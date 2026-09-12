@@ -100,8 +100,16 @@
             </nav>
         </header>
         <aside class="main-sidebar modern-sidebar">
-            <section class="sidebar" style="padding-top: 10px;">
-                @Env.GetMenuBarPage(null)
+            <section class="sidebar" style="display: flex; flex-direction: column; min-height: calc(100vh - 60px);">
+                <div>
+                    @Env.GetMenuBarPage(null)
+                </div>
+                <div class="sidebar-logout-wrapper">
+                    <a href="~/Account/signout" class="sidebar-logout-btn">
+                        <i class="fa fa-sign-out"></i>
+                        <span>Cerrar Sesi&oacute;n</span>
+                    </a>
+                </div>
             </section>
         </aside>
         <div style="width:250px !important" class="control-sidebar-bg"></div>
