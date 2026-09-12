@@ -1403,10 +1403,16 @@ table.table td, .table td {
     display: table-row !important;
 }
 
-.streaming-table table th,
-.streaming-table table td {
+.streaming-table table th:not(.hidden),
+.streaming-table table td:not(.hidden) {
     display: table-cell !important;
     vertical-align: middle !important;
+}
+
+.streaming-table table .hidden,
+.streaming-table table th.hidden,
+.streaming-table table td.hidden {
+    display: none !important;
 }
 
 .streaming-table table th {

@@ -8,11 +8,10 @@
     <table id="tbRole" class="table table-striped table-bordered" style="width: 100%;">
         <thead>
             <tr>
-                <th class="hidden"> Id </th>
-                <th style="width: 80px; text-align: center;"></th>
+                <th style="width: 70px; text-align: center;"></th>
                 <th style="width: 25%; text-align: center;"> Entidad </th>
                 <th style="width: 40%; text-align: center;"> Perfil </th>
-                <th class="mobile" style="width: 25%; text-align: center;"> Ult. Periodo Cargado</th>
+                <th class="mobile" style="width: 30%; text-align: center;"> Ult. Periodo Cargado</th>
             </tr>
         </thead>
         <tbody style="font-size: 12px;">
@@ -21,10 +20,8 @@
                 foreach (var item in Model)
                 {
                     <tr>
-                        <td class="hidden">
-                            @Html.HiddenFor(modelItem => item.IDENTIDAD)
-                        </td>
                         <td style="text-align: center; background-color: white;">
+                            @Html.HiddenFor(modelItem => item.IDENTIDAD)
                             @{
                                 string ruta = Url.Content("~/Content/images/" + @item.NOMBRE + ".jpg");
                                 <img width="40" height="40" src="@ruta" />
