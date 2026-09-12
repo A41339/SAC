@@ -1,4 +1,4 @@
-﻿@model FGA.Model.Modelo_PMatriz
+@model FGA.Model.Modelo_PMatriz
 
 @{
     ViewBag.Title = "Supuestos de Proyección de Mora";
@@ -34,21 +34,21 @@
                                                 <table class="table table-condensed table-striped table-bordered">
                                                     <tr>
                                                         <td>
-                                                            @Html.Label("Entidad:")
+                                                            <label>Entidad:</label>
                                                         </td>
                                                         <td>
                                                             @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", style = "width: 200px;" })
                                                         </td>
                                                         <td>
-                                                            @Html.Label("Tasa crecimiento cartera:")
+                                                            <label>Tasa crecimiento cartera:</label>
                                                         </td>
                                                         <td>
-                                                            <div style="display: inline-flex">
+                                                            <div style="display: inline-flex; align-items: center; gap: 6px;">
 
                                                                 <select name="cmb_tipoTasa" id="cmb_tipoTasa" style="width: 200px">
                                                                     <option id="1" value="0" @(Session["TipoTasa"].ToString() == "0" ? "selected" : "")>Crecimiento sugerido</option>
-                                                                    <option id="2" value="1" @(Session["TipoTasa"].ToString() == "1" ? "selected" : "")>Específica mensual</option>
-                                                                    <option id="3" value="12" @(Session["TipoTasa"].ToString() == "12" ? "selected" : "")>Específica anual</option>
+                                                                    <option id="2" value="1" @(Session["TipoTasa"].ToString() == "1" ? "selected" : "")>Espec&iacute;fica mensual</option>
+                                                                    <option id="3" value="12" @(Session["TipoTasa"].ToString() == "12" ? "selected" : "")>Espec&iacute;fica anual</option>
                                                                 </select>
                                                                 <a class="text-right" data-toggle="tooltip" data-placement="top" title="Ayuda"
                                                                    href="javascript:help('Tasa', 'Puede elegir entre las siguientes tres opciones: <br/><br/> a) Crecimiento sugerido: está dado de acuerdo con los períodos históricos y el cálculo interno de FGA. No podrá ser modificado. <br/><br/> b) Tasa especifica se puede incluir de forma manual ya sea una tasa anual o mensual, debe escoger en la seguilla de al lado el tipo mensual o anual.<br/><br/> c) Tasa por estacionalidad: se incluye en forma manual una tasa de crecimiento para cada mes proyectado')"><i class="btn btn-xs btn-default icon fa fa-question"></i></a>
@@ -59,13 +59,13 @@
                                                     </tr>
                                                     <tr>
                                                         <td>
-                                                            @Html.Label("Periodo actual:")
+                                                            <label>Periodo actual:</label>
                                                         </td>
                                                         <td>
                                                             <input name="PeriodoActual" id="PeriodoActual" class="datecontrol" value="@Session["PeriodoActual"]" />
                                                         </td>
                                                         <td>
-                                                            @Html.Label("Tasa:")
+                                                            <label>Tasa:</label>
                                                         </td>
                                                         <td>
                                                             <input name="Tasa" type="text" @(Session["TipoTasa"].ToString() == "0" ? "readonly=\"readonly\"" : "") id="Tasa" value="@(Model is null ? "0": Model.TasaCrecimiento.ToString())" style="width: 200px" />
@@ -74,20 +74,20 @@
                                                     </tr>
                                                     <tr>
                                                         <td>
-                                                            @Html.Label("Meses por proyectar:")
+                                                            <label>Meses por proyectar:</label>
                                                         </td>
                                                         <td>
-                                                            <div style="display: inline-flex">
+                                                            <div style="display: inline-flex; align-items: center; gap: 6px;">
                                                                 <input name="PeriodoEstimar" type="number" id="PeriodoEstimar" value="@Session["PeriodoEstimar"]" />
                                                                 <a class="text-right" data-toggle="tooltip" data-placement="top" title="Ayuda"
                                                                    href="javascript:help('Meses por proyectar', 'En este cuadro se elige la cantidad de meses a proyectar de la cartera de crédito, tomando como base el último mes cargado')"><i class="btn btn-xs btn-default icon fa fa-question"></i></a>
                                                             </div>
                                                         </td>
                                                         <td>
-                                                            @Html.Label("Periodo inicial:")
+                                                            <label>Periodo inicial:</label>
                                                         </td>
                                                         <td nowrap="nowrap">
-                                                            <div style="display: table-cell">
+                                                            <div style="display: inline-flex; align-items: center; gap: 6px;">
                                                                 <input name="PeriodoI" id="PeriodoI" class="datecontrol" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["PeriodoI"].ToString()).ToString("MM/yyyy")" />
                                                                 <a class="text-right" data-toggle="tooltip" data-placement="top" title="Ayuda"
                                                                    href="javascript:help('Periodo inicial', 'El mínimo de meses históricos que se deben de tomar son 12 meses')"><i class="btn btn-xs btn-default icon fa fa-question"></i></a>
@@ -97,20 +97,20 @@
                                                     </tr>
                                                     <tr>
                                                         <td>
-                                                            @Html.Label("Periodos históricos:")
+                                                            <label>Periodos hist&oacute;ricos:</label>
                                                         </td>
                                                         <td>
-                                                            <div style="display: inline-flex">
+                                                            <div style="display: inline-flex; align-items: center; gap: 6px;">
                                                                 <input name="PeriodoCrecimiento" type="number" id="PeriodoCrecimiento" value="@Session["PeriodoCrecimiento"]" />
                                                                 <a class="text-right" data-toggle="tooltip" data-placement="top" title="Ayuda"
                                                                    href="javascript:help('Periodos históricos', 'El número a elegir será la cantidad de meses históricos que se tomarán como base para la proyección de la cartera de crédito, considerar que el mínimo son 12 meses')"><i class="btn btn-xs btn-default icon fa fa-question"></i></a>
                                                             </div>
                                                         </td>
                                                         <td>
-                                                            @Html.Label("Periodo final:")
+                                                            <label>Periodo final:</label>
                                                         </td>
                                                         <td nowrap="nowrap">
-                                                            <div style="display: table-cell">
+                                                            <div style="display: inline-flex; align-items: center; gap: 6px;">
                                                                 <input name="PeriodoF" id="PeriodoF" class="datecontrol" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["PeriodoF"].ToString()).ToString("MM/yyyy")" />
                                                                 <a class="text-right" data-toggle="tooltip" data-placement="top" title="Ayuda"
                                                                    href="javascript:help('Periodo final', 'El mes idóneo a escoger es el último período cargado')"><i class="btn btn-xs btn-default icon fa fa-question"></i></a>

@@ -1,4 +1,4 @@
-﻿@model FGA.Model.Modelo_PEEFF
+@model FGA.Model.Modelo_PEEFF
 
 @{
     ViewBag.Title = "Módulo de proyecciones";
@@ -25,36 +25,34 @@
                                 <table class="table table-condensed table-striped table-bordered">
                                     <tr>
                                         <td>
-                                            @Html.Label("Entidad:")
+                                            <label>Entidad:</label>
                                         </td>
                                         <td>
                                             @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", style = "width: 200px;" })
                                         </td>
 
                                         <td>
-                                            @Html.Label("Fecha de corte:")
+                                            <label>Fecha de corte:</label>
                                         </td>
                                         <td nowrap="nowrap">
-                                            <input name="PeriodoI" id="PeriodoI" class="datecontrol"
-                                                   value="@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["PeriodoI"].ToString()).Date.ToString("MMMM yyyy"))" />
-                                            <a class="text-right" data-toggle="tooltip" data-placement="top" title="Ayuda"
-                                               href="javascript:help('Fecha de corte', 'Fecha de base a partir de la que se genera los períodos proyectados, se podrán usar cortes del período vigente y el último cierre fiscal cargado, meses anteriores a ese no se podrán usar como base.' )"><i class="btn btn-xs btn-default icon fa fa-question"></i></a>
+                                            <div style="display: inline-flex; align-items: center; gap: 6px;">
+                                                <input name="PeriodoI" id="PeriodoI" class="datecontrol"
+                                                       value="@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["PeriodoI"].ToString()).Date.ToString("MMMM yyyy"))" />
+                                                <a class="text-right" data-toggle="tooltip" data-placement="top" title="Ayuda"
+                                                   href="javascript:help('Fecha de corte', 'Fecha de base a partir de la que se genera los períodos proyectados, se podrán usar cortes del período vigente y el último cierre fiscal cargado, meses anteriores a ese no se podrán usar como base.' )"><i class="btn btn-xs btn-default icon fa fa-question"></i></a>
+                                            </div>
                                         </td>
                                         <td>
-                                            @Html.Label("Periodos por proyectar:")
+                                            <label>Periodos por proyectar:</label>
                                         </td>
                                         <td nowrap="nowrap">
-                                            <div class="row">
-                                                <div class="col-xs-7">
-                                                    <select id="ddlPlazo" name="ddlPlazo" style="width:220px">
-                                                        <option value="1" @(Model.ddlPlazo == "1" ? " selected" : "")>12 meses</option>
-                                                        <option value="2" @(Model.ddlPlazo == "2" ? " selected" : "")>3 años (Primer año mensual)</option>
-                                                    </select>
-                                                </div>
-                                                <div class="col-xs-1">
-                                                    <a class="text-left" data-toggle="tooltip" data-placement="top" title="Ayuda"
-                                                       href="javascript:help('Periodos por proyectar', 'La opción de 12 meses solo mostrará una proyección mensual de un año, la opción de 3 años mostrará el primer año en forma mensual. El segundo y tercero en forma anualizada')"><i class="btn btn-xs btn-default icon fa fa-question"></i></a>
-                                                </div>
+                                            <div style="display: inline-flex; align-items: center; gap: 6px;">
+                                                <select id="ddlPlazo" name="ddlPlazo" style="width:220px">
+                                                    <option value="1" @(Model.ddlPlazo == "1" ? " selected" : "")>12 meses</option>
+                                                    <option value="2" @(Model.ddlPlazo == "2" ? " selected" : "")>3 &ntilde;os (Primer &ntilde;o mensual)</option>
+                                                </select>
+                                                <a class="text-left" data-toggle="tooltip" data-placement="top" title="Ayuda"
+                                                   href="javascript:help('Periodos por proyectar', 'La opción de 12 meses solo mostrará una proyección mensual de un año, la opción de 3 años mostrará el primer año en forma mensual. El segundo y tercero en forma anualizada')"><i class="btn btn-xs btn-default icon fa fa-question"></i></a>
                                             </div>
                                         </td>
                                         <td>
