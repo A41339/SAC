@@ -25,7 +25,8 @@ namespace FGA
                 "~/Content/DataTable/new/jquery.dataTables.min.css",
                 "~/Content/DataTable/new/buttons.dataTables.min.css",
                 "~/Content/jquery-steps/demo/css/jquery.steps.css",
-                "~/Content/jquery-ui.css"));
+                "~/Content/jquery-ui.css",
+                "~/Content/dashboard_modern.css"));
 
             bundles.Add(new ScriptBundle("~/bundles/javascript").Include(
                     "~/Content/theme/plugins/jQuery/jQuery-2.1.3.min.js",

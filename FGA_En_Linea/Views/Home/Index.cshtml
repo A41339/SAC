@@ -1,4 +1,4 @@
-﻿@{
+@{
     ViewBag.Title = "Dashboard";
 }
 
@@ -14,44 +14,23 @@
 
 <section class="content">
 
-    <div class="box">
-        <div class="streaming-table">
-            <span id="found" class="label label-info"></span>
-            <table class="table table-condensed table-striped table-bordered">
-                <tr>
-                    <td class="mobile">
-                        @Html.Label("Entidad:")
-                    </td>
-                    <td>
-                        @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", style = "width: 200px;" })
-                    </td>
-                    <td class="mobile">
-                        <label id="Periodo1L" name="Periodo1">Periodo Inicial:</label>
-                    </td>
-                    <td nowrap="nowrap" class="form-group">
-                        <input name="Periodo1" id="Periodo1" class="datecontrol" style="width: 200px;" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MM/yyyy")" />
-                    </td>
-                    <td class="mobile">
-                        <label id="Periodo2L" name="Periodo1">Periodo Final:</label>
-                    </td>
-                    <td nowrap="nowrap" class="form-group">
-                        <input name="Periodo2" id="Periodo2" class="datecontrol" style="width: 200px;" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MM/yyyy")" />
-                    </td>
-                    <td>
-                        <label class="btn btn-facebook" onclick="javascript:getContent()">
-                            Generar
-                        </label>
-                    </td>
-                    @*@if (Env.GetUserInfo("roleid") != FGA.Utility.Utilitarios.roleGerencial.ToString())
-                        {
-                            <td>
-                                <label class="btn btn-pinterest" onclick="javascript:getPDF()">
-                                    PDF
-                                </label>
-                            </td>
-                        }*@
-                </tr>
-            </table>
+    <div class="modern-filter-bar">
+        <div class="modern-filter-group">
+            <label for="IdEntidad">Entidad</label>
+            @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", @class = "modern-filter-input", style = "width: 220px;" })
+        </div>
+        <div class="modern-filter-group">
+            <label id="Periodo1L" for="Periodo1">Período Inicial</label>
+            <input name="Periodo1" id="Periodo1" class="datecontrol modern-filter-input" style="width: 140px;" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MM/yyyy")" />
+        </div>
+        <div class="modern-filter-group">
+            <label id="Periodo2L" for="Periodo2">Período Final</label>
+            <input name="Periodo2" id="Periodo2" class="datecontrol modern-filter-input" style="width: 140px;" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MM/yyyy")" />
+        </div>
+        <div>
+            <button class="btn-modern-generate" onclick="javascript:getContent()">
+                <i class="fa fa-download"></i> Generar Reporte
+            </button>
         </div>
     </div>
     <div>
