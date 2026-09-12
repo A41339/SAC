@@ -26,17 +26,57 @@
 </head>
 
 <style>
-    .highcharts-contextbutton .highcharts-button-symbol {
-        opacity: 0 !important;
-        visibility: hidden !important;
+    /* Highcharts Export Hamburger Button Styling */
+    .highcharts-contextbutton,
+    .highcharts-button,
+    .highcharts-exporting-group {
+        display: block !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        cursor: pointer !important;
     }
 
-    .highcharts-contextbutton .highcharts-button-box,
-    .highcharts-contextbutton:hover .highcharts-button-box,
-    .highcharts-contextbutton.highcharts-button-hover .highcharts-button-box,
-    .highcharts-contextbutton.highcharts-button-pressed .highcharts-button-box {
-        fill: transparent !important;
-        stroke: transparent !important;
+    .highcharts-credits {
+        display: none !important;
+    }
+
+    /* Hide glitched text inside Highcharts export button */
+    .highcharts-button text,
+    .highcharts-contextbutton text,
+    .highcharts-button-symbol text,
+    .highcharts-button tspan {
+        display: none !important;
+    }
+
+    /* Clean white rounded box background */
+    .highcharts-button .highcharts-button-box,
+    .highcharts-contextbutton .highcharts-button-box {
+        fill: #ffffff !important;
+        stroke: #cbd5e1 !important;
+        stroke-width: 1px !important;
+        rx: 6px !important;
+        ry: 6px !important;
+    }
+
+    .highcharts-button:hover .highcharts-button-box,
+    .highcharts-contextbutton:hover .highcharts-button-box {
+        fill: #f1f5f9 !important;
+        stroke: #94a3b8 !important;
+    }
+
+    /* Draw 3 clean SVG lines (hamburger bars) for the symbol */
+    .highcharts-button-symbol,
+    .highcharts-contextbutton .highcharts-button-symbol {
+        opacity: 1 !important;
+        visibility: visible !important;
+        stroke: #475569 !important;
+        stroke-width: 2px !important;
+        fill: none !important;
+    }
+
+    .highcharts-button:hover .highcharts-button-symbol,
+    .highcharts-contextbutton:hover .highcharts-button-symbol {
+        stroke: #143750 !important;
     }
 </style>
 
