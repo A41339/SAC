@@ -409,68 +409,168 @@ table.table td, .table td {
 }
 
 /* ==========================================================================
-   8. Modals & Dialogs Modernization
+   8. Modals & Dialogs Modernization (Premium Enterprise UI)
    ========================================================================== */
+.modal-dialog {
+    margin: 30px auto !important;
+}
+
 .modal-content {
-    border-radius: 12px !important;
-    border: none !important;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 10px 10px -5px rgba(0, 0, 0, 0.05) !important;
+    border-radius: 16px !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25) !important;
     overflow: hidden !important;
     background-color: #ffffff !important;
 }
 
+/* Modal Header & Box Header inside Modals */
 .modal-header,
-.modal-header .box-header {
+.modal-content > .box-header,
+.modal-content .box-header {
     background-color: #143750 !important;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
     padding: 16px 24px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    margin: 0 !important;
+    border-radius: 16px 16px 0 0 !important;
 }
 
-.modal-header *,
-.modal-header .box-header *,
+.modal-header table,
+.modal-content .box-header table {
+    width: 100% !important;
+    margin: 0 !important;
+    background: transparent !important;
+    border: none !important;
+}
+
+.modal-header table td,
+.modal-content .box-header table td {
+    border: none !important;
+    background: transparent !important;
+    padding: 0 10px 0 0 !important;
+    vertical-align: middle !important;
+}
+
+.modal-header img,
+.modal-content .box-header img {
+    border-radius: 8px !important;
+    background: #ffffff !important;
+    padding: 3px !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15) !important;
+    object-fit: contain !important;
+    width: 42px !important;
+    height: 42px !important;
+}
+
 .modal-header .box-title,
 .modal-header h1,
 .modal-header h2,
 .modal-header h3,
 .modal-header h4,
 .modal-header h5,
-.modal-header label,
-.modal-header span,
-.modal-header p,
-.modal-header div,
-.modal-header .box-header .box-title {
+.modal-content .box-header .box-title,
+.modal-content .box-header h4,
+.modal-content .box-header h3 {
     color: #ffffff !important;
-    font-weight: 700 !important;
-}
-
-.modal-header .box-header {
-    background: transparent !important;
-    border-bottom: none !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    letter-spacing: -0.2px !important;
+    margin: 0 !important;
     padding: 0 !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
 }
 
-.modal-header .close {
+/* Modal Close Button (Top-Right X) */
+.modal-header .close,
+.modal-content .close {
     color: #ffffff !important;
     opacity: 0.85 !important;
     text-shadow: none !important;
-    font-size: 24px !important;
+    font-size: 20px !important;
+    font-weight: 300 !important;
+    background: rgba(255, 255, 255, 0.12) !important;
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 0.2s ease !important;
+    border: none !important;
+    outline: none !important;
+    margin: 0 !important;
+    line-height: 1 !important;
 }
 
-.modal-header .close:hover {
-    color: #86d2dd !important;
+.modal-header .close:hover,
+.modal-content .close:hover {
+    background: rgba(255, 255, 255, 0.25) !important;
+    color: #ffffff !important;
     opacity: 1 !important;
 }
 
-.modal-body {
-    padding: 20px 24px !important;
+/* Modal Body */
+.modal-body,
+.modal-content .box-body {
+    padding: 24px 28px !important;
     color: #1e293b !important;
     background-color: #ffffff !important;
+    border: none !important;
 }
 
+.modal-content .box {
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    margin-bottom: 0 !important;
+}
+
+.modal-content .box-body {
+    padding: 10px 0 !important;
+}
+
+/* Modal Footer */
 .modal-footer {
     background-color: #f8fafc !important;
     border-top: 1px solid #e2e8f0 !important;
     padding: 14px 24px !important;
+    border-radius: 0 0 16px 16px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+}
+
+.modal-footer .btn-danger,
+.modal-footer .btn-default {
+    background-color: #f1f5f9 !important;
+    border: 1px solid #cbd5e1 !important;
+    color: #334155 !important;
+    font-weight: 600 !important;
+    border-radius: 8px !important;
+    padding: 8px 22px !important;
+    box-shadow: none !important;
+    transition: all 0.2s ease !important;
+}
+
+.modal-footer .btn-danger:hover,
+.modal-footer .btn-default:hover {
+    background-color: #e2e8f0 !important;
+    border-color: #94a3b8 !important;
+    color: #0f172a !important;
+}
+
+/* Highcharts Exporting & Character Glitch Cleanup */
+.highcharts-contextbutton,
+.highcharts-button,
+.highcharts-button-symbol,
+.highcharts-exporting-group,
+.highcharts-menu,
+.highcharts-credits {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
 }
 
 /* ==========================================================================

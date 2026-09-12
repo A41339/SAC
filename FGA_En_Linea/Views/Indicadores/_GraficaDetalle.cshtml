@@ -1,25 +1,14 @@
-﻿@model DotNet.Highcharts.Highcharts
-<div class="col-md-12">
-    <div class="box direct-chat direct-chat-primary">
-        <div class="box-header">
-            <table>
-                <tr>
-                    <td>
-                        <img width="50" height="50" src="@Session["Logo"]" />
-                    </td>
-                    <td>
-                        <h4 class="box-title">@ViewBag.Title</h4>
-                    </td>
-                </tr>
-            </table>
-        </div>
-        <div class="box-body col-xs-12">
-            <div>
-                <div style="width: 100%;">
-                    @(Model)
-                </div>
-            </div>
-        </div>
+@model DotNet.Highcharts.Highcharts
+<div class="modal-header">
+    <div style="display: flex; align-items: center; gap: 12px;">
+        <img width="42" height="42" src="@Session["Logo"]" style="border-radius: 8px; background: #ffffff; padding: 3px; box-shadow: 0 2px 6px rgba(0,0,0,0.15);" />
+        <h4 class="box-title" style="margin: 0; color: #ffffff !important; font-size: 16px; font-weight: 600;">@ViewBag.Title</h4>
+    </div>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+</div>
+<div class="modal-body" style="padding: 24px;">
+    <div style="width: 100%;">
+        @(Model)
     </div>
 </div>
 
