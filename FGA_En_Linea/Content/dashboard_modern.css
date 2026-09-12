@@ -1268,37 +1268,50 @@ table.table td, .table td {
 }
 
 /* Zoom / Modal Trigger Icon Button in Chart Panel Header */
-.box-header a .fa-line-chart,
-.box-header a i.btn-info,
-.box-header a.text-right i {
+.box-header a.btn-ampliar,
+.box-header a[href*="javascript:m"],
+.box-header a.text-right {
     background-color: #ebf5ff !important;
     color: #143750 !important;
     border: 1px solid #bfdbfe !important;
     border-radius: 6px !important;
-    padding: 6px 12px !important;
+    padding: 6px 14px !important;
     font-size: 13px !important;
+    font-weight: 600 !important;
     transition: all 0.2s ease !important;
     display: inline-flex !important;
     align-items: center !important;
     gap: 6px !important;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+    text-decoration: none !important;
 }
 
-.box-header a i.fa-line-chart:empty::after,
-.box-header a i.btn-info:empty::after,
-.box-header a.text-right i:empty::after {
-    content: " Ampliar" !important;
-    font-style: normal !important;
-    font-weight: 600 !important;
-    font-size: 12px !important;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
-}
-
-.box-header a:hover .fa-line-chart,
-.box-header a:hover i.btn-info,
-.box-header a.text-right:hover i {
+.box-header a.btn-ampliar:hover,
+.box-header a[href*="javascript:m"]:hover,
+.box-header a.text-right:hover {
     background-color: #143750 !important;
     color: #ffffff !important;
     border-color: #143750 !important;
+}
+
+.box-header a i,
+.box-header a i.fa-line-chart,
+.box-header a i.btn-info,
+.box-header a.text-right i {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    color: inherit !important;
+    font-size: 13px !important;
+    display: inline-block !important;
+}
+
+.box-header a i::after,
+.box-header a i.fa-line-chart::after,
+.box-header a i.btn-info::after,
+.box-header a.text-right i::after {
+    content: none !important;
 }
 
