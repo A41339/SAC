@@ -1,0 +1,67 @@
+@model FGA.Models.CatalogoCuenta
+
+@{
+    ViewBag.Title = "Editar Cuenta";
+    if (Ajax.IsThisAjaxRequest())
+    {
+        Layout = null;
+    }
+}
+
+@Html.StarkAjaxFormSubmiter("frmCompany", "tbCompany", true, "Acción ejecutada con éxito")
+
+@{
+    if (!Ajax.IsThisAjaxRequest())
+    {
+        <section class="content-header">
+            <h1>
+                Editar una Cuenta
+            </h1>
+        </section>
+    }
+}
+
+@using (Html.BeginForm("Edit", "CatalogoCuenta", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmCompany" }))
+{
+    @Html.AntiForgeryToken()
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box box-solid box-info">
+                    <div role="form">
+                        <div class="box-body">
+                            @Html.HiddenFor(model=>model.Cuenta, new { @class = "" })
+                            <div class="col-lg-12">
+                                <div class="col-lg-4">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Cuenta, new { @class = "" })
+                                        @Html.Editor("Id", new { htmlAttributes = new { @class = "form-control", @disabled= "disabled" }})
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Nombre, new { @class = "" })
+                                        @Html.EditorFor(model => model.Nombre, new { htmlAttributes = new { @class = "form-control" } })
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="form-group">
+                                        @Html.Label("Proyectar", new { @class = "checkbox" })
+                                        @Html.EditorFor(model => model.Ind_Proyectar, new { htmlAttributes = new { @class = "js-switch" } })
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="box-footer">
+                        @Html.StarkInputButtion("Guardar", "submit", "btn btn-primary", "")
+                        @Html.ActionLink("Regresar", "Index", null, new { @class = "btn btn-primary" })
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+}

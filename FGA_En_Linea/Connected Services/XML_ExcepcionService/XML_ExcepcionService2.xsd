@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/FGA.Models" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/FGA.Models" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:complexType name="ArrayOfXML_Excepcion">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="XML_Excepcion" nillable="true" type="tns:XML_Excepcion" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfXML_Excepcion" nillable="true" type="tns:ArrayOfXML_Excepcion" />
+  <xs:complexType name="XML_Excepcion">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="IdArchivo" nillable="true" type="tns:TipoXML" />
+      <xs:element minOccurs="0" name="IdArchivo_Id" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="IdEntidad" nillable="true" type="tns:Entidad" />
+      <xs:element minOccurs="0" name="IdEntidad_Id" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="XML_Excepcion" nillable="true" type="tns:XML_Excepcion" />
+  <xs:complexType name="TipoXML">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="DiaMaximo" type="xs:int" />
+      <xs:element minOccurs="0" name="Encabezados" nillable="true" type="tns:ArrayOfXML_Encabezado" />
+      <xs:element minOccurs="0" name="Excepciones" nillable="true" type="tns:ArrayOfXML_Excepcion" />
+      <xs:element minOccurs="0" name="Id" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Nombre" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Prioridad" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="TipoXML" nillable="true" type="tns:TipoXML" />
+  <xs:complexType name="ArrayOfXML_Encabezado">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="XML_Encabezado" nillable="true" type="tns:XML_Encabezado" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfXML_Encabezado" nillable="true" type="tns:ArrayOfXML_Encabezado" />
+  <xs:complexType name="XML_Encabezado">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Cantidad" type="xs:int" />
+      <xs:element minOccurs="0" name="FechaCarga" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="Id" type="xs:long" />
+      <xs:element minOccurs="0" name="IdArchivo" nillable="true" type="tns:TipoXML" />
+      <xs:element minOccurs="0" name="IdArchivo_Id" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="IdEntidad" nillable="true" type="tns:Entidad" />
+      <xs:element minOccurs="0" name="IdEntidad_Id" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="IdEstado" nillable="true" type="tns:ArchivoEstado" />
+      <xs:element minOccurs="0" name="IdEstado_Id" type="xs:int" />
+      <xs:element minOccurs="0" name="IdUsuario" nillable="true" type="tns:Usuario" />
+      <xs:element minOccurs="0" name="IdUsuario_Id" type="xs:int" />
+      <xs:element minOccurs="0" name="Periodo" type="xs:dateTime" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="XML_Encabezado" nillable="true" type="tns:XML_Encabezado" />
+  <xs:complexType name="Entidad">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Activo" type="xs:boolean" />
+      <xs:element minOccurs="0" name="Contacto" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Encabezados" nillable="true" type="tns:ArrayOfXML_Encabezado" />
+      <xs:element minOccurs="0" name="Excepciones" nillable="true" type="tns:ArrayOfXML_Excepcion" />
+      <xs:element minOccurs="0" name="Id" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Identificacion" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Ind_Cargar" type="xs:boolean" />
+      <xs:element minOccurs="0" name="Logo" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Nombre" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Usuario_Ids" nillable="true" type="tns:ArrayOfUsuario" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Entidad" nillable="true" type="tns:Entidad" />
+  <xs:complexType name="ArrayOfUsuario">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Usuario" nillable="true" type="tns:Usuario" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfUsuario" nillable="true" type="tns:ArrayOfUsuario" />
+  <xs:complexType name="Usuario">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Contrasena" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Correo" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Encabezados" nillable="true" type="tns:ArrayOfXML_Encabezado" />
+      <xs:element minOccurs="0" name="Entidad_Usuario" nillable="true" type="tns:Entidad" />
+      <xs:element minOccurs="0" name="Entidad_Usuario_Id" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Estado_Usuario" nillable="true" type="tns:UsuarioEstado" />
+      <xs:element minOccurs="0" name="Estado_Usuario_Id" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Id" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="Identificacion" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Nombre" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Role_Usuario" nillable="true" type="tns:Role" />
+      <xs:element minOccurs="0" name="Role_Usuario_Id" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="Sexo_Usuario" nillable="true" type="tns:Sexo" />
+      <xs:element minOccurs="0" name="Sexo_Usuario_Id" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Usuario" nillable="true" type="tns:Usuario" />
+  <xs:complexType name="UsuarioEstado">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Id" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Nombre" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Usuario_Ids" nillable="true" type="tns:ArrayOfUsuario" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="UsuarioEstado" nillable="true" type="tns:UsuarioEstado" />
+  <xs:complexType name="Role">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Activo" type="xs:boolean" />
+      <xs:element minOccurs="0" name="Id" type="xs:int" />
+      <xs:element minOccurs="0" name="MenuPermission_RoleIds" nillable="true" type="tns:ArrayOfMenuPermission" />
+      <xs:element minOccurs="0" name="Nombre" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Usuario_Ids" nillable="true" type="tns:ArrayOfUsuario" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Role" nillable="true" type="tns:Role" />
+  <xs:complexType name="ArrayOfMenuPermission">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="MenuPermission" nillable="true" type="tns:MenuPermission" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfMenuPermission" nillable="true" type="tns:ArrayOfMenuPermission" />
+  <xs:complexType name="MenuPermission">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Id" type="xs:int" />
+      <xs:element minOccurs="0" name="IsCreate" type="xs:boolean" />
+      <xs:element minOccurs="0" name="IsDelete" type="xs:boolean" />
+      <xs:element minOccurs="0" name="IsRead" type="xs:boolean" />
+      <xs:element minOccurs="0" name="IsUpdate" type="xs:boolean" />
+      <xs:element minOccurs="0" name="MenuId" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="Menu_MenuId" nillable="true" type="tns:Menu" />
+      <xs:element minOccurs="0" name="RoleId" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="Role_RoleId" nillable="true" type="tns:Role" />
+      <xs:element minOccurs="0" name="SortOrder" nillable="true" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="MenuPermission" nillable="true" type="tns:MenuPermission" />
+  <xs:complexType name="Menu">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Id" type="xs:int" />
+      <xs:element minOccurs="0" name="Menu2" nillable="true" type="tns:Menu" />
+      <xs:element minOccurs="0" name="MenuIcon" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="MenuPermission_MenuIds" nillable="true" type="tns:ArrayOfMenuPermission" />
+      <xs:element minOccurs="0" name="MenuText" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="MenuURL" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Menu_ParentIds" nillable="true" type="tns:ArrayOfMenu" />
+      <xs:element minOccurs="0" name="ParentId" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="SortOrder" nillable="true" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Menu" nillable="true" type="tns:Menu" />
+  <xs:complexType name="ArrayOfMenu">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Menu" nillable="true" type="tns:Menu" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfMenu" nillable="true" type="tns:ArrayOfMenu" />
+  <xs:complexType name="Sexo">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Id" type="xs:int" />
+      <xs:element minOccurs="0" name="Nombre" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Usuario_Ids" nillable="true" type="tns:ArrayOfUsuario" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Sexo" nillable="true" type="tns:Sexo" />
+  <xs:complexType name="ArchivoEstado">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Encabezados" nillable="true" type="tns:ArrayOfXML_Encabezado" />
+      <xs:element minOccurs="0" name="Id" type="xs:int" />
+      <xs:element minOccurs="0" name="Nombre" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArchivoEstado" nillable="true" type="tns:ArchivoEstado" />
+</xs:schema>

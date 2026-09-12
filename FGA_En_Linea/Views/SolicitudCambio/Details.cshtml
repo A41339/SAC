@@ -1,0 +1,34 @@
+@model FGA.Models.SolicitudView
+
+@{
+    ViewBag.Title = "Editar";
+    if (Ajax.IsThisAjaxRequest())
+    {
+        Layout = null;
+    }
+}
+
+@Html.StarkAjaxFormSubmiter("frmSolicitud", "tbSolicitud", true, "Acción ejecutada con éxito")
+@using (Html.BeginForm("Edit", "SolicitudCambio", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmSolicitud" }))
+{
+    @Html.Partial("_VerDetalle", Model)
+}
+
+<script>
+
+    function download() {
+        var path = "/SolicitudCambio/Download/?id=" + @Model.solicitud.Id;
+        window.location.href = path;
+        }
+
+        $(function ()
+        {
+            $("#wizard").steps({
+                headerTag: "h2",
+                bodyTag: "section",
+                transitionEffect: "slideLeft",
+                enableAllSteps: true
+            });
+        });
+
+</script>

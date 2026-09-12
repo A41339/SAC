@@ -1,0 +1,206 @@
+@using System.Linq
+@model FGA.Models.Creditos_Ofertas[]
+
+@{
+    ViewBag.Title = "Mercado de Créditos";
+}
+
+@section ScriptsOrCss {
+    <link href="~/Content/Creditos_Marketplace.css" rel="stylesheet" />
+    <script>
+        $(document).ready(function () {
+            function formatNumber(n) {
+                if (!n) return "";
+                n = n.toString().replace(/[^\d.]/g, "");
+                var parts = n.split(".");
+                parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                if (parts.length > 2) parts.pop();
+                return parts.join(".");
+            }
+
+            $('.input-monto').on('keyup', function () {
+                var val = $(this).val();
+                $(this).val(formatNumber(val));
+            });
+
+            $('.form-solicitar').on('submit', function () {
+                var btnSubmit = $(this).find('button[type="submit"]');
+                btnSubmit.prop('disabled', true).html('Procesando... <i class="fa fa-spinner fa-spin"></i>');
+                var montoInput = $(this).find('.input-monto');
+                if (montoInput.length > 0) {
+                    montoInput.val(montoInput.val().replace(/,/g, ""));
+                }
+            });
+        });
+    </script>
+}
+
+<div class="credit-marketplace-container">
+    <div class="row">
+        <div class="col-md-8">
+            <h2 class="animate-fade-in" style="color: #0B4E91; font-weight: 700; margin-bottom: 25px;">
+                <i class="fa fa-university"></i> Mercado de Cr&eacute;ditos
+            </h2>
+            <p class="lead animate-fade-in" style="font-size: 16px; color: #666;">Explore las mejores ofertas de financiamiento entre cooperativas.</p>
+        </div>
+        <div class="col-md-4 text-right" style="padding-top: 20px;">
+            <a href="@Url.Action("Publicar")" class="btn btn-premium animate-fade-in">
+                <i class="fa fa-plus-circle"></i> Publicar Nueva Oferta
+            </a>
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success animate-fade-in">
+            <i class="fa fa-check-circle"></i> @TempData["Success"]
+        </div>
+    }
+
+    <!-- Stats summary section -->
+    <div class="row animate-fade-in" style="animation-delay: 0.1s; margin-top: 20px;">
+        <div class="col-md-3">
+            <div class="market-stat">
+                <span class="market-stat-value">@Model.Length</span>
+                <div class="stat-label">Cr&eacute;ditos Disponibles</div>
+            </div>
+        </div>
+        @{
+            var totalesPorMoneda = Model.GroupBy(o => new { o.Moneda.Codigo, o.Moneda.Nombre })
+                                        .Select(g => new { 
+                                            Moneda = g.Key.Nombre, 
+                                            Codigo = g.Key.Codigo,
+                                            Total = g.Sum(o => (decimal?)o.Mon_Monto) ?? 0 
+                                        });
+        }
+        @foreach (var totalItem in totalesPorMoneda)
+        {
+            <div class="col-md-3" style="width: auto; min-width: 25%;">
+                <div class="market-stat">
+                    <span class="market-stat-value" style="font-size: 24px;">@totalItem.Total.ToString("N0") @totalItem.Moneda</span>
+                    <span class="market-stat-label" style="display: block;">Liquidez en @totalItem.Moneda</span>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="row" style="margin-top: 30px;">
+        @foreach (var oferta in Model)
+        {
+            <div class="col-md-4 animate-fade-in" style="animation-delay: 0.2s">
+                <div class="credit-card">
+                    <div class="credit-card-header">
+                        <div class="row" style="margin: 0; display: flex; align-items: center;">
+                            <div style="flex: 0 0 50px; margin-right: 15px;">
+                                <img src="@(MicrosoftHelper.MSHelper.GetSiteRoot() + "/Content/images/" + oferta.EntidadOferente.Nombre + ".jpg")" 
+                                     alt="Logo" 
+                                     style="width: 50px; height: 50px; object-fit: contain; border-radius: 4px; background: white; padding: 2px; border: 1px solid #eee;" 
+                                     onerror="this.onerror=null; this.outerHTML='<div style=\'width: 50px; height: 50px; background: #eee; border-radius: 4px; display: flex; align-items: center; justify-content: center; border: 1px solid #ddd;\'><i class=\'fa fa-university\' style=\'color: #999;\'></i></div>'" />
+                            </div>
+                            <div style="flex: 1;">
+                                <div class="pull-right">
+                                    <span class="badge badge-premium badge-active">ACTIVA</span>
+                                </div>
+                                <h4 style="margin: 0; font-weight: 600; font-size: 18px;">@oferta.EntidadOferente.Nombre</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="credit-card-body">
+                        <div style="font-size: 32px; font-weight: 800; color: #0B4E91; margin-bottom: 15px; letter-spacing: -1px;">
+                            @oferta.Mon_Monto.ToString("N2") <span style="font-size: 18px; color: #1e6fb3; font-weight: 600;">@oferta.Moneda.Nombre</span> 
+                        </div>
+                        
+                        <div class="row" style="margin-bottom: 20px; background: #fbfcfd; padding: 10px; border-radius: 8px;">
+                            <div class="col-xs-6" style="border-right: 1px solid #eee;">
+                                <small class="text-muted text-uppercase" style="font-size: 10px; font-weight: 700; display: block; margin-bottom: 4px;">Tasa Anual</small>
+                                <div style="font-weight: 700; font-size: 18px; color: #2e7d32;">@oferta.TasaInteresAnual.ToString("N2") %</div>
+                            </div>
+                            <div class="col-xs-6">
+                                <small class="text-muted text-uppercase" style="font-size: 10px; font-weight: 700; display: block; margin-bottom: 4px;">Plazo M&aacute;x.</small>
+                                <div style="font-weight: 700; font-size: 18px; color: #333;">@oferta.PlazoMeses <span style="font-size: 12px; font-weight: 400;">Meses</span></div>
+                            </div>
+                        </div>
+
+                        @if (oferta.Requisitos != null)
+                        {
+                            <div style="margin-bottom: 20px;">
+                                <small class="text-muted text-uppercase" style="font-size: 10px; font-weight: 700;">Documentaci&oacute;n requerida:</small>
+                                <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px;">
+                                    @foreach (var req in oferta.Requisitos)
+                                    {
+                                        <span class="badge" style="background: #eef2f7; color: #444; font-size: 10px; padding: 4px 10px; border-radius: 4px; border-left: 3px solid #0B4E91;">@req.TipoDocumento.Descripcion</span>
+                                    }
+                                </div>
+                            </div>
+                        }
+
+                        <button type="button" class="btn btn-premium btn-block" data-toggle="modal" data-target="#modalSolicitar-@oferta.Id">
+                            <i class="fa fa-paper-plane"></i> Solicitar Cr&eacute;dito
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Solicitar con diseño mejorado -->
+            <div class="modal fade" id="modalSolicitar-@oferta.Id" tabindex="-1" role="dialog">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content" style="border-radius: 12px; overflow: hidden; border: none; box-shadow: 0 10px 40px rgba(0,0,0,0.2);">
+                        @using (Html.BeginForm("Solicitar", "Creditos", FormMethod.Post, new { @class = "form-solicitar" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="ofertaId" value="@oferta.Id" />
+                            <div class="modal-header" style="background: #0B4E91; color: white; border: none; padding: 20px;">
+                                <button type="button" class="close" data-dismiss="modal" style="color: white; opacity: 0.8;"><span>&times;</span></button>
+                                <h4 class="modal-title" style="font-weight: 700; color: white;">
+                                    <i class="fa fa-paper-plane"></i> Solicitar Cr&eacute;dito
+                                </h4>
+                                <small style="display: block; opacity: 0.8; margin-top: 5px;">Destinatario: @oferta.EntidadOferente.Nombre</small>
+                            </div>
+                            <div class="modal-body" style="padding: 25px;">
+                                <div class="form-group" style="margin-bottom: 20px;">
+                                    <label style="font-weight: 600; color: #444; margin-bottom: 8px;">Monto a Solicitar</label>
+                                    <div class="input-group">
+                                        <input type="text" name="montoStr" class="form-control input-lg input-monto" required style="font-weight: 700; color: #0B4E91;" placeholder="0.00" />
+                                        <span class="input-group-addon" style="background: #f8f9fa;">@oferta.Moneda.Nombre</span>
+                                    </div>
+                                    <small class="text-muted">Monto m&aacute;ximo de la oferta: @oferta.Mon_Monto.ToString("N2") @oferta.Moneda.Nombre</small>
+                                </div>
+                                
+                                <div class="form-group" style="margin-bottom: 20px;">
+                                    <label style="font-weight: 600; color: #444; margin-bottom: 8px;">Comentarios Adicionales</label>
+                                    <textarea name="comentarios" class="form-control" rows="3" placeholder="Indique detalles adicionales de la solicitud..." style="border-radius: 8px;"></textarea>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group" style="margin-bottom: 20px;">
+                                            <label style="font-weight: 600; color: #444;">Tel&eacute;fono Notificaci&oacute;n</label>
+                                            <input type="text" name="telefono" class="form-control" required placeholder="Ej: 88887777" style="border-radius: 8px;" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group" style="margin-bottom: 20px;">
+                                            <label style="font-weight: 600; color: #444;">Correo Notificaci&oacute;n</label>
+                                            <input type="email" name="email" class="form-control" required placeholder="Ej: info@coop.com" style="border-radius: 8px;" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div style="background: #fff8e1; border-left: 4px solid #ffc107; padding: 15px; border-radius: 4px; margin-top: 15px;">
+                                    <strong style="color: #856404;"><i class="fa fa-info-circle"></i> Informaci&oacute;n importante</strong>
+                                    <p style="margin: 5px 0 0 0; font-size: 13px; color: #856404;">Al enviar esta solicitud, la entidad oferente recibir&aacute; una notificaci&oacute;n inmediata v&iacute;a SMS y Correo Electr&oacute;nico.</p>
+                                </div>
+                            </div>
+                            <div class="modal-footer" style="background: #f8f9fa; border-top: 1px solid #eee; padding: 20px;">
+                                <button type="button" class="btn btn-default" data-dismiss="modal" style="border-radius: 20px; padding: 8px 25px;">Cancelar</button>
+                                <button type="submit" class="btn btn-premium" style="border-radius: 20px; padding: 8px 30px; min-width: 150px;">
+                                    Enviar Solicitud <i class="fa fa-arrow-right"></i>
+                                </button>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,220 @@
+﻿@model FGA.Models.Seccion
+
+@{
+    ViewBag.Title = "Editar una sección";
+    if (Ajax.IsThisAjaxRequest())
+    {
+        Layout = null;
+    }
+}
+
+@Html.StarkAjaxFormSubmiter("frmSeccion", "tbSeccion", true, "Acción ejecutada con éxito")
+
+@{
+    if (!Ajax.IsThisAjaxRequest())
+    {
+        <section class="content-header">
+            <h1>
+                Editar la sección @Model.Nombre
+            </h1>
+        </section>
+    }
+}
+
+@using (Html.BeginForm("Edit", "Seccion", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmSeccion" }))
+{
+    @Html.AntiForgeryToken()
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box box-solid box-info">
+                    <div class="box-header">
+                        <h3 class="box-title">Complete el formulario</h3>
+                    </div>
+                    <div role="form">
+                        <div class="box-body">
+                            <br />
+                            <div class="hidden">
+                                @Html.LabelFor(model => model.Id, new { @class = "" })
+                                @Html.EditorFor(model => model.Id)
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Nombre, new { @class = "" })
+                                @Html.EditorFor(model => model.Nombre)
+                            </div>
+                            <div class="form-group">
+
+                                @if (Model.Id < (int)FGA.Utility.Utilitarios.enum_secciones.banner || Model.Id == (int)FGA.Utility.Utilitarios.enum_secciones.unase)
+                                {
+                                    @Html.Label("Título:")
+                                    @Html.EditorFor(model => model.Detalle1)
+                                }
+                                else if (Model.Id == (int)FGA.Utility.Utilitarios.enum_secciones.banner)
+                                {
+                                    @Html.Label("Primera Leyenda:")
+                                    @Html.EditorFor(model => model.Detalle1)
+                                }
+                                else if (Model.Id == (int)FGA.Utility.Utilitarios.enum_secciones.piePagina)
+                                {
+                                    @Html.Label("Detalle:")
+                                    @Html.TextAreaFor(model => model.Detalle1, new
+                                   {
+                                       cols = "50",
+                                       rows = "10",
+                                       @class = "form-control",
+                                       @style = "background-color:white; width:100%;",
+                                       @minlength = "5",
+                                       @required = "true"
+                                   })
+                                }
+                                else if (Model.Id == (int)FGA.Utility.Utilitarios.enum_secciones.popUp)
+                                {
+                                    @Html.Label("Habilitar:")
+                                    @Html.DropDownList("Detalle1", new List<SelectListItem> { new SelectListItem { Value = "S", Text = "Sí" },
+                                                                                         new SelectListItem { Value = "N", Text = "No" }},
+                                                                                         new { @id = "Detalle1", style = "width: 100px;" })
+
+                                }
+                            </div>
+                            <div class="form-group">
+                                @if (Model.Id < (int)FGA.Utility.Utilitarios.enum_secciones.banner)
+                                {
+                                    @Html.Label("Sub título:")
+                                    @Html.EditorFor(model => model.Detalle2)
+                                }
+                                else if (Model.Id == (int)FGA.Utility.Utilitarios.enum_secciones.banner)
+                                {
+                                    @Html.Label("Segunda Leyenda:")
+                                    @Html.EditorFor(model => model.Detalle2)
+                                }
+                                else if (Model.Id == (int)FGA.Utility.Utilitarios.enum_secciones.parametros)
+                                {
+                                    @Html.Label("Teléfono:")
+                                    @Html.EditorFor(model => model.Detalle2)
+                                }
+                                else if (Model.Id == (int)FGA.Utility.Utilitarios.enum_secciones.piePagina)
+                                {
+                                    @Html.Label("Horario Lunes a Viernes:")
+                                    @Html.EditorFor(model => model.Detalle2)
+                                }
+                                else if (Model.Id == (int)FGA.Utility.Utilitarios.enum_secciones.unase)
+                                {
+                                    @Html.Label("Primer mensaje:")
+                                    @Html.EditorFor(model => model.Detalle2)
+                                }
+                                else if (Model.Id == (int)FGA.Utility.Utilitarios.enum_secciones.popUp)
+                                {
+                                    @Html.Label("URL:")
+                                    @Html.EditorFor(model => model.Detalle2)
+
+                                }
+                            </div>
+                            <div class="form-group">
+                                @if (Model.Id < (int)FGA.Utility.Utilitarios.enum_secciones.videos)
+                                {
+                                    @Html.Label("Detalle:")
+                                    @Html.TextAreaFor(model => model.Detalle3, new
+                                    {
+                                        cols = "50",
+                                         rows = "10",
+                                         @class = "form-control",
+                                         @style = "background-color:white; width:100%;",
+                                         @minlength = "5",
+                                         @required = "true"
+                                    })
+                                }
+                                else if (Model.Id == (int)FGA.Utility.Utilitarios.enum_secciones.galeria)
+                                {
+                                    @Html.Label("WhastApp:")
+                                    @Html.EditorFor(model => model.Detalle3)
+                                }
+                                else if (Model.Id == (int)FGA.Utility.Utilitarios.enum_secciones.banner)
+                                {
+                                    @Html.Label("Tercera Leyenda:")
+                                    @Html.EditorFor(model => model.Detalle3)
+                                }
+                                else if (Model.Id == (int)FGA.Utility.Utilitarios.enum_secciones.parametros)
+                                {
+                                    @Html.Label("Correo:")
+                                    @Html.EditorFor(model => model.Detalle3)
+                                }
+                                else if (Model.Id == (int)FGA.Utility.Utilitarios.enum_secciones.ubicacion)
+                                {
+                                    @Html.Label("Latitud:")
+                                    @Html.EditorFor(model => model.Detalle3)
+                                }
+                                else if (Model.Id == (int)FGA.Utility.Utilitarios.enum_secciones.piePagina)
+                                {
+                                    @Html.Label("Horario Fin de Semana:")
+                                    @Html.EditorFor(model => model.Detalle3)
+                                }
+                                else if (Model.Id == (int)FGA.Utility.Utilitarios.enum_secciones.unase)
+                                {
+                                    @Html.Label("Segundo mensaje:")
+                                    @Html.EditorFor(model => model.Detalle3)
+                                }
+                            </div>
+                            <div class="form-group">
+                                @if (Model.Id == (int)FGA.Utility.Utilitarios.enum_secciones.ubicacion)
+                                {
+                                    @Html.Label("Longitud:")
+                                    @Html.EditorFor(model => model.Detalle4)
+                                }
+                                else if (Model.Id == (int)FGA.Utility.Utilitarios.enum_secciones.parametros)
+                                {
+                                    @Html.Label("Linked In:")
+                                    @Html.EditorFor(model => model.Detalle4)
+                                }
+                                else if (Model.Id == (int)FGA.Utility.Utilitarios.enum_secciones.unase)
+                                {
+                                    @Html.Label("Tercer mensaje:")
+                                    @Html.EditorFor(model => model.Detalle4)
+                                }
+                            </div>
+                            @if (Model.Id < (int)FGA.Utility.Utilitarios.enum_secciones.videos || Model.Id == (int)FGA.Utility.Utilitarios.enum_secciones.conozca
+                            || Model.Id == (int)FGA.Utility.Utilitarios.enum_secciones.parametros || Model.Id == (int)FGA.Utility.Utilitarios.enum_secciones.unase
+                            || Model.Id == (int)FGA.Utility.Utilitarios.enum_secciones.popUp)
+                            {
+
+                                <label class="btn btn-default">
+                                    Buscar Imagen&hellip; <input type="file" name="file" style="display: none;">
+                                </label>
+
+                                @*if (Model.Id == (int)FGA.Utility.Utilitarios.enum_secciones.quienes_somos)
+                                {
+                                    <img width="300" height="250" src="https://www.ffc.co.cr/img/secciones/quienes_somos/img.jpg" alt="" />
+                                }
+                                else if (Model.Id == (int)FGA.Utility.Utilitarios.enum_secciones.conozca)
+                                {
+                                    <img width="300" height="250" src="https://www.ffc.co.cr/img/secciones/contactenos/img.jpg" alt="" />
+                                }
+                                else if (Model.Id == (int)FGA.Utility.Utilitarios.enum_secciones.afiliados)
+                                {
+                                    <img width="300" height="250" src="https://www.ffc.co.cr/img/secciones/afiliados/img.jpg" alt="" />
+                                }
+                                else if (Model.Id == (int)FGA.Utility.Utilitarios.enum_secciones.parametros)
+                                {
+                                    <img width="120" height="80" src="https://www.ffc.co.cr/img/secciones/Logo/Logo.jpg" alt="" />
+                                }
+                                else if (Model.Id == (int)FGA.Utility.Utilitarios.enum_secciones.unase)
+                                {
+                                    <img width="120" height="80" src="https://www.ffc.co.cr/img/secciones/Unase/img.jpg" alt="" />
+                                }
+                                else if (Model.Id == (int)FGA.Utility.Utilitarios.enum_secciones.popUp)
+                                {
+                                    <img width="120" height="80" src="https://www.ffc.co.cr/img/secciones/popUp/img.jpg" alt="" />
+                                }*@
+                            }
+                        </div>
+                    </div><!-- /.box-body -->
+                    <div class="box-footer">
+                        @Html.StarkInputButtion("Guardar", "submit", "btn btn-primary", "")
+                        @Html.ActionLink("Regresar", "Index", null, new { @class = "btn btn-primary" })
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+}

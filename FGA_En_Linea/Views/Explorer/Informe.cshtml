@@ -1,0 +1,308 @@
+﻿@{
+    ViewBag.Title = "Nuevo informe";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<section class="content-header">
+    <h1>
+        Carga de informes
+    </h1>
+</section>
+<section class="content">
+    <div id="dropzone">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box box-solid box-info">
+                    <div class="box-body table-responsive">
+                        <div class="margin">
+                            <div class="streaming-table">
+                                <table class="table table-condensed table-striped table-bordered">
+                                    <tr>
+                                        <td class="mobile">
+                                            @Html.Label("Entidad:")
+                                        </td>
+                                        <td>
+                                            @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", @style = "width:200px" })
+                                        </td>
+                                        <td class="mobile">
+                                            @Html.Label("Mes:")
+                                        </td>
+                                        <td>
+                                            @Html.DropDownList("Mes", Enumerable.Range(1, 12).Select(i => new SelectListItem
+                                            {
+                                                Value = i.ToString(),
+                                                Text = System.Globalization.CultureInfo.CurrentUICulture.DateTimeFormat.GetMonthName(i).ToUpper(),
+                                                Selected = (DateTime.Now.Month - 1 == i ? true : false)
+                                            }), new { @id = "Mes", @style = "width:200px" })
+                                        </td>
+                                        <td class="mobile">
+                                            @Html.Label("Año:")
+                                        </td>
+                                        <td>
+                                            @Html.DropDownList("Anno", Enumerable.Range(2018, DateTime.Now.Year - 2018 + 3).
+                                                                       Select(i => new SelectListItem { Value = i.ToString(), Text = i.ToString(), Selected = (i == DateTime.Now.Year ? true : false) }),
+                                                                       new { @id = "Anno", @style = "width:200px" })
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="mobile">
+                                            @Html.Label("Tipo Informe:")
+                                        </td>
+                                        <td>
+                                            @Html.DropDownList("TipoInforme", null, new { @id = "TipoInforme", @style = "width:200px" })
+                                        </td>
+                                        <td class="mobile">
+                                            @Html.Label("Destinatarios:")
+                                        </td>
+                                        <td>
+                                            <div id="divDest">
+                                            </div>
+                                        </td>
+                                        <td class="mobile">
+                                            @Html.Label("Añadir destinatarios:")
+                                        </td>
+                                        <td>
+                                            <input id="txt_destinatario" />
+                                            <a data-toggle="tooltip" data-placement="top" title="Agregar" href="javascript:AddDest();"><i class="btn btn-xs btn-success icon fa fa-plus"></i></a>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @using (Html.BeginForm("UploadInforme", "Explorer", FormMethod.Post, new { enctype = "multipart/form-data", id = "my-awesome-dropzone", @class = "dropzone" }))
+        {
+            <div class="fallback">
+                <input name="file" id="file" type="file" multiple />
+            </div>
+        }
+        <br />
+        <br />
+        <div>
+            <label class="btn btn-facebook">
+                Cargar y Enviar<input type="submit" name="submit" id="btn_guardar" style="display: none;">
+            </label>
+        </div>
+    </div>
+</section>
+
+<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <a data-toggle="tooltip" data-placement="top"><i class="btn btn-md btn-warning icon fa fa-warning"></i></a>
+                    <h3 class="box-title">Confirmación de carga y envío del informe</h3>
+                </div>
+                <div class="box-body">
+                    <div class="form-group">
+                        <label>Para:</label>
+                        <input class="form-control" id="lbl_para" placeholder="Para:">
+                    </div>
+                    <div class="form-group">
+                        <label>Asunto:</label>
+                        <input class="form-control" id="lbl_asunto" placeholder="Asunto:">
+                    </div>
+                    <div class="form-group">
+                        <label>Cooperativa:</label>
+                        <input class="form-control" id="lbl_cooperativa" placeholder="Cooperativa:">
+                    </div>
+                    <div class="form-group">
+                        <div id="txt_mail"></div>
+                    </div>
+                    <div id="adjunto">
+                    </div>
+                </div>
+                <div class="box-footer">
+                    <div class="pull-right">
+                        <a href="javascript:DescartarInforme();" class="btn btn-danger"><i class="fa fa-times"></i> Descartar</a>
+                        <a href="javascript:ModificarInforme();" class="btn btn-default"><i class="fa fa-edit"></i> Modificar</a>
+                        <a href="javascript:GuardarInforme();" class="btn btn-primary"><i class="fa fa-envelope-o"></i> Enviar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modalError" class="modal fade">
+    <div class="modal-dialog modal-fail">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="icon-box">
+                    <i class="material-icons"></i>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div style="margin-left:50px; margin-right: 50px;">
+                    <p id="lbl_mensajeError" class="text-center">Ha ocurrido un error.</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger btn-block" data-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modalSuccess" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="icon-box">
+                    <i class="material-icons"></i>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div style="margin-left:50px; margin-right: 50px;">
+                    <p id="lbl_mensajeExito" class="text-center"></p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-success btn-block" data-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section ScriptsOrCss
+{
+    <link href="~/Content/dropzone-master/dist/dropzone.css" rel="stylesheet" />
+    <script src="~/Content/dropzone-master/dist/dropzone.js"></script>
+    <script src="~/Content/theme/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
+}
+
+<script type="text/javascript">
+    Dropzone.options.myAwesomeDropzone = {
+        paramName: "files",
+        maxFilesize: 1024,
+        maxFiles: 1,
+        timeout: 18000000,
+        acceptedFiles: "application/pdf",
+        init: function () {
+                this.on("complete", function (data) {
+                    $('#adjunto').html(data.xhr.response);
+                });
+              }
+    };
+
+    $("#IdEntidad").change(function () {
+        ActualizarDestinatarios();
+    });
+
+    $("#TipoInforme").change(function () {
+        ActualizarTexto();
+    });
+
+    $("#btn_guardar").click(function () {
+        var correos = '';
+        var informe = $('#TipoInforme').find('option:selected').text().toLowerCase();
+        var entidad = $('#IdEntidad').find('option:selected').text();
+        var mes = $('#Mes').find('option:selected').text();
+        var anno =  $('#Anno').find('option:selected').text();
+        $('#Destinatarios option').each(function () {
+            correos += $(this).text() + ";";
+        });
+        $('#lbl_para').val(correos);
+        $('#lbl_asunto').val('Informe ' + informe + '. Periodo: ' + mes + '/' + anno);
+        $('#lbl_cooperativa').val(entidad);
+        $('#lbl_tipoInforme').val(informe);
+        $('#confirmModal').modal('show');
+    });
+
+    function GuardarInforme() {
+
+        var destinatarios = $('#lbl_para').val();
+        var texto = $('#compose-textarea').val();
+        var idEntidad = $('#IdEntidad').val();
+        var idInforme = $('#TipoInforme').val();
+        var mes = $('#Mes').val();
+        var anno = $('#Anno').val();
+
+        $.ajax({
+            url: '@Url.Action("GuardarInforme", "Explorer")',
+            type: 'POST',
+            cache: false,
+            async: false,
+            data: {
+                'idEntidad': idEntidad,
+                'idInforme': idInforme,
+                'mes': mes,
+                'anno': anno,
+                'texto': texto,
+                'destinatarios': destinatarios
+            },
+            success: function (data) {
+                var result = data.resultado.exito;
+                if (result == false) {
+                    $("#lbl_mensajeError").html(data.resultado.mensaje);
+                    $("#modalError").modal('show');
+                }
+                else {
+                    $("#lbl_mensajeExito").html(data.resultado.mensaje);
+                    $('.dropzone')[0].dropzone.removeAllFiles();
+                    $("#modalSuccess").modal('show');
+                    $('#confirmModal').modal('hide');
+                }
+            },
+            error: function (data) {
+                $("#modalError").modal('show');
+            }
+        });
+    }
+
+    function DescartarInforme() {
+        $('.dropzone')[0].dropzone.removeAllFiles();
+        $('#confirmModal').modal('hide');
+    }
+
+    function ModificarInforme() {
+        $('#confirmModal').modal('hide');
+    }
+
+    function ActualizarDestinatarios() {
+         $.ajax({
+            url: '@Url.Action("GetFrom", "Explorer")',
+            type: 'POST',
+            cache: false,
+            async: false,
+            data: {
+                 'IdEntidad': $('#IdEntidad').val(),
+            },
+             success: function (result) {
+                 $("#divDest").html(result);
+            }
+         });
+    }
+
+    function ActualizarTexto() {
+         $.ajax({
+            url: '@Url.Action("GetTxtMail", "Explorer")',
+            type: 'POST',
+            cache: false,
+            async: false,
+            data: {
+               'IdInforme': $('#TipoInforme').val(),
+            },
+            success: function (result) {
+               $("#txt_mail").html(result);
+            }
+         });
+    }
+
+    function AddDest() {
+        $("#Destinatarios").append(new Option($('#txt_destinatario').val(), $('#txt_destinatario').val()));
+        $('#txt_destinatario').val('');
+    }
+
+    function DelDest() {
+       $('#Destinatarios').find('option:selected').remove().end();
+    }
+
+    ActualizarDestinatarios();
+    ActualizarTexto();
+
+</script>

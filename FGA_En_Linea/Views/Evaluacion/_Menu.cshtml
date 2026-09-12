@@ -1,0 +1,524 @@
+﻿@model  FGA.Model.Modelo_Evaluacion
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="justify-content-center">
+    <div id="navWizard" style="height:100%">
+        <ul id="navWizardSteps" class="nav nav-tabs" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link @(Model.eval.ToString().ToLower() == "true" ? "" : "active")" id="paso1-tab" data-toggle="tab" href="#paso1" role="tab" aria-controls="paso1" aria-selected="true"></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="paso2-tab" data-toggle="tab" href="#paso2" role="tab" aria-controls="paso2" aria-selected="false"></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="paso3-tab" data-toggle="tab" href="#paso3" role="tab" aria-controls="paso3" aria-selected="false"></a>
+            </li>
+            @if (Env.GetUserInfo("roleid") == "10" || Session["IsFGA"].ToString() == "1")
+            {
+                <li class="nav-item">
+                    <a class="nav-link" id="paso4-tab" data-toggle="tab" href="#paso4" role="tab" aria-controls="paso4" aria-selected="false"></a>
+                </li>
+            }
+            <li class="nav-item">
+                <a class="nav-link @(Model.eval.ToString().ToLower() == "true" ? "active" : "")" id="paso5-tab" data-toggle="tab" href="#paso5" role="tab" aria-controls="paso5" aria-selected="false"></a>
+            </li>
+        </ul>
+        <div class="tab-content align-middle" id="myTabContent">
+            <div class="tab-pane @(Model.eval.ToString().ToLower() == "true" ? "" : "active")" id="paso1" role="tabpanel" aria-labelledby="paso1-tab">
+                <section>
+                    <div class="col-xs-12 text-center">
+                        <h3>
+                            <b>Autoevaluación</b>
+                        </h3>
+                        <h3>
+                            <b>SUPERVISIÓN BASADA EN RIESGO (SUGEF 24-22)</b>
+                        </h3>
+                    </div>
+                </section>
+                <section class="content">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="box box-solid box-info" style="height: 650px ">
+                                <br />
+                                <div style="padding:20px">
+                                    <br /><br /><br /> <br /><br /><br /><br /><br /><br />
+                                    <p class="text-justify title">
+                                        Bienvenido al módulo de autoevaluación FFC de los aspectos que establece el reglamento 24-22 de SUGEF para la Supervisión Basada en Riesgos SBR.<br /><br />
+                                        Esta autoevaluación desarrollada por FFC consta de varias etapas que pretenden identificar y mejorar el estado de los componentes establecidos en el Reglamento Sugef 24-22 y una serie de sub componentes que el Supervisor podría emplear para evaluar, con el objetivo de minimizar la exposición a posibles riesgos.<br /><br />
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <div class="tab-pane " id="paso2" role="tabpanel" aria-labelledby="paso2-tab">
+                <section>
+                    <div class="col-xs-12 text-center">
+                        <h3>
+                            <b>Descargo</b>
+                        </h3>
+                    </div>
+                </section>
+                <section class="content">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="box box-solid box-info" style="height: 650px">
+                                <br />
+                                <div class="margin">
+                                    <div style="padding:20px">
+                                        <br /><br /><br /> <br /><br /><br /><br /><br />
+                                        <p class="text-justify title">
+                                            FFC ha realizado esta autoevaluación con el propósito de colaborar con las entidades afiliadas en la identificación de las brechas existentes en los riesgos a evaluar por el Supervisor. La misma no constituye una evaluación donde hay calificaciones buenas o malas, por tal motivo es muy importante que, al momento de realizarla, la elección de cada respuesta se apegue a la realidad de la Cooperativa.<br /><br />
+                                            Si al contestar cada criterio usted elige la mejor respuesta, pero no la que se ajusta a su entidad, no se logrará el objetivo de este ejercicio, que es brindarle a la Cooperativa una herramienta de ayuda.<br /><br />
+                                            La autoevaluación es completamente confidencial y los resultados nos permitirán elaborar un diagnóstico para enfocar los esfuerzos en atender las áreas más débiles de la entidad.<br /><br />
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <div class="tab-pane " id="paso3" role="tabpanel" aria-labelledby="paso3-tab">
+                <section>
+                    <div class="col-xs-12 text-center">
+                        <h3>
+                            <b>Instrucciones</b>
+                        </h3>
+                    </div>
+                </section> <br /><br /><br /><br />
+                <section class="content">
+                    <div class="row">
+                        <div class="box box-solid box-info" style="min-height:650px">
+                            <div id="videohelp" class="col-7 col-md-7 col-xl-7 hidden">
+                                <div style="padding:20px">
+                                    <p class="text-justify title">
+                                        <br />
+                                        La evaluación consta de un total de 165 preguntas distribuidas en 4 componentes cuantitativos con sus respectivos subcomponentes, cada subcomponente tendrá una serie de criterios para evaluar.  Adicionalmente, se
+                                        cuenta con un componente cuantitativo sobre el Nivel y la Calidad del Capital Base.
+                                        <br /><br />
+                                        Para iniciar la autoevaluación se deberán designar los responsables de atender cada componente, es posible designar 2 responsables que deben haber sido dados de alta previamente como usuarios del SAC.
+                                        <br /><br />
+                                        No existe un límite de tiempo para responder. Cada pregunta tendrá cuatro opciones de respuesta, no existen respuestas buenas o malas, sino que las réplicas buscan situar a la entidad en la opción que refleje mejor su realidad además de contar con la evidencia para respaldar tal afirmación.
+                                        <br /><br />
+                                        Al salir se autoguardará la última pregunta completada, es factible devolverse a alguna pregunta y cambiar la respuesta si así lo amerita, sin embargo, no es posible adelantar las preguntas sin antes dar respuesta. Cada subcomponente le indicará la cantidad de preguntas y el nivel de avance tanto del subcomponente como del componente.
+                                        <br /><br />
+                                        Es posible elaborar la autoevaluación de todos los componentes en forma simultánea, al igual que es viable evaluar varios subcomponentes al mismo tiempo.
+                                        <br /><br />
+                                        Una vez completada la autoevaluación de cada componente se le indicará antes de salvar y enviar la autoevaluación, ya que una vez enviada no se podrá acceder de nuevo a la misma.
+                                        <br />
+                                    </p>
+                                </div>
+                            </div>
+                            <div id="video" class="col-12 col-md-12 col-xl-12 text-center">
+                                <br /><br /> <br />
+                                <video controls="controls" id="evalSpeaker" style="background-color: white; border: none;  width:450px; height:550px; max-height:550px;">
+                                    <source src="~/Content/Video/eval11.mp4" type="video/mp4" />
+                                    <p>Tu navegador no soporta la reproducción nativa de video o no tiene los códecs Ogg requeridos. Tal vez quieras pasarte a un navegador moderno con más características, con el fin de poder ver el archivo de video.</p>
+                                </video>
+                                <a class="text-right" id="showHelp" style="font-size: 32px; padding-left: 10px" data-toggle="tooltip" data-placement="top" title="Ayuda"
+                                   onmouseover="javascript:showHelp()" href="javascript:help('Instrucciones para realizar la autoevaluación')"><i class="btn btn-xs btn-info icon fa fa-info"></i></a>
+                                <a class="text-right hidden" id="hideHelp" style="font-size: 32px; padding-left: 10px" data-toggle="tooltip" data-placement="top" title="Ayuda"
+                                   onmouseover="javascript:hideHelp()" href="javascript:help('Instrucciones para realizar la autoevaluación')"><i class="btn btn-xs btn-info icon fa fa-info"></i></a>
+
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            @if (Env.GetUserInfo("roleid") == "10" || Session["IsFGA"].ToString() == "1")
+            {
+                <div class="tab-pane " id="paso4" role="tabpanel" aria-labelledby="paso4-tab">
+                    <section class="text-center">
+                        <div class="col-xs-12">
+                            <h3>
+                                <b>Designación de responsables</b>
+                            </h3>
+                            <br />
+                        </div>
+                    </section>
+                    <section class="content">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="box box-solid box-info" style="height: 650px ">
+                                    <div class="margin">
+                                        <div style="padding:5px">
+                                            @if (Model != null)
+                                            {
+                                                var activo = "";
+                                                var cantidad = 0;
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th> <img width="100" height="100" src="@Session["Logo"]" /></th>
+                                                        </tr>
+                                                        <tr>
+                                                            <th class="title" scope="col"><b>Criterio a evaluar</b></th>
+                                                            <th class="title" scope="col"><b>Responsable sugerido</b></th>
+                                                            <th class="title" scope="col"><b>Primer Responsable</b></th>
+                                                            <th class="title" scope="col"><b>Segundo Responsable</b></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach (var eval in Model.listaCategorias)
+                                                        {
+                                                            <tr>
+                                                                <td class="title">
+                                                                    @eval.Titulo
+                                                                </td>
+                                                                <td class="title">
+                                                                    @eval.ResponsableSugerido
+                                                                </td>
+                                                                <td>
+                                                                    <select id="IdResponsable1" style="width:250px" name="IdResponsable1" onchange="javascript:Responsable(this.value, 0, @eval.Id)">
+                                                                        <option class="title" value="0" selected>--Seleccione--</option>
+                                                                        @foreach (var detalle in Model.listaUsuarios)
+                                                                        {
+                                                                            activo = "";
+                                                                            foreach (var resp in Model.listaResponsables)
+                                                                            {
+                                                                                if (resp.IdCategoria_Id == eval.Id && resp.IdUsuario_Id1 == detalle.Id)
+                                                                                {
+                                                                                    cantidad += 1;
+                                                                                    activo = "selected";
+                                                                                }
+                                                                            }
+
+                                                                            <option class="title" @(string.IsNullOrEmpty(activo) ? "" : "selected") value="@detalle.Id">@detalle.Nombre</option>
+                                                                        }
+                                                                    </select>
+                                                                </td>
+                                                                <td>
+                                                                    <select id="IdResponsable2" style="width:250px" name="IdResponsable2" onchange="javascript:Responsable(0, this.value, @eval.Id)">
+                                                                        <option class="title" value="0" selected>--Seleccione--</option>
+                                                                        @foreach (var detalle in Model.listaUsuarios)
+                                                                        {
+                                                                            activo = "";
+                                                                            foreach (var resp in Model.listaResponsables)
+                                                                            {
+                                                                                if (resp.IdCategoria_Id == eval.Id && resp.IdUsuario_Id2 == detalle.Id)
+                                                                                {
+                                                                                    activo = "selected";
+                                                                                }
+                                                                            }
+
+                                                                            <option class="title" @(string.IsNullOrEmpty(activo) ? "" : "selected") value="@detalle.Id">@detalle.Nombre</option>
+                                                                        }
+                                                                    </select>
+                                                                </td>
+                                                            </tr>
+                                                        }
+
+                                                    </tbody>
+                                                </table>
+                                                <input type="hidden" id="cant_responsables" value="@cantidad" />
+                                            }
+                                            <br /><br />
+                                            <div class="text-center">
+                                                <label class="text-bold text-warning text-center" style="font-size: 18px">
+                                                    <a class="text-right" style="font-size: 20px" data-toggle="tooltip" data-placement="top"><i class="btn btn-xs btn-warning icon fa fa-bell"></i></a>
+                                                    Si el colaborador encargado de completar el componente no está presente en la lista desplegable,
+                                                    deberá solicitarle al usuario maestro que proceda a crearlo en la herramienta SAC
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            }
+            <div class="tab-pane @(Model.eval.ToString().ToLower() == "true" ? "active" : "")" id="paso5" role="tabpanel" aria-labelledby="paso5-tab">
+                <div class="dropdown show text-right" style="z-index:200">
+                    <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" style="font-size: 36px;" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="btn btn-lg btn_ctrl icon fa fa-bars">
+                        </i>
+                    </a>
+                    <div style="width: 250px;" class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
+                        <table>
+                            <tr>
+                                <td>
+                                    <a class="dropdown-item" id="btnInicio" style="font-size: 24px;" data-toggle="tooltip" title="Inicio"
+                                       href="javascript:back(0)">
+                                        <i style="margin-bottom: 10px; margin-left: 10px" class="btn btn-xs btn-ctrl icon fa fa-home">
+                                        </i>
+                                    </a>
+                                </td>
+                                <td>
+                                    <label style="font-size:18px" onclick="javascript:back(0)" class="cursor text text-info nowrap">Inicio</label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <a class="dropdown-item" id="btnInicio" style="font-size: 24px;" data-toggle="tooltip" data-placement="top" title="Descargo"
+                                       href="javascript:back(1)">
+                                        <i style="margin-bottom: 10px; margin-left: 10px" class="btn btn-xs btn-ctrl icon fa fa-balance-scale">
+                                        </i>
+                                    </a>
+                                </td>
+                                <td>
+                                    <label style="font-size: 18px;" onclick="javascript:back(1)" class="cursor text text-info nowrap">Descargo</label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <a class="dropdown-item" id="btnInicio" style="font-size: 24px;" data-toggle="tooltip" data-placement="top" title="Instrucciones"
+                                       href="javascript:back(2)">
+                                        <i style="margin-bottom: 10px; margin-left: 10px" class="btn btn-xs btn-ctrl icon fa fa-info-circle">
+                                        </i>
+                                    </a>
+                                </td>
+                                <td>
+                                    <label style="font-size: 18px;" onclick="javascript:back(2)" class="cursor text text-info nowrap">Instrucciones</label>
+                                </td>
+                            </tr>
+                            @if (Env.GetUserInfo("roleid") == "10" || Session["IsFGA"].ToString() == "1")
+                            {
+                                <tr>
+                                    <td>
+                                        <a class="dropdown-item" id="btnFormulario" style="font-size: 24px;" data-toggle="tooltip" data-placement="top" title="Responsables"
+                                           href="javascript:back(3)">
+                                            <i style="margin-bottom: 10px; margin-left: 10px" class="btn btn-xs btn-ctrl icon fa fa-users">
+                                            </i>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <label style="font-size: 18px;" onclick="javascript:back(3)" class="cursor text text-info nowrap">Responsables</label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a class="dropdown-item" id="btnEvaluacion" style="font-size: 24px;" data-toggle="tooltip" data-placement="top" title="Evaluación"
+                                           href="javascript:back(4)">
+                                            <i style="margin-bottom: 10px; margin-left: 10px" class="btn btn-xs btn-ctrl icon fa fa-file-text-o">
+                                            </i>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <label style="font-size: 18px;" onclick="javascript:back(4)" class="cursor text text-info nowrap">Evaluación</label>
+                                    </td>
+                                </tr>
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td>
+                                        <a class="dropdown-item" id="btnEvaluacion" style="font-size: 24px;" data-toggle="tooltip" data-placement="top" title="Evaluación"
+                                           href="javascript:back(4)">
+                                            <i style="margin-bottom: 10px; margin-left: 10px" class="btn btn-xs btn-ctrl icon fa fa-file-text-o">
+                                            </i>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <label style="font-size: 18px;" onclick="javascript:back(3)" class="cursor text text-info nowrap">Evaluación</label>
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                </div>
+                <div style="position: absolute; top: 55px;">
+
+
+                    <section class="content-header">
+                        <div class="col-xs-12 text-center">
+                            <h3>
+                                <b>SUPERVISIÓN BASADA EN RIESGO (SUGEF 24-22)</b>
+                            </h3>
+                        </div>
+                    </section>
+                    <section class="content">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="box box-solid box-info">
+                                    <div class="margin">
+                                        <div style="padding-left: 20px; padding-right: 20px">
+                                            <br />
+                                            @{
+                                                List<string> opciones = new List<string>();
+                                                foreach (var clase in Model.listaCategorias)
+                                                {
+                                                    opciones.Add(clase.Titulo);
+                                                }
+                                            }
+
+                                            @if (Model != null)
+                                            {
+                                                <div class="row">
+                                                    <div style="width:100%">
+
+                                                        @if (Model.listaCategorias.Count > 0)
+                                                        {
+                                                            int i = 0;
+                                                            string color = "";
+                                                            var categoria = 0;
+                                                            var permiso = 0;
+                                                            foreach (var eval in Model.listaCategorias)
+                                                            {
+                                                                permiso = 0;
+                                                                if (Session["IsFGA"].ToString() == "1")
+                                                                {
+                                                                    permiso = 1;
+                                                                }
+                                                                else
+                                                                {
+                                                                    foreach (var miEval in Model.misCategorias)
+                                                                    {
+                                                                        if (miEval.Id == eval.Id)
+                                                                        {
+                                                                            permiso = 1;
+                                                                        }
+                                                                    }
+                                                                }
+
+                                                                color = (i == 0 ? "darkblue" : i == 1 ? "gray" : i == 2 ? "green" : i == 3 ? "#b4520a" : i == 4 ? "darkgoldenrod" : "black");
+                                                                i = i + 1;
+                                                                <div class="post-masonry col-lg-4 col-md-6 col-sm-12">
+                                                                    <div class="blog-thumb">
+                                                                        @{
+                                                                            try
+                                                                            {
+                                                                                string ruta = "https://www.ffc.co.cr/img/secciones/categoria/" + eval.Imagen + ".jpg";
+                                                                                <img style="@(permiso == 0 ? "filter: grayscale(1);" : "")" src="@ruta" width="150" height="180" alt="" />
+
+                                                                            }
+                                                                            catch (Exception) { }
+                                                                        }
+                                                                    </div>
+                                                                    <div class="blog-body">
+                                                                        <div class="text-center box-content">
+                                                                            <h4 style="color:@color; font-size:20px!important"><b>@eval.Titulo</b></h4>
+                                                                            @if (eval.SubCategorias.Count > 0)
+                                                                            {
+                                                                                string detail = string.Empty;
+                                                                                <form class="form-inline">
+                                                                                    <div class="form-group">
+                                                                                        <b><span style="font-size:18px" class="text text-danger nowrap">Subcomponente:</span></b>
+                                                                                        <select style="margin-left: 10px; width:300px" class="form-control" id="@("C" + eval.Id)" onchange="javascript:calcularPorcentaje('@("C" + eval.Id)')" name="subCategoria">
+                                                                                            <option value="0">@(permiso == 0 ? "No aparece como responsable" : "--Seleccione--")</option>
+                                                                                            @if (permiso != 0)
+                                                                                            {
+                                                                                                categoria = 0;
+                                                                                                foreach (var item in eval.SubCategorias)
+                                                                                                {
+                                                                                                    categoria = item.Id;
+                                                                                                    if (FGA.Utility.Utilitarios.GetSubCategoriaPorcentaje(categoria, Model.evaluaciones) == 100)
+                                                                                                    {
+                                                                                                        detail = "✔";
+                                                                                                    }
+                                                                                                    else
+                                                                                                    {
+                                                                                                        detail = "X";
+                                                                                                    }
+                                                                                                    <option value="@item.Id">
+                                                                                                        @(item.Enunciado + " " + detail)
+                                                                                                    </option>
+                                                                                                }
+                                                                                            }
+                                                                                        </select>
+                                                                                    </div>
+                                                                                </form>
+
+                                                                                <span style="font-size:18px"><b>Avance: </b> <label id="porc_avance"> @(FGA.Utility.Utilitarios.GetPorcentaje(categoria, Model.evaluaciones))</label></span>
+                                                                            }
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <input type="hidden" value="0" id="S0" />
+
+                                                                foreach (var item in eval.SubCategorias)
+                                                                {
+                                                                    <input type="hidden" value="@(FGA.Utility.Utilitarios.GetPorcentaje(item.Id, Model.evaluaciones))" id="@("S" + item.Id.ToString())" />
+                                                                }
+                                                            }
+                                                        }
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="leyenda"></div>
+
+<script type="text/javascript">
+
+    function back(id) {
+        $($('#navWizardSteps li > a')[id]).tab('show');
+    }
+
+    function calcularPorcentaje(id) {
+        var subCategoria = $('#' + id).val();
+        var porcentajeAvance = $('#S' + subCategoria).val();
+        document.getElementById('porc_avance').innerHTML = porcentajeAvance;
+        generarEvaluacion(subCategoria);
+    }
+
+    $('#subCategoria').on('change', function () {
+        generarEvaluacion();
+    });
+
+    function showHelp() {
+
+        $('#showHelp').addClass("hidden");
+        $('#hideHelp').removeClass("hidden");
+
+        $('#videohelp').removeClass("hidden");
+        $('#video').removeClass("col-12");
+        $('#video').removeClass("col-md-12");
+        $('#video').removeClass("col-xl-12");
+
+        $('#video').addClass("col-5");
+        $('#video').addClass("col-md-5");
+        $('#video').addClass("col-xl-5");
+    }
+
+    function hideHelp() {
+
+        $('#showHelp').removeClass("hidden");
+        $('#hideHelp').addClass("hidden");
+
+        $('#videohelp').addClass("hidden");
+        $('#video').addClass("col-12");
+        $('#video').addClass("col-md-12");
+        $('#video').addClass("col-xl-12");
+
+        $('#video').removeClass("col-5");
+        $('#video').removeClass("col-md-5");
+        $('#video').removeClass("col-xl-5");
+    }
+
+    function Responsable(IdUsuario1, IdUsuario2, IdCategoria) {
+         $.ajax({
+           url: '@Url.Action("AsignarResponsable", "Evaluacion")',
+           type: 'POST',
+           cache: false,
+           async: true,
+           data: {
+               'idUsuario1': IdUsuario1,
+               'idUsuario2': IdUsuario2,
+               'idCategoria': IdCategoria,
+           },
+           success: function (data) {
+              if (data == 1)
+                  $('#jqb-btn-next').removeClass("hidden");
+           }
+        });
+    }
+
+    let vid = document.getElementById("evalSpeaker");
+    vid.onended = function () {
+        $('#jqb-btn-next').removeClass("hidden");
+    };
+
+</script>

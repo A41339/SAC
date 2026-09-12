@@ -1,0 +1,416 @@
+﻿@{
+    ViewBag.Title = "CAMEL";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section ScriptsOrCss
+{
+    <link rel="stylesheet" href="~/Content/multiselect/docs/css/prettify.min.css" type="text/css">
+    <script type="text/javascript" src="~/Content/multiselect/docs/js/prettify.min.js"></script>
+    <link rel="stylesheet" href="~/Content/multiselect/dist/css/bootstrap-multiselect.css" type="text/css">
+    <script type="text/javascript" src="~/Content/multiselect/dist/js/bootstrap-multiselect.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+}
+
+<section class="content-header">
+    <h1>
+        SUGEF
+    </h1>
+</section>
+
+<section class="content">
+    <div class="box box-solid box-info">
+        <div class="box-body">
+            @using (Html.BeginForm("BuscarSUGEF", "Indicadores", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmCAMEL" }))
+            {
+                @Html.AntiForgeryToken()
+                <div class="margin">
+                    <div class="streaming-table">
+                        <span id="found" class="label label-info"></span>
+                        <table class="table table-condensed table-striped table-bordered">
+                            <tr>
+                                <td class="mobile">
+                                    @Html.Label("Entidad:")
+                                </td>
+                                <td>
+                                    @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", style = "width: 200px;" })
+                                </td>
+                                <td class="mobile">
+                                    @Html.Label("Periodo:")
+                                </td>
+                                <td nowrap="nowrap" class="form-group">
+                                    <input name="PeriodoI" id="PeriodoI" class="datecontrol" style="width: 180px;" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MM/yyyy")" />
+                                </td>
+                                <td class="mobile">
+                                    @Html.Label("Comparar con:")
+                                </td>
+                                <td nowrap="nowrap" class="form-group">
+                                    <input name="PeriodoF" id="PeriodoF" class="datecontrol" style="width: 180px;" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MM/yyyy")" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="mobile">
+                                    @Html.Label("Resumido:")
+                                </td>
+                                <td class="mobile" nowrap="nowrap">
+                                    @Html.DropDownList("TipoReporte", new List<SelectListItem> { new SelectListItem { Value = "S", Text = "Sí" },
+                                                                                              new SelectListItem { Value = "N", Text = "No" }
+                                                                                            }, new { @id = "TipoReporte", style = "width: 200px;" })
+                                </td>
+                                <td>
+                                    <label class="btn btn-facebook">
+                                        Generar<input type="submit" name="submit" style="display: none;">
+                                    </label>
+                                </td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            }
+
+            <div class="nav-tabs-custom">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="#tab_1" data-toggle="tab">Normativos</a></li>
+                    <li class=""><a href="#tab_2" data-toggle="tab">Suficiencia Patrimonial</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane active" id="tab_1">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="box-body table-responsive">
+                                    <div class="margin">
+
+                                        <div class="streaming-table">
+                                            <span id="found" class="label label-info"></span>
+                                            <table id="tbCAMEL" class="table table-striped table-bordered" style="width:100%">
+                                                <thead>
+                                                    <tr>
+                                                        <th><img width="50" height="50" src="@Session["Logo"]" /></th>
+                                                    </tr>
+                                                    <tr>
+                                                        <th class="hidden"> Id  </th>
+                                                        <th> Cuenta  </th>
+                                                        <th> @FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MMMM yyyy")) </th>
+                                                        <th> @FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MMMM yyyy")) </th>
+                                                        <th> @FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MMMM yyyy")) (Promedio) </th>
+                                                        <th> @FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MMMM yyyy")) (Promedio) </th>
+                                                        <th></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody></tbody>
+                                            </table>
+                                            <div id="summary">
+                                                <div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="tab_2">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="box box-info">
+                                    <div class="margin">
+                                        <div id="alerta-diferencia"
+                                             style="display: none; background: #FFC107; color: #333; padding: 10px; margin-bottom: 10px; border: 1px solid #ffeeba; border-radius: 4px; font-size: 12px; /* texto más grande */ display: flex; align-items: center; ">
+                                            <i class="fas fa-exclamation-triangle fa-2x"
+                                               style="margin-right: 15px;"></i>
+                                            <span id="mensaje-alerta" style="font-size: 16px;"></span>
+                                        </div>
+                                        <br />
+                                        <div class="streaming-table">
+                                            <span id="found" class="label label-info"></span>
+                                            <table id="tbSuficiencia306" class="table table-striped table-bordered" style="width:100%">
+                                                <thead>
+                                                    <tr>
+                                                        <th>
+                                                            <div class="box box-info">
+                                                                <div class="box-header">
+                                                                    <img width="50" height="50" src="@Session["Logo"]" />
+                                                                    <h4 class="box-title">Suficiencia apartir de enero 2025</h4>
+                                                                </div>
+                                                            </div>
+                                                        </th>
+                                                    </tr>
+                                                    <tr>
+                                                        <th class="hidden"> Id  </th>
+                                                        <th> Cuenta  </th>
+                                                        <th> @FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MMMM yyyy")) </th>
+                                                        <th> @FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MMMM yyyy")) </th>
+                                                        <th></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody></tbody>
+                                            </table>
+                                            <div id="summary">
+                                                <div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="box box-info">
+                                    <div class="margin">
+                                        <div class="streaming-table">
+                                            <span id="found" class="label label-info"></span>
+                                            <table id="tbSuficiencia" class="table table-striped table-bordered" style="width:100%">
+                                                <thead>
+                                                    <tr>
+                                                        <th>
+                                                            <div class="box box-info">
+                                                                <div class="box-header">
+                                                                    <img width="50" height="50" src="@Session["Logo"]" />
+                                                                    <h4 class="box-title">Suficiencia antes de enero 2025</h4>
+                                                                </div>
+                                                            </div>
+                                                        </th>
+                                                    </tr>
+                                                    <tr>
+                                                        <th class="hidden"> Id  </th>
+                                                        <th> Cuenta  </th>
+                                                        <th> @FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MMMM yyyy")) </th>
+                                                        <th> @FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MMMM yyyy")) </th>
+                                                        <th></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody></tbody>
+                                            </table>
+                                            <div id="summary">
+                                                <div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="graphModal" tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div id="grafica">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script type="text/javascript">
+
+    function getGraph(id, estilo) {
+
+        var tipo = 1;
+        if (estilo == 'S')
+            tipo = 0;
+
+        $.ajax({
+            url: '@Url.Action("GraficaDetalle", "Indicadores")',
+            type: 'POST',
+            cache: false,
+            async: false,
+            data: {
+                    'Entidades': $('#IdEntidad').val(),
+                    'PeriodoI':  $('#PeriodoI').val(),
+                    'PeriodoF':  $('#PeriodoF').val(),
+                    'cmb_indicadores': id,
+                    'cmb_estilo': tipo
+            },
+                success: function (result) {
+                $('#grafica').html(result);
+            }
+        });
+
+        $('#graphModal').modal('show');
+    }
+
+    function formatMillion() {
+        return this.value;
+    }
+
+    function formatPercent() {
+        return this.value + " %";
+    }
+
+    $(document).ready(function () {
+        $("#tbCAMEL").dataTable({
+            "rowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+                $(nRow).find('td:eq(0)').addClass('hidden');
+
+                 for (var i = 2; i <= 5; i++){
+                    if (parseInt(aData[i]) < 0)
+                         $(nRow).find('td:eq(' + i + ')').css('color', 'Red');
+                    else
+                        $(nRow).find('td:eq(' + i + ')').css('color', '#336699');
+
+                }
+            },
+            "bRetrieve": true,
+            "bProcessing": true,
+            "dom": 'lBfrtip',
+            "sAjaxSource": "@Url.Content("~/Indicadores/GetGridCAMEL")",
+                "buttons": [
+                        { extend: 'copyHtml5', exportOptions: { columns: ':visible' } }
+                    ,{ extend: 'excelHtml5', exportOptions: { columns: ':visible' } }
+                    ,{ extend: 'csvHtml5', exportOptions: { columns: ':visible' } }
+                    ,{ extend: 'print', exportOptions: { columns: ':visible' } }
+                    ,'colvis'
+                ],
+                columnDefs: [
+                    {
+                        className: 'text-right', targets: [2, 3, 4, 5],
+                        width: '150px', targets: [2, 3, 4, 5],
+                    },
+            ],
+            "pageLength": -1,
+                "order": [[ 0, "asc" ]],
+            "lengthMenu": [[5,15, 25, 50, -1], [5,15, 25, 50, "Todos"]],
+                "aoColumns": [
+                    {}, {}, {}, {}, {}, {}, {}
+            ]
+        });
+
+        $("#tbSuficiencia").dataTable({
+             "rowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+                 $(nRow).find('td:eq(0)').addClass('hidden');
+
+                  for (var i = 2; i <= 5; i++){
+                     if (parseInt(aData[i]) < 0)
+                          $(nRow).find('td:eq(' + i + ')').css('color', 'Red');
+                     else
+                         $(nRow).find('td:eq(' + i + ')').css('color', '#336699');
+
+                 }
+             },
+             "bRetrieve": true,
+             "bProcessing": true,
+             "dom": 'lBfrtip',
+             "sAjaxSource": "@Url.Content("~/Indicadores/GetSuficiencia")",
+                 "buttons": [
+                         { extend: 'copyHtml5', exportOptions: { columns: ':visible' } }
+                     ,{ extend: 'excelHtml5', exportOptions: { columns: ':visible' } }
+                     ,{ extend: 'csvHtml5', exportOptions: { columns: ':visible' } }
+                     ,{ extend: 'print', exportOptions: { columns: ':visible' } }
+                     ,'colvis'
+                 ],
+                 columnDefs: [
+                     {
+                         className: 'text-right', targets: [2, 3],
+                         width: '150px', targets: [2, 3],
+                     },
+             ],
+             "pageLength": -1,
+                 "order": [[ 0, "asc" ]],
+             "lengthMenu": [[5,15, 25, 50, -1], [5,15, 25, 50, "Todos"]],
+                 "aoColumns": [
+                     {}, {}, {}, {}, {}
+             ]
+        });
+
+       $(document).ready(function () {
+    var valoresFilas = {};
+
+           $("#tbSuficiencia306").dataTable({
+               "fnDrawCallback": function (settings) {
+                   var api = this.api();
+                   var rowsCount = api.rows({ filter: 'applied' }).data().length;
+                   var container = $(api.table().container()); // contenedor completo del DataTable
+
+                   if (rowsCount === 0) {
+                       container.hide();  // oculta toda la estructura del DataTable (tabla, footer, botones, etc)
+                   } else {
+                       container.show();
+                   }
+               },
+        "rowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+            $(nRow).find('td:eq(0)').addClass('hidden');
+            const idCuenta = parseInt(aData[0]);
+
+            // Guardar valores de la columna 3 (índice 2) para las cuentas 0 y 1
+            if (idCuenta === 0 || idCuenta === 1) {
+                valoresFilas[idCuenta] = parseFloat(aData[2]);
+            }
+
+            // Ocultar la fila si el valor de la primera columna es 0
+            if (idCuenta === 0) {
+                $(nRow).hide();
+            }
+
+            // Colorear columnas 2 a 5 según valor
+            for (var i = 2; i <= 5; i++) {
+                if (parseInt(aData[i]) < 0)
+                    $(nRow).find('td:eq(' + i + ')').css('color', 'Red');
+                else
+                    $(nRow).find('td:eq(' + i + ')').css('color', '#336699');
+            }
+        },
+        "initComplete": function () {
+            // Comparar los valores de la columna 3 de las filas 0 y 1
+            if (
+                valoresFilas[0] !== undefined &&
+                valoresFilas[1] !== undefined &&
+                Math.abs(valoresFilas[0] - valoresFilas[1]) > 0.02
+            ) {
+                var periodo = $("#PeriodoI").val() || $("#PeriodoI").text();
+                $("#mensaje-alerta").text("El dato de la cuenta 10000 no coincide con la validación para el mes " + periodo + ".");
+                $("#alerta-diferencia").show();
+            }
+            else {
+                $("#alerta-diferencia").hide();
+            }
+        },
+        "bRetrieve": true,
+        "bProcessing": true,
+        "dom": 'lBfrtip',
+        "sAjaxSource": "@Url.Content("~/Indicadores/GetSuficiencia306")",
+        "buttons": [
+            { extend: 'copyHtml5', exportOptions: { columns: ':visible' } },
+            { extend: 'excelHtml5', exportOptions: { columns: ':visible' } },
+            { extend: 'csvHtml5', exportOptions: { columns: ':visible' } },
+            { extend: 'print', exportOptions: { columns: ':visible' } },
+            'colvis'
+        ],
+        columnDefs: [
+            {
+                className: 'text-right', targets: [2, 3],
+                width: '150px', targets: [2, 3],
+            }
+        ],
+        "pageLength": -1,
+        "order": [[0, "asc"]],
+        "lengthMenu": [[5, 15, 25, 50, -1], [5, 15, 25, 50, "Todos"]],
+        "aoColumns": [
+            {}, {}, {}, {}, {}
+        ]
+    });
+       });
+
+        $('.dataTable').each(function () {
+            // Cuenta filas del tbody (sin contar encabezados)
+            if ($(this).find('tbody tr').length === 0) {
+                $(this).hide();  // Oculta la tabla
+            } else {
+                $(this).show();  // Muestra la tabla si tiene filas
+            }
+        });
+
+     });
+</script>

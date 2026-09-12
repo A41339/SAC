@@ -1,0 +1,1319 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://tempuri.org/" elementFormDefault="qualified" targetNamespace="http://tempuri.org/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://10.171.1.28/DBService/SP.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" />
+  <xs:import schemaLocation="http://10.171.1.28/DBService/SP.svc?xsd=xsd3" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+  <xs:element name="FGA_Borrar_Proyeccion">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="IdEntidad" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="Periodo" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="Cuenta" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Borrar_ProyeccionResponse">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Tipos_Indicadores">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="IdEntidad" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="IdEntidadConsulta" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Tipos_IndicadoresResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Consultar_Tipos_IndicadoresResult" nillable="true" type="q1:ArrayOfFGA_Consultar_Tipos_Indicadores_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Grafico_Indicador">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="pERIODOI" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="pERIODOF" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="iNDICADOR" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Grafico_IndicadorResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Consultar_Grafico_IndicadorResult" nillable="true" type="q2:ArrayOfFGA_Consultar_Grafico_Indicador_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Monitor">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_MonitorResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Consultar_MonitorResult" nillable="true" type="q3:ArrayOfFGA_Consultar_Monitor_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Sessiones">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="pERIODO" type="xs:dateTime" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_SessionesResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Consultar_SessionesResult" nillable="true" type="q4:ArrayOfFGA_Consultar_Sessiones_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Cierre_Mensual">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="pERIODO" nillable="true" type="xs:dateTime" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Cierre_MensualResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="FGA_Cierre_MensualResult" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Balance_Comprobacion">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="pERIODO" nillable="true" type="xs:dateTime" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Balance_ComprobacionResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q5="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Consultar_Balance_ComprobacionResult" nillable="true" type="q5:ArrayOfFGA_Consultar_Balance_Comprobacion_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Cartera_Credito">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="pERIODO" nillable="true" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="pageSize" type="xs:int" />
+        <xs:element minOccurs="0" name="skip" type="xs:int" />
+        <xs:element minOccurs="0" name="search" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="count" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Cartera_CreditoResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q6="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Consultar_Cartera_CreditoResult" nillable="true" type="q6:ArrayOfFGA_Consultar_Cartera_Credito_Result" />
+        <xs:element minOccurs="0" name="count" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Maduracion_Cartera">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="pERIODO" nillable="true" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="pageSize" type="xs:int" />
+        <xs:element minOccurs="0" name="skip" type="xs:int" />
+        <xs:element minOccurs="0" name="search" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="count" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Maduracion_CarteraResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q7="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Consultar_Maduracion_CarteraResult" nillable="true" type="q7:ArrayOfFGA_Consultar_Maduracion_Cartera_Result" />
+        <xs:element minOccurs="0" name="count" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Maduracion_Cartera_Det">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="pERIODO" nillable="true" type="xs:dateTime" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Maduracion_Cartera_DetResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q8="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Consultar_Maduracion_Cartera_DetResult" nillable="true" type="q8:ArrayOfFGA_Consultar_Maduracion_Cartera_Det_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Riesgo_Liquidez">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="pERIODO" nillable="true" type="xs:dateTime" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Riesgo_LiquidezResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q9="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Consultar_Riesgo_LiquidezResult" nillable="true" type="q9:ArrayOfFGA_Consultar_Riesgo_Liquidez_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Tasa_Ponderada">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="pERIODOI" nillable="true" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="pERIODOF" nillable="true" type="xs:dateTime" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Tasa_PonderadaResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q10="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Consultar_Tasa_PonderadaResult" nillable="true" type="q10:ArrayOfFGA_Consultar_Tasa_Ponderada_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_CAMEL">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="pERIODO1" nillable="true" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="pERIODO2" nillable="true" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="pERIODO3" nillable="true" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="iNDRESUMEN" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_CAMELResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q11="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Consultar_CAMELResult" nillable="true" type="q11:ArrayOfFGA_Consultar_CAMEL_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Suficiencia">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="pERIODO" nillable="true" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="pERIODO_COMPARAR" nillable="true" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="iNDRESUMEN" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_SuficienciaResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q12="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Consultar_SuficienciaResult" nillable="true" type="q12:ArrayOfFGA_Consultar_Suficiencia_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Indicadores">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="iNDICADOR" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_IndicadoresResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q13="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Consultar_IndicadoresResult" nillable="true" type="q13:ArrayOfFGA_Consultar_Indicadores_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Otros_Indicadores">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="pERIODO1" nillable="true" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="pERIODO2" nillable="true" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="pERIODO3" nillable="true" type="xs:dateTime" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Otros_IndicadoresResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q14="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Consultar_Otros_IndicadoresResult" nillable="true" type="q14:ArrayOfFGA_Consultar_Otros_Indicadores_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Indicadores_Cartera">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="pERIODO1" nillable="true" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="pERIODO2" nillable="true" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="pERIODO3" nillable="true" type="xs:dateTime" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Indicadores_CarteraResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q15="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Consultar_Indicadores_CarteraResult" nillable="true" type="q15:ArrayOfFGA_Consultar_Indicadores_Cartera_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Calculos_Personalizados">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="idEntidadConsulta" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="pERIODO" nillable="true" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="pERIODO_COMPARAR" nillable="true" type="xs:dateTime" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Calculos_PersonalizadosResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q16="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Consultar_Calculos_PersonalizadosResult" nillable="true" type="q16:ArrayOfFGA_Consultar_Calculos_Personalizados_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Analisis_Horizontal">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="iNDICADOR" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Analisis_HorizontalResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q17="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Analisis_HorizontalResult" nillable="true" type="q17:ArrayOfFGA_Analisis_Horizontal_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Analisis_Vertical">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="iNDICADOR" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Analisis_VerticalResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q18="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Analisis_VerticalResult" nillable="true" type="q18:ArrayOfFGA_Analisis_Vertical_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Dashboard">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="pERIODOI" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="pERIODOF" type="xs:dateTime" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_DashboardResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q19="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Consultar_DashboardResult" nillable="true" type="q19:ArrayOfFGA_Consultar_Dashboard_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_FechaCierre">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_FechaCierreResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="FGA_Consultar_FechaCierreResult" type="xs:dateTime" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Ejecutar_Cierre">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Ejecutar_CierreResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="FGA_Ejecutar_CierreResult" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Calif_Cartera">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="pERIDOOINICIAL" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="pERIODOFINAL" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="cALIFICACION" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Calif_CarteraResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q20="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Consultar_Calif_CarteraResult" nillable="true" type="q20:ArrayOfFGA_Consultar_Calific_Cartera_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_CalificE">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="pERIDOOINICIAL" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="pERIODOFINAL" type="xs:dateTime" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_CalificEResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q21="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Consultar_CalificEResult" nillable="true" type="q21:ArrayOfFGA_Consultar_CalificE_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_ArchivosPendientes">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_ArchivosPendientesResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q22="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="FGA_Consultar_ArchivosPendientesResult" nillable="true" type="q22:ArrayOfstring" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Tipo_Cartera">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="pERIDOOINICIAL" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="pERIODOFINAL" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="cTIPOCARTERA" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Tipo_CarteraResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q23="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Consultar_Tipo_CarteraResult" nillable="true" type="q23:ArrayOfFGA_Consultar_Tipo_Cartera_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Tipo_Cartera_E">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="pERIDOOINICIAL" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="pERIODOFINAL" type="xs:dateTime" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Tipo_Cartera_EResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q24="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Consultar_Tipo_Cartera_EResult" nillable="true" type="q24:ArrayOfFGA_Consultar_Tipo_Cartera_E_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_CarteraTotal">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="pERIDOOINICIAL" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="pERIODOFINAL" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="pMESES" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_CarteraTotalResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q25="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Consultar_CarteraTotalResult" nillable="true" type="q25:ArrayOfFGA_Consultar_CarteraTotal_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_CuentasLiq">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="pERIDOOINICIAL" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="pERIODOFINAL" type="xs:dateTime" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_CuentasLiqResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q26="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Consultar_CuentasLiqResult" nillable="true" type="q26:ArrayOfFGA_Consultar_CuentasLiq_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_RecuperacionActivos">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="pERIDOOINICIAL" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="pERIODOFINAL" type="xs:dateTime" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_RecuperacionActivosResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q27="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Consultar_RecuperacionActivosResult" nillable="true" type="q27:ArrayOfFGA_Consultar_RecuperacionActivos_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Rpt_Balance">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="pERIODO1" nillable="true" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="pERIODO2" nillable="true" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="pERIODO3" nillable="true" type="xs:dateTime" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Rpt_BalanceResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q28="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Rpt_BalanceResult" nillable="true" type="q28:ArrayOfFGA_Rpt_Balance_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Rpt_EstadoResultados">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="pERIODO1" nillable="true" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="pERIODO2" nillable="true" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="pERIODO3" nillable="true" type="xs:dateTime" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Rpt_EstadoResultadosResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q29="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Rpt_EstadoResultadosResult" nillable="true" type="q29:ArrayOfFGA_Rpt_EstadoResultados_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_ArchivosCargados">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="pERIODO" nillable="true" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="pTipoEntidad" type="xs:boolean" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_ArchivosCargadosResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q30="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Consultar_ArchivosCargadosResult" nillable="true" type="q30:ArrayOfFGA_Consultar_ArchivosCargados_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Matrices_Desmejora_Cartera">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="pERIODOINICIAL" nillable="true" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="pERIODOFINAL" nillable="true" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="pERIODOINICIAL_COMP" nillable="true" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="pERIODOFINAL_COMP" nillable="true" type="xs:dateTime" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Matrices_Desmejora_CarteraResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q31="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Consultar_Matrices_Desmejora_CarteraResult" nillable="true" type="q31:ArrayOfFGA_Consultar_Matrices_Desmejora_Cartera_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Matrices_PerdidaEstimada">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="pERIODOINICIAL" nillable="true" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="pERIODOFINAL" nillable="true" type="xs:dateTime" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Matrices_PerdidaEstimadaResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q32="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Consultar_Matrices_PerdidaEstimadaResult" nillable="true" type="q32:ArrayOfFGA_Consultar_Matrices_PerdidaEstimada_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Matrices_Variacion_Cartera">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="pERIODOINICIAL" nillable="true" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="pERIODOFINAL" nillable="true" type="xs:dateTime" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Matrices_Variacion_CarteraResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q33="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Consultar_Matrices_Variacion_CarteraResult" nillable="true" type="q33:ArrayOfFGA_Consultar_Matrices_Variacion_Cartera_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Modelo_Tasas">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="pERIODOINICIAL" nillable="true" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="pERIODOFINAL" nillable="true" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="pOpcion" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Modelo_TasasResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q34="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Consultar_Modelo_TasasResult" nillable="true" type="q34:ArrayOfFGA_Consultar_Modelo_Tasas_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Modelo_Margen">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="pERIODOINICIAL" nillable="true" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="pERIODOFINAL" nillable="true" type="xs:dateTime" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Modelo_MargenResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q35="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Consultar_Modelo_MargenResult" nillable="true" type="q35:ArrayOfFGA_Consultar_Modelo_Margen_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Variacion_CS">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="pERIODOINICIAL" nillable="true" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="pERIODOFINAL" nillable="true" type="xs:dateTime" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Variacion_CSResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q36="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Consultar_Variacion_CSResult" nillable="true" type="q36:ArrayOfFGA_Consultar_Variacion_CS_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Balance_Comprobacion_Rango">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="pERIODOINICIAL" nillable="true" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="pERIODOFINAL" nillable="true" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="pISMENSUAL" nillable="true" type="xs:boolean" />
+        <xs:element minOccurs="0" name="pINDMODELOTASAS" nillable="true" type="xs:boolean" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Balance_Comprobacion_RangoResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q37="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Consultar_Balance_Comprobacion_RangoResult" nillable="true" type="q37:ArrayOfFGA_Consultar_Balance_Comprobacion_Rango_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Graficos_Financieros">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="pERIODO1" nillable="true" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="pERIODO2" nillable="true" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="pERIODO3" nillable="true" type="xs:dateTime" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Graficos_FinancierosResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q38="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Consultar_Graficos_FinancierosResult" nillable="true" type="q38:ArrayOfFGA_Consultar_Graficos_Financieros_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Variacion_Interanual_SF">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="pERIODOI" nillable="true" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="pERIODOF" nillable="true" type="xs:dateTime" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Variacion_Interanual_SFResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q39="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Consultar_Variacion_Interanual_SFResult" nillable="true" type="q39:ArrayOfFGA_Consultar_Variacion_Interanual_SF_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Valida_Permite_Cargar">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Valida_Permite_CargarResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="FGA_Valida_Permite_CargarResult" type="xs:boolean" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Riesgo_Liquidez_Rango">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="pERIODOI" nillable="true" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="pERIODOF" nillable="true" type="xs:dateTime" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Riesgo_Liquidez_RangoResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q40="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Consultar_Riesgo_Liquidez_RangoResult" nillable="true" type="q40:ArrayOfFGA_Consultar_Riesgo_Liquidez_Rango_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Credito_Categoria_Rango">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="pERIODOI" nillable="true" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="pERIODOF" nillable="true" type="xs:dateTime" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Credito_Categoria_RangoResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q41="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Consultar_Credito_Categoria_RangoResult" nillable="true" type="q41:ArrayOfFGA_Consultar_Credito_Categoria_Rango_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Gastos_Ingresos">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="pERIODOI" nillable="true" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="pERIODOF" nillable="true" type="xs:dateTime" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Gastos_IngresosResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q42="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Consultar_Gastos_IngresosResult" nillable="true" type="q42:ArrayOfFGA_Consultar_Gastos_Ingresos_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Grafico_Mora_Cartera">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="pERIODOI" nillable="true" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="pERIODOF" nillable="true" type="xs:dateTime" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Grafico_Mora_CarteraResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q43="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Consultar_Grafico_Mora_CarteraResult" nillable="true" type="q43:ArrayOfFGA_Consultar_Grafico_Mora_Cartera_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Generar_Proyeccion">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="pERIODOCORTE" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="pERIODOS_HISTORICOS" type="xs:int" />
+        <xs:element minOccurs="0" name="pERIODOS_PROYECTAR" type="xs:int" />
+        <xs:element minOccurs="0" name="cUENTA" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Generar_ProyeccionResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q44="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Generar_ProyeccionResult" nillable="true" type="q44:ArrayOfFGA_Generar_Proyeccion_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Cuentas_Proyectar">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="iND_RESUMEN" type="xs:boolean" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Cuentas_ProyectarResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q45="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Consultar_Cuentas_ProyectarResult" nillable="true" type="q45:ArrayOfFGA_Consultar_Cuentas_Proyectar_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Datos_Historicos">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="pERIODOCORTE" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="pERIODOS" type="xs:int" />
+        <xs:element minOccurs="0" name="cUENTA" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Datos_HistoricosResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q46="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Consultar_Datos_HistoricosResult" nillable="true" type="q46:ArrayOfFGA_Consultar_Datos_Historicos_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Validar_Proyecciones_IRL">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="pERIODO" type="xs:dateTime" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Validar_Proyecciones_IRLResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q47="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="FGA_Validar_Proyecciones_IRLResult" nillable="true" type="q47:ArrayOfstring" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Estado_Proyeccion">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="pERIODO" type="xs:dateTime" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Estado_ProyeccionResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q48="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Consultar_Estado_ProyeccionResult" nillable="true" type="q48:ArrayOfFGA_Consultar_Estado_Proyeccion_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_IRL_Cuentas">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="IdEntidad" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="Periodo" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="Pond_Efectivo" nillable="true" type="xs:decimal" />
+        <xs:element minOccurs="0" name="Pond_BCCR" nillable="true" type="xs:decimal" />
+        <xs:element minOccurs="0" name="Pond_Ent_Finan" nillable="true" type="xs:decimal" />
+        <xs:element minOccurs="0" name="Pond_Ent_Exterior" nillable="true" type="xs:decimal" />
+        <xs:element minOccurs="0" name="Pond_Inv_BCCR" nillable="true" type="xs:decimal" />
+        <xs:element minOccurs="0" name="Pond_Inv_SP_No_Financ" nillable="true" type="xs:decimal" />
+        <xs:element minOccurs="0" name="Pond_Inv_Ots_Entidades" nillable="true" type="xs:decimal" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_IRL_CuentasResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q49="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Consultar_IRL_CuentasResult" nillable="true" type="q49:ArrayOfFGA_Consultar_IRL_Cuentas_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Matrices_Probabilidada">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="pERIODOINICIAL" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="pERIODOFINAL" type="xs:dateTime" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Matrices_ProbabilidadaResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q50="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Consultar_Matrices_ProbabilidadaResult" nillable="true" type="q50:ArrayOfFGA_Consultar_Matrices_Probabilidad_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Rpt_ER_SF">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="pERIODOI" nillable="true" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="pERIODOF" nillable="true" type="xs:dateTime" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Rpt_ER_SFResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q51="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Rpt_ER_SFResult" nillable="true" type="q51:ArrayOfFGA_Rpt_ER_SF_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Rpt_Balance_SF">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="pERIODOI" nillable="true" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="pERIODOF" nillable="true" type="xs:dateTime" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Rpt_Balance_SFResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q52="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Rpt_Balance_SFResult" nillable="true" type="q52:ArrayOfFGA_Rpt_Balance_SF_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Ingreso_SF">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="pERIODO1" nillable="true" type="xs:dateTime" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Ingreso_SFResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q53="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Consultar_Ingreso_SFResult" nillable="true" type="q53:ArrayOfFGA_Consultar_Ingreso_SF_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Gasto_SF">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="pERIODO1" nillable="true" type="xs:dateTime" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Gasto_SFResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q54="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Consultar_Gasto_SFResult" nillable="true" type="q54:ArrayOfFGA_Consultar_Gasto_SF_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Composicion_Balance_SF">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="pERIODO1" nillable="true" type="xs:dateTime" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Composicion_Balance_SFResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q55="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Consultar_Composicion_Balance_SFResult" nillable="true" type="q55:ArrayOfFGA_Consultar_Composicion_Balance_SF_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Indicadores_Sugef">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="pERIODOI" nillable="true" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="pERIODOF" nillable="true" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="iNDICADOR" nillable="true" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Indicadores_SugefResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q56="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Consultar_Indicadores_SugefResult" nillable="true" type="q56:ArrayOfFGA_Consultar_Indicadores_Sugef_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Tipo_Cartera_Sector">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="pERIODO" nillable="true" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="idSector" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Tipo_Cartera_SectorResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q57="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Consultar_Tipo_Cartera_SectorResult" nillable="true" type="q57:ArrayOfFGA_Consultar_Tipo_Cartera_Sector_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Variacion_Cartera_Sector">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="periodoInicial" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="periodoFinal" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="idSector" type="xs:int" />
+        <xs:element minOccurs="0" name="numMeses" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Variacion_Cartera_SectorResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q58="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Consultar_Variacion_Cartera_SectorResult" nillable="true" type="q58:ArrayOfFGA_Consultar_Variacion_Cartera_Sector_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Composicion_Cartera_Sector">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="periodo" type="xs:dateTime" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Composicion_Cartera_SectorResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q59="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Consultar_Composicion_Cartera_SectorResult" nillable="true" type="q59:ArrayOfFGA_Consultar_Composicion_Cartera_Sector_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Composicion_Mora_Sector">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="periodo" type="xs:dateTime" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Composicion_Mora_SectorResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q60="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Consultar_Composicion_Mora_SectorResult" nillable="true" type="q60:ArrayOfFGA_Consultar_Composicion_Mora_Sector_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Cartera_Rango_SF">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="pERIODOI" nillable="true" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="pERIODOF" nillable="true" type="xs:dateTime" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Cartera_Rango_SFResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q61="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Consultar_Cartera_Rango_SFResult" nillable="true" type="q61:ArrayOfFGA_Consultar_Cartera_Rango_SF_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Indicadores_Formulas">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="pERIODO" nillable="true" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="pERIODOCOMPARAR" nillable="true" type="xs:dateTime" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Indicadores_FormulasResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q62="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Consultar_Indicadores_FormulasResult" nillable="true" type="q62:ArrayOfFGA_Consultar_Indicadores_Formulas_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Generar_Proy_Matrices">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="pERIODOSESTIMAR" type="xs:int" />
+        <xs:element minOccurs="0" name="pERIODOSCRECIMIENTO" type="xs:int" />
+        <xs:element minOccurs="0" name="pERIODOINICIAL" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="pPERIODOFINAL" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="Tasa" type="xs:decimal" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Generar_Proy_MatricesResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q63="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Generar_Proy_MatricesResult" nillable="true" type="q63:ArrayOfFGA_Generar_Proy_Matrices_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_CrecimientoSugerido">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="pERIODOCORTE" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_CrecimientoSugeridoResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q64="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_CrecimientoSugeridoResult" nillable="true" type="q64:ArrayOfFGA_CrecimientoSugerido_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Rpt_EEFF_Proy">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="pERIODOCORTE" nillable="true" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="TipoReporte" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="TipoPlazo" nillable="true" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Rpt_EEFF_ProyResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q65="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Rpt_EEFF_ProyResult" nillable="true" type="q65:ArrayOfFGA_Rpt_EEFF_Proy_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_ConsultarEvaluacion">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="iDSUBCATEGORIA" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_ConsultarEvaluacionResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q66="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_ConsultarEvaluacionResult" nillable="true" type="q66:ArrayOfFGA_Consultar_Evaluacion_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_ConsultarAvance">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_ConsultarAvanceResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q67="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_ConsultarAvanceResult" nillable="true" type="q67:ArrayOfFGA_Consultar_Avance_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_ConsultarAvance_X_Categoria">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="iDCATEGORIA" nillable="true" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_ConsultarAvance_X_CategoriaResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q68="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_ConsultarAvance_X_CategoriaResult" nillable="true" type="q68:ArrayOfFGA_CONSULTAR_AVANCE_X_CATEGORIA_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_ConsultarHistorial_X_Categoria">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="iDCATEGORIA" nillable="true" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_ConsultarHistorial_X_CategoriaResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q69="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_ConsultarHistorial_X_CategoriaResult" nillable="true" type="q69:ArrayOfFGA_Consultar_Historial_X_Categoria_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_ConsultarSimulacionCapital">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="pPERIODO" nillable="true" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="tIPOESCENARIO" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="pORC_CARTERA" nillable="true" type="xs:decimal" />
+        <xs:element minOccurs="0" name="pORC_INVER" nillable="true" type="xs:decimal" />
+        <xs:element minOccurs="0" name="pORC_ACTIVOS" nillable="true" type="xs:decimal" />
+        <xs:element minOccurs="0" name="pORC_DISPONIBILIDADES" nillable="true" type="xs:decimal" />
+        <xs:element minOccurs="0" name="pORC_INMUEBLES" nillable="true" type="xs:decimal" />
+        <xs:element minOccurs="0" name="pORC_POSICION" nillable="true" type="xs:decimal" />
+        <xs:element minOccurs="0" name="pORC_INCREMENTO" nillable="true" type="xs:decimal" />
+        <xs:element minOccurs="0" name="pORC_UOBA" nillable="true" type="xs:decimal" />
+        <xs:element minOccurs="0" name="pORC_CAPITAL" nillable="true" type="xs:decimal" />
+        <xs:element minOccurs="0" name="pORC_RETIRO" nillable="true" type="xs:decimal" />
+        <xs:element minOccurs="0" name="pIMCA" nillable="true" type="xs:decimal" />
+        <xs:element minOccurs="0" name="pORC_SUFICIENCIAOBJETIVO" nillable="true" type="xs:decimal" />
+        <xs:element minOccurs="0" name="pPorc_Legal" nillable="true" type="xs:decimal" />
+        <xs:element minOccurs="0" name="pPorc_Excedente" nillable="true" type="xs:decimal" />
+        <xs:element minOccurs="0" name="pPorc_Voluntarias" nillable="true" type="xs:decimal" />
+        <xs:element minOccurs="0" name="pPorc_Aportes" nillable="true" type="xs:decimal" />
+        <xs:element minOccurs="0" name="pPorc_Donaciones" nillable="true" type="xs:decimal" />
+        <xs:element minOccurs="0" name="pPorc_Revaluacion" nillable="true" type="xs:decimal" />
+        <xs:element minOccurs="0" name="vIMCA" nillable="true" type="xs:decimal" />
+        <xs:element minOccurs="0" name="vCAPITAL_BASE" nillable="true" type="xs:decimal" />
+        <xs:element minOccurs="0" name="vIMCA_CAPITAL" nillable="true" type="xs:decimal" />
+        <xs:element minOccurs="0" name="vIND_SUFICIENCIA" nillable="true" type="xs:decimal" />
+        <xs:element minOccurs="0" name="vCN1" nillable="true" type="xs:decimal" />
+        <xs:element minOccurs="0" name="vCCN1" nillable="true" type="xs:decimal" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_ConsultarSimulacionCapitalResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q70="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_ConsultarSimulacionCapitalResult" nillable="true" type="q70:ArrayOfFGA_Consultar_Simulacion_Capital_Result" />
+        <xs:element minOccurs="0" name="vIMCA" nillable="true" type="xs:decimal" />
+        <xs:element minOccurs="0" name="vCAPITAL_BASE" nillable="true" type="xs:decimal" />
+        <xs:element minOccurs="0" name="vIMCA_CAPITAL" nillable="true" type="xs:decimal" />
+        <xs:element minOccurs="0" name="vIND_SUFICIENCIA" nillable="true" type="xs:decimal" />
+        <xs:element minOccurs="0" name="vCN1" nillable="true" type="xs:decimal" />
+        <xs:element minOccurs="0" name="vCCN1" nillable="true" type="xs:decimal" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Resultado_Evaluacion">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="idEntidad" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="idCategoria" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Resultado_EvaluacionResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q71="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Consultar_Resultado_EvaluacionResult" nillable="true" type="q71:ArrayOfFGA_CONSULTAR_RESULTADO_EVALUACION_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_FacturacionFGD">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="idEntidad" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="anno" type="xs:int" />
+        <xs:element minOccurs="0" name="trimestre" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_FacturacionFGDResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q72="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Consultar_FacturacionFGDResult" nillable="true" type="q72:ArrayOfFGA_Consultar_FacturacionFGD_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Grafico_Oper_Categoria">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="pERIODOI" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="pERIODOF" type="xs:dateTime" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Grafico_Oper_CategoriaResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q73="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Consultar_Grafico_Oper_CategoriaResult" nillable="true" type="q73:ArrayOfFGA_Consultar_Grafico_Oper_Categoria_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Grafico_Oper_Etapa">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="pERIODOI" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="pERIODOF" type="xs:dateTime" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Grafico_Oper_EtapaResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q74="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Consultar_Grafico_Oper_EtapaResult" nillable="true" type="q74:ArrayOfFGA_Consultar_Grafico_Oper_Etapa_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Grafico_Oper_Segmento">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="pERIODOI" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="pERIODOF" type="xs:dateTime" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Grafico_Oper_SegmentoResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q75="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Consultar_Grafico_Oper_SegmentoResult" nillable="true" type="q75:ArrayOfFGA_Consultar_Grafico_Oper_Segmento_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Grafico_Oper_EAD">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iDENTIDAD" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="pERIODOI" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="pERIODOF" type="xs:dateTime" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FGA_Consultar_Grafico_Oper_EADResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q76="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" minOccurs="0" name="FGA_Consultar_Grafico_Oper_EADResult" nillable="true" type="q76:ArrayOfFGA_Consultar_Grafico_Oper_EAD_Result" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

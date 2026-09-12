@@ -1,0 +1,107 @@
+﻿@model FGA.Model.Graficos_SF
+
+@{
+    ViewBag.Title = "Origen y aplicación";
+}
+
+<section class="content">
+    <section class="content-header">
+        <h1>
+            Origen y aplicación
+        </h1>
+    </section>
+    @using (Html.BeginForm("Origen", "Industria", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmInforme" }))
+    {
+        <div class="box box-solid box-info">
+            <div class="box-body table-responsive">
+                <div class="margin">
+                    <div class="streaming-table">
+                        <span id="found" class="label label-info"></span>
+                        <table class="table table-condensed table-striped table-bordered">
+                            <tr>
+
+                                <td class="mobile">
+                                    @Html.Label("Periodo Inicial:")
+                                </td>
+                                <td nowrap="nowrap">
+                                    <input name="Periodo1" id="Periodo1" class="datecontrol" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToShortDateString()" />
+                                </td>
+                                <td class="mobile">
+                                    @Html.Label("Periodo Final:")
+                                </td>
+                                <td nowrap="nowrap">
+                                    <input name="Periodo2" id="Periodo2" class="datecontrol" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToShortDateString()" />
+                                </td>
+                                <td>
+                                    <label>
+                                        <button type="submit" id="btn_buscar" class="btn btn-primary">Generar</button>
+                                    </label>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <div>
+        <div class="nav-tabs-custom">
+            <ul class="nav nav-tabs">
+                <li class="active"><a href="#tab_1" data-toggle="tab">Origen y Aplicación</a></li>
+                <li><a href="#tab_2" data-toggle="tab">Variación</a></li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane active" id="tab_1">
+                    <div class="row">
+
+                        @if (Session["TipoReporte"] != null)
+                        {
+                            <iframe src="~/Reportes/ReportView.aspx" width="1500" height="1500" style="border:none"></iframe>
+                        }
+                    </div>
+                </div>
+                <div class="tab-pane" id="tab_2">
+                    <div class="row">
+                        <div class="col-sm-10">
+                            <div class="col-md-10">
+                                @(Model.variacion)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script type="text/javascript">
+
+    function refreshPage() {
+        $.ajax({
+            url: '@Url.Action("LoadOrigen", "Industria")',
+                type: 'POST',
+                cache: false,
+                async: false,
+                data: {
+                    'Periodo1': $('#Periodo1').val(),
+                    'Periodo2': $('#Periodo2').val()
+                },
+            success: function (result) {
+                $('#detail').html(result);
+            }
+        });
+    }
+
+      $(document).on('click', '#btn_buscar', function () {
+         refreshPage();
+      });
+
+    function formatMillion() {
+        return this.value;
+    }
+
+    function formatPercent() {
+        return this.value + ' %';
+    }
+</script>

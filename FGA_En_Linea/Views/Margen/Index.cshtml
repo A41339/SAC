@@ -1,0 +1,196 @@
+﻿@model FGA.Model.ModeloMargen_Financ
+
+@{
+    ViewBag.Title = "Modelo de márgenes";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="content-header">
+    <h1>
+        Márgenes
+    </h1>
+</section>
+
+<section class="content">
+    @using (Html.BeginForm("Buscar", "Margen", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmMargen" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box box-solid box-info">
+                    <div class="box-body table-responsive">
+                        <div class="margin">
+                            <div class="streaming-table">
+                                <span id="found" class="label label-info"></span>
+                                <table class="table table-condensed table-striped table-bordered">
+                                    <tr>
+                                        <td class="mobile">
+                                            @Html.Label("Entidad:")
+                                        </td>
+                                        <td>
+                                            @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", style = "width: 200px;" })
+                                        </td>
+
+                                        <td class="mobile">
+                                            @Html.Label("Inicial:")
+                                        </td>
+                                        <td nowrap="nowrap">
+                                            <input name="PeriodoI" id="PeriodoI" class="datecontrol" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MM/yyyy")" />
+                                        </td>
+                                        <td class="mobile">
+                                            @Html.Label("Final:")
+                                        </td>
+                                        <td nowrap="nowrap">
+                                            <input name="PeriodoF" id="PeriodoF" class="datecontrol" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MM/yyyy")" />
+                                        </td>
+                                        <td>
+                                            <label class="btn btn-facebook">
+                                                Generar<input type="submit" name="submit" style="display: none;">
+                                            </label>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="box box-solid box-info">
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a href="#tab_5" data-toggle="tab">Margen Financiero</a></li>
+                            <li><a href="#tab_6" data-toggle="tab">Cobertura de Margenes</a></li>
+                            <li><a href="#tab_7" data-toggle="tab">Indicadores de Rentabilidad</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="tab_5">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="box-header with-border">
+                                            <img width="50" height="50" src="@Session["Logo"]" />
+                                            <h3 class="box-title">Cobertura de margen financiero</h3>
+                                            <a class="text-right" data-toggle="tooltip" data-placement="top" href="javascript:mMargen()"><i class="btn btn-xs btn-info icon fa fa-line-chart"></i></a>
+                                        </div>
+                                        <div class="box-body">
+                                            @(Model.margenFinanciero)
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="tab_6">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="box-header with-border">
+                                            <img width="50" height="50" src="@Session["Logo"]" />
+                                            <h3 class="box-title">Cobertura de margenes</h3>
+                                            <a class="text-right" data-toggle="tooltip" data-placement="top" href="javascript:mCobertura()"><i class="btn btn-xs btn-info icon fa fa-line-chart"></i></a>
+                                        </div>
+                                        <div class="box-body">
+                                            @(Model.coberturaMargenes)
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="tab_7">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="box-header with-border">
+                                            <img width="50" height="50" src="@Session["Logo"]" />
+                                            <h3 class="box-title">Indicadores de rentabilidad</h3>
+                                            <a class="text-right" data-toggle="tooltip" data-placement="top" href="javascript:mRentabilidad()"><i class="btn btn-xs btn-info icon fa fa-line-chart"></i></a>
+                                        </div>
+                                        <div class="box-body">
+                                            @(Model.indicadoresRentabilidad)
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    }
+</section>
+
+<div class="modal fade" id="mMargen" tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="box-header with-border">
+                    <img width="50" height="50" src="@Session["Logo"]" />
+                    <h3 id="pEntidad1" style="padding-bottom: 10px;" class="box-title">Cobertura de margen financiero</h3>
+                </div>
+            </div>
+            <div class="modal-body">
+                @(Model.pMargenFinanciero)
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mCobertura" tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="box-header with-border">
+                    <img width="50" height="50" src="@Session["Logo"]" />
+                    <h3 id="pEntidad2" style="padding-bottom: 10px;" class="box-title">Cobertura de margenes</h3>
+                </div>
+            </div>
+            <div class="modal-body">
+                @(Model.pCoberturaMargenes)
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mRentabilidad" tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="box-header with-border">
+                    <img width="50" height="50" src="@Session["Logo"]" />
+                    <h3 id="pEntidad3" style="padding-bottom: 10px;" class="box-title">Indicadores de rentabilidad</h3>
+                </div>
+            </div>
+            <div class="modal-body">
+                @(Model.pIndicadoresRentabilidad)
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    function mMargen() {
+        $('#mMargen').modal('show');
+    }
+
+    function mCobertura() {
+        $('#mCobertura').modal('show');
+    }
+
+    function mRentabilidad() {
+        $('#mRentabilidad').modal('show');
+    }
+
+    function formatMillion() {
+        return this.value;
+    }
+
+    function formatPercent() {
+        return this.value + ' %';
+    }
+</script>

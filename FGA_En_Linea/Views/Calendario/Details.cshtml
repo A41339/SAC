@@ -1,0 +1,57 @@
+@model FGA.Models.Calendario
+
+@{
+    ViewBag.Title = "Consultar un Calendario";
+    if (Ajax.IsThisAjaxRequest())
+    {
+        Layout = null;
+    }
+}
+<section class="content-header">
+    <h1>
+        Consultar Calendario
+    </h1>
+</section>
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box box-solid box-info">
+                <div class="box-header">
+                    <h3 class="box-title">Detalles</h3>
+                </div><!-- /.box-header -->
+                <div class="box-body table-responsive">
+                    <div class="widget-sec">
+                        <div class="streaming-table">
+                            <table class="table table-striped table-bordered">
+                                <tr class="hidden">
+                                    <td>@Html.LabelFor(model => model.Id, new { @class = "" })</td>
+                                    <td>@Html.DisplayFor(model => model.Id)</td>
+                                </tr>
+                                <tr>
+                                    <td>@Html.LabelFor(model => model.Periodo, new { @class = "" })</td>
+                                    <td>@Html.DisplayFor(model => model.Periodo)</td>
+                                </tr>
+                                <tr>
+                                    <td>@Html.LabelFor(model => model.DiaNotificacion, new { @class = "" })</td>
+                                    <td>@Html.DisplayFor(model => model.DiaNotificacion)</td>
+                                </tr>
+                                <tr>
+                                    <td>@Html.LabelFor(model => model.DiaLimite, new { @class = "" })</td>
+                                    <td>@Html.DisplayFor(model => model.DiaLimite)</td>
+                                </tr>
+                                <tr>
+                                    <td>@Html.LabelFor(model => model.Enviado, new { @class = "" })</td>
+                                    <td>@Html.DisplayFor(model => model.Enviado)</td>
+                                </tr>
+
+                            </table>
+                            <div class="box-footer">                                 
+                                @Html.ActionLink("Regresar", "Index", null, new { @class = "btn btn-primary" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

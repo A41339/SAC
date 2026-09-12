@@ -1,0 +1,143 @@
+﻿@{
+    ViewBag.Title = "IRL";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="content-header">
+    <h1>
+        IRL
+    </h1>
+</section>
+
+<section class="content">
+
+    @Html.AntiForgeryToken()
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box box-solid box-info">
+                <div class="box-body table-responsive">
+                    <div class="margin">
+                        <div class="streaming-table">
+                            <span id="found" class="label label-info"></span>
+                            <table class="table table-condensed table-striped table-bordered">
+                                <tr>
+                                    <td class="mobile">
+                                        @Html.Label("Entidad:")
+                                    </td>
+                                    <td>
+                                        @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", style = "width: 200px;" })
+                                    </td>
+                                    <td class="mobile">
+                                        @Html.Label("Periodo:")
+                                    </td>
+                                    <td nowrap="nowrap">
+                                        <input name="Periodo" id="Periodo" class="datecontrol" value="@Session["Periodo2"]" />
+                                    </td>
+                                    <td>
+                                        <label class="btn btn-facebook" onclick="javascript:consultarIRL()">
+                                            Generar
+                                        </label>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <section class="content">
+                <div class="row">
+                    <div id="tblIRLCuentas">
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</section>
+<div id="modalError" class="modal fade">
+    <div class="modal-dialog modal-fail">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="icon-box">
+                    <i class="material-icons"></i>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div style="margin-left:50px; margin-right: 50px;">
+                    <p id="lbl_mensajeError" class="text-center">Ha ocurrido un error.</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger btn-block" data-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">    
+    function consultarIRL() {
+        var entidad = $('#IdEntidad').val();
+        var periodo = $('#Periodo').val();
+
+        $.ajax({
+            url: '@Url.Action("ValidarIRL", "IRL")',
+            type: 'POST',
+            cache: false,
+            async: false,
+            data: {
+                'IdEntidad': entidad,
+                'Periodo': periodo
+            },
+            success: function (data) {
+                var resultado = data.resultado.exito;
+                if (resultado == false) {
+                    $("#lbl_mensajeError").html(data.resultado.mensaje);
+                    $("#modalError").modal('show');
+                }
+                else {
+                    actualizarIRL();
+                }
+            },
+            error: function (result) {
+                $("#modalError").modal('show');
+            }
+        });
+    }
+
+    function actualizarIRL() {
+
+        var entidad = $('#IdEntidad').val();
+        var periodo = $('#Periodo').val();
+        var efectivo = $('#11100000').val();
+        var bccr = $('#11200000').val();
+        var ent_finan = $('#11300000').val();
+        var ent_exterior = $('#11400000').val();
+        var inv_bccr = $('#12201000').val();
+        var inv_sp_no_finan = $('#12202000').val();
+        var inv_ots_entidades = $('#12203000').val();
+
+         $.ajax({
+            url: '@Url.Action("ConsultarIRL", "IRL")',
+            type: 'POST',
+            cache: false,
+            async: false,
+            data: {
+                'IdEntidad': entidad,
+                'Periodo': periodo,
+                'Efectivo': efectivo,
+                'Bccr': bccr,
+                'Ent_finan': ent_finan,
+                'Ent_exterior': ent_exterior,
+                'Inv_Bccr': inv_bccr,
+                'Inv_sp_no_finan': inv_sp_no_finan,
+                'Inv_Ots_Entidades': inv_ots_entidades
+            },
+            success: function (result) {
+                $('#tblIRLCuentas').html(result);
+            }
+       });
+    }
+</script>

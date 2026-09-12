@@ -1,0 +1,61 @@
+@model FGA.Models.Formulas
+
+@{
+    ViewBag.Title = "Editar fórmula";
+    if (Ajax.IsThisAjaxRequest())
+    {
+        Layout = null;
+    }
+}
+
+@Html.StarkAjaxFormSubmiter("frmFormula", "tbFormula", true, "Acción ejecutada con éxito")
+
+@{
+    if (!Ajax.IsThisAjaxRequest())
+    {
+        <section class="content-header">
+            <h1>
+                Editar una fórmula
+            </h1>
+        </section>
+    }
+}
+
+@using (Html.BeginForm("Edit", "Formula", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmFormula" }))
+{
+    @Html.AntiForgeryToken()
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box box-solid box-info">
+                    <div role="form">
+                        <div class="box-body">
+                            <div class="form-group">
+                                @Html.HiddenFor(model => model.Id, new { @class = "" })
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Nombre, new { @class = "" })
+                                @Html.EditorFor(model => model.Nombre)
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Formula, new { @class = "" })
+                                @Html.EditorFor(model => model.Formula)
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Ind_Porcentaje, new { @class = "checkbox" })
+                                @Html.EditorFor(model => model.Ind_Porcentaje, new { htmlAttributes = new { @class = "js-switch" } })
+                            </div>                           
+                        </div>
+                    </div><!-- /.box-body -->
+                    <div class="box-footer">
+                        @Html.StarkInputButtion("Guardar", "submit", "btn btn-primary", "")
+                        @Html.ActionLink("Regresar", "Index", null, new { @class = "btn btn-primary" })
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+}

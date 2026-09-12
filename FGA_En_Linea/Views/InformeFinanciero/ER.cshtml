@@ -1,0 +1,302 @@
+﻿@model FGA.Model.Graficos_Financieros
+
+@{
+    ViewBag.Title = "Estado Resultados";
+}
+
+<section class="content">
+    <section class="content-header">
+        <h1>
+            Estado Resultados
+        </h1>
+    </section>
+
+    @using (Html.BeginForm("LoadER", "InformeFinanciero", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmInforme" }))
+    {
+        <div class="box box-solid box-info">
+            <div class="box-body table-responsive">
+                <div class="margin">
+                    <div class="streaming-table">
+                        <span id="found" class="label label-info"></span>
+                        <table class="table table-condensed table-striped table-bordered">
+                            <tr>
+                                <td class="mobile">
+                                    @Html.Label("Entidad:")
+                                </td>
+                                <td>
+                                    @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", style = "width: 200px;" })
+                                </td>
+                                <td class="mobile">
+                                    @Html.Label("Primer Periodo:")
+                                </td>
+                                <td nowrap="nowrap">
+                                    <input name="Periodo1" id="Periodo1" class="datecontrol" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MM/yyyy")" />
+                                </td>
+                                <td class="mobile">
+                                    @Html.Label("Mensual:")
+                                </td>
+                                <td nowrap="nowrap">
+                                    @Html.DropDownList("Mensual", new List<SelectListItem> {
+                                                                    new SelectListItem { Value = "0", Text = "NO" },
+                                                                    new SelectListItem { Value = "1", Text = "SÍ" }
+                                                                    }, new { @id = "Mensual" })
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="mobile">
+                                    @Html.Label("Segundo Periodo:")
+                                </td>
+                                <td nowrap="nowrap">
+                                    <input name="Periodo2" id="Periodo2" class="datecontrol" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MM/yyyy")" />
+                                </td>
+                                <td class="mobile">
+                                    @Html.Label("Tercer Periodo:")
+                                </td>
+                                <td>
+                                    <input name="Periodo3" id="Periodo3" class="datecontrol" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo3"].ToString()).ToString("MM/yyyy")" />
+                                </td>
+                                <td>
+                                    <label>
+                                        <button type="submit" class="btn btn-primary">Generar</button>
+                                    </label>
+                                </td>
+                                <td>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (Session["TipoReporte"] != null)
+    {
+        <div>
+            <div class="nav-tabs-custom">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="#tab_1" data-toggle="tab">Estado de resultados</a></li>
+                    <li><a href="#tab_2" data-toggle="tab">Análisis</a></li>
+                    <li><a href="#tab_3" data-toggle="tab">Composición</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane active" id="tab_1">
+                        <div class="box-body table-responsive">
+                            <div class="margin">
+                                <iframe src="~/Reportes/ReportView.aspx" width="1500" height="1400" style="border:none"></iframe>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="tab_2">
+                        <div class="box-body table-responsive">
+                            <div class="margin">
+                                <iframe src="~/Reportes/ReportView2.aspx" width="1500" height="1500" style="border:none"></iframe>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="tab_3">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="box box-primary">
+                                    <div class="box-body">
+                                        <div class="row">
+                                            <div class="col-xs-12">
+                                                <div class="box-body table-responsive">
+                                                    <span id="found" class="label label-info"></span>
+                                                    <table id="tbIngreso" class="table table-striped table-bordered" style="width:100%; height: 350px">
+                                                        <thead>
+                                                            <tr>
+                                                                <th colspan="5">
+                                                                    <img width="50" height="50" src="@Session["Logo"]" />
+                                                                    <label class="box-title">Ingresos</label>
+                                                                </th>
+                                                            </tr>
+                                                            <tr>
+                                                                <th class="hidden">
+                                                                </th>
+                                                                <th>
+                                                                </th>
+                                                                <th>
+                                                                    Financiero
+                                                                </th>
+                                                                <th>
+                                                                    Operativo
+                                                                </th>
+                                                                <th>
+                                                                    Recuperación
+                                                                </th>
+                                                                <th>
+                                                                    Ingreso Promedio
+                                                                </th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody></tbody>
+                                                    </table>
+                                                    <div id="summary">
+                                                        <div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="box box-warning">
+                                    <div class="box-header with-border">
+                                        <img width="50" height="50" src="@Session["Logo"]" />
+                                        <h4 class="box-title">Ingreso</h4>
+                                    </div>
+                                    <div class="box-body">
+                                        @(Model.composicionIngreso)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="col-md-12">
+                                    <div class="box box-primary">
+                                        <div class="box-body">
+                                            <div class="row">
+                                                <div class="col-xs-12">
+                                                    <div class="box-body table-responsive">
+                                                        <span id="found" class="label label-info"></span>
+                                                        <table id="tbGasto" class="table table-striped table-bordered" style="width:100%; height: 350px">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th colspan="6">
+                                                                        <img width="50" height="50" src="@Session["Logo"]" />
+                                                                        <label class="box-title">Gastos</label>
+                                                                    </th>
+                                                                </tr>
+                                                                <tr>
+                                                                    <th class="hidden">
+                                                                    </th>
+                                                                    <th>
+                                                                    </th>
+                                                                    <th>
+                                                                        Financiero
+                                                                    </th>
+                                                                    <th>
+                                                                        Estimación
+                                                                    </th>
+                                                                    <th>
+                                                                        Operativo
+                                                                    </th>
+                                                                    <th>
+                                                                        Administración
+                                                                    </th>
+                                                                    <th>
+                                                                        Impuesto
+                                                                    </th>
+
+                                                                    <th>
+                                                                        Gasto Promedio
+                                                                    </th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody></tbody>
+                                                        </table>
+                                                        <div id="summary">
+                                                            <div>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="box box-warning">
+                                        <div class="box-header with-border">
+                                            <img width="50" height="50" src="@Session["Logo"]" />
+                                            <h4 class="box-title">Gasto</h4>
+                                        </div>
+                                        <div class="box-body">
+                                            @(Model.composicionGasto)
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</section>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        oTableIngreso = $("#tbIngreso").dataTable({
+        "rowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+            $(nRow).find('td:eq(0)').addClass('hidden');
+        },
+        "bRetrieve": true,
+        "bProcessing": true,
+        "bPaginate": false,
+        "bFilter": false,
+        "bInfo": false,
+        "dom": 'lBfrtip',
+        "sAjaxSource": "@Url.Content("~/Composicion/GetGridIngreso")",
+        "buttons": [
+                { extend: 'copyHtml5', exportOptions: { columns: ':visible' } }
+            ,{ extend: 'excelHtml5', exportOptions: { columns: ':visible' } }
+            ,{ extend: 'csvHtml5', exportOptions: { columns: ':visible' } }
+            ,{ extend: 'print', exportOptions: { columns: ':visible' } }
+            ,'colvis'
+            ],
+            columnDefs: [
+                    {
+                        className: 'text-right', targets: [2, 3, 4, 5]
+                    },
+            ],
+            "aoColumns": [
+                {},{},{},{},{},{}
+         ]
+        });
+
+        oTableGasto = $("#tbGasto").dataTable({
+        "rowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+            $(nRow).find('td:eq(0)').addClass('hidden');
+        },
+        "bRetrieve": true,
+        "bProcessing": true,
+        "bPaginate": false,
+        "bFilter": false,
+        "bInfo": false,
+        "dom": 'lBfrtip',
+        "sAjaxSource": "@Url.Content("~/Composicion/GetGridGasto")",
+        "buttons": [
+                { extend: 'copyHtml5', exportOptions: { columns: ':visible' } }
+            ,{ extend: 'excelHtml5', exportOptions: { columns: ':visible' } }
+            ,{ extend: 'csvHtml5', exportOptions: { columns: ':visible' } }
+            ,{ extend: 'print', exportOptions: { columns: ':visible' } }
+            ,'colvis'
+            ],
+            columnDefs: [
+                    {
+                        className: 'text-right', targets: [2, 3, 4, 5, 6, 7]
+                    },
+            ],
+            "aoColumns": [
+                {},{},{},{},{},{},{},{}
+         ]
+          });
+     });
+
+    function formatMillion() {
+        return this.value;
+    }
+
+    function formatPercent() {
+        return this.value + ' %';
+    }
+</script>

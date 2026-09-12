@@ -1,0 +1,52 @@
+﻿@model FGA.Models.Album
+
+@{
+    ViewBag.Title = "Consultar un Álbum";
+    if (Ajax.IsThisAjaxRequest())
+    {
+        Layout = null;
+    }
+}
+<section class="content-header">
+    <h1>
+        Consultar una galería
+    </h1>
+</section>
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box box-solid box-info">
+                <div class="box-header">
+                    <h3 class="box-title">Detalles</h3>
+                </div><!-- /.box-header -->
+                <div class="box-body table-responsive">
+                    <div class="widget-sec">
+                        <div class="streaming-table">
+                            <table class="table table-striped table-bordered">
+                                <tr>
+                                    <td>Id</td>
+                                    <td>@Html.DisplayFor(model => model.Id)</td>
+                                </tr>
+                                <tr>
+                                    <td>Fecha</td>
+                                    <td>@Html.DisplayFor(model => model.Fecha)</td>
+                                </tr>
+                                <tr>
+                                    <td>Título</td>
+                                    <td>@Html.Raw(Model.Titulo)</td>
+                                </tr>
+                                <tr>
+                                    <td>Autor</td>
+                                    <td>@Html.Raw(Model.Autor)</td>
+                                </tr>
+                            </table>
+                            <div class="box-footer">
+                                @Html.ActionLink("Regresar", "Index", null, new { @class = "btn btn-primary" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

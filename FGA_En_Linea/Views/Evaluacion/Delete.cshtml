@@ -1,0 +1,60 @@
+
+@model Entities.Entities.Evaluacion.EvalCategoria
+
+@{
+    ViewBag.Title = "Está seguro de eliminar la categoría?";
+    if (Ajax.IsThisAjaxRequest())
+    {
+        Layout = null;
+    }
+}
+
+@Html.StarkAjaxFormSubmiter("frmCompany", "tbCompany", true, "Acción ejecutada con éxito")
+
+@{
+    if (!Ajax.IsThisAjaxRequest())
+    {
+        <section class="content-header">
+            <h1>
+                Borrar una Categoría
+            </h1>
+        </section>
+    }
+}
+
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box box-solid box-info">
+                <div class="box-header">
+                    <h3 class="box-title">Detalles</h3>
+                </div><!-- /.box-header -->
+                <div class="box-body table-responsive">
+                    <div class="widget-sec">
+                        <div class="streaming-table">
+                            <table class="table table-striped table-bordered">
+                                <tr>
+                                    <td>Id</td>
+                                    <td>@Html.DisplayFor(model => model.Id)</td>
+                                </tr>
+                                <tr>
+                                    <td>Título</td>
+                                    <td>@Html.DisplayFor(model => model.Titulo)</td>
+                                </tr>
+                            </table>
+                            <div class="box-footer">
+
+                                @using (Html.BeginForm("Delete", "Evaluacion", FormMethod.Post, new { id = "frmCompany" }))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    @Html.StarkInputButtion("Borrar", "submit", "btn btn-danger", "")
+                                    @Html.ActionLink("Regresar", "Index", null, new { @class = "btn btn-primary" })
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

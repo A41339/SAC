@@ -1,0 +1,203 @@
+﻿@model FGA.Models.EstatusCarga
+
+@{
+    ViewBag.Title = "Consultar Archivos";
+}
+
+<style>
+    .circular-progress {
+           background: -webkit-gradient(linear, right top, left top, color-stop(@(Model.porcentajeCarga)%, #03A9F4), color-stop(@(Model.porcentajeCarga)%, transparent), to(transparent)), -webkit-gradient(linear, right top, left top, color-stop(@(Model.porcentajeCarga)%, #03A9F4), color-stop(@(Model.porcentajeCarga)%, #E0E0E0), to(#E0E0E0));
+            background: linear-gradient(-90deg, #03A9F4 @(Model.porcentajeCarga) %, transparent @(Model.porcentajeCarga) %, transparent), linear-gradient(270deg, #03A9F4 @(Model.porcentajeCarga) %, #E0E0E0 @(Model.porcentajeCarga) %, #E0E0E0);
+            border-radius: 50%;
+            box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+            height: 200px;
+            margin: 2em auto;
+            position: relative;
+            width: 200px;
+            -webkit-transition: all .3s linear;
+            transition: all .3s linear;
+        }
+
+        .circular-progress::before {
+            background-color: #FAFAFA;
+            border-radius: 50%;
+            box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+            color: rgba(0, 0, 0, 0.54);
+            content: '@(Model.porcentajeCarga)%';
+            font-size: 72px;
+            font-weight: bold;
+            height: 100%;
+            left: 0;
+            line-height: 200px;
+            position: absolute;
+            text-align: center;
+            top: 0;
+            -webkit-transform: scale(0.87);
+            transform: scale(0.87);
+            width: 100%;
+        }
+</style>
+
+<section class="content-header">
+    <h1>
+        Estatus de la carga
+    </h1>
+</section>
+<section class="content contenedor">
+    @using (Html.BeginForm("Buscar", "Cierre", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmArchivo" }))
+    {
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box box-solid box-info">
+                    <div class="box-body table-responsive">
+                        <div class="margin">
+                            <div class="streaming-table">
+                                <table class="table table-condensed table-striped table-bordered">
+                                    <tr>
+                                        <td class="mobile">
+                                            <label> Parámetros de búsqueda</label>
+                                        </td>
+                                        <td class="mobile">
+                                            @Html.Label("Entidad:")
+                                        </td>
+                                        <td>
+                                            @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", style = "width: 200px;" })
+                                        </td>
+                                        <td class="mobile">
+                                            @Html.Label("Periodo:")
+                                        </td>
+                                        <td>
+                                            <input name="Periodo" id="Periodo" class="datecontrol" value="@Session["Periodo"].ToString()" />
+                                        </td>
+                                        <td>
+                                            <label class="btn btn-facebook">
+                                                Generar<input type="submit" name="submit" style="display: none;">
+                                            </label>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="col-xs-12 col-lg-4">
+                <div class="box box-solid box-info">
+                    <div class="circular-progress"> </div>
+                    <div class="text-center">
+                        <label>Cantidad de archivos pendientes: @Model.pendientes</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12 col-lg-8">
+                <div class="box box-solid box-info">
+                    <div class="box-body table-responsive">
+                        <div class="margin">
+                            <div class="streaming-table">
+                                <table id="tbRole" class="table table-striped table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th style="text-align: center;" class="hidden"> Id </th>
+                                            <th style="text-align: center;"> Archivo XML </th>
+                                            <th style="text-align: center;" class="mobile"> Periodo </th>
+                                            <th style="text-align: center;"> Estado </th>
+                                            <th style="text-align: center;" class="mobile"> Usuario Responsable </th>
+                                            <th style="text-align: center;" class="mobile"> Fecha de Carga </th>
+                                            <th style="text-align: center;" class="mobile"> Registros </th>
+                                            <th style="text-align: center;" class="hidden"> </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody style="font-size: 12px;">
+                                        @if (Model != null)
+                                        {
+                                            foreach (var item in Model.listaArchivos)
+                                            {
+                                                <tr>
+                                                    <td class="hidden">
+                                                        @Html.HiddenFor(modelItem => item.ID_ENCABEZADO)
+                                                    </td>
+                                                    <td>
+                                                        <label>@Html.DisplayFor(modelItem => item.NOMBRE_XML) </label>
+                                                    </td>
+                                                    <td class="mobile" style="text-align: center;">
+                                                        <label>@Html.DisplayFor(modelItem => item.PERIODO) </label>
+                                                    </td>
+                                                    <td style="text-align: center;">
+                                                        @if (item.XML_ID == FGA.Utility.Utilitarios.archivoCargado)
+                                                        {
+                                                            <img src="~/Content/images/wait.png" />
+                                                        }
+                                                        else if (item.XML_ID == FGA.Utility.Utilitarios.archivoAceptado)
+                                                        {
+                                                            <img src="~/Content/images/check.png" />
+                                                        }
+                                                        else if (item.XML_ID == FGA.Utility.Utilitarios.archivoPendiente)
+                                                        {
+                                                            <img src="~/Content/images/warning.png" />
+                                                        }
+                                                        else
+                                                        {
+                                                            <img src="~/Content/images/wrong.png" />
+                                                        }
+                                                    </td>
+                                                    <td class="mobile" style="text-align: center;">
+                                                        <label>@Html.DisplayFor(modelItem => item.USUARIO) </label>
+                                                    </td>
+                                                    <td class="mobile" style="text-align: center;">
+                                                        @if (item.XML_ID == FGA.Utility.Utilitarios.archivoPendiente)
+                                                        {
+                                                            <label> Pendiente</label>
+                                                        }
+                                                        else
+                                                        {
+                                                            <label>@Html.DisplayFor(modelItem => item.FECHACARGA) </label>
+                                                        }
+                                                    </td>
+                                                    <td class="mobile" style="text-align: center;">
+                                                        @if (item.XML_ID == FGA.Utility.Utilitarios.archivoAceptado && item.CANTIDAD == 0)
+                                                        {
+                                                            <label> No Aplica</label>
+                                                        }
+                                                        else
+                                                        {
+                                                            <label>@Html.DisplayFor(modelItem => item.CANTIDAD) </label>
+                                                        }
+                                                    </td>
+                                                    @if (item.XML_ID != FGA.Utility.Utilitarios.archivoPendiente && item.XML_ID != FGA.Utility.Utilitarios.archivoCargado)
+                                                    {
+                                                        if (Session["IsFGA"].ToString() == "1" && item.XML_ID == FGA.Utility.Utilitarios.archivoAceptado)
+                                                        {
+                                                            <td>
+                                                                @Html.ActionLink("Borrar", "Eliminar", new { id = item.ID_ENCABEZADO }, new { @class = "btn btn-danger btn-xs" })
+                                                            </td>
+                                                        }
+                                                        if (Session["IsFGA"].ToString() == "1" && item.XML_ID != FGA.Utility.Utilitarios.archivoAceptado)
+                                                        {
+                                                            <td>
+                                                                @Html.ActionLink("Aceptar", "AceptarArchivo", new { id = item.ID_ENCABEZADO }, new { @class = "btn btn-success btn-xs" })
+                                                            </td>
+                                                        }
+                                                        if (item.XML_ID == FGA.Utility.Utilitarios.archivoErrores)
+                                                        {
+                                                            <td>
+                                                                @Html.ActionLink("Errores", "Details", new { id = item.ID_ENCABEZADO }, new { @class = "btn btn-warning btn-xs" })
+                                                            </td>
+                                                        }
+                                                    }
+                                                </tr>
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

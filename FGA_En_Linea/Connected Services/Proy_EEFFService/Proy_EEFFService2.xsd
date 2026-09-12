@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/FGA.Models" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/FGA.Models" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:complexType name="Proy_EEFF">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="CrecimientoCapital" type="xs:decimal" />
+      <xs:element minOccurs="0" name="CrecimientoCaptaciones" type="xs:decimal" />
+      <xs:element minOccurs="0" name="CrecimientoCartera" type="xs:decimal" />
+      <xs:element minOccurs="0" name="GastoAdmin" type="xs:decimal" />
+      <xs:element minOccurs="0" name="GastoEstimac" type="xs:decimal" />
+      <xs:element minOccurs="0" name="Id" type="xs:int" />
+      <xs:element minOccurs="0" name="IdEntidad" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="PeriodoCorte" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="RecuperacionIncobrable" type="xs:decimal" />
+      <xs:element minOccurs="0" name="ReservasVoluntarias" type="xs:decimal" />
+      <xs:element minOccurs="0" name="TasaCaptaciones" type="xs:decimal" />
+      <xs:element minOccurs="0" name="TasaCarteraVencida" type="xs:decimal" />
+      <xs:element minOccurs="0" name="TasaCarteraVigente" type="xs:decimal" />
+      <xs:element minOccurs="0" name="TasaInversiones" type="xs:decimal" />
+      <xs:element minOccurs="0" name="TasaNuevaColocacion" type="xs:decimal" />
+      <xs:element minOccurs="0" name="TasaObligaciones" type="xs:decimal" />
+      <xs:element minOccurs="0" name="TipoCrecimiento" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="TipoPlazo" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="TipoTasa" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Proy_EEFF" nillable="true" type="tns:Proy_EEFF" />
+  <xs:complexType name="ArrayOfProy_EEFF">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Proy_EEFF" nillable="true" type="tns:Proy_EEFF" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfProy_EEFF" nillable="true" type="tns:ArrayOfProy_EEFF" />
+</xs:schema>

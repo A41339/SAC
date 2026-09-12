@@ -1,0 +1,133 @@
+﻿<div class="col-md-9">
+    <div class="box box-info">
+        <div class="box-body">
+            <div class="row">
+                <div class="col-xs-12">
+                    <span id="found" class="label label-info"></span>
+                    <table id="tbProyeccion" class="table table-striped table-bordered" style="width:100%; height: 350px">
+                        <thead>
+                            <tr>
+                                <th colspan="2">
+                                    <img width="50" height="50" src="@Session["Logo"]" />
+                                    <label class="box-title">Proyección</label>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th>
+                                    Periodo
+                                </th>
+                                <th style="text-align:center">
+                                    @{ var estilo = (FGA.Utility.Utilitarios.enum_proyeccion)ViewBag.IdProyeccion == FGA.Utility.Utilitarios.enum_proyeccion.AR ? "style=color:orange" : "";   }
+                                    <a data-toggle="tooltip" @estilo data-placement="top" title="Variable rezagado" href="javascript:getGraph(@Convert.ToInt32(FGA.Utility.Utilitarios.enum_proyeccion.AR))">Variable rezagado<i style="margin:5px" class="btn btn-xs btn-info icon fa fa-line-chart"></i></a>
+                                </th>
+                                <th style="text-align:center">
+                                    @{ estilo = (FGA.Utility.Utilitarios.enum_proyeccion)ViewBag.IdProyeccion == FGA.Utility.Utilitarios.enum_proyeccion.Mensual ? "style=color:orange" : ""; }
+                                    <a data-toggle="tooltip" @estilo data-placement="top" title="Tasa crecimiento" href="javascript:getGraph(@Convert.ToInt32(FGA.Utility.Utilitarios.enum_proyeccion.Mensual))">Tasa crecimiento<i style="margin:5px" class="btn btn-xs btn-info icon fa fa-line-chart"></i></a>
+                                </th>
+                                <th style="text-align:center">
+                                    @{ estilo = (FGA.Utility.Utilitarios.enum_proyeccion)ViewBag.IdProyeccion == FGA.Utility.Utilitarios.enum_proyeccion.Trimestral ? "style=color:orange" : ""; }
+                                    <a data-toggle="tooltip" @estilo data-placement="top" title="Promedio 3 meses" href="javascript:getGraph(@Convert.ToInt32(FGA.Utility.Utilitarios.enum_proyeccion.Trimestral))">Promedio 3 meses<i style="margin:5px" class="btn btn-xs btn-info icon fa fa-line-chart"></i></a>
+                                </th>
+                                <th style="text-align:center">
+                                    @{ estilo = (FGA.Utility.Utilitarios.enum_proyeccion)ViewBag.IdProyeccion == FGA.Utility.Utilitarios.enum_proyeccion.Semestral ? "style=color:orange" : ""; }
+                                    <a data-toggle="tooltip" @estilo data-placement="top" title="Promedio 6 meses" href="javascript:getGraph(@Convert.ToInt32(FGA.Utility.Utilitarios.enum_proyeccion.Semestral))">Promedio 6 meses<i style="margin:5px" class="btn btn-xs btn-info icon fa fa-line-chart"></i></a>
+                                </th>
+                                <th style="text-align:center">
+                                    @{ estilo = (FGA.Utility.Utilitarios.enum_proyeccion)ViewBag.IdProyeccion == FGA.Utility.Utilitarios.enum_proyeccion.Anual ? "style=color:orange" : ""; }
+                                    <a data-toggle="tooltip" @estilo data-placement="top" title="Alterno" href="javascript:getGraph(@Convert.ToInt32(FGA.Utility.Utilitarios.enum_proyeccion.Anual))">Alterno<i style="margin:5px" class="btn btn-xs btn-info icon fa fa-line-chart"></i></a>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th>
+                                </th>
+                                <th style="text-align:center">
+                                    @if ((FGA.Utility.Utilitarios.enum_proyeccion)ViewBag.IdProyeccion == FGA.Utility.Utilitarios.enum_proyeccion.AR)
+                                    {
+                                        <a data-toggle="tooltip" data-placement="top" title="Variable rezagado" href="javascript:borrarProy()"><i style="margin:5px" class="btn btn-sm btn-box-tool icon fa fa-remove"></i></a>
+                                    }
+                                    else
+                                    {
+                                        <a data-toggle="tooltip" data-placement="top" title="Variable rezagado" href="javascript:guardar(@Convert.ToInt32(FGA.Utility.Utilitarios.enum_proyeccion.AR))"><i style="margin:5px" class="btn btn-sm btn-box-tool icon fa fa-save"></i></a>
+                                    }
+                                </th>
+                                <th style="text-align:center">
+                                    @if ((FGA.Utility.Utilitarios.enum_proyeccion)ViewBag.IdProyeccion == FGA.Utility.Utilitarios.enum_proyeccion.Mensual)
+                                    {
+                                        <a data-toggle="tooltip" data-placement="top" title="Tasa crecimiento" href="javascript:borrarProy()"><i style="margin:5px" class="btn btn-sm btn-box-tool icon fa fa-remove"></i></a>
+                                    }
+                                    else
+                                    {
+                                        <a data-toggle="tooltip" data-placement="top" title="Tasa crecimiento" href="javascript:guardar(@Convert.ToInt32(FGA.Utility.Utilitarios.enum_proyeccion.Mensual))"><i style="margin:5px" class="btn btn-sm btn-box-tool icon fa fa-save"></i></a>
+                                    }
+                                </th>
+                                <th style="text-align:center">
+                                    @if ((FGA.Utility.Utilitarios.enum_proyeccion)ViewBag.IdProyeccion == FGA.Utility.Utilitarios.enum_proyeccion.Trimestral)
+                                    {
+                                        <a data-toggle="tooltip" data-placement="top" title="Promedio 3 meses" href="javascript:borrarProy()"><i style="margin:5px" class="btn btn-sm btn-box-tool icon fa fa-remove"></i></a>
+                                    }
+                                    else
+                                    {
+                                        <a data-toggle="tooltip" data-placement="top" title="Promedio 3 meses" href="javascript:guardar(@Convert.ToInt32(FGA.Utility.Utilitarios.enum_proyeccion.Trimestral))"><i style="margin:5px" class="btn btn-sm btn-box-tool icon fa fa-save"></i></a>
+                                    }
+                                </th>
+                                <th style="text-align:center">
+                                    @if ((FGA.Utility.Utilitarios.enum_proyeccion)ViewBag.IdProyeccion == FGA.Utility.Utilitarios.enum_proyeccion.Semestral)
+                                    {
+                                        <a data-toggle="tooltip" data-placement="top" title="Promedio 6 meses" href="javascript:borrarProy()"><i style="margin:5px" class="btn btn-sm btn-box-tool icon fa fa-remove"></i></a>
+                                    }
+                                    else
+                                    {
+                                        <a data-toggle="tooltip" data-placement="top" title="Promedio 6 meses" href="javascript:guardar(@Convert.ToInt32(FGA.Utility.Utilitarios.enum_proyeccion.Semestral))"><i style="margin:5px" class="btn btn-sm btn-box-tool icon fa fa-save"></i></a>
+                                    }
+                                </th>
+                                <th style="text-align:center">
+                                    @if ((FGA.Utility.Utilitarios.enum_proyeccion)ViewBag.IdProyeccion == FGA.Utility.Utilitarios.enum_proyeccion.Anual)
+                                    {
+                                        <a data-toggle="tooltip" data-placement="top" title="Alterno" href="javascript:borrarProy()"><i style="margin:5px" class="btn btn-box-tool icon fa fa-remove"></i></a>
+                                    }
+                                    else
+                                    {
+                                        <a data-toggle="tooltip" data-placement="top" title="Alterno" href="javascript:guardar(@Convert.ToInt32(FGA.Utility.Utilitarios.enum_proyeccion.Anual))"><i style="margin:5px" class="btn btn-box-tool icon fa fa-save"></i></a>
+                                    }
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                    <div id="summary">
+                        <div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+     $(document).ready(function () {
+        oTableRole = $("#tbProyeccion").dataTable({
+        "bRetrieve": true,
+        "bProcessing": true,
+        "bPaginate": false,
+        "bFilter": false,
+        "bInfo": false,
+        "bSort" : false,
+        "dom": 'lBfrtip',
+        "sAjaxSource": "@Url.Content("~/IRL/GetProyeccion")",
+        "buttons": [
+                { extend: 'copyHtml5', exportOptions: { columns: ':visible' } }
+            ,{ extend: 'excelHtml5', exportOptions: { columns: ':visible' } }
+            ,{ extend: 'csvHtml5', exportOptions: { columns: ':visible' } }
+            ,{ extend: 'print', exportOptions: { columns: ':visible' } }
+            ,'colvis'
+            ],
+            columnDefs: [
+                    {
+                        className: 'text-right', targets: [1, 2, 3, 4, 5]
+                    },
+            ],
+            "aoColumns": [{}, {}, {}, {}, {}, {}]
+        });
+    });
+</script>

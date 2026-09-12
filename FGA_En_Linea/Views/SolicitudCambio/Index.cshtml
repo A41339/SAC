@@ -1,0 +1,249 @@
+@{
+    ViewBag.Title = "Solicitudes de cambio";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="content-header">
+    <h1>
+        Solicitudes de cambio
+    </h1>
+</section>
+
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box box-solid box-info">
+                <div class="box-body">
+                    <div class="margin">
+                        <div class="btn-group">
+                            <a href="~/SolicitudCambio/Create" class="btn btn-dropbox">Crear una Solicitud</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="solicitudes">
+                @Html.Partial("_VerSolicitudes")
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="deleteLabel">Motivo del rechazo</h4>
+            </div>
+            <div class="modal-body">
+                <p>Describa el motivo de la devolución</p>
+                @Html.TextArea("txt_motivoRechazo", new
+                {
+                                  cols = "50",
+                                   rows = "10",
+                                   @class = "form-control",
+                                   @style = "background-color:white; width:100%;",
+                                   @minlength = "5",
+                                   @required = "true"
+                })
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="deleteConfirm">Devolver</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="taskModal" tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="taskTitle"></h4>
+            </div>
+            <div id="tareas">
+                <div class="form-group" style="padding-top: 10px !important;">
+                    <div class="col-lg-1 col-md-1 col-sm-1 col-xs-12 form-validate">
+                        <p><label class="control-label">Inicio</label></p>
+                    </div>
+                    <div class="col-lg-5 col-md-6 col-sm-6 col-xs-12 form-validate">
+                        <input name="Periodo1" class="date" id="Periodo1" style="margin-right: 5px; width: calc(100% - 50px);" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToShortDateString()" />
+                    </div>
+                    <div class="col-lg-1 col-md-1 col-sm-1 col-xs-12 form-validate">
+                        <p><label class="control-label">Fin</label></p>
+                    </div>
+                    <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12 form-validate">
+                        <input name="Periodo2" class="date" id="Periodo2" style="margin-right: 5px; width: calc(100% - 50px);" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToShortDateString()" />
+                    </div>
+                </div>
+                <br /> <br />
+                <div class="form-group">
+                    <div class="col-lg-12  col-xs-12 form-validate">
+                        <input type="text" id="task_detail" class="form-control add_task_todo" placeholder="Cree una tarea nueva" name="task-insert">
+                    </div>
+                </div>
+                <br /> <br />
+                <div class="form-group">
+                    <div class="col-lg-12  col-xs-12 form-validate">
+                        <div class="new-task">
+                            <div class="to-do-list">
+                                <div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success btn_addTask" id="add-btn">Agregar</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Cancelar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    $('#task_detail').on("keypress", function(e) {
+        if (e.keyCode == 13) {
+            $("#add-btn").click();
+            return false;
+        }
+    });
+
+    $('#txt_motivoRechazo').on("keypress", function(e) {
+        if (e.keyCode == 13) {
+            $("#deleteConfirm").click();
+            return false;
+        }
+    });
+
+    $(document).on('click', '.btn_aceptar', function () {
+
+        var $item = $(this).attr("data-id");
+        $.ajax({
+            async: false,
+            type: "GET",
+            dataType: "json",
+            contentType: "application/json",
+            url: '@Url.Action("Aprobar", "SolicitudCambio")',
+            data: {
+                'id': $item
+            }
+        });
+        refreshSol();
+    });
+
+     $(document).on('click', '#add-btn', function () {
+
+         var motivo = $('#task_detail').val();
+         var fechaIni = $('#Periodo1').val();
+         var fechaFin = $('#Periodo2').val();
+
+        $.ajax({
+            async: false,
+            type: "GET",
+            dataType: "json",
+            contentType: "application/json",
+            url: '@Url.Action("AddTask", "SolicitudCambio")',
+            data: {
+                'idSolicitud': currentSolicitud,
+                'detalle': motivo,
+                'fechaIni': fechaIni,
+                'fechaFin': fechaFin
+            }
+        });
+
+        refreshTask();
+    });
+
+    function refreshSol() {
+        var table = $('#tbSol').DataTable();
+        table.ajax.reload();
+    }
+
+    function refreshTask() {
+         $.ajax({
+            url: '@Url.Action("VerTareas", "SolicitudCambio")',
+            type: 'POST',
+            cache: false,
+            async: true,
+            data: {
+                'idSolicitud': currentSolicitud
+            },
+            success: function (result) {
+                $('#tareas').html(result);
+            }
+        });
+    }
+
+    var currentSolicitud;
+    function updateNotification(id, action) {
+        currentSolicitud = id;
+    }
+
+    function confirmDelete(id) {
+        currentSolicitud = id;
+        $('#deleteConfirmModal').modal('show');
+    }
+
+    function addTask(id, title) {
+        currentSolicitud = id;
+        refreshTask();
+        $('#taskTitle').text(title);
+        $('#taskModal').modal('show');
+    }
+
+    $(function() {
+        $("#deleteConfirmModal").on('click', "#deleteConfirm", function () {
+            var motivo = $('#txt_motivoRechazo').val();
+            $.ajax({
+                async: false,
+                type: "GET",
+                dataType: "json",
+                contentType: "application/json",
+                url: '@Url.Action("Rechazar", "SolicitudCambio")',
+                data: {
+                    'id': currentSolicitud,
+                    'motivo': motivo,
+                }
+             });
+
+             $('#deleteConfirmModal').modal('hide');
+             refreshSol();
+        });
+      });
+
+    function deleteTask(id) {
+        $.ajax({
+            async: false,
+            type: "GET",
+            dataType: "json",
+            contentType: "application/json",
+            url: '@Url.Action("DeleteTask", "SolicitudCambio")',
+            data: {
+                'idTarea': id
+            }
+        });
+        refreshTask();
+    }
+
+    oTableCompany = $("#tbSol").dataTable({
+        "bRetrieve": true,
+        "bProcessing": true,
+        "sort":false,
+        "dom": 'lBfrtip',
+        "sAjaxSource": "@Url.Content("~/SolicitudCambio/GetGrid")",
+        "buttons": [
+                { extend: 'copyHtml5', exportOptions: { columns: ':visible' } }
+            ,{ extend: 'excelHtml5', exportOptions: { columns: ':visible' } }
+            ,{ extend: 'pdfHtml5', exportOptions: { columns: ':visible' } }
+            ,{ extend: 'print', exportOptions: { columns: ':visible' } }
+            ,'colvis'
+        ], 
+        columnDefs: [{  className: 'text-center', targets: [0, 1,2,3,4,5,6, 7] }],
+        "pageLength": 10,
+        "lengthMenu": [[5,10, 25, 50, -1], [5,10, 25, 50, "Todos"]],
+        "aoColumns": [{ }, {}, {}, {}, {}, {}, {}, {}]
+    });
+
+</script>

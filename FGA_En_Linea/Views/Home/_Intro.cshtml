@@ -1,0 +1,1205 @@
+﻿@model  FGA.Models.Dashboard
+
+<script src="https://code.highcharts.com/highcharts.js"></script>
+
+<style>
+    image.highcharts-point[width="8"] {
+        display: none;
+    }
+
+    .grid-container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-auto-rows: 230px; /* altura de cada fila */
+        gap: 1rem; /* espacio entre celdas */
+        padding: 1rem;
+    }
+
+    /* El cuarto div ocupa dos filas */
+    .span-3rows {
+        grid-row: span 3;
+        height: 100%; /* ocupar toda la altura disponible */
+    }
+</style>
+
+<div class="row">
+    <div id="dashboard" style="visibility:hidden; position: fixed">
+        <div style="border: 1px solid yellow; background-color: white; margin: 5px; text-align: center;">
+            <label class="h3" id="lbl_encabezado">
+            </label>
+        </div>
+        <br />
+        <div class="col-sm-12">
+            <section class="content">
+                <table>
+                    <tr>
+                        <td>
+                            <div class="box">
+                                <div class="box-header">
+                                    <label>Compromiso patrimonial</label>
+                                </div>
+                                <div class="">
+                                    <div class="row">
+                                        <div class="text-center">
+                                            <div>
+                                                <div style="height: 130px; width: 240px;">
+                                                    <div id="pChart_compromiso"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td style="width:30px"></td>
+                        <td>
+                            <div class="box">
+
+                                <div class="box-header">
+                                    <label>Morosidad mayor a 90 días</label>
+                                </div>
+                                <div class="">
+                                    <div class="row flip-boxes">
+                                        <div class="text-center">
+                                            <div>
+                                                <div style="height: 130px; width: 240px;">
+                                                    <div id="pChart_morosidad"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td style="width:30px"></td>
+                        <td>
+                            <div class="box">
+                                <div class="box-header">
+                                    <label>Activo produc / pasivo costo</label>
+                                </div>
+                                <div class="">
+                                    <div class="row flip-boxes">
+                                        <div class="text-center">
+                                            <div>
+                                                <div style="height: 130px; width: 240px;">
+                                                    <div id="pChart_activo"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td style="width:30px"></td>
+                        <td>
+                            <br />
+                            <div class="box">
+                                <div class="box-header">
+                                    <label>Utilidad o pérdida acumulada trimestral</label>
+                                </div>
+                                <div class="">
+                                    <div class="row flip-boxes">
+                                        <div class="text-center">
+                                            <div>
+                                                <div style="height: 130px; width: 240px;">
+                                                    <div id="pChart_perdidaAcumulada"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td rowspan="2">
+                            <div class="box">
+                                <div class="">
+                                    <div class="row flip-boxes">
+                                        <div class="text-center">
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="box">
+                                <div class="box-header">
+                                    <label>Gasto admin / utilidad </label>
+                                </div>
+                                <div class="">
+                                    <div class="row flip-boxes">
+                                        <div class="text-center">
+                                            <div>
+                                                <div style="height: 130px; width: 240px;">
+                                                    <div id="pChart_costo"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td style="width:30px"></td>
+                        <td>
+                            <br />
+                            <div class="box">
+                                <div class="box-header">
+                                    <label>ICL</label>
+                                </div>
+                                <div class="">
+                                    <div class="row flip-boxes">
+                                        <div class="text-center">
+                                            <div>
+                                                <div style="height: 130px; width: 240px;">
+                                                    <div id="pChart_ICL"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td style="width:30px"></td>
+
+
+                    </tr>
+                </table>
+            </section>
+        </div>
+    </div>
+</div>
+
+<div id="detail" class="row">
+    <div class="col-sm-12">
+        <div class="grid-container">
+            <div class="box span-3rows">
+                <div class="box">
+                    <div class="box-header">
+                        <h4 class="box-title">Nivel y Calidad del Capital</h4>
+                        <div class="text-right">
+                            <a class="text-right" data-toggle="tooltip" data-placement="top" title="Nivel y Calidad del Capital" href="javascript:mSuficiencia()"><i class="btn btn-xs btn-info icon fa fa-line-chart"></i></a>
+                          
+                        </div>
+                    </div>
+                    <div class="">
+                        <div class="row flip-boxes">
+                            <div class="text-center">
+                                <div class="flip-box">
+                                    <div class="front">
+                                        <div class="text-center">
+                                            <div>
+                                                <div class="">
+                                                    <div id="wrapper" style="display: flex; justify-content: space-around; flex-wrap: wrap;"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="back">
+                                        <br />
+                                        <h4 style="color: #2c3e50;
+                                              font-size: 16px;
+                                              font-weight: bold;
+                                              font-family: Arial, sans-serif;
+                                              text-shadow: 1px 1px #ccc;">
+                                            Suficiencia
+                                        </h4>
+                                        <div class='my-legend'>
+                                            <div style="display: flex; justify-content: center;">
+                                                <div class='legend-scale'>
+                                                    <ul class='legend-labels'>
+                                                        <li><span style='background: #0f9747;'></span> @((!Model.prudencial ? "> 14" : "> 16"))</li>
+                                                        <li><span style='background: #bdecb6;'></span> @((!Model.prudencial ? "14 > x >= 10" : "16 > x >= 12"))</li>
+                                                        <li><span style='background: #fdae19;'></span> @((!Model.prudencial ? "10 > x >= 8" : "12 > x >= 9"))</li>
+                                                        <li><span style='background: #ee1f25;'></span> @((!Model.prudencial ? "< 8" : "< 9"))</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- CN1 -->
+                                        <br /><br />
+                                        <h4 style="color: #2c3e50;
+                                          font-size: 16px;
+                                          font-weight: bold;
+                                          font-family: Arial, sans-serif;
+                                          text-shadow: 1px 1px #ccc;">
+                                            CN1
+                                        </h4>
+                                        <div class='my-legend'>
+                                            <div style="display: flex; justify-content: center;">
+                                                <div class='legend-scale'>
+                                                    <ul class='legend-labels'>
+                                                        <li><span style='background: #0f9747;'></span> @((!Model.prudencial ? "> 10" : "> 12.5"))</li>
+                                                        <li><span style='background: #bdecb6;'></span> @((!Model.prudencial ? "10 > x >= 8" : "12.5 > x >= 10"))</li>
+                                                        <li><span style='background: #fdae19;'></span> @((!Model.prudencial ? "7 > x >= 6" : "10 > x >= 7"))</li>
+                                                        <li><span style='background: #ee1f25;'></span> @((!Model.prudencial ? "< 6" : "< 7"))</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- CNN1 -->
+                                        <br /><br />
+                                        <h4 style="color: #2c3e50;
+                                          font-size: 16px;
+                                          font-weight: bold;
+                                          font-family: Arial, sans-serif;
+                                          text-shadow: 1px 1px #ccc;">
+                                            CNN1
+                                        </h4>
+                                        <div class='my-legend'>
+                                            <div style="display: flex; justify-content: center;">
+                                                <div class='legend-scale'>
+                                                    <ul class='legend-labels'>
+                                                        <li><span style='background: #0f9747;'></span> @((!Model.prudencial ? "> 7.5" : "> 11"))</li>
+                                                        <li><span style='background: #bdecb6;'></span> @((!Model.prudencial ? "7.5 > x >= 6.5" : "11 > x >= 8.5"))</li>
+                                                        <li><span style='background: #fdae19;'></span> @((!Model.prudencial ? "6.5 > x >= 4.5" : "8.5 > x >= 6.5"))</li>                                                        
+                                                        <li><span style='background: #ee1f25;'></span> @((!Model.prudencial ? "< 4.5" : "< 6.5"))</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- APALANCAMIENTO -->
+                                        <br /><br />
+                                        <h4 style="color: #2c3e50;
+                                          font-size: 16px;
+                                          font-weight: bold;
+                                          font-family: Arial, sans-serif;
+                                          text-shadow: 1px 1px #ccc;">
+                                            Apalancamiento
+                                        </h4>
+                                        <div class='my-legend'>
+                                            <div style="display: flex; justify-content: center;">
+                                                <div class='legend-scale'>
+                                                    <ul class='legend-labels'>
+                                                        <li><span style='background: #0f9747;'></span> @((!Model.prudencial ? "> 6" : "> 8"))</li>
+                                                        <li><span style='background: #bdecb6;'></span> @((!Model.prudencial ? "6 > x >= 5" : "8 > x >= 7"))</li>
+                                                        <li><span style='background: #fdae19;'></span> @((!Model.prudencial ? "5 > x >= 3" : "7 > x >= 4"))</li>
+                                                        <li><span style='background: #ee1f25;'></span> @((!Model.prudencial ? "< 3" : "< 4"))</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="box">
+                <div class="box-header">
+                    <h4 class="box-title">Compromiso patrimonial</h4>
+                    <div class="text-right">
+                        <a class="text-right" data-toggle="tooltip" data-placement="top" title="Comportamiento histórico" href="javascript:getGraph('C3')"><i class="btn btn-xs btn-info icon fa fa-line-chart"></i></a>
+                        <a class="text-right" data-toggle="tooltip" data-placement="top" id="btn_compromiso" title="Imprimir"><i class="btn btn-xs btn-danger icon fa fa-save"></i></a>
+                        <a class="text-right" data-toggle="tooltip" data-placement="top" title="Definición"
+                           href="javascript:help('Compromiso patrimonial', 'Determina qué porcentaje del patrimonio no redimible cubre las pérdidas no protegidas por las estimaciones contables. La determinación de las pérdidas estimadas se basa en la calidad y estructura de los activos de los intermediarios financieros')"><i class="btn btn-xs btn-default icon fa fa-question"></i></a>
+                    </div>
+                </div>
+                <div class="">
+                    <div class="row flip-boxes">
+                        <div class="flip-box">
+                            <div class="front">
+                                <div class="text-center">
+                                    <div>
+                                        <div class="">
+                                            <div id="chart_compromiso"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="back">
+                                <br />
+                                <div class='my-legend'>
+                                    <br />
+                                    <div style="display: flex; justify-content: center;">
+                                        <div class='legend-scale'>
+                                            <ul class='legend-labels'>
+                                                <li><span style='background:#ee1f25;'></span> > 20</li>
+                                                <li><span style='background:#fdae19;'></span>20 - 10</li>
+                                                <li><span style='background:#bdecb6;'></span>10 - 0</li>
+                                                <li><span style='background:#0f9747;'></span>≤ 0</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="box">
+                <div class="box-header">
+                    <h4 class="box-title">Morosidad mayor a 90 días</h4>
+                    <div class="text-right">
+                        <a class="text-right" data-toggle="tooltip" data-placement="top" title="Comportamiento histórico" href="javascript:getGraph('C22')"><i class="btn btn-xs btn-info icon fa fa-line-chart"></i></a>
+                        <a class="text-right" data-toggle="tooltip" data-placement="top" id="btn_morosidad" title="Imprimir"><i class="btn btn-xs btn-danger icon fa fa-save"></i></a>
+                        <a class="text-right" data-toggle="tooltip" data-placement="top" title="Definición"
+                           href="javascript:help('Morosidad mayor a 90 días', 'Mide la proporción de la cartera directa que se encuentra en mora mayor a 90 días y la cartera en cobro judicial.  Con base al Reglamento Sugef 24-00, las cooperativas están catalogadas como Paritario 1. <br/><br/> <b>Paritario 1:</b> Estará caracterizado por los intermediarios predominantemente orientados hacia modelos de negocio de crédito minorista en las actividades de consumo, tarjetas de crédito. Vehículos, vivienda residencial y Sistema de Banca de Desarrollo. Se tendrá como un modelo de negocio predominante enfocado hacia banca minorista aquel cuya proporción para este tipo de cartera represente más del 60% del portafolio crediticio total.')"><i class="btn btn-xs btn-default icon fa fa-question"></i></a>
+                    </div>
+                </div>
+                <div class="">
+                    <div class="row flip-boxes">
+                        <div class="flip-box">
+                            <div class="front">
+                                <div class="text-center">
+                                    <div>
+                                        <div class="">
+                                            <div id="chart_morosidad"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="back">
+                                <div class='my-legend'>
+                                    <br />
+                                    <div style="display: flex; justify-content: center;">
+                                        <div class='legend-scale'>
+                                            <ul class='legend-labels'>
+                                                <li><span style='background:#ee1f25;'></span>> 12</li>
+                                                <li><span style='background:#fdae19;'></span>12 - 7</li>
+                                                <li><span style='background:#bdecb6;'></span>7 - 5</li>
+                                                <li><span style='background:#0f9747;'></span>≤ 5</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="box">
+                <div class="box-header">
+                    <h4 class="box-title">Activo produc / pasivo costo</h4>
+                    <div class="text-right">
+                        <a class="text-right" data-toggle="tooltip" data-placement="top" title="Comportamiento histórico" href="javascript:getGraph('C60')"><i class="btn btn-xs btn-info icon fa fa-line-chart"></i></a>
+                        <a class="text-right" data-toggle="tooltip" data-placement="top" id="btn_activo" title="Imprimir"><i class="btn btn-xs btn-danger icon fa fa-save"></i></a>
+                        <a class="text-right" data-toggle="tooltip" data-placement="top" title="Definición"
+                           href="javascript:help('Activo productivo / pasivo costo', 'Mide la eficiencia en la colocación de recursos captados.')"><i class="btn btn-xs btn-default icon fa fa-question"></i></a>
+                    </div>
+                </div>
+                <div class="">
+                    <div class="row flip-boxes">
+                        <div class="flip-box">
+                            <div class="front">
+                                <div class="text-center">
+                                    <div>
+                                        <div class="">
+                                            <div id="chart_activo"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="back">
+                                <div class='my-legend'>
+                                    <br />
+                                    <div style="display: flex; justify-content: center;">
+                                        <div class='legend-scale'>
+                                            <ul class='legend-labels'>
+                                                <li><span style='background:#ee1f25;'></span>˂ .75</li>
+                                                <li><span style='background:#fdae19;'></span>.75 - .85</li>
+                                                <li><span style='background:#bdecb6;'></span>.85 - .95</li>
+                                                <li><span style='background:#0f9747;'></span>≥ .95</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="box">
+                <div class="box-header">
+                    <h4 class="box-title">Utilidad o pérdida acumulada trimestral</h4>
+                    <div class="text-right">
+                        <a class="text-right" data-toggle="tooltip" data-placement="top" title="Comportamiento histórico" href="javascript:getGraph('C127')"><i class="btn btn-xs btn-info icon fa fa-line-chart"></i></a>
+                        <a class="text-right" data-toggle="tooltip" data-placement="top" id="btn_perdidaAcumulada" title="Imprimir"><i class="btn btn-xs btn-danger icon fa fa-save"></i></a>
+                        <a class="text-right" data-toggle="tooltip" data-placement="top" title="Definición"
+                           href="javascript:help('Utilidad o pérdida acumulada trimestral', 'Determina cuánta utilidad (o pérdida) acumulada trimestral se genera del aporte económico que realizaron los socios')"><i class="btn btn-xs btn-default icon fa fa-question"></i></a>
+                    </div>
+                </div>
+                <div class="">
+                    <div class="row flip-boxes">
+                        <div class="flip-box">
+                            <div class="front">
+                                <div class="text-center">
+                                    <div>
+                                        <div class="">
+                                            <div id="chart_perdidaAcumulada"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="back">
+                                <div class='my-legend'>
+                                    <br />
+                                    <div style="display: flex; justify-content: center;">
+                                        <div class='legend-scale'>
+                                            <ul class='legend-labels'>
+                                                <li><span style='background:#ee1f25;'></span>≥ -10 </li>
+                                                <li><span style='background:#fdae19;'></span>-10 - 0 </li>
+                                                <li><span style='background:#bdecb6;'></span>0 - 1</li>
+                                                <li><span style='background:#0f9747;'></span>≥ 1</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="box">
+                <div class="box-header">
+                    <h4 class="box-title">Gasto admin / utilidad </h4>
+                    <div class="text-right">
+                        <a class="text-right" data-toggle="tooltip" data-placement="top" title="Comportamiento histórico" href="javascript:getGraph('C118')"><i class="btn btn-xs btn-info icon fa fa-line-chart"></i></a>
+                        <a class="text-right" data-toggle="tooltip" data-placement="top" id="btn_gasto" title="Imprimir"><i class="btn btn-xs btn-danger icon fa fa-save"></i></a>
+                        <a class="text-right" data-toggle="tooltip" data-placement="top" title="Definición"
+                           href="javascript:help('Gasto administrativo / Utilidad', 'Determina la proporción de gastos administrativos que se requieren en la generación de las utilidades operaciones brutas de la entidad.')"><i class="btn btn-xs btn-default icon fa fa-question"></i></a>
+                    </div>
+                </div>
+                <div class="">
+                    <div class="row flip-boxes">
+                        <div class="flip-box">
+                            <div class="front">
+                                <div class="text-center">
+                                    <div>
+                                        <div class="">
+                                            <div id="chart_costo"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="back">
+                                <div class='my-legend'>
+                                    <br />
+                                    <div style="display: flex; justify-content: center;">
+                                        <div class='legend-scale'>
+                                            <ul class='legend-labels'>
+                                                <li><span style='background:#ee1f25;'></span>> 90</li>
+                                                <li><span style='background:#fdae19;'></span>80 - 90</li>
+                                                <li><span style='background:#bdecb6;'></span>75 - 80</li>
+                                                <li><span style='background:#0f9747;'></span>˂ 75</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="box">
+                <div class="box-header">
+                    <h4 class="box-title">ICL Colones</h4>
+                    <div class="text-right">
+                        <a class="text-right" data-toggle="tooltip" data-placement="top" title="Comportamiento histórico" href="javascript:getGraph('X100000')"><i class="btn btn-xs btn-info icon fa fa-line-chart"></i></a>
+                        <a class="text-right" data-toggle="tooltip" data-placement="top" id="btn_ICL" title="Imprimir"><i class="btn btn-xs btn-danger icon fa fa-save"></i></a>
+                        <a class="text-right" data-toggle="tooltip" data-placement="top" title="Definición"
+                           href="javascript:help('ICL', 'El indicador de Cobertura de Liquidez (ICL) de la SUGEF se refiere a un cálculo que las entidades financieras deben realizar para demostrar que tienen suficientes activos líquidos de alta calidad para cubrir sus necesidades de efectivo durante un período de estrés de 30 días')"><i class="btn btn-xs btn-default icon fa fa-question"></i></a>
+                    </div>
+                </div>
+                <div class="">
+                    <div class="row flip-boxes">
+                        <div class="flip-box">
+                            <div class="front">
+                                <div class="text-center">
+                                    <div>
+                                        <div class="">
+                                            <div id="chart_ICL"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="back">
+                                <div class='my-legend'>
+                                    <br />
+                                    <div style="display: flex; justify-content: center;">
+                                        <div class='legend-scale'>
+                                            <ul class='legend-labels'>
+                                                <li><span style='background:#ee1f25;'></span>< 0.9</li>
+                                                <li><span style='background:#fdae19;'></span>0.9 - 1</li>
+                                                <li><span style='background:#bdecb6;'></span>1 - 1.5</li>
+                                                <li><span style='background:#0f9747;'></span>≥ 1.5</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-12">
+        <section class="content">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="box">
+                        <div class="box-header">
+                            <h4 class="box-title">Diferencial de tasas (porcentaje)</h4>
+                            <a class="text-right" data-toggle="tooltip" data-placement="top" title="Diferencial de tasas" href="javascript:mDiferencialTasas()"><i class="btn btn-xs btn-info icon fa fa-line-chart"></i></a>
+                        </div>
+                        <div class="box">
+                            @(Model.DiferencialTasas)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="box">
+                        <div class="box-header">
+                            <h4 class="box-title">Cobertura de márgenes</h4>
+                            <a class="text-right" data-toggle="tooltip" data-placement="top" title="Cobertura de margenes" href="javascript:mRentabilidad()"><i class="btn btn-xs btn-info icon fa fa-line-chart"></i></a>
+                        </div>
+                        <div class="box">
+                            @(Model.IndicadoresRentabilidad)
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="box">
+                        <div class="box-header">
+                            <h4 class="box-title">Variación interanual cartera</h4>
+                            <a class="text-right" data-toggle="tooltip" data-placement="top" title="Variación Interanual Cartera" href="javascript:mVariacionCartera()"><i class="btn btn-xs btn-info icon fa fa-line-chart"></i></a>
+                        </div>
+                        <div class="box">
+                            @(Model.VariacionCartera)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="box">
+                        <div class="box-header">
+                            <h4 class="box-title">Mora de la cartera</h4>
+                            <a class="text-right" data-toggle="tooltip" data-placement="top" title="Mora de la Cartera" href="javascript:mMora()"><i class="btn btn-xs btn-info icon fa fa-line-chart"></i></a>
+                        </div>
+                        <div class="box content">
+                            @(Model.Mora)
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="box">
+                        <div class="box-header">
+                            <h4 class="box-title">Variación Capital Social</h4>
+                            <a class="text-right" data-toggle="tooltip" data-placement="top" title="Capital Social" href="javascript:mCapitalSocial()"><i class="btn btn-xs btn-info icon fa fa-line-chart"></i></a>
+                        </div>
+                        <div class="box">
+                            @(Model.CapitalSocial)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="box">
+                        <div class="box-header">
+                            <h4 class="box-title">Brecha de líquidez</h4>
+                            <a class="text-right" data-toggle="tooltip" data-placement="top" title="Brecha de líquidez" href="javascript:mBrechaLiquidez()"><i class="btn btn-xs btn-info icon fa fa-line-chart"></i></a>
+                        </div>
+                        <div class="box">
+                            @(Model.BrechaLiquidez)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+<div class="modal fade" id="defModal" tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <div class="box-header with-border">
+                    <img width="50" height="50" src="@Session["Logo"]" />
+                    <h3 id="titulo" style="padding-bottom: 10px;" class="box-title"></h3>
+                </div>
+            </div>
+            <div class="modal-body">
+                <p class="text-justify" style="font-size: 14px" id="definicion">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mDiferencialTasas" tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="box-header with-border">
+                    <img width="50" height="50" src="@Session["Logo"]" />
+                    <h3 id="titulo" style="padding-bottom: 10px;" class="box-title">Diferencial de Tasas</h3>
+                </div>
+            </div>
+            <div class="modal-body">
+                @(Model.pDiferencialTasas)
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mCapitalSocial" tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="box-header with-border">
+                    <img width="50" height="50" src="@Session["Logo"]" />
+                    <h3 id="titulo" style="padding-bottom: 10px;" class="box-title">Variación del Capital Social</h3>
+                </div>
+            </div>
+            <div class="modal-body">
+                @(Model.pCapitalSocial)
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mVariacionCartera" tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="box-header with-border">
+                    <img width="50" height="50" src="@Session["Logo"]" />
+                    <h3 id="titulo" style="padding-bottom: 10px;" class="box-title">Variación Interanual de la Cartera</h3>
+                </div>
+            </div>
+            <div class="modal-body">
+                @(Model.pVariacionCartera)
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mMora" tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="box-header with-border">
+                    <img width="50" height="50" src="@Session["Logo"]" />
+                    <h3 id="titulo" style="padding-bottom: 10px;" class="box-title">Mora de la Cartera</h3>
+                </div>
+            </div>
+            <div class="modal-body">
+                @(Model.pMora)
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mBrechaLiquidez" tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="box-header with-border">
+                    <img width="50" height="50" src="@Session["Logo"]" />
+                    <h3 id="titulo" style="padding-bottom: 10px;" class="box-title">Brecha de Liquidez</h3>
+                </div>
+            </div>
+            <div class="modal-body">
+                @(Model.pBrechaLiquidez)
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mRentabilidad" tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="box-header with-border">
+                    <img width="50" height="50" src="@Session["Logo"]" />
+                    <h3 id="titulo" style="padding-bottom: 10px;" class="box-title">Cobertura de margenes</h3>
+                </div>
+            </div>
+            <div class="modal-body">
+                @(Model.pIndicadoresRentabilidad)
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mSuficiencia" tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="box-header with-border">
+                    <img width="50" height="50" src="@Session["Logo"]" />
+                    <h3 id="titulo" style="padding-bottom: 10px;" class="box-title">Nivel y Calidad del Capital</h3>
+                </div>
+            </div>
+            <div class="modal-body">
+                @(Model.pSuficiencia)
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function mCapitalSocial() {
+        $('#mCapitalSocial').modal('show');
+    }
+    function mVariacionCartera() {
+        $('#mVariacionCartera').modal('show');
+    }
+    function mDiferencialTasas() {
+        $('#mDiferencialTasas').modal('show');
+    }
+    function mMora() {
+        $('#mMora').modal('show');
+    }
+    function mBrechaLiquidez() {
+        $('#mBrechaLiquidez').modal('show');
+    }
+    function mRentabilidad() {
+        $('#mRentabilidad').modal('show');
+    }
+    function mSuficiencia() {
+        $('#mSuficiencia').modal('show');
+    }
+    $(document).ready(function () {
+
+        am4core.useTheme(am4themes_animated);
+        var chartMin = 0.5
+        var chartMax = 4.5;
+        var data = {
+            scoreMorosidad: parseFloat(@Model.Morosidad[0].ToString("N2").Replace(",",".")).toString(),
+            scoreCompromiso: parseFloat(@Model.Compromiso[0].ToString("N2").Replace(",",".")).toString(),
+            scoreActivo: parseFloat(@Model.Activo[0].ToString("N2").Replace(",",".")).toString(),
+            scoreCosto: parseFloat(@Model.CostoAdmin[0].ToString("N2").Replace(",",".")).toString(),
+            scoreICL: parseFloat(@Model.ICL[0].ToString("N2").Replace(",",".")).toString(),
+            scorePerdidaAcumulada: parseFloat(@Model.PerdidaAcumulada[0].ToString("N2").Replace(",",".")).toString(),
+            scorePerdidaEsperada: parseFloat(@Model.PerdidaEsperada[0].ToString("N2").Replace(",",".")).toString(),
+            scoreRiesgoCambiario: parseFloat(@Model.RiesgoCambiario[0].ToString("N2").Replace(",",".")).toString(),
+            gradingData: [
+                {
+                    title: "Normal",
+                    color: "#0f9747",
+                    lowScore: 0.5,
+                    highScore: 1.5
+                },
+                {
+                    title: "Nivel 1",
+                    color: "#bdecb6",
+                    lowScore: 1.501,
+                    highScore: 2.5
+                },
+                {
+                    title: "Nivel 2",
+                    color: "#F9C74F",
+                    lowScore: 2.501,
+                    highScore: 3.5
+                },
+                {
+                    title: "Nivel 3",
+                    color: "#EE1F25",
+                    lowScore: 3.501,
+                    highScore: 4.5
+                }
+            ]
+        };
+
+        function lookUpGrade(lookupScore, grades) {
+            for (var i = 0; i < grades.length; i++) {
+                if (grades[i].lowScore < lookupScore && grades[i].highScore >= lookupScore)
+                    return grades[i];
+            }
+            return 1;
+        }
+
+        function createChartPrint(id, score, texto, veces, btn, name) {
+            var chart = am4core.create(id, am4charts.GaugeChart, am4charts.XYChart3D);
+            chart.hiddenState.properties.opacity = 0;
+            chart.fontSize = 12;
+            chart.innerRadius = am4core.percent(90);
+            chart.resizable = true;
+
+            var axis = createAxis(chart);
+            var grade = lookUpGrade(score, data.gradingData);
+            var label = createLabel(chart, grade, veces);
+            createHand(chart, axis, score, label, texto);
+
+            $(btn).on('click', function (e) {
+                chart.exporting.filePrefix = name;
+                chart.exporting.export("jpg");
+            });
+
+            return chart;
+        }
+
+        function createAxis(chart) {
+            var axis = chart.xAxes.push(new am4charts.ValueAxis());
+            axis.min = chartMin;
+            axis.max = chartMax;
+            axis.strictMinMax = true;
+            axis.renderer.labels.template.disabled = true;
+            axis.renderer.ticks.template.disabled = true;
+            axis.renderer.grid.template.disabled = true;
+            axis.renderer.grid.template.opacity = 0.5;
+
+            for (let grading of data.gradingData) {
+                var range = axis.axisRanges.create();
+                range.axisFill.fill = am4core.color(grading.color);
+                range.axisFill.fillOpacity = 1;
+                range.axisFill.zIndex = -1;
+                range.value = grading.lowScore > chartMin ? grading.lowScore : chartMin;
+                range.endValue = grading.highScore < chartMax ? grading.highScore : chartMax;
+                range.grid.strokeOpacity = 0;
+                range.stroke = am4core.color(grading.color).lighten(-0.1);
+                range.label.inside = false;
+                range.label.text = grading.title.toUpperCase();
+                range.label.inside = false;
+                range.label.location = 0.5;
+                range.label.inside = false;
+                range.label.radius = am4core.percent(10);
+                range.label.paddingBottom = -5; // ~half font size
+                range.label.fontSize = "0.8em";
+            }
+            return axis;
+        }
+
+        function createLabel(chart, grade, veces) {
+            var label = chart.radarContainer.createChild(am4core.Label);
+            label.isMeasured = false;
+            label.fontSize = "20px";
+            label.x = am4core.percent(50);
+            label.paddingBottom = 15;
+            label.horizontalCenter = "middle";
+            label.verticalCenter = "bottom";
+            label.fill = am4core.color(grade.color);
+
+            if (veces) {
+                var label2 = chart.radarContainer.createChild(am4core.Label);
+                label2.isMeasured = false;
+                label2.fontSize = "15px";
+                label2.horizontalCenter = "middle";
+                label2.verticalCenter = "bottom";
+                label2.text = "veces";
+            }
+            return label;
+        }
+
+        function createChart(id, score, texto, veces, btn, name) {
+            var chart = am4core.create(id, am4charts.GaugeChart, am4charts.XYChart3D);
+            chart.hiddenState.properties.opacity = 0;
+            chart.fontSize = 12;
+            chart.innerRadius = am4core.percent(90);
+            chart.resizable = true;
+
+            var axis = createAxis(chart);
+            var grade = lookUpGrade(score, data.gradingData);
+            var label = createLabel(chart, grade, veces);
+            createHand(chart, axis, score, label, texto);
+
+            $(btn).on('click', function (e) {
+                chart.exporting.filePrefix = name;
+                chart.exporting.export("jpg");
+            });
+
+            return chart;
+        }
+
+        function createChartPrint(id, score, texto, veces, btn, name) {
+            var chart = am4core.create(id, am4charts.GaugeChart, am4charts.XYChart3D);
+            chart.hiddenState.properties.opacity = 0;
+            chart.fontSize = 9;
+            chart.innerRadius = am4core.percent(90);
+            chart.resizable = true;
+
+            var axis = createAxisPrint(chart);
+            var grade = lookUpGrade(score, data.gradingData);
+            var label = createLabelPrint(chart, grade, veces);
+            createHand(chart, axis, score, label, texto);
+
+            $(btn).on('click', function (e) {
+                chart.exporting.filePrefix = name;
+                chart.exporting.export("jpg");
+            });
+
+            return chart;
+        }
+
+        function createAxisPrint(chart) {
+            var axis = chart.xAxes.push(new am4charts.ValueAxis());
+            axis.min = chartMin;
+            axis.max = chartMax;
+            axis.strictMinMax = true;
+            axis.renderer.labels.template.disabled = true;
+            axis.renderer.ticks.template.disabled = true;
+            axis.renderer.grid.template.disabled = true;
+            axis.renderer.grid.template.opacity = 0.5;
+
+            for (let grading of data.gradingData) {
+                var range = axis.axisRanges.create();
+                range.axisFill.fill = am4core.color(grading.color);
+                range.axisFill.fillOpacity = 1;
+                range.axisFill.zIndex = -1;
+                range.value = grading.lowScore > chartMin ? grading.lowScore : chartMin;
+                range.endValue = grading.highScore < chartMax ? grading.highScore : chartMax;
+                range.grid.strokeOpacity = 0;
+                range.stroke = am4core.color(grading.color).lighten(-0.1);
+                range.label.inside = false;
+                range.label.text = grading.title.toUpperCase();
+                range.label.inside = false;
+                range.label.location = 0.5;
+                range.label.inside = false;
+                range.label.radius = am4core.percent(10);
+                range.label.paddingBottom = -5; // ~half font size
+                range.label.fontSize = "0.8em";
+            }
+            return axis;
+        }
+
+        function createLabelPrint(chart, grade, veces) {
+            var label = chart.radarContainer.createChild(am4core.Label);
+            label.isMeasured = false;
+            label.fontSize = "12px";
+            label.x = am4core.percent(50);
+            label.paddingBottom = 15;
+            label.horizontalCenter = "middle";
+            label.verticalCenter = "bottom";
+            label.fill = am4core.color(grade.color);
+
+            if (veces) {
+                var label2 = chart.radarContainer.createChild(am4core.Label);
+                label2.isMeasured = false;
+                label2.fontSize = "10px";
+                label2.horizontalCenter = "middle";
+                label2.verticalCenter = "bottom";
+                label2.text = "veces";
+            }
+            return label;
+        }
+
+        function createHand(chart, axis, score, label, text) {
+            var hand = chart.hands.push(new am4charts.ClockHand());
+            hand.axis = axis;
+            hand.innerRadius = am4core.percent(55);
+            hand.startWidth = 8;
+            hand.pin.disabled = true;
+            hand.value = score;
+            hand.fill = am4core.color("#444");
+            hand.stroke = am4core.color("#000");
+
+            hand.events.on("positionchanged", function () {
+                label.text = text;
+                var result = lookUpGrade(score, data.gradingData);
+                label.fill = am4core.color(result.color);
+            });
+
+            hand.showValue(parseFloat(score), 1, am4core.ease.cubicOut);
+            return hand;
+        }
+
+        /*MOROSIDAD*/
+        var chartMorosidad = createChart("chart_morosidad", data.scoreMorosidad, parseFloat(@Model.Morosidad[1].ToString("N2").Replace(",",".")).toString() + '%', false, $('#btn_morosidad'), 'Morosidad_Mayor_90');
+        var pChartMorosidad = createChartPrint("pChart_morosidad", data.scoreMorosidad, parseFloat(@Model.Morosidad[1].ToString("N2").Replace(",",".")).toString() + '%', false, $('#btn_morosidad'), 'Morosidad_Mayor_90');
+
+        /*COMPROMISO*/
+        var chartCompromiso = createChart("chart_compromiso", data.scoreCompromiso, parseFloat(@Model.Compromiso[1].ToString("N2").Replace(",",".")).toString() + '%', false, $('#btn_compromiso'), 'Compromiso_Patrimonial');
+        var pChartCompromiso = createChartPrint("pChart_compromiso", data.scoreCompromiso, parseFloat(@Model.Compromiso[1].ToString("N2").Replace(",",".")).toString() + '%', false, $('#btn_compromiso'), 'Compromiso_Patrimonial');
+
+        /*ACTIVO*/
+        var chartActivo = createChart("chart_activo", data.scoreActivo, parseFloat(@Model.Activo[1].ToString("N2").Replace(",",".")).toString(), true, $('#btn_activo'), 'Act_Prod_Entre_Pasivo');
+        var pChartActivo = createChartPrint("pChart_activo", data.scoreActivo, parseFloat(@Model.Activo[1].ToString("N2").Replace(",",".")).toString(), true, $('#btn_activo'), 'Act_Prod_Entre_Pasivo');
+
+        /*COSTO*/
+        var chartCosto = createChart("chart_costo", data.scoreCosto, parseFloat(@Model.CostoAdmin[1].ToString("N2").Replace(",",".")).toString() + '%', false, $('#btn_gasto'), 'Gasto_Entre_Utilidad');
+        var pChartCosto = createChartPrint("pChart_costo", data.scoreCosto, parseFloat(@Model.CostoAdmin[1].ToString("N2").Replace(",",".")).toString() + '%', false, $('#btn_gasto'), 'Gasto_Entre_Utilidad');
+
+        /*SUFICIENCIA*/
+        var chartICL = createChart("chart_ICL", data.scoreICL, parseFloat(@Model.ICL[1].ToString("N2").Replace(",",".")).toString(), true, $('#btn_ICL'), 'ICL');
+        var pChartICL = createChartPrint("pChart_ICL", data.scoreICL, parseFloat(@Model.ICL[1].ToString("N2").Replace(",",".")).toString(), true, $('#btn_ICL'), 'ICL');
+
+        @*/*Pérdida esperada cartera total / cartera total*/
+        var chartPerdidaEsperada = createChart("chart_perdidaEsperada", data.scorePerdidaEsperada, parseFloat(@Model.PerdidaEsperada[1].ToString("N2").Replace(",",".")).toString(), true, $('#btn_perdidaEsperada'), 'Perdida_Esperada');
+        var pChartPerdidaEsperada = createChartPrint("pChart_perdidaEsperada", data.scorePerdidaEsperada, parseFloat(@Model.PerdidaEsperada[1].ToString("N2").Replace(",",".")).toString(), true, $('#btn_perdidaEsperada'), 'Perdida_Esperada');*@
+
+        /*Utilidad o Pérdida Acumulada Trimestral*/
+        var chartPerdidaAcumulada = createChart("chart_perdidaAcumulada", data.scorePerdidaAcumulada, parseFloat(@Model.PerdidaAcumulada[1].ToString("N2").Replace(",",".")).toString() + '%', false, $('#btn_perdidaAcumulada'), 'Perdida_Acumulada');
+        var pChartPerdidaAcumulada = createChartPrint("pChart_perdidaAcumulada", data.scorePerdidaAcumulada, parseFloat(@Model.PerdidaAcumulada[1].ToString("N2").Replace(",",".")).toString() + '%', false, $('#btn_perdidaAcumulada'), 'Perdida_Acumulada');
+        function createGauge(containerId, value, text, vTitle) {
+            if (Highcharts.charts) {
+                Highcharts.charts.forEach(function (chart) {
+                    if (chart && chart.renderTo.id === containerId) {
+                        chart.destroy();
+                    }
+                });
+            }
+
+            const chart = Highcharts.chart(containerId, {
+                chart: {
+                    type: 'scatter',
+                    height: 120,
+                    margin: [45, 10, 45, 10],
+                    backgroundColor: null
+                },
+                exporting: { enabled: false },
+                legend: { navigation: { enabled: false } },
+                title: {
+                    text: vTitle,
+                    align: 'center',
+                    style: {
+                        color: '#2c3e50',
+                        fontSize: '16px',
+                        fontWeight: 'bold',
+                        fontFamily: 'Arial, sans-serif',
+                        textShadow: '1px 1px #ccc'
+                    }
+                },
+                credits: { enabled: false },
+                accessibility: { enabled: false },
+                navigation: { keyboardNavigation: { enabled: false } },
+                xAxis: {
+                    min: 0.5,
+                    max: 4.5,
+                    tickPositions: [1, 2, 3, 4],
+                    lineWidth: 0,
+                    tickWidth: 0,
+                    labels: {
+                        enabled: true,
+                        formatter: function () {
+                            if (this.value === 1) return 'N1';
+                            if (this.value === 2) return 'N2 y N3';
+                            if (this.value === 3) return 'IRG1 y IRG2';
+                            if (this.value === 4) return 'IRG3';
+                            return '';
+                        },
+                        style: {
+                            fontWeight: 'bold',
+                            color: '#2c3e50',
+                            fontSize: '12px'
+                        }
+                    },
+                    plotBands: [
+                        { from: 0.5, to: 1.5, color: '#0f9747' },
+                        { from: 1.5, to: 2.5, color: '#bdecb6' },
+                        { from: 2.5, to: 3.5, color: '#F9C74F' },
+                        { from: 3.5, to: 4.5, color: '#EE1F25' }
+                    ]
+                },
+                yAxis: {
+                    min: 0,
+                    max: 1,
+                    visible: false
+                },
+                tooltip: { enabled: false },
+                series: [{
+                    name: null,
+                    showInLegend: false,
+                    data: [{
+                        x: 0.5, // inicio a la izquierda
+                        y: 0.3,
+                        customLabel: '0.0',
+                        dataLabels: {
+                            enabled: true,
+                            useHTML: true,
+                            formatter: function () {
+                                return `<div style="background:#2c3e50; color:#fff; padding:4px 20px; border-radius:8px; font-weight:bold; font-size:14px; box-shadow:0 2px 5px rgba(0,0,0,0.3);">${this.point.customLabel}%</div>`;
+                            },
+                            align: 'center',
+                            verticalAlign: 'top',
+                            y: -10
+                        }
+                    }],
+                    marker: {
+                        symbol: 'url(https://www.ffc.co.cr/ffc/arrow.png)',
+                        width: 20,
+                        height: 20
+                    }
+                }]
+            });
+
+            const point = chart.series[0].points[0];
+            let currentX = 0.5;
+            let currentLabel = 0;
+            const steps = 100;
+            const incrementX = (value - 0.5) / steps;
+            const targetLabel = Number(text);
+            const incrementLabel = targetLabel / steps;
+            const intervalTime = 30; // ms, para animación más suave y lenta
+
+            const interval = setInterval(() => {
+                currentX += incrementX;
+                currentLabel += incrementLabel;
+
+                if (currentX >= value) currentX = value;
+                if (currentLabel >= targetLabel) currentLabel = targetLabel;
+
+                point.update({ x: currentX, customLabel: currentLabel.toFixed(1) }, true, false);
+
+                if (currentX === value && currentLabel === targetLabel) {
+                    clearInterval(interval);
+                }
+            }, intervalTime);
+        }
+
+        const gauges = [
+            { text: @Html.Raw(Json.Encode(Model.Suficiencia[1])), value: @Html.Raw(Json.Encode(Model.Suficiencia[0])), title: "Suficiencia" },
+            { text: @Html.Raw(Json.Encode(Model.CN1[1])), value: @Html.Raw(Json.Encode(Model.CN1[0])), title: "CN1" },
+            { text: @Html.Raw(Json.Encode(Model.CNN1[1])), value: @Html.Raw(Json.Encode(Model.CNN1[0])), title: "CNN1" },
+            { text: @Html.Raw(Json.Encode(Model.Apalancamiento[1])), value: @Html.Raw(Json.Encode(Model.Apalancamiento[0])), title: "Apalancamiento" }
+        ];
+
+        const wrapper = document.getElementById('wrapper');
+        wrapper.style.height = '600px';
+        wrapper.style.display = 'flex';
+        wrapper.style.flexDirection = 'column';
+        wrapper.style.justifyContent = 'space-between';
+
+        gauges.forEach((gauge, index) => {
+            const div = document.createElement('div');
+            div.id = 'gauge-' + (index + 1);
+            div.style.width = '90%';
+            div.style.minWidth = '180px';
+            div.style.margin = '0 auto 25px';
+            wrapper.appendChild(div);
+
+            createGauge(div.id, gauge.value, gauge.text, gauge.title);
+        });
+    });
+
+</script>
+

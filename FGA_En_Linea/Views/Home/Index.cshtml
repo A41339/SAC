@@ -1,0 +1,167 @@
+﻿@{
+    ViewBag.Title = "Dashboard";
+}
+
+@section ScriptsOrCss
+{
+ 
+    <script src="https://cdn.amcharts.com/lib/4/core.js"></script>
+    <script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
+    <script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.62/pdfmake.js"></script>
+    <link href="~/Content/box.css" rel="stylesheet" />
+}
+
+<section class="content">
+
+    <div class="box">
+        <div class="streaming-table">
+            <span id="found" class="label label-info"></span>
+            <table class="table table-condensed table-striped table-bordered">
+                <tr>
+                    <td class="mobile">
+                        @Html.Label("Entidad:")
+                    </td>
+                    <td>
+                        @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", style = "width: 200px;" })
+                    </td>
+                    <td class="mobile">
+                        <label id="Periodo1L" name="Periodo1">Periodo Inicial:</label>
+                    </td>
+                    <td nowrap="nowrap" class="form-group">
+                        <input name="Periodo1" id="Periodo1" class="datecontrol" style="width: 200px;" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MM/yyyy")" />
+                    </td>
+                    <td class="mobile">
+                        <label id="Periodo2L" name="Periodo1">Periodo Final:</label>
+                    </td>
+                    <td nowrap="nowrap" class="form-group">
+                        <input name="Periodo2" id="Periodo2" class="datecontrol" style="width: 200px;" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MM/yyyy")" />
+                    </td>
+                    <td>
+                        <label class="btn btn-facebook" onclick="javascript:getContent()">
+                            Generar
+                        </label>
+                    </td>
+                    @*@if (Env.GetUserInfo("roleid") != FGA.Utility.Utilitarios.roleGerencial.ToString())
+                        {
+                            <td>
+                                <label class="btn btn-pinterest" onclick="javascript:getPDF()">
+                                    PDF
+                                </label>
+                            </td>
+                        }*@
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div>
+        <div id="contenido">
+        </div>
+    </div>
+</section>
+
+<div class="modal fade" id="graphModal" tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div id="grafica">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function help(titulo, detalle) {
+        $('#titulo').html(titulo);
+        $('#definicion').html(detalle);
+        $('#defModal').modal('show');
+    }
+
+    function formatMillion() {
+        return this.value;
+    }
+
+    function formatPercent() {
+        return this.value + " %";
+    }
+
+    var meses = new Array("Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre");
+
+    function getPDF() {
+        var divContent1 = $("#dashboard").html();
+        divContent1 = divContent1.replace("hidden", "");
+
+        var printWindow = window.open('', '', 'height=500, width=1500');
+        printWindow.document.write('<html><head>');
+        printWindow.document.write('<link rel="stylesheet" href="http://www.ffc.co.cr/FFC/Content/theme/dist/css/AdminLTE.min.css" type="text/css" />');
+        printWindow.document.write('<link rel="stylesheet" href="http://www.ffc.co.cr/FFC/Content/theme/dist/css/skins/_all-skins.min.css" type="text/css" />');
+        printWindow.document.write('<link rel="stylesheet" href="http://www.ffc.co.cr/FFC/Content/Site.css" type="text/css" />');
+        printWindow.document.write('<link rel="stylesheet" href="http://www.ffc.co.cr/FFC/Content/theme/bower_components/bootstrap/dist/css/bootstrap.min.css"><html>');
+
+        printWindow.document.write('</head><body>');
+        printWindow.document.write(divContent1);
+        printWindow.document.write('</body></html>');
+        printWindow.print();
+        printWindow.close();
+
+    }
+
+    function getGraph(id) {
+        $.ajax({
+            url: '@Url.Action("GraficaDetalle", "Indicadores")',
+            type: 'POST',
+            cache: false,
+            async: false,
+            data: {
+                'Entidades': $('#IdEntidad').val(),
+                'PeriodoI':  $('#Periodo1').val(),
+                'PeriodoF':  $('#Periodo2').val(),
+                'cmb_indicadores': id,
+                'cmb_estilo': 0
+            },
+             success: function (result) {
+                $('#grafica').html(result);
+             }
+        });
+
+        $('#graphModal').modal('show');
+    }
+
+    function getContent() {
+        $.ajax({
+            url: '@Url.Action("GetContent", "Home")',
+            type: 'POST',
+            cache: false,
+            async: false,
+             data: {
+                'IdEntidad': $('#IdEntidad').val(),
+                'Periodo1':  $('#Periodo1').val(),
+                'Periodo2':  $('#Periodo2').val()
+            },
+            success: function (data) {
+                $('#contenido').html(data);
+                var from = $("#Periodo2").val().split("/");
+                var f = new Date(from[2], from[1] - 1, from[0]);
+
+                $('#lbl_encabezado').text("Infograma. " + meses[f.getMonth()] + ", " + f.getFullYear() + "\n" + $('#IdEntidad  option:selected').text());
+                $('#lbl_encabezado').html($('#lbl_encabezado').html().replace(/\n/g, '<br/>'));
+            }
+        });
+    }
+
+    getContent();
+
+    $(document).ready(function () {
+       if(@(Env.GetUserInfo("roleid") == FGA.Utility.Utilitarios.roleGerencial.ToString())) {
+            $('.highcharts-button').css("display", "none");
+        }
+
+
+    });
+
+</script>
+
+

@@ -1,0 +1,87 @@
+@model FGA.Models.Usuario
+
+@{
+    ViewBag.Title = "Modificar";
+    if (Ajax.IsThisAjaxRequest())
+    {
+        Layout = null;
+    }
+}
+
+
+@Html.StarkAjaxFormSubmiter("frmUser", "tbUser", true, "Acción realizada con éxito")
+
+
+@{
+    if (!Ajax.IsThisAjaxRequest())
+    {
+        <section class="content-header">
+            <h1>
+                Modificar Usuario
+            </h1>
+        </section>
+    }
+}
+
+
+@using (Html.BeginForm("Edit", "Usuario", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmUser" }))
+{
+    @Html.AntiForgeryToken()
+
+    <section class="content">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box box-solid box-info">                   
+                    <div role="form">
+                        <div class="box-body">
+                            <div class="hidden">
+                                @Html.LabelFor(model => model.Id, new { @class = "" })
+                                @Html.EditorFor(model => model.Id)
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Identificacion, new { @class = "" })
+                                @Html.EditorFor(model => model.Identificacion)
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Nombre, new { @class = "" })
+                                @Html.EditorFor(model => model.Nombre)
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Telefono, new { @class = "" })
+                                @Html.EditorFor(model => model.Telefono)
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Puesto, new { @class = "" })
+                                @Html.EditorFor(model => model.Puesto)
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Correo, new { @class = "" })
+                                @Html.EditorFor(model => model.Correo, new { htmlAttributes = new { @style = "width: 100%;" } })
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Entidad_Usuario, new { @class = "" })
+                                @Html.DropDownList("Entidades", " -Selecciona una opción- ")
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Role_Usuario, new { @class = "" })
+                                @Html.DropDownList("Roles", " -Selecciona una opción- ")
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Estado_Usuario, new { @class = "" })
+                                @Html.DropDownList("Estados", " -Selecciona una opción- ")
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Sexo_Usuario, new { @class = "" })
+                                @Html.DropDownList("Sexos", " -Selecciona una opción- ")
+                            </div>
+                        </div>
+                        <div class="box-footer">
+                            @Html.StarkInputButtion("Guardar", "submit", "btn btn-primary", "")
+                            @Html.ActionLink("Regresar", "Index", null, new { @class = "btn btn-primary" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+}

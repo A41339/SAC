@@ -1,0 +1,87 @@
+﻿@{
+    ViewBag.Title = "Consolidado";
+}
+
+<section class="content">
+    <section class="content-header">
+        <h1>
+            EEFF Consolidado
+        </h1>
+    </section>
+    <div class="box box-solid box-info">
+        <div class="box-body table-responsive">
+            <div class="margin">
+                <div class="streaming-table">
+                    <span id="found" class="label label-info"></span>
+                    <table class="table table-condensed table-striped table-bordered">
+                        <tr>
+                            <td class="mobile">
+                                @Html.Label("Entidad:")
+                            </td>
+                            <td>
+                                @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", style = "width: 200px;" })
+                            </td>
+                            <td class="mobile">
+                                @Html.Label("Primer Periodo:")
+                            </td>
+                            <td nowrap="nowrap">
+                                <input name="Periodo1" id="Periodo1" class="datecontrol" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MM/yyyy")" />
+                            </td>
+                            <td>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="mobile">
+                                @Html.Label("Segundo Periodo:")
+                            </td>
+                            <td nowrap="nowrap">
+                                <input name="Periodo2" id="Periodo2" class="datecontrol" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MM/yyyy")" />
+                            </td>
+                            <td class="mobile">
+                                @Html.Label("Tercer Periodo:")
+                            </td>
+                            <td>
+                                <input name="Periodo3" id="Periodo3" class="datecontrol" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo3"].ToString()).ToString("MM/yyyy")" />
+                            </td>
+                            <td>
+                                <label>
+                                    <button type="submit" id="btn_buscar" class="btn btn-primary">Generar</button>
+                                </label>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="detail">
+
+    </div>
+</section>
+
+<script type="text/javascript">
+
+    function refreshPage() {
+        $.ajax({
+            url: '@Url.Action("LoadConsolidado", "InformeFinanciero")',
+                type: 'POST',
+                cache: false,
+                async: false,
+                data: {
+                'Entidades': $('#IdEntidad').val(),
+                'Periodo1': $('#Periodo1').val(),
+                'Periodo2': $('#Periodo2').val(),
+                'Periodo3': $('#Periodo3').val()
+            },
+            success: function (result) {
+                $('#detail').html(result);
+            }
+        });
+    }
+
+      $(document).on('click', '#btn_buscar', function () {
+         refreshPage();
+      });
+
+</script>

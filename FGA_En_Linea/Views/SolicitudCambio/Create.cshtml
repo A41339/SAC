@@ -1,0 +1,335 @@
+@model FGA.Models.SolicitudCambio_Insert
+
+@{
+    ViewBag.Title = "Crear";
+    if (Ajax.IsThisAjaxRequest())
+    {
+        Layout = null;
+    }
+}
+
+@Html.StarkAjaxFormSubmiter("frmSolicitud", "tbSolicitud", true, "Acción ejecutada con éxito")
+
+@{
+    if (!Ajax.IsThisAjaxRequest())
+    {
+        <section class="content-header">
+            <h1>
+                Creación de una solicitud
+            </h1>
+        </section>
+    }
+}
+
+<script src="~/Scripts/jquery-form.js"></script>
+
+@using (Html.BeginForm("Create", "SolicitudCambio", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmSolicitud" }))
+{
+    @Html.AntiForgeryToken()
+    <section class="content">
+        <div class="panel panel-primary">
+            <div class="panel-body">
+                <label class="title">Datos del solicitante</label>
+                <div class="form-group" style="padding-top: 10px !important;">
+                    <div class="col-lg-1 col-md-1 col-sm-1 col-xs-12 form-validate">
+                        @Html.LabelFor(model => model.sol.IdSolicitante_Id, new { @class = "" })
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 form-validate">
+                        @Html.DropDownList("IdSolicitante_Id", null, new { @id = "IdSolicitante_Id", @class = "form-control", style = "width: 100%;" })
+                    </div>
+                    @*<div class="col-lg-1 col-md-1 col-sm-1 col-xs-12 form-validate">
+                            @Html.LabelFor(model => model.IdAprobador_Id, new { @class = "" })
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 form-validate">
+                            @Html.DropDownList("IdAprobador_Id", null, new { @id = "IdAprobador_Id", @class = "form-control", style = "width: 100%;" })
+                        </div>*@
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                        <label>Categoría del cambio</label>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-4  col-xs-12 form-validate">
+                        <input id="IndEmergencia" class="chk" name="IndEmergencia" type="checkbox"> <label class="control-label">Urgente</label>
+                        <input id="IndEstandar" class="chk" name="IndEstandar" type="checkbox"> <label class="control-label">Estandar</label>
+                        <input id="IndNormal" class="chk" name="IndNormal" type="checkbox"> <label class="control-label">Normal</label>
+                        <input id="IndComplejo" class="chk" name="IndComplejo" type="checkbox"> <label class="control-label">Complejo</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-primary">
+            <div class="panel-body">
+                <label class="title">Identificación del cambio</label>
+                <div class="form-group" style="padding-top: 10px !important;">
+                    <div class="col-lg-1 col-md-1 col-sm-1 col-xs-12 form-validate">
+                        <label>Descripción</label>
+                    </div>
+                    <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12 form-validate">
+                        @Html.TextAreaFor(model => model.sol.Descripcion, new
+                        {
+                            cols = "50",
+                            rows = "1",
+                            @class = "form-control",
+                            @style = "background-color:white; width:100%;"
+                        })
+                    </div>
+                    <div class="col-lg-1 col-md-1 col-sm-1 col-xs-12 form-validate">
+                        <p><label class="control-label">Urgencia</label></p>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                        <select class="form-control" style="width:100%" name="IdUrgencia" id="IdUrgencia">
+                            <option value="1">Baja</option>
+                            <option value="2">Media</option>
+                            <option value="3">Alta</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-1 col-md-1 col-sm-1 col-xs-12 form-validate">
+                        <p><label class="control-label">Prioridad</label></p>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                        <select class="form-control" style="width:100%" name="IdPrioridad" id="IdPrioridad">
+                            <option value="1">Baja</option>
+                            <option value="2">Media</option>
+                            <option value="3">Alta</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group" style="padding-top: 30px !important;">
+                    <div class="col-lg-1 col-md-1 col-sm-1 col-xs-12 form-validate">
+                        <p><label class="control-label">Entorno</label></p>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                        <select class="form-control" style="width:100%" name="IdEnterno" id="IdEnterno">
+                            <option value="1">Desarrollo</option>
+                            <option value="2">Producción</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-1 col-md-1 col-sm-1 col-xs-12 form-validate">
+                        <p><label class="control-label">Servicio</label></p>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                        @Html.DropDownList("SeccionesImplicadas", null, new { @id = "SeccionesImplicadas", @class = "form-control", style = "width: 100%;" })
+                    </div>
+                    <div class="col-lg-1 col-md-1 col-sm-1 col-xs-12 form-validate">
+                        <p><label class="control-label">Fec límite</label></p>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                        <input name="FechaLimite" class="date" id="FechaLimite" style="margin-right: 5px; width: calc(100% - 50px);" />
+                    </div>
+                    <div class="col-lg-1 col-md-1 col-sm-1 col-xs-12 form-validate">
+                        @Html.LabelFor(model => model.sol.IdUsuariosAfectados, new { @class = "" })
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                        <select class="form-control" style="width:100%" name="IdUsuariosAfectados" id="IdUsuariosAfectados">
+                            <option value="0">Ninguno</option>
+                            <option value="1">De 1 a 5</option>
+                            <option value="2">De 1 a 10</option>
+                            <option value="3">De 1 a 15</option>
+                            <option value="4">De 1 a 20</option>
+                            <option value="5">De 1 a 25</option>
+                            <option value="6">Todos</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-primary">
+            <div class="panel-body">
+                <label class="title">Detalle del cambio</label>
+                <div class="form-group" style="padding-top: 10px !important;">
+                    <div class="col-lg-1 col-md-1 col-sm-1 col-xs-12 form-validate">
+                        <label>Motivo</label>
+                    </div>
+                    <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12 form-validate">
+                        @Html.TextAreaFor(model => model.sol.MotivoCambio, new
+                     {
+                         cols = "50",
+                         rows = "1",
+                         @class = "form-control",
+                         @style = "background-color:white; width:100%;"
+                     })
+                    </div>
+                    <div class="col-lg-1 col-md-1 col-sm-1 col-xs-12 form-validate">
+                        <label>Objetivo</label>
+                    </div>
+                    <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12 form-validate">
+                        @Html.TextAreaFor(model => model.sol.ObjetivoCambio, new
+                     {
+                         cols = "50",
+                         rows = "1",
+                         @class = "form-control",
+                         @style = "background-color:white; width:100%;"
+                     })
+                    </div>
+                </div>
+                <div class="form-group" style="padding-top: 30px !important;">
+                    <div class="col-lg-1 col-md-1 col-sm-1 col-xs-12 form-validate">
+                        <label>Impacto</label>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                        <select class="form-control" style="width:100%" name="DetalleImpacto" id="DetalleImpacto">
+                            <option value="Muy grave">Muy grave</option>
+                            <option value="Grave">Grave</option>
+                            <option value="Moderado">Moderado</option>
+                            <option value="Bajo">Bajo</option>
+                            <option value="Muy bajo">Muy bajo</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-1 col-md-1 col-sm-1 col-xs-12 form-validate">
+                        <label>Riesgo</label>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                        <select class="form-control" style="width:100%" name="RiesgoCambio" id="RiesgoCambio">
+                            <option value="Muy alto">Muy alto</option>
+                            <option value="Alto">Alto</option>
+                            <option value="Medio">Medio</option>
+                            <option value="Bajo">Bajo</option>
+                            <option value="Muy bajo">Muy bajo</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-1 col-md-1 col-sm-1 col-xs-12 form-validate">
+                        <p><label class="control-label">Inicio prev</label></p>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                        <input name="FechaInicioPrev" class="date" id="FechaInicioPrev" style="margin-right: 5px; width: calc(100% - 50px);" />
+                    </div>
+                    <div class="col-lg-1 col-md-1 col-sm-1 col-xs-12 form-validate">
+                        <p><label class="control-label">Fin prev.</label></p>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                        <input name="FechaFinPrev" class="date" id="FechaFinPrev" style="margin-right: 5px; width: calc(100% - 50px);" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-primary">
+            <div class="panel-body">
+                <label class="title">Clasificación del cambio</label>
+                <div class="form-group" style="padding-top: 20px !important;">
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                        <label>Mantenimiento evolutivo</label>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                        <label>Mantenimiento perfectivo</label>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                        <label>Mantenimiento adapatativo</label>
+                        <input id="IndMantAdaptativo" name="IndMantAdaptativo" type="checkbox">
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                        <label>Documento asociado al cambio</label>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                        <label class="btn btn-default">
+                            Adjuntar documentos&hellip; <input type="file" id="fileToUpload" multiple name="files" style="display: none;">
+                        </label>
+                        @Html.ValidationMessage("File")
+                        @Html.Hidden("hdnFileUpload")
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+
+                        <div class="control-section" style="padding: 0px;">
+                            <div id="selectedFiles"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group" style="padding-top: 20px !important;">
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                        <input id="IndNuevaFunc" name="IndNuevaFunc" type="checkbox"> <label class="control-label">Nueva funcionalidad</label>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                        <input id="IndMantenimiento" name="IndMantenimiento" type="checkbox"> <label class="control-label">Mantenimiento</label>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                        <label>Mantenimiento correctivo</label>
+                        <input id="IndMantCorrectivo" name="IndMantCorrectivo" type="checkbox">
+                    </div>
+                </div>
+                <div class="form-group" style="padding-top: 20px !important;">
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                        <input id="IndNuevaVersion" name="IndNuevaVersion" type="checkbox">  <label class="control-label">Nueva versión</label>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                        <input id="IndMejoraServ" name="IndMejoraServ" type="checkbox">  <label class="control-label">Mejora de servicio</label>
+                    </div>
+                </div>
+                <div class="form-group" style="padding-top: 20px !important;">
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                        <input id="IndNuevoServ" name="IndNuevoServ" type="checkbox">  <label class="control-label">Nuevo servicio</label>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                        <input id="IndMejoraEstetica" name="IndMejoraEstetica" type="checkbox"> <label class="control-label">Mejora estética</label>
+                    </div>
+                </div>
+                <div class="form-group" style="padding-top: 20px !important;">
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                        <input id="IndPaseEntorno" name="IndPaseEntorno" type="checkbox"> <label class="control-label">Paso de entorno a otro</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="box-footer">
+            @Html.StarkInputButtion("Enviar a revisión", "submit", "btn btn-primary", "")
+            @Html.ActionLink("Regresar", "Index", null, new { @class = "btn btn-primary" })
+        </div>
+    </section>
+}
+
+<script>
+
+    var nowTemp = new Date();
+    var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
+    var files;
+    var storedFiles = [];
+    var upc = 0;
+
+    $(function () {
+
+        $(":file").attr('title', '  ');
+        $("input[id^='fileToUpload']").change(function (e) {
+            doReCreate(e);
+        });
+
+        selDiv = $("#selectedFiles");
+    });
+
+    function doReCreate(e) {
+        upc = upc + 1;
+        handleFileSelect(e);
+
+        $("input[id^='fileToUpload']").hide();
+        $('<input>').attr({
+            type: 'file',
+            multiple: 'multiple',
+            id: 'fileToUpload' + upc,
+            class: 'fUpload',
+            name: 'fileUpload',
+            style: 'float: left',
+            title: '  ',
+            onchange: "doReCreate(event)"
+        }).appendTo('#uploaders');
+    }
+
+    function handleFileSelect(e) {
+
+        selDiv = document.querySelector("#selectedFiles");
+
+        if (!e.target.files) return;
+        files = e.target.files;
+
+        for (var i = 0; i < files.length; i++) {
+            var f = files[i];
+            selDiv.innerHTML += "<div>" + f.name + "<a onclick='removeAtt(this)'> X </a></div>";
+            storedFiles.push(f.name);
+        }
+        $('#@Html.IdFor(i => i.FilesToBeUploaded)').val(storedFiles);
+    }
+
+    function removeAtt(t) {
+        var serEle = $(t).parent().text().slice(0, -3);
+        var index = storedFiles.indexOf(serEle);
+        if (index !== -1) {
+            storedFiles.splice(index, 1);
+        }
+        $(t).parent().remove();
+        $('#@Html.IdFor(i => i.FilesToBeUploaded)').val(storedFiles);
+    }
+</script>

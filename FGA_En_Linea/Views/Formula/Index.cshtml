@@ -1,0 +1,93 @@
+@{
+    ViewBag.Title = "Fórmulas";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="content-header">
+    <h1>
+        Catálogo de fórmulas
+    </h1>
+</section>
+
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box box-solid box-info">
+                 <div class="box-body">
+                    <div class="margin">
+                        <div class="btn-group">
+                            <a href="~/Formula/Create" class="btn btn-dropbox">Crear una fórmula</a>
+                        </div>
+                    </div>
+                 </div>
+            </div>
+            <div class="box box-solid box-info">
+                <div class="box-body table-responsive">
+                    <div class="margin">
+                        <div class="streaming-table">
+                            <span id="found" class="label label-info"></span>
+                            <table id="tbFormula" class="table table-striped table-bordered">
+                                <thead class="header">
+                                    <tr>
+                                        <th>Acción</th>
+                                        <th> Nombre  </th>
+                                        <th> Fórmula </th>
+                                        <th> Porcentual  </th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                            <br />
+                            <div id="summary">
+                                <div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script type="text/javascript">
+
+        $(document).ready(function () {
+            var oTableUser = "";
+            var ControlerNameUser = "@Url.Content("~/Formula")";
+            // debugger;
+            oTableUser = $("#tbFormula").dataTable({
+            "bRetrieve": true,
+            "bProcessing": true,
+            "dom": 'lBfrtip',
+            "sAjaxSource": "@Url.Content("~/Formula/GetGrid")",
+            "buttons": [
+                 { extend: 'copyHtml5', exportOptions: { columns: ':visible' } }
+                ,{ extend: 'excelHtml5', exportOptions: { columns: ':visible' } }
+                ,{ extend: 'pdfHtml5', exportOptions: { columns: ':visible' } }
+                ,{ extend: 'print', exportOptions: { columns: ':visible' } }
+                ,'colvis'
+            ], columnDefs: [{   visible: false }],
+            "pageLength": 10,
+            "lengthMenu": [[5,10, 25, 50, -1], [5,10, 25, 50, "Todos"]],
+                "aoColumns": [
+                {
+                "mRender": function (oObj, type, row) {
+                    var buttons = '<div class="text-center"> <div class="btn-group text-left"> <button type="button" class="btn btn-default btn-xs btn-warning dropdown-toggle" data-toggle="dropdown">Acción <span class="caret"></span></button>';
+                    buttons += '<ul class="dropdown-menu pull-left" role="menu">';
+                    buttons += '<li><a href="' + ControlerNameUser + "/Edit/" + row[0] + '"><i class="fa fa-edit"></i>Modificar</a></li>';
+                    buttons += '<li><a href="' + ControlerNameUser + "/Details/" + row[0] + '"><i class="fa fa-edit"></i>Consultar</a></li>';
+                    buttons += '<li><a href="' + ControlerNameUser + "/Delete/" + row[0] + '"><i class="fa fa-edit"></i>Borrar</a></li>';
+                    buttons += '</ul>';
+                    buttons += '</div></div>';
+                    return buttons;
+                                 }
+
+        } ,{},{},{}
+        ]
+
+        });
+
+        });
+</script>
+

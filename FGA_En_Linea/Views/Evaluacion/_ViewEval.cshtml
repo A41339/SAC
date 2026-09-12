@@ -1,0 +1,166 @@
+﻿@model  FGA.Model.Modelo_Evaluacion
+
+<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css'>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js'></script>
+<script src='https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js'></script>
+<script src="~/Scripts/bootstrap-multi-step-form3.js"></script>
+<style>
+    .contenedor {
+        max-width: 80%;
+        margin: 0 auto;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        border-color: black;
+        box-shadow: 0 0 10px black;
+    }
+</style>
+<div class="modal-dialog modal-lg">
+    <div>
+        <div class="modal-body">
+
+            @if (FGA.Utility.Utilitarios.GetSubCategoriaPorcentaje(Model.evaluaciones[0].IdSubCategoria, Model.evaluaciones) != 100)
+            {
+                <div class="text-right">
+                    <button type="button" class="btn btn-xs btn-danger" data-dismiss="modal">X</button> <label class="title">Salir</label>
+                </div>
+            }
+
+            <div class="container d-flex justify-content-center">
+                <br />
+                <div class="card mt-3">
+                    @{
+                        int i = 1;
+                        bool stepActivo = false;
+                        int opcion = 0;
+                        foreach (var eval in Model.evaluaciones)
+                        {
+                            stepActivo = (eval.OpcionSeleccionada == 0 || i == Model.evaluaciones.Count) && opcion == 0 ? true : false;
+                            if (stepActivo)
+                            {
+                                opcion = i;
+                            }
+
+                            if (FGA.Utility.Utilitarios.GetSubCategoriaPorcentaje(Model.evaluaciones[0].IdSubCategoria, Model.evaluaciones) < 100)
+                            {
+                                <div class="card-body p-5 step" style="@(stepActivo ? "" : "display: none")">
+                                    <div class="pull-right">
+                                        <h4>
+                                            <b>Subcomponente @(i + "/" + Model.evaluaciones.Count)</b>
+                                        </h4>
+                                    </div>
+                                    <br /><br /><br />
+                                    <div class="bg-info clearfix">
+                                        <div class="pull-left">
+                                            <label class="title bold">
+                                                <b>@(i.ToString() + ". " + eval.Enunciado + " ")</b>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <br /> <br />
+                                    <ul>
+                                        <li style="padding-bottom:25px" class="title"><input type="radio" onchange="Respuesta(1, @eval.IdPregunta)" @(eval.OpcionSeleccionada == 1 ? "checked" : "") name="pregunta @eval.IdPregunta.ToString()" id="A @eval.IdPregunta" />@("  A. " + eval.OpcionA)</li>
+                                        <li style="padding-bottom:25px" class="title"><input type="radio" onchange="Respuesta(2, @eval.IdPregunta)" @(eval.OpcionSeleccionada == 2 ? "checked" : "") name="pregunta @eval.IdPregunta.ToString()" id="B @eval.IdPregunta" />@("  B. " + eval.OpcionB)</li>
+                                        <li style="padding-bottom:25px" class="title"><input type="radio" onchange="Respuesta(3, @eval.IdPregunta)" @(eval.OpcionSeleccionada == 3 ? "checked" : "") name="pregunta @eval.IdPregunta.ToString()" id="C @eval.IdPregunta" />@("  C. " + eval.OpcionC)</li>
+                                        <li style="padding-bottom:25px" class="title"><input type="radio" onchange="Respuesta(4, @eval.IdPregunta)" @(eval.OpcionSeleccionada == 4 ? "checked" : "") name="pregunta @eval.IdPregunta.ToString()" id="D @eval.IdPregunta" />@("  D. " + eval.OpcionD)</li>
+                                    </ul>
+                                    @{
+                                        i = i + 1;
+                                        if (i == Model.evaluaciones.Count + 1)
+                                        {
+                                            <br />
+                                            <label id="alert" class="title text-danger">
+                                                <b>Recuerde que al enviar este subcomponente no podrá ingresar nuevamente a la autoevaluación</b>
+                                            </label>
+                                            <label id="success" class="hidden title text-success">
+                                                <b>Evaluación enviada exitosamente</b>
+                                            </label>
+
+                                            <br />
+                                        }
+                                    }
+                                </div>
+                            }
+                        }
+
+                        if (FGA.Utility.Utilitarios.GetSubCategoriaPorcentaje(Model.evaluaciones[0].IdSubCategoria, Model.evaluaciones) == 100)
+                        {
+                            <br /><br /><br /><br /><br />
+                            <div class="contenedor">
+                                <br /><br />
+                                <label class="title">El usuario ha finalizado de completar el subcomponente, la evaluación fue enviada y no podrá volver a ingresar</label>
+                                <br>
+                                <div class="text-right">
+                                    <br />
+                                    <button type="button" class="btn btn-danger" data-dismiss="modal">Salir</button>  <label class="title"></label>
+                                </div>
+                                <br /><br />
+                            </div>
+                            <br /><br /><br />
+                        }
+                    }
+                    <br /> <br />
+                    <div class="card-footer">
+                        @if (Model.evaluaciones[0].Confirmada.Contains(";" + Model.evaluaciones[0].IdSubCategoria.ToString() + ";") == false)
+                        {
+                            <button class="action back btn btn-danger" style="display: none">Atrás</button>
+                            <button class="action next btn btn-success" @(Model.evaluaciones[0].OpcionSeleccionada == 0 ? "disabled" : "")>Siguiente</button>
+                            <button class="action submit btn btn-success" style="display: none">Enviar</button>
+                        }
+                    </div>
+                    <br />
+                    <br />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<input type="hidden" id="numStep" value="@opcion" />
+
+<script type="text/javascript">
+
+    $('input[type="radio"]').on('change', function () {
+        updateButtonVisibility();
+    });
+
+    function updateButtonVisibility() {
+        var currentStep = $('.card-body.step:visible');
+        var anyOptionSelected = currentStep.find('input[type="radio"]:checked').length > 0;
+        $('.action.next').prop('disabled', !anyOptionSelected);
+        $('.action.submit').prop('disabled', !anyOptionSelected);
+    }
+
+    $('.action.submit').click(function () {
+        if (confirm("¿Estás seguro de enviar la evaluación? No podrás ingresar nuevamente.")) {
+            var evalIdCategoriaId = @Model.evaluaciones[0].IdCategoria;
+            var evalIdSubCategoriaId = @Model.evaluaciones[0].IdSubCategoria;
+            $.ajax({
+                url: '@Url.Action("Confirmar", "Evaluacion")',
+                type: 'POST',
+                data: {
+                    'idCategoria': evalIdCategoriaId,
+                    'idSubCategoria': evalIdSubCategoriaId
+                },
+                success: function () {
+                    $('.action.back').prop('disabled', true);
+                    $('#alert').addClass('hidden');
+                    $('#success').removeClass('hidden');
+                }
+            });
+        }
+     });
+
+    function Respuesta(IdOpcion, IdPregunta) {
+         $.ajax({
+           url: '@Url.Action("Respuesta", "Evaluacion")',
+           type: 'POST',
+           cache: false,
+           async: true,
+           data: {
+               'idOpcion': IdOpcion,
+               'idPregunta': IdPregunta
+           }
+         });
+    }
+</script>

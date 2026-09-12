@@ -1,0 +1,100 @@
+@model FGA.Models.Creditos_Solicitudes[]
+
+@{
+    ViewBag.Title = "Gesti&oacute;n de Solicitudes Recibidas";
+}
+
+@section ScriptsOrCss {
+    <link href="~/Content/Creditos_Marketplace.css" rel="stylesheet" />
+    <script>
+        function resolver(id, estado) {
+            var accion = estado == 2 ? 'aprobar' : 'rechazar';
+            if (confirm('\xbfEst\xe1 seguro de que desea ' + accion + ' esta solicitud?')) {
+                $('#solId').val(id);
+                $('#estId').val(estado);
+                if (estado == 3) {
+                    var m = prompt('Indique el motivo del rechazo:');
+                    if (m == null) return;
+                    $('#motivo').val(m);
+                }
+                $('#formResolver').submit();
+            }
+        }
+    </script>
+}
+
+<div class="credit-marketplace-container">
+    <div class="row">
+        <div class="col-md-12">
+            <h2 class="animate-fade-in" style="color: #0B4E91; font-weight: 700; margin-bottom: 25px;">
+                <i class="fa fa-tasks"></i> Gesti&oacute;n de Solicitudes Recibidas
+            </h2>
+        </div>
+    </div>
+
+    <div class="row animate-fade-in" style="animation-delay: 0.1s">
+        <div class="col-md-12">
+            <div class="credit-card">
+                <div class="credit-card-body">
+                    <table class="credit-table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Solicitante</th>
+                                <th>Monto Solicitado</th>
+                                <th>Fecha de Solicitud</th>
+                                <th>Estado</th>
+                                <th class="text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var sol in Model)
+                            {
+                                <tr>
+                                    <td style="font-weight: 600;">@sol.EntidadSolicitante.Nombre</td>
+                                    <td>
+                                        <span style="color: #0B4E91; font-weight: 700;">@sol.Mon_MontoSolicitado.ToString("N2") @sol.Oferta.Moneda.Nombre</span>
+                                    </td>
+                                    <td>@sol.Fec_Solicitud.ToString("g")</td>
+                                    <td>
+                                        @{
+                                            string badgeClass = "badge-pending";
+                                            if (sol.EstadoSolicitud_Id == 2) { badgeClass = "badge-success"; }
+                                            if (sol.EstadoSolicitud_Id == 3) { badgeClass = "badge-danger"; }
+                                            if (sol.EstadoSolicitud_Id == 4) { badgeClass = "badge-active"; }
+                                        }
+                                        <span class="badge badge-premium @badgeClass">@sol.EstadoSolicitud.Descripcion</span>
+                                    </td>
+                                    <td class="text-center">
+                                        @if (sol.EstadoSolicitud_Id == 1) // Pendiente
+                                        {
+                                            <button class="btn btn-sm btn-success" style="border-radius: 15px; padding: 5px 15px;" onclick="resolver(@sol.Id, 2)">
+                                                <i class="fa fa-check"></i> Aprobar
+                                            </button>
+                                            <button class="btn btn-sm btn-danger" style="border-radius: 15px; padding: 5px 15px; margin-left: 5px;" onclick="resolver(@sol.Id, 3)">
+                                                <i class="fa fa-times"></i> Rechazar
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted" style="font-size: 11px;"><i class="fa fa-lock"></i> Procesada</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@using (Html.BeginForm("Resolver", "Creditos", FormMethod.Post, new { id = "formResolver" }))
+{
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="solicitudId" id="solId" />
+    <input type="hidden" name="estadoId" id="estId" />
+    <input type="hidden" name="motivoRechazo" id="motivo" />
+}
+
+}

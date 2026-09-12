@@ -1,0 +1,97 @@
+@{
+      ViewBag.Title = "Tipos de XML";
+      Layout = "~/Views/Shared/_Layout.cshtml";
+}
+    <section class="content-header">
+        <h1>
+            Mantenimiento de Tipos de XML
+        </h1>
+    </section>
+
+    <section class="content">
+        <!-- Small boxes (Stat box) -->
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box box-solid box-info">
+
+                    <div class="box-body">
+                        <!-- Split button -->
+                        <div class="margin"> 
+                            <div class="btn-group"> 
+                                <a href="~/TipoXML/Create" class="btn btn-dropbox">Crear un Tipo de XML</a>
+                            </div>  
+                        </div>
+                        <!-- flat split buttons -->
+                    </div><!-- /.box-body -->
+                </div>
+                <div class="box box-solid box-info">
+                    <div class="box-body table-responsive">
+                        <div class="margin">
+                            <div class="streaming-table">
+                                <span id="found" class="label label-info"></span>
+                                <table id="tbTipoXML" class="table table-striped table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Acción</th>
+                                            <th> Código  </th>
+                                            <th> Nombre  </th>
+                                            @*<th> Prioridad  </th>
+                                            <th> Día Máximo  </th>*@
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+
+                                <div id="summary">
+                                    <div>
+                                    </div>
+                                </div>
+                                <br />
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+     <script type="text/javascript">
+
+        $(document).ready(function () {
+            var oTableTipoXML = "";
+            var ControlerNameTipoXML = "@Url.Content("~/TipoXML")";
+            // debugger;
+            oTableCompany = $("#tbTipoXML").dataTable({  
+            "bRetrieve": true,
+            "bProcessing": true,
+            "dom": 'lBfrtip',
+            "sAjaxSource": "@Url.Content("~/TipoXML/GetGrid")",
+            "buttons": [
+                 { extend: 'copyHtml5', exportOptions: { columns: ':visible' } }
+                ,{ extend: 'excelHtml5', exportOptions: { columns: ':visible' } }
+                ,{ extend: 'pdfHtml5', exportOptions: { columns: ':visible' } }
+                ,{ extend: 'print', exportOptions: { columns: ':visible' } } 
+                ,'colvis'
+            ], columnDefs: [{   visible: false }],
+            "pageLength": 10,
+            "lengthMenu": [[5,10, 25, 50, -1], [5,10, 25, 50, "Todos"]],
+                "aoColumns": [
+                             
+                {
+                                 "mRender": function (oObj, type, row) {
+                                     
+                    var buttons = '<div class="text-center"> <div class="btn-group text-left"> <button type="button" class="btn btn-default btn-xs btn-warning dropdown-toggle" data-toggle="dropdown">Acción <span class="caret"></span></button>';
+                    buttons += '<ul class="dropdown-menu pull-left" role="menu">';
+                                     buttons += '<li><a href="' + ControlerNameTipoXML + "/Edit/" + row[0] + '"><i class="fa fa-edit"></i>Excepciones</a></li>';
+                                     buttons += '<li><a href="' + ControlerNameTipoXML + "/Details/" + row[0] + '"><i class="fa fa-edit"></i>Consultar</a></li>';
+                                     buttons += '<li><a href="' + ControlerNameTipoXML + "/Delete/" + row[0] + '"><i class="fa fa-edit"></i>Borrar</a></li>';
+                    buttons += '</ul>';
+                    buttons += '</div></div>';
+                    return buttons;
+                }
+                    }, {}, {}]
+        });
+     });
+</script>
+

@@ -1,0 +1,117 @@
+@model Entities.Entities.Evaluacion.EvalCategoria
+
+@{
+    ViewBag.Title = "Crear";
+    if (Ajax.IsThisAjaxRequest())
+    {
+        Layout = null;
+    }
+}
+
+@Html.StarkAjaxFormSubmiter("frmCompany", "tbCompany", true, "Acción ejecutada con éxito")
+@{
+    if (!Ajax.IsThisAjaxRequest())
+    {
+        <section class="content-header">
+            <h1>
+                Creación de una Categoría
+            </h1>
+        </section>
+    }
+}
+
+@using (Html.BeginForm("Create", "Evaluacion", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmCompany" }))
+{
+    @Html.AntiForgeryToken()
+    <!-- Main content -->
+    <section class="content">
+        <!-- Small boxes(Stat box) -->
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box box-solid box-info">
+                    <div role="form">
+                        <div class="box-body">
+                            <div class="col-lg-12">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Titulo, new { @class = "" })
+                                        @Html.EditorFor(model => model.Titulo)
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.ResponsableSugerido, new { @class = "" })
+                                        @Html.EditorFor(model => model.ResponsableSugerido)
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.Descripcion, new { @class = "" })
+                                    <textarea id="Descripcion" name="Descripcion" class="form-control" style="height: 300px"></textarea>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.PuntosOpcionA, new { @class = "" })
+                                        @Html.EditorFor(model => model.PuntosOpcionA)
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.PuntosOpcionB, new { @class = "" })
+                                        @Html.EditorFor(model => model.PuntosOpcionB)
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.PuntosOpcionC, new { @class = "" })
+                                        @Html.EditorFor(model => model.PuntosOpcionC)
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.PuntosOpcionD, new { @class = "" })
+                                        @Html.EditorFor(model => model.PuntosOpcionD)
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <label>Imagen</label>
+                                        <label class="btn btn-default">
+                                            Browse&hellip; <input type="file" name="file" style="display: none;">
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="box-footer">
+                                @Html.StarkInputButtion("Guardar", "submit", "btn btn-primary", "")
+                                @Html.ActionLink("Regresar", "Index", null, new { @class = "btn btn-primary" })
+                            </div>
+                        </div>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </section>
+}
+
+
+<script src="~/Content/theme/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
+<script>
+    $(function () {
+        $("#Descripcion").wysihtml5(({
+            toolbar: {
+                "font-styles": true, // Font styling, e.g. h1, h2, etc.
+                "emphasis": true, // Italics, bold, etc.
+                "lists": true, // (Un)ordered lists, e.g. Bullets, Numbers.
+                "html": false, // Button which allows you to edit the generated HTML.
+                "link": true, // Button to insert a link.
+                "image": true, // Button to insert an image.
+                "color": false, // Button to change color of font
+                "blockquote": false, // Blockquote
+            }
+        }));
+    })
+</script>

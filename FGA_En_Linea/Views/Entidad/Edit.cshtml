@@ -1,0 +1,126 @@
+@model FGA.Models.Entidad
+
+@{
+    ViewBag.Title = "Editar Entidad";
+    if (Ajax.IsThisAjaxRequest())
+    {
+        Layout = null;
+    }
+}
+
+@Html.StarkAjaxFormSubmiter("frmCompany", "tbCompany", true, "Acción ejecutada con éxito")
+
+@{
+    if (!Ajax.IsThisAjaxRequest())
+    {
+        <br />
+        <section class="content-header">
+            <h1 style="margin-left:15px">
+                Editar una Entidad
+            </h1>
+        </section>
+        <br />
+    }
+}
+
+<script type="text/javascript">
+    $(function () {
+
+        $("#Identificacion").mask("9999999999");
+    });
+</script>
+
+@using (Html.BeginForm("Edit", "Entidad", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmCompany" }))
+{
+    @Html.AntiForgeryToken()
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box box-solid box-info">
+                    <div role="form">
+                        <div class="box-body">
+                            <div class="form-group">
+                                @Html.HiddenFor(model => model.Id, new { @class = "" })
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="col-lg-4">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Identificacion, new { @class = "" })
+                                        @Html.EditorFor(model => model.Identificacion)
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Nombre, new { @class = "" })
+                                        @Html.EditorFor(model => model.Nombre)
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Perfil_Entidad, new { @class = "" })
+                                        @Html.DropDownList("Perfil_Entidad_Id", " -Selecciona una opción- ")
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Contacto, new { @class = "" })
+                                        @Html.EditorFor(model => model.Contacto)
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.CorreoInforme, new { @class = "" })
+                                        @Html.EditorFor(model => model.CorreoInforme)
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Activo, new { @class = "checkbox" })
+                                        @Html.EditorFor(model => model.Activo, new { htmlAttributes = new { @class = "js-switch" } })
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Ind_Validar, new { @class = "checkbox" })
+                                        @Html.EditorFor(model => model.Ind_Validar, new { htmlAttributes = new { @class = "js-switch" } })
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Ind_Cargar, new { @class = "checkbox" })
+                                        @Html.EditorFor(model => model.Ind_Cargar, new { htmlAttributes = new { @class = "js-switch" } })
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Ind_Evaluacion, new { @class = "checkbox" })
+                                        @Html.EditorFor(model => model.Ind_Evaluacion, new { htmlAttributes = new { @class = "js-switch" } })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="col-lg-12">
+                                    <label class="btn btn-default">
+                                        Logo&hellip; <input type="file" name="file" style="display: none;">
+                                    </label>
+                                    <img width="200" height="150" src="https://www.ffc.co.cr/img/secciones/afiliados/@(String.Format("{0}{1}", Model.Nombre, ".jpg"))"
+                                         onerror="this.onerror=null; this.src='https://www.ffc.co.cr/img/secciones/Logo/Logo.jpg'" alt="Logo Entidad" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="box-footer">
+                        @Html.StarkInputButtion("Guardar", "submit", "btn btn-primary", "")
+                        @Html.ActionLink("Regresar", "Index", null, new { @class = "btn btn-primary" })
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+}

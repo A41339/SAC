@@ -1,0 +1,113 @@
+﻿@{
+    ViewBag.Title = "Composición de cartera";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<section class="content-header">
+    <h1>
+        Información de la cartera de la nueva normativa. Cálculos 14-21
+    </h1>
+</section>
+
+<section class="content">
+    <div class="col-xs-12">
+        <div class="box box-solid box-info">
+            <div class="margin">
+                <div class="streaming-table">
+                    <span id="found" class="label label-info"></span>
+                    <table class="table table-condensed table-striped">
+                        <tr>
+                            <td class="mobile">
+                                @Html.Label("Entidad:")
+                            </td>
+                            <td>
+                                @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", style = "width: 350px;" })
+                            </td>
+                            <td class="mobile">
+                                @Html.Label("Gráfico:")
+                            </td>
+                            <td>
+                                @Html.DropDownList("Grafico", null, new { @id = "Grafico", style = "width: 350px;" })
+                            </td>
+                            <td>
+                                <label class="btn btn-facebook">
+                                    Generar<input type="submit" name="submit" id="btn_buscar" style="display: none;">
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td id="lbl_fecInicial" class="mobile">
+                                @Html.Label("Inicial:")
+                            </td>
+                            <td id="txt_fecInicial" nowrap="nowrap" class="form-group">
+                                <input name="PeriodoI" id="PeriodoI" class="datecontrol" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MM/yyyy")" />
+                            </td>
+                            <td class="mobile">
+                                @Html.Label("Final:")
+                            </td>
+                            <td nowrap="nowrap" class="form-group">
+                                <input name="PeriodoF" id="PeriodoF" class="datecontrol" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MM/yyyy")" />
+                            </td>
+                            <td></td>
+                        </tr>
+                       
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div id="grafica">
+        </div>
+    </div>
+</section>
+
+<script type="text/javascript">
+
+    $("#Grafico").change(function () {
+        if ($("#Grafico").val() != 10) {
+            $("#txt_fecInicial").removeClass("hidden");
+            $("#lbl_fecInicial").removeClass("hidden");
+        }       
+        else {
+            $("#txt_fecInicial").addClass("hidden");
+            $("#lbl_fecInicial").addClass("hidden");
+        }       
+    });
+
+    function refreshGraph() {
+         $.ajax({
+            url: '@Url.Action("GraficaDetalle", "Cartera14_21")',
+            type: 'POST',
+            cache: false,
+            async: false,
+            data: {
+                 'Entidades': $('#IdEntidad').val(),
+                 'Grafico': $('#Grafico').val(),
+                 'PeriodoI': $('#PeriodoI').val(),
+                 'PeriodoF': $('#PeriodoF').val()                
+            },
+             success: function (result) {
+                 $('#grafica').html(result);
+                 $("#entidad").text($("#Grafico :selected").text());
+                 $("#pEntidad").text($("#Grafico :selected").text());
+            }
+         });
+    }
+
+    $(document).on('click', '#btn_buscar', function () {
+        refreshGraph();
+    });
+
+    function formatMillion() {
+        $("#entidad").text($("#Grafico :selected").text());
+        $("#pEntidad").text($("#Grafico :selected").text());
+        return this.value;
+    }
+
+    function formatPercent() {
+        return this.value + " %";
+    }
+
+    refreshGraph();
+
+</script>

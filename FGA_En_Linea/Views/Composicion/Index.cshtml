@@ -1,0 +1,176 @@
+﻿@model  FGA.Model.Composicion_cartera
+
+@{
+    ViewBag.Title = "Composición de cartera";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section ScriptsOrCss
+{
+    <link rel="stylesheet" href="~/Content/multiselect/docs/css/prettify.min.css" type="text/css">
+    <script type="text/javascript" src="~/Content/multiselect/docs/js/prettify.min.js"></script>
+    <link rel="stylesheet" href="~/Content/multiselect/dist/css/bootstrap-multiselect.css" type="text/css">
+    <script type="text/javascript" src="~/Content/multiselect/dist/js/bootstrap-multiselect.js"></script>
+}
+
+<section class="content-header">
+    <h1>
+        Composición de la cartera
+    </h1>
+</section>
+
+<section class="content">
+    <div class="col-xs-12">
+        <div class="box box-solid box-info">
+            <div class="margin">
+                <div class="streaming-table">
+                    <span id="found" class="label label-info"></span>
+                    <table class="table table-condensed table-striped">
+                        <tr>
+                            <td class="mobile">
+                                @Html.Label("Entidad:")
+                            </td>
+                            <td>
+                                @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", style = "width: 350px;" })
+                            </td>
+                            <td class="mobile">
+                                @Html.Label("Gráfico:")
+                            </td>
+                            <td>
+                                @Html.DropDownList("Grafico", null, new { @id = "Grafico", style = "width: 350px;" })
+                            </td>
+                            <td>
+                                <label class="btn btn-facebook">
+                                    Generar<input type="submit" name="submit" id="btn_buscar" style="display: none;">
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="mobile">
+                                @Html.Label("Inicial:")
+                            </td>
+                            <td nowrap="nowrap" class="form-group">
+                                <input name="PeriodoI" id="PeriodoI" class="datecontrol" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MM/yyyy")" />
+                            </td>
+                            <td class="mobile">
+                                @Html.Label("Final:")
+                            </td>
+                            <td nowrap="nowrap" class="form-group">
+                                <input name="PeriodoF" id="PeriodoF" class="datecontrol" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MM/yyyy")" />
+                            </td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td id="lbl_categoria" class="mobile hidden">
+                                @Html.Label("Categorías:")
+                            </td>
+                            <td id="cmb_categoria" class="hidden">
+                                <select id="IdCategoria" name="CategoriaRiesgo" multiple="multiple">
+                                    @foreach (var detalle in Model.listaCategoriaRiesgo)
+                                    {
+                                        <option value="@detalle.CategoriaRiesgo">@detalle.CategoriaRiesgo</option>
+                                    }
+                                </select>
+                            </td>
+                            <td id="lbl_tipoCartera" class="mobile hidden">
+                                @Html.Label("Tipos de Cartera:")
+                            </td>
+                            <td id="cmb_tipoCartera" class="hidden">
+                                <select id="IdTipoCartera" name="TipoCartera" multiple="multiple">
+                                    @foreach (var detalle in Model.listaTiposCartera)
+                                    {
+                                        <option value="@detalle.Nombre">@detalle.Nombre</option>
+                                    }
+                                </select>
+                            </td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div id="grafica">
+        </div>
+    </div>
+</section>
+
+<script type="text/javascript">
+
+    $("#Grafico").change(function () {
+        if ($("#Grafico").val() == 3) {
+            $("#cmb_categoria").removeClass("hidden");
+            $("#lbl_categoria").removeClass("hidden");
+            $("#lbl_tipoCartera").addClass("hidden");
+            $("#cmb_tipoCartera").addClass("hidden");
+        }
+        else if ($("#Grafico").val() == 7) {
+            $("#cmb_tipoCartera").removeClass("hidden");
+            $("#lbl_tipoCartera").removeClass("hidden");
+            $("#lbl_categoria").addClass("hidden");
+            $("#cmb_categoria").addClass("hidden");
+        }
+        else {
+            $("#lbl_categoria").addClass("hidden");
+            $("#cmb_categoria").addClass("hidden");
+            $("#lbl_tipoCartera").addClass("hidden");
+            $("#cmb_tipoCartera").addClass("hidden");
+        }
+
+        $('#IdCategoria').multiselect({
+            enableFiltering: true,
+            filterBehavior: 'text',
+            buttonWidth: 200,
+            numberDisplayed: 1,
+            maxHeight: 450
+        });
+
+        $('#IdTipoCartera').multiselect({
+            enableFiltering: true,
+            filterBehavior: 'text',
+            buttonWidth: 200,
+            numberDisplayed: 1,
+            maxHeight: 450
+        });
+    });
+
+    function refreshGraph() {
+         $.ajax({
+            url: '@Url.Action("GraficaDetalle", "Composicion")',
+            type: 'POST',
+            cache: false,
+            async: false,
+            data: {
+                 'Entidades': $('#IdEntidad').val(),
+                 'Grafico': $('#Grafico').val(),
+                 'PeriodoI': $('#PeriodoI').val(),
+                 'PeriodoF': $('#PeriodoF').val(),
+                 'CategoriaRiesgo': $('#IdCategoria').val(),
+                 'TipoCartera': $('#IdTipoCartera').val()
+            },
+             success: function (result) {
+                 $('#grafica').html(result);
+                 $("#entidad").text($("#Grafico :selected").text());
+                 $("#pEntidad").text($("#Grafico :selected").text());
+            }
+         });
+    }
+
+    $(document).on('click', '#btn_buscar', function () {
+        refreshGraph();
+    });
+
+    function formatMillion() {
+        $("#entidad").text($("#Grafico :selected").text() + " en millones");
+        $("#pEntidad").text($("#Grafico :selected").text() + " en millones");
+        return this.value;
+    }
+
+    function formatPercent() {
+        return this.value + " %";
+    }
+
+    refreshGraph();
+
+</script>

@@ -1,0 +1,58 @@
+@model FGA.Models.Calendario
+
+@{
+    ViewBag.Title = "Crear";
+    if (Ajax.IsThisAjaxRequest())
+    {
+        Layout = null;
+    }
+}
+
+@Html.StarkAjaxFormSubmiter("frmCalendar", "tbCalendar", true, "Acción ejecutada con éxito")
+
+@{
+    if (!Ajax.IsThisAjaxRequest())
+    {
+        <section class="content-header">
+            <h1>
+                Crear Calendario
+            </h1>
+        </section>
+    }
+}
+
+@using (Html.BeginForm("Create", "Calendario", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmCalendar" }))
+{
+    @Html.AntiForgeryToken()
+    <section class="content">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box box-solid box-info">
+                    <div class="box-header">
+                        <h3 class="box-title">Complete el formulario</h3>
+                    </div>
+                    <div role="form">
+                        <div class="box-body">                           
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Periodo, new { @class = "" })
+                                <input name="Periodo" id="Periodo" class="datecontrol" />
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.DiaNotificacion)
+                                @Html.EditorFor(model => model.DiaNotificacion, new { @class = "" })
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.DiaLimite)
+                                @Html.EditorFor(model => model.DiaLimite, new { @class = "" })
+                            </div>
+                            <div class="box-footer">
+                                @Html.StarkInputButtion("Guardar", "submit", "btn btn-primary", "")
+                                @Html.ActionLink("Regresar", "Index", null, new { @class = "btn btn-primary" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+}

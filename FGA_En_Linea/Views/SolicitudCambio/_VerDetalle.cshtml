@@ -1,0 +1,674 @@
+﻿@model FGA.Models.SolicitudView
+
+<div class="container">
+    <div class="row">
+        <br />
+        <div id="wizard">
+            <h2>Registro</h2>
+            <section>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="panel panel-primary">
+                            <div class="panel-body">
+                                <label class="title">Datos del solicitante</label>
+                                <div class="form-group" style="padding-top: 10px !important;">
+                                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                                        @Html.LabelFor(model => model.solicitud.IdSolicitante_Id, new { @class = "" })
+                                    </div>
+                                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 form-validate">
+                                        @Html.DisplayFor(model => model.solicitud.IdSolicitante.Nombre)
+                                    </div>
+                                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                                        @Html.LabelFor(model => model.solicitud.IdAprobador_Id, new { @class = "" })
+                                    </div>
+                                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 form-validate">
+                                        @Html.DisplayFor(model => model.solicitud.IdAprobador.Nombre)
+                                    </div>
+                                </div>
+                                <div class="form-group" style="padding-top: 35px !important;">
+                                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                                        <label>Categoría del cambio</label>
+                                    </div>
+                                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                                        @if (@Model.solicitud.IndEmergencia)
+                                        {
+                                            <label class="btn btn-success btn-xs">
+                                                <span class="glyphicon glyphicon-ok"></span>
+                                            </label>
+                                        }
+                                        else
+                                        {
+                                            <label class="btn btn-danger btn-xs">
+                                                <span class="glyphicon glyphicon-remove"></span>
+                                            </label>
+                                        }
+                                        <label class="control-label">Urgente</label>
+                                    </div>
+                                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                                        @if (@Model.solicitud.IndEstandar)
+                                        {
+                                            <label class="btn btn-success btn-xs">
+                                                <span class="glyphicon glyphicon-ok"></span>
+                                            </label>
+                                        }
+                                        else
+                                        {
+                                            <label class="btn btn-danger btn-xs">
+                                                <span class="glyphicon glyphicon-remove"></span>
+                                            </label>
+                                        }
+                                        <label class="control-label">Estandar</label>
+                                    </div>
+                                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                                        @if (@Model.solicitud.IndNormal)
+                                        {
+                                            <label class="btn btn-success btn-xs">
+                                                <span class="glyphicon glyphicon-ok"></span>
+                                            </label>
+                                        }
+                                        else
+                                        {
+                                            <label class="btn btn-danger btn-xs">
+                                                <span class="glyphicon glyphicon-remove"></span>
+                                            </label>
+                                        }
+                                        <label class="control-label">Normal</label>
+                                    </div>
+                                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                                        @if (@Model.solicitud.IndComplejo)
+                                        {
+                                            <label class="btn btn-success btn-xs">
+                                                <span class="glyphicon glyphicon-ok"></span>
+                                            </label>
+                                        }
+                                        else
+                                        {
+                                            <label class="btn btn-danger btn-xs">
+                                                <span class="glyphicon glyphicon-remove"></span>
+                                            </label>
+                                        }
+                                        <label class="control-label">Complejo</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel panel-primary">
+                            <div class="panel-body">
+
+                                <label class="title">Identificación del cambio</label>
+                                <div class="form-group" style="padding-top: 10px !important;">
+                                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                                        <label>Descripción del cambio</label>
+                                    </div>
+                                    <div class="col-lg-10 col-md-10 col-sm-10 col-xs-12 form-validate">
+                                        @Html.DisplayFor(model => model.solicitud.Descripcion)
+                                    </div>
+                                </div>
+                                <div class="form-group" style="padding-top: 30px !important;">
+                                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                                        <p><label class="control-label">Urgencia</label></p>
+                                    </div>
+                                    @if (@Model.solicitud.IdUrgencia.Value == 1)
+                                    {
+                                        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                                            <span class="btn btn-info btn-xs">Baja</span>
+                                        </div>
+                                    }
+                                    else if (@Model.solicitud.IdUrgencia.Value == 2)
+                                    {
+                                        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                                            <span class="btn btn-warning btn-xs">Media</span>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                                            <span class="btn btn-danger btn-xs">Alta</span>
+                                        </div>
+                                    }
+                                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                                        <p><label class="control-label">Prioridad</label></p>
+                                    </div>
+                                    @if (@Model.solicitud.IdImpacto.Value == 1)
+                                    {
+                                        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                                            <span class="btn btn-info btn-xs">Baja</span>
+                                        </div>
+                                    }
+                                    else if (@Model.solicitud.IdImpacto.Value == 2)
+                                    {
+                                        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                                            <span class="btn btn-warning btn-xs">Media</span>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                                            <span class="btn btn-danger btn-xs">Alta</span>
+                                        </div>
+                                    }
+                                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                                        <p><label class="control-label">Entorno</label></p>
+                                    </div>
+                                    @if (@Model.solicitud.IdUrgencia.Value == 1)
+                                    {
+                                        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                                            Desarrollo
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                                            Producción
+                                        </div>
+                                    }
+                                </div>
+                                <div class="form-group" style="padding-top: 30px !important;">
+                                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                                        <p><label class="control-label">Servicio afectado</label></p>
+                                    </div>
+                                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                                        @Html.DisplayFor(model => model.solicitud.Seccion.MenuText)
+                                    </div>
+                                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                                        <p><label class="control-label">Fecha límite</label></p>
+                                    </div>
+                                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                                        @Html.DisplayFor(model => model.solicitud.FechaLimite)
+                                    </div>
+                                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                                        @Html.LabelFor(model => model.solicitud.IdUsuariosAfectados, new { @class = "" })
+                                    </div>
+                                    @if (@Model.solicitud.IdUsuariosAfectados.Value == 0)
+                                    {
+                                        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                                            Ninguno
+                                        </div>
+                                    }
+                                    else if (@Model.solicitud.IdUsuariosAfectados.Value == 1)
+                                    {
+                                        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                                            De 1 a 5
+                                        </div>
+                                    }
+                                    else if (@Model.solicitud.IdUsuariosAfectados.Value == 2)
+                                    {
+                                        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                                            De 1 a 10
+                                        </div>
+                                    }
+                                    else if (@Model.solicitud.IdUsuariosAfectados.Value == 3)
+                                    {
+                                        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                                            De 1 a 15
+                                        </div>
+                                    }
+                                    else if (@Model.solicitud.IdUsuariosAfectados.Value == 4)
+                                    {
+                                        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                                            De 1 a 20
+                                        </div>
+                                    }
+                                    else if (@Model.solicitud.IdUsuariosAfectados.Value == 5)
+                                    {
+                                        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                                            De 1 a 25
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                                            Todos
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel panel-primary">
+                            <div class="panel-body">
+
+                                <label class="title">Detalle del cambio</label>
+                                <div class="form-group" style="padding-top: 10px !important;">
+                                    <div class="col-lg-1 col-md-1 col-sm-1 col-xs-12 form-validate">
+                                        <label>Motivo</label>
+                                    </div>
+                                    <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12 form-validate">
+                                        @Html.DisplayFor(model => model.solicitud.MotivoCambio)
+                                    </div>
+                                    <div class="col-lg-1 col-md-1 col-sm-1 col-xs-12 form-validate">
+                                        <label>Objetivo</label>
+                                    </div>
+                                    <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12 form-validate">
+                                        @Html.DisplayFor(model => model.solicitud.ObjetivoCambio)
+                                    </div>
+                                </div>
+                                <div class="form-group" style="padding-top: 30px !important;">
+                                    <div class="col-lg-1 col-md-1 col-sm-1 col-xs-12 form-validate">
+                                        <label>Impacto</label>
+                                    </div>
+                                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                                        @Html.DisplayFor(model => model.solicitud.DetalleImpacto)
+                                    </div>
+                                    <div class="col-lg-1 col-md-1 col-sm-1 col-xs-12 form-validate">
+                                        <label>Riesgo</label>
+                                    </div>
+                                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                                        @Html.DisplayFor(model => model.solicitud.RiesgoCambio)
+                                    </div>
+                                    <div class="col-lg-1 col-md-1 col-sm-1 col-xs-12 form-validate">
+                                        <p><label class="control-label">Ini. prev</label></p>
+                                    </div>
+                                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                                        @Html.DisplayFor(model => model.solicitud.FechaInicioPrev)
+                                    </div>
+                                    <div class="col-lg-1 col-md-1 col-sm-1 col-xs-12 form-validate">
+                                        <p><label class="control-label">Fin prev</label></p>
+                                    </div>
+                                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                                        @Html.DisplayFor(model => model.solicitud.FechaFinPrev)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel panel-primary">
+                            <div class="panel-body">
+                                <label class="title">Clasificación del cambio</label>
+                                <div class="form-group" style="padding-top: 35px !important;">
+                                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                                        <label>Mantenimiento evolutivo</label>
+                                    </div>
+                                    <div class="col-lg-1 col-md-1 col-sm-1 col-xs-12 form-validate">
+                                    </div>
+                                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                                        <label>Mantenimiento perfectivo</label>
+                                    </div>
+                                    <div class="col-lg-1 col-md-1 col-sm-1 col-xs-12 form-validate">
+                                    </div>
+                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 form-validate">
+                                        <label class="control-label">Mantenimiento adaptativo</label>
+                                        @if (@Model.solicitud.IndMantAdaptativo)
+                                        {
+                                            <label class="btn btn-success btn-xs">
+                                                <span class="glyphicon glyphicon-ok"></span>
+                                            </label>
+                                        }
+                                        else
+                                        {
+                                            <label class="btn btn-danger btn-xs">
+                                                <span class="glyphicon glyphicon-remove"></span>
+                                            </label>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="form-group" style="padding-top: 35px !important;">
+                                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                                        @if (@Model.solicitud.IndNuevaFunc)
+                                        {
+                                            <label class="btn btn-success btn-xs">
+                                                <span class="glyphicon glyphicon-ok"></span>
+                                            </label>
+                                        }
+                                        else
+                                        {
+                                            <label class="btn btn-danger btn-xs">
+                                                <span class="glyphicon glyphicon-remove"></span>
+                                            </label>
+                                        }
+                                        <label class="control-label"> Nueva funcionalidad</label>
+                                    </div>
+                                    <div class="col-lg-1 col-md-1 col-sm-1 col-xs-12 form-validate">
+                                    </div>
+                                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                                        @if (@Model.solicitud.IndMantenimiento)
+                                        {
+                                            <label class="btn btn-success btn-xs">
+                                                <span class="glyphicon glyphicon-ok"></span>
+                                            </label>
+                                        }
+                                        else
+                                        {
+                                            <label class="btn btn-danger btn-xs">
+                                                <span class="glyphicon glyphicon-remove"></span>
+                                            </label>
+                                        }
+                                        <label class="control-label"> Mantenimiento</label>
+                                    </div>
+                                    <div class="col-lg-1 col-md-1 col-sm-1 col-xs-12 form-validate">
+                                    </div>
+
+                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 form-validate">
+                                        <label class="control-label">Mantenimiento correctivo</label>
+                                        @if (@Model.solicitud.IndMantCorrectivo)
+                                        {
+                                            <label class="btn btn-success btn-xs">
+                                                <span class="glyphicon glyphicon-ok"></span>
+                                            </label>
+                                        }
+                                        else
+                                        {
+                                            <label class="btn btn-danger btn-xs">
+                                                <span class="glyphicon glyphicon-remove"></span>
+                                            </label>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="form-group" style="padding-top: 30px !important;">
+                                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                                        @if (@Model.solicitud.IndNuevaVersion)
+                                        {
+                                            <label class="btn btn-success btn-xs">
+                                                <span class="glyphicon glyphicon-ok"></span>
+                                            </label>
+                                        }
+                                        else
+                                        {
+                                            <label class="btn btn-danger btn-xs">
+                                                <span class="glyphicon glyphicon-remove"></span>
+                                            </label>
+                                        }
+                                        <label class="control-label"> Nueva versión</label>
+                                    </div>
+                                    <div class="col-lg-1 col-md-1 col-sm-1 col-xs-12 form-validate">
+                                    </div>
+
+                                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                                        @if (@Model.solicitud.IndMejoraServ)
+                                        {
+                                            <label class="btn btn-success btn-xs">
+                                                <span class="glyphicon glyphicon-ok"></span>
+                                            </label>
+                                        }
+                                        else
+                                        {
+                                            <label class="btn btn-danger btn-xs">
+                                                <span class="glyphicon glyphicon-remove"></span>
+                                            </label>
+                                        }
+                                        <label class="control-label"> Mejora de servicio</label>
+                                    </div>
+
+                                </div>
+                                <div class="form-group" style="padding-top: 30px !important;">
+                                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                                        @if (@Model.solicitud.IndNuevoServ)
+                                        {
+                                            <label class="btn btn-success btn-xs">
+                                                <span class="glyphicon glyphicon-ok"></span>
+                                            </label>
+                                        }
+                                        else
+                                        {
+                                            <label class="btn btn-danger btn-xs">
+                                                <span class="glyphicon glyphicon-remove"></span>
+                                            </label>
+                                        }
+                                        <label class="control-label"> Nuevo servicio</label>
+                                    </div>
+                                    <div class="col-lg-1 col-md-1 col-sm-1 col-xs-12 form-validate">
+                                    </div>
+
+                                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                                        @if (@Model.solicitud.IndMejoraEstetica)
+                                        {
+                                            <label class="btn btn-success btn-xs">
+                                                <span class="glyphicon glyphicon-ok"></span>
+                                            </label>
+                                        }
+                                        else
+                                        {
+                                            <label class="btn btn-danger btn-xs">
+                                                <span class="glyphicon glyphicon-remove"></span>
+                                            </label>
+                                        }
+                                        <label class="control-label">Mejora estético</label>
+                                    </div>
+                                </div>
+                                <div class="form-group" style="padding-top: 30px !important;">
+                                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                                        @if (@Model.solicitud.IndPaseEntorno)
+                                        {
+                                            <label class="btn btn-success btn-xs">
+                                                <span class="glyphicon glyphicon-ok"></span>
+                                            </label>
+                                        }
+                                        else
+                                        {
+                                            <label class="btn btn-danger btn-xs">
+                                                <span class="glyphicon glyphicon-remove"></span>
+                                            </label>
+                                        }
+                                        <label class="control-label"> Paso entorno a otro</label>
+                                    </div>
+                                </div>
+                                @if (Model.solicitud.IndEstado.Value == (int)FGA.Enum.Enum_EstadoSolicitud.Rechazado)
+                                {
+                                    <div class="panel panel-primary">
+                                        <div class="panel-body">
+                                            <label class="title">Motivo del rechazo</label>
+                                            <div class="form-group" style="padding-top: 30px !important;">
+                                                <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                                                    <label class="control-label">Motivo</label>
+                                                </div>
+                                                <div class="col-lg-10 col-md-10 col-sm-10 col-xs-12 form-validate">
+                                                    <label class="label-alert">@Model.solicitud.MotivoRechazo</label>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                        <div class="panel panel-primary">
+                            <div class="panel-body">
+
+                                <label class="title">Documento asociado al cambio</label>
+                                <table id="listview" class="table table-striped table-bordered">
+                                    <tr class="noselect">
+                                        @*<td></td>*@
+                                        <th id="two">
+                                            Nombre
+                                        </th>
+                                        <th id="three">
+                                            Fecha modificación
+                                        </th>
+                                    </tr>
+                                    @{
+                                        foreach (var item in Model.files)
+                                        {
+                                            <tr class="t-row noselect">
+                                                @*<td>
+                                                    <span onclick="javascript:download();" class="fa fa-download" style="cursor: pointer"></span>
+                                                </td>*@
+                                                <td class="cursor">
+                                                    <img width="24" height="24" alt="@item.Category.ToString()" src="@Url.Content("~/Content/Images/" + item.Category.ToString() + ".png")"
+                                                         style="vertical-align: middle;" />
+                                                    <span style="padding-left: 2px;">
+                                                        @item.Name.ToUpper()
+                                                    </span>
+                                                </td>
+                                                <td class="three">
+                                                    @String.Format("{0:g}", item.Modified)
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="box-footer">
+                    @Html.ActionLink("Regresar", "Index", null, new { @class = "btn btn-primary" })
+                </div>
+            </section>
+
+            <h2>Desarrollo</h2>
+            <section>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="box box-solid box-info">
+                            <div class="box-body">
+                                <br />
+                                <label class="title">Tareas de desarrollo</label>
+                                <br />
+                                <div class="form-group" style="padding-top: 30px !important;">
+                                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                                        <p><label class="control-label">Inicio previsto</label></p>
+                                    </div>
+                                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 form-validate">
+                                        @Html.DisplayFor(model => model.solicitud.FechaDesarrolloInicio)
+                                    </div>
+                                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                                        <p><label class="control-label">Finalización  prevista</label></p>
+                                    </div>
+                                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 form-validate">
+                                        @Html.DisplayFor(model => model.solicitud.FechaDesarrolloFin)
+                                    </div>
+                                </div>
+                                <br />
+                                <div class="streaming-table">
+                                    <table id="tDesarrollo" class="table table-striped table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th> Detalle </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody style="font-size: 12px;">
+                                            @if (Model != null)
+                                            {
+                                                foreach (var item in Model.tareas)
+                                                {
+                                                    if (item.IdTipoTarea_Id == (int)FGA.Enum.Enum_EstadoSolicitud.Desarrollo)
+                                                    {
+                                                        <tr>
+                                                            <td>
+                                                                @item.Detalle
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                }
+                                            }
+                                        </tbody>
+                                    </table>
+                                    <br />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <h2>Pruebas</h2>
+            <section>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="box box-solid box-info">
+                            <div class="box-body">
+                                <br />
+                                <label class="title">Tareas de pruebas</label>
+                                <br />
+                                <div class="form-group" style="padding-top: 30px !important;">
+                                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                                        <p><label class="control-label">Inicio previsto</label></p>
+                                    </div>
+                                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 form-validate">
+                                        @Html.DisplayFor(model => model.solicitud.FechaPruebaInicio)
+                                    </div>
+                                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                                        <p><label class="control-label">Finalización  prevista</label></p>
+                                    </div>
+                                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 form-validate">
+                                        @Html.DisplayFor(model => model.solicitud.FechaPruebaFin)
+                                    </div>
+                                </div>
+                                <br />
+                                <div class="streaming-table">
+                                    <table id="tPruebas" class="table table-striped table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th> Detalle </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody style="font-size: 12px;">
+                                            @if (Model != null)
+                                            {
+                                                foreach (var item in Model.tareas)
+                                                {
+                                                    if (item.IdTipoTarea_Id == (int)FGA.Enum.Enum_EstadoSolicitud.Pruebas)
+                                                    {
+                                                        <tr>
+                                                            <td>
+                                                                @item.Detalle
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                }
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <h2>Pase a producción</h2>
+            <section>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="box box-solid box-info">
+                            <div class="box-body">
+                                <br />
+                                <label class="title">Tareas de pase a producción</label>
+                                <br />
+                                <div class="form-group" style="padding-top: 30px !important;">
+                                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                                        <p><label class="control-label">Inicio previsto</label></p>
+                                    </div>
+                                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 form-validate">
+                                        @Html.DisplayFor(model => model.solicitud.FechaPaseInicio)
+                                    </div>
+                                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                                        <p><label class="control-label">Finalización  prevista</label></p>
+                                    </div>
+                                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 form-validate">
+                                        @Html.DisplayFor(model => model.solicitud.FechaPaseFin)
+                                    </div>
+                                </div>
+                                <br />
+                                <div class="streaming-table">
+                                    <table id="tPase" class="table table-striped table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th> Detalle </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody style="font-size: 12px;">
+                                            @if (Model != null)
+                                            {
+                                                foreach (var item in Model.tareas)
+                                                {
+                                                    if (item.IdTipoTarea_Id == (int)FGA.Enum.Enum_EstadoSolicitud.PaseProduccion)
+                                                    {
+                                                        <tr>
+                                                            <td>
+                                                                @item.Detalle
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                }
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>

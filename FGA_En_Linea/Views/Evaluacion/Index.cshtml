@@ -1,0 +1,505 @@
+﻿@{
+    ViewBag.Title = "Categorías";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="content-header">
+    <h1>Evaluaciones</h1>
+</section>
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box box-solid box-info">
+                <div class="box-body">
+                    <div class="margin">
+                        <div class="btn-group">
+                            <a href="~/Evaluacion/Create" class="btn btn-dropbox">Crear una Categoría</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="box box-solid box-info">
+                <div class="box-body table-responsive">
+                    <div class="margin">
+                        <div class="streaming-table">
+                            <span id="found" class="label label-info"></span>
+                            <table id="tbEvaluacion" class="table table-striped table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Acción</th>
+                                        <th class="hidden">Código</th>
+                                        <th>Título</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+
+                            <div id="summary">
+                                <div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <br />
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="content">
+    <div class="modal fade" id="modalPreguntas" tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
+        <div class="modal-dialog  modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">
+                        <b><label id="preguntaTitle"></label></b>
+                    </h4>
+                </div>
+                <div class="margin">
+                    <div class="box box-solid box-info">
+                        <br />
+                        <div id="tblPreguntas">
+                        </div>
+                        <div class="box-body table-responsive">
+                            <br />
+                            <div class="col-lg-12 ">
+                                <textarea type="text" id="EnunciadoPregunta" class="form-control" placeholder="Enunciado" name="EnunciadoPregunta"></textarea>
+                            </div>
+                            <div class="col-lg-12">
+                                <textarea type="text" id="OpcionA" class="form-control" placeholder="Opción A" name="OpcionA"></textarea>
+                            </div>
+                            <div class="col-lg-12">
+                                <textarea type="text" id="OpcionB" class="form-control" placeholder="Opción B" name="OpcionB"></textarea>
+                            </div>
+                            <div class="col-lg-12">
+                                <textarea type="text" id="OpcionC" class="form-control" placeholder="Opción C" name="OpcionC"></textarea>
+                            </div>
+                            <div class="col-lg-12">
+                                <textarea type="text" id="OpcionD" class="form-control" placeholder="Opción D" name="OpcionD"></textarea>
+                            </div>
+                        </div>
+                        <br />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" id="btn_agregarPregunta">Agregar</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="content">
+    <div class="modal fade" id="modalSubCategorias" tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
+        <div class="modal-dialog  modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">
+                        <b><label id="subCategoriaTitle"></label></b>
+                    </h4>
+                </div>
+                <div class="margin">
+                    <div class="box box-solid box-info">
+                        <br />
+                        <div id="tblSubCategorias">
+                        </div>
+                        <div class="box-body table-responsive">
+                            <br />
+                            <div class="col-lg-12 ">
+                                <input type="text" id="EnunciadoSubCategoria" class="form-control" placeholder="Componente" name="EnunciadoSubCategoria" />
+                            </div>
+                        </div>
+                        <br />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" id="btn_agregarSubCategoria">Agregar</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="content">
+    <div class="modal fade" id="modalModificarPregunta" tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="lbl_tituloModificar">Modificar enunciado</h4>
+                </div>
+                <div class="margin">
+                    <div class="box box-solid box-info">
+                        <br />
+                        <div class="box-body table-responsive">
+                            <input id="MPreguntaId" name="MPreguntaId" class="hidden" />
+                            <div class="col-lg-12 ">
+                                <label>Enunciado</label>
+                                <textarea type="text" id="MPreguntaEnunciado" class="form-control" rows="5" placeholder="Pregunta" name="MEnunciado"></textarea>
+                            </div>
+                            <div class="col-lg-12">
+                                <label>Opción A</label>
+                                <textarea type="text" id="MOpcionA" class="form-control" rows="5" placeholder="Opción A" name="MOpcionA"></textarea>
+                            </div>
+                            <div class="col-lg-12">
+                                <label>Opción B</label>
+                                <textarea type="text" id="MOpcionB" class="form-control" rows="5" placeholder="Opción B" name="MOpcionB"></textarea>
+                            </div>
+                            <div class="col-lg-12">
+                                <label>Opción C</label>
+                                <textarea type="text" id="MOpcionC" class="form-control" rows="5" placeholder="Opción C" name="MOpcionC"></textarea>
+                            </div>
+                            <div class="col-lg-12">
+                                <label>Opción D</label>
+                                <textarea type="text" id="MOpcionD" class="form-control" rows="5" placeholder="Opción D" name="MOpcionD"></textarea>
+                            </div>
+                        </div>
+                        <br />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" id="btn_modificarPregunta">Modificar</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="content">
+    <div class="modal fade" id="modalModificarSubCategoria" tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="lbl_tituloMod">Modificar Componente</h4>
+                </div>
+                <div class="margin">
+                    <div class="box box-solid box-info">
+                        <div class="box-body table-responsive">
+                            <br />
+                            <input id="MSubCategoriaId" name="MSubCategoriaId" class="hidden" />
+                            <div class="col-lg-12 ">
+                                <label>Componente</label>
+                                <input type="text" id="MSubCategoriaEnunciado" class="form-control" placeholder="Pregunta" name="MSubCategoriaEnunciado" />
+                            </div>
+                        </div>
+                        <br />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" id="btn_modificarSubCategoria">Modificar</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<input id="idCategoria" runat="server" type="hidden" />
+<input id="idSubCategoria" runat="server" type="hidden" />
+
+<script type="text/javascript">
+
+    var ControlerNameCompany = "@Url.Content("~/Evaluacion")";
+
+    function verPreguntas(id, title) {
+        $("#idSubCategoria").val(id);
+        $('#preguntaTitle').text(title);
+        $('#modalPreguntas').modal('show');
+        refreshGridPreguntas();
+    }
+
+    function verSubCategorias(id, title) {
+        $("#idCategoria").val(id);
+        $('#subCategoriaTitle').text(title);
+        $('#modalSubCategorias').modal('show');
+        refreshGridSubCategorias();
+    }
+
+
+    function modificarPregunta(id, enunciado, opcionA, opcionB, opcionC, opcionD) {
+        $('#modalModificarPregunta').modal('show');
+        $('#MPreguntaId').val(id);
+        $('#MPreguntaEnunciado').val(enunciado);
+        $('#MOpcionA').val(opcionA);
+        $('#MOpcionB').val(opcionB);
+        $('#MOpcionC').val(opcionC);
+        $('#MOpcionD').val(opcionD);
+    }
+
+    function modificarSubCategoria(id, enunciado) {
+        $('#modalModificarSubCategoria').modal('show');
+        $('#MSubCategoriaId').val(id);
+        $('#MSubCategoriaEnunciado').val(enunciado);
+    }
+
+    function borrarPregunta(id) {
+        $.ajax({
+           url: '@Url.Action("DeletePregunta", "Evaluacion")',
+           type: 'POST',
+           cache: false,
+           async: true,
+           data: {
+               'id': id
+           }
+        });
+        refreshGridPreguntas();
+    }
+
+    function borrarSubCategoria(id) {
+        $.ajax({
+           url: '@Url.Action("DeleteSubCategoria", "Evaluacion")',
+           type: 'POST',
+           cache: false,
+           async: true,
+           data: {
+               'id': id
+           }
+        });
+        refreshGridSubCategorias();
+    }
+
+    $(document).on('click', '#btn_modificarPregunta', function () {
+
+        var id = $('#MPreguntaId').val();
+        var enunciado = $('#MPreguntaEnunciado').val();
+        var opcionA = $('#MOpcionA').val();
+        var opcionB = $('#MOpcionB').val();
+        var opcionC = $('#MOpcionC').val();
+        var opcionD = $('#MOpcionD').val();
+
+        $.ajax({
+            async: false,
+            type: "GET",
+            dataType: "json",
+            contentType: "application/json",
+            url: '@Url.Action("ModificarPregunta", "Evaluacion")',
+            data: {
+                'IdPregunta': id,
+                'Enunciado': enunciado,
+                'OpcionA': opcionA,
+                'OpcionB': opcionB,
+                'OpcionC': opcionC,
+                'OpcionD': opcionD
+            }
+        });
+
+        $('#MPreguntaId').val('');
+        $('#MPreguntaEnunciado').val('');
+        $('#MOpcionA').val('');
+        $('#MOpcionB').val('');
+        $('#MOpcionC').val('');
+        $('#MOpcionD').val('');
+        $('#modalModificarPregunta').modal('hide');
+        refreshGridPreguntas();
+     });
+
+
+     $(document).on('click', '#btn_modificarSubCategoria', function () {
+
+        var id = $('#MSubCategoriaId').val();
+        var enunciado = $('#MSubCategoriaEnunciado').val();
+
+        $.ajax({
+            async: false,
+            type: "GET",
+            dataType: "json",
+            contentType: "application/json",
+            url: '@Url.Action("ModificarSubCategoria", "Evaluacion")',
+            data: {
+                'IdSubCategoria': id,
+                'Enunciado': enunciado
+            }
+        });
+
+        $('#MSubCategoriaId').val('');
+        $('#MSubCategoriaEnunciado').val('');
+        $('#modalModificarSubCategoria').modal('hide');
+        refreshGridSubCategorias();
+     });
+
+    $(document).on('click', '#btn_agregarPregunta', function () {
+
+        var id = $("#idSubCategoria").val();
+        var enunciado = $('#EnunciadoPregunta').val();
+        var opcionA = $('#OpcionA').val();
+        var opcionB = $('#OpcionB').val();
+        var opcionC = $('#OpcionC').val();
+        var opcionD = $('#OpcionD').val();
+
+        $.ajax({
+            async: false,
+            type: "GET",
+            dataType: "json",
+            contentType: "application/json",
+            url: '@Url.Action("AgregarPregunta", "Evaluacion")',
+            data: {
+                'IdSubCategoria': id,
+                'Enunciado': enunciado,
+                'OpcionA': opcionA,
+                'OpcionB': opcionB,
+                'OpcionC': opcionC,
+                'OpcionD': opcionD
+            }
+        });
+
+        $('#EnunciadoPregunta').val('');
+        $('#OpcionA').val('');
+        $('#OpcionB').val('');
+        $('#OpcionC').val('');
+        $('#OpcionD').val('');
+        refreshGridPreguntas();
+     });
+
+
+    $(document).on('click', '#btn_agregarSubCategoria', function () {
+
+        var id = $('#idCategoria').val();
+        var enunciado = $('#EnunciadoSubCategoria').val();
+        $.ajax({
+            async: false,
+            type: "GET",
+            dataType: "json",
+            contentType: "application/json",
+            url: '@Url.Action("AgregarSubCategoria", "Evaluacion")',
+            data: {
+                'IdCategoria': id,
+                'Enunciado': enunciado
+            }
+        });
+
+        $('#EnunciadoSubCategoria').val('');
+        refreshGridSubCategorias();
+     });
+
+    function refreshGridPreguntas() {
+         $.ajax({
+            url: '@Url.Action("GetGridPreguntas", "Evaluacion")',
+            type: 'POST',
+            cache: false,
+            async: true,
+             success: function (result) {
+                 $('#tblPreguntas').html(result);
+            }
+        });
+    }
+
+     function refreshGridSubCategorias() {
+         $.ajax({
+            url: '@Url.Action("GetGridSubCategorias", "Evaluacion")',
+            type: 'POST',
+            cache: false,
+            async: true,
+             success: function (result) {
+                 $('#tblSubCategorias').html(result);
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        $("#tbEvaluacion").dataTable({
+        "bRetrieve": true,
+        "bProcessing": true,
+        "dom": 'lBfrtip',
+        "sAjaxSource": "@Url.Content("~/Evaluacion/GetGrid")",
+        "buttons": [
+                { extend: 'copyHtml5', exportOptions: { columns: ':visible' } }
+            ,{ extend: 'excelHtml5', exportOptions: { columns: ':visible' } }
+            ,{ extend: 'pdfHtml5', exportOptions: { columns: ':visible' } }
+            ,{ extend: 'print', exportOptions: { columns: ':visible' } }
+            ,'colvis'
+            ], columnDefs: [{ targets: [1], visible: false },
+                            { targets: [3], width: 100 } ],
+        "pageLength": 10,
+        "lengthMenu": [[5,10, 25, 50, -1], [5,10, 25, 50, "Todos"]],
+        "aoColumns": [
+        {
+            "mRender": function (oObj, type, row) {
+                var buttons = '<div class="text-center"> <div class="btn-group text-left"> <button type="button" class="btn btn-default btn-xs btn-warning dropdown-toggle" data-toggle="dropdown">Acción <span class="caret"></span></button>';
+                buttons += '<ul class="dropdown-menu pull-left" role="menu">';
+                                    buttons += '<li><a href="' + ControlerNameCompany + "/Edit/" + row[0] + '"><i class="fa fa-edit"></i>Modificar</a></li>';
+                                    buttons += '<li><a href="' + ControlerNameCompany + "/Delete/" + row[0] + '"><i class="fa fa-edit"></i>Borrar</a></li>';
+                buttons += '</ul>';
+                buttons += '</div></div>';
+                return buttons;
+            }
+            }, {}, {}, {}]
+        });
+    });
+
+    (function ($, window) {
+        'use strict';
+
+        var MultiModal = function (element) {
+            this.$element = $(element);
+            this.modalCount = 0;
+        };
+
+        MultiModal.BASE_ZINDEX = 1040;
+
+        MultiModal.prototype.show = function (target) {
+            var that = this;
+            var $target = $(target);
+            var modalIndex = that.modalCount++;
+
+            $target.css('z-index', MultiModal.BASE_ZINDEX + (modalIndex * 20) + 10);
+
+            // Bootstrap triggers the show event at the beginning of the show function and before
+            // the modal backdrop element has been created. The timeout here allows the modal
+            // show function to complete, after which the modal backdrop will have been created
+            // and appended to the DOM.
+            window.setTimeout(function () {
+                // we only want one backdrop; hide any extras
+                if (modalIndex > 0)
+                    $('.modal-backdrop').not(':first').addClass('hidden');
+
+                that.adjustBackdrop();
+            });
+        };
+
+        MultiModal.prototype.hidden = function (target) {
+            this.modalCount--;
+
+            if (this.modalCount) {
+                this.adjustBackdrop();
+                // bootstrap removes the modal-open class when a modal is closed; add it back
+                $('body').addClass('modal-open');
+            }
+        };
+
+        MultiModal.prototype.adjustBackdrop = function () {
+            var modalIndex = this.modalCount - 1;
+            $('.modal-backdrop:first').css('z-index', MultiModal.BASE_ZINDEX + (modalIndex * 20));
+        };
+
+        function Plugin(method, target) {
+            return this.each(function () {
+                var $this = $(this);
+                var data = $this.data('multi-modal-plugin');
+
+                if (!data)
+                    $this.data('multi-modal-plugin', (data = new MultiModal(this)));
+
+                if (method)
+                    data[method](target);
+            });
+        }
+
+        $.fn.multiModal = Plugin;
+        $.fn.multiModal.Constructor = MultiModal;
+
+        $(document).on('show.bs.modal', function (e) {
+            $(document).multiModal('show', e.target);
+        });
+
+        $(document).on('hidden.bs.modal', function (e) {
+            $(document).multiModal('hidden', e.target);
+        });
+    }(jQuery, window));
+
+</script>

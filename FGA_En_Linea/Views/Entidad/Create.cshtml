@@ -1,0 +1,131 @@
+@model FGA.Models.Entidad
+
+@{
+    ViewBag.Title = "Crear";
+    if (Ajax.IsThisAjaxRequest())
+    {
+        Layout = null;
+    }
+}
+
+@Html.StarkAjaxFormSubmiter("frmCompany", "tbCompany", true, "Acción ejecutada con éxito")
+
+@{
+    if (!Ajax.IsThisAjaxRequest())
+    {
+        <section class="content-header">
+            <br />
+            <h1 style="margin-left:15px">
+                Creación de una Entidad
+            </h1>
+            <br />
+        </section>
+    }
+}
+
+<script type="text/javascript">
+    $(function () {
+
+        $("#Identificacion").mask("9999999999");
+    });
+</script>
+
+@using (Html.BeginForm("Create", "Entidad", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmCompany" }))
+{
+    @Html.AntiForgeryToken()
+    <!-- Main content -->
+    <section class="content">
+        <!-- Small boxes(Stat box) -->
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box box-solid box-info">
+                    <div role="form">
+                        <div class="box-body">
+                            <div class="col-lg-12">
+                                <div class="col-lg-4">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Id, new { @class = "" })
+                                        @Html.EditorFor(model => model.Id)
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Identificacion, new { @class = "" })
+                                        @Html.EditorFor(model => model.Identificacion)
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Nombre, new { @class = "" })
+                                        @Html.EditorFor(model => model.Nombre)
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="col-lg-4">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Contacto, new { @class = "" })
+                                        @Html.EditorFor(model => model.Contacto)
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.CorreoInforme, new { @class = "" })
+                                        @Html.EditorFor(model => model.CorreoInforme)
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Perfil_Entidad, new { @class = "" })
+                                        @Html.DropDownList("Perfil_Entidad_Id")
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Activo, new { @class = "checkbox" })
+                                        @Html.EditorFor(model => model.Activo, new { htmlAttributes = new { @class = "js-switch" } })
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Ind_Cargar, new { @class = "checkbox" })
+                                        @Html.EditorFor(model => model.Ind_Cargar, new { htmlAttributes = new { @class = "js-switch" } })
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Ind_Validar, new { @class = "checkbox" })
+                                        @Html.EditorFor(model => model.Ind_Validar, new { htmlAttributes = new { @class = "js-switch" } })
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Ind_Evaluacion, new { @class = "checkbox" })
+                                        @Html.EditorFor(model => model.Ind_Evaluacion, new { htmlAttributes = new { @class = "js-switch" } })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <label>Logo</label>
+                                        <label class="btn btn-default">
+                                            Browse&hellip; <input type="file" name="file" style="display: none;">
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="box-footer">
+                                @Html.StarkInputButtion("Guardar", "submit", "btn btn-primary", "")
+                                @Html.ActionLink("Regresar", "Index", null, new { @class = "btn btn-primary" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+}
+

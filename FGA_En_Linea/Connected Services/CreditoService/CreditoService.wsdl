@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="http://tempuri.org/" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" name="CreditoService" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://tempuri.org/Imports">
+      <xsd:import schemaLocation="http://10.171.1.28/DBService/CreditoService.svc?xsd=xsd0" namespace="http://tempuri.org/" />
+      <xsd:import schemaLocation="http://10.171.1.28/DBService/CreditoService.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import schemaLocation="http://10.171.1.28/DBService/CreditoService.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/FGA.Models" />
+      <xsd:import schemaLocation="http://10.171.1.28/DBService/CreditoService.svc?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/Entities.Entities.Evaluacion" />
+      <xsd:import schemaLocation="http://10.171.1.28/DBService/CreditoService.svc?xsd=xsd4" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="ICreditoService_GetOfertasActivas_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetOfertasActivas" />
+  </wsdl:message>
+  <wsdl:message name="ICreditoService_GetOfertasActivas_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetOfertasActivasResponse" />
+  </wsdl:message>
+  <wsdl:message name="ICreditoService_GetOfertaById_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetOfertaById" />
+  </wsdl:message>
+  <wsdl:message name="ICreditoService_GetOfertaById_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetOfertaByIdResponse" />
+  </wsdl:message>
+  <wsdl:message name="ICreditoService_PublicarOferta_InputMessage">
+    <wsdl:part name="parameters" element="tns:PublicarOferta" />
+  </wsdl:message>
+  <wsdl:message name="ICreditoService_PublicarOferta_OutputMessage">
+    <wsdl:part name="parameters" element="tns:PublicarOfertaResponse" />
+  </wsdl:message>
+  <wsdl:message name="ICreditoService_InactivarOferta_InputMessage">
+    <wsdl:part name="parameters" element="tns:InactivarOferta" />
+  </wsdl:message>
+  <wsdl:message name="ICreditoService_InactivarOferta_OutputMessage">
+    <wsdl:part name="parameters" element="tns:InactivarOfertaResponse" />
+  </wsdl:message>
+  <wsdl:message name="ICreditoService_GetRequisitosOferta_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetRequisitosOferta" />
+  </wsdl:message>
+  <wsdl:message name="ICreditoService_GetRequisitosOferta_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetRequisitosOfertaResponse" />
+  </wsdl:message>
+  <wsdl:message name="ICreditoService_GetSolicitudesPorEntidad_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetSolicitudesPorEntidad" />
+  </wsdl:message>
+  <wsdl:message name="ICreditoService_GetSolicitudesPorEntidad_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetSolicitudesPorEntidadResponse" />
+  </wsdl:message>
+  <wsdl:message name="ICreditoService_GetSolicitudesRecibidas_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetSolicitudesRecibidas" />
+  </wsdl:message>
+  <wsdl:message name="ICreditoService_GetSolicitudesRecibidas_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetSolicitudesRecibidasResponse" />
+  </wsdl:message>
+  <wsdl:message name="ICreditoService_CrearSolicitud_InputMessage">
+    <wsdl:part name="parameters" element="tns:CrearSolicitud" />
+  </wsdl:message>
+  <wsdl:message name="ICreditoService_CrearSolicitud_OutputMessage">
+    <wsdl:part name="parameters" element="tns:CrearSolicitudResponse" />
+  </wsdl:message>
+  <wsdl:message name="ICreditoService_ResolverSolicitud_InputMessage">
+    <wsdl:part name="parameters" element="tns:ResolverSolicitud" />
+  </wsdl:message>
+  <wsdl:message name="ICreditoService_ResolverSolicitud_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ResolverSolicitudResponse" />
+  </wsdl:message>
+  <wsdl:message name="ICreditoService_CargarDocumento_InputMessage">
+    <wsdl:part name="parameters" element="tns:CargarDocumento" />
+  </wsdl:message>
+  <wsdl:message name="ICreditoService_CargarDocumento_OutputMessage">
+    <wsdl:part name="parameters" element="tns:CargarDocumentoResponse" />
+  </wsdl:message>
+  <wsdl:message name="ICreditoService_ValidarDocumento_InputMessage">
+    <wsdl:part name="parameters" element="tns:ValidarDocumento" />
+  </wsdl:message>
+  <wsdl:message name="ICreditoService_ValidarDocumento_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ValidarDocumentoResponse" />
+  </wsdl:message>
+  <wsdl:message name="ICreditoService_GetDocumentosPorSolicitud_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetDocumentosPorSolicitud" />
+  </wsdl:message>
+  <wsdl:message name="ICreditoService_GetDocumentosPorSolicitud_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetDocumentosPorSolicitudResponse" />
+  </wsdl:message>
+  <wsdl:message name="ICreditoService_GetTiposDocumento_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetTiposDocumento" />
+  </wsdl:message>
+  <wsdl:message name="ICreditoService_GetTiposDocumento_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetTiposDocumentoResponse" />
+  </wsdl:message>
+  <wsdl:message name="ICreditoService_GetMonedas_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetMonedas" />
+  </wsdl:message>
+  <wsdl:message name="ICreditoService_GetMonedas_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetMonedasResponse" />
+  </wsdl:message>
+  <wsdl:portType name="ICreditoService">
+    <wsdl:operation name="GetOfertasActivas">
+      <wsdl:input wsaw:Action="http://tempuri.org/ICreditoService/GetOfertasActivas" message="tns:ICreditoService_GetOfertasActivas_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ICreditoService/GetOfertasActivasResponse" message="tns:ICreditoService_GetOfertasActivas_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetOfertaById">
+      <wsdl:input wsaw:Action="http://tempuri.org/ICreditoService/GetOfertaById" message="tns:ICreditoService_GetOfertaById_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ICreditoService/GetOfertaByIdResponse" message="tns:ICreditoService_GetOfertaById_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="PublicarOferta">
+      <wsdl:input wsaw:Action="http://tempuri.org/ICreditoService/PublicarOferta" message="tns:ICreditoService_PublicarOferta_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ICreditoService/PublicarOfertaResponse" message="tns:ICreditoService_PublicarOferta_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="InactivarOferta">
+      <wsdl:input wsaw:Action="http://tempuri.org/ICreditoService/InactivarOferta" message="tns:ICreditoService_InactivarOferta_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ICreditoService/InactivarOfertaResponse" message="tns:ICreditoService_InactivarOferta_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetRequisitosOferta">
+      <wsdl:input wsaw:Action="http://tempuri.org/ICreditoService/GetRequisitosOferta" message="tns:ICreditoService_GetRequisitosOferta_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ICreditoService/GetRequisitosOfertaResponse" message="tns:ICreditoService_GetRequisitosOferta_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetSolicitudesPorEntidad">
+      <wsdl:input wsaw:Action="http://tempuri.org/ICreditoService/GetSolicitudesPorEntidad" message="tns:ICreditoService_GetSolicitudesPorEntidad_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ICreditoService/GetSolicitudesPorEntidadResponse" message="tns:ICreditoService_GetSolicitudesPorEntidad_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetSolicitudesRecibidas">
+      <wsdl:input wsaw:Action="http://tempuri.org/ICreditoService/GetSolicitudesRecibidas" message="tns:ICreditoService_GetSolicitudesRecibidas_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ICreditoService/GetSolicitudesRecibidasResponse" message="tns:ICreditoService_GetSolicitudesRecibidas_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="CrearSolicitud">
+      <wsdl:input wsaw:Action="http://tempuri.org/ICreditoService/CrearSolicitud" message="tns:ICreditoService_CrearSolicitud_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ICreditoService/CrearSolicitudResponse" message="tns:ICreditoService_CrearSolicitud_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="ResolverSolicitud">
+      <wsdl:input wsaw:Action="http://tempuri.org/ICreditoService/ResolverSolicitud" message="tns:ICreditoService_ResolverSolicitud_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ICreditoService/ResolverSolicitudResponse" message="tns:ICreditoService_ResolverSolicitud_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="CargarDocumento">
+      <wsdl:input wsaw:Action="http://tempuri.org/ICreditoService/CargarDocumento" message="tns:ICreditoService_CargarDocumento_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ICreditoService/CargarDocumentoResponse" message="tns:ICreditoService_CargarDocumento_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="ValidarDocumento">
+      <wsdl:input wsaw:Action="http://tempuri.org/ICreditoService/ValidarDocumento" message="tns:ICreditoService_ValidarDocumento_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ICreditoService/ValidarDocumentoResponse" message="tns:ICreditoService_ValidarDocumento_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDocumentosPorSolicitud">
+      <wsdl:input wsaw:Action="http://tempuri.org/ICreditoService/GetDocumentosPorSolicitud" message="tns:ICreditoService_GetDocumentosPorSolicitud_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ICreditoService/GetDocumentosPorSolicitudResponse" message="tns:ICreditoService_GetDocumentosPorSolicitud_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetTiposDocumento">
+      <wsdl:input wsaw:Action="http://tempuri.org/ICreditoService/GetTiposDocumento" message="tns:ICreditoService_GetTiposDocumento_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ICreditoService/GetTiposDocumentoResponse" message="tns:ICreditoService_GetTiposDocumento_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetMonedas">
+      <wsdl:input wsaw:Action="http://tempuri.org/ICreditoService/GetMonedas" message="tns:ICreditoService_GetMonedas_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ICreditoService/GetMonedasResponse" message="tns:ICreditoService_GetMonedas_OutputMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="BasicHttpBinding_ICreditoService" type="tns:ICreditoService">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="GetOfertasActivas">
+      <soap:operation soapAction="http://tempuri.org/ICreditoService/GetOfertasActivas" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetOfertaById">
+      <soap:operation soapAction="http://tempuri.org/ICreditoService/GetOfertaById" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PublicarOferta">
+      <soap:operation soapAction="http://tempuri.org/ICreditoService/PublicarOferta" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="InactivarOferta">
+      <soap:operation soapAction="http://tempuri.org/ICreditoService/InactivarOferta" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetRequisitosOferta">
+      <soap:operation soapAction="http://tempuri.org/ICreditoService/GetRequisitosOferta" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetSolicitudesPorEntidad">
+      <soap:operation soapAction="http://tempuri.org/ICreditoService/GetSolicitudesPorEntidad" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetSolicitudesRecibidas">
+      <soap:operation soapAction="http://tempuri.org/ICreditoService/GetSolicitudesRecibidas" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CrearSolicitud">
+      <soap:operation soapAction="http://tempuri.org/ICreditoService/CrearSolicitud" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ResolverSolicitud">
+      <soap:operation soapAction="http://tempuri.org/ICreditoService/ResolverSolicitud" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CargarDocumento">
+      <soap:operation soapAction="http://tempuri.org/ICreditoService/CargarDocumento" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ValidarDocumento">
+      <soap:operation soapAction="http://tempuri.org/ICreditoService/ValidarDocumento" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDocumentosPorSolicitud">
+      <soap:operation soapAction="http://tempuri.org/ICreditoService/GetDocumentosPorSolicitud" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTiposDocumento">
+      <soap:operation soapAction="http://tempuri.org/ICreditoService/GetTiposDocumento" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMonedas">
+      <soap:operation soapAction="http://tempuri.org/ICreditoService/GetMonedas" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="CreditoService">
+    <wsdl:port name="BasicHttpBinding_ICreditoService" binding="tns:BasicHttpBinding_ICreditoService">
+      <soap:address location="http://10.171.1.28/DBService/CreditoService.svc" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

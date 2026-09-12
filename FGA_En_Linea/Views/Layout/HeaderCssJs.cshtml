@@ -1,0 +1,22 @@
+﻿
+<script>
+        $(document).ready(function () {
+            @{
+                if (TempData["success"]!=null)
+                {
+                     @:$.sticky("<br/> @TempData["success"]", { stickyClass: 'success' });
+                }
+            }
+            function StarkL() {  $("#starkloader").show(); }
+        });
+         jQuery.ajaxSetup({
+            beforeSend: function () {
+                $('#starkloader').show();
+            },
+            complete: function () {
+                $('#starkloader').hide();
+            },
+            success: function () { }
+        });
+</script>
+

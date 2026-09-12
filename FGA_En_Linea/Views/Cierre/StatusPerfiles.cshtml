@@ -1,0 +1,90 @@
+﻿@model IEnumerable<Entities.Entities.Procedures.FGA_Consultar_Monitor_Result>
+
+<div id="dialog"></div>
+
+@using (Html.BeginForm("CargarEntidad", "Cierre", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmPerfil" }))
+{
+    @Html.AntiForgeryToken()
+    <table id="tbRole" class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th class="hidden"> Id  </th>
+                <th></th>
+                <th style="text-align: center;"> Entidad  </th>
+                <th style="text-align: center;"> Perfil  </th>
+                <th class="mobile" style="text-align: center;"> Ult. Periodo Cargado</th>
+            </tr>
+        </thead>
+        <tbody style="font-size: 12px;">
+            @if (Model != null)
+            {
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="hidden">
+                            @Html.HiddenFor(modelItem => item.IDENTIDAD)
+                        </td>
+                        <td style="text-align: center; background-color: white;">
+                            @{
+                                string ruta = Url.Content("~/Content/images/" + @item.NOMBRE + ".jpg");
+                                <img width="40" height="40" src="@ruta" />
+                            }
+                        </td>
+                        <td style="text-align: center;">
+                            <a name="txtEntidad" class="cursor" onclick="javascript:CargarEntidad(@(item.IDENTIDAD))">@item.NOMBRE</a>
+                        </td>
+                        <td style="text-align: center;">
+                            <label>@Html.DisplayFor(modelItem => item.PERFIL)</label>
+                        </td>
+                        <td class="mobile" style="text-align: center;">
+                            @if (item.ULT_CIERRE.ToString("ddMMyyy") == FGA.Utility.Utilitarios.sinCierre)
+                            {
+                                <label>No aplica</label>
+                            }
+                            else
+                            {
+                                <label>@FGA.Utility.Utilitarios.toUpperFirstLetter(item.ULT_CIERRE.ToString("MMMM-yy"))</label>
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+
+    <input id="IdEntidad" name="IdEntidad" type="hidden" value="" />
+}
+
+<script type="text/javascript">
+    $(function () {
+        $('.new-value-link').click(function () {
+            var href = this.href;
+            $('#dialog').dialog({
+                modal: true,
+                open: function (event, ui) {
+                    $(this).load(href, function (result) {
+                        $('#new-value-form').submit(function () {
+                            $.ajax({
+                                url: this.action,
+                                type: this.method,
+                                data: $(this).serialize(),
+                                success: function (json) {
+                                    $('#dialog').dialog('close');
+                                    $('#NewValue').val(json.newValue);
+                                }
+                            });
+                            return false;
+                        });
+                    });
+                }
+            });
+            return false;
+        });
+    });
+
+    function CargarEntidad(idEntidad) {
+        $('#IdEntidad').val(idEntidad);
+        $("#frmPerfil").submit();
+    }
+
+</script>

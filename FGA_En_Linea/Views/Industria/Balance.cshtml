@@ -1,0 +1,74 @@
+﻿@{
+    ViewBag.Title = "Balance";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="content-header">
+    <h1>
+        Balance
+    </h1>
+</section>
+
+<section class="content">
+    <div class="box box-solid box-info">
+        <div class="box-body table-responsive">
+            <div class="margin">
+                <div class="streaming-table">
+                    <span id="found" class="label label-info"></span>
+                    <table class="table table-condensed table-striped table-bordered">
+
+                        <tr>
+                            <td class="mobile">
+                                @Html.Label("Primer Periodo:")
+                            </td>
+                            <td>
+                                <input name="Periodo1" id="Periodo1" class="datecontrol" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToShortDateString()" />
+                            </td>
+                            <td>
+                                @Html.Label("Segundo Periodo:")
+                            </td>
+                            <td>
+                                <input name="Periodo2" id="Periodo2" class="datecontrol" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToShortDateString()" />
+                            </td>
+                            <td>
+                                <a id="download" href="javascript:download();" class="btn btn-primary"><span>Generar</span></a>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="reportes">
+    </div>
+</section>
+
+<script type="text/javascript">
+    function getApplicationPath() {
+        var path = location.pathname;
+        var index = path.indexOf("/Industria");
+        if (index > -1)
+            return path.substr(0, index + 1);
+        if (path.charAt(path.length - 1) != '/')
+            path += '/';
+        return path;
+    }
+    function download() {
+        var path = getApplicationPath() + "Industria/GetBalance_SF/?periodoI=" + $('#Periodo1').val() + "&periodoF=" + $('#Periodo2').val() ;
+        window.location.href = path;
+          loadPartialView();
+    }
+
+    function loadPartialView() {
+        $.ajax({
+            url: '@Url.Action("GetPartial", "Industria")',
+            type: 'POST',
+            cache: false,
+            async: true,
+            success: function (result) {
+                $('#reportes').html(result);
+            }
+        });
+    }
+
+</script>

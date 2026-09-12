@@ -1,0 +1,73 @@
+﻿@{
+    ViewBag.Title = "Errores";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="content-header">
+    <h1>
+        Lista de Errores
+    </h1>
+</section>
+
+<section class="content">
+    <!-- Small boxes (Stat box) -->
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box box-solid box-info">
+                <div class="box-body table-responsive">
+                    <div class="margin">
+                        <div class="streaming-table">
+                            <span id="found" class="label label-info"></span>
+                            <table id="tbError" class="table table-striped table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th> Archivo  </th>
+                                        <th> Error  </th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+
+                            <div id="summary">
+                                <div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="box-footer">
+                        @Html.ActionLink("Regresar", null, null, null, new { href = Request.UrlReferrer, @class = "btn btn-primary" })
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script type="text/javascript">
+        $(document).ready(function () {
+            var oTableRole = "";
+            var ControlerNameRole = "@Url.Content("~/Archivo")";
+            // debugger;
+            oTableRole = $("#tbError").dataTable({
+            "bRetrieve": true,
+            "bProcessing": true,
+            "dom": 'lBfrtip',
+            "sAjaxSource": "@Url.Content("~/Archivo/GetGrid")",
+            "buttons": [
+                 { extend: 'copyHtml5', exportOptions: { columns: ':visible' } }
+                ,{ extend: 'excelHtml5', exportOptions: { columns: ':visible' } }
+                ,{ extend: 'csvHtml5', exportOptions: { columns: ':visible' } }
+                ,{ extend: 'pdfHtml5', exportOptions: { columns: ':visible' } }
+                ,{ extend: 'print', exportOptions: { columns: ':visible' } }
+                ,'colvis'
+            ], columnDefs: [{   visible: false }],
+            "pageLength": 10,
+            "lengthMenu": [[5,10, 25, 50, -1], [5,10, 25, 50, "Todos"]],
+                "aoColumns": [
+ {}, {}
+        ]
+
+        });
+
+        });
+</script>

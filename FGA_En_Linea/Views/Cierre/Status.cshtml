@@ -1,0 +1,117 @@
+﻿@model IEnumerable<Entities.Entities.Procedures.FGA_Consultar_Monitor_Result>
+
+<div id="dialog"></div>
+<table id="tbRole" class="table table-striped table-bordered">
+    <thead>
+        <tr>
+            <th class="hidden"> Id  </th>
+            <th style="text-align: center;" colspan="2"> Entidad  </th>
+            <th class="mobile" style="text-align: center;"> Ult. Periodo Cargado</th>
+            <th style="text-align: center;"> Periodo Pendiente </th>
+            <th style="text-align: center;"> Detalle </th>
+            <th class="mobile" style="text-align: center;"> Pendientes </th>
+            @if (Session["IsFGA"].ToString() == "1")
+            {
+                <th style="text-align: center;"> Ejecutar </th>
+            }
+        </tr>
+    </thead>
+    <tbody style="font-size: 12px;">
+        @if (Model != null)
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td class="hidden">
+                        @Html.HiddenFor(modelItem => item.IDENTIDAD)
+                    </td>
+                    <td style="text-align: center; background-color: white;">
+                        @{
+                            string ruta = Url.Content("~/Content/images/" + @item.NOMBRE + ".jpg");
+                            <img width="40" height="40" src="@ruta" />
+                        }
+                    </td>
+                    <td style="text-align: center;">
+                        <label>@Html.DisplayFor(modelItem => item.NOMBRE)</label>
+                    </td>
+                    <td class="mobile" style="text-align: center;">
+                        @if (item.ULT_CIERRE.ToString("ddMMyyy") == FGA.Utility.Utilitarios.sinCierre)
+                        {
+                            <label>No aplica</label>
+                        }
+                        else
+                        {
+                            <label>@FGA.Utility.Utilitarios.toUpperFirstLetter(item.ULT_CIERRE.ToString("MMMM-yy"))</label>
+                        }
+                    </td>
+                    <td style="text-align: center;">
+                        @if (item.PERIODO_ACTUAL.ToString("ddMMyyy") == FGA.Utility.Utilitarios.sinCierre)
+                        {
+                            <label>No aplica</label>
+                        }
+                        else
+                        {
+                            <label>@FGA.Utility.Utilitarios.toUpperFirstLetter(item.PERIODO_ACTUAL.ToString("MMMM-yy"))</label>
+                        }
+                    </td>
+                    <td style="text-align: center;">
+                        @item.ARCHIVOS
+                    </td>
+                    <td style="text-align: center;" class="mobile">
+                        @Html.ActionLink("Ver", "VerPendientes", "Cierre", new { id = item.IDENTIDAD }, new { @class = "new-value-link btn btn-info btn-xs" })
+                    </td>
+                    @if (Session["IsFGA"].ToString() == "1")
+                    {
+                        <td style="text-align: center;">
+                            @Html.ActionLink("Ejecutar Cierre", "Cierre", new { id = item.IDENTIDAD, periodo = item.PERIODO_ACTUAL }, new { @class = "btn btn-default btn-xs" })
+                        </td>
+                    }
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+@if (!string.IsNullOrEmpty(ViewBag.Mensaje))
+{
+    if (((string)ViewBag.Mensaje).Contains("Proceso exitoso"))
+    {
+        <div class="callout callout-success">
+            <p>@ViewBag.Mensaje</p>
+        </div>
+    }
+    else
+    {
+        <div class="callout callout-danger">
+            <p>@ViewBag.Mensaje</p>
+        </div>
+    }
+}
+
+<script type="text/javascript">
+    $(function () {
+        $('.new-value-link').click(function () {
+            var href = this.href;
+            $('#dialog').dialog({
+                modal: true,
+                open: function (event, ui) {
+                    $(this).load(href, function (result) {
+                        $('#new-value-form').submit(function () {
+                            $.ajax({
+                                url: this.action,
+                                type: this.method,
+                                data: $(this).serialize(),
+                                success: function (json) {
+                                    $('#dialog').dialog('close');
+                                    $('#NewValue').val(json.newValue);
+                                }
+                            });
+                            return false;
+                        });
+                    });
+                }
+            });
+            return false;
+        });
+    });
+</script>

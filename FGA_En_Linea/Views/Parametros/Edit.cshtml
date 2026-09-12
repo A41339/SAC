@@ -1,0 +1,66 @@
+@model FGA.Models.Parametros
+
+@{
+    ViewBag.Title = "Editar un parámetro";
+    if (Ajax.IsThisAjaxRequest())
+    {
+        Layout = null;
+    }
+}
+
+@Html.StarkAjaxFormSubmiter("frmCompany", "tbCompany", true, "Acción ejecutada con éxito")
+
+@{
+    if (!Ajax.IsThisAjaxRequest())
+    {
+        <section class="content-header">
+            <h1>
+                Editar un parámetro
+            </h1>
+        </section>
+    }
+}
+
+@using (Html.BeginForm("Edit", "Parametros", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmCompany" }))
+{
+    @Html.AntiForgeryToken()
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box box-solid box-info">
+                    <div role="form">
+                        <div class="box-body">
+                            @Html.HiddenFor(model=>model.Id, new { @class = "" })
+                            <div class="col-lg-12">
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Llave, new { @class = "" })
+                                        @Html.EditorFor(model => model.Llave, new { htmlAttributes = new { @class = "form-control" } })
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Valor, new { @class = "" })
+                                        @Html.EditorFor(model => model.Valor, new { htmlAttributes = new { @class = "form-control" } })
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Descripcion, new { @class = "" })
+                                        @Html.EditorFor(model => model.Descripcion, new { htmlAttributes = new { @class = "form-control" } })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="box-footer">
+                        @Html.StarkInputButtion("Guardar", "submit", "btn btn-primary", "")
+                        @Html.ActionLink("Regresar", "Index", null, new { @class = "btn btn-primary" })
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+}

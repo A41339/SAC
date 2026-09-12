@@ -1,0 +1,138 @@
+@using System.Linq
+@{
+    ViewBag.Title = "Formalizaci&oacute;n de Solicitud #" + Model.Id;
+    var requisitos = (IEnumerable<FGA.Models.Creditos_OfertaRequisitos>)ViewBag.Requisitos;
+    var documentos = (IEnumerable<FGA.Models.Creditos_Documentos>)ViewBag.Documentos;
+}
+
+@section ScriptsOrCss {
+    <link href="~/Content/Creditos_Marketplace.css" rel="stylesheet" />
+}
+
+<div class="credit-marketplace-container">
+    <div class="row">
+        <div class="col-md-12">
+            <h2 class="animate-fade-in" style="color: #0B4E91; font-weight: 700; margin-bottom: 25px;">
+                <i class="fa fa-file-text-o"></i> @Html.Raw(ViewBag.Title)
+            </h2>
+            <p class="lead animate-fade-in" style="font-size: 16px; color: #666;">Para continuar con el desembolso de su cr&eacute;dito, por favor cargue el Pagar&eacute; firmado y los documentos adicionales solicitados.</p>
+        </div>
+    </div>
+
+    <div class="row animate-fade-in" style="animation-delay: 0.1s">
+        <div class="col-md-6">
+            <div class="credit-card">
+                <div class="credit-card-header">
+                    <h4 style="margin: 0; font-weight: 600;">1. Descargar Pagar&eacute; Generado</h4>
+                </div>
+                <div class="credit-card-body">
+                    <p>El sistema ha generado autom&aacute;ticamente su pagar&eacute; con los datos de la solicitud.</p>
+                    <a href="@Url.Action("DescargarPagare", new { id = Model.Id })" class="btn btn-premium btn-lg" style="margin: 15px 0;">
+                        <i class="fa fa-download"></i> Descargar Pagar&eacute; (.docx)
+                    </a>
+                    <p class="small text-muted">* Descargue, firme (f&iacute;sica o digitalmente seg&uacute;n corresponda) y cargue el documento en la siguiente secci&oacute;n.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="credit-card">
+                <div class="credit-card-header" style="background: #2e7d32;">
+                    <h4 style="margin: 0; font-weight: 600; color: white;">2. Cargar Documentos Firmados</h4>
+                </div>
+                <div class="credit-card-body">
+                    @using (Html.BeginForm("SubirDocumento", "Creditos", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="solicitudId" value="@Model.Id" />
+                        
+                        <div class="form-group">
+                            <label style="font-weight: 600; color: #555;">Seleccione el Tipo de Documento:</label>
+                            <select name="tipoDocumentoId" class="form-control input-lg" required>
+                                <option value="">-- Seleccione --</option>
+                                <option value="1">Pagar&eacute; Firmado</option>
+                                @foreach (var req in requisitos)
+                                {
+                                    <option value="@req.TipoDocumento_Id">@req.TipoDocumento.Descripcion</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label style="font-weight: 600; color: #555;">Archivo (PDF o Imagen):</label>
+                            <input type="file" name="archivo" class="form-control" required accept=".pdf,image/*" />
+                        </div>
+
+                        <button type="submit" class="btn btn-premium" style="background: #2e7d32; border-color: #276b2b;">
+                            <i class="fa fa-upload"></i> Subir Documento
+                        </button>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row animate-fade-in" style="animation-delay: 0.2s; margin-top: 20px;">
+        <div class="col-md-12">
+            <div class="credit-card">
+                <div class="credit-card-header">
+                    <h4 style="margin: 0; font-weight: 600;">Documentos Cargados</h4>
+                </div>
+                <div class="credit-card-body">
+                    @if (documentos != null && documentos.Any())
+                    {
+                        <table class="credit-table">
+                            <thead>
+                                <tr>
+                                    <th>Tipo</th>
+                                    <th>Archivo</th>
+                                    <th>Fecha Carga</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var doc in documentos)
+                                {
+                                    <tr>
+                                        <td style="font-weight: 600;">@doc.TipoDocumento?.Descripcion</td>
+                                        <td>@doc.NombreArchivoOriginal</td>
+                                        <td>@doc.Fec_Carga.ToString("g")</td>
+                                        <td>
+                                            @if (doc.Ind_FirmaValida)
+                                            {
+                                                <span class="badge badge-premium badge-success">Validado</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge badge-premium badge-pending">Pendiente Revisi&oacute;n</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <div class="text-center" style="padding: 40px;">
+                            <i class="fa fa-info-circle fa-3x" style="color: #ddd; margin-bottom: 15px;"></i>
+                            <p class="text-muted">No se han cargado documentos a&uacute;n.</p>
+                        </div>
+                    }
+                </div>
+                <div class="credit-card-footer text-right" style="background: #f8f9fa; padding: 20px;">
+                    <a href="@Url.Action("MisSolicitudes")" class="btn btn-default" style="border-radius: 20px; padding: 8px 25px;">Volver a mis solicitudes</a>
+                    @if (documentos != null && documentos.Any(d => d.TipoDocumento_Id == 1)) 
+                    {
+                        using (Html.BeginForm("CompletarFormalizacion", "Creditos", FormMethod.Post, new { style = "display:inline;" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="solicitudId" value="@Model.Id" />
+                            <button type="submit" class="btn btn-premium" style="min-width: 180px;">Finalizar Tr&aacute;mite <i class="fa fa-check"></i></button>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

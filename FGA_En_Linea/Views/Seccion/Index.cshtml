@@ -1,0 +1,82 @@
+﻿@{
+    ViewBag.Title = "Mapa del sitio";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="content-header">
+    <h1>
+        Mapa del sitio
+    </h1>
+</section>
+
+<section class="content">
+    <!-- Small boxes (Stat box) -->
+    <div class="row">
+        <div class="col-xs-12">
+          
+            <div class="box box-solid box-info">
+                <div class="box-body table-responsive">
+                    <div class="margin">
+                        <div class="streaming-table">
+                            <span id="found" class="label label-info"></span>
+                            <table id="tbSeccion" class="table table-striped table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Acción</th>
+                                        <th>Nombre</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+
+                            <div id="summary">
+                                <div>
+                                </div>
+                            </div>
+                            <br />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script type="text/javascript">
+
+        $(document).ready(function () {
+            var oTableCompany = "";
+            var ControlerNameCompany = "@Url.Content("~/Seccion")";
+            // debugger;
+            oTableCompany = $("#tbSeccion").dataTable({
+            "bRetrieve": true,
+            "bProcessing": true,
+            "dom": 'lBfrtip',
+            "order": [[ 1, "asc" ]],
+            "sAjaxSource": "@Url.Content("~/Seccion/GetGrid")",
+            "buttons": [
+                 { extend: 'copyHtml5', exportOptions: { columns: ':visible' } }
+                ,{ extend: 'excelHtml5', exportOptions: { columns: ':visible' } }
+                ,{ extend: 'pdfHtml5', exportOptions: { columns: ':visible' } }
+                ,{ extend: 'print', exportOptions: { columns: ':visible' } }
+                ,'colvis'
+            ], columnDefs: [{   visible: false }],
+            "pageLength": 25,
+            "lengthMenu": [[5,10, 25, 50, -1], [5,10, 25, 50, "Todos"]],
+                "aoColumns": [
+
+                {
+                                 "mRender": function (oObj, type, row) {
+
+                    var buttons = '<div class="text-center"> <div class="btn-group text-left"> <button type="button" class="btn btn-default btn-xs btn-warning dropdown-toggle" data-toggle="dropdown">Acción <span class="caret"></span></button>';
+                    buttons += '<ul class="dropdown-menu pull-left" role="menu">';
+                                     buttons += '<li><a href="' + ControlerNameCompany + "/Edit/" + row[0] + '"><i class="fa fa-edit"></i>Modificar</a></li>';
+                    buttons += '</ul>';
+                    buttons += '</div></div>';
+                    return buttons;
+                }
+                    },  {}]
+        });
+     });
+</script>
+

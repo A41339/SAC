@@ -1,0 +1,62 @@
+﻿@model FGA.Models.Noticia
+
+@{
+    ViewBag.Title = "Crear";
+    if (Ajax.IsThisAjaxRequest())
+    {
+        Layout = null;
+    }
+}
+
+
+@Html.StarkAjaxFormSubmiter("frmNoticia", "tbNoticia", true, "Acción ejecutada con éxito")
+
+@{
+    if (!Ajax.IsThisAjaxRequest())
+    {
+        <section class="content-header">
+            <h1>
+                Creación de una Noticia
+            </h1>
+        </section>
+    }
+}
+
+@using (Html.BeginForm("Create", "Noticia", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmNoticia" }))
+{
+    @Html.AntiForgeryToken()
+    <!-- Main content -->
+    <section class="content">
+        <!-- Small boxes(Stat box) -->
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box box-solid box-info">
+                    <div role="form">
+                        <div class="box-body">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Fecha, new { @class = "" })
+                                <input name="Fecha" id="Fecha" class="datecontrol" />
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Detalle, new { @class = "" })
+                                @Html.EditorFor(model => model.Detalle)
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Link, new { @class = "" })
+                                @Html.EditorFor(model => model.Link)
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Ind_Mostrar_Fecha, new { @class = "checkbox" })
+                                @Html.EditorFor(model => model.Ind_Mostrar_Fecha, new { htmlAttributes = new { @class = "js-switch" } })
+                            </div>
+                            <div class="box-footer">
+                                @Html.StarkInputButtion("Guardar", "submit", "btn btn-primary", "")
+                                @Html.ActionLink("Regresar", "Index", null, new { @class = "btn btn-primary" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+}

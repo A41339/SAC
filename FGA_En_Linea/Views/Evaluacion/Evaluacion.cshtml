@@ -1,0 +1,109 @@
+﻿@model  FGA.Model.Modelo_Evaluacion
+
+@{
+    ViewBag.Title = "Evaluación";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script type="text/javascript" src="~/Content/multiselect/docs/js/prettify.min.js"></script>
+<script src="~/Scripts/bootstrap.bundle.min.js"></script>
+<script src="~/Scripts/jquery.bootstrap.wizard2.js"></script>
+
+<section class="content">
+    @Html.Partial("_Menu", Model)
+</section>
+
+<section class="content">
+    <div class="modal fade" id="modal-container" tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
+        <div class="modal-dialog  modal-lg">
+            <div class="modal-content">
+                <div id="tblPreguntas">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="modal fade" id="defModal" tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="box-header with-border">
+                    <h3 id="titulo" style="padding-bottom: 10px;" class="box-title"></h3>
+                </div>
+            </div>
+            <div class="modal-body">
+                <p class="text-justify" style="font-size: 14px" id="definicion">
+                    <br />
+                    La evaluación consta de un total de 166 preguntas distribuidas en 4 componentes cualitativos con sus respectivos subcomponentes, cada subcomponente tendrá una serie de criterios para evaluar.
+                    <br /><br />
+                    Para iniciar la autoevaluación se deberán designar los responsables de atender cada componente, es posible designar dos responsables que deben haber sido dados de alta previamente como usuarios del SAC.
+                    <br /><br />
+                    No existe un límite de tiempo para responder. Cada pregunta tendrá cuatro opciones de respuesta, no existen respuestas buenas o malas, sino que las réplicas buscan situar a la entidad en la opción que refleje mejor su realidad además de contar con la evidencia para respaldar tal afirmación.
+                    <br /><br />
+                    Al salir se autoguardará la última pregunta completada, es factible devolverse a alguna pregunta y cambiar la respuesta si así lo amerita, sin embargo, no es posible adelantar las preguntas sin antes dar respuesta. Cada subcomponente le indicará la cantidad de preguntas y el nivel de avance tanto del subcomponente como del componente.
+                    <br /><br />
+                    Es posible elaborar la autoevaluación de todos los componentes en forma simultánea, al igual que es viable evaluar varios subcomponentes al mismo tiempo.
+                    <br /><br />
+                    Una vez completada la autoevaluación de cada componente se le indicará antes de salvar y enviar la autoevaluación, ya que una vez enviada no se podrá acceder de nuevo a la misma.
+                    <br />
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsOrCss
+{
+    <link rel="stylesheet" href="~/Content/blog/css/templatemo-misc.css">
+    <link rel="stylesheet" href="~/Content/blog/css/templatemo-style.css">
+    <link rel="stylesheet" href="~/Content/multiselect/docs/css/prettify.min.css" type="text/css">
+    <link rel="stylesheet" href="~/Content/multiselect/dist/css/bootstrap-multiselect.css" type="text/css">
+}
+
+<script type="text/javascript">
+
+    function help(titulo) {
+        $('#titulo').html(titulo);
+        $('#defModal').modal('show');
+    }
+
+    $('#modal-container').on('hidden.bs.modal', function () {
+        window.location.reload();
+    });
+
+    function generarEvaluacion(id) {
+        $.ajax({
+           url: '@Url.Action("ViewEval", "Evaluacion")',
+           type: 'POST',
+           cache: false,
+           async: true,
+           data: {
+               'id': id
+           },
+            success: function (result) {
+                $('#tblPreguntas').html(result);
+                $('#modal-container').modal('show');
+            },
+        });
+    }
+
+    $.fn.jqueryBootstrapWizard.labels = {
+        btn_back: 'Atrás',
+        btn_next: 'Siguiente',
+        btn_finish: 'Finalizar',
+        btn_cancel: 'Cancelar'
+    }
+
+    $('#navWizard').jqueryBootstrapWizard({
+    });
+
+    if ('@(Model.eval.ToString().ToLower())' == 'true') {
+        $('#jqb-btn-next').addClass("hidden");
+        $('#jqb-btn-prev').removeClass("hidden");
+    }
+
+</script>

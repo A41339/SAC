@@ -1,0 +1,59 @@
+﻿@model string
+
+@{
+    bool upperEnabled = Model == System.Configuration.ConfigurationManager.AppSettings["RutaUploads"] ? false : true;
+    List<string> list = ViewData["CheckedList"] as List<string>;
+    string jList = "";
+    if (list != null && list.Count > 0)
+    {
+        System.Web.Script.Serialization.JavaScriptSerializer serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
+        jList = serializer.Serialize(list);
+        jList = jList.Replace("\"", "$");
+    }
+
+    <p>
+        @if (upperEnabled && bool.Parse(Session["FullAccess"].ToString()) == true)
+        {
+            <a id="top" href="javascript:goTop();" style="padding-left: .4em;"><span>Inicio</span></a>
+            <a id="upper" href='javascript:goUpper("@Model");' style="padding-left: .4em;"><span>Arriba</span></a>
+        }
+
+        <a id="download" href="javascript:download();" style="padding-left: .4em;"><span>Descargar</span></a>
+    </p>
+}
+
+<script type="text/javascript">
+    function goUpper(path) {
+        $.ajax({
+            type: "POST",
+            url: getApplicationPath() + "Explorer/GoUpper",
+            data: { path: path },
+            cache: false,
+            dataType: "html",
+            success: function (data) {
+                $('#listpane').html(data);
+            }
+        })
+    }
+
+    function goTop() {
+        $.ajax({
+            type: "POST",
+            url: getApplicationPath() + "Explorer/GoTop",
+            data: {},
+            cache: false,
+            dataType: "html",
+            success: function (data) {
+                $('#listpane').html(data);
+
+            }
+        })
+    }
+
+    function download() {
+        var list = '@jList';
+        var path = getApplicationPath() + "Explorer/Download/?jlist=" + list;
+        window.location.href = path;
+    }
+</script>
+

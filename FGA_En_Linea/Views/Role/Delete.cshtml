@@ -1,0 +1,71 @@
+@model FGA.Models.Role
+
+@{
+    ViewBag.Title = "Are you sure you want to delete";
+    if (Ajax.IsThisAjaxRequest())
+    {
+        Layout = null;
+    }
+}
+
+
+@Html.StarkAjaxFormSubmiter("frmRole", "tbRole", true, "Action Successfully Executed")
+
+@{
+    if (!Ajax.IsThisAjaxRequest())
+    {
+        <section class="content-header">
+            <h1>
+                @ViewBag.Title
+                <small>@ViewBag.Title</small>
+            </h1>
+        </section>
+    }
+}
+
+<section class="content">
+    <!-- Small boxes (Stat box) -->
+    <div class="row">
+        <div class="col-xs-12">
+
+            <div class="box box-solid box-primary">
+                <div class="box-header">
+                    <h3 class="box-title">Detail of Role</h3>
+                </div><!-- /.box-header -->
+                <div class="box-body table-responsive">
+                  
+                    <div class="widget-sec">
+                        <div class="streaming-table">
+                            <table class="table table-striped table-bordered">
+
+                                <tr>
+                                    <td>RoleName</td>
+                                    <td>@Html.DisplayFor(model => model.RoleName)</td>
+                                </tr>
+                                <tr>
+                                    <td>IsActive</td>
+                                    <td>@Html.DisplayFor(model => model.IsActive)</td>
+                                </tr>
+
+
+                            </table>
+                            <div class="box-footer">
+
+                                  @using (Html.BeginForm("Delete", "Role", FormMethod.Post, new {  id = "frmRole" }))
+                                {
+                                    @Html.AntiForgeryToken()
+
+                                    @Html.StarkInputButtion("Delete","submit","btn btn-danger","")
+                                    @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-primary" })
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+

@@ -1,0 +1,167 @@
+@using System.Linq
+@model FGA.Models.Creditos_Ofertas
+
+@{
+    ViewBag.Title = "Publicar Oferta de Cr&eacute;dito";
+}
+
+@section ScriptsOrCss {
+    <link href="~/Content/Creditos_Marketplace.css" rel="stylesheet" />
+    <script>
+        $(document).ready(function() {
+            console.log("Vista Publicar cargada");
+            
+            // Función para formatear números
+            function formatNumber(n) {
+                // n: string o numero
+                n = n.toString().replace(/[^\d.]/g, ""); // Solo digitos y punto
+                var parts = n.split(".");
+                parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                return parts.join(".");
+            }
+
+            // Aplicar formato al escribir en el monto
+            $('#Mon_Monto').on('keyup', function() {
+                var val = $(this).val();
+                $(this).val(formatNumber(val));
+            });
+
+            $('#TasaInteresAnual').on('keyup', function() {
+                var val = $(this).val();
+                $(this).val(formatNumber(val));
+            });
+
+            $('#formPublicar').on('submit', function() {
+                console.log("Formulario enviando...");
+                // Eliminar comas antes de enviar para que el servidor lo procese como decimal
+                var montoInput = $('#Mon_Monto');
+                montoInput.val(montoInput.val().replace(/,/g, ""));
+                
+                var tasaInput = $('#TasaInteresAnual');
+                tasaInput.val(tasaInput.val().replace(/,/g, ""));
+            });
+        });
+    </script>
+}
+
+<div class="credit-marketplace-container">
+    <div class="row">
+        <div class="col-md-12">
+            <h2 class="animate-fade-in" style="color: #0B4E91; font-weight: 700; margin-bottom: 25px;">
+                <i class="fa fa-plus-circle"></i> Publicar Oferta de Cr&eacute;dito
+            </h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2 animate-fade-in" style="animation-delay: 0.1s">
+            <div class="credit-card">
+                <div class="credit-card-header">
+                    <h4 style="margin: 0; font-weight: 600;">Detalles de la Nueva Oferta</h4>
+                </div>
+                <div class="credit-card-body">
+                    @if (ViewBag.Error != null)
+                    {
+                        <div class="alert alert-danger">
+                            <i class="fa fa-exclamation-circle"></i> @ViewBag.Error
+                        </div>
+                    }
+                    @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+                    @using (Html.BeginForm("Publicar", "Creditos", FormMethod.Post, new { @class = "form-horizontal", id = "formPublicar" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label" style="color: #555;">Monto Disponible</label>
+                            <div class="col-sm-6">
+                                <div class="input-group">
+                                    <span class="input-group-addon" style="background: #f8f9fa;"><i class="fa fa-money"></i></span>
+                                    @Html.TextBoxFor(m => m.Mon_Monto, new { @class = "form-control input-lg", type = "text", required = "required", placeholder = "0,000.00", style = "font-weight: 700;", id = "Mon_Monto" })
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                @Html.DropDownListFor(m => m.Moneda_Id, new SelectList((IEnumerable<FGA.Models.Creditos_Moneda>)ViewBag.Monedas, "Id", "Nombre"), new { @class = "form-control input-lg" })
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-6 control-label" style="color: #555;">Tasa Anual (%)</label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBoxFor(m => m.TasaInteresAnual, new { @class = "form-control", type = "text", required = "required", placeholder = "0.00", id = "TasaInteresAnual" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-6 control-label" style="color: #555;">Plazo M&aacute;ximo (Meses)</label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBoxFor(m => m.PlazoMeses, new { @class = "form-control", type = "number", required = "required", placeholder = "0" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr style="border-top: 1px dashed #eee;" />
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label" style="color: #555;">Contacto SMS</label>
+                            <div class="col-sm-9">
+                                <div class="input-group">
+                                    <span class="input-group-addon" style="background: #f8f9fa;"><i class="fa fa-mobile"></i></span>
+                                    @Html.TextBoxFor(m => m.TelefonoNotificacionSMS, new { @class = "form-control", required = "required", placeholder = "Celular para alertas" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label" style="color: #555;">Email Notificaci&oacute;n</label>
+                            <div class="col-sm-9">
+                                <div class="input-group">
+                                    <span class="input-group-addon" style="background: #f8f9fa;"><i class="fa fa-envelope-o"></i></span>
+                                    @Html.TextBoxFor(m => m.EmailNotificacion, new { @class = "form-control", type = "email", required = "required", placeholder = "correo@ejemplo.com" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label" style="color: #555;">Fecha Vencimiento</label>
+                            <div class="col-sm-9">
+                                @Html.TextBoxFor(m => m.Fec_Vencimiento, new { @class = "form-control", type = "date" })
+                                <small class="text-muted">Deje en blanco si la oferta no vence.</small>
+                            </div>
+                        </div>
+
+                        <div style="background: #fdfdfd; padding: 20px; border-radius: 12px; border: 1px solid #efefef; margin-top: 25px;">
+                            <label style="font-weight: 700; color: #0B4E91; margin-bottom: 15px; display: block;">
+                                <i class="fa fa-files-o"></i> Documentaci&oacute;n Requerida para el Solicitante
+                            </label>
+                            <div class="row">
+                                @foreach (var doc in (IEnumerable<FGA.Models.Creditos_TipoDocumento>)ViewBag.TiposDoc)
+                                {
+                                    <div class="col-md-6">
+                                        <div class="checkbox" style="padding: 10px; background: white; margin-bottom: 8px; border-radius: 6px; border: 1px solid #eee;">
+                                            <label style="font-weight: 500;">
+                                                <input type="checkbox" name="requisitosIds" value="@doc.Id"> @doc.Descripcion
+                                            </label>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="margin-top: 30px;">
+                            <div class="col-sm-offset-3 col-sm-9">
+                                <button type="submit" class="btn btn-premium" style="padding: 10px 40px; font-size: 16px;">
+                                    <i class="fa fa-cloud-upload"></i> Publicar Oferta Ahora
+                                </button>
+                                <a href="@Url.Action("Index")" class="btn btn-default" style="padding: 10px 25px; margin-left: 10px; border-radius: 20px;">Cancelar</a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

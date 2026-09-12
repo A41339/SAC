@@ -1,0 +1,233 @@
+@model FGA.Models.Formulas
+
+@{
+    ViewBag.Title = "Crear";
+    if (Ajax.IsThisAjaxRequest())
+    {
+        Layout = null;
+    }
+}
+
+@Html.StarkAjaxFormSubmiter("frmFormula", "tbFormula", true, "Acción ejecutada con éxito")
+
+@{
+    if (!Ajax.IsThisAjaxRequest())
+    {
+        <section class="content-header">
+            <h1>
+                Creación de una fórmula
+            </h1>
+        </section>
+    }
+}
+
+@using (Html.BeginForm("Create", "Formula", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmFormula" }))
+{
+    @Html.AntiForgeryToken()
+    <!-- Main content -->
+    <section class="content">
+        <!-- Small boxes(Stat box) -->
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="col-md-6">
+                    <div class="box box-solid box-info">
+                        <div role="form">
+                            <div class="box-body">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.Nombre, new { @class = "" })
+                                    @Html.EditorFor(model => model.Nombre)
+                                </div>
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.Formula, new { @class = "" })
+                                    @Html.EditorFor(model => model.Formula)
+                                </div>
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.Ind_Porcentaje, new { @class = "checkbox" })
+                                    @Html.EditorFor(model => model.Ind_Porcentaje, new { htmlAttributes = new { @class = "js-switch" } })
+                                </div>
+                                <div class="box-footer">
+                                    @Html.StarkInputButtion("Guardar", "submit", "btn btn-primary", "")
+                                    @Html.ActionLink("Regresar", "Index", null, new { @class = "btn btn-primary" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div id="accordian">
+                        <ul>
+                            <li>
+                                <h3><i class="fa fa-angle-down"></i> ¿Cómo utilizar cuentas anualizadas, mensuales o acumuladas?</h3>
+                                <ul>
+                                    <li>
+                                        <div class="box box-solid box-info">
+                                            <div class="box-body">
+                                                Para utilizar una cuenta del catálogo se deberá anteponer dos letras
+                                                <div class="box-body table-responsive">
+                                                    <div class="margin">
+                                                        <div class="streaming-table">
+                                                            <table class="table table-striped table-bordered">
+                                                                <tr>
+                                                                    <td>AN</td>
+                                                                    <td>Anualizado</td>
+                                                                    <td>AN100000000</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>ME</td>
+                                                                    <td>Mensualizado</td>
+                                                                    <td>ME100000000</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>AC</td>
+                                                                    <td>Acumulado</td>
+                                                                    <td>AC100000000</td>
+                                                                </tr>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                <h3><i class="fa fa-angle-down"></i> Por días de atraso</h3>
+                                <ul>
+                                    <li>
+                                        <div class="box box-solid box-info">
+                                            <div class="box-body">
+                                                Para sumar el saldo de operaciones según sus días de atraso deberá utilizar los siguientes códigos
+                                                <div class="box-body table-responsive">
+                                                    <div class="margin">
+                                                        <div class="streaming-table">
+                                                            <table class="table table-striped table-bordered">
+                                                                <tr>
+                                                                    <td>V009</td>
+                                                                    <td>Al día</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>V010</td>
+                                                                    <td>1 - 30 días</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>V011</td>
+                                                                    <td>31 - 60 días</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>V012</td>
+                                                                    <td>61 - 90 días</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>V013</td>
+                                                                    <td>91 - 180 días</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>V014</td>
+                                                                    <td>181 - 360 días</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>V016</td>
+                                                                    <td>Más de 360 días</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>V015</td>
+                                                                    <td>Cobro judicial</td>
+                                                                </tr>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                <h3><i class="fa fa-angle-down"></i> Por tipo de cartera</h3>
+                                <ul>
+                                    <li>
+                                        <div class="box box-solid box-info">
+                                            <div class="box-body">
+                                                Para sumar el saldo de operaciones por tipo de cartera deberá utilizar los siguientes códigos
+                                                <div class="box-body table-responsive">
+                                                    <div class="margin">
+                                                        <div class="streaming-table">
+                                                            <table class="table table-striped table-bordered">
+                                                                <tr>
+                                                                    <td>V017</td>
+                                                                    <td>Cartera consumo</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>V018</td>
+                                                                    <td>Cartera vehiculos</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>V019</td>
+                                                                    <td>Cartera tarjeta de crédito</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>V020</td>
+                                                                    <td>Cartera vivienda residencial</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>V021</td>
+                                                                    <td>Cartera micro y pequeña empresa</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>V022</td>
+                                                                    <td>Cartera mediana empresa</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>V023</td>
+                                                                    <td>Cartera gran empersa</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>V024</td>
+                                                                    <td>Cartera gobierno central</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>V025</td>
+                                                                    <td>Cartera artículo 167 (Refinanciada)</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>V026</td>
+                                                                    <td>Cartera microcredito SBD</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>V027</td>
+                                                                    <td>Cartera banca segundo piso SBD</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>V028</td>
+                                                                    <td>Cartera banca desarrollo SDB</td>
+                                                                </tr>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+}
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $("#accordian h3").click(function () {
+            $("#accordian ul ul").slideUp();
+            if (!$(this).next().is(":visible")) {
+                $(this).next().slideDown();
+            }
+        });
+    });
+
+</script>

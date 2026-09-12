@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/Entities.Entities.Evaluacion" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/Entities.Entities.Evaluacion" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://10.171.1.28/DBService/EvalCategoriaService.svc?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/FGA.Models" />
+  <xs:complexType name="ArrayOfEvalCategoria">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="EvalCategoria" nillable="true" type="tns:EvalCategoria" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfEvalCategoria" nillable="true" type="tns:ArrayOfEvalCategoria" />
+  <xs:complexType name="EvalCategoria">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="CategoriasResponsable" nillable="true" type="tns:ArrayOfEvalResponsableCategoria" />
+      <xs:element minOccurs="0" name="Descripcion" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Id" type="xs:int" />
+      <xs:element minOccurs="0" name="Imagen" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Ind_Estado" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="PuntosOpcionA" type="xs:int" />
+      <xs:element minOccurs="0" name="PuntosOpcionB" type="xs:int" />
+      <xs:element minOccurs="0" name="PuntosOpcionC" type="xs:int" />
+      <xs:element minOccurs="0" name="PuntosOpcionD" type="xs:int" />
+      <xs:element minOccurs="0" name="ResponsableSugerido" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="SubCategorias" nillable="true" type="tns:ArrayOfEvalSubCategoria" />
+      <xs:element minOccurs="0" name="Titulo" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="EvalCategoria" nillable="true" type="tns:EvalCategoria" />
+  <xs:complexType name="ArrayOfEvalResponsableCategoria">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="EvalResponsableCategoria" nillable="true" type="tns:EvalResponsableCategoria" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfEvalResponsableCategoria" nillable="true" type="tns:ArrayOfEvalResponsableCategoria" />
+  <xs:complexType name="EvalResponsableCategoria">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Confirmada" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Id" type="xs:int" />
+      <xs:element minOccurs="0" name="IdCategoria" nillable="true" type="tns:EvalCategoria" />
+      <xs:element minOccurs="0" name="IdCategoria_Id" type="xs:int" />
+      <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/FGA.Models" minOccurs="0" name="IdEntidad" nillable="true" type="q1:Entidad" />
+      <xs:element minOccurs="0" name="IdEntidad_Id" nillable="true" type="xs:string" />
+      <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/FGA.Models" minOccurs="0" name="IdUsuario1" nillable="true" type="q2:Usuario" />
+      <xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/FGA.Models" minOccurs="0" name="IdUsuario2" nillable="true" type="q3:Usuario" />
+      <xs:element minOccurs="0" name="IdUsuario_Id1" type="xs:int" />
+      <xs:element minOccurs="0" name="IdUsuario_Id2" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="EvalResponsableCategoria" nillable="true" type="tns:EvalResponsableCategoria" />
+  <xs:complexType name="ArrayOfEvalRespuestaUsuario">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="EvalRespuestaUsuario" nillable="true" type="tns:EvalRespuestaUsuario" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfEvalRespuestaUsuario" nillable="true" type="tns:ArrayOfEvalRespuestaUsuario" />
+  <xs:complexType name="EvalRespuestaUsuario">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Id" type="xs:int" />
+      <xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/FGA.Models" minOccurs="0" name="IdEntidad" nillable="true" type="q4:Entidad" />
+      <xs:element minOccurs="0" name="IdEntidad_Id" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="IdPregunta" nillable="true" type="tns:EvalPregunta" />
+      <xs:element minOccurs="0" name="IdPregunta_Id" type="xs:int" />
+      <xs:element xmlns:q5="http://schemas.datacontract.org/2004/07/FGA.Models" minOccurs="0" name="IdUsuario" nillable="true" type="q5:Usuario" />
+      <xs:element minOccurs="0" name="IdUsuario_Id" type="xs:int" />
+      <xs:element minOccurs="0" name="OpcionSeleccionada" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="EvalRespuestaUsuario" nillable="true" type="tns:EvalRespuestaUsuario" />
+  <xs:complexType name="EvalPregunta">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Enunciado" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Id" type="xs:int" />
+      <xs:element minOccurs="0" name="IdSubCategoria" type="xs:int" />
+      <xs:element minOccurs="0" name="IdSubCategoria_Id" nillable="true" type="tns:EvalSubCategoria" />
+      <xs:element minOccurs="0" name="OpcionA" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="OpcionB" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="OpcionC" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="OpcionD" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Respuestas" nillable="true" type="tns:ArrayOfEvalRespuestaUsuario" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="EvalPregunta" nillable="true" type="tns:EvalPregunta" />
+  <xs:complexType name="EvalSubCategoria">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Enunciado" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Id" type="xs:int" />
+      <xs:element minOccurs="0" name="IdCategoria" type="xs:int" />
+      <xs:element minOccurs="0" name="IdCategoria_Id" nillable="true" type="tns:EvalCategoria" />
+      <xs:element minOccurs="0" name="Preguntas" nillable="true" type="tns:ArrayOfEvalPregunta" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="EvalSubCategoria" nillable="true" type="tns:EvalSubCategoria" />
+  <xs:complexType name="ArrayOfEvalPregunta">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="EvalPregunta" nillable="true" type="tns:EvalPregunta" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfEvalPregunta" nillable="true" type="tns:ArrayOfEvalPregunta" />
+  <xs:complexType name="ArrayOfEvalSubCategoria">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="EvalSubCategoria" nillable="true" type="tns:EvalSubCategoria" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfEvalSubCategoria" nillable="true" type="tns:ArrayOfEvalSubCategoria" />
+</xs:schema>

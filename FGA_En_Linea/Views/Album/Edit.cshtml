@@ -1,0 +1,221 @@
+﻿@model FGA.Models.Album_Update
+
+@{
+    ViewBag.Title = "Editar un Álbum";
+    if (Ajax.IsThisAjaxRequest())
+    {
+        Layout = null;
+    }
+}
+
+<script src="~/Scripts/jquery-form.js"></script>
+@Html.StarkAjaxFormSubmiter("frmID", "tbAlbum", true, "Acción ejecutada con éxito")
+@{
+    if (!Ajax.IsThisAjaxRequest())
+    {
+        <section class="content-header">
+            <h1>
+                Editar una galería
+            </h1>
+        </section>
+    }
+}
+
+@using (Html.BeginForm("Edit", "Album", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmID" }))
+{
+    @Html.AntiForgeryToken()
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box box-solid box-info">
+                    <div role="form">
+                        <div class="box-body">
+                            @Html.HiddenFor(i => i.FilesToBeUploaded)
+                            <div class="hidden">
+                                @Html.LabelFor(model => model.Id, new { @class = "" })
+                                @Html.EditorFor(model => model.Id)
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Fecha, new { @class = "" })
+                                <input name="Fecha" id="Fecha" class="datecontrol" value="@Model.Fecha.ToShortDateString()" />
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.TipoAlbum_Id, new { @class = "" })
+                                @Html.DropDownList("TipoAlbum_Id", " -Selecciona una opción- ")
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Autor, new { @class = "" })
+                                @Html.EditorFor(model => model.Autor)
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Titulo, new { @class = "" })
+                                @Html.EditorFor(model => model.Titulo)
+                            </div>
+                            <div class="form-group">
+                                <label id="detalle">Detalle - URL para (Noticias)</label>
+                                <textarea id="Detalle" name="Detalle" class="form-control" style="height: 300px">
+                                    @Model.Detalle.ToString()
+                                </textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Agregue los archivos, <b>muy importante subir al menos una imagen que servirá de carátula para la nota</b></label>
+                                <label class="btn btn-default">
+                                    Buscar Archivos&hellip; <input type="file" id="fileToUpload" multiple name="files" style="display: none;">
+                                </label>
+                                @Html.ValidationMessage("File")
+                                @Html.Hidden("hdnFileUpload")
+                            </div>
+                            <div class="control-section" style="padding: 0px;">
+                                <div id="selectedFiles"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div id="status" style="text-align:left; color:darkred; font-size:14px;"></div>
+                    <br />
+                    <div class="box-footer">
+                        <label class="btn btn-primary">
+                            Guardar<input type="submit" name="submit" style="display: none;">
+                        </label>
+                        @Html.ActionLink("Regresar", "Index", null, new { @class = "btn btn-primary" })
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+}
+
+<section class="content-header">
+    <h1>
+        Archivos asociados
+    </h1>
+</section>
+
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box box-solid box-info">
+                <div class="box-body table-responsive">
+                    <div class="margin">
+                        <div class="streaming-table">
+                            <table id="tbFiles" class="table table-striped table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th> Archivo  </th>
+                                        <th>  </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (System.Collections.Generic.KeyValuePair<string, string> detalle in Model.Files)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @detalle.Key
+                                            </td>
+                                            <td>
+                                                <button type="button" title="Borrar" onclick="javascript: DeleteFile(@Model.Id, '@detalle.Key.Replace('.', '$')', $(this));">Borrar</button>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<script src="~/Content/theme/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
+<script>
+        $(function () {
+        $("#Detalle").wysihtml5(({
+          toolbar: {
+            "font-styles": true, // Font styling, e.g. h1, h2, etc.
+            "emphasis": true, // Italics, bold, etc.
+            "lists": true, // (Un)ordered lists, e.g. Bullets, Numbers.
+            "html": false, // Button which allows you to edit the generated HTML.
+            "link": true, // Button to insert a link.
+            "image": true, // Button to insert an image.
+            "color": false, // Button to change color of font
+            "blockquote": false, // Blockquote
+          }
+        }));
+     })
+
+    var nowTemp = new Date();
+    var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
+    var files;
+    var storedFiles = [];
+    var upc = 0;
+
+    $(function () {
+        $(":file").attr('title', '  ');
+        $("input[id^='fileToUpload']").change(function (e) {
+                                                doReCreate(e);
+                                            });
+        selDiv = $("#selectedFiles");
+    });
+
+    function doReCreate(e) {
+        upc = upc + 1;
+        handleFileSelect(e);
+        $("input[id^='fileToUpload']").hide();
+        $('<input>').attr({
+            type: 'file',
+            multiple: 'multiple',
+            id: 'fileToUpload' + upc,
+            class: 'fUpload',
+            name: 'fileUpload',
+            style: 'float: left',
+            title: '  ',
+            onchange: "doReCreate(event)"
+        }).appendTo('#uploaders');
+    }
+
+    function handleFileSelect(e) {
+        selDiv = document.querySelector("#selectedFiles");
+        if (!e.target.files) return;
+        files = e.target.files;
+        selDiv.innerHTML = '';
+
+        for (var i = 0; i < files.length; i++) {
+            var f = files[i];
+            selDiv.innerHTML += "<div>" + f.name + "<a onclick='removeAtt(this)'> X </a></div>";
+            storedFiles.push(f.name);
+        }
+
+        $('#@Html.IdFor(i => i.FilesToBeUploaded)').val(storedFiles);
+    }
+
+    function removeAtt(t) {
+        var serEle = $(t).parent().text().slice(0, -3);
+        var index = storedFiles.indexOf(serEle);
+        if (index !== -1) {
+            storedFiles.splice(index, 1);
+        }
+        $(t).parent().remove();
+        $('#@Html.IdFor(i => i.FilesToBeUploaded)').val(storedFiles);
+     }
+
+    @*  @Html.ActionLink("Borrar", "DeleteFile", new { id = Model.album.Id, file = detalle.Key.Replace(".", "$") })*@
+
+    function DeleteFile(id, file, row) {
+        $.ajax({
+            url: "@Url.Action("DeleteFile","Album")/" + id + "?file=" + file,
+            type: 'GET',
+            async: true,
+            processData: false,
+            cache: false,
+            error: function (xhr) {
+                alert('error');
+            }
+        }).done(function () {
+            row.parents("tr").remove();
+        });
+    }
+</script>

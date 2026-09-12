@@ -1,0 +1,600 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\EntityFramework.6.4.4\build\EntityFramework.props" Condition="Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{D3D55143-95BA-4B2B-9A0B-EBB8DE0AD333}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Entities</RootNamespace>
+    <AssemblyName>Entities</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.7\lib\net45\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.7\lib\net45\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.7\lib\net45\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.7\lib\net45\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.7\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.7\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Xceed.Document.NET, Version=5.0.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\DocX.5.0.0\lib\net40\Xceed.Document.NET.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Drawing.NET, Version=1.0.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\DocX.5.0.0\lib\net40\Xceed.Drawing.NET.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Words.NET, Version=5.0.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\DocX.5.0.0\lib\net40\Xceed.Words.NET.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Entities\Content\Album_Update.cs" />
+    <Compile Include="Entities\Content\Album_Insert.cs" />
+    <Compile Include="Entities\Evaluacion\EvalResponsableCategoria.cs" />
+    <Compile Include="Entities\Evaluacion\EvalCategoria.cs" />
+    <Compile Include="Entities\Evaluacion\EvalSubCategoria.cs" />
+    <Compile Include="Entities\Evaluacion\EvalPregunta.cs" />
+    <Compile Include="Entities\Evaluacion\EvalRespuestaUsuario.cs" />
+    <Compile Include="Entities\Procedures\FGAEntities.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>FGAEntities.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGAEntities.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGAEntities.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>FGAEntities.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Analisis_Horizontal_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Analisis_Vertical_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_ArchivosCargados_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Avance_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Avance_X_Categoria_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Balance_Comprobacion_Masiva_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Balance_Comprobacion_Rango_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Balance_Comprobacion_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Calculos_Personalizados_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_CalificE_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Calific_Cartera_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_CAMEL_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_CarteraTotal_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Cartera_Credito_Masiva_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Cartera_Credito_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Cartera_Rango_SF_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Composicion_Balance_SF_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Composicion_Cartera_Sector_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Composicion_Mora_Sector_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Credito_Categoria_Rango_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_CuentasLiq_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Cuentas_Proyectar_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Dashboard_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Datos_Historicos_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Estado_Proyeccion_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Evaluacion_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_FacturacionFFC_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_FacturacionFGD_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Gastos_Ingresos_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Gasto_SF_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Graficos_Financieros_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Grafico_Indicador_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Grafico_Mora_Cartera_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Grafico_Oper_Categoria_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Grafico_Oper_EAD_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Grafico_Oper_Etapa_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Grafico_Oper_Segmento_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Grafico_Suficiencia_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Historial_X_Categoria_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Indicadores_Cartera_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Indicadores_Formulas_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Indicadores_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Indicadores_Sugef_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Ingreso_SF_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_IRL_Cuentas_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Maduracion_Cartera_Det_Masiva_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Maduracion_Cartera_Det_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Maduracion_Cartera_Masiva_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Maduracion_Cartera_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Matrices_Desmejora_Cartera_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Matrices_PerdidaEstimada_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Matrices_Probabilidad_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Matrices_Variacion_Cartera_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Modelo_Margen_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Modelo_Tasas_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Monitor_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Operaciones_Nuevas_Masiva_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Operaciones_Nuevas_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Otros_Indicadores_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_RecuperacionActivos_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Resultado_Evaluacion_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Riesgo_Liquidez_Masiva_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Riesgo_Liquidez_Rango_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Riesgo_Liquidez_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Sessiones_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Simulacion_Capital_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Suficiencia_306_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Suficiencia_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Tasa_Ponderada_Masiva_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Tasa_Ponderada_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Tipos_Indicadores_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Tipo_Cartera_E_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Tipo_Cartera_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Tipo_Cartera_Sector_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Variacion_Cartera_Sector_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Variacion_CS_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Consultar_Variacion_Interanual_SF_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_CrecimientoSugerido_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Generar_Proyeccion_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Generar_Proy_Matrices_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Rpt_AN_Balance_SF_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Rpt_AN_ER_SF_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Rpt_Balance_Comprobacion_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Rpt_Balance_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Rpt_Balance_SF_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Rpt_EEFF_Proy_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Rpt_ER_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Rpt_ER_SF_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Procedures\FGA_Rpt_EstadoResultados_Result.cs">
+      <DependentUpon>FGAEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Reports\ListaLogos.cs" />
+    <Compile Include="Entities\Reports\Reporte_Riesgos.cs" />
+    <Compile Include="Entities\TaskManager\SolicitudCambio_Insert.cs" />
+    <Compile Include="Entities\TaskManager\Estado.cs" />
+    <Compile Include="Entities\TaskManager\TipoTarea.cs" />
+    <Compile Include="Entities\TaskManager\Tarea.cs" />
+    <Compile Include="Entities\TaskManager\Proyecto.cs" />
+    <Compile Include="Entities\TaskManager\SolicitudCambio.cs" />
+    <Compile Include="Entities\TaskManager\Prioridad.cs" />
+    <Compile Include="Entities\TaskManager\Urgencia.cs" />
+    <Compile Include="Entities\Transac\BCCR_Indicadores.cs" />
+    <Compile Include="Entities\Transac\BCCR_TipoIndicador.cs" />
+    <Compile Include="Entities\Transac\Creditos_Moneda.cs" />
+    <Compile Include="Entities\Transac\IDoc.cs" />
+    <Compile Include="Entities\Transac\PagareDoc.cs" />
+    <Compile Include="Entities\Transac\Proy_EEFF.cs" />
+    <Compile Include="Entities\Transac\Bit_Sessiones.cs" />
+    <Compile Include="Entities\Transac\Sector.cs" />
+    <Compile Include="Entities\Transac\Notificaciones.cs" />
+    <Compile Include="Entities\Transac\Parametros.cs" />
+    <Compile Include="Entities\Transac\Salida_Sugef_Indicadores_Cartera.cs" />
+    <Compile Include="Entities\Transac\PerfilEntidad.cs" />
+    <Compile Include="Entities\Transac\CargaAsincronica.cs" />
+    <Compile Include="Entities\Transac\Sugef_Cartera.cs" />
+    <Compile Include="Entities\Transac\Sugef_Info_Contable.cs" />
+    <Compile Include="Entities\Transac\TipoInforme.cs" />
+    <Compile Include="Entities\Transac\Hist_IPC.cs" />
+    <Compile Include="Entities\Transac\Proyeccion.cs" />
+    <Compile Include="Entities\Transac\Exclusion_Periodos_Proyectar.cs" />
+    <Compile Include="Entities\Transac\TipoProyeccion.cs" />
+    <Compile Include="Entities\Transac\CatalogoCuenta.cs" />
+    <Compile Include="Entities\Transac\Calendario.cs" />
+    <Compile Include="Entities\Transac\ArchivoEstado.cs" />
+    <Compile Include="Entities\Content\Afiliada.cs" />
+    <Compile Include="Entities\Content\Tipo_Album.cs" />
+    <Compile Include="Entities\Content\Contactenos.cs" />
+    <Compile Include="Entities\Content\Footer.cs" />
+    <Compile Include="Entities\Content\Header.cs" />
+    <Compile Include="Entities\Content\Gallery.cs" />
+    <Compile Include="Entities\Content\Home.cs" />
+    <Compile Include="Entities\Content\Album.cs" />
+    <Compile Include="Entities\Content\Seccion.cs" />
+    <Compile Include="Entities\Transac\InformeMail.cs" />
+    <Compile Include="Entities\Transac\Sugef_Encabezado.cs" />
+    <Compile Include="Entities\Transac\Sugef_Errores.cs" />
+    <Compile Include="Entities\Transac\XML_ICL.cs" />
+    <Compile Include="Entities\Transac\XML_ICL_Metadata.cs" />
+    <Compile Include="Entities\Transac\XML_Excepcion.cs" />
+    <Compile Include="Entities\Transac\Formulas.cs" />
+    <Compile Include="Entities\Transac\Categoria_Riesgo.cs" />
+    <Compile Include="Entities\Transac\Message.cs" />
+    <Compile Include="Entities\Transac\Sexo.cs" />
+    <Compile Include="Entities\Transac\Tipo_Cartera.cs" />
+    <Compile Include="Entities\Transac\Rpt_Analisis_VH.cs" />
+    <Compile Include="Entities\Transac\Rpt_Graph.cs" />
+    <Compile Include="Entities\Transac\Rpt_EstructuraCamel.cs" />
+    <Compile Include="Entities\Transac\Entidad.cs" />
+    <Compile Include="Entities\Transac\Error.cs" />
+    <Compile Include="Entities\Transac\File.cs" />
+    <Compile Include="Entities\Transac\IHist.cs" />
+    <Compile Include="Entities\Transac\IndicadorEconomico.cs" />
+    <Compile Include="Entities\Transac\Log.cs" />
+    <Compile Include="Entities\Transac\Menu.cs" />
+    <Compile Include="Entities\Transac\MenuPermission.cs" />
+    <Compile Include="Entities\Transac\Role.cs" />
+    <Compile Include="Entities\Transac\TipoXML.cs" />
+    <Compile Include="Entities\Content\Noticia.cs" />
+    <Compile Include="Entities\Transac\Hist_Libor.cs" />
+    <Compile Include="Entities\Transac\Hist_TBP.cs" />
+    <Compile Include="Entities\Transac\Hist_TipoCambio.cs" />
+    <Compile Include="Entities\Transac\Usuario.cs" />
+    <Compile Include="Entities\Transac\UsuarioEstado.cs" />
+    <Compile Include="Entities\Transac\XML_Suficiencia_Patrimonial.cs" />
+    <Compile Include="Entities\Transac\XML_Indicadores_Financieros.cs" />
+    <Compile Include="Entities\Transac\XML_Suficiencia_Patrimonial_Metadata.cs" />
+    <Compile Include="Entities\Transac\XML_Indicadores_Financieros_Metadata.cs" />
+    <Compile Include="Entities\Transac\XML_Rango_Calce_Plazo.cs" />
+    <Compile Include="Entities\Transac\XML_Flujo_EfectivoReal.cs" />
+    <Compile Include="Entities\Transac\XML_Rango_Calce_Plazo_Metadata.cs" />
+    <Compile Include="Entities\Transac\XML_Flujo_EfectivoReal_Metadata.cs" />
+    <Compile Include="Entities\Transac\XML_Contable_DatosAdicionales.cs" />
+    <Compile Include="Entities\Transac\XML_Contable_Brecha.cs" />
+    <Compile Include="Entities\Transac\XML_Capital_Social.cs" />
+    <Compile Include="Entities\Transac\XML_Contable_DatosAdicionales_Metadata.cs" />
+    <Compile Include="Entities\Transac\XML_Contable_Brecha_Metadata.cs" />
+    <Compile Include="Entities\Transac\XML_Capital_Social_Metadata.cs" />
+    <Compile Include="Entities\Transac\XML_Contable_Estado.cs" />
+    <Compile Include="Entities\Transac\XML_Contable_Estado_Metadata.cs" />
+    <Compile Include="Entities\Transac\XML_Credito_Cuota_Atrasada.cs" />
+    <Compile Include="Entities\Transac\XML_Credito_Cuota_Atrasada_Metadata.cs" />
+    <Compile Include="Entities\Transac\XML_Credito_Deudor.cs" />
+    <Compile Include="Entities\Transac\XML_Credito_Deudor_Metadata.cs" />
+    <Compile Include="Entities\Transac\XML_Credito_Operacion_DirInd.cs" />
+    <Compile Include="Entities\Transac\XML_Credito_Operacion_DirInd_Metadata.cs" />
+    <Compile Include="Entities\Transac\XML_Encabezado.cs" />
+    <Compile Include="Entities\Transac\XML_Encabezado_Metadata.cs" />
+    <Compile Include="Entities\Transac\XML_Errores.cs" />
+    <Compile Include="Entities\Transac\XML_Inversion_Activa.cs" />
+    <Compile Include="Entities\Transac\XML_Inversion_Activa_Metadata.cs" />
+    <Compile Include="Entities\Transac\XML_Pasivo_Cuenta_Contable_210.cs" />
+    <Compile Include="Entities\Transac\XML_Pasivo_Cuenta_Contable_210_Metadata.cs" />
+    <Compile Include="Enum\Enum_EstadoSolicitud.cs" />
+    <Compile Include="Enum\Enum_IndEconomico.cs" />
+    <Compile Include="Maping\Evaluacion\EvalCategoriaMap.cs" />
+    <Compile Include="Maping\Evaluacion\EvalResponsableCategoriaMap.cs" />
+    <Compile Include="Maping\Evaluacion\EvalSubCategoriaMap.cs" />
+    <Compile Include="Maping\Evaluacion\EvalRespuestaUsuarioMap.cs" />
+    <Compile Include="Maping\Evaluacion\EvalPreguntaMap .cs" />
+    <Compile Include="Maping\TaskManager\TareaMap.cs" />
+    <Compile Include="Maping\TaskManager\TipoTareaMap.cs" />
+    <Compile Include="Maping\Transac\CargaAsincronicaMap.cs" />
+    <Compile Include="Maping\Transac\Proy_EEFFMap.cs" />
+    <Compile Include="Maping\Transac\Bit_SessionesMap.cs" />
+    <Compile Include="Maping\Transac\SectorMap.cs" />
+    <Compile Include="Maping\Transac\NotificacionesMap.cs" />
+    <Compile Include="Maping\Transac\InformeMailMap.cs" />
+    <Compile Include="Maping\Transac\ParametrosMap.cs" />
+    <Compile Include="Maping\Transac\Salida_Sugef_Indicadores_CarteraMap.cs" />
+    <Compile Include="Maping\Transac\PerfilEntidadMap.cs" />
+    <Compile Include="Maping\Transac\Sugef_CarteraMap.cs" />
+    <Compile Include="Maping\Transac\Sugef_Info_ContableMap.cs" />
+    <Compile Include="Maping\Transac\TipoInformeMap.cs" />
+    <Compile Include="Maping\Transac\Exclusion_Periodos_ProyectarMap.cs" />
+    <Compile Include="Maping\Transac\Hist_IPCMap.cs" />
+    <Compile Include="Maping\Transac\ProyeccionMap.cs" />
+    <Compile Include="Maping\Transac\TipoProyeccionMap.cs" />
+    <Compile Include="Maping\Transac\CatalogoCuentaMap.cs" />
+    <Compile Include="Maping\Transac\MessageMap.cs" />
+    <Compile Include="Maping\Transac\FormulasMap.cs" />
+    <Compile Include="Maping\Transac\SexoMap.cs" />
+    <Compile Include="Maping\Transac\Tipo_CarteraMap.cs" />
+    <Compile Include="Maping\Transac\Categoria_RiesgoMap.cs" />
+    <Compile Include="Maping\Transac\CalendarioMap.cs" />
+    <Compile Include="Maping\Transac\Rpt_GraphMap.cs" />
+    <Compile Include="Maping\Content\Tipo_AlbumMap.cs" />
+    <Compile Include="Maping\Content\AlbumMap.cs" />
+    <Compile Include="Maping\Content\SeccionMap.cs" />
+    <Compile Include="Maping\Transac\Rpt_EstructuraCamelMap.cs" />
+    <Compile Include="Maping\Transac\Rpt_Analisis_VHMap.cs" />
+    <Compile Include="Maping\Transac\ArchivoEstadoMap.cs" />
+    <Compile Include="Maping\Transac\EntidadMap.cs" />
+    <Compile Include="Maping\Transac\LogMap.cs" />
+    <Compile Include="Maping\Transac\MenuMap.cs" />
+    <Compile Include="Maping\Transac\MenuPermissionMap.cs" />
+    <Compile Include="Maping\Transac\Hist_TBPMap..cs" />
+    <Compile Include="Maping\Transac\Hist_TipoCambioMap..cs" />
+    <Compile Include="Maping\Transac\Hist_LiborMap.cs" />
+    <Compile Include="Maping\Transac\RoleMap.cs" />
+    <Compile Include="Maping\Transac\TipoXMLMap.cs" />
+    <Compile Include="Maping\Transac\UsuarioEstadoMap.cs" />
+    <Compile Include="Maping\Content\NoticiaMap.cs" />
+    <Compile Include="Maping\TaskManager\ProyectoMap.cs" />
+    <Compile Include="Maping\TaskManager\SolicitudCambioMap.cs" />
+    <Compile Include="Entities\Transac\Creditos_EstadoSolicitud.cs" />
+    <Compile Include="Entities\Transac\Creditos_ComisionConfig.cs" />
+    <Compile Include="Entities\Transac\Creditos_Ofertas.cs" />
+    <Compile Include="Entities\Transac\Creditos_Solicitudes.cs" />
+    <Compile Include="Entities\Transac\Creditos_Documentos.cs" />
+    <Compile Include="Entities\Transac\Creditos_SMSLog.cs" />
+    <Compile Include="Entities\Transac\Creditos_TipoDocumento.cs" />
+    <Compile Include="Entities\Transac\Creditos_OfertaRequisitos.cs" />
+    <Compile Include="Maping\Transac\CreditosMap.cs" />
+    <Compile Include="Maping\Transac\UsuarioMap.cs" />
+    <Compile Include="Maping\Transac\XML_ICLMap.cs" />
+    <Compile Include="Maping\Transac\XML_CapitalSocialMap.cs" />
+    <Compile Include="Maping\Transac\XML_Contable_EstadoMap.cs" />
+    <Compile Include="Maping\Transac\XML_Credito_Cuota_AtrasadaMap.cs" />
+    <Compile Include="Maping\Transac\XML_Credito_DeudorMap.cs" />
+    <Compile Include="Maping\Transac\XML_Credito_Operacion_DirIndMap .cs" />
+    <Compile Include="Maping\Transac\Sugef_EncabezadoMap.cs" />
+    <Compile Include="Maping\Transac\Sugef_ErroresMap.cs" />
+    <Compile Include="Maping\Transac\XML_ExcepcionMap.cs" />
+    <Compile Include="Maping\Transac\XML_EncabezadoMap.cs" />
+    <Compile Include="Maping\Transac\XML_ErroresMap.cs" />
+    <Compile Include="Maping\Transac\XML_Contable_BrechaMap.cs" />
+    <Compile Include="Maping\Transac\XML_Contable_DatosAdicionalesMap.cs" />
+    <Compile Include="Maping\Transac\XML_Suficiencia_PatrimonialMap.cs" />
+    <Compile Include="Maping\Transac\XML_Indicadores_FinancierosMap.cs" />
+    <Compile Include="Maping\Transac\XML_Flujo_EfectivoRealMap.cs" />
+    <Compile Include="Maping\Transac\XML_Rango_Calce_PlazoMap.cs" />
+    <Compile Include="Maping\Transac\XML_Inversion_ActivaMap.cs" />
+    <Compile Include="Maping\Transac\XML_Pasivo_Cuenta_Contable_210Map.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <EntityDeploy Include="Entities\Procedures\FGAEntities.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>FGAEntities.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <None Include="Entities\Procedures\FGAEntities.edmx.diagram">
+      <DependentUpon>FGAEntities.edmx</DependentUpon>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Entities\Procedures\FGAEntities.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>FGAEntities.edmx</DependentUpon>
+      <LastGenOutput>FGAEntities.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="Entities\Procedures\FGAEntities.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>FGAEntities.edmx</DependentUpon>
+      <LastGenOutput>FGAEntities.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.4.4\build\EntityFramework.props'))" />
+    <Error Condition="!Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.4.4\build\EntityFramework.targets'))" />
+  </Target>
+  <Import Project="..\packages\EntityFramework.6.4.4\build\EntityFramework.targets" Condition="Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.targets')" />
+</Project>

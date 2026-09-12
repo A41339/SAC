@@ -1,0 +1,468 @@
+﻿@model FGA.Model.Modelo_PMatriz
+
+@{
+    ViewBag.Title = "Supuestos de Proyección de Mora";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="content-header">
+    <h1>
+        Supuestos de Proyección de Mora
+    </h1>
+</section>
+
+<section class="content">
+    <div>
+        <div class="nav-tabs-custom">
+            <ul class="nav nav-tabs">
+                <li class="@(Model.Buscar ? "" : "active")"><a href="#tab_1" data-toggle="tab">Supuestos</a></li>
+                <li @(Model.Buscar ? "class=active" : "class=hidden")><a href="#tab_2" data-toggle="tab">Proyección</a></li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane @(Model.Buscar ? "" : "active")" id="tab_1">
+
+                    @using (Html.BeginForm("Buscar", "ProyeccionMatriz", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmMatriz" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="box box-solid box-info">
+                                    <div class="box-body table-responsive">
+                                        <div class="margin">
+                                            <div class="streaming-table">
+                                                <span id="found" class="label label-info"></span>
+                                                <table class="table table-condensed table-striped table-bordered">
+                                                    <tr>
+                                                        <td>
+                                                            @Html.Label("Entidad:")
+                                                        </td>
+                                                        <td>
+                                                            @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", style = "width: 200px;" })
+                                                        </td>
+                                                        <td>
+                                                            @Html.Label("Tasa crecimiento cartera:")
+                                                        </td>
+                                                        <td>
+                                                            <div style="display: inline-flex">
+
+                                                                <select name="cmb_tipoTasa" id="cmb_tipoTasa" style="width: 200px">
+                                                                    <option id="1" value="0" @(Session["TipoTasa"].ToString() == "0" ? "selected" : "")>Crecimiento sugerido</option>
+                                                                    <option id="2" value="1" @(Session["TipoTasa"].ToString() == "1" ? "selected" : "")>Específica mensual</option>
+                                                                    <option id="3" value="12" @(Session["TipoTasa"].ToString() == "12" ? "selected" : "")>Específica anual</option>
+                                                                </select>
+                                                                <a class="text-right" data-toggle="tooltip" data-placement="top" title="Ayuda"
+                                                                   href="javascript:help('Tasa', 'Puede elegir entre las siguientes tres opciones: <br/><br/> a) Crecimiento sugerido: está dado de acuerdo con los períodos históricos y el cálculo interno de FGA. No podrá ser modificado. <br/><br/> b) Tasa especifica se puede incluir de forma manual ya sea una tasa anual o mensual, debe escoger en la seguilla de al lado el tipo mensual o anual.<br/><br/> c) Tasa por estacionalidad: se incluye en forma manual una tasa de crecimiento para cada mes proyectado')"><i class="btn btn-xs btn-default icon fa fa-question"></i></a>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            @Html.Label("Periodo actual:")
+                                                        </td>
+                                                        <td>
+                                                            <input name="PeriodoActual" id="PeriodoActual" class="datecontrol" value="@Session["PeriodoActual"]" />
+                                                        </td>
+                                                        <td>
+                                                            @Html.Label("Tasa:")
+                                                        </td>
+                                                        <td>
+                                                            <input name="Tasa" type="text" @(Session["TipoTasa"].ToString() == "0" ? "readonly=\"readonly\"" : "") id="Tasa" value="@(Model is null ? "0": Model.TasaCrecimiento.ToString())" style="width: 200px" />
+                                                        </td>
+                                                        <td></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            @Html.Label("Meses por proyectar:")
+                                                        </td>
+                                                        <td>
+                                                            <div style="display: inline-flex">
+                                                                <input name="PeriodoEstimar" type="number" id="PeriodoEstimar" value="@Session["PeriodoEstimar"]" />
+                                                                <a class="text-right" data-toggle="tooltip" data-placement="top" title="Ayuda"
+                                                                   href="javascript:help('Meses por proyectar', 'En este cuadro se elige la cantidad de meses a proyectar de la cartera de crédito, tomando como base el último mes cargado')"><i class="btn btn-xs btn-default icon fa fa-question"></i></a>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            @Html.Label("Periodo inicial:")
+                                                        </td>
+                                                        <td nowrap="nowrap">
+                                                            <div style="display: table-cell">
+                                                                <input name="PeriodoI" id="PeriodoI" class="datecontrol" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["PeriodoI"].ToString()).ToString("MM/yyyy")" />
+                                                                <a class="text-right" data-toggle="tooltip" data-placement="top" title="Ayuda"
+                                                                   href="javascript:help('Periodo inicial', 'El mínimo de meses históricos que se deben de tomar son 12 meses')"><i class="btn btn-xs btn-default icon fa fa-question"></i></a>
+                                                            </div>
+                                                        </td>
+                                                        <td></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            @Html.Label("Periodos históricos:")
+                                                        </td>
+                                                        <td>
+                                                            <div style="display: inline-flex">
+                                                                <input name="PeriodoCrecimiento" type="number" id="PeriodoCrecimiento" value="@Session["PeriodoCrecimiento"]" />
+                                                                <a class="text-right" data-toggle="tooltip" data-placement="top" title="Ayuda"
+                                                                   href="javascript:help('Periodos históricos', 'El número a elegir será la cantidad de meses históricos que se tomarán como base para la proyección de la cartera de crédito, considerar que el mínimo son 12 meses')"><i class="btn btn-xs btn-default icon fa fa-question"></i></a>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            @Html.Label("Periodo final:")
+                                                        </td>
+                                                        <td nowrap="nowrap">
+                                                            <div style="display: table-cell">
+                                                                <input name="PeriodoF" id="PeriodoF" class="datecontrol" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["PeriodoF"].ToString()).ToString("MM/yyyy")" />
+                                                                <a class="text-right" data-toggle="tooltip" data-placement="top" title="Ayuda"
+                                                                   href="javascript:help('Periodo final', 'El mes idóneo a escoger es el último período cargado')"><i class="btn btn-xs btn-default icon fa fa-question"></i></a>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <label class="btn btn-facebook">
+                                                                Generar proyecciones mora<input type="submit" name="submit" style="display: none;">
+                                                            </label>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="tab-pane @(Model.Buscar ? "active" : "")" id="tab_2">
+
+                    @if (Model.Buscar)
+                    {
+                        <div class="box box-solid box-info">
+                            <div class="row">
+                                <div class="margin">
+                                    <br />
+                                    <div class="col-md-12">
+                                        <table id="tbRangos" class="table table-striped table-bordered" style="width:100%; height: 350px">
+                                            <thead>
+                                                <tr>
+                                                    <th colspan="7">
+                                                        <img width="50" height="50" src="@Session["Logo"]" />
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th>Periodo</th>
+                                                    <th>Al día</th>
+                                                    <th>1-30 días</th>
+                                                    <th>31-60 días</th>
+                                                    <th>61-90 días</th>
+                                                    <th>91-180 días</th>
+                                                    <th>Más de 180 días</th>
+                                                    <th>Cobro Judicial</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                        </table>
+                                        <div id="summary">
+                                            <div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-7">
+                                        <div class="box box-info">
+                                            <div class="box-header with-border">
+                                                <img width="50" height="50" src="@Session["Logo"]" />
+                                                <h4 class="box-title">Mora Estimada</h4>
+                                            </div>
+                                            <div class="box-body">
+                                                @(Model.MoraEstimada)
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <br /> <br /><br /> <br />
+                                        <table id="tbDMora" class="table table-striped table-bordered" style="width:100%;">
+                                            <thead>
+                                                <tr>
+                                                    <th colspan="8">
+                                                        <img width="50" height="50" src="@Session["Logo"]" />
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th>Periodo</th>
+                                                    <th>Cartera vencida a más de un día</th>
+                                                    <th>Cartera vencida a más de 30 días</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                        </table>
+                                        <div id="summary">
+                                            <div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <table id="tbDetalle" class="table table-striped table-bordered" style="width:100%; height: 350px">
+                                            <thead>
+                                                <tr>
+                                                    <th colspan="6">
+                                                        <img width="50" height="50" src="@Session["Logo"]" />
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th>Periodo</th>
+                                                    <th>Cartera total</th>
+                                                    <th>En mora</th>
+                                                    <th>Estimación nivel de mora</th>
+                                                    <th>Mora / Cartera total</th>
+                                                    <th>Estimación mora</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                        </table>
+                                        <div id="summary">
+                                            <div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <table id="tbMora" class="table table-striped table-bordered" style="width:100%; height: 350px">
+                                            <thead>
+                                                <tr>
+                                                    <th colspan="8">
+                                                        <img width="50" height="50" src="@Session["Logo"]" />
+                                                        <h4 class="box-title">Proyección de Mora</h4>
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th>Periodo</th>
+                                                    <th>Al día</th>
+                                                    <th>1-30 días</th>
+                                                    <th>31-60 días</th>
+                                                    <th>61-90 días</th>
+                                                    <th>91-180 días</th>
+                                                    <th>Más de 180 días</th>
+                                                    <th>Cobro Judicial</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                        </table>
+                                        <div id="summary">
+                                            <div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <div class="box box-primary">
+                                            <div class="box-header with-border">
+                                                <img width="50" height="50" src="@Session["Logo"]" />
+                                                <h3 class="box-title">Distribución de la Mora</h3>
+                                            </div>
+                                            <div class="box-body">
+                                                @(Model.DistribucionMora)
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br />
+                                <br />
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="modal fade" id="defModal" tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <div class="box-header with-border">
+                    <h3 id="titulo" style="padding-bottom: 10px;" class="box-title"></h3>
+                </div>
+            </div>
+            <div class="modal-body">
+                <p class="text-justify" style="font-size: 14px" id="definicion">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    function help(titulo, detalle) {
+        $('#titulo').html(titulo);
+        $('#definicion').html(detalle);
+        $('#defModal').modal('show');
+    }
+
+
+    $(document).ready(function () {
+
+        validarOpcion();
+
+        $("#cmb_tipoTasa").change(
+            function () {
+				if ($("#cmb_tipoTasa").val() == 0) {
+					$("#Tasa").attr('readonly', true);
+					$("#Tasa").css("background-color", "#eee");
+				}
+				else {
+					$("#Tasa").attr('readonly', false);
+					$("#Tasa").css("background-color", "#fff");
+				}
+
+				$("#Tasa").focus();
+			}
+        );
+
+   	    function validarOpcion() {
+			if ($("#cmb_tipoTasa").val() == 0) {
+				$("#Tasa").attr('readonly', true);
+				$("#Tasa").css("background-color", "#eee");
+			}
+			else {
+				$("#Tasa").attr('readonly', false);
+				$("#Tasa").css("background-color", "#fff");
+			}
+
+            $("#Tasa").focus();
+		}
+
+
+        $('#Tasa').on('keypress', function (event) {
+            var regex = new RegExp("^[a-zA-Z0-9,]+$");
+            var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+            if (!regex.test(key)) {
+                event.preventDefault();
+                return false;
+            }
+        });
+
+        var ControlerNameRole = "@Url.Content("~/ProyeccionMatriz")";
+
+        $("#tbRangos").dataTable({
+            "bRetrieve": true,
+            "ordering": false,
+            "bProcessing": true,
+            "bPaginate": false,
+            "bFilter": false,
+            "bInfo": false,
+            "dom": 'lBfrtip',
+            "sAjaxSource": "@Url.Content("~/ProyeccionMatriz/GetGrid")",
+            columnDefs: [
+                {
+                className: 'text-right', targets: [0, 1, 2, 3, 4, 5, 6, 7],
+                },
+            ],
+            "buttons": [
+                 { extend: 'copyHtml5', exportOptions: { columns: ':visible' } }
+                ,{ extend: 'excelHtml5', exportOptions: { columns: ':visible' } }
+                ,{ extend: 'csvHtml5', exportOptions: { columns: ':visible' } }
+                ,{ extend: 'print', exportOptions: { columns: ':visible' } }
+                ,'colvis'
+                ],
+                "aoColumns": [
+                    {}, {}, {}, {}, {}, {}, {}, {}
+            ]
+        });
+
+        $("#tbDetalle").dataTable({
+            "bRetrieve": true,
+            "ordering": false,
+            "bProcessing": true,
+            "bPaginate": false,
+            "bFilter": false,
+            "bInfo": false,
+            "dom": 'lBfrtip',
+            "sAjaxSource": "@Url.Content("~/ProyeccionMatriz/GetGridDetalle")",
+            columnDefs: [
+                {
+                    className: 'text-right', targets: [0, 1, 2, 3, 4, 5],
+                },
+            ],
+            "buttons": [
+                 { extend: 'copyHtml5', exportOptions: { columns: ':visible' } }
+                ,{ extend: 'excelHtml5', exportOptions: { columns: ':visible' } }
+                ,{ extend: 'csvHtml5', exportOptions: { columns: ':visible' } }
+                ,{ extend: 'print', exportOptions: { columns: ':visible' } }
+                ,'colvis'
+                ],
+                "aoColumns": [
+                    {}, {}, {}, {}, {}, {}
+            ]
+        });
+
+         $("#tbMora").dataTable({
+             "bRetrieve": true,
+             "ordering": false,
+            "bProcessing": true,
+            "bPaginate": false,
+            "bFilter": false,
+            "bInfo": false,
+            "dom": 'lBfrtip',
+             "sAjaxSource": "@Url.Content("~/ProyeccionMatriz/GetGridMora")",
+             columnDefs: [
+                 {
+                     className: 'text-right', targets: [0, 1, 2, 3, 4, 5, 6, 7],
+                 },
+             ],
+            "buttons": [
+                 { extend: 'copyHtml5', exportOptions: { columns: ':visible' } }
+                ,{ extend: 'excelHtml5', exportOptions: { columns: ':visible' } }
+                ,{ extend: 'csvHtml5', exportOptions: { columns: ':visible' } }
+                ,{ extend: 'print', exportOptions: { columns: ':visible' } }
+                ,'colvis'
+                ],
+                "aoColumns": [
+                    {}, {}, {}, {}, {}, {}, {}, {}
+             ],
+
+         });
+
+         $("#tbDMora").dataTable({
+             "bRetrieve": true,
+             "ordering": false,
+            "bProcessing": true,
+            "bPaginate": false,
+            "bFilter": false,
+            "bInfo": false,
+            "dom": 'lBfrtip',
+             "sAjaxSource": "@Url.Content("~/ProyeccionMatriz/GetGridDMora")",
+             columnDefs: [
+                 {
+                     className: 'text-right', targets: [0, 1, 2],
+                 },
+             ],
+            "buttons": [
+                 { extend: 'copyHtml5', exportOptions: { columns: ':visible' } }
+                ,{ extend: 'excelHtml5', exportOptions: { columns: ':visible' } }
+                ,{ extend: 'csvHtml5', exportOptions: { columns: ':visible' } }
+                ,{ extend: 'print', exportOptions: { columns: ':visible' } }
+                ,'colvis'
+                ],
+                "aoColumns": [
+                    {}, {}, {}
+             ],
+        });
+      });
+
+    function formatMillion() {
+        return this.value;
+    }
+
+    function formatPercent() {
+        return this.value + ' %';
+    }
+
+</script>
+
+
+
+
+

@@ -1,0 +1,352 @@
+﻿@model FGA.Model.Modelo_Matris
+
+@{
+    ViewBag.Title = "Mora";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="content-header">
+    <h1>
+        Matrices de Mora
+    </h1>
+</section>
+
+<section class="content">
+    @using (Html.BeginForm("Buscar", "Matriz", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmMatriz" }))
+    {
+        @Html.AntiForgeryToken()
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box box-solid box-info">
+                    <div class="box-body table-responsive">
+                        <div class="margin">
+                            <div class="streaming-table">
+                                <span id="found" class="label label-info"></span>
+                                <table class="table table-condensed table-striped table-bordered">
+                                    <tr>
+                                        <td class="mobile">
+                                            @Html.Label("Entidad:")
+                                        </td>
+                                        <td>
+                                            @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", style = "width: 200px;" })
+                                        </td>
+                                        <td class="mobile">
+                                            @Html.Label("Inicial:")
+                                        </td>
+                                        <td nowrap="nowrap">
+                                            <input name="PeriodoI" id="PeriodoI" class="datecontrol" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MM/yyyy")" />
+                                        </td>
+                                        <td class="mobile">
+                                            @Html.Label("Final:")
+                                        </td>
+                                        <td nowrap="nowrap">
+                                            <input name="PeriodoF" id="PeriodoF" class="datecontrol" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MM/yyyy")" />
+                                        </td>
+                                        <td>
+                                            <label class="btn btn-facebook">
+                                                Generar<input type="submit" name="submit" style="display: none;">
+                                            </label>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="nav-tabs-custom">
+            <ul class="nav nav-tabs">
+                <li class="active"><a href="#tab_1" data-toggle="tab">Probabilidades de desmejora y concentración</a></li>
+                <li><a href="#tab_2" data-toggle="tab">Pérdida Esperada</a></li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane active" id="tab_1">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <section class="content">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="box box-primary">
+                                            <table class="table table-condensed table-striped table-bordered" style="padding-left: 10px;">
+                                                <tr>
+                                                    <td class="mobile">
+                                                        @Html.Label("Comparar Inicial:")
+                                                    </td>
+                                                    <td nowrap="nowrap">
+                                                        <input name="PeriodoIC" id="PeriodoIC" style="width: 100px" class="datecontrol"  value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["PeriodoIC"].ToString()).ToString("MM/yyyy")" /> 
+                                                    </td>
+                                                    <td class="mobile">
+                                                        @Html.Label("Comparar Final:")
+                                                    </td>
+                                                    <td nowrap="nowrap">
+                                                        <input name="PeriodoFC" id="PeriodoFC" style="width: 100px" class="datecontrol" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["PeriodoFC"].ToString()).ToString("MM/yyyy")" /> 
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td rowspan="4">
+                                                        <label class="label label-danger">@Model.validarFechas</label>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                            <div class="box-body">
+                                                <div class="row">
+                                                    <div class="col-xs-12">
+                                                        <span id="found" class="label label-info"></span>
+                                                        <table id="tbError" class="table table-striped table-bordered" style="width:100%; height: 350px">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th colspan="5">
+                                                                        <img width="50" height="50" src="@Session["Logo"]" />
+                                                                        <label class="box-title">Probabilidad de desmejora</label>
+                                                                    </th>
+                                                                </tr>
+                                                                <tr>
+                                                                    <th class="hidden"> ID  </th>
+                                                                    <th> Atraso  </th>
+                                                                    <th>
+                                                                        Desmejora  @FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["PeriodoIC"].ToString()).ToString("MMM yy")) -
+                                                                        @FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["PeriodoFC"].ToString()).ToString("MMM yy"))
+                                                                    </th>
+                                                                    <th>
+                                                                        Desmejora @FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MMM yy")) -
+                                                                        @FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MMM yy"))
+                                                                    </th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody></tbody>
+                                                        </table>
+
+                                                        <div id="summary">
+                                                            <div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="box box-info">
+                                            <div class="box-header with-border">
+                                                <img width="50" height="50" src="@Session["Logo"]" />
+                                                <h4 class="box-title">Concentración al día</h4>
+                                                <a class="text-right" data-toggle="tooltip" data-placement="top" href="javascript:mConcentracionAlDia()"><i class="btn btn-xs btn-info icon fa fa-line-chart"></i></a>
+                                            </div>
+                                            <div class="box-body">
+                                                @(Model.concentracionAlDia)
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="box box-primary">
+                                            <div class="box-header with-border">
+                                                <img width="50" height="50" src="@Session["Logo"]" />
+                                                <h3 class="box-title">Concentración de la cartera</h3>
+                                                <a class="text-right" data-toggle="tooltip" data-placement="top" href="javascript:mConcentracion()"><i class="btn btn-xs btn-info icon fa fa-line-chart"></i></a>
+                                            </div>
+                                            <div class="box-body">
+                                                @(Model.concentracion)
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane" id="tab_2">
+                    <div class="row">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="box box-info">
+                                    <div class="box-header with-border">
+                                        <img width="50" height="50" src="@Session["Logo"]" />
+                                        <h3 class="box-title">Pérdida calculada por saldos</h3>
+                                        <a class="text-right" data-toggle="tooltip" data-placement="top" href="javascript:mPerdida()"><i class="btn btn-xs btn-info icon fa fa-line-chart"></i></a>
+                                    </div>
+                                    <div class="box-body">
+                                        @(Model.perdida)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="box box-primary">
+                                    <div class="box-header with-border">
+                                        <img width="50" height="50" src="@Session["Logo"]" />
+                                        <h4 class="box-title">Indicadores de riesgo de activo</h4>
+                                        <a class="text-right" data-toggle="tooltip" data-placement="top" href="javascript:mRiesgoActivo()"><i class="btn btn-xs btn-info icon fa fa-line-chart"></i></a>
+                                    </div>
+                                    <div class="box-body">
+                                        @(Model.riesgoActivo)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</section>
+
+<div id="modalError" class="modal fade">
+    <div class="modal-dialog modal-fail">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="icon-box">
+                    <i class="material-icons"></i>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div style="margin-left:50px; margin-right: 50px;">
+                    <p id="lbl_mensajeError" class="text-center"></p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger btn-block" data-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mConcentracionAlDia" tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="box-header with-border">
+                    <img width="50" height="50" src="@Session["Logo"]" />
+                    <h3 id="pEntidad1" style="padding-bottom: 10px;" class="box-title">Concentración al día</h3>
+                </div>
+            </div>
+            <div class="modal-body">
+                @(Model.pConcentracionAlDia)
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mConcentracion" tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="box-header with-border">
+                    <img width="50" height="50" src="@Session["Logo"]" />
+                    <h3 id="pEntidad2" style="padding-bottom: 10px;" class="box-title">Concentración de la cartera</h3>
+                </div>
+            </div>
+            <div class="modal-body">
+                @(Model.pConcentracion)
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mPerdida" tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="box-header with-border">
+                    <img width="50" height="50" src="@Session["Logo"]" />
+                    <h3 id="pEntidad3" style="padding-bottom: 10px;" class="box-title">Pérdida calculada por saldos</h3>
+                </div>
+            </div>
+            <div class="modal-body">
+                @(Model.pPerdida)
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mRiesgoActivo" tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="box-header with-border">
+                    <img width="50" height="50" src="@Session["Logo"]" />
+                    <h3 id="pEntidad4" style="padding-bottom: 10px;" class="box-title">Indicadores de riesgo de activo</h3>
+                </div>
+            </div>
+            <div class="modal-body">
+                @(Model.pRiesgoActivo)
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    function mConcentracionAlDia() {
+        $('#mConcentracionAlDia').modal('show');
+    }
+
+    function mConcentracion() {
+        $('#mConcentracion').modal('show');
+    }
+
+    function mPerdida() {
+        $('#mPerdida').modal('show');
+    }
+
+    function mRiesgoActivo() {
+        $('#mRiesgoActivo').modal('show');
+    }
+
+     $(document).ready(function () {
+            var oTableRole = "";
+            var ControlerNameRole = "@Url.Content("~/Matriz")";
+            // debugger;
+            oTableRole = $("#tbError").dataTable({
+            "rowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+                    $(nRow).find('td:eq(0)').addClass('hidden');
+             },
+            "bRetrieve": true,
+            "bProcessing": true,
+            "bPaginate": false,
+            "bFilter": false,
+            "bInfo": false,
+            "dom": 'lBfrtip',
+            "sAjaxSource": "@Url.Content("~/Matriz/GetGrid")",
+            "buttons": [
+                 { extend: 'copyHtml5', exportOptions: { columns: ':visible' } }
+                ,{ extend: 'excelHtml5', exportOptions: { columns: ':visible' } }
+                ,{ extend: 'csvHtml5', exportOptions: { columns: ':visible' } }
+                ,{ extend: 'print', exportOptions: { columns: ':visible' } }
+                ,'colvis'
+                ],
+                columnDefs: [
+                     {
+                         className: 'text-right', targets: [2, 3]
+                     },
+                ],
+                "aoColumns": [
+                    {},{},{},{}
+        ]
+        });
+     });
+
+    function formatMillion() {
+        return this.value;
+    }
+
+    function formatPercent() {
+        return this.value + ' %';
+    }
+
+</script>

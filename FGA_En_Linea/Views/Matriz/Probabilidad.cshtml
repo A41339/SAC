@@ -1,0 +1,141 @@
+﻿@{
+    ViewBag.Title = "Matrices";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="content-header">
+    <h1>
+        Matrices
+    </h1>
+</section>
+
+<section class="content">
+    @using (Html.BeginForm("BuscarProbabilidad", "Matriz", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmMatriz" }))
+    {
+        @Html.AntiForgeryToken()
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box box-solid box-info">
+                    <div class="box-body table-responsive">
+                        <div class="margin">
+                            <div class="streaming-table">
+                                <span id="found" class="label label-info"></span>
+                                <table class="table table-condensed table-striped table-bordered">
+                                    <tr>
+                                        <td class="mobile">
+                                            @Html.Label("Entidad:")
+                                        </td>
+                                        <td>
+                                            @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", style = "width: 200px;" })
+                                        </td>
+                                        <td class="mobile">
+                                            @Html.Label("Inicial:")
+                                        </td>
+                                        <td nowrap="nowrap">
+                                            <input name="PeriodoI" id="PeriodoI" class="datecontrol" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MM/yyyy")" />
+                                        </td>
+                                        <td class="mobile">
+                                            @Html.Label("Final:")
+                                        </td>
+                                        <td nowrap="nowrap">
+                                            <input name="PeriodoF" id="PeriodoF" class="datecontrol" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MM/yyyy")" />
+                                        </td>
+                                        <td>
+                                            <label class="btn btn-facebook">
+                                                Generar<input type="submit" name="submit" style="display: none;">
+                                            </label>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <section class="content">
+                    <div class="row">
+                        <div class="box box-primary">
+                            <div class="box-body">
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <span id="found" class="label label-info"></span>
+                                        <table id="tbError" class="table table-striped table-bordered" style="width:100%; height: 350px">
+                                            <thead>
+                                                <tr>
+                                                    <th colspan="4">
+                                                        <img width="50" height="50" src="@Session["Logo"]" />
+                                                        <label class="box-title">Matriz de probabilidad</label>
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th class="hidden">
+                                                    </th>
+                                                    <th>
+                                                        Inicio
+                                                    </th>
+                                                    <th>
+                                                        Fin
+                                                    </th>
+                                                    <th>
+                                                        Probabilidad
+                                                    </th>
+                                                    <th>
+                                                        Saldo
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                        </table>
+                                        <div id="summary">
+                                            <div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    }
+</section>
+
+<script type="text/javascript">
+
+     $(document).ready(function () {
+            var oTableRole = "";
+            var ControlerNameRole = "@Url.Content("~/Matriz")";
+            oTableRole = $("#tbError").dataTable({
+                  "rowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+                    $(nRow).find('td:eq(0)').addClass('hidden');
+             },
+            "bRetrieve": true,
+            "bProcessing": true,
+            "bPaginate": false,
+            "bFilter": false,
+            "bInfo": false,
+            "dom": 'lBfrtip',
+            "sAjaxSource": "@Url.Content("~/Matriz/GetGridProbabilidad")",
+            "buttons": [
+                 { extend: 'copyHtml5', exportOptions: { columns: ':visible' } }
+                ,{ extend: 'excelHtml5', exportOptions: { columns: ':visible' } }
+                ,{ extend: 'csvHtml5', exportOptions: { columns: ':visible' } }
+                ,{ extend: 'print', exportOptions: { columns: ':visible' } }
+                ,'colvis'
+                ],
+                columnDefs: [
+                     {
+                         className: 'text-right', targets: [3, 4]
+                     },
+                ],
+                "aoColumns": [
+                    {},{},{},{},{}
+        ]
+        });
+     });
+
+</script>

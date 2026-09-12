@@ -1,0 +1,56 @@
+@model FGA.Models.TipoXML
+
+@{
+    ViewBag.Title = "Consultar un Tipo de XML";
+    if (Ajax.IsThisAjaxRequest())
+    {
+        Layout = null;
+    }
+}
+<section class="content-header">
+    <h1>
+        Consultar un Tipo de XML
+    </h1>
+</section>
+<section class="content">
+    <!-- Small boxes (Stat box) -->
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box box-solid box-info">
+                <div class="box-header">
+                    <h3 class="box-title">Detalles</h3>
+                </div><!-- /.box-header -->
+                <div class="box-body table-responsive">
+                    <div class="widget-sec">
+                        <div class="streaming-table">
+                            <table class="table table-striped table-bordered">
+                                <tr>
+                                    <td>Id</td>
+                                    <td>@Html.DisplayFor(model => model.Id)</td>
+                                </tr>
+                                <tr>
+                                    <td>Nombre</td>
+                                    <td>@Html.Raw(Model.Nombre)</td>
+                                </tr>
+                                @*<tr>
+                                    <td>Día máximo</td>
+                                    <td>@Html.DisplayFor(model => model.DiaMaximo)</td>
+                                </tr>
+                                <tr>
+                                    <td>Prioridad</td>
+                                    <td>@Html.DisplayFor(model => model.Prioridad)</td>
+                                </tr>*@
+                            </table>
+                            <div class="box-footer">                                 
+                                @Html.ActionLink("Regresar", "Index", null, new { @class = "btn btn-primary" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+

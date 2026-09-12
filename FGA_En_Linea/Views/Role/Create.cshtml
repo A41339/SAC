@@ -1,0 +1,74 @@
+@model FGA.Models.Role
+
+@{
+    ViewBag.Title = "Create";
+    if (Ajax.IsThisAjaxRequest())
+    {
+        Layout = null;
+    }
+}
+ 
+
+@Html.StarkAjaxFormSubmiter("frmRole", "tbRole", true, "Action Successfully Executed")
+ 
+@{
+    if (!Ajax.IsThisAjaxRequest())
+    {
+        <section class="content-header">
+            <h1>
+                @ViewBag.Title
+                <small>@ViewBag.Title</small>
+            </h1>
+        </section>
+    }
+}
+<script type="text/javascript">
+        $(function () { 
+            $('select').searchableOptionList({
+                maxHeight: '250px'
+            });
+        });
+</script>
+@using (Html.BeginForm("Create", "Role", FormMethod.Post, new { enctype = "multipart/form-data",id = "frmRole"  }))
+{
+    @Html.AntiForgeryToken()
+          <!-- Main content -->
+    <section class="content">
+        <!-- Small boxes (Stat box) -->
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box box-solid box-primary">
+                    <div class="box-header">
+                        <h3 class="box-title">Fill Role Form</h3>
+                    </div><!-- /.box-header -->
+                    <!-- form start -->
+                    <div role="form">
+                        <div class="box-body">
+                              
+
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.RoleName, new { @class = "" })
+                                @Html.EditorFor(model => model.RoleName)  
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.IsActive, new { @class = "" })
+                                @Html.EditorFor(model => model.IsActive)  
+                            </div>
+
+
+
+
+                        </div>
+                        <div class="box-footer">
+                            @Html.StarkInputButtion("Create New","submit","btn btn-primary","") 
+                            @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-primary" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+}
+
+
+

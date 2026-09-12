@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Somos un sistema de protección que brinda garantía a los ahorrantes y también otorga respaldo institucional a las Cooperativas socias.">
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="FGA Confía" />
+    <meta property="og:description" content="Somos un sistema de protección que brinda garantía a los ahorrantes y también otorga respaldo institucional a las Cooperativas socias." />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>@ViewBag.Title - FFC</title>
+    <meta content="width=device-width, initial-scale=0.8, maximum-scale=1, user-scalable=no" name="viewport">
+    <link rel="icon" href="~/favicon.ico">
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/javascript")
+    @Html.Action("HeaderCssJs", "Layout")
+    @RenderSection("ScriptsOrCss", required: false)
+    <script src="~/signalr/hubs"></script>
+    @{ TempData["ThisUrl"] = Request.Url.ToString(); }
+    <script src="~/Content/DataTable/new/pdfmake.min.js"></script>
+    <script src="~/Content/DataTable/new/vfs_fonts.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script src="https://code.highcharts.com/modules/offline-exporting.js"></script>
+
+</head>
+
+<style>
+    .highcharts-contextbutton .highcharts-button-symbol {
+        opacity: 0 !important;
+        visibility: hidden !important;
+    }
+
+    .highcharts-contextbutton .highcharts-button-box,
+    .highcharts-contextbutton:hover .highcharts-button-box,
+    .highcharts-contextbutton.highcharts-button-hover .highcharts-button-box,
+    .highcharts-contextbutton.highcharts-button-pressed .highcharts-button-box {
+        fill: transparent !important;
+        stroke: transparent !important;
+    }
+</style>
+
+@{
+    var isCollapsed = Session[FGA.Utility.Utilitarios.show_MenuOculto] is null ? "" : "sidebar-collapse";
+}
+
+<body id="body" class="hold-transition skin-blue @isCollapsed sidebar-mini">
+    <div id="starkloader" style="top: 30%; left: 50%; position: fixed; z-index: 9999; display: none;width:50px;">
+        <img src="~/Content/notifire/loading3.gif" />
+    </div>
+    <div class="wrapper">
+        <header class="main-header">
+            <a href="" class="logo">
+                <span class="logo-mini">FFC</span>
+                <div class="logo-lg">
+                    <img src="~/Content/images/LogoN.jpg" width="80" height="30" />
+                </div>
+            </a>
+            <nav class="navbar navbar-static-top">
+                <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
+                    <span class="sr-only">Toggle navigation</span>
+                </a>
+                <div class="navbar-custom-menu">
+                    <ul class="nav navbar-nav">
+                        <li class="dropdown user user-menu">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                @{ var sexo = int.Parse(Env.GetUserInfo("gender")) == 1 ? "~/Content/theme/dist/img/mujer.png" : "~/Content/theme/dist/img/hombre.png"; }
+                                <img src="@Url.Content(sexo)" class="user-image" alt="Usuario" />
+                                <span class="hidden-xs contenedor">@Env.GetUserInfo("name")</span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li class="user-header">
+                                    <img src="~/Content/images/@Env.GetUserInfo("logo")" class="img-circle" alt="User Image" />
+                                    <p>
+                                        @Env.GetUserInfo("name")
+                                        <small>Fecha: @DateTime.Now.Date.ToShortDateString() </small>
+                                    </p>
+                                </li>
+                                <li class="user-footer">
+                                    <div class="pull-left">
+                                        <a href="~/Usuario/ChangePassword/@Env.GetUserInfo("userid")" class="btn btn-default btn-flat">Perfil</a>
+                                    </div>
+                                    <div class="pull-right">
+                                        <a href="~/Account/signout" class="btn btn-default btn-flat">Cerrar sesión</a>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </header>
+        <aside class="main-sidebar">
+            <section class="sidebar">
+                <div class="user-panel">
+                    <div class="pull-left image">
+                        <img src="~/Content/images/@Env.GetUserInfo("logo")" class="img-circle" alt="User Image" />
+                    </div>
+                    <div class="pull-left info">
+                        <p>Bienvenido </p>
+                        <a href="#"><i class="fa fa-circle text-success"></i>En Línea</a>
+                    </div>
+                </div>
+                @Env.GetMenuBarPage(null)
+            </section>
+        </aside>
+        <div style="width:250px !important" class="control-sidebar-bg"></div>
+        <div class="content-wrapper">
+            @RenderBody()
+        </div>
+        <div id="chatContainer" class="small-chat-box fadeInRight animated">
+            <div id="sidebar-chat">
+                <div id="profile">
+                    <div class="wrap">
+                        <img id="profile-img" src="~/Content/images/@Env.GetUserInfo("logo")" class="online" alt="" />
+                        <p>@Env.GetUserInfo("entidad")</p>
+                    </div>
+                </div>
+                <div id="contacts">
+                    <ul id="contact_panel"></ul>
+                </div>
+            </div>
+            <div id="discussion" class="content">
+                <div class="left">
+                    <div class="author-name">
+                        FGA
+                    </div>
+                    <div class="chat-message">
+                        Estamos para servirle
+                    </div>
+                </div>
+            </div>
+            <div class="form-chat">
+                <div class="input-group input-group-sm">
+                    <input id="message" name="message" type="text" class="form-control" onkeypress="return onEnterDown(event)"> <span class="input-group-btn">
+                        <button id="sendmessage" class="btn btn-primary" type="button">
+                            Enviar
+                        </button>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div id="small-chat">
+            <span id="alert_chat" class="badge badge-warning float-right"></span>
+            <a id="open_chat" class="open-small-chat">
+                <i class="fa fa-comments"></i>
+            </a>
+        </div>
+        <input type="hidden" id="activecontactid" />
+        <input type="hidden" id="myid" />
+        <input type="hidden" id="myname" />
+        <input type="hidden" id="companyname" />
+
+        @Html.Action("Index", "ParameterPartial")
+    </div>
+</body>
+
+<script type="text/javascript">
+
+        // Open close small chat
+        $('.open-small-chat').on('click', function (e) {
+            e.preventDefault();
+            $(this).children().toggleClass('fa-comments').toggleClass('fa-times');
+            $('.small-chat-box').toggleClass('active');
+            $('.message').focus();
+        });
+
+        // Initialize slimscroll for small chat
+        $('.small-chat-box .content').slimScroll({
+            height: '400px',
+            railOpacity: 0.4
+        });
+
+        $(document).on('change', '.config', function () {
+
+            if ($('#ckc_configMenu').is(":checked"))
+                $('body').addClass('sidebar-collapse');
+            else
+                $('body').removeClass('sidebar-collapse');
+
+            $.ajax({
+                async: true,
+                type: "GET",
+                dataType: "json",
+                contentType: "application/json",
+                url: '@Url.Action("Config", "ParameterPartial")',
+                data: {
+                    'yAxis': $('#ckc_configYAxis').is(":checked"),
+                    'columnDetail': $('#ckc_configColumnDetail').is(":checked"),
+                    'lineDetail': $('#ckc_configLineDetail').is(":checked"),
+                    'dateDetail': $('#ckc_configDateEach').is(":checked"),
+                    'menuDetail': $('#ckc_configMenu').is(":checked")
+                }
+            });
+        });
+
+        function onEnterDown(event) {
+	        if (event.which == 13 || event.keyCode == 13)
+		         $("#sendmessage").click();
+        }
+
+        $("#open_chat").click(function () {
+            $('#alert_chat').text('');
+        });
+
+        $(function () {
+
+            var chat = $.connection.chatHub;
+
+            chat.client.addNewMessageToPage = function (name, to, message, time, idTo, idFrom) {
+
+                var count = '';
+
+                if ($('#activecontactid').val() == idTo) {
+                    if (idFrom == $('#myid').val())
+                        $('#discussion').append('<div class="right"> <div class="author-name"> ' + htmlEncode(name) + '<br/> <small class="chat-date"> ' + time + ' </small></div><div class="chat-message active"> ' + htmlEncode(message) + '</div></div>');
+                    else
+                        $('#discussion').append('<div class="left"> <div class="author-name"> ' + htmlEncode(name) + '<br/> <small class="chat-date"> ' + time + ' </small></div><div class="chat-message"> ' + htmlEncode(message) + '</div></div>');
+                }
+                else {
+                    var msjO = $('#lbl_' + idTo).text();
+                    if (msjO == '')
+                        msjO = 1;
+                    else
+                        msjO = parseInt(msjO) + 1;
+
+                    $('#lbl_' + idTo).text(msjO);
+                }
+
+                if (!$('#chatContainer').hasClass('active')) {
+                    count = $('#alert_chat').text();
+                    if (count == '')
+                        count = 1;
+                    else
+                        count = parseInt(count) + 1;
+                }
+
+                $('#alert_chat').text(count);
+                $('#discussion').animate({scrollTop: $('#discussion').get(0).scrollHeight}, 1000);
+            };
+
+            chat.client.addContact = function (idUser, name, company, logo) {
+                if ($('#companyname').val() != company) {
+                    if (company == '@FGA.Utility.Utilitarios.nombreEntidadAdmin'){
+                        $('#contact_panel').append('<li  class="contact active"><div class="wrap"> <span class="contact-status online"></span><img src="' + logo + '" alt="" />' +
+                            '<div class="meta"> <p class="name">' + company + '</p>  </div></div></li>');
+                    }
+                    else {
+                         $('#contact_panel').append('<li id="' + idUser + '" class="contact"><div class="wrap"> <span class="contact-status online"></span><img src="' + logo + '" alt="" />' +
+                            '<div class="meta"> <p class="name">' + company + ' <label id="lbl_' + idUser + '" class="badge badge-warning float-right"></label></p> <p class="preview">' + name + '</p></div></div></li>');
+                    }
+                }
+            };
+
+            chat.client.clearContacts = function () {
+                $('#contact_panel').empty();
+            };
+
+            $('#activecontactid').val('@FGA.Utility.Utilitarios.entidadAdministradora');
+            $('#myid').val('@Env.GetUserInfo("userid")');
+            $('#myname').val('@Env.GetUserInfo("name")');
+            $('#message').focus();
+            $('#companyname').val('@Env.GetUserInfo("entidad")');
+
+            $.connection.hub.start().done(function () {
+
+                chat.server.connect($('#myid').val(), $('#myname').val(), $('#activecontactid').val(), $('#companyname').val());
+
+                $('#sendmessage').click(function () {
+                   chat.server.send($('#myid').val(), $('#activecontactid').val(), $('#message').val());
+                   $('#message').val('').focus();
+                });
+
+                $(document).on('click', '.contact', function () {
+
+                    var id = $(this).attr('id');
+
+                    $('.contact').removeClass('active');
+                    $(this).addClass('active');
+                    $('#activecontactid').val(id);
+                    $('#lbl_' + id).text('');
+                    $('#discussion').empty();
+
+                    chat.server.getHistory($('#myid').val(), $('#activecontactid').val(), 5);
+                });
+
+                $("#open_chat").click(function () {
+                    if ($('#chatContainer').hasClass('active')) {
+                         $('#discussion').empty();
+                        chat.server.getHistory($('#myid').val(), $('#activecontactid').val(), 5);
+                    }
+                });
+            });
+        });
+
+        function htmlEncode(value) {
+            var encodedValue = $('<div />').text(value).html();
+            return encodedValue;
+        }
+
+      $(function () {
+        $('.tableHighChart').DataTable();
+      });
+
+
+   Highcharts.setOptions({
+    lang: {
+	 decimalPoint: '.',
+        thousandsSep: ''
+    },
+    chart: {
+        backgroundColor: '#FFF',
+	spacingTop: 40
+    },
+    tooltip: {
+        backgroundColor: '#FFFFFF',
+        borderColor: '#CCCCCC',
+        style: {
+           color: '#333333'
+        },
+        pointFormatter: function () {
+            return Highcharts.numberFormat(this.y, 2, ',', ' ');
+        }
+    },
+    navigation: {
+        menuStyle: {
+            background: '#FFFFFF',
+            border: '1px solid #CCCCCC'
+        },
+        menuItemStyle: {
+            color: '#333333',
+            background: '#FFFFFF'
+        },
+        menuItemHoverStyle: {
+            background: '#E6E6E6',
+            color: '#000000'
+        }
+    },
+    exporting: {
+        tableCaption: '',
+        buttons: {
+	        contextButton: {
+                text: '🖨',
+                symbol: 'none',
+                symbolStroke: 'transparent',
+                x: 10,
+		y: -15,
+                theme: {
+                    width: 30,
+                    height: 30,
+                    fill: 'none',
+                    stroke: 'none',
+                    style: {
+                        fontSize: '18px'
+                    }
+                }
+            }
+    	}
+     }
+    });
+
+    Highcharts.chart('container', {
+        // ...
+        exporting: {
+            // Opciones del módulo export-data
+            csv: {
+                // Opción A: exportar con punto decimal y coma como separador de columnas
+                // decimalPoint: '.', itemDelimiter: ',',
+
+                // Opción B (recomendada en Excel español): mantener coma decimal y usar ; como delimitador
+                decimalPoint: '.',       // decimal del dato exportado
+                itemDelimiter: ';'       // delimitador de columnas para que Excel no choque con la coma
+            },
+	},
+        yAxis: {
+            labels: {
+                formatter: function () {
+                    return Highcharts.numberFormat(this.value, 0, ',', '');
+                }
+            }
+        }
+    });
+</script>

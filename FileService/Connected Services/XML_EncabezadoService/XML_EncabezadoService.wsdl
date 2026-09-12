@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="http://tempuri.org/" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" name="XML_EncabezadoService" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://tempuri.org/Imports">
+      <xsd:import schemaLocation="http://localhost/DBService/XML_EncabezadoService.svc?xsd=xsd0" namespace="http://tempuri.org/" />
+      <xsd:import schemaLocation="http://localhost/DBService/XML_EncabezadoService.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import schemaLocation="http://localhost/DBService/XML_EncabezadoService.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/FGA.Models" />
+      <xsd:import schemaLocation="http://localhost/DBService/XML_EncabezadoService.svc?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/Entities.Entities.Evaluacion" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="IXML_EncabezadoService_GetByCompany_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetByCompany" />
+  </wsdl:message>
+  <wsdl:message name="IXML_EncabezadoService_GetByCompany_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetByCompanyResponse" />
+  </wsdl:message>
+  <wsdl:message name="IXML_EncabezadoService_GetMonthFiles_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetMonthFiles" />
+  </wsdl:message>
+  <wsdl:message name="IXML_EncabezadoService_GetMonthFiles_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetMonthFilesResponse" />
+  </wsdl:message>
+  <wsdl:message name="IXML_EncabezadoService_IsLoadingFile_InputMessage">
+    <wsdl:part name="parameters" element="tns:IsLoadingFile" />
+  </wsdl:message>
+  <wsdl:message name="IXML_EncabezadoService_IsLoadingFile_OutputMessage">
+    <wsdl:part name="parameters" element="tns:IsLoadingFileResponse" />
+  </wsdl:message>
+  <wsdl:message name="IXML_EncabezadoService_IsUpload_InputMessage">
+    <wsdl:part name="parameters" element="tns:IsUpload" />
+  </wsdl:message>
+  <wsdl:message name="IXML_EncabezadoService_IsUpload_OutputMessage">
+    <wsdl:part name="parameters" element="tns:IsUploadResponse" />
+  </wsdl:message>
+  <wsdl:message name="IXML_EncabezadoService_GetAll_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetAll" />
+  </wsdl:message>
+  <wsdl:message name="IXML_EncabezadoService_GetAll_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetAllResponse" />
+  </wsdl:message>
+  <wsdl:message name="IXML_EncabezadoService_Get_InputMessage">
+    <wsdl:part name="parameters" element="tns:Get" />
+  </wsdl:message>
+  <wsdl:message name="IXML_EncabezadoService_Get_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetResponse" />
+  </wsdl:message>
+  <wsdl:message name="IXML_EncabezadoService_Add_InputMessage">
+    <wsdl:part name="parameters" element="tns:Add" />
+  </wsdl:message>
+  <wsdl:message name="IXML_EncabezadoService_Add_OutputMessage">
+    <wsdl:part name="parameters" element="tns:AddResponse" />
+  </wsdl:message>
+  <wsdl:message name="IXML_EncabezadoService_Update_InputMessage">
+    <wsdl:part name="parameters" element="tns:Update" />
+  </wsdl:message>
+  <wsdl:message name="IXML_EncabezadoService_Update_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateResponse" />
+  </wsdl:message>
+  <wsdl:message name="IXML_EncabezadoService_Delete_InputMessage">
+    <wsdl:part name="parameters" element="tns:Delete" />
+  </wsdl:message>
+  <wsdl:message name="IXML_EncabezadoService_Delete_OutputMessage">
+    <wsdl:part name="parameters" element="tns:DeleteResponse" />
+  </wsdl:message>
+  <wsdl:portType name="IXML_EncabezadoService">
+    <wsdl:operation name="GetByCompany">
+      <wsdl:input wsaw:Action="http://tempuri.org/IXML_EncabezadoService/GetByCompany" message="tns:IXML_EncabezadoService_GetByCompany_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IXML_EncabezadoService/GetByCompanyResponse" message="tns:IXML_EncabezadoService_GetByCompany_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetMonthFiles">
+      <wsdl:input wsaw:Action="http://tempuri.org/IXML_EncabezadoService/GetMonthFiles" message="tns:IXML_EncabezadoService_GetMonthFiles_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IXML_EncabezadoService/GetMonthFilesResponse" message="tns:IXML_EncabezadoService_GetMonthFiles_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="IsLoadingFile">
+      <wsdl:input wsaw:Action="http://tempuri.org/IXML_EncabezadoService/IsLoadingFile" message="tns:IXML_EncabezadoService_IsLoadingFile_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IXML_EncabezadoService/IsLoadingFileResponse" message="tns:IXML_EncabezadoService_IsLoadingFile_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="IsUpload">
+      <wsdl:input wsaw:Action="http://tempuri.org/IXML_EncabezadoService/IsUpload" message="tns:IXML_EncabezadoService_IsUpload_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IXML_EncabezadoService/IsUploadResponse" message="tns:IXML_EncabezadoService_IsUpload_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetAll">
+      <wsdl:input wsaw:Action="http://tempuri.org/IXML_EncabezadoService/GetAll" message="tns:IXML_EncabezadoService_GetAll_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IXML_EncabezadoService/GetAllResponse" message="tns:IXML_EncabezadoService_GetAll_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Get">
+      <wsdl:input wsaw:Action="http://tempuri.org/IXML_EncabezadoService/Get" message="tns:IXML_EncabezadoService_Get_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IXML_EncabezadoService/GetResponse" message="tns:IXML_EncabezadoService_Get_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Add">
+      <wsdl:input wsaw:Action="http://tempuri.org/IXML_EncabezadoService/Add" message="tns:IXML_EncabezadoService_Add_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IXML_EncabezadoService/AddResponse" message="tns:IXML_EncabezadoService_Add_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Update">
+      <wsdl:input wsaw:Action="http://tempuri.org/IXML_EncabezadoService/Update" message="tns:IXML_EncabezadoService_Update_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IXML_EncabezadoService/UpdateResponse" message="tns:IXML_EncabezadoService_Update_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Delete">
+      <wsdl:input wsaw:Action="http://tempuri.org/IXML_EncabezadoService/Delete" message="tns:IXML_EncabezadoService_Delete_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IXML_EncabezadoService/DeleteResponse" message="tns:IXML_EncabezadoService_Delete_OutputMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="BasicHttpBinding_IXML_EncabezadoService" type="tns:IXML_EncabezadoService">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="GetByCompany">
+      <soap:operation soapAction="http://tempuri.org/IXML_EncabezadoService/GetByCompany" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMonthFiles">
+      <soap:operation soapAction="http://tempuri.org/IXML_EncabezadoService/GetMonthFiles" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsLoadingFile">
+      <soap:operation soapAction="http://tempuri.org/IXML_EncabezadoService/IsLoadingFile" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsUpload">
+      <soap:operation soapAction="http://tempuri.org/IXML_EncabezadoService/IsUpload" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAll">
+      <soap:operation soapAction="http://tempuri.org/IXML_EncabezadoService/GetAll" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Get">
+      <soap:operation soapAction="http://tempuri.org/IXML_EncabezadoService/Get" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Add">
+      <soap:operation soapAction="http://tempuri.org/IXML_EncabezadoService/Add" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Update">
+      <soap:operation soapAction="http://tempuri.org/IXML_EncabezadoService/Update" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Delete">
+      <soap:operation soapAction="http://tempuri.org/IXML_EncabezadoService/Delete" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="XML_EncabezadoService">
+    <wsdl:port name="BasicHttpBinding_IXML_EncabezadoService" binding="tns:BasicHttpBinding_IXML_EncabezadoService">
+      <soap:address location="http://localhost/DBService/XML_EncabezadoService.svc" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

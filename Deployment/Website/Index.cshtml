@@ -1,0 +1,105 @@
+@model IEnumerable<FGA.Models.Creditos_Ofertas>
+
+@{
+    ViewBag.Title = "Mercado de Créditos";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <h2 class="page-header">@ViewBag.Title</h2>
+        <p class="lead">Examine las ofertas disponibles y solicite financiamiento de forma directa.</p>
+    </div>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+<div class="row">
+    @foreach (var oferta in Model)
+    {
+        <div class="col-md-4">
+            <div class="panel panel-default border-primary" style="border-top: 5px solid #337ab7;">
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <img src="@(MicrosoftHelper.MSHelper.GetSiteRoot() + "/Content/images/" + oferta.EntidadOferente.Nombre + ".jpg")" class="img-responsive img-thumbnail" alt="Logo" style="max-height: 60px;" onerror="this.src='/Content/images/LogoN.jpg'" />
+                        </div>
+                        <div class="col-xs-9">
+                            <h3 class="text-primary" style="margin-top: 5px;">@oferta.EntidadOferente.Nombre</h3>
+                        </div>
+                    </div>
+                    <hr />
+                    <p><strong>Monto:</strong> @oferta.Moneda.Codigo @oferta.Mon_Monto.ToString("N2")</p>
+                    <p><strong>Tasa Anual:</strong> @oferta.TasaInteresAnual.ToString("N2")%</p>
+                    <p><strong>Plazo:</strong> @oferta.PlazoMeses Meses</p>
+                    
+                    @if (oferta.Requisitos != null && oferta.Requisitos.Any())
+                    {
+                        <p><strong>Requisitos:</strong></p>
+                        <ul>
+                            @foreach (var req in oferta.Requisitos)
+                            {
+                                <li>@req.TipoDocumento.Descripcion</li>
+                            }
+                        </ul>
+                    }
+                </div>
+                <div class="panel-footer">
+                    <button class="btn btn-primary btn-block" data-toggle="modal" data-target="#modalSolicitar-@oferta.Id">
+                        Solicitar Crédito
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Solicitar -->
+        <div class="modal fade" id="modalSolicitar-@oferta.Id" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    @using (Html.BeginForm("Solicitar", "Creditos", FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="ofertaId" value="@oferta.Id" />
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                            <h4 class="modal-title">Solicitar Crédito a @oferta.EntidadOferente.Nombre</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>Monto a Solicitar (@oferta.Moneda.Codigo)</label>
+                                <input type="number" name="monto" class="form-control" max="@oferta.Mon_Monto" required step="0.01" />
+                            </div>
+                            <div class="form-group">
+                                <label>Comentarios</label>
+                                <textarea name="comentarios" class="form-control" rows="3"></textarea>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Teléfono Notificación</label>
+                                        <input type="text" name="telefono" class="form-control" required placeholder="Ej: 88887777" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Correo Notificación</label>
+                                        <input type="email" name="email" class="form-control" required placeholder="Ej: ccooperativa@correo.com" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="alert alert-info">
+                                <strong>Nota:</strong> Al solicitar, se le requerirá cargar los documentos indicados una vez aprobada la fase inicial.
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-success">Enviar Solicitud</button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>

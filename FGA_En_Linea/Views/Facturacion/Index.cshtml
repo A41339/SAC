@@ -1,0 +1,142 @@
+﻿@{
+    ViewBag.Title = "Contribuciones";
+}
+
+<section class="content-header">
+    <h1 id="TituloContribuciones">
+        FGD BCCR
+    </h1>
+</section>
+
+<section class="content">
+    @using (Html.BeginForm("Buscar", "Facturacion", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmInforme" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="box box-solid box-info">
+            <div class="box-body table-responsive">
+                <div class="margin">
+                    <div class="streaming-table">
+                        <span id="found" class="label label-info"></span>
+                        <table class="table table-condensed table-striped table-bordered">
+                            <tr>
+                                <td class="mobile">
+                                    @Html.Label("Entidad:")
+                                </td>
+                                <td>
+                                    @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", style = "width: 230px;" })
+                                </td>
+                                <td class="mobile">
+                                    @Html.Label("Año:")
+                                </td>
+                                <td>
+                                    @{
+                                        int anioActual = DateTime.Now.Year;
+                                        List<SelectListItem> anios = new List<SelectListItem>();
+
+                                        for (int i = anioActual - 3; i <= anioActual; i++)
+                                        {
+                                            bool isSelected = (i == anioActual);
+
+                                            anios.Add(new SelectListItem { Value = i.ToString(), Text = i.ToString(), Selected = isSelected });
+                                        }
+                                    }
+
+                                    @Html.DropDownList("Anio", anios, new { @id = "Anio", style = "width: 230px;" })
+
+                                </td>
+                                <td class="mobile">
+                                    @Html.Label("Trimestre:")
+                                </td>
+                                <td nowrap="nowrap">
+                                    @{
+                                        List<SelectListItem> trimestres = new List<SelectListItem> {
+                                            new SelectListItem { Value = "1", Text = "I Trimestre" },
+                                            new SelectListItem { Value = "2", Text = "II Trimestre" },
+                                            new SelectListItem { Value = "3", Text = "III Trimestre" },
+                                            new SelectListItem { Value = "4", Text = "IV Trimestre" }
+                                        };
+                                    }
+
+                                    @Html.DropDownList("Trimestre", trimestres, new { @id = "Trimestre", style = "width: 230px;" })
+                                </td>
+                                <td>
+                                    <button type="submit" id="btn_buscar" class="btn btn-primary">Generar</button>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="nav-tabs-custom">
+            <ul class="nav nav-tabs">
+                <li class="active"><a href="#tab_1" data-toggle="tab">FGD</a></li>
+                <li><a href="#tab_2" data-toggle="tab">FFC</a></li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane active" id="tab_1">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            @if (Session["TipoReporte"] != null)
+                            {
+                                <div class="box box-solid box-info">
+                                    <div class="box-body table-responsive">
+                                        <div class="margin">
+
+                                            <iframe src="~/Reportes/ReportView.aspx" width="1500" height="1500" style="border:none"></iframe>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane" id="tab_2">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            @if (Session["TipoReporte2"] != null)
+                            {
+                                <div class="box box-solid box-info">
+                                    <div class="box-body table-responsive">
+                                        <div class="margin">
+
+                                            <iframe src="~/Reportes/ReportView2.aspx" width="1500" height="1500" style="border:none"></iframe>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</section>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        // Al hacer clic en las pestañas
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+            var tabId = $(e.target).attr('href'); // Obtiene el ID de la pestaña activa
+
+            // Cambiar el título dependiendo del tab activo
+            if (tabId === '#tab_1') {
+                $('#TituloContribuciones').text('FGD BCCR');
+            } else if (tabId === '#tab_2') {
+                $('#TituloContribuciones').text('FEE-FFC');
+            }
+        });
+
+        // Asegurar que el título se actualice al cargar la página por si ya está en el tab 1 o 2
+        var activeTab = $('.nav-tabs .active a').attr('href');
+        if (activeTab === '#tab_1') {
+            $('#TituloContribuciones').text('FGD BCCR');
+        } else if (activeTab === '#tab_2') {
+            $('#TituloContribuciones').text('FEE-FFC');
+        }
+    });
+</script>

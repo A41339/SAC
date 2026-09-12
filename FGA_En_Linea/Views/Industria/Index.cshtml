@@ -1,0 +1,126 @@
+﻿@{
+    ViewBag.Title = "Cartera";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section ScriptsOrCss
+{
+    <link rel="stylesheet" href="~/Content/multiselect/docs/css/prettify.min.css" type="text/css">
+    <script type="text/javascript" src="~/Content/multiselect/docs/js/prettify.min.js"></script>
+    <link rel="stylesheet" href="~/Content/multiselect/dist/css/bootstrap-multiselect.css" type="text/css">
+    <script type="text/javascript" src="~/Content/multiselect/dist/js/bootstrap-multiselect.js"></script>
+}
+
+<section class="content-header">
+    <h1>
+        Cartera
+    </h1>
+</section>
+
+<section class="content">
+    <div class="col-xs-12">
+        <div class="box box-solid box-info">
+            <div class="margin">
+                <div class="streaming-table">
+                    <span id="found" class="label label-info"></span>
+                    <table class="table table-condensed table-striped">
+                        <tr>
+                            <td class="mobile">
+                                @Html.Label("Sector:")
+                            </td>
+                            <td>
+                                @Html.DropDownList("Sectores", null, new { @id = "IdSector", style = "width: 220px;" })
+                            </td>
+                            <td class="mobile">
+                                @Html.Label("Gráfico:")
+                            </td>
+                            <td>
+                                @Html.DropDownList("Grafico", null, new { @id = "Grafico", style = "width: 220px;" })
+                            </td>
+                            <td>
+                                <label class="btn btn-facebook">
+                                    Generar<input type="submit" name="submit" id="btn_buscar" style="display: none;">
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="mobile">
+                                @Html.Label("Periodo:")
+                            </td>
+                            <td nowrap="nowrap" class="form-group">
+                                <input name="PeriodoI" id="PeriodoI" class="datecontrol" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MM/yyyy")" />
+                            </td>
+                            <td class="mobile">
+                               @* @Html.Label("Final:")*@
+                            </td>
+                            <td nowrap="nowrap" class="form-group">
+                                @*<input name="PeriodoF" id="PeriodoF" class="datecontrol" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MM/yyyy")" />*@
+                            </td>
+                            <td></td>
+                        </tr>                        
+                    </table>
+                </div>
+            </div>
+
+
+        </div>
+        <div id="grafica">
+        </div>
+    </div>
+</section>
+
+<script type="text/javascript">
+
+    $("#IdSector").change(function () {
+        $.ajax({
+            data: {
+                'Sector': $('#IdSector').val()
+            },
+            type: 'POST',
+            cache: false,
+            dataType: 'json',
+            url: '@Url.Action("GetGraphOptions", "Industria")',
+            success: function (result) {                
+                $("#Grafico").empty();
+                $.each(result, function (i, item) {
+                    $("#Grafico").append('<option value="' + item.Value + '">' + item.Text + '</option>');
+                });
+            }
+        });
+        event.preventDefault(event);
+    });
+
+    function refreshGraph() {
+         $.ajax({
+            url: '@Url.Action("GraficaDetalle", "Industria")',
+            type: 'POST',
+            cache: false,
+            async: false,
+            data: {
+                'Sector': $('#IdSector').val(),
+                 'Grafico': $('#Grafico').val(),
+                 'PeriodoI': $('#PeriodoI').val()
+            },
+             success: function (result) {
+                 $('#grafica').html(result);
+                 $("#sector").text($("#Grafico :selected").text() + ': ' + $("#IdSector :selected").text());
+            }
+         });
+    }
+
+    $(document).on('click', '#btn_buscar', function () {
+        refreshGraph();
+    });
+
+    function formatMillion() {
+        $("#sector").text($("#Grafico :selected").text() + ': ' + $("#IdSector :selected").text());
+        return this.value;
+    }
+
+    function formatPercent() {
+        return this.value + " %";
+    }
+
+    refreshGraph();
+
+</script>

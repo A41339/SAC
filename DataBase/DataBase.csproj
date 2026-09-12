@@ -1,0 +1,148 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\EntityFramework.6.4.4\build\EntityFramework.props" Condition="Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{CEAF0F1C-AC9F-4463-92C6-9865ED4601BB}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>DataBase</RootNamespace>
+    <AssemblyName>DataBase</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Activities" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Concrete\Content\AlbumRepository.cs" />
+    <Compile Include="Concrete\Content\Tipo_AlbumRepository.cs" />
+    <Compile Include="Concrete\Content\SeccionRepository.cs" />
+    <Compile Include="Concrete\Evaluacion\EvalResponsableCategoriaRespository.cs" />
+    <Compile Include="Concrete\Evaluacion\EvalSubCategoriaRepository.cs" />
+    <Compile Include="Concrete\Evaluacion\EvalPreguntaRepository.cs" />
+    <Compile Include="Concrete\Evaluacion\EvalRespuestaUsuarioRepository.cs" />
+    <Compile Include="Concrete\Evaluacion\EvalCategoriaRepository.cs" />
+    <Compile Include="Concrete\TaskManager\TipoTareaRepository.cs" />
+    <Compile Include="Concrete\TaskManager\TareaRepository.cs" />
+    <Compile Include="Concrete\TaskManager\SolicitudCambioRepository.cs" />
+    <Compile Include="Concrete\TaskManager\ProyectoRepository.cs" />
+    <Compile Include="Concrete\Transac\CargaAsincronicaRepository.cs" />
+    <Compile Include="Concrete\Transac\BCCR_IndicadoresRepository.cs" />
+    <Compile Include="Concrete\Transac\BCCR_TipoIndicadorRepository.cs" />
+    <Compile Include="Concrete\Transac\Proy_EFFFRepository.cs" />
+    <Compile Include="Concrete\Transac\PerfilEntidadRepository.cs" />
+    <Compile Include="Concrete\Transac\Sugef_Info_ContableRepository.cs" />
+    <Compile Include="Concrete\Transac\Sugef_EncabezadoRepository.cs" />
+    <Compile Include="Concrete\Transac\SectorRepository.cs" />
+    <Compile Include="Concrete\Transac\NotificacionesRepository.cs" />
+    <Compile Include="Concrete\Transac\InformeMailRepository.cs" />
+    <Compile Include="Concrete\Transac\ParametrosRepository.cs" />
+    <Compile Include="Concrete\Transac\TipoInformeRepository.cs" />
+    <Compile Include="Concrete\Transac\Exclusion_PeriodosRepository.cs" />
+    <Compile Include="Concrete\Transac\ProyeccionRepository.cs" />
+    <Compile Include="Concrete\Transac\CatalogoCuentaRepository.cs" />
+    <Compile Include="Concrete\Transac\IPCRepository.cs" />
+    <Compile Include="Concrete\Transac\Bit_SessionesRepository.cs" />
+    <Compile Include="Concrete\Transac\XML_ExcepcionRepository.cs" />
+    <Compile Include="Concrete\Transac\SexoRepository.cs" />
+    <Compile Include="Concrete\Transac\FormulaRepository.cs" />
+    <Compile Include="Concrete\Transac\MessageRepository.cs" />
+    <Compile Include="Concrete\Transac\TipoCarteraRepository.cs" />
+    <Compile Include="Concrete\Transac\CategoriaRiesgoRepository.cs" />
+    <Compile Include="Concrete\Transac\CalendarioRepository.cs" />
+    <Compile Include="Concrete\Transac\MenuPermissionRepository.cs" />
+    <Compile Include="Concrete\Transac\Rpt_GraphRepository.cs" />
+    <Compile Include="Repository\ContentRepository.cs" />
+    <Compile Include="Concrete\Transac\Rpt_Analisis_VHRepository.cs" />
+    <Compile Include="Concrete\Transac\TBPRepository.cs" />
+    <Compile Include="Concrete\Transac\TCRepository.cs" />
+    <Compile Include="Concrete\Transac\LiborRepository.cs" />
+    <Compile Include="Concrete\Content\NoticiaRepository.cs" />
+    <Compile Include="Concrete\Transac\XML_ErroresRepository.cs" />
+    <Compile Include="Concrete\Transac\XML_EncabezadoRepository.cs" />
+    <Compile Include="Concrete\Transac\UsuarioEstadoRepository.cs" />
+    <Compile Include="Concrete\Transac\LogRepository.cs" />
+    <Compile Include="Concrete\Transac\ErrorRepository.cs" />
+    <Compile Include="Concrete\Transac\ArchivoEstadoRepository.cs" />
+    <Compile Include="Concrete\Transac\Rpt_EstructuraCamelRepository.cs" />
+    <Compile Include="Concrete\Transac\RoleRepository.cs" />
+    <Compile Include="Concrete\Transac\MenuRepository.cs" />
+    <Compile Include="Concrete\Transac\TipoXMLRepository.cs" />
+    <Compile Include="Concrete\Transac\UsuarioRepository.cs" />
+    <Compile Include="Concrete\Transac\EntidadRepository.cs" />
+    <Compile Include="Repository\Repository.cs" />
+    <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\ContentContext.cs" />
+    <Compile Include="Models\SIContext.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Entities\Entities.csproj">
+      <Project>{d3d55143-95ba-4b2b-9a0b-ebb8de0ad333}</Project>
+      <Name>Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Utilities\Utilities.csproj">
+      <Project>{537bed16-e688-4988-b3e6-87cc0d2b5821}</Project>
+      <Name>Utilities</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.4.4\build\EntityFramework.props'))" />
+    <Error Condition="!Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.4.4\build\EntityFramework.targets'))" />
+  </Target>
+  <Import Project="..\packages\EntityFramework.6.4.4\build\EntityFramework.targets" Condition="Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.targets')" />
+</Project>

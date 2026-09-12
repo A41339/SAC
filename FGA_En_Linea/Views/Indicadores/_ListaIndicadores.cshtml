@@ -1,0 +1,37 @@
+﻿@model IEnumerable<Entities.Entities.Procedures.FGA_Consultar_Tipos_Indicadores_Result>
+
+<select id="cmb_indicadores" name="cmb_indicadores" multiple="multiple">
+    <optgroup label="CAMEL"></optgroup>
+    @foreach (var detalle in Model.Where(o => o.ID.StartsWith("C")).ToList())
+    {
+        <option value="@detalle.ID">@detalle.NOMBRE</option>
+    }
+
+    <optgroup label="Otros"></optgroup>
+    @foreach (var detalle in Model.Where(o => o.ID.StartsWith("O")).ToList())
+    {
+        <option value="@detalle.ID">@detalle.NOMBRE</option>
+    }
+
+    <optgroup label="Personalizados"></optgroup>
+    @foreach (var detalle in Model.Where(o => o.ID.StartsWith("P")).ToList())
+    {
+        <option value="@detalle.ID">@detalle.NOMBRE</option>
+    }
+
+    <optgroup label="Suficiencia"></optgroup>
+    @foreach (var detalle in Model.Where(o => o.ID.StartsWith("S")).ToList())
+    {
+        <option value="@detalle.ID">@detalle.NOMBRE</option>
+    }
+</select>
+
+<script>
+    $('#cmb_indicadores').multiselect({
+        enableFiltering: true,
+        filterBehavior: 'text',
+        buttonWidth: 200,
+        numberDisplayed: 1,
+        maxHeight: 300
+    });
+</script>

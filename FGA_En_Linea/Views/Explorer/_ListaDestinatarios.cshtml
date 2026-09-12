@@ -1,0 +1,17 @@
+﻿@model IEnumerable<string>
+
+<table>
+    <tr>
+        <td>
+            <select id="Destinatarios" style="width: 100%; min-width: 200px; min-height: 100px" name="lst_destinatarios" multiple="multiple">
+                @foreach (var detalle in Model)
+                {
+                    <option value="@detalle">@detalle</option>
+                }
+            </select>
+        </td>
+        <td>
+            <a style="padding: 10px" data-toggle="tooltip" data-placement="top" title="Eliminar" href="javascript:DelDest();"><i class="btn btn-xs btn-danger icon fa fa-remove"></i></a>
+        </td>
+    </tr>
+</table>

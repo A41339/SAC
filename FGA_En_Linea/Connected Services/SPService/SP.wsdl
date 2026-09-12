@@ -1,0 +1,1598 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="http://tempuri.org/" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" name="SP" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://tempuri.org/Imports">
+      <xsd:import schemaLocation="http://10.171.1.28/DBService/SP.svc?xsd=xsd0" namespace="http://tempuri.org/" />
+      <xsd:import schemaLocation="http://10.171.1.28/DBService/SP.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import schemaLocation="http://10.171.1.28/DBService/SP.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/Entities.Entities.Procedures" />
+      <xsd:import schemaLocation="http://10.171.1.28/DBService/SP.svc?xsd=xsd3" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="ISP_FGA_Borrar_Proyeccion_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Borrar_Proyeccion" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Borrar_Proyeccion_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Borrar_ProyeccionResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Tipos_Indicadores_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Tipos_Indicadores" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Tipos_Indicadores_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Tipos_IndicadoresResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Grafico_Indicador_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Grafico_Indicador" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Grafico_Indicador_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Grafico_IndicadorResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Monitor_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Monitor" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Monitor_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_MonitorResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Sessiones_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Sessiones" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Sessiones_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_SessionesResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Cierre_Mensual_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Cierre_Mensual" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Cierre_Mensual_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Cierre_MensualResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Balance_Comprobacion_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Balance_Comprobacion" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Balance_Comprobacion_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Balance_ComprobacionResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Cartera_Credito_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Cartera_Credito" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Cartera_Credito_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Cartera_CreditoResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Maduracion_Cartera_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Maduracion_Cartera" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Maduracion_Cartera_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Maduracion_CarteraResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Maduracion_Cartera_Det_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Maduracion_Cartera_Det" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Maduracion_Cartera_Det_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Maduracion_Cartera_DetResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Riesgo_Liquidez_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Riesgo_Liquidez" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Riesgo_Liquidez_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Riesgo_LiquidezResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Tasa_Ponderada_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Tasa_Ponderada" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Tasa_Ponderada_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Tasa_PonderadaResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_CAMEL_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_CAMEL" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_CAMEL_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_CAMELResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Suficiencia_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Suficiencia" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Suficiencia_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_SuficienciaResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Suficiencia_306_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Suficiencia_306" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Suficiencia_306_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Suficiencia_306Response" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Indicadores_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Indicadores" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Indicadores_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_IndicadoresResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Otros_Indicadores_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Otros_Indicadores" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Otros_Indicadores_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Otros_IndicadoresResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Indicadores_Cartera_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Indicadores_Cartera" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Indicadores_Cartera_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Indicadores_CarteraResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Calculos_Personalizados_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Calculos_Personalizados" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Calculos_Personalizados_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Calculos_PersonalizadosResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Analisis_Horizontal_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Analisis_Horizontal" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Analisis_Horizontal_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Analisis_HorizontalResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Analisis_Vertical_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Analisis_Vertical" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Analisis_Vertical_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Analisis_VerticalResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Dashboard_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Dashboard" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Dashboard_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_DashboardResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_FechaCierre_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_FechaCierre" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_FechaCierre_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_FechaCierreResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Ejecutar_Cierre_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Ejecutar_Cierre" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Ejecutar_Cierre_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Ejecutar_CierreResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Calif_Cartera_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Calif_Cartera" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Calif_Cartera_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Calif_CarteraResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_CalificE_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_CalificE" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_CalificE_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_CalificEResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_ArchivosPendientes_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_ArchivosPendientes" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_ArchivosPendientes_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_ArchivosPendientesResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Tipo_Cartera_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Tipo_Cartera" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Tipo_Cartera_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Tipo_CarteraResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Tipo_Cartera_E_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Tipo_Cartera_E" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Tipo_Cartera_E_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Tipo_Cartera_EResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_CarteraTotal_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_CarteraTotal" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_CarteraTotal_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_CarteraTotalResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_CuentasLiq_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_CuentasLiq" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_CuentasLiq_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_CuentasLiqResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_RecuperacionActivos_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_RecuperacionActivos" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_RecuperacionActivos_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_RecuperacionActivosResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Rpt_Balance_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Rpt_Balance" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Rpt_Balance_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Rpt_BalanceResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Rpt_EstadoResultados_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Rpt_EstadoResultados" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Rpt_EstadoResultados_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Rpt_EstadoResultadosResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_ArchivosCargados_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_ArchivosCargados" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_ArchivosCargados_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_ArchivosCargadosResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Matrices_Desmejora_Cartera_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Matrices_Desmejora_Cartera" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Matrices_Desmejora_Cartera_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Matrices_Desmejora_CarteraResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Matrices_PerdidaEstimada_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Matrices_PerdidaEstimada" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Matrices_PerdidaEstimada_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Matrices_PerdidaEstimadaResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Matrices_Variacion_Cartera_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Matrices_Variacion_Cartera" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Matrices_Variacion_Cartera_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Matrices_Variacion_CarteraResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Modelo_Tasas_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Modelo_Tasas" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Modelo_Tasas_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Modelo_TasasResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Modelo_Margen_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Modelo_Margen" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Modelo_Margen_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Modelo_MargenResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Variacion_CS_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Variacion_CS" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Variacion_CS_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Variacion_CSResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Balance_Comprobacion_Rango_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Balance_Comprobacion_Rango" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Balance_Comprobacion_Rango_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Balance_Comprobacion_RangoResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Graficos_Financieros_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Graficos_Financieros" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Graficos_Financieros_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Graficos_FinancierosResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Variacion_Interanual_SF_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Variacion_Interanual_SF" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Variacion_Interanual_SF_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Variacion_Interanual_SFResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Valida_Permite_Cargar_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Valida_Permite_Cargar" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Valida_Permite_Cargar_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Valida_Permite_CargarResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Riesgo_Liquidez_Rango_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Riesgo_Liquidez_Rango" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Riesgo_Liquidez_Rango_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Riesgo_Liquidez_RangoResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Credito_Categoria_Rango_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Credito_Categoria_Rango" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Credito_Categoria_Rango_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Credito_Categoria_RangoResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Gastos_Ingresos_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Gastos_Ingresos" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Gastos_Ingresos_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Gastos_IngresosResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Grafico_Mora_Cartera_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Grafico_Mora_Cartera" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Grafico_Mora_Cartera_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Grafico_Mora_CarteraResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Grafico_Suficiencia_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Grafico_Suficiencia" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Grafico_Suficiencia_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Grafico_SuficienciaResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Generar_Proyeccion_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Generar_Proyeccion" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Generar_Proyeccion_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Generar_ProyeccionResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Cuentas_Proyectar_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Cuentas_Proyectar" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Cuentas_Proyectar_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Cuentas_ProyectarResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Datos_Historicos_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Datos_Historicos" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Datos_Historicos_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Datos_HistoricosResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Validar_Proyecciones_IRL_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Validar_Proyecciones_IRL" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Validar_Proyecciones_IRL_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Validar_Proyecciones_IRLResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Estado_Proyeccion_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Estado_Proyeccion" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Estado_Proyeccion_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Estado_ProyeccionResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_IRL_Cuentas_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_IRL_Cuentas" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_IRL_Cuentas_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_IRL_CuentasResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Matrices_Probabilidada_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Matrices_Probabilidada" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Matrices_Probabilidada_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Matrices_ProbabilidadaResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Rpt_ER_SF_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Rpt_ER_SF" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Rpt_ER_SF_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Rpt_ER_SFResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Rpt_Balance_SF_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Rpt_Balance_SF" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Rpt_Balance_SF_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Rpt_Balance_SFResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Ingreso_SF_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Ingreso_SF" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Ingreso_SF_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Ingreso_SFResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Gasto_SF_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Gasto_SF" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Gasto_SF_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Gasto_SFResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Composicion_Balance_SF_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Composicion_Balance_SF" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Composicion_Balance_SF_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Composicion_Balance_SFResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Indicadores_Sugef_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Indicadores_Sugef" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Indicadores_Sugef_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Indicadores_SugefResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Tipo_Cartera_Sector_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Tipo_Cartera_Sector" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Tipo_Cartera_Sector_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Tipo_Cartera_SectorResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Variacion_Cartera_Sector_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Variacion_Cartera_Sector" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Variacion_Cartera_Sector_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Variacion_Cartera_SectorResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Composicion_Cartera_Sector_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Composicion_Cartera_Sector" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Composicion_Cartera_Sector_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Composicion_Cartera_SectorResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Composicion_Mora_Sector_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Composicion_Mora_Sector" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Composicion_Mora_Sector_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Composicion_Mora_SectorResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Cartera_Rango_SF_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Cartera_Rango_SF" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Cartera_Rango_SF_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Cartera_Rango_SFResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Indicadores_Formulas_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Indicadores_Formulas" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Indicadores_Formulas_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Indicadores_FormulasResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Generar_Proy_Matrices_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Generar_Proy_Matrices" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Generar_Proy_Matrices_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Generar_Proy_MatricesResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_CrecimientoSugerido_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_CrecimientoSugerido" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_CrecimientoSugerido_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_CrecimientoSugeridoResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Rpt_EEFF_Proy_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Rpt_EEFF_Proy" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Rpt_EEFF_Proy_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Rpt_EEFF_ProyResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_ConsultarEvaluacion_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_ConsultarEvaluacion" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_ConsultarEvaluacion_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_ConsultarEvaluacionResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_ConsultarAvance_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_ConsultarAvance" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_ConsultarAvance_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_ConsultarAvanceResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_ConsultarAvance_X_Categoria_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_ConsultarAvance_X_Categoria" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_ConsultarAvance_X_Categoria_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_ConsultarAvance_X_CategoriaResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_ConsultarHistorial_X_Categoria_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_ConsultarHistorial_X_Categoria" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_ConsultarHistorial_X_Categoria_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_ConsultarHistorial_X_CategoriaResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_ConsultarSimulacionCapital_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_ConsultarSimulacionCapital" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_ConsultarSimulacionCapital_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_ConsultarSimulacionCapitalResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Resultado_Evaluacion_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Resultado_Evaluacion" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Resultado_Evaluacion_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Resultado_EvaluacionResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_FacturacionFGD_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_FacturacionFGD" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_FacturacionFGD_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_FacturacionFGDResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Grafico_Oper_Categoria_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Grafico_Oper_Categoria" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Grafico_Oper_Categoria_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Grafico_Oper_CategoriaResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Grafico_Oper_Etapa_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Grafico_Oper_Etapa" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Grafico_Oper_Etapa_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Grafico_Oper_EtapaResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Grafico_Oper_Segmento_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Grafico_Oper_Segmento" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Grafico_Oper_Segmento_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Grafico_Oper_SegmentoResponse" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Grafico_Oper_EAD_InputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Grafico_Oper_EAD" />
+  </wsdl:message>
+  <wsdl:message name="ISP_FGA_Consultar_Grafico_Oper_EAD_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FGA_Consultar_Grafico_Oper_EADResponse" />
+  </wsdl:message>
+  <wsdl:portType name="ISP">
+    <wsdl:operation name="FGA_Borrar_Proyeccion">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Borrar_Proyeccion" message="tns:ISP_FGA_Borrar_Proyeccion_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Borrar_ProyeccionResponse" message="tns:ISP_FGA_Borrar_Proyeccion_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Tipos_Indicadores">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Tipos_Indicadores" message="tns:ISP_FGA_Consultar_Tipos_Indicadores_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Tipos_IndicadoresResponse" message="tns:ISP_FGA_Consultar_Tipos_Indicadores_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Grafico_Indicador">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Grafico_Indicador" message="tns:ISP_FGA_Consultar_Grafico_Indicador_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Grafico_IndicadorResponse" message="tns:ISP_FGA_Consultar_Grafico_Indicador_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Monitor">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Monitor" message="tns:ISP_FGA_Consultar_Monitor_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_MonitorResponse" message="tns:ISP_FGA_Consultar_Monitor_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Sessiones">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Sessiones" message="tns:ISP_FGA_Consultar_Sessiones_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_SessionesResponse" message="tns:ISP_FGA_Consultar_Sessiones_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Cierre_Mensual">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Cierre_Mensual" message="tns:ISP_FGA_Cierre_Mensual_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Cierre_MensualResponse" message="tns:ISP_FGA_Cierre_Mensual_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Balance_Comprobacion">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Balance_Comprobacion" message="tns:ISP_FGA_Consultar_Balance_Comprobacion_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Balance_ComprobacionResponse" message="tns:ISP_FGA_Consultar_Balance_Comprobacion_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Cartera_Credito">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Cartera_Credito" message="tns:ISP_FGA_Consultar_Cartera_Credito_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Cartera_CreditoResponse" message="tns:ISP_FGA_Consultar_Cartera_Credito_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Maduracion_Cartera">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Maduracion_Cartera" message="tns:ISP_FGA_Consultar_Maduracion_Cartera_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Maduracion_CarteraResponse" message="tns:ISP_FGA_Consultar_Maduracion_Cartera_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Maduracion_Cartera_Det">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Maduracion_Cartera_Det" message="tns:ISP_FGA_Consultar_Maduracion_Cartera_Det_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Maduracion_Cartera_DetResponse" message="tns:ISP_FGA_Consultar_Maduracion_Cartera_Det_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Riesgo_Liquidez">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Riesgo_Liquidez" message="tns:ISP_FGA_Consultar_Riesgo_Liquidez_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Riesgo_LiquidezResponse" message="tns:ISP_FGA_Consultar_Riesgo_Liquidez_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Tasa_Ponderada">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Tasa_Ponderada" message="tns:ISP_FGA_Consultar_Tasa_Ponderada_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Tasa_PonderadaResponse" message="tns:ISP_FGA_Consultar_Tasa_Ponderada_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_CAMEL">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_CAMEL" message="tns:ISP_FGA_Consultar_CAMEL_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_CAMELResponse" message="tns:ISP_FGA_Consultar_CAMEL_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Suficiencia">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Suficiencia" message="tns:ISP_FGA_Consultar_Suficiencia_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_SuficienciaResponse" message="tns:ISP_FGA_Consultar_Suficiencia_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Suficiencia_306">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Suficiencia_306" message="tns:ISP_FGA_Consultar_Suficiencia_306_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Suficiencia_306Response" message="tns:ISP_FGA_Consultar_Suficiencia_306_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Indicadores">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Indicadores" message="tns:ISP_FGA_Consultar_Indicadores_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_IndicadoresResponse" message="tns:ISP_FGA_Consultar_Indicadores_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Otros_Indicadores">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Otros_Indicadores" message="tns:ISP_FGA_Consultar_Otros_Indicadores_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Otros_IndicadoresResponse" message="tns:ISP_FGA_Consultar_Otros_Indicadores_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Indicadores_Cartera">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Indicadores_Cartera" message="tns:ISP_FGA_Consultar_Indicadores_Cartera_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Indicadores_CarteraResponse" message="tns:ISP_FGA_Consultar_Indicadores_Cartera_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Calculos_Personalizados">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Calculos_Personalizados" message="tns:ISP_FGA_Consultar_Calculos_Personalizados_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Calculos_PersonalizadosResponse" message="tns:ISP_FGA_Consultar_Calculos_Personalizados_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Analisis_Horizontal">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Analisis_Horizontal" message="tns:ISP_FGA_Analisis_Horizontal_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Analisis_HorizontalResponse" message="tns:ISP_FGA_Analisis_Horizontal_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Analisis_Vertical">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Analisis_Vertical" message="tns:ISP_FGA_Analisis_Vertical_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Analisis_VerticalResponse" message="tns:ISP_FGA_Analisis_Vertical_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Dashboard">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Dashboard" message="tns:ISP_FGA_Consultar_Dashboard_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_DashboardResponse" message="tns:ISP_FGA_Consultar_Dashboard_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_FechaCierre">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_FechaCierre" message="tns:ISP_FGA_Consultar_FechaCierre_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_FechaCierreResponse" message="tns:ISP_FGA_Consultar_FechaCierre_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Ejecutar_Cierre">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Ejecutar_Cierre" message="tns:ISP_FGA_Ejecutar_Cierre_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Ejecutar_CierreResponse" message="tns:ISP_FGA_Ejecutar_Cierre_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Calif_Cartera">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Calif_Cartera" message="tns:ISP_FGA_Consultar_Calif_Cartera_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Calif_CarteraResponse" message="tns:ISP_FGA_Consultar_Calif_Cartera_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_CalificE">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_CalificE" message="tns:ISP_FGA_Consultar_CalificE_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_CalificEResponse" message="tns:ISP_FGA_Consultar_CalificE_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_ArchivosPendientes">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_ArchivosPendientes" message="tns:ISP_FGA_Consultar_ArchivosPendientes_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_ArchivosPendientesResponse" message="tns:ISP_FGA_Consultar_ArchivosPendientes_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Tipo_Cartera">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Tipo_Cartera" message="tns:ISP_FGA_Consultar_Tipo_Cartera_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Tipo_CarteraResponse" message="tns:ISP_FGA_Consultar_Tipo_Cartera_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Tipo_Cartera_E">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Tipo_Cartera_E" message="tns:ISP_FGA_Consultar_Tipo_Cartera_E_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Tipo_Cartera_EResponse" message="tns:ISP_FGA_Consultar_Tipo_Cartera_E_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_CarteraTotal">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_CarteraTotal" message="tns:ISP_FGA_Consultar_CarteraTotal_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_CarteraTotalResponse" message="tns:ISP_FGA_Consultar_CarteraTotal_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_CuentasLiq">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_CuentasLiq" message="tns:ISP_FGA_Consultar_CuentasLiq_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_CuentasLiqResponse" message="tns:ISP_FGA_Consultar_CuentasLiq_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_RecuperacionActivos">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_RecuperacionActivos" message="tns:ISP_FGA_Consultar_RecuperacionActivos_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_RecuperacionActivosResponse" message="tns:ISP_FGA_Consultar_RecuperacionActivos_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Rpt_Balance">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Rpt_Balance" message="tns:ISP_FGA_Rpt_Balance_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Rpt_BalanceResponse" message="tns:ISP_FGA_Rpt_Balance_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Rpt_EstadoResultados">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Rpt_EstadoResultados" message="tns:ISP_FGA_Rpt_EstadoResultados_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Rpt_EstadoResultadosResponse" message="tns:ISP_FGA_Rpt_EstadoResultados_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_ArchivosCargados">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_ArchivosCargados" message="tns:ISP_FGA_Consultar_ArchivosCargados_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_ArchivosCargadosResponse" message="tns:ISP_FGA_Consultar_ArchivosCargados_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Matrices_Desmejora_Cartera">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Matrices_Desmejora_Cartera" message="tns:ISP_FGA_Consultar_Matrices_Desmejora_Cartera_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Matrices_Desmejora_CarteraResponse" message="tns:ISP_FGA_Consultar_Matrices_Desmejora_Cartera_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Matrices_PerdidaEstimada">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Matrices_PerdidaEstimada" message="tns:ISP_FGA_Consultar_Matrices_PerdidaEstimada_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Matrices_PerdidaEstimadaResponse" message="tns:ISP_FGA_Consultar_Matrices_PerdidaEstimada_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Matrices_Variacion_Cartera">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Matrices_Variacion_Cartera" message="tns:ISP_FGA_Consultar_Matrices_Variacion_Cartera_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Matrices_Variacion_CarteraResponse" message="tns:ISP_FGA_Consultar_Matrices_Variacion_Cartera_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Modelo_Tasas">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Modelo_Tasas" message="tns:ISP_FGA_Consultar_Modelo_Tasas_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Modelo_TasasResponse" message="tns:ISP_FGA_Consultar_Modelo_Tasas_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Modelo_Margen">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Modelo_Margen" message="tns:ISP_FGA_Consultar_Modelo_Margen_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Modelo_MargenResponse" message="tns:ISP_FGA_Consultar_Modelo_Margen_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Variacion_CS">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Variacion_CS" message="tns:ISP_FGA_Consultar_Variacion_CS_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Variacion_CSResponse" message="tns:ISP_FGA_Consultar_Variacion_CS_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Balance_Comprobacion_Rango">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Balance_Comprobacion_Rango" message="tns:ISP_FGA_Consultar_Balance_Comprobacion_Rango_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Balance_Comprobacion_RangoResponse" message="tns:ISP_FGA_Consultar_Balance_Comprobacion_Rango_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Graficos_Financieros">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Graficos_Financieros" message="tns:ISP_FGA_Consultar_Graficos_Financieros_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Graficos_FinancierosResponse" message="tns:ISP_FGA_Consultar_Graficos_Financieros_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Variacion_Interanual_SF">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Variacion_Interanual_SF" message="tns:ISP_FGA_Consultar_Variacion_Interanual_SF_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Variacion_Interanual_SFResponse" message="tns:ISP_FGA_Consultar_Variacion_Interanual_SF_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Valida_Permite_Cargar">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Valida_Permite_Cargar" message="tns:ISP_FGA_Valida_Permite_Cargar_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Valida_Permite_CargarResponse" message="tns:ISP_FGA_Valida_Permite_Cargar_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Riesgo_Liquidez_Rango">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Riesgo_Liquidez_Rango" message="tns:ISP_FGA_Consultar_Riesgo_Liquidez_Rango_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Riesgo_Liquidez_RangoResponse" message="tns:ISP_FGA_Consultar_Riesgo_Liquidez_Rango_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Credito_Categoria_Rango">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Credito_Categoria_Rango" message="tns:ISP_FGA_Consultar_Credito_Categoria_Rango_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Credito_Categoria_RangoResponse" message="tns:ISP_FGA_Consultar_Credito_Categoria_Rango_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Gastos_Ingresos">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Gastos_Ingresos" message="tns:ISP_FGA_Consultar_Gastos_Ingresos_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Gastos_IngresosResponse" message="tns:ISP_FGA_Consultar_Gastos_Ingresos_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Grafico_Mora_Cartera">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Grafico_Mora_Cartera" message="tns:ISP_FGA_Consultar_Grafico_Mora_Cartera_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Grafico_Mora_CarteraResponse" message="tns:ISP_FGA_Consultar_Grafico_Mora_Cartera_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Grafico_Suficiencia">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Grafico_Suficiencia" message="tns:ISP_FGA_Consultar_Grafico_Suficiencia_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Grafico_SuficienciaResponse" message="tns:ISP_FGA_Consultar_Grafico_Suficiencia_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Generar_Proyeccion">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Generar_Proyeccion" message="tns:ISP_FGA_Generar_Proyeccion_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Generar_ProyeccionResponse" message="tns:ISP_FGA_Generar_Proyeccion_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Cuentas_Proyectar">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Cuentas_Proyectar" message="tns:ISP_FGA_Consultar_Cuentas_Proyectar_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Cuentas_ProyectarResponse" message="tns:ISP_FGA_Consultar_Cuentas_Proyectar_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Datos_Historicos">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Datos_Historicos" message="tns:ISP_FGA_Consultar_Datos_Historicos_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Datos_HistoricosResponse" message="tns:ISP_FGA_Consultar_Datos_Historicos_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Validar_Proyecciones_IRL">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Validar_Proyecciones_IRL" message="tns:ISP_FGA_Validar_Proyecciones_IRL_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Validar_Proyecciones_IRLResponse" message="tns:ISP_FGA_Validar_Proyecciones_IRL_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Estado_Proyeccion">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Estado_Proyeccion" message="tns:ISP_FGA_Consultar_Estado_Proyeccion_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Estado_ProyeccionResponse" message="tns:ISP_FGA_Consultar_Estado_Proyeccion_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_IRL_Cuentas">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_IRL_Cuentas" message="tns:ISP_FGA_Consultar_IRL_Cuentas_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_IRL_CuentasResponse" message="tns:ISP_FGA_Consultar_IRL_Cuentas_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Matrices_Probabilidada">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Matrices_Probabilidada" message="tns:ISP_FGA_Consultar_Matrices_Probabilidada_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Matrices_ProbabilidadaResponse" message="tns:ISP_FGA_Consultar_Matrices_Probabilidada_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Rpt_ER_SF">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Rpt_ER_SF" message="tns:ISP_FGA_Rpt_ER_SF_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Rpt_ER_SFResponse" message="tns:ISP_FGA_Rpt_ER_SF_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Rpt_Balance_SF">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Rpt_Balance_SF" message="tns:ISP_FGA_Rpt_Balance_SF_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Rpt_Balance_SFResponse" message="tns:ISP_FGA_Rpt_Balance_SF_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Ingreso_SF">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Ingreso_SF" message="tns:ISP_FGA_Consultar_Ingreso_SF_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Ingreso_SFResponse" message="tns:ISP_FGA_Consultar_Ingreso_SF_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Gasto_SF">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Gasto_SF" message="tns:ISP_FGA_Consultar_Gasto_SF_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Gasto_SFResponse" message="tns:ISP_FGA_Consultar_Gasto_SF_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Composicion_Balance_SF">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Composicion_Balance_SF" message="tns:ISP_FGA_Consultar_Composicion_Balance_SF_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Composicion_Balance_SFResponse" message="tns:ISP_FGA_Consultar_Composicion_Balance_SF_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Indicadores_Sugef">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Indicadores_Sugef" message="tns:ISP_FGA_Consultar_Indicadores_Sugef_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Indicadores_SugefResponse" message="tns:ISP_FGA_Consultar_Indicadores_Sugef_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Tipo_Cartera_Sector">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Tipo_Cartera_Sector" message="tns:ISP_FGA_Consultar_Tipo_Cartera_Sector_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Tipo_Cartera_SectorResponse" message="tns:ISP_FGA_Consultar_Tipo_Cartera_Sector_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Variacion_Cartera_Sector">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Variacion_Cartera_Sector" message="tns:ISP_FGA_Consultar_Variacion_Cartera_Sector_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Variacion_Cartera_SectorResponse" message="tns:ISP_FGA_Consultar_Variacion_Cartera_Sector_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Composicion_Cartera_Sector">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Composicion_Cartera_Sector" message="tns:ISP_FGA_Consultar_Composicion_Cartera_Sector_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Composicion_Cartera_SectorResponse" message="tns:ISP_FGA_Consultar_Composicion_Cartera_Sector_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Composicion_Mora_Sector">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Composicion_Mora_Sector" message="tns:ISP_FGA_Consultar_Composicion_Mora_Sector_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Composicion_Mora_SectorResponse" message="tns:ISP_FGA_Consultar_Composicion_Mora_Sector_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Cartera_Rango_SF">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Cartera_Rango_SF" message="tns:ISP_FGA_Consultar_Cartera_Rango_SF_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Cartera_Rango_SFResponse" message="tns:ISP_FGA_Consultar_Cartera_Rango_SF_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Indicadores_Formulas">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Indicadores_Formulas" message="tns:ISP_FGA_Consultar_Indicadores_Formulas_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Indicadores_FormulasResponse" message="tns:ISP_FGA_Consultar_Indicadores_Formulas_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Generar_Proy_Matrices">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Generar_Proy_Matrices" message="tns:ISP_FGA_Generar_Proy_Matrices_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Generar_Proy_MatricesResponse" message="tns:ISP_FGA_Generar_Proy_Matrices_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_CrecimientoSugerido">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_CrecimientoSugerido" message="tns:ISP_FGA_CrecimientoSugerido_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_CrecimientoSugeridoResponse" message="tns:ISP_FGA_CrecimientoSugerido_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Rpt_EEFF_Proy">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Rpt_EEFF_Proy" message="tns:ISP_FGA_Rpt_EEFF_Proy_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Rpt_EEFF_ProyResponse" message="tns:ISP_FGA_Rpt_EEFF_Proy_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_ConsultarEvaluacion">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_ConsultarEvaluacion" message="tns:ISP_FGA_ConsultarEvaluacion_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_ConsultarEvaluacionResponse" message="tns:ISP_FGA_ConsultarEvaluacion_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_ConsultarAvance">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_ConsultarAvance" message="tns:ISP_FGA_ConsultarAvance_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_ConsultarAvanceResponse" message="tns:ISP_FGA_ConsultarAvance_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_ConsultarAvance_X_Categoria">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_ConsultarAvance_X_Categoria" message="tns:ISP_FGA_ConsultarAvance_X_Categoria_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_ConsultarAvance_X_CategoriaResponse" message="tns:ISP_FGA_ConsultarAvance_X_Categoria_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_ConsultarHistorial_X_Categoria">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_ConsultarHistorial_X_Categoria" message="tns:ISP_FGA_ConsultarHistorial_X_Categoria_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_ConsultarHistorial_X_CategoriaResponse" message="tns:ISP_FGA_ConsultarHistorial_X_Categoria_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_ConsultarSimulacionCapital">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_ConsultarSimulacionCapital" message="tns:ISP_FGA_ConsultarSimulacionCapital_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_ConsultarSimulacionCapitalResponse" message="tns:ISP_FGA_ConsultarSimulacionCapital_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Resultado_Evaluacion">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Resultado_Evaluacion" message="tns:ISP_FGA_Consultar_Resultado_Evaluacion_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Resultado_EvaluacionResponse" message="tns:ISP_FGA_Consultar_Resultado_Evaluacion_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_FacturacionFGD">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_FacturacionFGD" message="tns:ISP_FGA_Consultar_FacturacionFGD_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_FacturacionFGDResponse" message="tns:ISP_FGA_Consultar_FacturacionFGD_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Grafico_Oper_Categoria">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Grafico_Oper_Categoria" message="tns:ISP_FGA_Consultar_Grafico_Oper_Categoria_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Grafico_Oper_CategoriaResponse" message="tns:ISP_FGA_Consultar_Grafico_Oper_Categoria_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Grafico_Oper_Etapa">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Grafico_Oper_Etapa" message="tns:ISP_FGA_Consultar_Grafico_Oper_Etapa_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Grafico_Oper_EtapaResponse" message="tns:ISP_FGA_Consultar_Grafico_Oper_Etapa_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Grafico_Oper_Segmento">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Grafico_Oper_Segmento" message="tns:ISP_FGA_Consultar_Grafico_Oper_Segmento_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Grafico_Oper_SegmentoResponse" message="tns:ISP_FGA_Consultar_Grafico_Oper_Segmento_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Grafico_Oper_EAD">
+      <wsdl:input wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Grafico_Oper_EAD" message="tns:ISP_FGA_Consultar_Grafico_Oper_EAD_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ISP/FGA_Consultar_Grafico_Oper_EADResponse" message="tns:ISP_FGA_Consultar_Grafico_Oper_EAD_OutputMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="BasicHttpBinding_ISP" type="tns:ISP">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="FGA_Borrar_Proyeccion">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Borrar_Proyeccion" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Tipos_Indicadores">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_Tipos_Indicadores" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Grafico_Indicador">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_Grafico_Indicador" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Monitor">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_Monitor" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Sessiones">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_Sessiones" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Cierre_Mensual">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Cierre_Mensual" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Balance_Comprobacion">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_Balance_Comprobacion" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Cartera_Credito">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_Cartera_Credito" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Maduracion_Cartera">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_Maduracion_Cartera" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Maduracion_Cartera_Det">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_Maduracion_Cartera_Det" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Riesgo_Liquidez">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_Riesgo_Liquidez" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Tasa_Ponderada">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_Tasa_Ponderada" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_CAMEL">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_CAMEL" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Suficiencia">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_Suficiencia" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Suficiencia_306">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_Suficiencia_306" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Indicadores">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_Indicadores" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Otros_Indicadores">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_Otros_Indicadores" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Indicadores_Cartera">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_Indicadores_Cartera" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Calculos_Personalizados">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_Calculos_Personalizados" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Analisis_Horizontal">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Analisis_Horizontal" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Analisis_Vertical">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Analisis_Vertical" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Dashboard">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_Dashboard" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_FechaCierre">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_FechaCierre" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Ejecutar_Cierre">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Ejecutar_Cierre" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Calif_Cartera">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_Calif_Cartera" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_CalificE">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_CalificE" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_ArchivosPendientes">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_ArchivosPendientes" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Tipo_Cartera">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_Tipo_Cartera" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Tipo_Cartera_E">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_Tipo_Cartera_E" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_CarteraTotal">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_CarteraTotal" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_CuentasLiq">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_CuentasLiq" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_RecuperacionActivos">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_RecuperacionActivos" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Rpt_Balance">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Rpt_Balance" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Rpt_EstadoResultados">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Rpt_EstadoResultados" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_ArchivosCargados">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_ArchivosCargados" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Matrices_Desmejora_Cartera">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_Matrices_Desmejora_Cartera" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Matrices_PerdidaEstimada">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_Matrices_PerdidaEstimada" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Matrices_Variacion_Cartera">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_Matrices_Variacion_Cartera" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Modelo_Tasas">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_Modelo_Tasas" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Modelo_Margen">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_Modelo_Margen" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Variacion_CS">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_Variacion_CS" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Balance_Comprobacion_Rango">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_Balance_Comprobacion_Rango" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Graficos_Financieros">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_Graficos_Financieros" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Variacion_Interanual_SF">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_Variacion_Interanual_SF" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Valida_Permite_Cargar">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Valida_Permite_Cargar" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Riesgo_Liquidez_Rango">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_Riesgo_Liquidez_Rango" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Credito_Categoria_Rango">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_Credito_Categoria_Rango" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Gastos_Ingresos">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_Gastos_Ingresos" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Grafico_Mora_Cartera">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_Grafico_Mora_Cartera" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Grafico_Suficiencia">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_Grafico_Suficiencia" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Generar_Proyeccion">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Generar_Proyeccion" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Cuentas_Proyectar">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_Cuentas_Proyectar" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Datos_Historicos">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_Datos_Historicos" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Validar_Proyecciones_IRL">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Validar_Proyecciones_IRL" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Estado_Proyeccion">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_Estado_Proyeccion" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_IRL_Cuentas">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_IRL_Cuentas" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Matrices_Probabilidada">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_Matrices_Probabilidada" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Rpt_ER_SF">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Rpt_ER_SF" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Rpt_Balance_SF">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Rpt_Balance_SF" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Ingreso_SF">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_Ingreso_SF" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Gasto_SF">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_Gasto_SF" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Composicion_Balance_SF">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_Composicion_Balance_SF" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Indicadores_Sugef">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_Indicadores_Sugef" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Tipo_Cartera_Sector">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_Tipo_Cartera_Sector" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Variacion_Cartera_Sector">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_Variacion_Cartera_Sector" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Composicion_Cartera_Sector">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_Composicion_Cartera_Sector" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Composicion_Mora_Sector">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_Composicion_Mora_Sector" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Cartera_Rango_SF">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_Cartera_Rango_SF" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Indicadores_Formulas">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_Indicadores_Formulas" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Generar_Proy_Matrices">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Generar_Proy_Matrices" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_CrecimientoSugerido">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_CrecimientoSugerido" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Rpt_EEFF_Proy">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Rpt_EEFF_Proy" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_ConsultarEvaluacion">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_ConsultarEvaluacion" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_ConsultarAvance">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_ConsultarAvance" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_ConsultarAvance_X_Categoria">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_ConsultarAvance_X_Categoria" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_ConsultarHistorial_X_Categoria">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_ConsultarHistorial_X_Categoria" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_ConsultarSimulacionCapital">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_ConsultarSimulacionCapital" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Resultado_Evaluacion">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_Resultado_Evaluacion" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_FacturacionFGD">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_FacturacionFGD" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Grafico_Oper_Categoria">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_Grafico_Oper_Categoria" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Grafico_Oper_Etapa">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_Grafico_Oper_Etapa" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Grafico_Oper_Segmento">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_Grafico_Oper_Segmento" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FGA_Consultar_Grafico_Oper_EAD">
+      <soap:operation soapAction="http://tempuri.org/ISP/FGA_Consultar_Grafico_Oper_EAD" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="SP">
+    <wsdl:port name="BasicHttpBinding_ISP" binding="tns:BasicHttpBinding_ISP">
+      <soap:address location="http://10.171.1.28/DBService/SP.svc" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

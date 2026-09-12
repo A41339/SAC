@@ -1,0 +1,43 @@
+﻿@model IEnumerable<Entities.Entities.Procedures.FGA_Consultar_Monitor_Result>
+
+@{
+    ViewBag.Title = "Perfiles";
+}
+
+<section class="content">
+
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box box-solid box-info">
+                <div class="box-body table-responsive">
+                    <div class="margin">
+                        <div class="streaming-table">
+                            <span id="found" class="label label-info"></span>
+                            <br />
+                            <div id="files">
+                                @Html.Partial("StatusPerfiles", Model)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script type="text/javascript">
+    function loadPartialView() {
+        $.ajax({
+            url: '@Url.Action("GetPerfiles", "Cierre")',
+            type: 'POST',
+            cache: false,
+            async: true,
+            success: function (result) {
+                $('#files').html(result);
+            }
+        });
+    }
+
+    loadPartialView();
+
+</script>

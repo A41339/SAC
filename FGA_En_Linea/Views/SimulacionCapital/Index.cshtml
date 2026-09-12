@@ -1,0 +1,22 @@
+﻿@model FGA.Model.Modelo_Simulacion
+
+@{
+    ViewBag.Title = "Módulo de simulación";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/Content/card.css" rel="stylesheet" />
+<section class="content-header">
+    <h1>
+        ISP - IMCA
+    </h1>
+</section>
+
+@using (Html.BeginForm("LoadReportAsync", "SimulacionCapital", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmInforme" }))
+{
+    <section class="content">
+        <div id="divSimulacion">
+            @Html.Partial("_Simulacion", Model)
+        </div>
+    </section>
+}

@@ -1,0 +1,272 @@
+﻿@model IEnumerable<FGA.Models.BCCR_Indicadores>
+
+@{
+    ViewBag.Title = "Indicadores Económicos";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section ScriptsOrCss
+{
+    <script src="~/Scripts/loader.js"></script>
+}
+
+<section class="content-header">
+    <h1>
+        Indicadores Económicos
+    </h1>
+</section>
+
+<section class="content">
+
+    @using (Html.BeginForm("Buscar", "IndEconomico", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmIndEconomico" }))
+    {
+        @Html.AntiForgeryToken()
+        <div class="box box-solid box-info">
+            <div class="box-body table-responsive">
+                <div class="margin">
+                    <div class="streaming-table">
+                        <span id="found" class="label label-info"></span>
+                        <table class="table table-condensed table-striped table-bordered">
+                            <tr>
+                                <td class="mobile">
+                                    <label>Parámetros de búsqueda</label>
+                                </td>
+                                <td class="mobile">
+                                    @Html.Label("Indicador:")
+                                </td>
+                                <td>
+                                    @Html.DropDownList("Indicadores", null, new { @id = "Id", style = "width: 200px;" })
+                                </td>
+                                <td>
+                                    <label class="btn btn-facebook">
+                                        Generar<input type="submit" name="submit" style="display: none;">
+                                    </label>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (Session["Indicador"] == null)
+    {
+        <div class="col-md-12">
+            <div class="box box-solid box-info">
+                <div class="box-body table-responsive">
+                    <div class="margin">
+                        <div class="streaming-table">
+                            <span id="found" class="label label-info"></span>
+                            <table id="tbUltimos" class="table table-striped table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th> Indicador  </th>
+                                        <th> Fecha  </th>
+                                        <th> Valor  </th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                            <div id="summary">
+                                <div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="col-md-8 col-sm-12">
+                    <div class="box box-solid box-info">
+                        <div class="box-body">
+                            <span id="found" class="label label-info"></span>
+                            <div class="box-header with-border">
+                                <h4 id="mes_destacado" class="box-title"></h4>
+                            </div>
+                            <div id="curve_chart" style="width: 100%; height: 400px"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-12">
+                    <div class="box box-solid box-info">
+                        <div class="box-body table-responsive">
+                            <div class="margin">
+                                <div class="streaming-table">
+                                    <span id="found" class="label label-info"></span>
+                                    <table id="tbError" class="table table-striped table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th> Fecha  </th>
+                                                <th> Valor  </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                    <div id="summary">
+                                        <div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</section>
+
+<script type="text/javascript">
+
+   google.charts.load('current', { packages: ['corechart'] });
+  google.charts.setOnLoadCallback(drawTimelineChart);
+
+  function drawTimelineChart() {
+    var headers = [
+      'Fecha',
+      'Valor',
+      { type: 'string', role: 'annotation', p: { html: true } }
+    ];
+    var dataRows = [];
+
+    @if (Model != null)
+    {
+      var desde = DateTime.Now.AddYears(-3);
+      foreach (var item in Model)
+      {
+        if (item.Fecha.HasValue && item.Monto.HasValue && item.Fecha.Value >= desde)
+        {
+          var fecha = item.Fecha.Value.ToString("MM-yyyy");
+          var monto = item.Monto.Value.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture);
+    <text>
+      var htmlTooltip = @monto.ToString();
+           dataRows.push(['@fecha', @monto, htmlTooltip]);
+    </text>
+        }
+      }
+    }
+
+    var nomIndicador = $('#Id :selected').text();
+    var chart = new google.visualization.AreaChart(document.getElementById('curve_chart'));
+    var frame = 0,
+        totalFrames = dataRows.length,
+        windowSize = 12;
+
+    function drawStep() {
+      if (frame < totalFrames) {
+        var slice = dataRows.slice(Math.max(0, frame - windowSize), frame + 1);
+        var data = google.visualization.arrayToDataTable([headers].concat(slice));
+
+        // Obtener el mes del frame actual
+        var currentMonth = slice[slice.length - 1][0];
+          document.getElementById('mes_destacado').innerHTML =
+              "Evolución mensual del " + nomIndicador + ". Mes actual: <strong>" + currentMonth + "</strong>";
+
+        var options = {
+          title: "",
+          curveType: 'function',
+          legend: { position: 'bottom' },
+          animation: {
+            startup: true,
+            duration: 800,
+            easing: 'inAndOut'
+          },
+          colors: ['#39aac5'],    // aquí va tu color personalizado
+          areaOpacity: 0.8,        // define la opacidad del área
+          series: {
+            0: { pointSize: 5 }
+          },
+          hAxis: {
+            textStyle: { fontSize: 12, color: '#333' }
+          },
+          vAxis: {
+            textStyle: { fontSize: 12, color: '#333' },
+            gridlines: { color: '#e0e0e0', count: 4 },
+            baselineColor: '#ccc'
+          },
+          tooltip: {
+            isHtml: true,
+            textStyle: { fontSize: 12 },
+            trigger: 'focus'
+          },
+          chartArea: {
+            left: 70,
+            bottom: 60,
+            top: 20,
+            width: '88%',
+            height: '80%'
+          },
+          backgroundColor: '#ffffff'
+        };
+
+
+        chart.draw(data, options);
+
+        frame++;
+      } else {
+        clearInterval(timer);
+      }
+    }
+
+    drawStep();
+    var timer = setInterval(drawStep, 1000);
+  }
+
+
+
+
+    $(document).ready(function () {
+      $("#tbError").dataTable({
+        "bRetrieve": true,
+        "bProcessing": true,
+        "dom": 'lBfrtip',
+        "bSort" : false,
+        "sAjaxSource": "@Url.Content("~/IndEconomico/GetGrid")",
+        "buttons": [
+        { extend: 'copyHtml5', exportOptions: { columns: ':visible' } }
+        ,{ extend: 'excelHtml5', exportOptions: { columns: ':visible' } }
+        ,{ extend: 'csvHtml5', exportOptions: { columns: ':visible' } }
+        ,{ extend: 'print', exportOptions: { columns: ':visible' } }
+        ,'colvis'
+        ],
+        columnDefs: [
+        { className: 'text-right', targets: [1] },
+        ],
+        "pageLength": 15,
+        "order": [[ 0, "desc" ]],
+        "lengthMenu": [[5,15, 25, 50, -1], [5,15, 25, 50, "Todos"]],
+        "aoColumns": [
+        {},{}
+        ]
+        });
+
+        $("#tbUltimos").dataTable({
+        "bRetrieve": true,
+        "bProcessing": true,
+        "dom": 'lBfrtip',
+        "bSort" : false,
+        "sAjaxSource": "@Url.Content("~/IndEconomico/GetUltimos")",
+        "buttons": [
+        { extend: 'copyHtml5', exportOptions: { columns: ':visible' } }
+        ,{ extend: 'excelHtml5', exportOptions: { columns: ':visible' } }
+        ,{ extend: 'csvHtml5', exportOptions: { columns: ':visible' } }
+        ,{ extend: 'print', exportOptions: { columns: ':visible' } }
+        ,'colvis'
+        ],
+        columnDefs: [
+        { className: 'text-right', targets: [2] },
+        ],
+        "pageLength": 15,
+        "order": [[ 0, "desc" ]],
+        "lengthMenu": [[5,15, 25, 50, -1], [5,15, 25, 50, "Todos"]],
+        "aoColumns": [
+        {}, {}, {}
+        ]
+        });
+        });
+</script>

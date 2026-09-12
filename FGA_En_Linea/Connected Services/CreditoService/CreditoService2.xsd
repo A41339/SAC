@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://tempuri.org/" elementFormDefault="qualified" targetNamespace="http://tempuri.org/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://10.171.1.28/DBService/CreditoService.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/FGA.Models" />
+  <xs:import schemaLocation="http://10.171.1.28/DBService/CreditoService.svc?xsd=xsd4" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+  <xs:element name="GetOfertasActivas">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetOfertasActivasResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/FGA.Models" minOccurs="0" name="GetOfertasActivasResult" nillable="true" type="q1:ArrayOfCreditos_Ofertas" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetOfertaById">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="id" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetOfertaByIdResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/FGA.Models" minOccurs="0" name="GetOfertaByIdResult" nillable="true" type="q2:Creditos_Ofertas" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="PublicarOferta">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/FGA.Models" minOccurs="0" name="oferta" nillable="true" type="q3:Creditos_Ofertas" />
+        <xs:element xmlns:q4="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="requisitosIds" nillable="true" type="q4:ArrayOfint" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="PublicarOfertaResponse">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="InactivarOferta">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="id" type="xs:int" />
+        <xs:element minOccurs="0" name="usuarioModificaId" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="InactivarOfertaResponse">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetRequisitosOferta">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="ofertaId" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetRequisitosOfertaResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q5="http://schemas.datacontract.org/2004/07/FGA.Models" minOccurs="0" name="GetRequisitosOfertaResult" nillable="true" type="q5:ArrayOfCreditos_OfertaRequisitos" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetSolicitudesPorEntidad">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="entidadId" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetSolicitudesPorEntidadResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q6="http://schemas.datacontract.org/2004/07/FGA.Models" minOccurs="0" name="GetSolicitudesPorEntidadResult" nillable="true" type="q6:ArrayOfCreditos_Solicitudes" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetSolicitudesRecibidas">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="entidadOferenteId" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetSolicitudesRecibidasResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q7="http://schemas.datacontract.org/2004/07/FGA.Models" minOccurs="0" name="GetSolicitudesRecibidasResult" nillable="true" type="q7:ArrayOfCreditos_Solicitudes" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="CrearSolicitud">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q8="http://schemas.datacontract.org/2004/07/FGA.Models" minOccurs="0" name="solicitud" nillable="true" type="q8:Creditos_Solicitudes" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="CrearSolicitudResponse">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ResolverSolicitud">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="solicitudId" type="xs:int" />
+        <xs:element minOccurs="0" name="estadoId" type="xs:int" />
+        <xs:element minOccurs="0" name="usuarioId" type="xs:int" />
+        <xs:element minOccurs="0" name="motivoRechazo" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ResolverSolicitudResponse">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="CargarDocumento">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q9="http://schemas.datacontract.org/2004/07/FGA.Models" minOccurs="0" name="documento" nillable="true" type="q9:Creditos_Documentos" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="CargarDocumentoResponse">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ValidarDocumento">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="documentoId" type="xs:int" />
+        <xs:element minOccurs="0" name="esValido" type="xs:boolean" />
+        <xs:element minOccurs="0" name="usuarioSacId" type="xs:int" />
+        <xs:element minOccurs="0" name="comentarios" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ValidarDocumentoResponse">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetDocumentosPorSolicitud">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="solicitudId" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetDocumentosPorSolicitudResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q10="http://schemas.datacontract.org/2004/07/FGA.Models" minOccurs="0" name="GetDocumentosPorSolicitudResult" nillable="true" type="q10:ArrayOfCreditos_Documentos" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTiposDocumento">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTiposDocumentoResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q11="http://schemas.datacontract.org/2004/07/FGA.Models" minOccurs="0" name="GetTiposDocumentoResult" nillable="true" type="q11:ArrayOfCreditos_TipoDocumento" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMonedas">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMonedasResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q12="http://schemas.datacontract.org/2004/07/FGA.Models" minOccurs="0" name="GetMonedasResult" nillable="true" type="q12:ArrayOfCreditos_Moneda" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

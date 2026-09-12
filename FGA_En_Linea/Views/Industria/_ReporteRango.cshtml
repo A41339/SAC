@@ -1,0 +1,27 @@
+﻿<div class="nav-tabs-custom">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="#tab_1" data-toggle="tab">Periodo: @FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToShortDateString()</a></li>
+        <li><a href="#tab_2" data-toggle="tab">Periodo @FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToShortDateString()</a></li>
+    </ul>
+    <div class="tab-content">
+        <div class="tab-pane active" id="tab_1">
+            <div class="row">
+
+                @if (Session["TipoReporte"] != null)
+                {
+                    <iframe src="~/Reportes/ReportView.aspx" width="1500" height="1500" style="border:none"></iframe>
+                }
+            </div>
+        </div>
+        <div class="tab-pane" id="tab_2">
+            <div class="row">
+                <div class="tab-content">
+                    @if (Session["TipoReporte2"] != null)
+                    {
+                        <iframe src="~/Reportes/ReportView2.aspx" width="1500" height="1500" style="border:none"></iframe>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

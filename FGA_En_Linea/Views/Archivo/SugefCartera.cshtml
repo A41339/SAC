@@ -1,0 +1,107 @@
+﻿@model IEnumerable<Entities.Entities.Procedures.FGA_Consultar_ArchivosCargados_Result>
+
+@{
+    ViewBag.Title = "Sugef Cartera";
+    if (Ajax.IsThisAjaxRequest())
+    {
+        Layout = null;
+    }
+}
+
+<script src="~/Scripts/jquery-form.js"></script>
+<section class="content contenedor">
+
+    @using (Html.BeginForm("SugefCartera", "Archivo", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmFile" }))
+    {
+        @Html.AntiForgeryToken()
+        <div class="box box-solid box-info">
+            <div class="box-body table-responsive">
+                <div class="margin">
+                    <div class="streaming-table">
+                        <span id="found" class="label label-info"></span>
+                        <table>
+                            <tr>
+                                <td>
+                                    <label class="btn btn-default">
+                                        Browse&hellip; <input type="file" name="xlsFile" style="display: none;">
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="btn btn-facebook">
+                                        Cargar<input type="submit" name="submit" style="display: none;">
+                                    </label>
+                                </td>
+                            </tr>
+                        </table>
+                        <br />
+                        <div class="progress">
+                            <div class="progress-bar"></div>
+                            <div class="percent">0%</div>
+                        </div>
+                        <div id="status" style="color: darkred;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    
+    <div id="files">
+        @Html.Partial("FileSugefCartera", Model)
+    </div>
+</section>
+
+<script>
+    (function () {
+
+        var bar = $('.progress-bar');
+        var percent = $('.percent');
+        var status = $('#status');
+
+        $('form').ajaxForm({
+            beforeSend: function () {
+                status.empty();
+                var percentVal = '0%';
+                bar.width(percentVal)
+                percent.html(percentVal);
+            },
+            uploadProgress: function (event, position, total, percentComplete) {
+                var percentVal = percentComplete + '%';
+                bar.width(percentVal)
+                percent.html(percentVal);
+            },
+            success: function () {
+                var percentVal = '100%';
+                bar.width(percentVal)
+                percent.html(percentVal);
+            },
+            complete: function (xhr) {
+                status.html(xhr.responseText);
+                if (xhr.responseText == '') {
+                    loadPartialView();
+                }
+            }
+        });
+    })();
+
+    function loadPartialView() {
+        $.ajax({
+            url: '@Url.Action("GetSUGEFCartera", "Archivo")',
+            type: 'POST',
+            cache: false,
+            async: true,
+            success: function (result) {
+                $('#files').html(result);
+            }
+        });
+    }
+
+    function refreshPartial() {
+        setTimeout(function () {
+            loadPartialView();
+            refreshPartial();
+        }, 10000);
+    }
+
+    refreshPartial();
+
+</script>

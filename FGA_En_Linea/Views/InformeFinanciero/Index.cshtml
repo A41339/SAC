@@ -1,0 +1,67 @@
+﻿@{
+    ViewBag.Title = "Balanza comprobación";
+}
+
+<section class="content-header">
+    <h1>
+        Balanza comprobación
+    </h1>
+</section>
+
+<section class="content">
+    @using (Html.BeginForm("LoadReportAsync", "InformeFinanciero", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmInforme" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="box box-solid box-info">
+            <div class="box-body table-responsive">
+                <div class="margin">
+                    <div class="streaming-table">
+                        <span id="found" class="label label-info"></span>
+                        <table class="table table-condensed table-striped table-bordered">
+                            <tr>
+                                <td class="mobile">
+                                    @Html.Label("Entidad:")
+                                </td>
+                                <td>
+                                    @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", style = "width: 200px;" })
+                                </td>
+                                <td class="mobile">
+                                    @Html.Label("Mensual:")
+                                </td>
+                                <td nowrap="nowrap">
+                                    @Html.DropDownList("Mensual", new List<SelectListItem> {
+                                                                    new SelectListItem { Value = "0", Text = "NO" },
+                                                                    new SelectListItem { Value = "1", Text = "SÍ" }
+                                                                    }, new { @id = "Mensual" })
+                                </td>
+                                <td>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="mobile">
+                                    @Html.Label("Primer Periodo:")
+                                </td>
+                                <td>
+                                    <input name="Periodo1" id="Periodo1" class="datecontrol" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MM/yyyy")" />
+                                </td>
+                                <td>
+                                    @Html.Label("Segundo Periodo:")
+                                </td>
+                                <td>
+                                    <input name="Periodo2" id="Periodo2" class="datecontrol" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MM/yyyy")" />
+
+                                </td>
+                                <td>
+                                    <button type="submit" id="btn_buscar" class="btn btn-primary">Generar</button>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    }
+</section>

@@ -1,0 +1,124 @@
+﻿@model IEnumerable<FGA.Models.FileModel>
+
+<div id="commands">
+    @Html.Partial("ActionLinks", ViewData["Parent"] == null ? string.Empty : ViewData["Parent"])
+</div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-solid box-info">
+            <div class="box-body table-responsive">
+                <div class="margin">
+                    <div class="streaming-table">
+                        <span id="found" class="label label-info"></span>
+                        <br />
+                        @Html.Label("Doble click en la carpeta para navegar")
+                        <br />
+                        <br />
+                        <table id="listview" class="table table-striped table-bordered">
+                            <tr class="noselect">
+                                <th id="one"> </th>
+                                <th id="two">
+                                    Nombre
+                                </th>
+                                <th id="three">
+                                    Fecha modificación
+                                </th>
+                            </tr>
+                            @{
+                                foreach (var item in Model)
+                                {
+                                    <tr class="t-row noselect">
+                                        <td class="one" onclick="IsCheckBoxCheck()">
+                                            @Html.CheckBox("fileCheck", new { value = item.FullPath })
+                                        </td>
+                                        <td class="cursor">
+                                            <img width="24" height="24" alt="@item.Category.ToString()" src="@Url.Content("~/Content/Images/" + item.Category.ToString() + ".png")"
+                                                 style="vertical-align: middle;" />
+                                            <span style="padding-left: 2px;">
+                                                @item.Name.ToUpper()
+                                            </span>
+                                        </td>
+                                        <td class="three">
+                                            @String.Format("{0:g}", item.Modified)
+                                        </td>
+                                        <td class="hidden">
+                                            @Html.Hidden("fullPath", item.FullPath)
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+     $(function () {
+        $.extend($.fn.disableTextSelect = function () {
+            return this.each(function () {
+                    $(this).mousedown(function () { return false; });
+            });
+        });
+    });
+
+    $(document).ready(function () {
+        $("#listview .t-row").click(function () {
+            $("#listview tr").removeClass("t-state-selected");
+            $(this).toggleClass("t-state-selected");
+        });
+        $('.noselect').disableTextSelect();
+        $("#listview .t-row:first").click();
+    });
+
+      $("#listview .t-row").dblclick(function () {
+            var path = getApplicationPath();
+            var filename = jQuery("input[name=fullPath]", this).val();
+            $.ajax({
+                type: "POST",
+                url: path + "Explorer/GetFiles",
+                data: { path: filename },
+                cache: false,
+                dataType: "html",
+                success: function (data) {
+                    $('#listpane').html(data);
+
+                }
+            })
+        });
+
+    function IsCheckBoxCheck() {
+        var list = new Object;
+            var i = 0;
+            var filename = '@ViewData["Parent"]';
+            var path = getApplicationPath();
+            $("input:checkbox:checked").each(function () {
+                list[i++] = $(this).val();
+            });
+            $.ajax({
+                type: "POST",
+                url: path + "Explorer/LoadActionLinks",
+                data: { path: filename, list: list },
+                cache: false,
+                dataType: "html",
+                success: function (data) {
+                    $('#commands').html(data);
+                }
+            })
+    }
+
+    function getApplicationPath() {
+        var path = location.pathname;
+        var index = path.indexOf("/Explorer");
+        if (index > -1)
+            return path.substr(0, index + 1);
+        if (path.charAt(path.length - 1) != '/')
+            path += '/';
+        return path;
+    }
+
+</script>

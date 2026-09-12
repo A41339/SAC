@@ -1,0 +1,1001 @@
+﻿@model FGA.Model.Modelo_PEEFF
+
+@{
+    ViewBag.Title = "Módulo de proyecciones";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="content-header">
+    <h1>
+        Módulo de proyecciones
+    </h1>
+</section>
+
+<section class="content">
+    @using (Html.BeginForm("Buscar", "ProyeccionEEFF", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmMatriz" }))
+    {
+        @Html.AntiForgeryToken()
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box box-solid box-info">
+                    <div class="box-body table-responsive">
+                        <div class="margin">
+                            <div class="streaming-table">
+                                <span id="found" class="label label-info"></span>
+                                <table class="table table-condensed table-striped table-bordered">
+                                    <tr>
+                                        <td>
+                                            @Html.Label("Entidad:")
+                                        </td>
+                                        <td>
+                                            @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", style = "width: 200px;" })
+                                        </td>
+
+                                        <td>
+                                            @Html.Label("Fecha de corte:")
+                                        </td>
+                                        <td nowrap="nowrap">
+                                            <input name="PeriodoI" id="PeriodoI" class="datecontrol"
+                                                   value="@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["PeriodoI"].ToString()).Date.ToString("MMMM yyyy"))" />
+                                            <a class="text-right" data-toggle="tooltip" data-placement="top" title="Ayuda"
+                                               href="javascript:help('Fecha de corte', 'Fecha de base a partir de la que se genera los períodos proyectados, se podrán usar cortes del período vigente y el último cierre fiscal cargado, meses anteriores a ese no se podrán usar como base.' )"><i class="btn btn-xs btn-default icon fa fa-question"></i></a>
+                                        </td>
+                                        <td>
+                                            @Html.Label("Periodos por proyectar:")
+                                        </td>
+                                        <td nowrap="nowrap">
+                                            <div class="row">
+                                                <div class="col-xs-7">
+                                                    <select id="ddlPlazo" name="ddlPlazo" style="width:220px">
+                                                        <option value="1" @(Model.ddlPlazo == "1" ? " selected" : "")>12 meses</option>
+                                                        <option value="2" @(Model.ddlPlazo == "2" ? " selected" : "")>3 años (Primer año mensual)</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-xs-1">
+                                                    <a class="text-left" data-toggle="tooltip" data-placement="top" title="Ayuda"
+                                                       href="javascript:help('Periodos por proyectar', 'La opción de 12 meses solo mostrará una proyección mensual de un año, la opción de 3 años mostrará el primer año en forma mensual. El segundo y tercero en forma anualizada')"><i class="btn btn-xs btn-default icon fa fa-question"></i></a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <label class="btn btn-facebook">
+                                                Incluir supuestos<input type="submit" id="btn_supuestos" value="Consultar" name="command" style="display: none;">
+                                            </label>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        if (Model.Supuestos == true)
+        {
+            <div id="menuTab" class="nav-tabs-custom">
+                <ul class="nav nav-tabs">
+                    <li id="tab1" class="@(Model.proyeccion ? "" : "active")"><a href="#tab1C" data-toggle="tab">Supuestos de proyección</a></li>
+                    <li id="tab3" @(@Session["TipoReporte"] is null ? "class=hidden" : "class=''")><a href="#tab3C" data-toggle="tab">Balance proyectado</a></li>
+                    <li id="tab2" @(@Session["TipoReporte3"] is null ? "class=hidden" : "class=''")><a href="#tab2C" data-toggle="tab">Análisis balance proyectado</a></li>
+                    <li id="tab5" @(@Session["TipoReporte2"] is null ? "class=hidden" : "class=''")><a href="#tab5C" data-toggle="tab">Estado resultados proyectado</a></li>
+                    <li id="tab4" @(@Session["TipoReporte4"] is null ? "class=hidden" : "class=''")><a href="#tab4C" data-toggle="tab">Análisis estado resultados proyectado</a></li>
+                    <li id="tab6" @(@Session["TipoReporte2"] is null ? "class=hidden" : "class=''")><a href="#tab6C" data-toggle="tab">Mora</a></li>
+                    <li id="tab7" @(@Session["TipoReporte"] is null ? "class=hidden" : "class=''")><a href="#tab7C" data-toggle="tab">Indicadores</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane" id="tab1C">
+                        <div class="box-body table-responsive">
+                            <div class="col-md-6">
+                                <div class="box box-primary">
+                                    <div class="box-body">
+                                        <span id="found" class="label label-info"></span>
+                                        <div class="box-header with-border">
+                                            <img width="50" height="50" src="@Session["Logo"]" />
+                                            <h4 class="box-title">Supuestos de proyección</h4>
+                                        </div>
+                                        <table id="tbSupuestos" class="table table-striped table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th class="text-left">Tasa de la intermediación</th>
+                                                    <th class="text-center">
+                                                        <div class="row">
+                                                            <div class="col-xs-5">
+                                                                <select id="ddlTasa" name="ddlTasa" style="width:150px">
+                                                                    <option value="1" @(Model.ddlTasa == "1" ? " selected" : "")>Referencia</option>
+                                                                    <option value="2" @(Model.ddlTasa == "2" ? " selected" : "")>Manual</option>
+                                                                </select>
+                                                            </div>
+                                                            <div class="col-xs-1">
+                                                                <a class="text-right" data-toggle="tooltip" data-placement="top" title="Ayuda"
+                                                                   href="javascript:help('Tasa de la intermediación', 'Las tasas mostradas  en referencia son sugeridas de acuerdo con la información con la que cuenta FFC, en la opción manual el usuario puede modificarlas.')"><i class="btn btn-xs btn-default icon fa fa-question"></i></a>
+                                                            </div>
+                                                        </div>
+                                                    </th>
+                                                    <th id="ayudaT" class="hidden">
+                                                        Referencia
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>
+                                                        Tasa cartera nueva colocación
+                                                    </td>
+                                                    <td class="text-right">
+                                                        <input name="tasaNuevaColocacion" readonly id="tasaNuevaColocacion" class="text-right" style="width: 70px; border-style: none" value="@(Model.TasaNuevaColocacion)%" />
+                                                    </td>
+                                                    <td id="ayudaT1" class="hidden">
+                                                        @Model.PTasaNuevaColocacion%
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        Tasa de crédito cartera vigente
+                                                    </td>
+                                                    <td class="text-right">
+                                                        <input name="tasaCarteraVigente" readonly id="tasaCarteraVigente" class="text-right" style="width: 70px; border-style: none" value="@(Model.TasaCarteraVigente)%" />
+                                                    </td>
+                                                    <td id="ayudaT2" class="hidden">
+                                                        @Model.PTasaCarteraVigente%
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        Tasa por cartera vencida
+                                                    </td>
+                                                    <td class="text-right">
+                                                        <input name="tasaCarteraVencida" readonly id="tasaCarteraVencida" class="text-right" style="width: 70px; border-style: none" value="@(Model.TasaCarteraVencida)%" />
+                                                    </td>
+                                                    <td id="ayudaT3" class="hidden">
+                                                        @Model.PTasaCarteraVencida%
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        Tasa de inversiones
+                                                    </td>
+                                                    <td class="text-right">
+                                                        <input name="tasaInversiones" readonly id="tasaInversiones" class="text-right" style="width: 70px; border-style: none" value="@(Model.TasaInversiones)%" />
+                                                    </td>
+                                                    <td id="ayudaT4" class="hidden">
+                                                        @Model.PTasaInversiones%
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        Tasa captaciones
+                                                    </td>
+                                                    <td class="text-right">
+                                                        <input name="tasaCaptaciones" readonly id="tasaCaptaciones" class="text-right" style="width: 70px; border-style: none" value="@(Model.TasaCaptaciones)%" />
+                                                    </td>
+                                                    <td id="ayudaT5" class="hidden">
+                                                        @Model.PTasaCaptaciones%
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        Tasa obligaciones con entidades
+                                                    </td>
+                                                    <td class="text-right">
+                                                        <input name="tasaObligaciones" readonly id="tasaObligaciones" class="text-right" style="width: 70px; border-style: none" value="@(Model.TasaObligaciones)%" />
+                                                    </td>
+                                                    <td id="ayudaT6" class="hidden">
+                                                        @Model.PTasaObligaciones%
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="box box-primary">
+                                    <div class="box-body">
+                                        <div class="row">
+                                            <div class="col-xs-12">
+                                                <span id="found" class="label label-info"></span>
+                                                <div class="box-header with-border">
+                                                    <img width="50" height="50" src="@Session["Logo"]" />
+                                                    <h4 class="box-title">Crecimiento sugerido</h4>
+                                                </div>
+                                                <table id="tbCrecimiento" class="table table-striped table-bordered" style="width:100%; height: 350px">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="text-left">Tipo de crecimiento</th>
+                                                            <th class="text-center">
+                                                                <div class="row">
+                                                                    <div class="col-xs-5">
+                                                                        <select id="ddlCrecimiento" name="ddlCrecimiento" style="width:150px">
+                                                                            <option value="1" @(Model.ddlCrecimiento == "1" ? " selected" : "")>Referencia</option>
+                                                                            <option value="2" @(Model.ddlCrecimiento == "2" ? " selected" : "")>Manual</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="col-xs-1">
+                                                                        <a class="text-right" data-toggle="tooltip" data-placement="top" title="Ayuda"
+                                                                           href="javascript:help('Tipo de crecimiento', 'El usuario puede escoger entre sugerido o manual, el crecimiento sugerido le indica datos en cada línea calculados por FFC, la opción manual permite incluir la tasa anual en cada línea determinada por la entidad.')"><i class="btn btn-xs btn-default icon fa fa-question"></i></a>
+                                                                    </div>
+                                                                </div>
+                                                            </th>
+                                                            <th id="ayudaC" class="hidden">
+                                                                Referencia
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>
+                                                                Crecimiento de la cartera anual
+                                                            </td>
+                                                            <td class="text-right">
+                                                                <input name="CarteraAnual" readonly id="CarteraAnual" class="text-right" style="width: 70px; border-style: none" value="@Model.CarteraAnual%" />
+                                                            </td>
+                                                            <td id="ayudaC1" class="hidden">
+                                                                @Model.PCarteraAnual%
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                Crecimiento de captaciones anual
+                                                            </td>
+                                                            <td class="text-right">
+                                                                <input name="Captaciones" readonly id="Captaciones" class="text-right" style="width: 70px; border-style: none" value="@Model.Captaciones%" />
+                                                            </td>
+                                                            <td id="ayudaC2" class="hidden">
+                                                                @Model.PCaptaciones%
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                Crecimiento de capital anual
+                                                            </td>
+                                                            <td class="text-right">
+                                                                <input name="Capital" readonly id="Capital" class="text-right" style="width: 70px; border-style: none" value="@Model.Capital%" />
+                                                            </td>
+                                                            <td id="ayudaC3" class="hidden">
+                                                                @Model.PCapital%
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                Crecimiento del gasto administrativo anual
+                                                            </td>
+                                                            <td class="text-right">
+                                                                <input name="GastoAdmin" readonly id="GastoAdmin" class="text-right" style="width: 70px; border-style: none" value="@Model.GastoAdmin%" />
+                                                            </td>
+                                                            <td id="ayudaC4" class="hidden">
+                                                                @Model.PGastoAdmin%
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                Crecimiento anual del gasto por estimaciones
+                                                            </td>
+                                                            <td class="text-right">
+                                                                <input name="GastoEstimac" readonly id="GastoEstimac" class="text-right" style="width: 70px; border-style: none" value="@Model.GastoEstimac%" />
+                                                            </td>
+                                                            <td id="ayudaC5" class="hidden">
+                                                                @Model.PGastoEstimac%
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                Reservas voluntarias anuales
+                                                            </td>
+                                                            <td class="text-right">
+                                                                <input name="ReservaVoluntaria" id="ReservaVoluntaria" class="text-right" style="width: 70px; border-style: none" value="@Model.ReservaVoluntaria" />
+                                                            </td>
+                                                            <td>
+                                                                <a class="text-right" data-toggle="tooltip" data-placement="top" title="Ayuda"
+                                                                   href="javascript:help('Reserva Voluntaria', 'Se refiere al monto adicional que la entidad puede estimar en reservas de forma anual. Incluir el dato en millones')"><i class="btn btn-xs btn-default icon fa fa-question"></i></a>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                Ingreso por recuperación de incobrables
+                                                            </td>
+                                                            <td class="text-right">
+                                                                <input name="RecuperacionIncobrable" id="RecuperacionIncobrable" class="text-right" style="width: 70px; border-style: none" value="@Model.RecuperacionIncobrable" />
+                                                            </td>
+                                                            <td>
+                                                                <a class="text-right" data-toggle="tooltip" data-placement="top" title="Ayuda"
+                                                                   href="javascript:help('Ingreso por recuperación de incobrables', 'Se refiere al monto adicional que la entidad puede proyectar como ingresos adicionales en la recuperación de incobrables o estimaciones de forma anual. Incluir el dato en millones')"><i class="btn btn-xs btn-default icon fa fa-question"></i></a>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="box box-primary">
+                                    <div class="box-body">
+                                        <div class="row">
+                                            <div class="col-xs-12">
+                                                <div class="box-header with-border">
+                                                    <h5 style="color: #0B4E91" class="text-justify">Estimado usuario: Los supuestos mostrados son calculados de acuerdo con la metodología de FFC y se muestran como sugerencia, sin embargo, pueden ser cambiados en forma manual al dar click en la opción. Los seleccionados serán los utilizados en las proyecciones</h5>
+                                                    <br />
+                                                    <div class="text-center">
+                                                        <table>
+                                                            <tr>
+                                                                @if (Model.Generar || Model.proyeccion)
+                                                                {
+                                                                    <td>
+                                                                        <label class="btn btn-info">
+                                                                            Generar<input type="submit" id="btn_generar" value="Generar" name="command" style="display: none;">
+                                                                        </label>
+                                                                    </td>
+                                                                }
+                                                                <td style="padding-right:10px"></td>
+                                                                <td>
+                                                                    <label class="btn btn-success">
+                                                                        Guardar<input type="submit" value="Guardar" id="btn_guardar" name="command" style="display: none;">
+                                                                    </label>
+                                                                </td>
+                                                                <td style="padding-right:10px"></td>
+                                                                <td>
+                                                                    <label class="btn btn-danger">
+                                                                        Borrar<input id="BorrarConfirm" value="BorrarConfirm" style="display: none;">
+                                                                    </label>
+                                                                    <input type="submit" id="Borrar" value="Borrar" name="command" style="display: none;">
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                        <br />
+                                                    </div>
+                                                    <br />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="tab2C">
+                        <div class="box-body table-responsive">
+                            <div class="margin">
+                                @if (Session["TipoReporte3"] != null)
+                                {
+                                    <iframe src="~/Reportes/ReportView3.aspx" width="1500" height="1500" style="border:none"></iframe>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="tab3C">
+                        <div class="box-body table-responsive">
+                            <div class="margin">
+                                @if (Session["TipoReporte"] != null)
+                                {
+                                    <iframe src="~/Reportes/ReportView.aspx" width="1500" height="1400" style="border:none"></iframe>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="tab4C">
+                        <div class="box-body table-responsive">
+                            <div class="margin">
+                                @if (Session["TipoReporte4"] != null)
+                                {
+                                    <iframe src="~/Reportes/ReportView4.aspx" width="1500" height="1500" style="border:none"></iframe>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="tab5C">
+                        <div class="box-body table-responsive">
+                            <div class="margin">
+                                @if (Session["TipoReporte2"] != null)
+                                {
+                                    <iframe src="~/Reportes/ReportView2.aspx" width="1500" height="1500" style="border:none"></iframe>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="tab6C">
+                        <div class="box-body table-responsive">
+                            <div class="margin">
+                                <div class="box box-solid box-info">
+                                    <div class="row">
+                                        <div class="margin">
+                                            <br />
+                                            <div class="col-md-12">
+                                                <table id="tbRangos" class="table table-striped table-bordered" style="width:100%; height: 350px">
+                                                    <thead>
+                                                        <tr>
+                                                            <th colspan="7">
+                                                                <img width="50" height="50" src="@Session["Logo"]" />
+                                                            </th>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Periodo</th>
+                                                            <th>1</th>
+                                                            <th>2</th>
+                                                            <th>3</th>
+                                                            <th>4</th>
+                                                            <th>5</th>
+                                                            <th>7</th>
+                                                            <th>8</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody></tbody>
+                                                </table>
+                                                <div id="summary">
+                                                    <div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="box box-info">
+                                                    <div class="box-header with-border">
+                                                        <img width="50" height="50" src="@Session["Logo"]" />
+                                                        <h4 class="box-title">Mora Agrupada</h4>
+                                                    </div>
+                                                    <div class="box-body">
+                                                        @(Model.gMora)
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <table id="tbMora" class="table table-striped table-bordered" style="width:100%; height: 350px">
+                                                    <thead>
+                                                        <tr>
+                                                            <th colspan="8">
+                                                                <img width="50" height="50" src="@Session["Logo"]" />
+                                                                <h4 class="box-title">Proyección de Mora</h4>
+                                                            </th>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Periodo</th>
+                                                            <th>1</th>
+                                                            <th>2</th>
+                                                            <th>3</th>
+                                                            <th>4</th>
+                                                            <th>5</th>
+                                                            <th>7</th>
+                                                            <th>8</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody></tbody>
+                                                </table>
+                                                <div id="summary">
+                                                    <div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <br />
+                                                <table id="tbMora" class="table table-striped table-bordered" style="width:100%; height: 350px">
+                                                    <thead>
+                                                        <tr>
+                                                            <th colspan="8">
+                                                                <img width="50" height="50" src="@Session["Logo"]" />
+                                                                <h4 class="box-title">Porcentajes utilizados</h4>
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>Igual o menor a 30 días</td>
+                                                            <td>0%</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Igual o menor a 60 días</td>
+                                                            <td>7.5%</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Igual o menor a 90 días</td>
+                                                            <td>25%</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Igual o menor a 180 días</td>
+                                                            <td>50%</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Más de 180 días</td>
+                                                            <td>75%</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Cobro Judicial</td>
+                                                            <td>100%</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div class="col-md-9">
+                                                <table id="tbIndicadores" class="table table-striped table-bordered" style="width:100%; height: 350px">
+                                                    <thead>
+                                                        <tr>
+                                                            <th colspan="8">
+                                                                <img width="50" height="50" src="@Session["Logo"]" />
+                                                                <h4 class="box-title">Indicadores</h4>
+                                                            </th>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Periodo</th>
+                                                            <th>Estimación Sobre Cartera de Crédito / Cartera Mayor a 90 Días y CJ</th>
+                                                            <th>Mora / Cartera Total</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody></tbody>
+                                                </table>
+                                                <div id="summary">
+                                                    <div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <br />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="tab7C">
+                        <div class="box-body table-responsive">
+                            <div class="margin">
+                                <div class="box box-solid box-info">
+                                    <div class="row">
+                                        <div class="margin">
+                                            <br />
+                                            <div class="col-md-6">
+                                                <table id="tbGridIndicadores" class="table table-striped table-bordered" style="width:100%; height: 350px">
+                                                    <thead>
+                                                        <tr>
+                                                            <th colspan="4">
+                                                                <img width="50" height="50" src="@Session["Logo"]" />
+                                                            </th>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Indicador</th>
+                                                            <th>
+                                                                @(Session["Plazo"].ToString() == "1" ? @FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["FechaInicio"].ToString()).Date.ToString("MMMM yyyy"))
+                                                                                                          : "Diciembre " + (FGA.Utility.Utilitarios.ConvertirAFecha(Session["FechaInicio"].ToString()).Date.Year))
+                                                            </th>
+                                                            <th>
+                                                                @(Session["Plazo"].ToString() == "1" ? FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["FechaInicio"].ToString()).AddMonths(12).Date.ToString("MMMM yyyy"))
+                                                                                                          : "Diciembre " + (FGA.Utility.Utilitarios.ConvertirAFecha(Session["FechaInicio"].ToString()).Date.Year + 1))
+                                                            </th>
+                                                            <th @(@Session["Plazo"].ToString() == "1" ? "class=hidden" : "class=''")>Diciembre @(FGA.Utility.Utilitarios.ConvertirAFecha(Session["FechaInicio"].ToString()).Date.Year + 2) </th>
+                                                            <th @(@Session["Plazo"].ToString() == "1" ? "class=hidden" : "class=''")>Diciembre @(FGA.Utility.Utilitarios.ConvertirAFecha(Session["FechaInicio"].ToString()).Date.Year + 3) </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody></tbody>
+                                                </table>
+                                                <div id="summary">
+                                                    <div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="box box-info">
+                                                    <div class="box-header with-border">
+                                                        <img width="50" height="50" src="@Session["Logo"]" />
+                                                        <h4 class="box-title">Saldo y variación de la cartera de crédito proyectada</h4>
+                                                    </div>
+                                                    <div class="box-body">
+                                                        @(Model.gCartera)
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="box box-info">
+                                                    <div class="box-header with-border">
+                                                        <img width="50" height="50" src="@Session["Logo"]" />
+                                                        <h4 class="box-title">Saldo del activo productivo y pasivo con costo proyectado</h4>
+                                                    </div>
+                                                    <div class="box-body">
+                                                        @(Model.gActivo_pasivo)
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="box box-info">
+                                                    <div class="box-header with-border">
+                                                        <img width="50" height="50" src="@Session["Logo"]" />
+                                                        <h4 class="box-title">Saldo y variación interanual de las obligaciones con el público proyectado</h4>
+                                                    </div>
+                                                    <div class="box-body">
+                                                        @(Model.gObligacionPublico)
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="box box-info">
+                                                    <div class="box-header with-border">
+                                                        <img width="50" height="50" src="@Session["Logo"]" />
+                                                        <h4 class="box-title">Saldo y variación interanual del capital social</h4>
+                                                    </div>
+                                                    <div class="box-body">
+                                                        @(Model.gCapitalSocial)
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="box box-info">
+                                                    <div class="box-header with-border">
+                                                        <img width="50" height="50" src="@Session["Logo"]" />
+                                                        <h4 class="box-title">Comparativo de los resultados proyectados</h4>
+                                                    </div>
+                                                    <div class="box-body">
+                                                        @(Model.gIngreso_gasto)
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="box box-info">
+                                                    <div class="box-header with-border">
+                                                        <img width="50" height="50" src="@Session["Logo"]" />
+                                                        <h4 class="box-title">
+                                                            Indicador evaluación de rendimientos proyectado
+                                                        </h4>
+                                                    </div>
+                                                    <div class="box-body">
+                                                        @(Model.gGastoUtilidad)
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="box box-info">
+                                                    <div class="box-header with-border">
+                                                        <img width="50" height="50" src="@Session["Logo"]" />
+                                                        <h4 class="box-title">Indicador de eficiencia proyectado</h4>
+                                                    </div>
+                                                    <div class="box-body">
+                                                        @(Model.gUtilidadPatrimonio)
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</section>
+
+<div id="modalError" class="modal fade">
+    <div class="modal-dialog modal-fail">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="icon-box">
+                    <i class="material-icons"></i>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div style="margin-left:50px; margin-right: 50px;">
+                    <p id="lbl_mensajeError" class="text-center">@Model.mensaje</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger btn-block" data-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="modalExito" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="icon-box">
+                    <i class="material-icons"></i>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div style="margin-left:50px; margin-right: 50px;">
+                    <p id="lbl_mensajeExito" class="text-center">@Model.mensaje</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-success btn-block" data-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="defModal" tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <div class="box-header with-border">
+                    <h3 id="titulo" style="padding-bottom: 10px;" class="box-title"></h3>
+                </div>
+            </div>
+            <div class="modal-body">
+                <p class="text-justify" style="font-size: 14px" id="definicion">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    var option =  @Session["Plazo"].ToString()
+
+    function help(titulo, detalle) {
+        $('#titulo').html(titulo);
+        $('#definicion').html(detalle);
+        $('#defModal').modal('show');
+    }
+
+    $("#ddlPlazo").change(function () {
+        if ('@(Model.proyeccion.ToString().ToLower())' == 'true')
+            $('#btn_generar').trigger('click');
+    });
+
+    function refreshCrecimiento() {
+
+
+        if ($("#ddlCrecimiento").val() == '1') {
+
+            $("#CarteraAnual").val('@(Model.PCarteraAnual.ToString("N2") + '%')');
+            $("#Captaciones").val('@(Model.PCaptaciones.ToString("N2") + '%')');
+            $("#Capital").val('@(Model.PCapital.ToString("N2") + '%')');
+            $("#GastoAdmin").val('@(Model.PGastoAdmin.ToString("N2") + '%')');
+            $("#GastoEstimac").val('@(Model.PGastoEstimac.ToString("N2") + '%')');
+            $("#ReservaVoluntaria").val('@(Model.PReservaVoluntaria.ToString("N2"))');
+            $("#RecuperacionIncobrable").val('@(Model.PRecuperacionIncobrable.ToString("N2"))');
+
+            $("#CarteraAnual").prop('readonly', true);
+            $("#Captaciones").prop('readonly', true);
+            $("#Capital").prop('readonly', true);
+            $("#GastoAdmin").prop('readonly', true);
+            $("#GastoEstimac").prop('readonly', true);
+
+            $("#ayudaC").addClass('hidden');
+            $("#ayudaC1").addClass('hidden');
+            $("#ayudaC2").addClass('hidden');
+            $("#ayudaC3").addClass('hidden');
+            $("#ayudaC4").addClass('hidden');
+            $("#ayudaC5").addClass('hidden');
+        }
+        else {
+
+            $("#CarteraAnual").val('@(Model.CarteraAnual.ToString("N2") + '%')');
+            $("#Captaciones").val('@(Model.Captaciones.ToString("N2") + '%')');
+            $("#Capital").val('@(Model.Capital.ToString("N2") + '%')');
+            $("#GastoAdmin").val('@(Model.GastoAdmin.ToString("N2") + '%')');
+            $("#GastoEstimac").val('@(Model.GastoEstimac.ToString("N2") + '%')');
+            $("#ReservaVoluntaria").val('@(Model.ReservaVoluntaria.ToString("N2"))');
+            $("#RecuperacionIncobrable").val('@(Model.RecuperacionIncobrable.ToString("N2"))');
+
+            $("#ayudaC").removeClass('hidden');
+            $("#ayudaC1").removeClass('hidden');
+            $("#ayudaC2").removeClass('hidden');
+            $("#ayudaC3").removeClass('hidden');
+            $("#ayudaC4").removeClass('hidden');
+            $("#ayudaC5").removeClass('hidden');
+
+            $("#CarteraAnual").removeAttr('readonly');
+            $("#Captaciones").removeAttr('readonly');
+            $("#Capital").removeAttr('readonly');
+            $("#GastoAdmin").removeAttr('readonly');
+            $("#GastoEstimac").removeAttr('readonly');
+        }
+    }
+
+    function refreshTasa() {
+
+         if ($("#ddlTasa").val() == '1') {
+
+            $('#tasaNuevaColocacion').val('@(Model.PTasaNuevaColocacion.ToString("N2") + '%')');
+            $("#tasaCarteraVigente").val('@(Model.PTasaCarteraVigente.ToString("N2") + '%')');
+            $("#tasaCarteraVencida").val('@(Model.PTasaCarteraVencida.ToString("N2") + '%')');
+            $("#tasaInversiones").val('@(Model.PTasaInversiones.ToString("N2") + '%')');
+            $("#tasaCaptaciones").val('@(Model.PTasaCaptaciones.ToString("N2") + '%')');
+            $("#tasaObligaciones").val('@(Model.PTasaObligaciones.ToString("N2") + '%')');
+
+            $("#tasaNuevaColocacion").prop('readonly', true);
+            $("#tasaCarteraVigente").prop('readonly', true);
+            $("#tasaCarteraVencida").prop('readonly', true);
+            $("#tasaInversiones").prop('readonly', true);
+            $("#tasaCaptaciones").prop('readonly', true);
+            $("#tasaObligaciones").prop('readonly', true);
+
+            $("#ayudaT").addClass('hidden');
+            $("#ayudaT1").addClass('hidden');
+            $("#ayudaT2").addClass('hidden');
+            $("#ayudaT3").addClass('hidden');
+            $("#ayudaT4").addClass('hidden');
+            $("#ayudaT5").addClass('hidden');
+            $("#ayudaT6").addClass('hidden');
+        }
+         else {
+
+            $('#tasaNuevaColocacion').val('@(Model.TasaNuevaColocacion.ToString("N2") + '%')');
+            $("#tasaCarteraVigente").val('@(Model.TasaCarteraVigente.ToString("N2") + '%')');
+            $("#tasaCarteraVencida").val('@(Model.TasaCarteraVencida.ToString("N2") + '%')');
+            $("#tasaInversiones").val('@(Model.TasaInversiones.ToString("N2") + '%')');
+            $("#tasaCaptaciones").val('@(Model.TasaCaptaciones.ToString("N2") + '%')');
+            $("#tasaObligaciones").val('@(Model.TasaObligaciones.ToString("N2") + '%')');
+
+            $("#tasaNuevaColocacion").removeAttr('readonly');
+            $("#tasaCarteraVigente").removeAttr('readonly');
+            $("#tasaCarteraVencida").removeAttr('readonly');
+            $("#tasaInversiones").removeAttr('readonly');
+            $("#tasaCaptaciones").removeAttr('readonly');
+            $("#tasaObligaciones").removeAttr('readonly');
+
+            $("#ayudaT").removeClass('hidden');
+            $("#ayudaT1").removeClass('hidden');
+            $("#ayudaT2").removeClass('hidden');
+            $("#ayudaT3").removeClass('hidden');
+            $("#ayudaT4").removeClass('hidden');
+            $("#ayudaT5").removeClass('hidden');
+            $("#ayudaT6").removeClass('hidden');
+        }
+    }
+
+    $("#ddlTasa").change(function () {
+        refreshTasa();
+    })
+
+    $("#ddlCrecimiento").change(function () {
+        refreshCrecimiento();
+    })
+
+    @{
+        if (Model.AlertaProyeccion == 0)
+        {
+            <text>
+                $('#modalError').modal('show');
+            </text>
+        }
+    }
+
+    $("#BorrarConfirm").button().click(function () {
+        if (!confirm("Desea borrar los últimos supuestos guardados")) {
+            return false;
+        }
+        $("#Borrar").click();
+    })
+
+    var ControlerNameRole = "@Url.Content("~/ProyeccionEEFF")";
+
+    var table = $("#tbIndicadores").dataTable({
+        "bRetrieve": true,
+        "ordering": false,
+        "bProcessing": true,
+        "bPaginate": false,
+        "bFilter": false,
+        "bInfo": false,
+        "dom": 'lBfrtip',
+        "sAjaxSource": "@Url.Content("~/ProyeccionEEFF/GetIndicadores")",
+        "buttons": [
+                { extend: 'copyHtml5', exportOptions: { columns: ':visible' } }
+            ,{ extend: 'excelHtml5', exportOptions: { columns: ':visible' } }
+            ,{ extend: 'csvHtml5', exportOptions: { columns: ':visible' } }
+            ,{ extend: 'print', exportOptions: { columns: ':visible' } }
+            ,'colvis'
+            ],
+            "aoColumns": [
+                {}, {}, {}
+        ]
+    });
+
+    $("#tbRangos").dataTable({
+        "bRetrieve": true,
+        "ordering": false,
+        "bProcessing": true,
+        "bPaginate": false,
+        "bFilter": false,
+        "bInfo": false,
+        "dom": 'lBfrtip',
+        "sAjaxSource": "@Url.Content("~/ProyeccionEEFF/GetGrid")",
+        columnDefs: [
+            {
+            className: 'text-right', targets: [0, 1, 2, 3, 4, 5, 6, 7],
+            },
+        ],
+        "buttons": [
+                { extend: 'copyHtml5', exportOptions: { columns: ':visible' } }
+            ,{ extend: 'excelHtml5', exportOptions: { columns: ':visible' } }
+            ,{ extend: 'csvHtml5', exportOptions: { columns: ':visible' } }
+            ,{ extend: 'print', exportOptions: { columns: ':visible' } }
+            ,'colvis'
+            ],
+            "aoColumns": [
+                {}, {}, {}, {}, {}, {}, {}, {}
+        ]
+    });
+
+    $("#tbMora").dataTable({
+        "bRetrieve": true,
+        "ordering": false,
+        "bProcessing": true,
+        "bPaginate": false,
+        "bFilter": false,
+        "bInfo": false,
+        "dom": 'lBfrtip',
+        "sAjaxSource": "@Url.Content("~/ProyeccionEEFF/GetGridMora")",
+        columnDefs: [
+            {
+                className: 'text-right', targets: [0, 1, 2, 3, 4, 5, 6, 7],
+            },
+        ],
+        "buttons": [
+            { extend: 'copyHtml5', exportOptions: { columns: ':visible' } }
+        ,{ extend: 'excelHtml5', exportOptions: { columns: ':visible' } }
+        ,{ extend: 'csvHtml5', exportOptions: { columns: ':visible' } }
+        ,{ extend: 'print', exportOptions: { columns: ':visible' } }
+        ,'colvis'
+        ],
+        "aoColumns": [
+            {}, {}, {}, {}, {}, {}, {}, {}
+        ],
+    });
+
+    $("#tbGridIndicadores").dataTable({
+        "bRetrieve": true,
+        "ordering": false,
+        "bProcessing": true,
+        "bPaginate": false,
+        "bFilter": false,
+        "bInfo": false,
+        "dom": 'lBfrtip',
+        "sAjaxSource": "@Url.Content("~/ProyeccionEEFF/GetGridIndicadores")",
+        columnDefs: [
+            {
+                className: 'text-right', targets: [1, 2, 3, 4],
+                visible: option == 1 ? false : true, targets: [3, 4]
+            },
+        ],
+        "buttons": [
+            { extend: 'copyHtml5', exportOptions: { columns: ':visible' } }
+            ,{ extend: 'excelHtml5', exportOptions: { columns: ':visible' } }
+            ,{ extend: 'csvHtml5', exportOptions: { columns: ':visible' } }
+            ,{ extend: 'print', exportOptions: { columns: ':visible' } }
+        ,'colvis'
+        ],
+        "aoColumns": [
+            {}, {}, {}, {}, {}
+        ],
+    });
+
+    $(document).ready(function () {
+        var activeId;
+        $("li").click(function () {
+            activeId = this.id;
+            localStorage.setItem('activeTab', activeId);
+        });
+
+        activeId = localStorage.getItem('activeTab');
+        if ('@(Model.proyeccion.ToString().ToLower())' == 'true' && '@Model.AlertaProyeccion.ToString()' != '0') {
+            if (activeId) {
+                if (activeId == 'tab1')
+                    activeId = 'tab3'
+
+                $('#' + activeId).addClass("active");
+                $('#' + activeId + 'C').addClass("active");
+            }
+            else {
+                $('#tab3').addClass("active");
+                $('#tab3C').addClass("active");
+            }
+        }
+        else {
+            $('#tab1').addClass("active");
+            $('#tab1C').addClass("active");
+        }
+    });
+
+    function formatMillion() {
+        return this.value;
+    }
+
+    function formatPercent() {
+        return this.value + ' %';
+    }
+
+    refreshTasa();
+    refreshCrecimiento();
+</script>

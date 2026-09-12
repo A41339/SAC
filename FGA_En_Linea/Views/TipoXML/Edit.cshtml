@@ -1,0 +1,113 @@
+@model FGA.Models.EditTipoXML
+
+@{
+    ViewBag.Title = "Excepciones";
+    if (Ajax.IsThisAjaxRequest())
+    {
+        Layout = null;
+    }
+}
+
+@Html.StarkAjaxFormSubmiter("frmTipoXML", "tbTipoXML", true, "Acción ejecutada con éxito")
+ 
+@{
+    if (!Ajax.IsThisAjaxRequest())
+    {
+        <section class="content-header">
+            <h1>
+                Excepciones
+            </h1>
+        </section>
+    }
+}
+
+@using (Html.BeginForm("Edit", "TipoXML", FormMethod.Post, new { enctype = "multipart/form-data",id = "frmTipoXML"  }))
+{
+    @Html.AntiForgeryToken()
+
+        <!-- Main content -->
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box box-solid box-info">               
+                <div role="form">
+                    <div class="box-body">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.tipoXML.Nombre, new { @class = "" })
+                            @Html.EditorFor(model => model.tipoXML.Nombre)
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5">
+                                <div class="form-group">
+                                    <label>Entidades ligadas</label>
+                                    <select id="ligado" class="lst_item" name="lst_debe" multiple="multiple">
+                                        @foreach (FGA.Models.Entidad detalle in Model.ligada)
+                                        {
+                                            <option value="@detalle.Id">@detalle.Nombre</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <br />
+                                <input type="button" class="btn btn-primary btn_ctrl" id="right" value=">" />
+                                <br />
+                                <input type="button" class="btn btn-primary btn_ctrl" id="left" value="<" />
+
+                            </div>
+                            <div class="col-md-5">
+                                <div class="form-group">
+                                    <label>Entidades excluidas</label>
+                                    <select id="desligado" class="lst_item" name="lst_excluido" multiple="multiple">
+                                        @foreach (FGA.Models.Entidad detalle in Model.desLigada)
+                                        {
+                                            <option value="@detalle.Id">@detalle.Nombre</option>
+                                        } 
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </div><!-- /.box-body -->
+                    <div class="box-footer">
+                        @Html.ActionLink("Regresar", "Index", null, new { @class = "btn btn-primary" })
+                    </div>
+                </div>
+            </div>
+        </div>
+</section>
+
+}
+
+
+<script type="text/javascript">
+    $(function () {
+        function moveItems(origin, dest) {
+            var action = origin;
+            $(origin).find(':selected').each(function () {
+                $.ajax({
+                    async: true,
+                    type: "GET",
+                    dataType: "json",
+                    contentType: "application/json",
+                    url: '@Url.Action("Excepcion", "TipoXML")',
+                    data: {
+                        'idEntidad': $(this).val(),
+                        'idArchivo': @Model.tipoXML.Id,
+                        'idAction':  action
+                    }
+                });
+            });
+
+            $(origin).find(':selected').appendTo(dest);         
+        }
+
+        $('#left').click(function () {
+            moveItems('#desligado', '#ligado');
+        });
+
+        $('#right').on('click', function () {
+            moveItems('#ligado', '#desligado');
+        });
+    });
+</script>

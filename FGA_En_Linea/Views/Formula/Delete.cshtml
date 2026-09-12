@@ -1,0 +1,73 @@
+@model FGA.Models.Formulas
+
+@{
+    ViewBag.Title = "Está seguro de eliminar la fórmula?";
+    if (Ajax.IsThisAjaxRequest())
+    {
+        Layout = null;
+    }
+}
+
+@Html.StarkAjaxFormSubmiter("frmFormula", "tbFormula", true, "Acción ejecutada con éxito")
+
+@{
+    if (!Ajax.IsThisAjaxRequest())
+    {
+        <section class="content-header">
+            <h1>
+                Borrar una fórmula
+            </h1>
+        </section>
+    }
+}
+
+<section class="content">
+    <!-- Small boxes (Stat box) -->
+    <div class="row">
+        <div class="col-xs-12">
+
+            <div class="box box-solid box-info">
+                <div class="box-header">
+                    <h3 class="box-title">Detalles</h3>
+                </div><!-- /.box-header -->
+                <div class="box-body table-responsive">
+
+                    <div class="widget-sec">
+                        <div class="streaming-table">
+                            <table class="table table-striped table-bordered">
+                                <tr>
+                                    <td></td>
+                                    <td>@Html.DisplayFor(model => model.Id)</td>
+                                </tr>
+                                <tr>
+                                    <td>Nombre</td>
+                                    <td>@Html.Raw(Model.Nombre)</td>
+                                </tr>
+                                <tr>
+                                    <td>Fórmula</td>
+                                    <td>@Html.Raw(Model.Formula)</td>
+                                </tr>
+                                <tr>
+                                    <td>Porcentual/td>
+                                    <td>@Html.DisplayFor(model => model.Ind_Porcentaje)</td>
+                                </tr>
+                            </table>
+                            <div class="box-footer">
+
+                                @using (Html.BeginForm("Delete", "Formula", FormMethod.Post, new { id = "frmFormula" }))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    @Html.StarkInputButtion("Borrar", "submit", "btn btn-danger", "")
+                                    @Html.ActionLink("Regresar", "Index", null, new { @class = "btn btn-primary" })
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+

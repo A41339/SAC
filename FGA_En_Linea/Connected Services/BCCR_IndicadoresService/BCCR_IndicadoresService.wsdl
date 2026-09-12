@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="http://tempuri.org/" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" name="BCCR_IndicadoresService" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://tempuri.org/Imports">
+      <xsd:import schemaLocation="http://10.171.1.28/DBService/BCCR_IndicadoresService.svc?xsd=xsd0" namespace="http://tempuri.org/" />
+      <xsd:import schemaLocation="http://10.171.1.28/DBService/BCCR_IndicadoresService.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import schemaLocation="http://10.171.1.28/DBService/BCCR_IndicadoresService.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/FGA.Models" />
+      <xsd:import schemaLocation="http://10.171.1.28/DBService/BCCR_IndicadoresService.svc?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/Concrete" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="IBCCR_IndicadoresService_GetAll_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetAll" />
+  </wsdl:message>
+  <wsdl:message name="IBCCR_IndicadoresService_GetAll_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetAllResponse" />
+  </wsdl:message>
+  <wsdl:message name="IBCCR_IndicadoresService_Get_InputMessage">
+    <wsdl:part name="parameters" element="tns:Get" />
+  </wsdl:message>
+  <wsdl:message name="IBCCR_IndicadoresService_Get_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetResponse" />
+  </wsdl:message>
+  <wsdl:message name="IBCCR_IndicadoresService_GetByType_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetByType" />
+  </wsdl:message>
+  <wsdl:message name="IBCCR_IndicadoresService_GetByType_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetByTypeResponse" />
+  </wsdl:message>
+  <wsdl:message name="IBCCR_IndicadoresService_Add_InputMessage">
+    <wsdl:part name="parameters" element="tns:Add" />
+  </wsdl:message>
+  <wsdl:message name="IBCCR_IndicadoresService_Add_OutputMessage">
+    <wsdl:part name="parameters" element="tns:AddResponse" />
+  </wsdl:message>
+  <wsdl:message name="IBCCR_IndicadoresService_Update_InputMessage">
+    <wsdl:part name="parameters" element="tns:Update" />
+  </wsdl:message>
+  <wsdl:message name="IBCCR_IndicadoresService_Update_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateResponse" />
+  </wsdl:message>
+  <wsdl:message name="IBCCR_IndicadoresService_Delete_InputMessage">
+    <wsdl:part name="parameters" element="tns:Delete" />
+  </wsdl:message>
+  <wsdl:message name="IBCCR_IndicadoresService_Delete_OutputMessage">
+    <wsdl:part name="parameters" element="tns:DeleteResponse" />
+  </wsdl:message>
+  <wsdl:message name="IBCCR_IndicadoresService_GetUltimosValoresPorIndicador_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetUltimosValoresPorIndicador" />
+  </wsdl:message>
+  <wsdl:message name="IBCCR_IndicadoresService_GetUltimosValoresPorIndicador_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetUltimosValoresPorIndicadorResponse" />
+  </wsdl:message>
+  <wsdl:portType name="IBCCR_IndicadoresService">
+    <wsdl:operation name="GetAll">
+      <wsdl:input wsaw:Action="http://tempuri.org/IBCCR_IndicadoresService/GetAll" message="tns:IBCCR_IndicadoresService_GetAll_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IBCCR_IndicadoresService/GetAllResponse" message="tns:IBCCR_IndicadoresService_GetAll_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Get">
+      <wsdl:input wsaw:Action="http://tempuri.org/IBCCR_IndicadoresService/Get" message="tns:IBCCR_IndicadoresService_Get_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IBCCR_IndicadoresService/GetResponse" message="tns:IBCCR_IndicadoresService_Get_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetByType">
+      <wsdl:input wsaw:Action="http://tempuri.org/IBCCR_IndicadoresService/GetByType" message="tns:IBCCR_IndicadoresService_GetByType_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IBCCR_IndicadoresService/GetByTypeResponse" message="tns:IBCCR_IndicadoresService_GetByType_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Add">
+      <wsdl:input wsaw:Action="http://tempuri.org/IBCCR_IndicadoresService/Add" message="tns:IBCCR_IndicadoresService_Add_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IBCCR_IndicadoresService/AddResponse" message="tns:IBCCR_IndicadoresService_Add_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Update">
+      <wsdl:input wsaw:Action="http://tempuri.org/IBCCR_IndicadoresService/Update" message="tns:IBCCR_IndicadoresService_Update_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IBCCR_IndicadoresService/UpdateResponse" message="tns:IBCCR_IndicadoresService_Update_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Delete">
+      <wsdl:input wsaw:Action="http://tempuri.org/IBCCR_IndicadoresService/Delete" message="tns:IBCCR_IndicadoresService_Delete_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IBCCR_IndicadoresService/DeleteResponse" message="tns:IBCCR_IndicadoresService_Delete_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetUltimosValoresPorIndicador">
+      <wsdl:input wsaw:Action="http://tempuri.org/IBCCR_IndicadoresService/GetUltimosValoresPorIndicador" message="tns:IBCCR_IndicadoresService_GetUltimosValoresPorIndicador_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IBCCR_IndicadoresService/GetUltimosValoresPorIndicadorResponse" message="tns:IBCCR_IndicadoresService_GetUltimosValoresPorIndicador_OutputMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="BasicHttpBinding_IBCCR_IndicadoresService" type="tns:IBCCR_IndicadoresService">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="GetAll">
+      <soap:operation soapAction="http://tempuri.org/IBCCR_IndicadoresService/GetAll" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Get">
+      <soap:operation soapAction="http://tempuri.org/IBCCR_IndicadoresService/Get" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetByType">
+      <soap:operation soapAction="http://tempuri.org/IBCCR_IndicadoresService/GetByType" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Add">
+      <soap:operation soapAction="http://tempuri.org/IBCCR_IndicadoresService/Add" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Update">
+      <soap:operation soapAction="http://tempuri.org/IBCCR_IndicadoresService/Update" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Delete">
+      <soap:operation soapAction="http://tempuri.org/IBCCR_IndicadoresService/Delete" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetUltimosValoresPorIndicador">
+      <soap:operation soapAction="http://tempuri.org/IBCCR_IndicadoresService/GetUltimosValoresPorIndicador" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="BCCR_IndicadoresService">
+    <wsdl:port name="BasicHttpBinding_IBCCR_IndicadoresService" binding="tns:BasicHttpBinding_IBCCR_IndicadoresService">
+      <soap:address location="http://10.171.1.28/DBService/BCCR_IndicadoresService.svc" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

@@ -1,0 +1,121 @@
+﻿@{
+    ViewBag.Title = "Notificaciones";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<section class="content-header">
+    <h1>
+        Notificaciones
+    </h1>
+</section>
+<section class="content">   
+    <div class="modal-content">
+        <div class="box box-primary">
+            <div class="box-header with-border">
+                <a data-toggle="tooltip" data-placement="top"><i class="btn btn-md btn-warning icon fa fa-warning"></i></a>
+                <h3 class="box-title">Incluya los datos de la notificación</h3>
+            </div>
+            <div class="box-body">
+                <div class="form-group">
+                    <label>Asunto:</label>
+                    <input class="form-control" id="lbl_asunto" placeholder="Asunto:">
+                </div>
+                <div class="form-group">
+                    @Html.TextArea("compose-textarea", "", new { @id = "compose-textarea", @class = "form-control", @style = "height: 200px;" })
+                </div>
+            </div>
+            <div class="box-footer">
+                <div class="pull-right">
+                    <a href="javascript:EnviarNotificacion();" class="btn btn-primary"><i class="fa fa-envelope-o"></i> Enviar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div id="modalError" class="modal fade">
+    <div class="modal-dialog modal-fail">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="icon-box">
+                    <i class="material-icons"></i>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div style="margin-left:50px; margin-right: 50px;">
+                    <p id="lbl_mensajeError" class="text-center">Ha ocurrido un error.</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger btn-block" data-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modalSuccess" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="icon-box">
+                    <i class="material-icons"></i>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div style="margin-left:50px; margin-right: 50px;">
+                    <p id="lbl_mensajeExito" class="text-center"></p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-success btn-block" data-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section ScriptsOrCss
+{
+    <script src="~/Content/theme/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
+}
+
+<script type="text/javascript">
+
+    $("#compose-textarea").wysihtml5();
+      
+    function EnviarNotificacion() {
+
+        var destinatarios = '';
+        var asunto = $('#lbl_asunto').val();
+        var texto = $('#compose-textarea').val();
+        var idEntidad = '';
+  
+        $.ajax({
+            url: '@Url.Action("EnviarNotificacion", "Explorer")',
+            type: 'POST',
+            cache: false,
+            async: false,
+            data: {
+                'idEntidad': idEntidad,
+                'asunto': asunto,
+                'texto': texto,
+                'destinatarios': destinatarios
+            },
+            success: function (data) {
+                var result = data.resultado.exito;
+                if (result == false) {
+                    $("#lbl_mensajeError").html(data.resultado.mensaje);
+                    $("#modalError").modal('show');
+                }
+                else {
+                    $("#lbl_mensajeExito").html(data.resultado.mensaje);
+                    $("#modalSuccess").modal('show');
+                    $('#confirmModal').modal('hide');
+                }
+            },
+            error: function (data) {
+                $("#modalError").modal('show');
+            }
+        });
+    }
+    
+</script>

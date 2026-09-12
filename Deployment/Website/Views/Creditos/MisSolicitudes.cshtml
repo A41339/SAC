@@ -1,0 +1,94 @@
+@model FGA.Models.Creditos_Solicitudes[]
+
+@{
+    ViewBag.Title = "Mis Solicitudes de Cr&eacute;dito";
+}
+
+@section ScriptsOrCss {
+    <link href="~/Content/Creditos_Marketplace.css" rel="stylesheet" />
+}
+
+<div class="credit-marketplace-container">
+    <div class="row">
+        <div class="col-md-12">
+            <h2 class="animate-fade-in" style="color: #0B4E91; font-weight: 700; margin-bottom: 25px;">
+                <i class="fa fa-paper-plane"></i> Mis Solicitudes de Cr&eacute;dito
+            </h2>
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success animate-fade-in">
+            <i class="fa fa-check-circle"></i> @TempData["Success"]
+        </div>
+    }
+
+    <div class="row animate-fade-in" style="animation-delay: 0.1s">
+        <div class="col-md-12">
+            <div class="credit-card">
+                <div class="credit-card-body">
+                    <table class="credit-table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Entidad Oferente</th>
+                                <th>Monto Solicitado</th>
+                                <th>Fecha</th>
+                                <th>Estado</th>
+                                <th class="text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var sol in Model)
+                            {
+                                <tr>
+                                    <td style="font-weight: 600;">@sol.Oferta.EntidadOferente.Nombre</td>
+                                    <td>
+                                        <span style="color: #0B4E91; font-weight: 700;">@sol.Mon_MontoSolicitado.ToString("N2") @sol.Oferta.Moneda.Nombre</span>
+                                    </td>
+                                    <td>@sol.Fec_Solicitud.ToString("g")</td>
+                                    <td>
+                                        @{
+                                            string badgeClass = "badge-pending";
+                                            if (sol.EstadoSolicitud_Id == 2) { badgeClass = "badge-success"; }
+                                            if (sol.EstadoSolicitud_Id == 3) { badgeClass = "badge-danger"; }
+                                            if (sol.EstadoSolicitud_Id == 4) { badgeClass = "badge-active"; }
+                                        }
+                                        <span class="badge badge-premium @badgeClass">@sol.EstadoSolicitud.Descripcion</span>
+                                    </td>
+                                    <td class="text-center">
+                                        @if (sol.EstadoSolicitud_Id == 2) // Aprobada, lista para formalización
+                                        {
+                                            <a href="@Url.Action("Formalizar", new { id = sol.Id })" class="btn btn-sm btn-premium" style="border-radius: 15px; padding: 5px 15px;">
+                                                <i class="fa fa-file-text"></i> Formalizar
+                                            </a>
+                                        }
+                                        else if (sol.EstadoSolicitud_Id == 4) // En formalización
+                                        {
+                                            <a href="@Url.Action("VerDocumentos", new { id = sol.Id })" class="btn btn-sm btn-default" style="border-radius: 15px; padding: 5px 15px;">
+                                                <i class="fa fa-folder-open"></i> Ver Documentos
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted" style="font-size: 11px;">N/A</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    
+                    @if (Model.Length == 0)
+                    {
+                        <div class="text-center" style="padding: 40px;">
+                            <i class="fa fa-info-circle fa-3x" style="color: #ddd; margin-bottom: 15px;"></i>
+                            <p class="text-muted">A&uacute;n no ha realizado ninguna solicitud de cr&eacute;dito.</p>
+                            <a href="@Url.Action("Index")" class="btn btn-premium">Explorar Ofertas</a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

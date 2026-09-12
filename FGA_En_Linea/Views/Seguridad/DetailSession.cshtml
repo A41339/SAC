@@ -1,0 +1,57 @@
+﻿@model IEnumerable<Entities.Entities.Procedures.FGA_Consultar_Sessiones_Result>
+
+<div id="dialog"></div>
+<table id="tbRole" class="table table-striped table-bordered">
+    <thead>
+        <tr>
+            <th class="hidden"> Id  </th>
+            <th style="text-align: center;" colspan="2"> Entidad  </th>
+            <th class="mobile" style="text-align: center;">Periodo</th>
+            <th style="text-align: center;"> Usuario carga </th>
+            <th style="text-align: center;"> Usuario administrador </th>
+            <th class="mobile" style="text-align: center;"> Usuario maestro </th>
+            <th class="mobile" style="text-align: center;"> Usuario director </th>
+            <th class="mobile" style="text-align: center;"> Total de ingresos </th>
+        </tr>
+    </thead>
+    <tbody style="font-size: 12px;">
+        @if (Model != null)
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td class="hidden">
+                        @Html.HiddenFor(modelItem => item.IDENTIDAD)
+                    </td>
+                    <td style="text-align: center; background-color: white;">
+                        @{
+                            string ruta = Url.Content("~/Content/images/" + @item.NOMBRE + ".jpg");
+                            <img width="40" height="40" src="@ruta" />
+                        }
+                    </td>
+                    <td style="text-align: center;">
+                        <label>@Html.DisplayFor(modelItem => item.NOMBRE)</label>
+                    </td>
+                    <td class="mobile" style="text-align: center;">
+                        <label>@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Fecha"].ToString()).ToString("MMMM-yy"))</label>
+                    </td>
+                    <td style="text-align: center;">
+                        <label>@(item.Usuario_Carga == 0 ? "" : item.Usuario_Carga.Value.ToString())</label>
+                    </td>
+                    <td style="text-align: center;">
+                        <label>@(item.Usuario_Administrador == 0 ? "" : item.Usuario_Administrador.Value.ToString())</label>
+                    </td>
+                    <td style="text-align: center;">
+                        <label>@(item.Usuario_Maestro == 0 ? "" : item.Usuario_Maestro.Value.ToString())</label>
+                    </td>
+                    <td style="text-align: center;">
+                        <label>@(item.Usuario_Director == 0 ? "" : item.Usuario_Director.Value.ToString())</label>
+                    </td>
+                    <td style="text-align: center;">
+                        <label>@item.Total_Ingresos</label>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

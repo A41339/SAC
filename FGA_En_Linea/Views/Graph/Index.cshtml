@@ -1,0 +1,165 @@
+﻿@model DotNet.Highcharts.Highcharts
+
+@{
+    ViewBag.Title = "Composición de cartera";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section ScriptsOrCss
+{
+    <script src="https://github.highcharts.com/hc5-fixes/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/series-label.js"></script>
+       <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://highcharts.github.io/export-csv/export-csv.js"></script>
+    <script src="https://github.highcharts.com/hc5-fixes/highcharts-3d.js"></script>
+}
+
+<section class="content-header">
+    <h1>
+        Composición de la cartera
+    </h1>
+</section>
+
+<section class="content">
+    @using (Html.BeginForm("LoadBuscar", "Graph", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmInforme" }))
+    {
+        @Html.AntiForgeryToken()
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box box-solid box-info">
+                    <div class="box-body table-responsive">
+                        <div class="margin">
+                            <div class="streaming-table">
+                                <span id="found" class="label label-info"></span>
+                                <table class="table table-condensed table-striped">
+                                    <tr>
+                                        <td class="mobile">
+                                            @Html.Label("Entidad:")
+                                        </td>
+                                        <td>
+                                            @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", style = "width: 200px;" })
+                                        </td>
+                                        <td class="mobile">
+                                            @Html.Label("Gráfico:")
+                                        </td>
+                                        <td>
+                                            @Html.DropDownList("Grafico", null, new { @id = "Grafico", style = "width: 200px;" })
+                                        </td>
+                                        <td>
+                                            <label class="btn btn-facebook">
+                                                Generar<input type="submit" name="submit" style="display: none;">
+                                            </label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="mobile">
+                                            @Html.Label("Inicial:")
+                                        </td>
+                                        <td nowrap="nowrap" class="form-group">
+                                            <input name="PeriodoI" id="PeriodoI" class="datecontrol" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MM/yyyy")" />
+                                        </td>
+                                        <td class="mobile">
+                                            @Html.Label("Final:")
+                                        </td>
+                                        <td nowrap="nowrap" class="form-group">
+                                            <input name="PeriodoF" id="PeriodoF" class="datecontrol" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MM/yyyy")" />
+                                        </td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td id="lbl_categoria" class="mobile hidden">
+                                            @Html.Label("Categorías:")
+                                        </td>
+                                        <td id="cmb_categoria" class="hidden">
+                                            @Html.DropDownList("CategoriaRiesgo", null, new { @id = "IdCategoria", style = "width: 200px;", @class = "form-control select2", @multiple = "multiple", @placeholder = "Seleccione las opciones" })
+                                        </td>
+                                        <td id="lbl_tipoCartera" class="mobile hidden">
+                                            @Html.Label("Tipos de Cartera:")
+                                        </td>
+                                        <td id="cmb_tipoCartera" class="hidden">
+                                            @Html.DropDownList("TipoCartera", null, new { @id = "IdTipoCartera", style = "width: 200px;", @class = "form-control select2", @multiple = "multiple", @placeholder = "Seleccione las opciones" })
+                                        </td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box box-warning direct-chat direct-chat-primary">
+                <div class="box-header with-border">
+                    <img width="50" height="50" src="@Session["Logo"]" />
+                    <h3 id="entidad" style="padding-bottom: 10px;" class="box-title"></h3>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="box box-solid">
+                            <div class="box-body table-responsive">
+                                <div id="container" style="width: 100%; height: 400px">
+                                    @(Model)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script type="text/javascript">
+
+    $("#entidad").text($("#Grafico :selected").text());
+
+    $("#Grafico").change(function () {
+        if ($("#Grafico").val() == 3) {
+            $("#cmb_categoria").removeClass("hidden");
+            $("#lbl_categoria").removeClass("hidden");
+            $("#lbl_tipoCartera").addClass("hidden");
+            $("#cmb_tipoCartera").addClass("hidden");
+            $(".select2").select2();
+        }
+        else if ($("#Grafico").val() == 7) {
+            $("#cmb_tipoCartera").removeClass("hidden");
+            $("#lbl_tipoCartera").removeClass("hidden");
+            $("#lbl_categoria").addClass("hidden");
+            $("#cmb_categoria").addClass("hidden");
+            $(".select2").select2();
+        }
+        else {
+            $("#lbl_categoria").addClass("hidden");
+            $("#cmb_categoria").addClass("hidden");
+            $("#lbl_tipoCartera").addClass("hidden");
+            $("#cmb_tipoCartera").addClass("hidden");
+        }
+    });
+
+    if ($("#Grafico").val() == 3) {
+        $("#cmb_categoria").removeClass("hidden");
+        $("#lbl_categoria").removeClass("hidden");
+        $(".select2").select2();
+    }
+    else if ($("#Grafico").val() == 7) {
+        $("#cmb_tipoCartera").removeClass("hidden");
+        $("#lbl_tipoCartera").removeClass("hidden");
+        $(".select2").select2();
+    }
+
+
+    function formatMillion() {
+        $("#entidad").text($("#Grafico :selected").text() + " en Millones");
+        return this.value;
+    }
+
+    function formatPercent() {
+        return this.value + " %";
+    }
+</script>
+

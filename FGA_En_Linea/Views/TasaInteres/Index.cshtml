@@ -1,0 +1,291 @@
+﻿@model FGA.Model.Modelo_Tasas
+
+@{
+    ViewBag.Title = "Tasa de interés";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="content-header">
+    <h1>
+        Tasas
+    </h1>
+</section>
+
+<section class="content">
+    @using (Html.BeginForm("Buscar", "TasaInteres", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmTasaInteres" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box box-solid box-info">
+                    <div class="box-body table-responsive">
+                        <div class="margin">
+                            <div class="streaming-table">
+                                <span id="found" class="label label-info"></span>
+                                <table class="table table-condensed table-striped table-bordered">
+                                    <tr>
+                                        <td class="mobile">
+                                            @Html.Label("Entidad:")
+                                        </td>
+                                        <td>
+                                            @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", style = "width: 200px;" })
+                                        </td>
+                                        <td class="mobile">
+                                            @Html.Label("Opción:")
+                                        </td>
+                                        <td nowrap="nowrap">
+                                            @Html.DropDownList("Opcion", new List<SelectListItem> {  new SelectListItem { Value = "0", Text = "CONSOLIDADA" },
+                                                                                                    new SelectListItem { Value = "1", Text = "COLONES" },
+                                                                                                    new SelectListItem { Value = "2", Text = "DÓLARES" },
+                                                                                                 }, new { @id = "Opcion", style = "width: 200px;" })
+                                        </td>
+                                        <td>
+                                            <label class="btn btn-facebook">
+                                                Generar<input type="submit" name="submit" style="display: none;">
+                                            </label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="mobile">
+                                            @Html.Label("Inicial:")
+                                        </td>
+                                        <td nowrap="nowrap">
+                                            <input name="PeriodoI" id="PeriodoI" class="datecontrol" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MM/yyyy")" />
+                                        </td>
+                                        <td class="mobile">
+                                            @Html.Label("Final:")
+                                        </td>
+                                        <td nowrap="nowrap">
+                                            <input name="PeriodoF" id="PeriodoF" class="datecontrol" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MM/yyyy")" />
+                                        </td>
+                                        <td></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="box box-solid box-info">
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a href="#tab_3" data-toggle="tab">Diferencial de Tasas</a></li>
+                            <li><a href="#tab_1" data-toggle="tab">Tasa Activa</a></li>
+                            <li><a href="#tab_2" data-toggle="tab">Tasa Pasiva</a></li>
+                            <li><a href="#tab_4" data-toggle="tab">Ponderada</a></li>
+                            <li><a href="#tab_5" data-toggle="tab">Ponderada por segmento</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="tab-pane" id="tab_1">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="col-md-12">
+                                            <div class="box-header with-border">
+                                                <img width="50" height="50" src="@Session["Logo"]" />
+                                                <h4 class="box-title">Tasa activa</h4>
+                                                <a class="text-right" data-toggle="tooltip" data-placement="top" href="javascript:mTasaActiva()"><i class="btn btn-xs btn-info icon fa fa-line-chart"></i></a>
+                                            </div>
+                                            <div class="box-body">
+                                                @(Model.tasaActiva)
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="tab_2">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="col-md-12">
+                                            <div class="box-header with-border">
+                                                <img width="50" height="50" src="@Session["Logo"]" />
+                                                <h3 class="box-title">Tasa pasiva</h3>
+                                                <a class="text-right" data-toggle="tooltip" data-placement="top" href="javascript:mTasaPasiva()"><i class="btn btn-xs btn-info icon fa fa-line-chart"></i></a>
+                                            </div>
+                                            <div class="box-body">
+                                                @(Model.tasaPasiva)
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane  active" id="tab_3">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="col-md-12">
+                                            <div class="box-header with-border">
+                                                <img width="50" height="50" src="@Session["Logo"]" />
+                                                <h3 class="box-title">Diferencial de tasas</h3>
+                                                <a class="text-right" data-toggle="tooltip" data-placement="top" href="javascript:mDiferencialTasas()"><i class="btn btn-xs btn-info icon fa fa-line-chart"></i></a>
+                                            </div>
+                                            <div class="box-body">
+                                                @(Model.diferencialTasas)
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="tab_4">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="col-md-12">
+                                            <div class="box-header with-border">
+                                                <img width="50" height="50" src="@Session["Logo"]" />
+                                                <h3 class="box-title">Tasa ponderada</h3>
+                                                <a class="text-right" data-toggle="tooltip" data-placement="top" href="javascript:mTasaPonderada()"><i class="btn btn-xs btn-info icon fa fa-line-chart"></i></a>
+                                            </div>
+                                            <div class="box-body">
+                                                @(Model.tasaPonderada)
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="tab_5">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="col-md-12">
+                                            <div class="box-header with-border">
+                                                <img width="50" height="50" src="@Session["Logo"]" />
+                                                <h3 class="box-title">Tasa ponderada por segmento</h3>
+                                                <a class="text-right" data-toggle="tooltip" data-placement="top" href="javascript:mTasaPonderadaSegmento()"><i class="btn btn-xs btn-info icon fa fa-line-chart"></i></a>
+                                            </div>
+                                            <div class="box-body">
+                                                @(Model.tasaPonderadaSegmento)
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</section>
+
+<div class="modal fade" id="mTasaActiva" tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="box-header with-border">
+                    <img width="50" height="50" src="@Session["Logo"]" />
+                    <h3 id="pEntidad1" style="padding-bottom: 10px;" class="box-title">Tasa activa</h3>
+                </div>
+            </div>
+            <div class="modal-body">
+                @(Model.pTasaActiva)
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mTasaPasiva" tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="box-header with-border">
+                    <img width="50" height="50" src="@Session["Logo"]" />
+                    <h3 id="pEntidad2" style="padding-bottom: 10px;" class="box-title">Tasa pasiva</h3>
+                </div>
+            </div>
+            <div class="modal-body">
+                @(Model.pTasaPasiva)
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mDiferencialTasas" tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="box-header with-border">
+                    <img width="50" height="50" src="@Session["Logo"]" />
+                    <h3 id="pEntidad3" style="padding-bottom: 10px;" class="box-title">Diferencial de tasas</h3>
+                </div>
+            </div>
+            <div class="modal-body">
+                @(Model.pDiferencialTasas)
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mTasaPonderada" tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="box-header with-border">
+                    <img width="50" height="50" src="@Session["Logo"]" />
+                    <h3 id="pEntidad4" style="padding-bottom: 10px;" class="box-title">Tasa ponderada</h3>
+                </div>
+            </div>
+            <div class="modal-body">
+                @(Model.pTasaPonderada)
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mTasaPonderadaSegmento" tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="box-header with-border">
+                    <img width="50" height="50" src="@Session["Logo"]" />
+                    <h3 id="pEntidad5" style="padding-bottom: 10px;" class="box-title">Tasa ponderada por segmento</h3>
+                </div>
+            </div>
+            <div class="modal-body">
+                @(Model.pTasaPonderadaSegmento)
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    function mTasaActiva() {
+        $('#mTasaActiva').modal('show');
+    }
+
+    function mTasaPasiva() {
+        $('#mTasaPasiva').modal('show');
+    }
+
+    function mDiferencialTasas() {
+        $('#mDiferencialTasas').modal('show');
+    }
+
+    function mTasaPonderada() {
+        $('#mTasaPonderada').modal('show');
+    }
+
+    function mTasaPonderadaSegmento() {
+        $('#mTasaPonderadaSegmento').modal('show');
+    }
+
+    function formatMillion() {
+        return this.value;
+    }
+
+    function formatPercent() {
+        return this.value + ' %';
+    }
+</script>

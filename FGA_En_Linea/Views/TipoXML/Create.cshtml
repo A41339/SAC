@@ -1,0 +1,56 @@
+@model FGA.Models.TipoXML
+
+@{
+    ViewBag.Title = "Crear";
+    if (Ajax.IsThisAjaxRequest())
+    {
+        Layout = null;
+    }
+}
+
+@Html.StarkAjaxFormSubmiter("frmTipoXML", "tbTipoXML", true, "Acción ejecutada con éxito")
+
+@{
+    if (!Ajax.IsThisAjaxRequest())
+    {
+        <section class="content-header">
+            <h1>
+                Creación de un Tipo de XML
+            </h1>
+        </section>
+    }
+}
+
+@using (Html.BeginForm("Create", "TipoXML", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmTipoXML" }))
+{
+    @Html.AntiForgeryToken()
+    <!-- Main content -->
+    <section class="content">
+        <!-- Small boxes(Stat box) -->
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box box-solid box-info">
+                    <div role="form">
+                        <div class="box-body">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Id, new { @class = "" })
+                                @Html.EditorFor(model => model.Id)
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Nombre, new { @class = "" })
+                                @Html.EditorFor(model => model.Nombre)
+                            </div>
+                            <div class="box-footer">
+                                @Html.StarkInputButtion("Guardar", "submit", "btn btn-primary", "")
+                                @Html.ActionLink("Regresar", "Index", null, new { @class = "btn btn-primary" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+}
+
+
