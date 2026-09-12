@@ -2,22 +2,24 @@
 
 <script src="https://code.highcharts.com/highcharts.js"></script>
 
-@functions {
-    public static string FormatVal(decimal[] arr, int idx, string fmt = "N2", string suffix = "") {
+@{
+    var modelData = Model ?? new FGA.Models.Dashboard();
+
+    Func<decimal[], int, string, string, string> FormatVal = (arr, idx, fmt, suffix) => {
         if (arr != null && arr.Length > idx) {
             return arr[idx].ToString(fmt) + suffix;
         }
         return "0" + suffix;
-    }
+    };
 
-    public static decimal GetVal(decimal[] arr, int idx) {
+    Func<decimal[], decimal> GetVal = (arr, idx) => {
         if (arr != null && arr.Length > idx) {
             return arr[idx];
         }
         return 0;
-    }
+    };
 
-    public static string TrendClass(decimal curr, decimal prev, bool lowerIsBetter = false) {
+    Func<decimal, decimal, bool, string> TrendClass = (curr, prev, lowerIsBetter) => {
         if (curr == prev) return "fa fa-arrow-right";
         bool up = curr > prev;
         if (lowerIsBetter) {
@@ -25,11 +27,7 @@
         } else {
             return up ? "fa fa-arrow-up trend-arrow-up" : "fa fa-arrow-down trend-arrow-down";
         }
-    }
-}
-
-@{
-    var modelData = Model ?? new FGA.Models.Dashboard();
+    };
 
     decimal suficienciaVal = GetVal(modelData.Suficiencia, 1);
     decimal suficienciaPrev = GetVal(modelData.Suficiencia, 0);
@@ -72,7 +70,10 @@
         
         <!-- KPI 1: Suficiencia Patrimonial -->
         <div class="modern-kpi-card">
-            <div class="kpi-title">Suficiencia Patrimonial</div>
+            <div class="kpi-title">
+                <span>Suficiencia Patrimonial</span>
+                <a href="javascript:getGraph('C1')" style="margin-left:auto; color:#94a3b8;"><i class="fa fa-line-chart"></i></a>
+            </div>
             <div class="kpi-value-row">
                 <div class="kpi-big-num">@FormatVal(modelData.Suficiencia, 1, "N1", "%")</div>
                 <div><i class="@TrendClass(suficienciaVal, suficienciaPrev, false)"></i></div>
@@ -82,7 +83,10 @@
 
         <!-- KPI 2: Eficiencia -->
         <div class="modern-kpi-card">
-            <div class="kpi-title">Eficiencia</div>
+            <div class="kpi-title">
+                <span>Eficiencia</span>
+                <a href="javascript:getGraph('C118')" style="margin-left:auto; color:#94a3b8;"><i class="fa fa-line-chart"></i></a>
+            </div>
             <div class="kpi-value-row">
                 <div class="kpi-big-num">@FormatVal(modelData.CostoAdmin, 1, "N1", "%")</div>
                 <div><i class="@TrendClass(costoVal, costoPrev, true)"></i></div>
@@ -92,7 +96,10 @@
 
         <!-- KPI 3: Morosidad mayor a 90 días -->
         <div class="modern-kpi-card">
-            <div class="kpi-title">Morosidad mayor a 90 d&iacute;as</div>
+            <div class="kpi-title">
+                <span>Morosidad mayor a 90 d&iacute;as</span>
+                <a href="javascript:getGraph('C22')" style="margin-left:auto; color:#94a3b8;"><i class="fa fa-line-chart"></i></a>
+            </div>
             <div class="kpi-value-row">
                 <div class="kpi-big-num">@FormatVal(modelData.Morosidad, 1, "N1", "%")</div>
                 <div><i class="@TrendClass(morosidadVal, morosidadPrev, true)"></i></div>
@@ -278,6 +285,23 @@
     </div>
 </div>
 
+<!-- Contenedor oculto de amCharts gauges para compatibilidad JS -->
+<div style="display:none;">
+    <div id="chart_compromiso"></div>
+    <div id="pChart_compromiso"></div>
+    <div id="chart_morosidad"></div>
+    <div id="pChart_morosidad"></div>
+    <div id="chart_activo"></div>
+    <div id="pChart_activo"></div>
+    <div id="chart_costo"></div>
+    <div id="pChart_costo"></div>
+    <div id="chart_ICL"></div>
+    <div id="pChart_ICL"></div>
+    <div id="chart_perdidaAcumulada"></div>
+    <div id="pChart_perdidaAcumulada"></div>
+    <div id="wrapper"></div>
+</div>
+
 <!-- ==================== FILA DE GRÁFICOS DINÁMICOS HIGHCHARTS ==================== -->
 @if (modelData != null && (modelData.VariacionCartera != null || modelData.Mora != null || modelData.DiferencialTasas != null || modelData.IndicadoresRentabilidad != null))
 {
@@ -289,6 +313,7 @@
                     <div class="box">
                         <div class="box-header">
                             <h4 class="box-title">Diferencial de tasas (porcentaje)</h4>
+                            <a class="pull-right" href="javascript:mDiferencialTasas()"><i class="fa fa-line-chart"></i></a>
                         </div>
                         <div class="box-body">
                             @modelData.DiferencialTasas
@@ -302,6 +327,7 @@
                     <div class="box">
                         <div class="box-header">
                             <h4 class="box-title">Cobertura de m&aacute;rgenes</h4>
+                            <a class="pull-right" href="javascript:mRentabilidad()"><i class="fa fa-line-chart"></i></a>
                         </div>
                         <div class="box-body">
                             @modelData.IndicadoresRentabilidad
@@ -318,6 +344,7 @@
                     <div class="box">
                         <div class="box-header">
                             <h4 class="box-title">Variaci&oacute;n interanual cartera</h4>
+                            <a class="pull-right" href="javascript:mVariacionCartera()"><i class="fa fa-line-chart"></i></a>
                         </div>
                         <div class="box-body">
                             @modelData.VariacionCartera
@@ -331,6 +358,7 @@
                     <div class="box">
                         <div class="box-header">
                             <h4 class="box-title">Mora de la cartera</h4>
+                            <a class="pull-right" href="javascript:mMora()"><i class="fa fa-line-chart"></i></a>
                         </div>
                         <div class="box-body">
                             @modelData.Mora
@@ -347,6 +375,7 @@
                     <div class="box">
                         <div class="box-header">
                             <h4 class="box-title">Variaci&oacute;n Capital Social</h4>
+                            <a class="pull-right" href="javascript:mCapitalSocial()"><i class="fa fa-line-chart"></i></a>
                         </div>
                         <div class="box-body">
                             @modelData.CapitalSocial
@@ -360,6 +389,7 @@
                     <div class="box">
                         <div class="box-header">
                             <h4 class="box-title">Brecha de l&iacute;quidez</h4>
+                            <a class="pull-right" href="javascript:mBrechaLiquidez()"><i class="fa fa-line-chart"></i></a>
                         </div>
                         <div class="box-body">
                             @modelData.BrechaLiquidez
@@ -371,8 +401,153 @@
     </div>
 }
 
-<!-- Highcharts Sparkline Dynamic Initialization -->
+<!-- Modales del sistema -->
+<div class="modal fade" id="defModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h3 id="titulo" class="modal-title"></h3>
+            </div>
+            <div class="modal-body">
+                <p id="definicion"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mDiferencialTasas" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h3 class="modal-title">Diferencial de Tasas</h3>
+            </div>
+            <div class="modal-body">
+                @modelData.pDiferencialTasas
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mCapitalSocial" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h3 class="modal-title">Variaci&oacute;n del Capital Social</h3>
+            </div>
+            <div class="modal-body">
+                @modelData.pCapitalSocial
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mVariacionCartera" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h3 class="modal-title">Variaci&oacute;n Interanual de la Cartera</h3>
+            </div>
+            <div class="modal-body">
+                @modelData.pVariacionCartera
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mMora" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h3 class="modal-title">Mora de la Cartera</h3>
+            </div>
+            <div class="modal-body">
+                @modelData.pMora
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mBrechaLiquidez" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h3 class="modal-title">Brecha de Liquidez</h3>
+            </div>
+            <div class="modal-body">
+                @modelData.pBrechaLiquidez
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mRentabilidad" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h3 class="modal-title">Cobertura de m&aacute;rgenes</h3>
+            </div>
+            <div class="modal-body">
+                @modelData.pIndicadoresRentabilidad
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mSuficiencia" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h3 class="modal-title">Nivel y Calidad del Capital</h3>
+            </div>
+            <div class="modal-body">
+                @modelData.pSuficiencia
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Highcharts Sparkline & Funciones de Modal JavaScript -->
 <script>
+    function mCapitalSocial() { $('#mCapitalSocial').modal('show'); }
+    function mVariacionCartera() { $('#mVariacionCartera').modal('show'); }
+    function mDiferencialTasas() { $('#mDiferencialTasas').modal('show'); }
+    function mMora() { $('#mMora').modal('show'); }
+    function mBrechaLiquidez() { $('#mBrechaLiquidez').modal('show'); }
+    function mRentabilidad() { $('#mRentabilidad').modal('show'); }
+    function mSuficiencia() { $('#mSuficiencia').modal('show'); }
+
     $(document).ready(function () {
         function createSparkline(containerId, dataArray, lineColor) {
             if (typeof Highcharts === 'undefined' || !document.getElementById(containerId)) return;
