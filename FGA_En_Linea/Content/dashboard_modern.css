@@ -1232,9 +1232,10 @@ table.table td, .table td {
 /* ==========================================================================
    Chart Panel Cards Modernization
    ========================================================================== */
-.box:not(.modal-content *):not(.modal-dialog *) > .box-header.with-border,
-.tab-pane .box:not(.modal-content *) > .box-header,
-.content .box:not(.modal-content *) > .box-header.with-border {
+.box-header:not(.modal-header):not(.modal-content *):not(.modal-dialog *),
+.box-header.with-border:not(.modal-header):not(.modal-content *):not(.modal-dialog *),
+.tab-pane .box-header,
+.content .box-header {
     background: #f8fafc !important;
     padding: 14px 20px !important;
     border-bottom: 1px solid #e2e8f0 !important;
@@ -1242,19 +1243,22 @@ table.table td, .table td {
     align-items: center !important;
     justify-content: space-between !important;
     border-radius: 12px 12px 0 0 !important;
+    width: 100% !important;
 }
 
-.box:not(.modal-content *) > .box-header.with-border > div:first-child,
-.tab-pane .box:not(.modal-content *) > .box-header > div:first-child,
-.content .box:not(.modal-content *) > .box-header > div:first-child {
+.box-header:not(.modal-header):not(.modal-content *):not(.modal-dialog *) > div:first-child,
+.box-header.with-border:not(.modal-header):not(.modal-content *):not(.modal-dialog *) > div:first-child,
+.tab-pane .box-header > div:first-child,
+.content .box-header > div:first-child {
     display: flex !important;
     align-items: center !important;
     gap: 12px !important;
+    margin-right: auto !important;
 }
 
-.box:not(.modal-content *) > .box-header.with-border img,
-.tab-pane .box:not(.modal-content *) > .box-header img,
-.content .box:not(.modal-content *) > .box-header img {
+.box-header:not(.modal-header):not(.modal-content *):not(.modal-dialog *) img,
+.tab-pane .box-header img,
+.content .box-header img {
     width: 38px !important;
     height: 38px !important;
     border-radius: 8px !important;
@@ -1265,11 +1269,11 @@ table.table td, .table td {
     margin-right: 10px !important;
 }
 
-.box:not(.modal-content *) > .box-header.with-border .box-title,
-.tab-pane .box:not(.modal-content *) > .box-header .box-title,
-.content .box:not(.modal-content *) > .box-header .box-title,
-.content .box:not(.modal-content *) > .box-header h3,
-.content .box:not(.modal-content *) > .box-header h4,
+.box-header:not(.modal-header):not(.modal-content *):not(.modal-dialog *) .box-title,
+.tab-pane .box-header .box-title,
+.content .box-header .box-title,
+.content .box-header h3,
+.content .box-header h4,
 .box-header .box-title,
 .box-header h3,
 .box-header h4 {
@@ -1300,6 +1304,8 @@ table.table td, .table td {
     gap: 6px !important;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
     text-decoration: none !important;
+    margin-left: auto !important;
+    flex-shrink: 0 !important;
 }
 
 .box-header a.btn-ampliar:hover,
