@@ -1,13 +1,13 @@
 @model FGA.Model.Modelo_PEEFF
 
 @{
-    ViewBag.Title = "Módulo de proyecciones";
+    ViewBag.Title = "M&oacute;dulo de proyecciones";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <section class="content-header">
     <h1>
-        Módulo de proyecciones
+        M&oacute;dulo de proyecciones
     </h1>
 </section>
 
@@ -18,51 +18,41 @@
         <div class="row">
             <div class="col-xs-12">
                 <div class="box box-solid box-info">
-                    <div class="box-body table-responsive">
-                        <div class="margin">
-                            <div class="streaming-table">
-                                <span id="found" class="label label-info"></span>
-                                <table class="table table-condensed table-striped table-bordered">
-                                    <tr>
-                                        <td>
-                                            <label>Entidad:</label>
-                                        </td>
-                                        <td>
-                                            @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", style = "width: 200px;" })
-                                        </td>
-                                        <td>
-                                            <label>Fecha de corte:</label>
-                                        </td>
-                                        <td nowrap="nowrap">
-                                            <div style="display: inline-flex; align-items: center; gap: 6px;">
-                                                <input name="PeriodoI" id="PeriodoI" class="datecontrol"
-                                                       value="@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["PeriodoI"].ToString()).Date.ToString("MMMM yyyy"))" />
-                                                <a class="text-right" data-toggle="tooltip" data-placement="top" title="Ayuda"
-                                                   href="javascript:help('Fecha de corte', 'Fecha de base a partir de la que se genera los períodos proyectados, se podrán usar cortes del período vigente y el último cierre fiscal cargado, meses anteriores a ese no se podrán usar como base.' )"><i class="btn btn-xs btn-default icon fa fa-question"></i></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <label>Periodos por proyectar:</label>
-                                        </td>
-                                        <td nowrap="nowrap">
-                                            <div style="display: inline-flex; align-items: center; gap: 6px;">
-                                                <select id="ddlPlazo" name="ddlPlazo" style="width:220px">
-                                                    <option value="1" @(Model.ddlPlazo == "1" ? " selected" : "")>12 meses</option>
-                                                    <option value="2" @(Model.ddlPlazo == "2" ? " selected" : "")>3 &ntilde;os (Primer &ntilde;o mensual)</option>
-                                                </select>
-                                                <a class="text-left" data-toggle="tooltip" data-placement="top" title="Ayuda"
-                                                   href="javascript:help('Periodos por proyectar', 'La opción de 12 meses solo mostrará una proyección mensual de un año, la opción de 3 años mostrará el primer año en forma mensual. El segundo y tercero en forma anualizada')"><i class="btn btn-xs btn-default icon fa fa-question"></i></a>
-                                            </div>
-                                        </td>
-                                        <td colspan="2" class="text-right">
-                                            <label class="btn btn-facebook" style="margin-bottom: 0;">
-                                                Incluir supuestos<input type="submit" id="btn_supuestos" value="Consultar" name="command" style="display: none;">
-                                            </label>
-                                        </td>
-                                    </tr>
-                                </table>
+                    <div class="box-body" style="padding: 12px 18px;">
+                        <div class="streaming-table modern-filter-card" style="padding: 12px 15px;">
+                            <span id="found" class="label label-info"></span>
+                            <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 15px;">
+                                <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 18px; flex: 1;">
+                                    <div style="display: inline-flex; align-items: center; gap: 8px;">
+                                        <label style="margin-bottom: 0; font-weight: 600; color: #475569;">Entidad:</label>
+                                        @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", @class = "form-control", style = "width: auto; min-width: 180px;" })
+                                    </div>
+                                    <div style="display: inline-flex; align-items: center; gap: 8px;">
+                                        <label style="margin-bottom: 0; font-weight: 600; color: #475569;">Fecha de corte:</label>
+                                        <div style="display: inline-flex; align-items: center; gap: 6px;">
+                                            <input name="PeriodoI" id="PeriodoI" class="datecontrol form-control" style="width: 140px;"
+                                                   value="@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["PeriodoI"].ToString()).Date.ToString("MMMM yyyy"))" />
+                                            <a class="text-right" data-toggle="tooltip" data-placement="top" title="Ayuda"
+                                               href="javascript:help('Fecha de corte', 'Fecha de base a partir de la que se genera los períodos proyectados, se podrán usar cortes del período vigente y el último cierre fiscal cargado, meses anteriores a ese no se podrán usar como base.' )"><i class="btn btn-xs btn-default icon fa fa-question"></i></a>
+                                        </div>
+                                    </div>
+                                    <div style="display: inline-flex; align-items: center; gap: 8px;">
+                                        <label style="margin-bottom: 0; font-weight: 600; color: #475569;">Periodos por proyectar:</label>
+                                        <div style="display: inline-flex; align-items: center; gap: 6px;">
+                                            <select id="ddlPlazo" name="ddlPlazo" class="form-control" style="width: auto; min-width: 200px;">
+                                                <option value="1" @(Model.ddlPlazo == "1" ? " selected" : "")>12 meses</option>
+                                                <option value="2" @(Model.ddlPlazo == "2" ? " selected" : "")>3 &ntilde;os (Primer &ntilde;o mensual)</option>
+                                            </select>
+                                            <a class="text-left" data-toggle="tooltip" data-placement="top" title="Ayuda"
+                                               href="javascript:help('Periodos por proyectar', 'La opción de 12 meses solo mostrará una proyección mensual de un año, la opción de 3 años mostrará el primer año en forma mensual. El segundo y tercero en forma anualizada')"><i class="btn btn-xs btn-default icon fa fa-question"></i></a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="margin-left: auto;">
+                                    <label class="btn btn-facebook" style="margin-bottom: 0;">
+                                        Incluir supuestos<input type="submit" id="btn_supuestos" value="Consultar" name="command" style="display: none;">
+                                    </label>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -358,7 +348,7 @@
                             <div class="margin">
                                 @if (Session["TipoReporte3"] != null)
                                 {
-                                    <iframe src="~/Reportes/ReportView3.aspx" width="1500" height="1500" style="border:none"></iframe>
+                                    <iframe src="~/Reportes/ReportView3.aspx" width="100%" height="900" style="border:none; width: 100%; max-width: 100%;"></iframe>
                                 }
                             </div>
                         </div>
@@ -368,7 +358,7 @@
                             <div class="margin">
                                 @if (Session["TipoReporte"] != null)
                                 {
-                                    <iframe src="~/Reportes/ReportView.aspx" width="1500" height="1400" style="border:none"></iframe>
+                                    <iframe src="~/Reportes/ReportView.aspx" width="100%" height="900" style="border:none; width: 100%; max-width: 100%;"></iframe>
                                 }
                             </div>
                         </div>
@@ -378,7 +368,7 @@
                             <div class="margin">
                                 @if (Session["TipoReporte4"] != null)
                                 {
-                                    <iframe src="~/Reportes/ReportView4.aspx" width="1500" height="1500" style="border:none"></iframe>
+                                    <iframe src="~/Reportes/ReportView4.aspx" width="100%" height="900" style="border:none; width: 100%; max-width: 100%;"></iframe>
                                 }
                             </div>
                         </div>
@@ -388,7 +378,7 @@
                             <div class="margin">
                                 @if (Session["TipoReporte2"] != null)
                                 {
-                                    <iframe src="~/Reportes/ReportView2.aspx" width="1500" height="1500" style="border:none"></iframe>
+                                    <iframe src="~/Reportes/ReportView2.aspx" width="100%" height="900" style="border:none; width: 100%; max-width: 100%;"></iframe>
                                 }
                             </div>
                         </div>
