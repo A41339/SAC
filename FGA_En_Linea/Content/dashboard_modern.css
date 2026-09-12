@@ -1386,56 +1386,41 @@ table.table td, .table td {
     overflow: hidden !important;
 }
 
-.streaming-table table.table,
-.streaming-table table {
-    display: block !important;
+/* Ensure streaming-table data tables preserve standard HTML table layout and alignment */
+.streaming-table table,
+.streaming-table .table {
+    display: table !important;
     width: 100% !important;
     max-width: 100% !important;
-    border: none !important;
-    background: transparent !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    box-sizing: border-box !important;
-}
-
-.streaming-table table > tbody {
-    display: block !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    box-sizing: border-box !important;
-}
-
-.streaming-table table tr {
-    display: flex !important;
-    flex-wrap: wrap !important;
-    align-items: center !important;
-    gap: 12px 18px !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    background: transparent !important;
-    border: none !important;
-    margin-bottom: 6px !important;
-    box-sizing: border-box !important;
-}
-
-.streaming-table table tr:last-child {
+    border-collapse: collapse !important;
     margin-bottom: 0 !important;
 }
 
-.streaming-table table td {
-    display: inline-flex !important;
-    align-items: center !important;
-    gap: 8px !important;
-    border: none !important;
-    background: transparent !important;
-    padding: 4px 0 !important;
-    margin: 0 !important;
-    vertical-align: middle !important;
-    box-sizing: border-box !important;
+.streaming-table table > thead {
+    display: table-header-group !important;
 }
 
-.streaming-table table tr > td:last-child {
-    margin-left: auto !important;
+.streaming-table table > tbody {
+    display: table-row-group !important;
+}
+
+.streaming-table table tr {
+    display: table-row !important;
+}
+
+.streaming-table table th,
+.streaming-table table td {
+    display: table-cell !important;
+    vertical-align: middle !important;
+}
+
+.streaming-table table th {
+    background-color: #f1f5f9 !important;
+    color: #1e293b !important;
+    font-weight: 700 !important;
+    font-size: 13px !important;
+    padding: 10px 14px !important;
+    border-bottom: 2px solid #cbd5e1 !important;
 }
 
 .streaming-table table td label,
