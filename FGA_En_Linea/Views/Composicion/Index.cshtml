@@ -28,13 +28,13 @@
                     <table class="table table-condensed table-striped">
                         <tr>
                             <td class="mobile">
-                                @Html.Label("Entidad:")
+                                <label>Entidad:</label>
                             </td>
                             <td>
                                 @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", style = "width: 350px;" })
                             </td>
                             <td class="mobile">
-                                @Html.Label("Gr&aacute;fico:")
+                                <label>Gr&aacute;fico:</label>
                             </td>
                             <td>
                                 @Html.DropDownList("Grafico", null, new { @id = "Grafico", style = "width: 350px;" })
@@ -47,13 +47,13 @@
                         </tr>
                         <tr>
                             <td class="mobile">
-                                @Html.Label("Inicial:")
+                                <label>Inicial:</label>
                             </td>
                             <td nowrap="nowrap" class="form-group">
                                 <input name="PeriodoI" id="PeriodoI" class="datecontrol" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MM/yyyy")" />
                             </td>
                             <td class="mobile">
-                                @Html.Label("Final:")
+                                <label>Final:</label>
                             </td>
                             <td nowrap="nowrap" class="form-group">
                                 <input name="PeriodoF" id="PeriodoF" class="datecontrol" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MM/yyyy")" />
@@ -62,7 +62,7 @@
                         </tr>
                         <tr>
                             <td id="lbl_categoria" class="mobile hidden">
-                                @Html.Label("Categorías:")
+                                <label>Categor&iacute;as:</label>
                             </td>
                             <td id="cmb_categoria" class="hidden">
                                 <select id="IdCategoria" name="CategoriaRiesgo" multiple="multiple">
@@ -73,7 +73,7 @@
                                 </select>
                             </td>
                             <td id="lbl_tipoCartera" class="mobile hidden">
-                                @Html.Label("Tipos de Cartera:")
+                                <label>Tipos de Cartera:</label>
                             </td>
                             <td id="cmb_tipoCartera" class="hidden">
                                 <select id="IdTipoCartera" name="TipoCartera" multiple="multiple">
@@ -98,30 +98,11 @@
 
 <script type="text/javascript">
 
-    $("#Grafico").change(function () {
-        if ($("#Grafico").val() == 3) {
-            $("#cmb_categoria").removeClass("hidden");
-            $("#lbl_categoria").removeClass("hidden");
-            $("#lbl_tipoCartera").addClass("hidden");
-            $("#cmb_tipoCartera").addClass("hidden");
-        }
-        else if ($("#Grafico").val() == 7) {
-            $("#cmb_tipoCartera").removeClass("hidden");
-            $("#lbl_tipoCartera").removeClass("hidden");
-            $("#lbl_categoria").addClass("hidden");
-            $("#cmb_categoria").addClass("hidden");
-        }
-        else {
-            $("#lbl_categoria").addClass("hidden");
-            $("#cmb_categoria").addClass("hidden");
-            $("#lbl_tipoCartera").addClass("hidden");
-            $("#cmb_tipoCartera").addClass("hidden");
-        }
-
+    function initMultiselects() {
         $('#IdCategoria').multiselect({
             enableFiltering: true,
             filterBehavior: 'text',
-            buttonWidth: 200,
+            buttonWidth: '220px',
             numberDisplayed: 1,
             maxHeight: 450
         });
@@ -129,10 +110,34 @@
         $('#IdTipoCartera').multiselect({
             enableFiltering: true,
             filterBehavior: 'text',
-            buttonWidth: 200,
+            buttonWidth: '220px',
             numberDisplayed: 1,
             maxHeight: 450
         });
+    }
+
+    function toggleCategoryTypes() {
+        var val = $("#Grafico").val();
+        if (val == 3) {
+            $("#cmb_categoria, #lbl_categoria").removeClass("hidden");
+            $("#cmb_tipoCartera, #lbl_tipoCartera").addClass("hidden");
+        }
+        else if (val == 7) {
+            $("#cmb_tipoCartera, #lbl_tipoCartera").removeClass("hidden");
+            $("#cmb_categoria, #lbl_categoria").addClass("hidden");
+        }
+        else {
+            $("#cmb_categoria, #lbl_categoria, #cmb_tipoCartera, #lbl_tipoCartera").addClass("hidden");
+        }
+    }
+
+    $(document).ready(function () {
+        initMultiselects();
+        toggleCategoryTypes();
+    });
+
+    $("#Grafico").change(function () {
+        toggleCategoryTypes();
     });
 
     function refreshGraph() {

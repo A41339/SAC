@@ -1418,7 +1418,7 @@ table.table td, .table td {
     display: inline-block !important;
 }
 
-.streaming-table select,
+.streaming-table select:not([multiple]),
 .streaming-table input[type="text"],
 .streaming-table input.datecontrol {
     background-color: #f8fafc !important;
@@ -1432,6 +1432,31 @@ table.table td, .table td {
     box-shadow: none !important;
     box-sizing: border-box !important;
     display: inline-block !important;
+}
+
+.streaming-table select[multiple] {
+    display: none !important;
+}
+
+.streaming-table .btn-group > button.multiselect {
+    background-color: #f8fafc !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 8px !important;
+    padding: 6px 12px !important;
+    font-size: 13px !important;
+    color: #0f172a !important;
+    height: 36px !important;
+    line-height: 22px !important;
+    box-shadow: none !important;
+    text-align: left !important;
+    font-weight: 500 !important;
+}
+
+.streaming-table .btn-group > button.multiselect:focus,
+.streaming-table .btn-group.open > button.multiselect {
+    border-color: #2563eb !important;
+    background-color: #ffffff !important;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
 }
 
 .streaming-table select:focus,
