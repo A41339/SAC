@@ -351,6 +351,39 @@
       });
 
 
+    if (window.Highcharts && Highcharts.SVGRenderer && Highcharts.SVGRenderer.prototype.symbols) {
+        var customPrinterSymbol = function (x, y, w, h) {
+            return [
+                'M', x + 3, y + 5,
+                'L', x + 3, y + 1,
+                'L', x + 13, y + 1,
+                'L', x + 13, y + 5,
+                'M', x + 1, y + 6,
+                'L', x + 15, y + 6,
+                'C', x + 15.6, y + 6, x + 16, y + 6.4, x + 16, y + 7,
+                'L', x + 16, y + 11,
+                'C', x + 16, y + 11.6, x + 15.6, y + 12, x + 15, y + 12,
+                'L', x + 13, y + 12,
+                'L', x + 13, y + 10,
+                'L', x + 3, y + 10,
+                'L', x + 3, y + 12,
+                'L', x + 1, y + 12,
+                'C', x + 0.4, y + 12, x, y + 11.6, x, y + 11,
+                'L', x, y + 7,
+                'C', x, y + 6.4, x + 0.4, y + 6, x + 1, y + 6,
+                'Z',
+                'M', x + 4, y + 9,
+                'L', x + 12, y + 9,
+                'L', x + 12, y + 14,
+                'L', x + 4, y + 14,
+                'Z'
+            ];
+        };
+        Highcharts.SVGRenderer.prototype.symbols.printer = customPrinterSymbol;
+        Highcharts.SVGRenderer.prototype.symbols.menu = customPrinterSymbol;
+        Highcharts.SVGRenderer.prototype.symbols.menuball = customPrinterSymbol;
+    }
+
    Highcharts.setOptions({
     lang: {
 	 decimalPoint: '.',
@@ -388,19 +421,15 @@
         tableCaption: '',
         buttons: {
 	        contextButton: {
-                text: '🖨',
-                symbol: 'none',
-                symbolStroke: 'transparent',
-                x: 10,
-		y: -15,
+                symbol: 'printer',
+                symbolStroke: '#143750',
+                symbolFill: 'none',
+                symbolStrokeWidth: 1.5,
                 theme: {
-                    width: 30,
-                    height: 30,
-                    fill: 'none',
-                    stroke: 'none',
-                    style: {
-                        fontSize: '18px'
-                    }
+                    fill: '#ffffff',
+                    stroke: '#cbd5e1',
+                    'stroke-width': 1,
+                    r: 6
                 }
             }
     	}
