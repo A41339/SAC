@@ -1,85 +1,197 @@
-﻿.custom-form {
-    opacity: 0.9;
-    border-radius: 10px;
+/* ==========================================================================
+   FFC - Modern Login Styles & Glassmorphism Theme
+   ========================================================================== */
+
+:root {
+    --login-bg-start: #0b2341;
+    --login-bg-end: #1e3a8a;
+    --card-bg: rgba(255, 255, 255, 0.96);
+    --primary-blue: #2563eb;
+    --accent-teal: #0d7682;
+    --text-dark: #0f172a;
+    --text-muted: #64748b;
+    --border-color: #e2e8f0;
+}
+
+body.login-page {
+    background: linear-gradient(135deg, var(--login-bg-start) 0%, #0f172a 50%, var(--login-bg-end) 100%) !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 20px;
 }
 
 .background {
-    background: url(../Content/images/Login_13.jpg);
-    background-size: cover; /* <------ */
-    background-repeat: no-repeat;
-    background-color: #888888;
-    background-position: center center;
-    height: 100%;
-    opacity: 0.8;
-    position: absolute;
+    position: fixed;
     top: 0;
-    bottom: 0;
-    right: 0;
     left: 0;
-    z-index: -1; /* To make sur it's below the rest */
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 20% 20%, rgba(13, 118, 130, 0.25) 0%, transparent 40%),
+                radial-gradient(circle at 80% 80%, rgba(37, 99, 235, 0.25) 0%, transparent 40%);
+    z-index: 0;
+}
+
+.login-box {
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 10;
+}
+
+.login-box-body.custom-form {
+    background: var(--card-bg) !important;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: 18px !important;
+    padding: 40px 35px !important;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.1) !important;
+    animation: fadeInScale 0.6s ease-out forwards;
+}
+
+.logo-container {
+    text-align: center;
+    margin-bottom: 25px;
 }
 
 .logo {
-    -webkit-animation-name: logo_animation; /* Safari 4.0 - 8.0 */
-    -webkit-animation-duration: 5s; /* Safari 4.0 - 8.0 */
-    animation-name: logo_animation;
-    animation-duration: 5s;
+    max-width: 170px;
+    height: auto;
+    animation: logo_animation 1.2s ease-out;
 }
 
-@-moz-keyframes logo_animation {
-    0% {
-        -webkit-transform: scale(0.6);
-        transform: scale(0.6);
-        opacity: 0;
-    }
-
-    60% {
-        -webkit-transform: scale(1.1);
-        transform: scale(1.1);
-        opacity: 1;
-    }
-
-    100% {
-        -webkit-transform: scale(1);
-        transform: scale(1);
-    }
+.login-welcome-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--text-dark);
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 4px;
 }
 
-@-webkit-keyframes logo_animation {
-    0% {
-        -webkit-transform: scale(0.6);
-        transform: scale(0.6);
-        opacity: 0;
-    }
-
-    60% {
-        -webkit-transform: scale(1.2);
-        transform: scale(1.2);
-        opacity: 1;
-    }
-
-    100% {
-        -webkit-transform: scale(1);
-        transform: scale(1);
-    }
+.login-box-msg {
+    font-size: 13px !important;
+    color: var(--text-muted) !important;
+    text-align: center !important;
+    padding: 0 !important;
+    margin-bottom: 25px !important;
+    font-weight: 500;
 }
 
+.form-group.has-feedback {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.form-control.modern-login-input {
+    height: 48px !important;
+    border-radius: 10px !important;
+    border: 1.5px solid var(--border-color) !important;
+    background-color: #f8fafc !important;
+    padding-left: 44px !important;
+    font-size: 13px !important;
+    color: var(--text-dark) !important;
+    transition: all 0.25s ease-in-out !important;
+}
+
+.form-control.modern-login-input:focus {
+    border-color: var(--primary-blue) !important;
+    background-color: #ffffff !important;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15) !important;
+    outline: none !important;
+}
+
+.input-icon-left {
+    position: absolute;
+    top: 50%;
+    left: 15px;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    font-size: 15px;
+    transition: color 0.2s ease;
+}
+
+.form-group.has-feedback:focus-within .input-icon-left {
+    color: var(--primary-blue);
+}
+
+.btn-modern-login {
+    width: 100%;
+    height: 48px;
+    background: linear-gradient(135deg, var(--accent-teal) 0%, var(--primary-blue) 100%) !important;
+    border: none !important;
+    border-radius: 10px !important;
+    color: #ffffff !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3) !important;
+    transition: all 0.25s ease !important;
+    margin-top: 10px;
+}
+
+.btn-modern-login:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4) !important;
+    opacity: 0.95;
+}
+
+.login-recovery-link {
+    display: block;
+    text-align: center;
+    margin-top: 20px;
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.login-recovery-link:hover {
+    color: var(--primary-blue);
+    text-decoration: underline;
+}
+
+/* Modals Custom Styling */
+.modal-content {
+    border-radius: 14px !important;
+    overflow: hidden;
+    border: none !important;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+}
+
+.modal-header {
+    background-color: var(--login-bg-start) !important;
+    color: white !important;
+    padding: 18px 24px !important;
+}
+
+.modal-header label {
+    color: white !important;
+    font-size: 14px;
+}
+
+.modal-header .close {
+    color: white !important;
+    opacity: 0.8;
+}
+
+@keyframes fadeInScale {
+    0% { opacity: 0; transform: scale(0.92) translateY(10px); }
+    100% { opacity: 1; transform: scale(1) translateY(0); }
+}
 
 @keyframes logo_animation {
-    0% {
-        -webkit-transform: scale(0.6);
-        transform: scale(0.6);
-        opacity: 0;
-    }
-
-    60% {
-        -webkit-transform: scale(1.2);
-        transform: scale(1.2);
-        opacity: 1;
-    }
-
-    100% {
-        -webkit-transform: scale(1);
-        transform: scale(1);
-    }
+    0% { transform: scale(0.85); opacity: 0; }
+    60% { transform: scale(1.05); opacity: 1; }
+    100% { transform: scale(1); }
 }

@@ -1,77 +1,91 @@
-@{
+﻿@{
     Layout = null;
 }
 <!DOCTYPE html>
+<html>
 <head>
-    <title>Ingreso</title>
+    <meta charset="utf-8" />
+    <title>Ingreso - FFC Sistema Empresarial</title>
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport" />
     <link rel="stylesheet" href="~/Content/theme/bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <link href="~/Content/theme/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
     <link href="~/Content/theme/dist/css/AdminLTE.min.css" rel="stylesheet" type="text/css" />
-    <link href="~/Content/Login.css?version=1.0" rel="stylesheet" type="text/css" />
+    <link href="~/Content/Login.css?version=2.0" rel="stylesheet" type="text/css" />
     <link href="~/Content/theme/plugins/iCheck/square/blue.css" rel="stylesheet" type="text/css" />
 </head>
 
-<div id="background"></div>
 <body class="login-page">
     <div class="background"></div>
+    
     <div class="login-box">
         <div class="login-box-body custom-form">
-            <div class="form-group has-feedback btn btn-block btn-flat">
-                <img class="logo" src="~/Content/images/Logo_Login2.png" width="150" height="60" />
+            <div class="logo-container">
+                <img class="logo" src="~/Content/images/Logo_Login2.png" alt="FFC Logo" />
+                <div class="login-welcome-title">Bienvenido</div>
             </div>
-            <br />
-            <p class="login-box-msg">Ingrese sus datos para iniciar sesi�n</p>
+            
+            <p class="login-box-msg">Ingrese sus credenciales para acceder al sistema</p>
+            
             <form action="" method="post">
                 <div class="form-group has-feedback">
-                    <input type="text" class="form-control" name="identificacion" id="identificacion" placeholder="Identificaci�n" />
-                    <span class="glyphicon glyphicon-user form-control-feedback"></span>
+                    <i class="fa fa-user input-icon-left"></i>
+                    <input type="text" class="form-control modern-login-input" name="identificacion" id="identificacion" placeholder="Usuario o Identificación" autocomplete="off" />
                 </div>
+                
                 <div class="form-group has-feedback">
-                    <input type="password" class="form-control" name="contrasena" id="contrasena" placeholder="Contrase�a" />
-                    <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+                    <i class="fa fa-lock input-icon-left"></i>
+                    <input type="password" class="form-control modern-login-input" name="contrasena" id="contrasena" placeholder="Contraseña" />
                 </div>
-                <div class="row">
-                    <div class="col-xs-8">
-                    </div><!-- /.col -->
-                    <div class="col-xs-4">
-                        <a id="btn_login" class="btn btn-primary btn-block btn-flat">Ingresar</a>
-                    </div><!-- /.col -->
+                
+                <div class="row" style="margin-top: 15px;">
+                    <div class="col-xs-12">
+                        <button type="button" id="btn_login" class="btn btn-modern-login btn-block">
+                            <i class="fa fa-sign-in"></i> Ingresar al Sistema
+                        </button>
+                    </div>
                 </div>
             </form>
-            <a href="~/Account/recovery">Olvid� mi contrase�a</a><br>
+            
+            <a href="~/Account/recovery" class="login-recovery-link">
+                <i class="fa fa-key"></i> ¿Olvidó su contraseña?
+            </a>
         </div>
     </div>
+
+    <!-- Modal OTP -->
     <div class="modal fade" id="OTPModal" role="dialog">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-sm" style="margin-top: 10%;">
             <div class="modal-content">
                 <div class="modal-header text-center">
-                    <a class="btn pull-right" data-dismiss="modal"><span>&times;</span></a>
-                    <label><strong>Por favor ingrese el OTP que fue enviado a su correo</strong></label>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <label><strong>Verificación de Seguridad (OTP)</strong></label>
                 </div>
-                <div class="modal-body">
-                    <input class="form-control" type="password" name="txtOTP" id="txtOTP" placeholder="OTP" />
+                <div class="modal-body text-center">
+                    <p style="font-size: 12px; color: #64748b; margin-bottom: 15px;">
+                        Por favor ingrese el código OTP que fue enviado a su correo electrónico.
+                    </p>
+                    <input class="form-control modern-login-input text-center" type="password" name="txtOTP" id="txtOTP" placeholder="Código OTP" style="font-size: 18px; letter-spacing: 4px;" />
                 </div>
-                <div class="modal-footer">
-                    <a id="verifyOTP" class="btn btn-success">Validar OTP</a>
+                <div class="modal-footer text-center">
+                    <a id="verifyOTP" class="btn btn-success btn-block" style="border-radius: 8px; font-weight: 700;">Validar OTP</a>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Modal Error -->
     <div id="modalError" class="modal fade">
-        <div class="modal-dialog modal-fail">
+        <div class="modal-dialog modal-sm" style="margin-top: 10%;">
             <div class="modal-content">
-                <div class="modal-header">
-                    <div class="icon-box">
-                        <i class="material-icons"></i>
-                    </div>
+                <div class="modal-header" style="background-color: #dc2626 !important;">
+                    <button type="button" class="close" data-dismiss="modal" style="color:white;">&times;</button>
+                    <h4 class="modal-title" style="color:white; text-align:center; font-size:15px; font-weight:700;">Error de Autenticación</h4>
                 </div>
-                <div class="modal-body">
-                    <div style="margin-left:50px; margin-right: 50px;">
-                        <p id="lbl_mensajeError" class="text-center">Ha ocurrido un error</p>
-                    </div>
+                <div class="modal-body text-center" style="padding: 20px;">
+                    <p id="lbl_mensajeError" style="color: #334155; font-size: 13px; margin: 0;">Ha ocurrido un error</p>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-danger btn-block" data-dismiss="modal">OK</button>
+                    <button class="btn btn-danger btn-block" data-dismiss="modal" style="border-radius: 8px; font-weight: 700;">Aceptar</button>
                 </div>
             </div>
         </div>
@@ -100,93 +114,71 @@
             });
         });
 
-        function doLogin() {
-             $.ajax({
-                url: '@Url.Action("doLogin", "Account")',
-                type: 'POST',
-                cache: false,
-                async: false,
-                data: {
-                     'identificacion': $('#identificacion').val(),
-                     'contrasena': $('#contrasena').val()
-                },
-                success: function (data) {
-                    var resultado = data.resultado.exito;
-                    if (resultado == false) {
-                        $("#lbl_mensajeError").html(data.resultado.mensaje);
-                        $("#modalError").modal('show');
-                    }
-                    else {
-                         window.location.href = data.resultado.mensaje;
-                    }
-                },
-                error: function (result) {
-                    $("#modalError").modal('show');
-                }
-             });
-        }
-
-        @*function doLogin() {
-             $.ajax({
-                url: '@Url.Action("doLogin", "Account")',
-                type: 'POST',
-                cache: false,
-                async: true,
-                data: {
-                     'identificacion': $('#identificacion').val(),
-                     'contrasena': $('#contrasena').val()
-                },
-                success: function (data) {
-                    var resultado = data.resultado.exito;
-                    if (resultado == false) {
-                        $("#lbl_mensajeError").html(data.resultado.mensaje);
-                        $("#modalError").modal('show');
-                    }
-                    else {
-                        $("#OTPModal").modal('show');
-                    }
-                },
-                error: function (result) {
-                    $("#modalError").modal('show');
-                }
-             });
-        }*@
-
-         function login() {
-             $.ajax({
-                url: '@Url.Action("Login", "Account")',
-                type: 'POST',
-                cache: false,
-                async: false,
-                data: {
-                     'identificacion': $('#identificacion').val(),
-                     'otp':  $('#txtOTP').val()
-                },
-                success: function (data) {
-                    var resultado = data.resultado.exito;
-                    if (resultado == false) {
-                        $("#lbl_mensajeError").html(data.resultado.mensaje);
-                        $("#modalError").modal('show');
-                    }
-                    else {
-                         window.location.href = data.resultado.mensaje;
-                    }
-                },
-                error: function (result) {
-                    $("#modalError").modal('show');
-                }
-             });
-        }
-
-        $(document).on('click', '#btn_login', function () {
+        $('#btn_login').click(function () {
             doLogin();
         });
 
-         $(document).on('click', '#verifyOTP', function () {
+        $('#verifyOTP').click(function () {
             login();
-         });
+        });
 
+        function doLogin() {
+            var identificacion = $('#identificacion').val();
+            var contrasena = $('#contrasena').val();
+
+            if (identificacion == '' || contrasena == '') {
+                $('#lbl_mensajeError').html('Debe ingresar el usuario y la contraseña.');
+                $('#modalError').modal('show');
+                return;
+            }
+
+            $.ajax({
+                url: '@Url.Action("login", "Account")',
+                type: "POST",
+                data: { "identificacion": identificacion, "contrasena": contrasena },
+                success: function (data) {
+                    if (data.result == 'true') {
+                        location.href = '@Url.Action("Index", "Home")';
+                    }
+                    else if (data.result == 'OTP') {
+                        $('#OTPModal').modal('show');
+                    }
+                    else {
+                        $('#lbl_mensajeError').html(data.result);
+                        $('#modalError').modal('show');
+                    }
+                },
+                error: function () {
+                    $('#lbl_mensajeError').html('Error de conexión con el servidor.');
+                    $('#modalError').modal('show');
+                }
+            });
+        }
+
+        function login() {
+            var identificacion = $('#identificacion').val();
+            var contrasena = $('#contrasena').val();
+            var otp = $('#txtOTP').val();
+
+            $.ajax({
+                url: '@Url.Action("loginOTP", "Account")',
+                type: "POST",
+                data: { "identificacion": identificacion, "contrasena": contrasena, "otp": otp },
+                success: function (data) {
+                    if (data.result == 'true') {
+                        location.href = '@Url.Action("Index", "Home")';
+                    }
+                    else {
+                        $('#lbl_mensajeError').html(data.result);
+                        $('#modalError').modal('show');
+                    }
+                },
+                error: function () {
+                    $('#lbl_mensajeError').html('Error de conexión al validar OTP.');
+                    $('#modalError').modal('show');
+                }
+            });
+        }
     </script>
 </body>
-
-
+</html>
