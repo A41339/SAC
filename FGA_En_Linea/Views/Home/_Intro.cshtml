@@ -1,6 +1,57 @@
-@model  FGA.Models.Dashboard
+@model FGA.Models.Dashboard
 
 <script src="https://code.highcharts.com/highcharts.js"></script>
+
+@{
+    // Funciones auxiliares de formato seguro
+    Func<decimal[], int, string, string, string> FormatVal = (arr, idx, fmt, suffix) => {
+        if (arr != null && arr.Length > idx) {
+            return arr[idx].ToString(fmt) + suffix;
+        }
+        return "0" + suffix;
+    };
+
+    Func<decimal[], decimal> GetVal = (arr, idx) => {
+        if (arr != null && arr.Length > idx) {
+            return arr[idx];
+        }
+        return 0;
+    };
+
+    Func<decimal, decimal, bool, string> TrendClass = (curr, prev, lowerIsBetter) => {
+        if (curr == prev) return "fa fa-arrow-right";
+        bool up = curr > prev;
+        if (lowerIsBetter) {
+            return up ? "fa fa-arrow-up trend-arrow-down" : "fa fa-arrow-down trend-arrow-up";
+        } else {
+            return up ? "fa fa-arrow-up trend-arrow-up" : "fa fa-arrow-down trend-arrow-down";
+        }
+    };
+
+    decimal suficienciaVal = GetVal(Model.Suficiencia, 1);
+    decimal suficienciaPrev = GetVal(Model.Suficiencia, 0);
+
+    decimal costoVal = GetVal(Model.CostoAdmin, 1);
+    decimal costoPrev = GetVal(Model.CostoAdmin, 0);
+
+    decimal morosidadVal = GetVal(Model.Morosidad, 1);
+    decimal morosidadPrev = GetVal(Model.Morosidad, 0);
+
+    decimal compromisoVal = GetVal(Model.Compromiso, 1);
+    decimal compromisoPrev = GetVal(Model.Compromiso, 0);
+    decimal compromisoVar = compromisoVal - compromisoPrev;
+    decimal compromisoVarPct = compromisoPrev != 0 ? (compromisoVar / compromisoPrev) * 100 : 0;
+
+    decimal activoVal = GetVal(Model.Activo, 1);
+    decimal activoPrev = GetVal(Model.Activo, 0);
+    decimal activoVar = activoVal - activoPrev;
+    decimal activoVarPct = activoPrev != 0 ? (activoVar / activoPrev) * 100 : 0;
+
+    decimal riesgoVal = GetVal(Model.Riesgo, 1);
+    decimal riesgoPrev = GetVal(Model.Riesgo, 0);
+    decimal riesgoVar = riesgoVal - riesgoPrev;
+    decimal riesgoVarPct = riesgoPrev != 0 ? (riesgoVar / riesgoPrev) * 100 : 0;
+}
 
 <div class="row">
     <div id="dashboard" style="visibility:hidden; position: fixed">
@@ -20,8 +71,8 @@
         <div class="modern-kpi-card">
             <div class="kpi-title">Suficiencia Patrimonial</div>
             <div class="kpi-value-row">
-                <div class="kpi-big-num">19.9%</div>
-                <div class="trend-arrow-up"><i class="fa fa-arrow-up"></i></div>
+                <div class="kpi-big-num">@FormatVal(Model.Suficiencia, 1, "N1", "%")</div>
+                <div><i class="@TrendClass(suficienciaVal, suficienciaPrev, false)"></i></div>
             </div>
             <div class="kpi-sparkline-container" id="sparkline_suficiencia"></div>
         </div>
@@ -30,8 +81,8 @@
         <div class="modern-kpi-card">
             <div class="kpi-title">Eficiencia</div>
             <div class="kpi-value-row">
-                <div class="kpi-big-num">50.2%</div>
-                <div class="trend-arrow-up"><i class="fa fa-arrow-up"></i></div>
+                <div class="kpi-big-num">@FormatVal(Model.CostoAdmin, 1, "N1", "%")</div>
+                <div><i class="@TrendClass(costoVal, costoPrev, true)"></i></div>
             </div>
             <div class="kpi-sparkline-container" id="sparkline_eficiencia"></div>
         </div>
@@ -40,8 +91,8 @@
         <div class="modern-kpi-card">
             <div class="kpi-title">Morosidad mayor a 90 d&iacute;as</div>
             <div class="kpi-value-row">
-                <div class="kpi-big-num">1.88%</div>
-                <div class="trend-arrow-down"><i class="fa fa-arrow-down"></i></div>
+                <div class="kpi-big-num">@FormatVal(Model.Morosidad, 1, "N1", "%")</div>
+                <div><i class="@TrendClass(morosidadVal, morosidadPrev, true)"></i></div>
             </div>
             <div class="kpi-sparkline-container" id="sparkline_morosidad"></div>
         </div>
@@ -56,88 +107,88 @@
             <div class="indicator-item">
                 <span class="indicator-name">Gastos De Administraci&oacute;n / Utilidad Operacional Bruta</span>
                 <div class="indicator-val-group">
-                    <span>76.75</span>
-                    <i class="fa fa-arrow-up trend-arrow-up"></i>
+                    <span>@FormatVal(Model.CostoAdmin, 1, "N2", "%")</span>
+                    <i class="@TrendClass(costoVal, costoPrev, true)"></i>
                 </div>
             </div>
 
             <div class="indicator-item">
                 <span class="indicator-name">Cartera con morosidad mayor a 90 d&iacute;as / Cartera Directa</span>
                 <div class="indicator-val-group">
-                    <span>1.60%</span>
-                    <i class="fa fa-arrow-down trend-arrow-down"></i>
+                    <span>@FormatVal(Model.Morosidad, 1, "N2", "%")</span>
+                    <i class="@TrendClass(morosidadVal, morosidadPrev, true)"></i>
                 </div>
             </div>
 
             <div class="indicator-item">
                 <span class="indicator-name">Margen financiero / Activos</span>
                 <div class="indicator-val-group">
-                    <span>1.66%</span>
-                    <i class="fa fa-arrow-up trend-arrow-up"></i>
+                    <span>@FormatVal(Model.Riesgo, 1, "N2", "%")</span>
+                    <i class="@TrendClass(GetVal(Model.Riesgo, 1), GetVal(Model.Riesgo, 0), false)"></i>
                 </div>
             </div>
 
             <div class="indicator-item">
                 <span class="indicator-name">Rentabilidad nominal / Patrimonio promedio</span>
                 <div class="indicator-val-group">
-                    <span>8.40%</span>
-                    <i class="fa fa-arrow-up trend-arrow-up"></i>
+                    <span>@FormatVal(Model.Compromiso, 1, "N2", "%")</span>
+                    <i class="@TrendClass(compromisoVal, compromisoPrev, false)"></i>
                 </div>
             </div>
 
             <div class="indicator-item">
-                <span class="indicator-name">Estimaciones sobre cartera de cr&eacute;ditos / Cartera con mora mayor a 90 d&iacute;as y cobro judicial</span>
+                <span class="indicator-name">Estimaciones sobre cartera / Mora mayor a 90 d&iacute;as y cobro judicial</span>
                 <div class="indicator-val-group">
-                    <span>1.78x</span>
-                    <i class="fa fa-arrow-right" style="color:#eab308"></i>
+                    <span>@FormatVal(Model.CalceMes, 1, "N2", "x")</span>
+                    <i class="@TrendClass(GetVal(Model.CalceMes, 1), GetVal(Model.CalceMes, 0), false)"></i>
                 </div>
             </div>
 
             <div class="indicator-item">
-                <span class="indicator-name">P&eacute;rdida Esperada Cartera Total / Estimaci&oacute;n por deterioro de cartera</span>
+                <span class="indicator-name">P&eacute;rdida Esperada Cartera Total / Estimaci&oacute;n por deterioro</span>
                 <div class="indicator-val-group">
-                    <span>1.70%</span>
-                    <i class="fa fa-arrow-down trend-arrow-down"></i>
+                    <span>@FormatVal(Model.PerdidaEsperada, 1, "N2", "%")</span>
+                    <i class="@TrendClass(GetVal(Model.PerdidaEsperada, 1), GetVal(Model.PerdidaEsperada, 0), true)"></i>
                 </div>
             </div>
 
             <div class="indicator-item">
                 <span class="indicator-name">Utilidad o p&eacute;rdida acumulada trimestral</span>
                 <div class="indicator-val-group">
-                    <span>1.70%</span>
-                    <i class="fa fa-arrow-up trend-arrow-up"></i>
+                    <span>@FormatVal(Model.PerdidaAcumulada, 1, "N2", "%")</span>
+                    <i class="@TrendClass(GetVal(Model.PerdidaAcumulada, 1), GetVal(Model.PerdidaAcumulada, 0), false)"></i>
                 </div>
             </div>
 
             <div class="indicator-item">
                 <span class="indicator-name">ICL colones</span>
                 <div class="indicator-val-group">
-                    <span>9.41x</span>
-                    <i class="fa fa-arrow-up trend-arrow-up"></i>
+                    <span>@FormatVal(Model.ICL, 1, "N2", "x")</span>
+                    <i class="@TrendClass(GetVal(Model.ICL, 1), GetVal(Model.ICL, 0), false)"></i>
                 </div>
             </div>
 
             <div class="indicator-item">
                 <span class="indicator-name">Concentraci&oacute;n de los 20 inversionistas</span>
                 <div class="indicator-val-group">
-                    <span>1.25x</span>
-                    <i class="fa fa-arrow-right" style="color:#eab308"></i>
+                    <span>@FormatVal(Model.Calce3Meses, 1, "N2", "x")</span>
+                    <i class="@TrendClass(GetVal(Model.Calce3Meses, 1), GetVal(Model.Calce3Meses, 0), true)"></i>
                 </div>
             </div>
 
             <div class="indicator-item">
                 <span class="indicator-name">Inversiones en t&iacute;tulos valores / Activo productivo</span>
                 <div class="indicator-val-group">
-                    <span>12.3%</span>
-                    <i class="fa fa-arrow-up trend-arrow-up"></i>
+                    <span>@FormatVal(Model.RiesgoTasa, 1, "N2", "%")</span>
+                    <i class="@TrendClass(GetVal(Model.RiesgoTasa, 1), GetVal(Model.RiesgoTasa, 0), false)"></i>
                 </div>
             </div>
 
             <div class="indicator-item">
                 <span class="indicator-name">Captaciones a plazo con el p&uacute;blico / Pasivo con costo</span>
                 <div class="indicator-val-group">
-                    <span>78.6%</span>
-                    <i class="fa fa-arrow-down trend-arrow-down"></i>
+                    <span>@FormatVal(Model.Activo, 1, "N2", "%")</span>
+                    <i class="@TrendClass(activoVal, activoPrev, false)"></i>
                 </div>
             </div>
 
@@ -158,19 +209,19 @@
                 <div class="icon-circle-teal"><i class="fa fa-bar-chart"></i></div>
                 <div class="cuenta-title">Resultado del periodo acumulado</div>
             </div>
-            <div class="cuenta-big-value">2,100</div>
+            <div class="cuenta-big-value">@FormatVal(Model.Compromiso, 1, "N0", "")</div>
             <div class="cuenta-subtable">
                 <div class="subtable-col">
                     <label>Periodo anterior</label>
-                    <span>1,250</span>
+                    <span>@FormatVal(Model.Compromiso, 0, "N0", "")</span>
                 </div>
                 <div class="subtable-col">
                     <label>Variaci&oacute;n</label>
-                    <span>850</span>
+                    <span>@compromisoVar.ToString("N0")</span>
                 </div>
                 <div class="subtable-col">
                     <label>Variaci&oacute;n %</label>
-                    <span>68.0%</span>
+                    <span>@compromisoVarPct.ToString("N1")%</span>
                 </div>
             </div>
         </div>
@@ -181,19 +232,19 @@
                 <div class="icon-circle-blue"><i class="fa fa-credit-card"></i></div>
                 <div class="cuenta-title">Cartera de cr&eacute;dito</div>
             </div>
-            <div class="cuenta-big-value">466,980</div>
+            <div class="cuenta-big-value">@FormatVal(Model.Activo, 1, "N0", "")</div>
             <div class="cuenta-subtable">
                 <div class="subtable-col">
                     <label>Periodo anterior</label>
-                    <span>450,280</span>
+                    <span>@FormatVal(Model.Activo, 0, "N0", "")</span>
                 </div>
                 <div class="subtable-col">
                     <label>Variaci&oacute;n</label>
-                    <span>16,700</span>
+                    <span>@activoVar.ToString("N0")</span>
                 </div>
                 <div class="subtable-col">
                     <label>Variaci&oacute;n %</label>
-                    <span>3.7%</span>
+                    <span>@activoVarPct.ToString("N1")%</span>
                 </div>
             </div>
         </div>
@@ -204,19 +255,19 @@
                 <div class="icon-circle-orange"><i class="fa fa-database"></i></div>
                 <div class="cuenta-title">Obligaciones con el p&uacute;blico</div>
             </div>
-            <div class="cuenta-big-value">412,300</div>
+            <div class="cuenta-big-value">@FormatVal(Model.Riesgo, 1, "N0", "")</div>
             <div class="cuenta-subtable">
                 <div class="subtable-col">
                     <label>Periodo anterior</label>
-                    <span>380,150</span>
+                    <span>@FormatVal(Model.Riesgo, 0, "N0", "")</span>
                 </div>
                 <div class="subtable-col">
                     <label>Variaci&oacute;n</label>
-                    <span>32,150</span>
+                    <span>@riesgoVar.ToString("N0")</span>
                 </div>
                 <div class="subtable-col">
                     <label>Variaci&oacute;n %</label>
-                    <span>8.5%</span>
+                    <span>@riesgoVarPct.ToString("N1")%</span>
                 </div>
             </div>
         </div>
@@ -224,82 +275,100 @@
     </div>
 </div>
 
-<!-- ==================== FILA INFERIOR: CALIDAD DE LA CARTERA ==================== -->
-<div class="cartera-table-container">
-    <div class="section-header-title">Calidad de la Cartera</div>
-    
-    <table class="modern-table">
-        <thead>
-            <tr>
-                <th>Rango de d&iacute;as</th>
-                <th>Saldo (&cent; MM)</th>
-                <th>Participaci&oacute;n</th>
-                <th>Variaci&oacute;n mensual</th>
-                <th>Variaci&oacute;n interanual</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Al d&iacute;a</td>
-                <td>450,280</td>
-                <td>96.58%</td>
-                <td>1.2%</td>
-                <td>4.3%</td>
-            </tr>
-            <tr>
-                <td>1 - 30 d&iacute;as</td>
-                <td>5,200</td>
-                <td>1.12%</td>
-                <td>-0.3%</td>
-                <td>12.5%</td>
-            </tr>
-            <tr>
-                <td>31 - 60 d&iacute;as</td>
-                <td>3,950</td>
-                <td>0.85%</td>
-                <td>0.1%</td>
-                <td>18.7%</td>
-            </tr>
-            <tr>
-                <td>61 - 90 d&iacute;as</td>
-                <td>2,800</td>
-                <td>0.60%</td>
-                <td>0.2%</td>
-                <td>25.4%</td>
-            </tr>
-            <tr>
-                <td>91 - 180 d&iacute;as</td>
-                <td>1,250</td>
-                <td>0.27%</td>
-                <td>0.1%</td>
-                <td>20.6%</td>
-            </tr>
-            <tr>
-                <td>M&aacute;s de 180 d&iacute;as</td>
-                <td>1,000</td>
-                <td>0.21%</td>
-                <td>-0.1%</td>
-                <td>15.8%</td>
-            </tr>
-            <tr>
-                <td>Cobro Judicial</td>
-                <td>1,700</td>
-                <td>0.36%</td>
-                <td>0.0%</td>
-                <td>22.1%</td>
-            </tr>
-            <tr class="total-row">
-                <td>Total Cartera</td>
-                <td>466,980</td>
-                <td>100.00%</td>
-                <td>0.8%</td>
-                <td>14.3%</td>
-            </tr>
-        </tbody>
-    </table>
-</div>
+<!-- ==================== FILA DE GRÁFICOS DINÁMICOS HIGHCHARTS ==================== -->
+@if (Model.VariacionCartera != null || Model.Mora != null || Model.DiferencialTasas != null || Model.IndicadoresRentabilidad != null)
+{
+    <div style="margin-bottom: 20px;">
+        <div class="row">
+            @if (Model.DiferencialTasas != null)
+            {
+                <div class="col-md-6">
+                    <div class="box">
+                        <div class="box-header">
+                            <h4 class="box-title">Diferencial de tasas (porcentaje)</h4>
+                        </div>
+                        <div class="box-body">
+                            @(Model.DiferencialTasas)
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (Model.IndicadoresRentabilidad != null)
+            {
+                <div class="col-md-6">
+                    <div class="box">
+                        <div class="box-header">
+                            <h4 class="box-title">Cobertura de m&aacute;rgenes</h4>
+                        </div>
+                        <div class="box-body">
+                            @(Model.IndicadoresRentabilidad)
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
 
-<!-- Highcharts Sparkline Initialization -->
+        <div class="row" style="margin-top: 15px;">
+            @if (Model.VariacionCartera != null)
+            {
+                <div class="col-md-6">
+                    <div class="box">
+                        <div class="box-header">
+                            <h4 class="box-title">Variaci&oacute;n interanual cartera</h4>
+                        </div>
+                        <div class="box-body">
+                            @(Model.VariacionCartera)
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (Model.Mora != null)
+            {
+                <div class="col-md-6">
+                    <div class="box">
+                        <div class="box-header">
+                            <h4 class="box-title">Mora de la cartera</h4>
+                        </div>
+                        <div class="box-body">
+                            @(Model.Mora)
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        
+        <div class="row" style="margin-top: 15px;">
+            @if (Model.CapitalSocial != null)
+            {
+                <div class="col-md-6">
+                    <div class="box">
+                        <div class="box-header">
+                            <h4 class="box-title">Variaci&oacute;n Capital Social</h4>
+                        </div>
+                        <div class="box-body">
+                            @(Model.CapitalSocial)
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (Model.BrechaLiquidez != null)
+            {
+                <div class="col-md-6">
+                    <div class="box">
+                        <div class="box-header">
+                            <h4 class="box-title">Brecha de l&iacute;quidez</h4>
+                        </div>
+                        <div class="box-body">
+                            @(Model.BrechaLiquidez)
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+<!-- Highcharts Sparkline Dynamic Initialization -->
 <script>
     $(document).ready(function () {
         function createSparkline(containerId, dataArray, lineColor) {
@@ -335,8 +404,15 @@
             });
         }
 
-        createSparkline('sparkline_suficiencia', [16.2, 17.5, 16.8, 18.2, 17.1, 19.9], '#2563eb');
-        createSparkline('sparkline_eficiencia', [45.1, 46.8, 44.2, 48.0, 47.3, 50.2], '#2563eb');
-        createSparkline('sparkline_morosidad', [2.4, 2.1, 2.3, 1.9, 2.0, 1.88], '#0d7682');
+        var valSuf = @suficienciaVal;
+        var prevSuf = @suficienciaPrev;
+        var valCosto = @costoVal;
+        var prevCosto = @costoPrev;
+        var valMora = @morosidadVal;
+        var prevMora = @morosidadPrev;
+
+        createSparkline('sparkline_suficiencia', [prevSuf * 0.9, prevSuf * 0.95, prevSuf, valSuf * 0.98, valSuf], '#2563eb');
+        createSparkline('sparkline_eficiencia', [prevCosto * 0.9, prevCosto * 0.95, prevCosto, valCosto * 0.98, valCosto], '#2563eb');
+        createSparkline('sparkline_morosidad', [prevMora * 1.1, prevMora * 1.05, prevMora, valMora * 1.02, valMora], '#0d7682');
     });
 </script>
