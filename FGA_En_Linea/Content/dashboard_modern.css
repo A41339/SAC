@@ -1338,22 +1338,31 @@ table.table td, .table td {
 }
 
 /* ==========================================================================
-   11. Search Parameter Filter Bar Modernization (Responsive Flex Card)
+   11. Search Parameter Filter Bar Modernization
    ========================================================================== */
-.box:has(.streaming-table) {
+/* Reset outer AdminLTE box wrappers around streaming-table */
+.box:has(.streaming-table),
+.box-info:has(.streaming-table) {
     background: transparent !important;
     border: none !important;
     box-shadow: none !important;
-    margin-bottom: 20px !important;
+    margin-bottom: 15px !important;
 }
 
-.box:has(.streaming-table) > .box-body,
-.box-body.table-responsive:has(.streaming-table) {
+.box-body:has(.streaming-table),
+.box-body.table-responsive:has(.streaming-table),
+.box .margin:has(.streaming-table) {
     padding: 0 !important;
+    margin: 0 !important;
     background: transparent !important;
     border: none !important;
     overflow: visible !important;
     box-shadow: none !important;
+}
+
+/* Fallback for browsers without :has support */
+.box-info .box-body.table-responsive {
+    overflow: visible !important;
 }
 
 .streaming-table {
@@ -1361,60 +1370,42 @@ table.table td, .table td {
     width: 100% !important;
     background: #ffffff !important;
     border: 1px solid #e2e8f0 !important;
-    border-radius: 14px !important;
-    padding: 16px 22px !important;
+    border-radius: 12px !important;
+    padding: 14px 20px !important;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03) !important;
     margin-bottom: 20px !important;
-    min-height: auto !important;
-    height: auto !important;
+    box-sizing: border-box !important;
     overflow: visible !important;
 }
 
 .streaming-table table.table,
 .streaming-table table {
-    display: block !important;
+    display: table !important;
     width: 100% !important;
-    background: transparent !important;
+    border-collapse: separate !important;
+    border-spacing: 0 8px !important;
     border: none !important;
-    box-shadow: none !important;
+    background: transparent !important;
     margin: 0 !important;
-    padding: 0 !important;
-    height: auto !important;
 }
 
 .streaming-table table > tbody {
-    display: block !important;
-    width: 100% !important;
-    height: auto !important;
+    display: table-row-group !important;
 }
 
 .streaming-table table tr {
-    display: flex !important;
-    flex-wrap: wrap !important;
-    align-items: center !important;
-    gap: 12px 20px !important;
-    width: 100% !important;
+    display: table-row !important;
     background: transparent !important;
     border: none !important;
-    margin-bottom: 8px !important;
-    height: auto !important;
-    min-height: 40px !important;
-}
-
-.streaming-table table tr:last-child {
-    margin-bottom: 0 !important;
 }
 
 .streaming-table table td {
-    display: inline-flex !important;
-    align-items: center !important;
-    gap: 8px !important;
+    display: table-cell !important;
+    padding: 4px 8px !important;
     border: none !important;
     background: transparent !important;
-    padding: 4px 0 !important;
-    margin: 0 !important;
-    height: auto !important;
     vertical-align: middle !important;
+    white-space: nowrap !important;
 }
 
 .streaming-table table td label,
@@ -1424,6 +1415,7 @@ table.table td, .table td {
     font-size: 13.5px !important;
     margin: 0 !important;
     white-space: nowrap !important;
+    display: inline-block !important;
 }
 
 .streaming-table select,
@@ -1436,23 +1428,19 @@ table.table td, .table td {
     font-size: 13px !important;
     color: #0f172a !important;
     height: 36px !important;
-    line-height: 24px !important;
     transition: all 0.2s ease !important;
     box-shadow: none !important;
-    max-width: 100% !important;
+    box-sizing: border-box !important;
+    display: inline-block !important;
 }
 
 .streaming-table select:focus,
-.streaming-table input[type="text"],
+.streaming-table input[type="text"]:focus,
 .streaming-table input.datecontrol:focus {
     border-color: #2563eb !important;
     background-color: #ffffff !important;
     box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
     outline: none !important;
-}
-
-.streaming-table table tr > td:last-child {
-    margin-left: auto !important;
 }
 
 .streaming-table .btn-facebook,
