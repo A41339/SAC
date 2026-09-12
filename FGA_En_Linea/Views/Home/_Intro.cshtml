@@ -2,24 +2,22 @@
 
 <script src="https://code.highcharts.com/highcharts.js"></script>
 
-@{
-    var modelData = Model ?? new FGA.Models.Dashboard();
-
-    Func<decimal[], int, string, string, string> FormatVal = (arr, idx, fmt, suffix) => {
+@functions {
+    public string FormatVal(decimal[] arr, int idx, string fmt, string suffix) {
         if (arr != null && arr.Length > idx) {
             return arr[idx].ToString(fmt) + suffix;
         }
         return "0" + suffix;
-    };
+    }
 
-    Func<decimal[], decimal> GetVal = (arr, idx) => {
+    public decimal GetVal(decimal[] arr, int idx) {
         if (arr != null && arr.Length > idx) {
             return arr[idx];
         }
         return 0;
-    };
+    }
 
-    Func<decimal, decimal, bool, string> TrendClass = (curr, prev, lowerIsBetter) => {
+    public string TrendClass(decimal curr, decimal prev, bool lowerIsBetter) {
         if (curr == prev) return "fa fa-arrow-right";
         bool up = curr > prev;
         if (lowerIsBetter) {
@@ -27,7 +25,12 @@
         } else {
             return up ? "fa fa-arrow-up trend-arrow-up" : "fa fa-arrow-down trend-arrow-down";
         }
-    };
+    }
+}
+
+@{
+    var modelData = Model ?? new FGA.Models.Dashboard();
+
 
     decimal suficienciaVal = GetVal(modelData.Suficiencia, 1);
     decimal suficienciaPrev = GetVal(modelData.Suficiencia, 0);
@@ -583,12 +586,15 @@
             });
         }
 
-        var valSuf = @suficienciaVal;
-        var prevSuf = @suficienciaPrev;
-        var valCosto = @costoVal;
-        var prevCosto = @costoPrev;
-        var valMora = @morosidadVal;
-        var prevMora = @morosidadPrev;
+        @{
+            var inv = System.Globalization.CultureInfo.InvariantCulture;
+        }
+        var valSuf = @suficienciaVal.ToString(inv);
+        var prevSuf = @suficienciaPrev.ToString(inv);
+        var valCosto = @costoVal.ToString(inv);
+        var prevCosto = @costoPrev.ToString(inv);
+        var valMora = @morosidadVal.ToString(inv);
+        var prevMora = @morosidadPrev.ToString(inv);
 
         createSparkline('sparkline_suficiencia', [prevSuf * 0.9, prevSuf * 0.95, prevSuf, valSuf * 0.98, valSuf], '#2563eb');
         createSparkline('sparkline_eficiencia', [prevCosto * 0.9, prevCosto * 0.95, prevCosto, valCosto * 0.98, valCosto], '#2563eb');
