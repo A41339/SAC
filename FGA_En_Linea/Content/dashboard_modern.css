@@ -1,5 +1,5 @@
 /* ==========================================================================
-   FFC - Dashboard Moderno & Sidebar Styles
+   FFC - Theme Global Moderno & Inherited UI Styles
    ========================================================================== */
 
 :root {
@@ -9,6 +9,7 @@
     --sidebar-active-text: #0b2341;
     --sidebar-text: #94a3b8;
     --sidebar-text-hover: #ffffff;
+    --header-bg: #0b2341;
     --card-bg: #ffffff;
     --text-primary: #1e293b;
     --text-secondary: #64748b;
@@ -18,41 +19,372 @@
     --accent-orange: #ea580c;
     --success-green: #16a34a;
     --danger-red: #dc2626;
+    --warning-yellow: #d97706;
     --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
 }
 
-/* Base Body & Container Adjustments */
-body.modern-dashboard-body {
+/* ==========================================================================
+   1. Global Body & Typography Overrides
+   ========================================================================== */
+body, body.modern-dashboard-body {
     background-color: var(--bg-main) !important;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+    color: var(--text-primary) !important;
 }
 
-/* Sidebar Custom Styling */
-.main-sidebar.modern-sidebar {
+.content-wrapper, .right-side {
+    background-color: var(--bg-main) !important;
+}
+
+.content-header > h1 {
+    font-size: 22px !important;
+    font-weight: 700 !important;
+    color: #0f172a !important;
+    margin-bottom: 15px;
+}
+
+.content-header .breadcrumb {
+    background: transparent;
+    font-size: 12px;
+}
+
+/* ==========================================================================
+   2. Main Header & Navbar (Barra Superior Global)
+   ========================================================================== */
+.main-header .navbar {
+    background-color: var(--header-bg) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.main-header .logo {
+    background-color: #08192e !important;
+    color: #ffffff !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+    font-weight: 700;
+}
+
+.main-header .navbar .sidebar-toggle {
+    color: #ffffff !important;
+}
+
+.main-header .navbar .sidebar-toggle:hover {
+    background-color: var(--accent-teal) !important;
+}
+
+.main-header .navbar .nav > li > a {
+    color: #cbd5e1 !important;
+}
+
+.main-header .navbar .nav > li > a:hover {
+    background-color: rgba(255, 255, 255, 0.08) !important;
+    color: #ffffff !important;
+}
+
+/* User Profile Menu Dropdown */
+.navbar-nav > .user-menu > .dropdown-menu {
+    border-radius: 12px !important;
+    overflow: hidden;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--border-color);
+}
+
+.navbar-nav > .user-menu > .dropdown-menu > li.user-header {
+    background-color: var(--header-bg) !important;
+}
+
+/* ==========================================================================
+   3. Main Sidebar Navigation (Menú Lateral Izquierdo)
+   ========================================================================== */
+.main-sidebar, .main-sidebar.modern-sidebar {
     background-color: var(--sidebar-bg) !important;
-    border-right: none;
+    border-right: none !important;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
 }
 
-.modern-sidebar .sidebar-menu > li > a {
-    color: var(--sidebar-text);
-    border-radius: 8px;
-    margin: 4px 12px;
-    font-weight: 500;
-    transition: all 0.2s ease;
+.user-panel {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 15px;
+    margin-bottom: 10px;
 }
 
-.modern-sidebar .sidebar-menu > li:hover > a,
-.modern-sidebar .sidebar-menu > li.active > a {
-    color: var(--sidebar-active-text) !important;
-    background-color: var(--sidebar-active) !important;
+.user-panel .info, .user-panel .info a {
+    color: #e2e8f0 !important;
     font-weight: 600;
 }
 
-/* Header Filters Bar */
+.sidebar-menu > li {
+    margin: 2px 8px;
+}
+
+.sidebar-menu > li > a {
+    color: var(--sidebar-text) !important;
+    border-radius: 8px !important;
+    font-weight: 500;
+    padding: 10px 15px !important;
+    transition: all 0.2s ease-in-out;
+}
+
+.sidebar-menu > li:hover > a,
+.sidebar-menu > li.active > a {
+    color: var(--sidebar-active-text) !important;
+    background-color: var(--sidebar-active) !important;
+    font-weight: 700 !important;
+}
+
+.sidebar-menu > li.active > a i,
+.sidebar-menu > li:hover > a i {
+    color: var(--sidebar-active-text) !important;
+}
+
+.sidebar-menu .treeview-menu {
+    background: #08192e !important;
+    border-radius: 8px;
+    margin: 4px 0;
+    padding: 5px 0;
+}
+
+.sidebar-menu .treeview-menu > li > a {
+    color: #94a3b8 !important;
+    padding: 8px 15px 8px 25px !important;
+}
+
+.sidebar-menu .treeview-menu > li.active > a,
+.sidebar-menu .treeview-menu > li > a:hover {
+    color: #ffffff !important;
+    font-weight: 600;
+}
+
+/* ==========================================================================
+   4. AdminLTE Boxes & Cards Across All Views
+   ========================================================================== */
+.box {
+    background: var(--card-bg) !important;
+    border-radius: 12px !important;
+    border: 1px solid var(--border-color) !important;
+    box-shadow: var(--card-shadow) !important;
+    margin-bottom: 20px;
+}
+
+.box-header {
+    background: transparent !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+    padding: 14px 18px !important;
+}
+
+.box-header .box-title, .box-header label {
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    color: #1e293b !important;
+}
+
+.box.box-primary { border-top: 4px solid var(--primary-blue) !important; }
+.box.box-success { border-top: 4px solid var(--success-green) !important; }
+.box.box-info { border-top: 4px solid var(--accent-teal) !important; }
+.box.box-warning { border-top: 4px solid var(--warning-yellow) !important; }
+.box.box-danger { border-top: 4px solid var(--danger-red) !important; }
+
+/* ==========================================================================
+   5. Buttons Styling Global Override
+   ========================================================================== */
+.btn {
+    border-radius: 6px !important;
+    font-weight: 600 !important;
+    font-size: 12px !important;
+    padding: 7px 16px !important;
+    transition: all 0.2s ease-in-out !important;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.btn-primary, .btn-facebook {
+    background-color: var(--primary-blue) !important;
+    border-color: var(--primary-blue) !important;
+    color: #ffffff !important;
+}
+
+.btn-primary:hover, .btn-facebook:hover {
+    background-color: #1d4ed8 !important;
+    border-color: #1d4ed8 !important;
+}
+
+.btn-success {
+    background-color: var(--success-green) !important;
+    border-color: var(--success-green) !important;
+    color: #ffffff !important;
+}
+
+.btn-success:hover {
+    background-color: #15803d !important;
+}
+
+.btn-info {
+    background-color: var(--accent-teal) !important;
+    border-color: var(--accent-teal) !important;
+    color: #ffffff !important;
+}
+
+.btn-info:hover {
+    background-color: #095c66 !important;
+}
+
+.btn-danger, .btn-pinterest {
+    background-color: var(--danger-red) !important;
+    border-color: var(--danger-red) !important;
+    color: #ffffff !important;
+}
+
+.btn-danger:hover {
+    background-color: #b91c1c !important;
+}
+
+.btn-warning {
+    background-color: var(--warning-yellow) !important;
+    border-color: var(--warning-yellow) !important;
+    color: #ffffff !important;
+}
+
+.btn-default {
+    background-color: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    color: #334155 !important;
+}
+
+.btn-default:hover {
+    background-color: #f8fafc !important;
+    border-color: #94a3b8 !important;
+}
+
+/* ==========================================================================
+   6. Form Inputs, Selects & Datepickers
+   ========================================================================== */
+.form-control, select.form-control, input[type="text"], input[type="date"], select {
+    border-radius: 6px !important;
+    border: 1px solid #cbd5e1 !important;
+    background-color: #f8fafc !important;
+    color: #1e293b !important;
+    font-size: 12px !important;
+    padding: 6px 12px !important;
+    transition: all 0.2s ease-in-out !important;
+}
+
+.form-control:focus, select.form-control:focus, input[type="text"]:focus {
+    border-color: var(--primary-blue) !important;
+    background-color: #ffffff !important;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
+    outline: none !important;
+}
+
+.form-group label {
+    font-weight: 600 !important;
+    color: #475569 !important;
+    font-size: 12px !important;
+}
+
+/* ==========================================================================
+   7. Tables & DataTables Global Modernization
+   ========================================================================== */
+table.table, .table {
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
+    margin-bottom: 15px !important;
+}
+
+table.table th, .table th {
+    background-color: #ebf5ff !important;
+    color: #1e40af !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    padding: 10px 14px !important;
+    border-bottom: 2px solid #bfdbfe !important;
+    border-top: none !important;
+}
+
+table.table td, .table td {
+    padding: 10px 14px !important;
+    font-size: 12px !important;
+    color: #334155 !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+}
+
+.table-striped > tbody > tr:nth-of-type(odd) {
+    background-color: #f8fafc !important;
+}
+
+.table-hover > tbody > tr:hover {
+    background-color: #f1f5f9 !important;
+}
+
+.table-bordered {
+    border: 1px solid #e2e8f0 !important;
+}
+
+.table-bordered > tbody > tr > td, .table-bordered > tbody > tr > th {
+    border: 1px solid #f1f5f9 !important;
+}
+
+/* DataTables Controls */
+.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+    background: var(--primary-blue) !important;
+    color: #ffffff !important;
+    border-radius: 6px !important;
+    border: none !important;
+}
+
+/* ==========================================================================
+   8. Modals & Dialogs Modernization
+   ========================================================================== */
+.modal-content {
+    border-radius: 12px !important;
+    border: none !important;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+    overflow: hidden;
+}
+
+.modal-header {
+    background-color: var(--header-bg) !important;
+    color: #ffffff !important;
+    padding: 16px 24px !important;
+}
+
+.modal-header .modal-title, .modal-header h4 {
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    font-size: 16px !important;
+}
+
+.modal-header .close {
+    color: #ffffff !important;
+    opacity: 0.8;
+}
+
+.modal-footer {
+    background-color: #f8fafc !important;
+    border-top: 1px solid #e2e8f0 !important;
+    padding: 12px 24px !important;
+}
+
+/* ==========================================================================
+   9. Badges, Labels & Status Pills
+   ========================================================================== */
+.label, .badge {
+    border-radius: 12px !important;
+    padding: 4px 10px !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+}
+
+.label-success, .badge-success { background-color: #dcfce7 !important; color: #15803d !important; }
+.label-info, .badge-info { background-color: #e0f2fe !important; color: #0369a1 !important; }
+.label-warning, .badge-warning { background-color: #fef3c7 !important; color: #b45309 !important; }
+.label-danger, .badge-danger { background-color: #fee2e2 !important; color: #b91c1c !important; }
+
+/* ==========================================================================
+   10. Dashboard Specific Grid Styles
+   ========================================================================== */
 .modern-filter-bar {
     background: #ffffff;
-    padding: 12px 24px;
+    padding: 14px 24px;
     border-radius: 10px;
     margin-bottom: 20px;
     box-shadow: var(--card-shadow);
@@ -111,7 +443,6 @@ body.modern-dashboard-body {
     background-color: #095c66;
 }
 
-/* Dashboard Grid Layout */
 .dashboard-top-grid {
     display: grid;
     grid-template-columns: repeat(12, 1fr);
@@ -130,7 +461,6 @@ body.modern-dashboard-body {
     grid-column: span 3;
 }
 
-/* Individual KPI Card */
 .modern-kpi-card {
     background: var(--card-bg);
     border-radius: 12px;
@@ -192,7 +522,6 @@ body.modern-dashboard-body {
     width: 100%;
 }
 
-/* Side Indicators Panel */
 .modern-indicators-panel {
     background: var(--card-bg);
     border-radius: 12px;
@@ -235,7 +564,6 @@ body.modern-dashboard-body {
     color: #0f172a;
 }
 
-/* Cuentas Principales Row */
 .cuentas-principales-wrapper {
     background: var(--card-bg);
     border-radius: 12px;
@@ -358,7 +686,6 @@ body.modern-dashboard-body {
     color: #1e293b;
 }
 
-/* Calidad de Cartera Table */
 .cartera-table-container {
     background: var(--card-bg);
     border-radius: 12px;
