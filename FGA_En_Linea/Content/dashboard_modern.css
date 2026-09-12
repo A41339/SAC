@@ -1368,44 +1368,67 @@ table.table td, .table td {
 .streaming-table {
     display: block !important;
     width: 100% !important;
+    max-width: 100% !important;
     background: #ffffff !important;
     border: 1px solid #e2e8f0 !important;
-    border-radius: 12px !important;
+    border-radius: 14px !important;
     padding: 14px 20px !important;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03) !important;
     margin-bottom: 20px !important;
     box-sizing: border-box !important;
-    overflow: visible !important;
+    overflow: hidden !important;
 }
 
 .streaming-table table.table,
 .streaming-table table {
-    display: table !important;
+    display: block !important;
     width: 100% !important;
-    border-collapse: separate !important;
-    border-spacing: 0 8px !important;
+    max-width: 100% !important;
     border: none !important;
     background: transparent !important;
     margin: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
 }
 
 .streaming-table table > tbody {
-    display: table-row-group !important;
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
 }
 
 .streaming-table table tr {
-    display: table-row !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    gap: 12px 18px !important;
+    width: 100% !important;
+    max-width: 100% !important;
     background: transparent !important;
     border: none !important;
+    margin-bottom: 6px !important;
+    box-sizing: border-box !important;
+}
+
+.streaming-table table tr:last-child {
+    margin-bottom: 0 !important;
 }
 
 .streaming-table table td {
-    display: table-cell !important;
-    padding: 4px 8px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
     border: none !important;
     background: transparent !important;
+    padding: 4px 0 !important;
+    margin: 0 !important;
     vertical-align: middle !important;
-    white-space: nowrap !important;
+    box-sizing: border-box !important;
+}
+
+.streaming-table table tr > td:last-child {
+    margin-left: auto !important;
 }
 
 .streaming-table table td label,
@@ -1431,6 +1454,7 @@ table.table td, .table td {
     transition: all 0.2s ease !important;
     box-shadow: none !important;
     box-sizing: border-box !important;
+    max-width: 100% !important;
     display: inline-block !important;
 }
 
