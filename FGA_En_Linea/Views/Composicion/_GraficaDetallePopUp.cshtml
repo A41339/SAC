@@ -1,4 +1,4 @@
-﻿@model FGA.Model.Grafico
+@model FGA.Model.Grafico
 
 <div class="content">
     <div class="row">
@@ -27,11 +27,12 @@
 <div class="modal fade" id="mPopUp" tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header">
-                <div class="box-header with-border">
-                    <img width="50" height="50" src="@Session["Logo"]" />
-                    <h3 id="pEntidad" style="padding-bottom: 10px;" class="box-title"></h3>
+            <div class="modal-header" style="display: flex; align-items: center; justify-content: space-between;">
+                <div class="box-header with-border" style="display: flex; align-items: center; gap: 12px;">
+                    <img width="40" height="40" src="@Session["Logo"]" style="border-radius: 6px; background: #ffffff; padding: 2px;" />
+                    <h3 id="pEntidad" class="box-title" style="margin: 0; color: #ffffff !important;"></h3>
                 </div>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: #ffffff !important; opacity: 0.9;"><span aria-hidden="true">&times;</span></button>
             </div>
             <div class="modal-body">
                  @(Model.pDetalle)
