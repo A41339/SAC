@@ -1,13 +1,13 @@
 @model FGA.Model.Modelo_PEEFF
 
 @{
-    ViewBag.Title = "M&oacute;dulo de proyecciones";
+    ViewBag.Title = "Módulo de proyecciones";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <section class="content-header">
     <h1>
-        M&oacute;dulo de proyecciones
+        Módulo de proyecciones
     </h1>
 </section>
 
@@ -30,7 +30,6 @@
                                         <td>
                                             @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", style = "width: 200px;" })
                                         </td>
-
                                         <td>
                                             <label>Fecha de corte:</label>
                                         </td>
@@ -42,6 +41,8 @@
                                                    href="javascript:help('Fecha de corte', 'Fecha de base a partir de la que se genera los períodos proyectados, se podrán usar cortes del período vigente y el último cierre fiscal cargado, meses anteriores a ese no se podrán usar como base.' )"><i class="btn btn-xs btn-default icon fa fa-question"></i></a>
                                             </div>
                                         </td>
+                                    </tr>
+                                    <tr>
                                         <td>
                                             <label>Periodos por proyectar:</label>
                                         </td>
@@ -55,8 +56,8 @@
                                                    href="javascript:help('Periodos por proyectar', 'La opción de 12 meses solo mostrará una proyección mensual de un año, la opción de 3 años mostrará el primer año en forma mensual. El segundo y tercero en forma anualizada')"><i class="btn btn-xs btn-default icon fa fa-question"></i></a>
                                             </div>
                                         </td>
-                                        <td>
-                                            <label class="btn btn-facebook">
+                                        <td colspan="2" class="text-right">
+                                            <label class="btn btn-facebook" style="margin-bottom: 0;">
                                                 Incluir supuestos<input type="submit" id="btn_supuestos" value="Consultar" name="command" style="display: none;">
                                             </label>
                                         </td>
