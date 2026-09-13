@@ -459,3 +459,20 @@
         }
     });
 </script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var currentPath = window.location.pathname.toLowerCase();
+        $('.sidebar-menu li a').each(function () {
+            var href = $(this).attr('href');
+            if (href && href !== '#' && href !== 'javascript:void(0)') {
+                var cleanHref = href.toLowerCase().replace(window.location.origin.toLowerCase(), '');
+                if (cleanHref && (currentPath === cleanHref || (cleanHref.length > 3 && currentPath.indexOf(cleanHref) === 0))) {
+                    $('.sidebar-menu li').removeClass('active');
+                    $(this).closest('li').addClass('active');
+                    $(this).closest('.treeview').addClass('active menu-open');
+                }
+            }
+        });
+    });
+</script>

@@ -186,7 +186,7 @@ namespace FGA
 
         private static MvcHtmlString GetMenuBar(Nullable<int> ParentId, MenuPermission[] q)
         {
-            var path = HttpContext.Current.Request.Url.AbsoluteUri;
+            var rawPath = HttpContext.Current.Request.Url.AbsolutePath.ToLower();
             StringBuilder sb = new StringBuilder();
             var menuStyle = string.Empty;
 
@@ -194,19 +194,24 @@ namespace FGA
             {
                 foreach (var item in q.Where(i => i.Menu_MenuId.ParentId == ParentId).OrderBy(i => i.SortOrder))
                 {
-                    var js = q;
                     menuStyle = string.Empty;
+                    string itemUrl = (item.Menu_MenuId.MenuURL ?? "").Trim('/').ToLower();
 
-                    if (js.Count(j => j.Menu_MenuId.ParentId == item.Menu_MenuId.Id) > 0)
+                    if (!string.IsNullOrEmpty(itemUrl) && (rawPath.Equals("/" + itemUrl) || rawPath.StartsWith("/" + itemUrl + "/") || (itemUrl.Length > 2 && rawPath.Contains(itemUrl))))
                     {
+                        menuStyle = "active";
+                    }
 
+                    if (q.Count(j => j.Menu_MenuId.ParentId == item.Menu_MenuId.Id) > 0)
+                    {
                         foreach (var detalle in q.Where(i => i.Menu_MenuId.ParentId == item.Menu_MenuId.Id))
                         {
-                            if (path.Contains(detalle.Menu_MenuId.MenuURL))
+                            string detUrl = (detalle.Menu_MenuId.MenuURL ?? "").Trim('/').ToLower();
+                            if (!string.IsNullOrEmpty(detUrl) && (rawPath.Equals("/" + detUrl) || rawPath.StartsWith("/" + detUrl + "/") || (detUrl.Length > 2 && rawPath.Contains(detUrl))))
+                            {
                                 menuStyle = "menu-open active";
-
-                            if (q.Where(i => i.Menu_MenuId.ParentId == detalle.Menu_MenuId.Id && path.Contains(i.Menu_MenuId.MenuURL)).Count() >= 1)
-                                menuStyle = "menu-open active";
+                                break;
+                            }
                         }
 
                         sb.Append("<li class=\"treeview " + menuStyle + "\"> <a href=\"#\"> " + item.Menu_MenuId.MenuIcon + "<span style=\"font-size:13px;\">" + item.Menu_MenuId.MenuText + "</span><span class=\"pull-right-container\"> <i class=\"fa fa-angle-left pull-right\"></i></span> </a><ul class=\"treeview-menu\">");
@@ -216,9 +221,9 @@ namespace FGA
                     else
                     {
                         if (item.Menu_MenuId.ParentId == null)
-                            sb.Append("<li class=\"\"> <a style=\"font-size:13px;\" href=\"" + MicrosoftHelper.MSHelper.GetSiteRoot() + "/" + item.Menu_MenuId.MenuURL + "\">" + item.Menu_MenuId.MenuIcon + "  <span style=\"font-size:13px;\">" + item.Menu_MenuId.MenuText + "</span> <span class=\"pull-right-container\"></span></a></li>");
+                            sb.Append("<li class=\"" + menuStyle + "\"> <a style=\"font-size:13px;\" href=\"" + MicrosoftHelper.MSHelper.GetSiteRoot() + "/" + item.Menu_MenuId.MenuURL + "\">" + item.Menu_MenuId.MenuIcon + "  <span style=\"font-size:13px;\">" + item.Menu_MenuId.MenuText + "</span> <span class=\"pull-right-container\"></span></a></li>");
                         else
-                            sb.Append("<li class=\"\"> <a style=\"font-size:13px;\" href=\"" + MicrosoftHelper.MSHelper.GetSiteRoot() + "/" + item.Menu_MenuId.MenuURL + "\">" + item.Menu_MenuId.MenuIcon + " " + item.Menu_MenuId.MenuText + "</a></li>");
+                            sb.Append("<li class=\"" + menuStyle + "\"> <a style=\"font-size:13px;\" href=\"" + MicrosoftHelper.MSHelper.GetSiteRoot() + "/" + item.Menu_MenuId.MenuURL + "\">" + item.Menu_MenuId.MenuIcon + " " + item.Menu_MenuId.MenuText + "</a></li>");
                     }
                 }
                 sb.Append("</ul>");
