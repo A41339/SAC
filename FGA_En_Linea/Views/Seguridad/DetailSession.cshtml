@@ -1,17 +1,17 @@
 ﻿@model IEnumerable<Entities.Entities.Procedures.FGA_Consultar_Sessiones_Result>
 
 <div id="dialog"></div>
-<table id="tbRole" class="table table-striped table-bordered">
+<table id="tbRole" class="table table-striped table-bordered" style="width: 100%;">
     <thead>
         <tr>
-            <th class="hidden"> Id  </th>
-            <th style="text-align: center;" colspan="2"> Entidad  </th>
-            <th class="mobile" style="text-align: center;">Periodo</th>
-            <th style="text-align: center;"> Usuario carga </th>
-            <th style="text-align: center;"> Usuario administrador </th>
-            <th class="mobile" style="text-align: center;"> Usuario maestro </th>
-            <th class="mobile" style="text-align: center;"> Usuario director </th>
-            <th class="mobile" style="text-align: center;"> Total de ingresos </th>
+            <th style="width: 70px; text-align: center;"></th>
+            <th style="width: 20%; text-align: center;"> Entidad </th>
+            <th class="mobile" style="width: 10%; text-align: center;">Periodo</th>
+            <th style="width: 14%; text-align: center;"> Usuario carga </th>
+            <th style="width: 16%; text-align: center;"> Usuario administrador </th>
+            <th class="mobile" style="width: 14%; text-align: center;"> Usuario maestro </th>
+            <th class="mobile" style="width: 14%; text-align: center;"> Usuario director </th>
+            <th class="mobile" style="width: 12%; text-align: center;"> Total de ingresos </th>
         </tr>
     </thead>
     <tbody style="font-size: 12px;">
@@ -20,10 +20,8 @@
             foreach (var item in Model)
             {
                 <tr>
-                    <td class="hidden">
-                        @Html.HiddenFor(modelItem => item.IDENTIDAD)
-                    </td>
                     <td style="text-align: center; background-color: white;">
+                        @Html.HiddenFor(modelItem => item.IDENTIDAD)
                         @{
                             string ruta = Url.Content("~/Content/images/" + @item.NOMBRE + ".jpg");
                             <img width="40" height="40" src="@ruta" />

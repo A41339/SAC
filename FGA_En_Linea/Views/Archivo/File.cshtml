@@ -13,17 +13,16 @@
                     <div class="margin">
                         <div class="streaming-table">
                             <span id="found" class="label label-info"></span>
-                            <table id="tbFiles" class="table table-striped table-bordered">
+                            <table id="tbFiles" class="table table-striped table-bordered" style="width: 100%;">
                                 <thead>
                                     <tr>
-                                        <th class="hidden"> Id  </th>
-                                        <th> Nombre  </th>
-                                        <th class="mobile" style="text-align: center;"> Periodo  </th>
-                                        <th style="text-align: center;"> Estado  </th>
-                                        <th class="mobile" style="text-align: center;"> Usuario Responsable  </th>
-                                        <th class="mobile" style="text-align: center;"> Fecha de Carga </th>
-                                        <th class="mobile" style="text-align: center;"> Registros </th>
-                                        <th class="hidden">  </th>
+                                        <th style="text-align: center; width: 25%;"> Nombre </th>
+                                        <th style="text-align: center; width: 12%;" class="mobile"> Periodo </th>
+                                        <th style="text-align: center; width: 10%;"> Estado </th>
+                                        <th style="text-align: center; width: 20%;" class="mobile"> Usuario Responsable </th>
+                                        <th style="text-align: center; width: 15%;" class="mobile"> Fecha de Carga </th>
+                                        <th style="text-align: center; width: 8%;" class="mobile"> Registros </th>
+                                        <th style="text-align: center; width: 10%;"> Acciones </th>
                                     </tr>
                                 </thead>
                                 <tbody style="font-size: 12px;">
@@ -32,10 +31,8 @@
                                         foreach (var item in Model)
                                         {
                                             <tr>
-                                                <td class="hidden">
-                                                    @Html.HiddenFor(modelItem => item.ID_ENCABEZADO)
-                                                </td>
                                                 <td>
+                                                    @Html.HiddenFor(modelItem => item.ID_ENCABEZADO)
                                                     <label>@Html.DisplayFor(modelItem => item.NOMBRE_XML)</label>
                                                 </td>
                                                 <td class="mobile" style="text-align: center;">
@@ -82,13 +79,12 @@
                                                         <label>@Html.DisplayFor(modelItem => item.CANTIDAD)</label>
                                                     }
                                                 </td>
-                                                @if (item.XML_ID == FGA.Utility.Utilitarios.archivoErrores)
-                                                {
-                                                    <td>
-                                                        @Html.ActionLink("Errores", "Details", new { id = item.ID_ENCABEZADO })
-                                                    </td>
-                                                }
-
+                                                <td style="text-align: center;">
+                                                    @if (item.XML_ID == FGA.Utility.Utilitarios.archivoErrores)
+                                                    {
+                                                        @Html.ActionLink("Errores", "Details", new { id = item.ID_ENCABEZADO }, new { @class = "btn btn-danger btn-xs" })
+                                                    }
+                                                </td>
                                             </tr>
                                         }
                                     }

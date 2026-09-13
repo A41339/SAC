@@ -98,17 +98,16 @@
                     <div class="box-body table-responsive">
                         <div class="margin">
                             <div class="streaming-table">
-                                <table id="tbRole" class="table table-striped table-bordered">
+                                <table id="tbRole" class="table table-striped table-bordered" style="width: 100%;">
                                     <thead>
                                         <tr>
-                                            <th style="text-align: center;" class="hidden"> Id </th>
-                                            <th style="text-align: center;"> Archivo XML </th>
-                                            <th style="text-align: center;" class="mobile"> Periodo </th>
-                                            <th style="text-align: center;"> Estado </th>
-                                            <th style="text-align: center;" class="mobile"> Usuario Responsable </th>
-                                            <th style="text-align: center;" class="mobile"> Fecha de Carga </th>
-                                            <th style="text-align: center;" class="mobile"> Registros </th>
-                                            <th style="text-align: center;" class="hidden"> </th>
+                                            <th style="text-align: center; width: 25%;"> Archivo XML </th>
+                                            <th style="text-align: center; width: 12%;" class="mobile"> Periodo </th>
+                                            <th style="text-align: center; width: 10%;"> Estado </th>
+                                            <th style="text-align: center; width: 20%;" class="mobile"> Usuario Responsable </th>
+                                            <th style="text-align: center; width: 15%;" class="mobile"> Fecha de Carga </th>
+                                            <th style="text-align: center; width: 8%;" class="mobile"> Registros </th>
+                                            <th style="text-align: center; width: 10%;"> Acciones </th>
                                         </tr>
                                     </thead>
                                     <tbody style="font-size: 12px;">
@@ -117,10 +116,8 @@
                                             foreach (var item in Model.listaArchivos)
                                             {
                                                 <tr>
-                                                    <td class="hidden">
-                                                        @Html.HiddenFor(modelItem => item.ID_ENCABEZADO)
-                                                    </td>
                                                     <td>
+                                                        @Html.HiddenFor(modelItem => item.ID_ENCABEZADO)
                                                         <label>@Html.DisplayFor(modelItem => item.NOMBRE_XML) </label>
                                                     </td>
                                                     <td class="mobile" style="text-align: center;">
