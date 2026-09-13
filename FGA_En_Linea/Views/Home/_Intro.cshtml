@@ -26,6 +26,21 @@
             return up ? "fa fa-arrow-up trend-arrow-up" : "fa fa-arrow-down trend-arrow-down";
         }
     }
+
+    public HtmlString TrendPill(decimal curr, decimal prev, bool lowerIsBetter) {
+        decimal diff = curr - prev;
+        string sign = diff > 0 ? "+" : "";
+        string arrow = diff > 0 ? "▲" : (diff < 0 ? "▼" : "▬");
+        string pillClass = "neutral";
+        if (diff != 0) {
+            if (lowerIsBetter) {
+                pillClass = diff < 0 ? "positive" : "negative";
+            } else {
+                pillClass = diff > 0 ? "positive" : "negative";
+            }
+        }
+        return new HtmlString(string.Format("<span class=\"kpi-trend-pill {0}\">{1}{2:N1}% {3}</span>", pillClass, sign, diff, arrow));
+    }
 }
 
 @{
@@ -75,11 +90,11 @@
         <div class="modern-kpi-card">
             <div class="kpi-title">
                 <span>Suficiencia Patrimonial</span>
-                <a href="javascript:getGraph('C1')" style="margin-left:auto; color:#94a3b8;"><i class="fa fa-line-chart"></i></a>
+                <a href="javascript:getGraph('C1')" style="margin-left:auto; color:#94a3b8;" title="Ampliar gráfica"><i class="fa fa-line-chart"></i></a>
             </div>
             <div class="kpi-value-row">
                 <div class="kpi-big-num">@FormatVal(modelData.Suficiencia, 1, "N1", "%")</div>
-                <div><i class="@TrendClass(suficienciaVal, suficienciaPrev, false)"></i></div>
+                @TrendPill(suficienciaVal, suficienciaPrev, false)
             </div>
             <div class="kpi-sparkline-container" id="sparkline_suficiencia"></div>
         </div>
@@ -88,11 +103,11 @@
         <div class="modern-kpi-card">
             <div class="kpi-title">
                 <span>Eficiencia</span>
-                <a href="javascript:getGraph('C118')" style="margin-left:auto; color:#94a3b8;"><i class="fa fa-line-chart"></i></a>
+                <a href="javascript:getGraph('C118')" style="margin-left:auto; color:#94a3b8;" title="Ampliar gráfica"><i class="fa fa-line-chart"></i></a>
             </div>
             <div class="kpi-value-row">
                 <div class="kpi-big-num">@FormatVal(modelData.CostoAdmin, 1, "N1", "%")</div>
-                <div><i class="@TrendClass(costoVal, costoPrev, true)"></i></div>
+                @TrendPill(costoVal, costoPrev, true)
             </div>
             <div class="kpi-sparkline-container" id="sparkline_eficiencia"></div>
         </div>
@@ -101,11 +116,11 @@
         <div class="modern-kpi-card">
             <div class="kpi-title">
                 <span>Morosidad mayor a 90 d&iacute;as</span>
-                <a href="javascript:getGraph('C22')" style="margin-left:auto; color:#94a3b8;"><i class="fa fa-line-chart"></i></a>
+                <a href="javascript:getGraph('C22')" style="margin-left:auto; color:#94a3b8;" title="Ampliar gráfica"><i class="fa fa-line-chart"></i></a>
             </div>
             <div class="kpi-value-row">
                 <div class="kpi-big-num">@FormatVal(modelData.Morosidad, 1, "N1", "%")</div>
-                <div><i class="@TrendClass(morosidadVal, morosidadPrev, true)"></i></div>
+                @TrendPill(morosidadVal, morosidadPrev, true)
             </div>
             <div class="kpi-sparkline-container" id="sparkline_morosidad"></div>
         </div>
@@ -228,11 +243,11 @@
                     <label>Periodo anterior</label>
                     <span>@FormatVal(modelData.Compromiso, 0, "N0", "")</span>
                 </div>
-                <div class="subtable-col">
+                <div class="subtable-col @(compromisoVar > 0 ? "val-positive" : (compromisoVar < 0 ? "val-negative" : ""))">
                     <label>Variaci&oacute;n</label>
                     <span>@compromisoVar.ToString("N0")</span>
                 </div>
-                <div class="subtable-col">
+                <div class="subtable-col badge-cell @(compromisoVarPct > 0 ? "positive" : (compromisoVarPct < 0 ? "negative" : ""))">
                     <label>Variaci&oacute;n %</label>
                     <span>@compromisoVarPct.ToString("N1")%</span>
                 </div>
@@ -251,11 +266,11 @@
                     <label>Periodo anterior</label>
                     <span>@FormatVal(modelData.Activo, 0, "N0", "")</span>
                 </div>
-                <div class="subtable-col">
+                <div class="subtable-col @(activoVar > 0 ? "val-positive" : (activoVar < 0 ? "val-negative" : ""))">
                     <label>Variaci&oacute;n</label>
                     <span>@activoVar.ToString("N0")</span>
                 </div>
-                <div class="subtable-col">
+                <div class="subtable-col badge-cell @(activoVarPct > 0 ? "positive" : (activoVarPct < 0 ? "negative" : ""))">
                     <label>Variaci&oacute;n %</label>
                     <span>@activoVarPct.ToString("N1")%</span>
                 </div>
@@ -274,11 +289,11 @@
                     <label>Periodo anterior</label>
                     <span>@FormatVal(modelData.Riesgo, 0, "N0", "")</span>
                 </div>
-                <div class="subtable-col">
+                <div class="subtable-col @(riesgoVar > 0 ? "val-positive" : (riesgoVar < 0 ? "val-negative" : ""))">
                     <label>Variaci&oacute;n</label>
                     <span>@riesgoVar.ToString("N0")</span>
                 </div>
-                <div class="subtable-col">
+                <div class="subtable-col badge-cell @(riesgoVarPct > 0 ? "positive" : (riesgoVarPct < 0 ? "negative" : ""))">
                     <label>Variaci&oacute;n %</label>
                     <span>@riesgoVarPct.ToString("N1")%</span>
                 </div>
