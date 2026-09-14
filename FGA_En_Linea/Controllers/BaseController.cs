@@ -49,40 +49,41 @@ namespace FGA.Controllers
         protected override void Initialize(RequestContext requestContext)
         {
             base.Initialize(requestContext);
-            try
-            {
-                if (Env.GetUserInfo("name").Length <= 0)
-                {
-                    requestContext.HttpContext.Response.Clear();
-                    requestContext.HttpContext.Response.Redirect("~/Account/login");
-                    requestContext.HttpContext.Response.End();
-                }
-            }
-            catch (Exception)
-            {
-            }
         }
 
         protected override void OnActionExecuting(ActionExecutingContext context)
         {
-           
-            if (Session["IdEntidad"] is null)
+            if (Response.HeadersWritten)
             {
-                HttpCookie c = new HttpCookie(".AspNet.ApplicationCookie")
-                {
-                    Expires = DateTime.Now.AddDays(-1)
-                };
-                Response.Cookies.Add(c);
+                base.OnActionExecuting(context);
+                return;
+            }
 
-                HttpCookie d = new HttpCookie("__RequestVerificationToken")
+            if (Session["IdEntidad"] is null || string.IsNullOrEmpty(Env.GetUserInfo("name")))
+            {
+                if (!Response.HeadersWritten)
                 {
-                    Expires = DateTime.Now.AddDays(-1)
-                };
-                Response.Cookies.Add(d);
+                    HttpCookie c = new HttpCookie(".AspNet.ApplicationCookie")
+                    {
+                        Expires = DateTime.Now.AddDays(-1)
+                    };
+                    Response.Cookies.Add(c);
 
-                var AuthenticationManager = HttpContext.GetOwinContext().Authentication;
-                AuthenticationManager.SignOut();
-                Session.Abandon();
+                    HttpCookie d = new HttpCookie("__RequestVerificationToken")
+                    {
+                        Expires = DateTime.Now.AddDays(-1)
+                    };
+                    Response.Cookies.Add(d);
+                }
+
+                try
+                {
+                    var AuthenticationManager = HttpContext.GetOwinContext().Authentication;
+                    AuthenticationManager.SignOut();
+                    Session.Abandon();
+                }
+                catch (Exception) { }
+
                 context.Result = new RedirectResult("~/Account/Login");
                 return;
             }
@@ -255,7 +256,7 @@ namespace FGA.Controllers
 
         private void UnAuthoRedirect(ActionExecutingContext context)
         {
-            context.HttpContext.Response.Redirect("~/Account/unauthorized");
+            context.Result = new RedirectResult("~/Account/unauthorized");
         }
 
         private class MenuOfRole

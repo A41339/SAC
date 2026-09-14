@@ -3,8 +3,13 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Net;
+using System.Security.Claims;
+using System.Threading;
+using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
+using Microsoft.AspNet.Identity;
+using Microsoft.Owin.Security;
 using DocumentFormat.OpenXml.Office2010.Excel;
 using FGA.Models;
 
@@ -132,10 +137,10 @@ namespace FGA.Controllers
                         Estimad@ Usuario,
                         <br/>
                         <br/>
-                        Bienvenid@ al Sistema de Análisis Cooperativo SAC del Fondo de Fortalecimiento Cooperativo, nuestra entidad brinda soluciones financieras ágiles a las cooperativas de ahorro y crédito que contribuyan a mantener la solidez y estabilidad de nuestras afiliadas.
+                        Bienvenid@ al Sistema de Anï¿½lisis Cooperativo SAC del Fondo de Fortalecimiento Cooperativo, nuestra entidad brinda soluciones financieras ï¿½giles a las cooperativas de ahorro y crï¿½dito que contribuyan a mantener la solidez y estabilidad de nuestras afiliadas.
                         <br/>
                         <br/>
-                        Para conocer más de nosotros le invitamos a visitar nuestro sitio web <a href='https://www.ffc.co.cr/'>ffc.co.cr</a>, llamar al 2257-1111 o puede contactar a las analistas de riesgo:
+                        Para conocer mï¿½s de nosotros le invitamos a visitar nuestro sitio web <a href='https://www.ffc.co.cr/'>ffc.co.cr</a>, llamar al 2257-1111 o puede contactar a las analistas de riesgo:
                         <br/>
                         <br/>
                         Cinthya Salazar <a href='mailto:csalazar@ffc.co.cr'>csalazar@ffc.co.cr</a>
@@ -145,16 +150,16 @@ namespace FGA.Controllers
                         <br/>
                         <b>Nuevo Usuario:</b> " + usuario.Nombre +
                         "<br/>" +
-                        "<b>Identificación:</b> " + usuario.Identificacion +
+                        "<b>Identificaciï¿½n:</b> " + usuario.Identificacion +
                         "<br/>" +
-                        "<b>Contraseña Temporal:</b> " + enc.DecryptStr(usuario.Contrasena) + 
+                        "<b>Contraseï¿½a Temporal:</b> " + enc.DecryptStr(usuario.Contrasena) + 
                         "<br/>" +
-                        "La contraseña deberá de digitarse en la herramienta, no permite la opción copiar - pegar";
+                        "La contraseï¿½a deberï¿½ de digitarse en la herramienta, no permite la opciï¿½n copiar - pegar";
 
-                    MailSend.Email.EnviarCorreoImagenes("Notificación de creación de usuario", mensaje, usuario.Correo, ServidorCorreo, CuentaCorreo, CuentaCorreo, PasswordCorreo);
+                    MailSend.Email.EnviarCorreoImagenes("Notificaciï¿½n de creaciï¿½n de usuario", mensaje, usuario.Correo, ServidorCorreo, CuentaCorreo, CuentaCorreo, PasswordCorreo);
 
-                    MailSend.Email.EnviarCorreoImagenes("Creación de usuario", "<br /><br /> Notificación de creación de usuario: <br /><br /> La entidad: " + Entidad.Nombre +
-                    " ha creado el usuario " + usuario.Nombre + " con identificación: " + usuario.Identificacion + "<br /><br />", CorreoNotificacion, ServidorCorreo, CuentaCorreo, CuentaCorreo, PasswordCorreo);
+                    MailSend.Email.EnviarCorreoImagenes("Creaciï¿½n de usuario", "<br /><br /> Notificaciï¿½n de creaciï¿½n de usuario: <br /><br /> La entidad: " + Entidad.Nombre +
+                    " ha creado el usuario " + usuario.Nombre + " con identificaciï¿½n: " + usuario.Identificacion + "<br /><br />", CorreoNotificacion, ServidorCorreo, CuentaCorreo, CuentaCorreo, PasswordCorreo);
 
                     sb.Append("Sumitted");
                     return Content(sb.ToString());
@@ -252,7 +257,7 @@ namespace FGA.Controllers
             }
             catch (Exception)
             {
-                sb.Append("Error al realizar la modificación");
+                sb.Append("Error al realizar la modificaciï¿½n");
             }
             return Content(sb.ToString());
         }
@@ -290,11 +295,11 @@ namespace FGA.Controllers
                     var validPassword = ObjUser.GetValue("validPassword").AttemptedValue;
 
                     if(validPassword == Utility.Utilitarios.No)
-                        ViewBag.Mensaje = "La contraseña no cumple los requisitos";
+                        ViewBag.Mensaje = "La contraseï¿½a no cumple los requisitos";
 
                     var contrasenaNueva = ObjUser.GetValue("contrasenaNueva").AttemptedValue;
                     if (contrasenaNueva.Length < 8)
-                        ViewBag.Mensaje =  "La contraseña debe tener mínimo 8 caracteres";
+                        ViewBag.Mensaje =  "La contraseï¿½a debe tener mï¿½nimo 8 caracteres";
 
                     Encripcion.Encripcion enc = new Encripcion.Encripcion();
                     var contrasenaActual = enc.EncryptStr(ObjUser.GetValue("contrasenaActual").AttemptedValue);
@@ -302,10 +307,10 @@ namespace FGA.Controllers
                     var contrasenaConfirma = enc.EncryptStr(ObjUser.GetValue("contrasenaConfirma").AttemptedValue);
 
                     if(contrasenaActual != usuario.Contrasena)
-                        ViewBag.Mensaje = "La contraseña actual no coincide con la registrada";
+                        ViewBag.Mensaje = "La contraseï¿½a actual no coincide con la registrada";
 
                     else if (contrasenaNueva != contrasenaConfirma)
-                        ViewBag.Mensaje = "La nueva contraseña no coincide con la confirmación";
+                        ViewBag.Mensaje = "La nueva contraseï¿½a no coincide con la confirmaciï¿½n";
 
                     if (string.IsNullOrEmpty(ViewBag.Mensaje))
                     {
@@ -317,7 +322,40 @@ namespace FGA.Controllers
                         usuario.CambiarClave = Utility.Utilitarios.No;
                         usr.Update(usuario);
 
-                        ViewBag.Exito = "Contraseña modificada correctamente";
+                        Usuario usuarioActualizado = usr.Get(id);
+                        if (usuarioActualizado != null)
+                        {
+                            var claims = new List<Claim>
+                            {
+                                new Claim(ClaimTypes.Name, usuarioActualizado.Nombre.ToString()),
+                                new Claim(ClaimTypes.Role, usuarioActualizado.Role_Usuario.Id.ToString()),
+                                new Claim(ClaimTypes.Sid, usuarioActualizado.Id.ToString()),
+                                new Claim(ClaimTypes.Surname, usuarioActualizado.Entidad_Usuario.Nombre),
+                                new Claim(ClaimTypes.Gender, usuarioActualizado.Sexo_Usuario_Id.ToString()),
+                                new Claim("CambiarClave", Utility.Utilitarios.No),
+                                new Claim("Evaluacion", usuarioActualizado.Entidad_Usuario.Ind_Evaluacion ? "S" : "N")
+                            };
+
+                            try
+                            {
+                                if (System.IO.File.Exists(Server.MapPath("~/Content/images/" + usuarioActualizado.Entidad_Usuario.Nombre + ".jpg")))
+                                    claims.Add(new Claim(ClaimTypes.UserData, usuarioActualizado.Entidad_Usuario.Nombre + ".jpg"));
+                                else
+                                    claims.Add(new Claim(ClaimTypes.UserData, string.IsNullOrEmpty(usuarioActualizado.Entidad_Usuario.Logo) ? "default.png" : usuarioActualizado.Entidad_Usuario.Logo));
+                            }
+                            catch (Exception)
+                            {
+                                claims.Add(new Claim(ClaimTypes.UserData, "default.png"));
+                            }
+
+                            var identity = new ClaimsIdentity(claims, DefaultAuthenticationTypes.ApplicationCookie);
+                            var authenticationManager = Request.GetOwinContext().Authentication;
+                            authenticationManager.SignIn(identity);
+                            var claimsPrincipal = new ClaimsPrincipal(identity);
+                            Thread.CurrentPrincipal = claimsPrincipal;
+                        }
+
+                        ViewBag.Exito = "ContraseÃ±a modificada correctamente";
                     }
                 }
                 else
@@ -329,7 +367,7 @@ namespace FGA.Controllers
             }
             catch (Exception)
             {
-                ViewBag.Mensaje = "Error al realizar la modificación";
+                ViewBag.Mensaje = "Error al realizar la modificaciï¿½n";
             }
             return View(usuario);
         }
@@ -377,7 +415,7 @@ namespace FGA.Controllers
             }
             catch (Exception)
             {
-                sb.Append("Error al realizar la modificación");
+                sb.Append("Error al realizar la modificaciï¿½n");
             }
             return Content(sb.ToString());
         }

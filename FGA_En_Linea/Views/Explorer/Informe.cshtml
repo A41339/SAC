@@ -11,79 +11,57 @@
     <div id="dropzone">
         <div class="row">
             <div class="col-xs-12">
-                <div class="box box-solid box-info">
-                    <div class="box-body table-responsive">
-                        <div class="margin">
-                            <div class="streaming-table">
-                                <table class="table table-condensed table-striped table-bordered">
-                                    <tr>
-                                        <td class="mobile">
-                                            @Html.Label("Entidad:")
-                                        </td>
-                                        <td>
-                                            @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", @style = "width:200px" })
-                                        </td>
-                                        <td class="mobile">
-                                            @Html.Label("Mes:")
-                                        </td>
-                                        <td>
-                                            @Html.DropDownList("Mes", Enumerable.Range(1, 12).Select(i => new SelectListItem
-                                            {
-                                                Value = i.ToString(),
-                                                Text = System.Globalization.CultureInfo.CurrentUICulture.DateTimeFormat.GetMonthName(i).ToUpper(),
-                                                Selected = (DateTime.Now.Month - 1 == i ? true : false)
-                                            }), new { @id = "Mes", @style = "width:200px" })
-                                        </td>
-                                        <td class="mobile">
-                                            @Html.Label("Año:")
-                                        </td>
-                                        <td>
-                                            @Html.DropDownList("Anno", Enumerable.Range(2018, DateTime.Now.Year - 2018 + 3).
-                                                                       Select(i => new SelectListItem { Value = i.ToString(), Text = i.ToString(), Selected = (i == DateTime.Now.Year ? true : false) }),
-                                                                       new { @id = "Anno", @style = "width:200px" })
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="mobile">
-                                            @Html.Label("Tipo Informe:")
-                                        </td>
-                                        <td>
-                                            @Html.DropDownList("TipoInforme", null, new { @id = "TipoInforme", @style = "width:200px" })
-                                        </td>
-                                        <td class="mobile">
-                                            @Html.Label("Destinatarios:")
-                                        </td>
-                                        <td>
-                                            <div id="divDest">
-                                            </div>
-                                        </td>
-                                        <td class="mobile">
-                                            @Html.Label("Añadir destinatarios:")
-                                        </td>
-                                        <td>
-                                            <input id="txt_destinatario" />
-                                            <a data-toggle="tooltip" data-placement="top" title="Agregar" href="javascript:AddDest();"><i class="btn btn-xs btn-success icon fa fa-plus"></i></a>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
+                <div class="box box-solid box-info" style="border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03); background: #ffffff; padding: 20px; margin-bottom: 20px;">
+                    <div style="display: flex; flex-wrap: wrap; gap: 16px; align-items: center; justify-content: space-between;">
+                        <div class="modern-filter-group">
+                            <label for="IdEntidad">Entidad</label>
+                            @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", @class = "modern-filter-input", @style = "width:180px;" })
+                        </div>
+                        <div class="modern-filter-group">
+                            <label for="Mes">Mes</label>
+                            @Html.DropDownList("Mes", Enumerable.Range(1, 12).Select(i => new SelectListItem
+                            {
+                                Value = i.ToString(),
+                                Text = System.Globalization.CultureInfo.CurrentUICulture.DateTimeFormat.GetMonthName(i).ToUpper(),
+                                Selected = (DateTime.Now.Month - 1 == i ? true : false)
+                            }), new { @id = "Mes", @class = "modern-filter-input", @style = "width:150px;" })
+                        </div>
+                        <div class="modern-filter-group">
+                            <label for="Anno">Año</label>
+                            @Html.DropDownList("Anno", Enumerable.Range(2018, DateTime.Now.Year - 2018 + 3).
+                                                       Select(i => new SelectListItem { Value = i.ToString(), Text = i.ToString(), Selected = (i == DateTime.Now.Year ? true : false) }),
+                                                       new { @id = "Anno", @class = "modern-filter-input", @style = "width:120px;" })
+                        </div>
+                        <div class="modern-filter-group">
+                            <label for="TipoInforme">Tipo Informe</label>
+                            @Html.DropDownList("TipoInforme", null, new { @id = "TipoInforme", @class = "modern-filter-input", @style = "width:180px;" })
+                        </div>
+                    </div>
+                    <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #f1f5f9; display: flex; flex-wrap: wrap; gap: 16px; align-items: center;">
+                        <div class="modern-filter-group">
+                            <label>Destinatarios:</label>
+                            <div id="divDest" style="display: inline-block;"></div>
+                        </div>
+                        <div class="modern-filter-group" style="margin-left: auto;">
+                            <label for="txt_destinatario">Añadir destinatario:</label>
+                            <input id="txt_destinatario" class="modern-filter-input" style="width: 180px;" placeholder="email@ejemplo.com" />
+                            <a data-toggle="tooltip" data-placement="top" title="Agregar destinatario" href="javascript:AddDest();" class="btn btn-sm btn-primary" style="border-radius: 6px;"><i class="fa fa-plus"></i></a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        @using (Html.BeginForm("UploadInforme", "Explorer", FormMethod.Post, new { enctype = "multipart/form-data", id = "my-awesome-dropzone", @class = "dropzone" }))
+        @using (Html.BeginForm("UploadInforme", "Explorer", FormMethod.Post, new { enctype = "multipart/form-data", id = "my-awesome-dropzone", @class = "dropzone", style = "border-radius: 12px; border: 2px dashed #cbd5e1; background: #ffffff;" }))
         {
             <div class="fallback">
                 <input name="file" id="file" type="file" multiple />
             </div>
         }
         <br />
-        <br />
-        <div>
-            <label class="btn btn-facebook">
-                Cargar y Enviar<input type="submit" name="submit" id="btn_guardar" style="display: none;">
-            </label>
+        <div style="text-align: right;">
+            <button type="submit" name="submit" id="btn_guardar" class="btn-modern-generate">
+                <i class="fa fa-upload"></i> Cargar y Enviar
+            </button>
         </div>
     </div>
 </section>
@@ -161,7 +139,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-success btn-block" data-dismiss="modal">OK</button>
+                <button class="btn btn-primary btn-block" data-dismiss="modal">OK</button>
             </div>
         </div>
     </div>

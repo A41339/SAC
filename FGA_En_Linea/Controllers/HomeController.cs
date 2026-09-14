@@ -1,4 +1,4 @@
-using DotNet.Highcharts.Enums;
+ï»¿using DotNet.Highcharts.Enums;
 using DotNet.Highcharts.Helpers;
 using DotNet.Highcharts.Options;
 using Entities.Entities.Procedures;
@@ -46,18 +46,42 @@ namespace FGA.Controllers
             return View();
         }
 
-        public ActionResult GetContent(String IdEntidad, DateTime Periodo1, DateTime Periodo2)
+        public ActionResult GetContent(String IdEntidad, string Periodo1, string Periodo2)
         {
-            Load();
-            Session["Periodo1"] = Periodo1.ToShortDateString();
-            Session["Periodo2"] = Periodo2.ToShortDateString();
+            try
+            {
+                Load();
+                DateTime p1 = Utilitarios.ConvertirAFecha(Periodo1);
+                DateTime p2 = Utilitarios.ConvertirAFecha(Periodo2);
 
-            Dashboard view = CargarDashboard(IdEntidad, Periodo1, Periodo2);
-            return PartialView("_Intro", view);
+                Session["Periodo1"] = p1.ToShortDateString();
+                Session["Periodo2"] = p2.ToShortDateString();
+
+                Dashboard view = CargarDashboard(IdEntidad, p1, p2);
+                return PartialView("_Intro", view);
+            }
+            catch (Exception ex)
+            {
+                try
+                {
+                    DateTime p1 = DateTime.Now.AddMonths(-3);
+                    DateTime p2 = DateTime.Now.AddMonths(-1);
+                    Dashboard view = CargarDashboard(IdEntidad, p1, p2);
+                    return PartialView("_Intro", view);
+                }
+                catch
+                {
+                    return PartialView("_Intro", new Dashboard());
+                }
+            }
         }
 
         private Dashboard CargarDashboard(string IdEntidad, DateTime PeriodoI, DateTime PeriodoF)
         {
+            if (string.IsNullOrEmpty(IdEntidad) && Session["IdEntidad"] != null)
+            {
+                IdEntidad = Session["IdEntidad"].ToString();
+            }
             Session["IdEntidad"] = IdEntidad;
             Load();
 
@@ -70,60 +94,88 @@ namespace FGA.Controllers
             var takCartera = new List<FGA_Consultar_CarteraTotal_Result>();
             var takSuficiencia = new List<FGA_Consultar_Grafico_Suficiencia_Result>();
 
-            view.prudencial = ent.Get(IdEntidad).Perfil_Entidad_Id == 2;
+            try
+            {
+                if (!string.IsNullOrEmpty(IdEntidad))
+                {
+                    var entRes = ent.Get(IdEntidad);
+                    if (entRes != null)
+                    {
+                        view.prudencial = entRes.Perfil_Entidad_Id == 2;
+                    }
+                }
+            }
+            catch { }
 
             Parallel.Invoke(
-                () => { setIRL(sp.FGA_Consultar_Estado_Proyeccion(IdEntidad, PeriodoF).ToList()); info = getIRL(); },
-                () => { takTasas = sp.FGA_Consultar_Modelo_Tasas(IdEntidad, PeriodoI, PeriodoF, 0).ToList(); },
-                () => { takRenta = sp.FGA_Consultar_Modelo_Margen(IdEntidad, PeriodoI, PeriodoF).ToList(); },
-                () => { takCartera = sp.FGA_Consultar_CarteraTotal(IdEntidad, PeriodoI, PeriodoF, 12).ToList(); },
-                () => { takMora = sp.FGA_Consultar_Grafico_Mora_Cartera(IdEntidad, PeriodoI, PeriodoF).ToList(); },
-                () => { takSuficiencia = sp.FGA_Consultar_Grafico_Suficiencia(IdEntidad, PeriodoI, PeriodoF).ToList(); },
-                () => { takCS = sp.FGA_Consultar_Variacion_CS(IdEntidad, PeriodoI, PeriodoF).ToList(); },
+                () => {
+                    try { info = sp.FGA_Consultar_Estado_Proyeccion(IdEntidad, PeriodoF)?.ToList() ?? new List<FGA_Consultar_Estado_Proyeccion_Result>(); } catch { }
+                },
+                () => {
+                    try { takTasas = sp.FGA_Consultar_Modelo_Tasas(IdEntidad, PeriodoI, PeriodoF, 0)?.ToList() ?? new List<FGA_Consultar_Modelo_Tasas_Result>(); } catch { }
+                },
+                () => {
+                    try { takRenta = sp.FGA_Consultar_Modelo_Margen(IdEntidad, PeriodoI, PeriodoF)?.ToList() ?? new List<FGA_Consultar_Modelo_Margen_Result>(); } catch { }
+                },
+                () => {
+                    try { takCartera = sp.FGA_Consultar_CarteraTotal(IdEntidad, PeriodoI, PeriodoF, 12)?.ToList() ?? new List<FGA_Consultar_CarteraTotal_Result>(); } catch { }
+                },
+                () => {
+                    try { takMora = sp.FGA_Consultar_Grafico_Mora_Cartera(IdEntidad, PeriodoI, PeriodoF)?.ToList() ?? new List<FGA_Consultar_Grafico_Mora_Cartera_Result>(); } catch { }
+                },
+                () => {
+                    try { takSuficiencia = sp.FGA_Consultar_Grafico_Suficiencia(IdEntidad, PeriodoI, PeriodoF)?.ToList() ?? new List<FGA_Consultar_Grafico_Suficiencia_Result>(); } catch { }
+                },
+                () => {
+                    try { takCS = sp.FGA_Consultar_Variacion_CS(IdEntidad, PeriodoI, PeriodoF)?.ToList() ?? new List<FGA_Consultar_Variacion_CS_Result>(); } catch { }
+                },
                 () =>
                 {
                     if (!string.IsNullOrEmpty(IdEntidad))
                     {
-                        var result = sp.FGA_Consultar_Dashboard(IdEntidad, PeriodoI, PeriodoF);
-
-                        if (result.Length > 0)
+                        try
                         {
-                            SetDashboardValue(view.Riesgo, result, view.idRiesgo);
-                            SetDashboardValue(view.Activo, result, view.idActivo);
-                            SetDashboardValue(view.CalceMes, result, view.idCalceMes);
-                            SetDashboardValue(view.Morosidad, result, view.idMorosidad);
-                            SetDashboardValue(view.Compromiso, result, view.idCompromiso);
-                            SetDashboardValue(view.Calce3Meses, result, view.idCalce3Mes);
-                            SetDashboardValue(view.CostoAdmin, result, view.idCostoAdmin);
-                            SetDashboardValue(view.Suficiencia, result, view.idSuficiencia);
-                            SetDashboardValue(view.RiesgoTasa, result, view.idRiesgoTasa);
-                            SetDashboardValue(view.RiesgoCambiario, result, view.idRiesgoCambiario);
-                            SetDashboardValue(view.PerdidaAcumulada, result, view.idPerdidaAcumulada);
-                            SetDashboardValue(view.PerdidaEsperada, result, view.idPerdidaEsperada);
+                            var result = sp.FGA_Consultar_Dashboard(IdEntidad, PeriodoI, PeriodoF);
 
-                            try
+                            if (result != null && result.Length > 0)
                             {
-                                SetDashboardValue(view.ICL, result, view.idICL);
-                                SetDashboardValue(view.Apalancamiento, result, view.idApalancamiento);
-                                SetDashboardValue(view.CN1, result, view.idCN1);
-                                SetDashboardValue(view.CNN1, result, view.idCCN1);
-                            }
-                            catch (Exception ex)
-                            {
-                                // Opcional: Log de errores si es necesario
+                                SetDashboardValue(view.Riesgo, result, view.idRiesgo);
+                                SetDashboardValue(view.Activo, result, view.idActivo);
+                                SetDashboardValue(view.CalceMes, result, view.idCalceMes);
+                                SetDashboardValue(view.Morosidad, result, view.idMorosidad);
+                                SetDashboardValue(view.Compromiso, result, view.idCompromiso);
+                                SetDashboardValue(view.Calce3Meses, result, view.idCalce3Mes);
+                                SetDashboardValue(view.CostoAdmin, result, view.idCostoAdmin);
+                                SetDashboardValue(view.Suficiencia, result, view.idSuficiencia);
+                                SetDashboardValue(view.RiesgoTasa, result, view.idRiesgoTasa);
+                                SetDashboardValue(view.RiesgoCambiario, result, view.idRiesgoCambiario);
+                                SetDashboardValue(view.PerdidaAcumulada, result, view.idPerdidaAcumulada);
+                                SetDashboardValue(view.PerdidaEsperada, result, view.idPerdidaEsperada);
+
+                                try
+                                {
+                                    SetDashboardValue(view.ICL, result, view.idICL);
+                                    SetDashboardValue(view.Apalancamiento, result, view.idApalancamiento);
+                                    SetDashboardValue(view.CN1, result, view.idCN1);
+                                    SetDashboardValue(view.CNN1, result, view.idCCN1);
+                                }
+                                catch { }
                             }
                         }
+                        catch { }
                     }
                 }
             );
 
-            GetVariacionCartera(ref view, takCartera);
-            GetCapitalizacion(ref view, takCS);
-            GetTasas(ref view, takTasas);
-            GetRentabilidad(ref view, takRenta);
-            GetMora(PeriodoI, PeriodoF, ref view, takMora);
-            GetSuficiencia(PeriodoI, PeriodoF, ref view, takSuficiencia);
-            GetBrechas(ref view, info);
+            try { setIRL(info); } catch { }
+
+            try { GetVariacionCartera(ref view, takCartera); } catch { }
+            try { GetCapitalizacion(ref view, takCS); } catch { }
+            try { GetTasas(ref view, takTasas); } catch { }
+            try { GetRentabilidad(ref view, takRenta); } catch { }
+            try { GetMora(PeriodoI, PeriodoF, ref view, takMora); } catch { }
+            try { GetSuficiencia(PeriodoI, PeriodoF, ref view, takSuficiencia); } catch { }
+            try { GetBrechas(ref view, info); } catch { }
 
             return view;
         }
@@ -169,14 +221,14 @@ namespace FGA.Controllers
                 var series = new Series[]
                 {
                     new Series{
-                        Name = "Variación interanual neta",
+                        Name = "Variaciï¿½n interanual neta",
                         Data = new Data(CarteraTotalNeta),
                         Color = ColorTranslator.FromHtml("#39aac5"),
                         PlotOptionsLine = HighChart.getLine()
                     },
                     new Series
                     {
-                        Name = "Variación interanual bruta",
+                        Name = "Variaciï¿½n interanual bruta",
                         Data = new Data(CarteraTotalBruta),
                         Color = ColorTranslator.FromHtml("#ed7c2f"),
                         PlotOptionsLine = HighChart.getLine()
@@ -217,7 +269,7 @@ namespace FGA.Controllers
                 var series = new Series[]
                 {
                     new Series{
-                    Name = "Variación anual del capital social",
+                    Name = "Variaciï¿½n anual del capital social",
                     Data = new Data(Variacion),
                     Color = ColorTranslator.FromHtml("#7d7d7d"),
                     PlotOptionsLine = HighChart.getLine()
@@ -365,14 +417,14 @@ namespace FGA.Controllers
                     var series = new Series[]
                         {
                             new Series{
-                                Name = "Razón IRL por banda",
+                                Name = "Razï¿½n IRL por banda",
                                 Data = new Data(Brecha),
                                 Color = ColorTranslator.FromHtml("#d9d9d9"),
                                 Type = ChartTypes.Line,
                                 PlotOptionsLine = HighChart.getLinePercent()
                             },
                             new Series{
-                                Name = "Razón IRL acumulado",
+                                Name = "Razï¿½n IRL acumulado",
                                 Data = new Data(Acumulada),
                                 Color = ColorTranslator.FromHtml("#ed7c2f"),
                                 Type = ChartTypes.Line,
@@ -421,14 +473,14 @@ namespace FGA.Controllers
                 var series = new Series[]
                 {
                     new Series{
-                        Name = "Tasa Activa Implícita",
+                        Name = "Tasa Activa Implï¿½cita",
                         Data = new Data(TasaActivo),
                         Color = HighChart.GetColor(0),
                         Type = ChartTypes.Line,
                         PlotOptionsLine = HighChart.getLinePercent()
                     },
                     new Series{
-                        Name = "Tasa Pasiva Implícita",
+                        Name = "Tasa Pasiva Implï¿½cita",
                         Data = new Data(TasaPasivo),
                         Color = HighChart.GetColor(1),
                         Type = ChartTypes.Line,
@@ -527,11 +579,11 @@ namespace FGA.Controllers
                     object[] AlDia = new object[numPeriodos];
 
                     List<Serie> listaSeries = new List<Serie>();
-                    listaSeries.Add(new Serie(numPeriodos, "1 - 30 días"));
-                    listaSeries.Add(new Serie(numPeriodos, "31 - 60 días"));
-                    listaSeries.Add(new Serie(numPeriodos, "61 - 90 días"));
-                    listaSeries.Add(new Serie(numPeriodos, "91 - 180 días"));
-                    listaSeries.Add(new Serie(numPeriodos, "Más de 180 días"));
+                    listaSeries.Add(new Serie(numPeriodos, "1 - 30 dï¿½as"));
+                    listaSeries.Add(new Serie(numPeriodos, "31 - 60 dï¿½as"));
+                    listaSeries.Add(new Serie(numPeriodos, "61 - 90 dï¿½as"));
+                    listaSeries.Add(new Serie(numPeriodos, "91 - 180 dï¿½as"));
+                    listaSeries.Add(new Serie(numPeriodos, "Mï¿½s de 180 dï¿½as"));
                     listaSeries.Add(new Serie(numPeriodos, "Cobro Judicial"));
 
                     for (int j = 0; j < numPeriodos; j++)
@@ -574,7 +626,7 @@ namespace FGA.Controllers
                             GridLineWidth = 0,
                             Title = new YAxisTitle()
                             {
-                                Text = "Al día",
+                                Text = "Al dï¿½a",
                                 Style = "fontSize: '0px', color: 'black',  fontFamily: 'Arial, sans-serif'",
                             },
                             Labels = new YAxisLabels()
@@ -612,7 +664,7 @@ namespace FGA.Controllers
                     serie = new Series
                     {
                         Type = ChartTypes.Line,
-                        Name = "Al día",
+                        Name = "Al dï¿½a",
                         Data = new Data(AlDia),
                         Color = HighChart.GetColor(i),
                         YAxis = "AlDia",

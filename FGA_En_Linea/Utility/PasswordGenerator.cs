@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Text;
 using System.Security.Cryptography;
 
@@ -26,7 +26,7 @@ namespace FGA.Utility
             this.Maximum = DefaultMaximum;
             this.ConsecutiveCharacters = false;
             this.RepeatCharacters = true;
-            this.ExcludeSymbols = false;
+            this.ExcludeSymbols = true;
             this.Exclusions = null;
 
             rng = new RNGCryptoServiceProvider();
@@ -206,7 +206,7 @@ namespace FGA.Utility
 
         private const int DefaultMinimum = 6;
         private const int DefaultMaximum = 10;
-        private const int UBoundDigit = 61;
+        private const int UBoundDigit = 57;
 
         private RNGCryptoServiceProvider rng;
         private int minSize;

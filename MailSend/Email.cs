@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
@@ -28,78 +28,101 @@ namespace MailSend
                 .email-wrapper {
                     width: 100%;
                     background-color: #f1f5f9;
-                    padding: 30px 10px;
+                    padding: 36px 16px;
                 }
                 .email-card {
-                    max-width: 620px;
+                    max-width: 780px;
                     margin: 0 auto;
                     background-color: #ffffff;
-                    border-radius: 12px;
+                    border-radius: 14px;
                     overflow: hidden;
-                    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+                    box-shadow: 0 12px 28px -5px rgba(0, 0, 0, 0.09), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
                     border: 1px solid #e2e8f0;
                 }
                 .email-header-banner {
-                    background-color: #0b2341;
-                    padding: 24px 30px;
+                    background-color: #143750;
+                    padding: 40px 28px;
                     text-align: center;
-                    border-bottom: 3px solid #0d7682;
+                    border-bottom: 5px solid #2563eb;
                 }
                 .email-header-banner img {
-                    max-width: 180px;
+                    max-width: 640px;
+                    width: 95%;
                     height: auto;
+                    max-height: 175px;
+                    display: inline-block;
+                    vertical-align: middle;
+                    object-fit: contain;
                 }
                 .email-body {
-                    padding: 32px 35px;
+                    padding: 40px 48px;
                     color: #334155;
-                    font-size: 15px;
-                    line-height: 1.6;
+                    font-size: 16px;
+                    line-height: 1.65;
                 }
                 .subject-title {
-                    font-size: 20px;
+                    font-size: 22px;
                     font-weight: 700;
                     color: #0f172a;
                     margin-top: 0;
-                    margin-bottom: 20px;
-                    padding-left: 12px;
-                    border-left: 4px solid #0d7682;
-                    line-height: 1.3;
+                    margin-bottom: 22px;
+                    padding-left: 14px;
+                    border-left: 5px solid #2563eb;
+                    line-height: 1.35;
                 }
                 .message-content {
                     color: #334155;
-                    font-size: 14px;
-                    line-height: 1.6;
-                    margin-bottom: 25px;
+                    font-size: 16px;
+                    line-height: 1.65;
+                    margin-bottom: 28px;
                 }
                 .message-content ul {
                     background-color: #f8fafc;
-                    border-radius: 8px;
-                    padding: 15px 20px 15px 35px;
+                    border-radius: 10px;
+                    padding: 18px 24px 18px 40px;
                     border: 1px solid #e2e8f0;
                 }
                 .message-content li {
-                    margin-bottom: 8px;
+                    margin-bottom: 10px;
                     color: #1e293b;
+                    font-size: 16px;
                 }
                 .button-container {
                     text-align: center;
-                    margin: 30px 0 15px 0;
+                    margin: 32px 0 24px 0;
                 }
                 .btn-c2a {
                     display: inline-block;
-                    padding: 12px 28px;
+                    padding: 12px 36px;
                     font-family: inherit;
-                    font-size: 14px;
-                    font-weight: 700;
+                    font-size: 15px;
+                    font-weight: 600;
+                    letter-spacing: 0.5px;
                     color: #ffffff !important;
-                    background-color: #0d7682;
+                    background-color: #2563eb;
+                    background: linear-gradient(180deg, #2563eb 0%, #1d4ed8 100%);
                     text-decoration: none !important;
                     border-radius: 8px;
-                    box-shadow: 0 4px 12px rgba(13, 118, 130, 0.25);
+                    border: 1px solid #1d4ed8;
+                    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.22);
+                    transition: all 0.2s ease;
+                }
+                .no-reply-box {
+                    margin-top: 32px;
+                    padding: 18px 22px;
+                    background-color: #fff1f2;
+                    border: 1px solid #fecdd3;
+                    border-left: 5px solid #e11d48;
+                    border-radius: 10px;
+                    text-align: center;
+                    color: #9f1239;
+                    font-size: 15px;
+                    font-weight: 600;
+                    line-height: 1.6;
                 }
                 .email-footer {
-                    background-color: #0b2341;
-                    padding: 20px 30px;
+                    background-color: #143750;
+                    padding: 24px 30px;
                     text-align: center;
                     color: #94a3b8;
                     font-size: 12px;
@@ -125,12 +148,15 @@ namespace MailSend
                             Tmensaje
                         </div>
                         <div class='button-container'>
-                            <a href='https://www.ffc.co.cr/FFC/Account/Login' class='btn-c2a'>INGRESE AQUÍ</a>
+                            <a href='https://www.ffc.co.cr/FFC/Account/Login' class='btn-c2a'>Ingrese Aqu&iacute;</a>
+                        </div>
+                        <div class='no-reply-box'>
+                            &#9888;&#65039; <strong>Aviso Importante:</strong> Mensaje automático del sistema. Por favor <u>no responda directamente a este correo</u>.
                         </div>
                     </div>
                     <div class='email-footer'>
-                        <p><strong>FFC - Fondo de Fortalecimiento Cooperativo</strong></p>
-                        <p>Mensaje automático del sistema. Por favor no responda directamente a este correo.</p>
+                        <p style='font-size: 14px;'><strong>FFC - Fondo de Fortalecimiento Cooperativo</strong></p>
+                        <p style='color: #cbd5e1; font-size: 13px;'>Sistema de Análisis Cooperativo (SAC)</p>
                     </div>
                 </div>
             </div>

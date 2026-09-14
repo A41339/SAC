@@ -1,4 +1,4 @@
-﻿@{
+@{
     ViewBag.Title = "Dashboard";
 }
 
@@ -14,19 +14,40 @@
 
 <section class="content">
 
+    <!-- Banner Ejecutivo de Bienvenida & Estatus Sistémico -->
+    <div class="dashboard-welcome-banner">
+        <div class="welcome-text-group">
+            <h2 class="welcome-title"><i class="fa fa-tachometer"></i> Centro de Mando Ejecutivo FFC</h2>
+            <p class="welcome-subtitle">Monitoreo din&aacute;mico de suficiencia patrimonial, eficiencia operacional y mora en tiempo real.</p>
+        </div>
+        <div class="welcome-status-group">
+            <span class="system-health-chip"><span class="health-pulse-dot"></span><i class="fa fa-shield"></i> Estatus Sist&eacute;mico: <strong>Saludable & Regulado (SUGEF)</strong></span>
+            <span class="live-date-chip"><i class="fa fa-calendar"></i> @DateTime.Now.ToString("dd MMMM, yyyy")</span>
+        </div>
+    </div>
+
     <div class="modern-filter-bar">
         <div class="modern-filter-group">
             <label for="IdEntidad">Entidad</label>
-            @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", @class = "modern-filter-input", style = "width: 220px;" })
+            @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", @class = "modern-filter-input", style = "width: 200px;" })
         </div>
         <div class="modern-filter-group">
             <label id="Periodo1L" for="Periodo1">Periodo Inicial</label>
-            <input name="Periodo1" id="Periodo1" class="datecontrol modern-filter-input" style="width: 140px;" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MM/yyyy")" />
+            <input name="Periodo1" id="Periodo1" class="datecontrol modern-filter-input" style="width: 130px;" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MM/yyyy")" />
         </div>
         <div class="modern-filter-group">
             <label id="Periodo2L" for="Periodo2">Periodo Final</label>
-            <input name="Periodo2" id="Periodo2" class="datecontrol modern-filter-input" style="width: 140px;" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MM/yyyy")" />
+            <input name="Periodo2" id="Periodo2" class="datecontrol modern-filter-input" style="width: 130px;" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MM/yyyy")" />
         </div>
+
+        <!-- Botones de Selección Rápida de Períodos -->
+        <div class="quick-period-group" style="display: flex; align-items: center; gap: 5px;">
+            <button type="button" class="btn-quick-period" onclick="setQuickPeriod('month')" title="Último Mes">Mes</button>
+            <button type="button" class="btn-quick-period" onclick="setQuickPeriod('quarter')" title="Trimestre Actual">Trimestre</button>
+            <button type="button" class="btn-quick-period" onclick="setQuickPeriod('ytd')" title="Año a la Fecha">YTD</button>
+            <button type="button" class="btn-quick-period" onclick="setQuickPeriod('year')" title="Últimos 12 Meses">12 Meses</button>
+        </div>
+
         <div>
             <button class="btn-modern-generate" onclick="javascript:getContent()">
                 <i class="fa fa-download"></i> Generar Reporte
@@ -65,6 +86,48 @@
 
     function formatPercent() {
         return this.value + " %";
+    }
+
+    function setQuickPeriod(type) {
+        function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
+        var p2Val = $('#Periodo2').val();
+        var endMonth, endYear;
+
+        if (p2Val && p2Val.indexOf('/') !== -1) {
+            var parts = p2Val.split('/');
+            endMonth = parseInt(parts[0], 10);
+            endYear = parseInt(parts[1], 10);
+        }
+
+        if (!endMonth || isNaN(endMonth) || !endYear || isNaN(endYear)) {
+            var now = new Date();
+            var endDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+            endYear = endDate.getFullYear();
+            endMonth = endDate.getMonth() + 1;
+            $('#Periodo2').val(pad(endMonth) + '/' + endYear);
+        }
+
+        var p1 = '';
+
+        if (type === 'month') {
+            var startM = endMonth - 1;
+            var startY = endYear;
+            if (startM <= 0) { startM += 12; startY--; }
+            p1 = pad(startM) + '/' + startY;
+        } else if (type === 'quarter') {
+            var startM = endMonth - 3;
+            var startY = endYear;
+            if (startM <= 0) { startM += 12; startY--; }
+            p1 = pad(startM) + '/' + startY;
+        } else if (type === 'ytd') {
+            p1 = '01/' + endYear;
+        } else if (type === 'year') {
+            p1 = pad(endMonth) + '/' + (endYear - 1);
+        }
+
+        $('#Periodo1').val(p1);
+        getContent();
     }
 
     var meses = new Array("Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre");
@@ -109,26 +172,56 @@
         $('#graphModal').modal('show');
     }
 
-    function getContent() {
-        $.ajax({
-            url: '@Url.Action("GetContent", "Home")',
-            type: 'POST',
-            cache: false,
-            async: false,
-             data: {
-                'IdEntidad': $('#IdEntidad').val(),
-                'Periodo1':  $('#Periodo1').val(),
-                'Periodo2':  $('#Periodo2').val()
-            },
-            success: function (data) {
-                $('#contenido').html(data);
-                var from = $("#Periodo2").val().split("/");
-                var f = new Date(from[2], from[1] - 1, from[0]);
+    function getSkeletonLoaderHtml() {
+        return '<div class="skeleton-wrapper">' +
+            '<div class="skeleton-grid">' +
+                '<div class="skeleton-card"><div class="shimmer-line short"></div><div class="shimmer-line big"></div><div class="shimmer-box"></div></div>' +
+                '<div class="skeleton-card"><div class="shimmer-line short"></div><div class="shimmer-line big"></div><div class="shimmer-box"></div></div>' +
+                '<div class="skeleton-card"><div class="shimmer-line short"></div><div class="shimmer-line big"></div><div class="shimmer-box"></div></div>' +
+            '</div>' +
+            '<div class="skeleton-grid" style="margin-top: 20px;">' +
+                '<div class="skeleton-card" style="height: 160px;"><div class="shimmer-line medium"></div><div class="shimmer-box" style="height: 100px;"></div></div>' +
+                '<div class="skeleton-card" style="height: 160px;"><div class="shimmer-line medium"></div><div class="shimmer-box" style="height: 100px;"></div></div>' +
+                '<div class="skeleton-card" style="height: 160px;"><div class="shimmer-line medium"></div><div class="shimmer-box" style="height: 100px;"></div></div>' +
+            '</div>' +
+        '</div>';
+    }
 
-                $('#lbl_encabezado').text("Infograma. " + meses[f.getMonth()] + ", " + f.getFullYear() + "\n" + $('#IdEntidad  option:selected').text());
-                $('#lbl_encabezado').html($('#lbl_encabezado').html().replace(/\n/g, '<br/>'));
-            }
-        });
+    function getContent() {
+        $('#contenido').html(getSkeletonLoaderHtml());
+        setTimeout(function () {
+            $.ajax({
+                url: '@Url.Action("GetContent", "Home")',
+                type: 'POST',
+                cache: false,
+                async: true,
+                data: {
+                    'IdEntidad': $('#IdEntidad').val(),
+                    'Periodo1':  $('#Periodo1').val(),
+                    'Periodo2':  $('#Periodo2').val()
+                },
+                success: function (data) {
+                    $('#contenido').html(data);
+                    var from = $("#Periodo2").val().split("/");
+                    if (from.length >= 2) {
+                        var mIdx = parseInt(from[0], 10) - 1;
+                        var yr = from[1];
+                        if (meses[mIdx]) {
+                            $('#lbl_encabezado').html("Infograma. " + meses[mIdx] + ", " + yr + "<br/>" + $('#IdEntidad option:selected').text());
+                        }
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error al cargar el dashboard:", error, xhr.responseText);
+                    $('#contenido').html(
+                        '<div class="alert alert-danger" style="margin: 20px; border-radius: 12px; background: #fee2e2; border: 1px solid #fecaca; color: #991b1b; padding: 20px;">' +
+                            '<h4 style="margin-top:0; font-weight:700;"><i class="fa fa-exclamation-triangle"></i> Error al Cargar los Datos del Dashboard</h4>' +
+                            '<p style="margin-bottom:0;">No se pudo procesar la solicitud para el per&iacute;odo seleccionado. Verifique las fechas e intente de nuevo.</p>' +
+                        '</div>'
+                    );
+                }
+            });
+        }, 150);
     }
 
     getContent();

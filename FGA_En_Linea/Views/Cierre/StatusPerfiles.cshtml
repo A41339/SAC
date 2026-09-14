@@ -1,53 +1,68 @@
-﻿@model IEnumerable<Entities.Entities.Procedures.FGA_Consultar_Monitor_Result>
+@model IEnumerable<Entities.Entities.Procedures.FGA_Consultar_Monitor_Result>
 
 <div id="dialog"></div>
 
 @using (Html.BeginForm("CargarEntidad", "Cierre", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmPerfil" }))
 {
     @Html.AntiForgeryToken()
-    <table id="tbRole" class="table table-striped table-bordered" style="width: 100%;">
-        <thead>
-            <tr>
-                <th style="width: 70px; text-align: center;"></th>
-                <th style="width: 25%; text-align: center;"> Entidad </th>
-                <th style="width: 40%; text-align: center;"> Perfil </th>
-                <th class="mobile" style="width: 30%; text-align: center;"> Ult. Periodo Cargado</th>
-            </tr>
-        </thead>
-        <tbody style="font-size: 12px;">
-            @if (Model != null)
-            {
-                foreach (var item in Model)
+    <div class="modern-table-card">
+        <table id="tbRole" class="table modern-data-table" style="width: 100%;">
+            <thead>
+                <tr>
+                    <th style="width: 38%; text-align: center;">Entidad</th>
+                    <th style="width: 35%; text-align: center;">Perfil de Supervisi&oacute;n</th>
+                    <th class="mobile" style="width: 27%; text-align: center;">&Uacute;lt. Per&iacute;odo Cargado</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null)
                 {
-                    <tr>
-                        <td style="text-align: center; background-color: white;">
-                            @Html.HiddenFor(modelItem => item.IDENTIDAD)
-                            @{
-                                string ruta = Url.Content("~/Content/images/" + @item.NOMBRE + ".jpg");
-                                <img width="40" height="40" src="@ruta" />
-                            }
-                        </td>
-                        <td style="text-align: center;">
-                            <a name="txtEntidad" class="cursor" onclick="javascript:CargarEntidad(@(item.IDENTIDAD))">@item.NOMBRE</a>
-                        </td>
-                        <td style="text-align: center;">
-                            <label>@Html.DisplayFor(modelItem => item.PERFIL)</label>
-                        </td>
-                        <td class="mobile" style="text-align: center;">
-                            @if (item.ULT_CIERRE.ToString("ddMMyyy") == FGA.Utility.Utilitarios.sinCierre)
-                            {
-                                <label>No aplica</label>
-                            }
-                            else
-                            {
-                                <label>@FGA.Utility.Utilitarios.toUpperFirstLetter(item.ULT_CIERRE.ToString("MMMM-yy"))</label>
-                            }
-                        </td>
-                    </tr>
+                    foreach (var item in Model)
+                    {
+                        var perfilText = item.PERFIL ?? "";
+                        string perfilBadgeClass = "badge-nosupervisada";
+                        string perfilIcon = "fa-info-circle";
+
+                        if (perfilText.IndexOf("Riesgos", StringComparison.OrdinalIgnoreCase) >= 0) {
+                            perfilBadgeClass = "badge-sbr";
+                            perfilIcon = "fa-shield";
+                        } else if (perfilText.IndexOf("Prudencial", StringComparison.OrdinalIgnoreCase) >= 0) {
+                            perfilBadgeClass = "badge-prudencial";
+                            perfilIcon = "fa-building-o";
+                        }
+
+                        var ultCierreStr = item.ULT_CIERRE.ToString("ddMMyyy");
+                        bool isSinCierre = ultCierreStr == FGA.Utility.Utilitarios.sinCierre;
+                        string fechaText = isSinCierre ? "No aplica" : FGA.Utility.Utilitarios.toUpperFirstLetter(item.ULT_CIERRE.ToString("MMMM-yy"));
+                        string fechaBadgeClass = isSinCierre ? "badge-periodo-none" : "badge-periodo-recent";
+                        string fechaIcon = isSinCierre ? "fa-minus-circle" : "fa-calendar-check-o";
+
+                        <tr>
+                            <td style="text-align: left; padding-left: 24px;">
+                                @Html.HiddenFor(modelItem => item.IDENTIDAD)
+                                <div class="entity-cell-group" onclick="javascript:CargarEntidad(@(item.IDENTIDAD))">
+                                    <div class="entity-logo-box">
+                                        <img src="@Url.Content("~/Content/images/" + item.NOMBRE + ".jpg")" alt="@item.NOMBRE" />
+                                    </div>
+                                    <span class="entity-name-text">@item.NOMBRE</span>
+                                </div>
+                            </td>
+                            <td style="text-align: center;">
+                                <span class="badge-perfil @perfilBadgeClass">
+                                    <i class="fa @perfilIcon"></i> @perfilText
+                                </span>
+                            </td>
+                            <td class="mobile" style="text-align: center;">
+                                <span class="badge-periodo @fechaBadgeClass">
+                                    <i class="fa @fechaIcon"></i> @fechaText
+                                </span>
+                            </td>
+                        </tr>
+                    }
                 }
-            }
-        </tbody>
-    </table>
+            </tbody>
+        </table>
+    </div>
 
     <input id="IdEntidad" name="IdEntidad" type="hidden" value="" />
 }

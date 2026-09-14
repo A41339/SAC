@@ -1,16 +1,18 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="description" content="Somos un sistema de protección que brinda garantía a los ahorrantes y también otorga respaldo institucional a las Cooperativas socias.">
+    <meta name="description" content="Somos un sistema de protección que brinda Garantía a los ahorrantes y también otorga respaldo institucional a las Cooperativas socias.">
     <meta property="og:type" content="website" />
     <meta property="og:title" content="FGA Confía" />
-    <meta property="og:description" content="Somos un sistema de protección que brinda garantía a los ahorrantes y también otorga respaldo institucional a las Cooperativas socias." />
+    <meta property="og:description" content="Somos un sistema de protección que brinda Garantía a los ahorrantes y también otorga respaldo institucional a las Cooperativas socias." />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>@Html.Raw(ViewBag.Title) - FFC</title>
     <meta content="width=device-width, initial-scale=0.8, maximum-scale=1, user-scalable=no" name="viewport">
     <link rel="icon" href="~/favicon.ico">
     @Styles.Render("~/Content/css")
+    <link rel="stylesheet" href="~/Content/theme/bower_components/font-awesome/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
     <link rel="stylesheet" href="~/Content/dashboard_modern.css?v=@DateTime.Now.Ticks" />
     @Scripts.Render("~/bundles/javascript")
     @Html.Action("HeaderCssJs", "Layout")
@@ -91,15 +93,22 @@
     </div>
     <div class="wrapper">
         <header class="main-header">
-            <a href="" class="logo">
-                <span class="logo-mini">FFC</span>
-                <div class="logo-lg" style="display: flex; align-items: center; justify-content: flex-start; padding-left: 15px; height: 100%; gap: 12px;">
-                    <div style="width: 38px; height: 38px; overflow: hidden; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: #ffffff; flex-shrink: 0; padding: 3px; box-shadow: 0 2px 4px rgba(0,0,0,0.15);">
-                        <img src="~/Content/images/FFC.jpg" style="height: 100%; width: auto; object-fit: contain;" alt="FFC" />
+            <div class="header-bg-backdrop">
+                <div class="glow-orb header-orb-1"></div>
+                <div class="glow-orb header-orb-2"></div>
+                <canvas id="headerCanvas" class="header-particle-canvas"></canvas>
+            </div>
+            <a href="~/Home/Index" class="logo" style="text-decoration: none;">
+                <span class="logo-mini" style="font-weight: 800; font-size: 18px; color: #ffffff; letter-spacing: 1px;">FFC</span>
+                <div class="logo-lg" style="display: flex; align-items: center; justify-content: flex-start; padding-left: 16px; height: 100%; gap: 12px;">
+                    <div class="header-logo-box" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 10px; background: #ffffff; flex-shrink: 0; padding: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.25), 0 0 0 1px rgba(255,255,255,0.25); transition: all 0.3s ease;">
+                        <img src="~/Content/images/FFC.jpg" style="height: 100%; width: 100%; object-fit: contain; border-radius: 6px;" alt="FFC" />
                     </div>
-                    <div style="display: flex; flex-direction: column; text-align: left; line-height: 1.05;">
-                        <span style="font-size: 32px; font-weight: 400; color: #ffffff; letter-spacing: 0.5px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">FFC</span>
-                        <span style="font-size: 12px; font-weight: 400; color: #cbd5e1; white-space: nowrap; margin-top: 1px;">Sistema Empresarial</span>
+                    <div style="display: flex; flex-direction: column; text-align: left; line-height: 1.1;">
+                        <span class="logo-text-ffc" style="font-size: 22px; font-weight: 800; color: #ffffff; letter-spacing: 1.4px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; text-shadow: 0 2px 6px rgba(0,0,0,0.3);">
+                            <span class="ffc-letter ffc-f1">F</span><span class="ffc-letter ffc-f2">F</span><span class="ffc-letter ffc-c">C</span>
+                        </span>
+                        <span style="font-size: 10.5px; font-weight: 700; color: #86d2dd; text-transform: uppercase; letter-spacing: 1.2px; margin-top: 2px; white-space: nowrap;">Sistema Empresarial</span>
                     </div>
                 </div>
             </a>
@@ -141,6 +150,9 @@
             </nav>
         </header>
         <aside class="main-sidebar modern-sidebar">
+            <div class="glow-orb sidebar-orb-1"></div>
+            <div class="glow-orb sidebar-orb-2"></div>
+            <canvas id="sidebarCanvas" class="sidebar-particle-canvas"></canvas>
             <section class="sidebar" style="display: flex; flex-direction: column; min-height: calc(100vh - 60px);">
                 <div>
                     @Env.GetMenuBarPage(null)
@@ -437,27 +449,23 @@
      }
     });
 
-    Highcharts.chart('container', {
-        // ...
-        exporting: {
-            // Opciones del módulo export-data
-            csv: {
-                // Opción A: exportar con punto decimal y coma como separador de columnas
-                // decimalPoint: '.', itemDelimiter: ',',
-
-                // Opción B (recomendada en Excel español): mantener coma decimal y usar ; como delimitador
-                decimalPoint: '.',       // decimal del dato exportado
-                itemDelimiter: ';'       // delimitador de columnas para que Excel no choque con la coma
+    if (document.getElementById('container')) {
+        Highcharts.chart('container', {
+            exporting: {
+                csv: {
+                    decimalPoint: '.',
+                    itemDelimiter: ';'
+                },
             },
-	},
-        yAxis: {
-            labels: {
-                formatter: function () {
-                    return Highcharts.numberFormat(this.value, 0, ',', '');
+            yAxis: {
+                labels: {
+                    formatter: function () {
+                        return Highcharts.numberFormat(this.value, 0, ',', '');
+                    }
                 }
             }
-        }
-    });
+        });
+    }
 </script>
 
 <script type="text/javascript">
@@ -475,4 +483,79 @@
             }
         });
     });
+</script>
+
+<script type="text/javascript">
+    (function () {
+        function initCanvas(canvasId, particleCount) {
+            var canvas = document.getElementById(canvasId);
+            if (!canvas || !canvas.parentElement) return;
+            var ctx = canvas.getContext('2d');
+            if (!ctx) return;
+            var particles = [];
+
+            function resize() {
+                if (!canvas.parentElement) return;
+                var rect = canvas.parentElement.getBoundingClientRect();
+                canvas.width = rect.width || 300;
+                canvas.height = rect.height || 100;
+            }
+            resize();
+            $(window).on('resize', resize);
+
+            for (var i = 0; i < particleCount; i++) {
+                particles.push({
+                    x: Math.random() * (canvas.width || 300),
+                    y: Math.random() * (canvas.height || 300),
+                    vx: (Math.random() - 0.5) * 0.4,
+                    vy: (Math.random() - 0.5) * 0.4,
+                    radius: Math.random() * 1.6 + 0.8,
+                    alpha: Math.random() * 0.4 + 0.2
+                });
+            }
+
+            function draw() {
+                if (!canvas.width || !canvas.height) {
+                    requestAnimationFrame(draw);
+                    return;
+                }
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                for (var i = 0; i < particles.length; i++) {
+                    var p = particles[i];
+                    p.x += p.vx;
+                    p.y += p.vy;
+
+                    if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                    if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(134, 210, 221, ' + p.alpha + ')';
+                    ctx.fill();
+
+                    for (var j = i + 1; j < particles.length; j++) {
+                        var p2 = particles[j];
+                        var dx = p.x - p2.x;
+                        var dy = p.y - p2.y;
+                        var dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < 85) {
+                            ctx.beginPath();
+                            ctx.moveTo(p.x, p.y);
+                            ctx.lineTo(p2.x, p2.y);
+                            ctx.strokeStyle = 'rgba(37, 99, 235, ' + (0.16 * (1 - dist / 85)) + ')';
+                            ctx.lineWidth = 0.7;
+                            ctx.stroke();
+                        }
+                    }
+                }
+                requestAnimationFrame(draw);
+            }
+            draw();
+        }
+
+        $(document).ready(function () {
+            initCanvas('headerCanvas', 22);
+            initCanvas('sidebarCanvas', 28);
+        });
+    })();
 </script>

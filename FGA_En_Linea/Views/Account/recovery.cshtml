@@ -1,65 +1,160 @@
-﻿@{
+@{
     Layout = null;
 }
-
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <title>Recuperar</title>
+    <meta charset="utf-8" />
+    <title>Recuperar Contrase&ntilde;a - FFC Sistema Empresarial</title>
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport" />
     <link rel="stylesheet" href="~/Content/theme/bower_components/bootstrap/dist/css/bootstrap.min.css">
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/theme/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
     <link href="~/Content/theme/dist/css/AdminLTE.min.css" rel="stylesheet" type="text/css" />
-    <link href="~/Content/Login.css" rel="stylesheet" type="text/css" />
-    <link href="~/Content/theme/plugins/iCheck/square/blue.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/Login.css?v=9.0" rel="stylesheet" type="text/css" />
 </head>
+
 <body class="login-page">
-    <div class="background"></div>
-    <div class="login-box">
-
-        <div class="login-box-body custom-form">
-            <div class="form-group has-feedback btn btn-block btn-flat">
-                <img src="~/Content/images/Logo_Login.png" width="150" height="60" />
+    <div class="login-wrapper">
+        <!-- Columna Izquierda: Brand / Hero Panel con Red de Particulas -->
+        <div class="login-hero">
+            <canvas id="heroParticles" class="hero-canvas"></canvas>
+            <div class="hero-bg-shapes">
+                <div class="glow-orb orb-1"></div>
+                <div class="glow-orb orb-2"></div>
             </div>
-            <br />
-
-            <p class="login-box-msg">Ingrese sus datos para recuperar contraseña</p>
-            <form action="" method="post">
-                <div class="form-group has-feedback">
-                    <input type="text" class="form-control" name="Email" placeholder="Correo electrónico" />
-                    <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+            
+            <div class="hero-header">
+                <div class="hero-logo-box">
+                    <img src="~/Content/images/FFC.jpg" alt="FFC Logo" />
                 </div>
-                <div class="row">
-                    <div class="col-xs-7">
-                    </div><!-- /.col -->
-                    <div class="col-xs-5">
-                        <button type="submit" class="btn btn-primary btn-block btn-flat">Recuperar</button>
-                    </div><!-- /.col -->
-                </div>
-            </form>
-            <div class="social-auth-links text-center">
-                @if (ViewBag.Msg != null)
-                {
-                    <span style="color: green">  @ViewBag.Msg  </span>
-                }
+                <span class="hero-brand-text">FFC</span>
             </div>
 
-            <a href="~/Account/login">Ir a Login</a><br>
+            <div class="hero-body">
+                <span class="hero-tag">Sistema de An&aacute;lisis Cooperativo (SAC)</span>
+                <h1 class="hero-title">Soluciones Financieras &Aacute;giles para el Sector Cooperativo</h1>
+                <p class="hero-subtitle">
+                    Ingrese su correo electr&oacute;nico registrado. Le enviaremos una clave temporal y las instrucciones para acceder al Sistema de An&aacute;lisis Cooperativo del FFC.
+                </p>
+                <div class="hero-features">
+                    <div class="hero-feature-item">
+                        <i class="fa fa-envelope-o"></i> Env&iacute;o Inmediato
+                    </div>
+                    <div class="hero-feature-item">
+                        <i class="fa fa-shield"></i> Canal Seguro FFC
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero-footer">
+                &copy; @DateTime.Now.Year Fondo de Fortalecimiento Cooperativo (FFC). Todos los derechos reservados.
+            </div>
+        </div>
+
+        <!-- Columna Derecha: Formulario de Recuperacion -->
+        <div class="login-form-section">
+            <div class="login-card">
+                <div class="form-header">
+                    <img class="form-sac-logo" src="~/Content/images/Logo_Login2.png?v=2.0" alt="SAC Logo" />
+                    <h2>Recuperar Contrase&ntilde;a</h2>
+                    <p>Ingrese su correo institucional registrado</p>
+                </div>
+                
+                <form action="" method="post">
+                    <div class="form-group-custom">
+                        <label for="Email" class="form-label-custom">Correo Electr&oacute;nico</label>
+                        <div class="input-container">
+                            <i class="fa fa-envelope input-icon-left"></i>
+                            <input type="email" class="form-control modern-login-input" name="Email" id="Email" placeholder="correo@cooperativa.fi.cr" required autocomplete="off" />
+                        </div>
+                    </div>
+                    
+                    @if (ViewBag.Msg != null)
+                    {
+                        <div style="margin-bottom: 22px; padding: 14px 18px; background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; color: #166534; font-size: 13.5px; font-weight: 600; text-align: center;">
+                            <i class="fa fa-check-circle"></i> @ViewBag.Msg
+                        </div>
+                    }
+
+                    <button type="submit" class="btn btn-modern-login">
+                        <span><i class="fa fa-key"></i> Recuperar</span>
+                    </button>
+                    
+                    <div class="form-options" style="justify-content: center; margin-top: 24px; margin-bottom: 0;">
+                        <a href="~/Account/login" class="login-recovery-link">
+                            <i class="fa fa-arrow-left"></i> Volver al inicio de sesi&oacute;n
+                        </a>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
+
     <script src="~/Content/theme/plugins/jQuery/jQuery-2.1.3.min.js"></script>
-    <script src="~/Content/theme/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
-    <script src="~/Content/theme/plugins/iCheck/icheck.min.js" type="text/javascript"></script>
+    <script src="~/Content/theme/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
     <script>
-        $(function () {
-            $('input').iCheck({
-                checkboxClass: 'icheckbox_square-blue',
-                radioClass: 'iradio_square-blue',
-                increaseArea: '20%' // optional
-            });
-        });
+        // Animacion de Red de Particulas Interactivas en el Hero Panel
+        (function () {
+            var canvas = document.getElementById('heroParticles');
+            if (!canvas) return;
+            var ctx = canvas.getContext('2d');
+            var particles = [];
+            var particleCount = 28;
+
+            function resize() {
+                if (!canvas.parentElement) return;
+                canvas.width = canvas.parentElement.offsetWidth;
+                canvas.height = canvas.parentElement.offsetHeight;
+            }
+            window.addEventListener('resize', resize);
+            resize();
+
+            for (var i = 0; i < particleCount; i++) {
+                particles.push({
+                    x: Math.random() * (canvas.width || 500),
+                    y: Math.random() * (canvas.height || 800),
+                    vx: (Math.random() - 0.5) * 0.5,
+                    vy: (Math.random() - 0.5) * 0.5,
+                    radius: Math.random() * 2 + 1,
+                    alpha: Math.random() * 0.4 + 0.2
+                });
+            }
+
+            function draw() {
+                if (!canvas.width || !canvas.height) resize();
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                for (var i = 0; i < particles.length; i++) {
+                    var p = particles[i];
+                    p.x += p.vx;
+                    p.y += p.vy;
+
+                    if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                    if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(134, 210, 221, ' + p.alpha + ')';
+                    ctx.fill();
+
+                    for (var j = i + 1; j < particles.length; j++) {
+                        var p2 = particles[j];
+                        var dx = p.x - p2.x;
+                        var dy = p.y - p2.y;
+                        var dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < 110) {
+                            ctx.beginPath();
+                            ctx.moveTo(p.x, p.y);
+                            ctx.lineTo(p2.x, p2.y);
+                            ctx.strokeStyle = 'rgba(37, 99, 235, ' + (0.18 * (1 - dist / 110)) + ')';
+                            ctx.lineWidth = 0.8;
+                            ctx.stroke();
+                        }
+                    }
+                }
+                requestAnimationFrame(draw);
+            }
+            draw();
+        })();
     </script>
 </body>
 </html>
-
-

@@ -1,4 +1,4 @@
-﻿@model FGA.Models.Dashboard
+@model FGA.Models.Dashboard
 
 <script src="https://code.highcharts.com/highcharts.js"></script>
 
@@ -17,44 +17,60 @@
         return 0;
     }
 
-    public string TrendClass(decimal curr, decimal prev, bool lowerIsBetter) {
-        if (curr == prev) return "fa fa-arrow-right";
-        bool up = curr > prev;
-        if (lowerIsBetter) {
-            return up ? "fa fa-arrow-up trend-arrow-down" : "fa fa-arrow-down trend-arrow-up";
-        } else {
-            return up ? "fa fa-arrow-up trend-arrow-up" : "fa fa-arrow-down trend-arrow-down";
-        }
+    public string TrendClass(decimal curr, decimal prev, bool lowerIsBetter = false) {
+        if (curr == prev) return "fa fa-minus";
+        return curr > prev ? "fa fa-arrow-up trend-arrow-up" : "fa fa-arrow-down trend-arrow-down";
     }
 
-    public HtmlString TrendPill(decimal curr, decimal prev, bool lowerIsBetter) {
+    public HtmlString TrendPill(decimal curr, decimal prev, bool lowerIsBetter = false) {
+        if (prev == 0 && curr == 0) {
+            return new HtmlString("<span class=\"kpi-trend-pill neutral\">0.0% <i class=\"fa fa-minus\"></i></span>");
+        }
         decimal diff = curr - prev;
         string sign = diff > 0 ? "+" : "";
-        string arrow = diff > 0 ? "▲" : (diff < 0 ? "▼" : "▬");
-        string pillClass = "neutral";
-        if (diff != 0) {
-            if (lowerIsBetter) {
-                pillClass = diff < 0 ? "positive" : "negative";
-            } else {
-                pillClass = diff > 0 ? "positive" : "negative";
-            }
-        }
+        string arrow = diff > 0 ? "<i class=\"fa fa-caret-up\"></i>" : (diff < 0 ? "<i class=\"fa fa-caret-down\"></i>" : "<i class=\"fa fa-minus\"></i>");
+        string pillClass = diff > 0 ? "positive" : (diff < 0 ? "negative" : "neutral");
         return new HtmlString(string.Format("<span class=\"kpi-trend-pill {0}\">{1}{2:N1}% {3}</span>", pillClass, sign, diff, arrow));
+    }
+
+    public HtmlString SemaphoreBadge(string kpiType, decimal value) {
+        string statusClass = "normal";
+        string labelText = "&Oacute;ptimo";
+        string icon = "fa-check-circle";
+
+        if (kpiType == "suficiencia") {
+            if (value < 8m) { statusClass = "status-danger danger"; labelText = "Alerta <8%"; icon = "fa-exclamation-triangle"; }
+            else if (value < 10m) { statusClass = "warning"; labelText = "Precauci&oacute;n <10%"; icon = "fa-exclamation-circle"; }
+            else { statusClass = "normal"; labelText = "SUGEF OK"; icon = "fa-check-circle"; }
+        } else if (kpiType == "eficiencia") {
+            if (value > 60m) { statusClass = "status-danger danger"; labelText = "Alerta >60%"; icon = "fa-exclamation-triangle"; }
+            else if (value > 50m) { statusClass = "warning"; labelText = "Precauci&oacute;n >50%"; icon = "fa-exclamation-circle"; }
+            else { statusClass = "normal"; labelText = "&Oacute;ptimo"; icon = "fa-check-circle"; }
+        } else if (kpiType == "morosidad") {
+            if (value > 5m) { statusClass = "status-danger danger"; labelText = "Alerta >5%"; icon = "fa-exclamation-triangle"; }
+            else if (value > 3m) { statusClass = "warning"; labelText = "Precauci&oacute;n >3%"; icon = "fa-exclamation-circle"; }
+            else { statusClass = "normal"; labelText = "En rango"; icon = "fa-check-circle"; }
+        }
+
+        return new HtmlString(string.Format("<span class=\"semaphore-badge {0}\"><i class=\"fa {1}\"></i> {2}</span>", statusClass, icon, labelText));
     }
 }
 
 @{
     var modelData = Model ?? new FGA.Models.Dashboard();
-
+    var inv = System.Globalization.CultureInfo.InvariantCulture;
 
     decimal suficienciaVal = GetVal(modelData.Suficiencia, 1);
     decimal suficienciaPrev = GetVal(modelData.Suficiencia, 0);
+    int sufPct = (int)Math.Min(100, Math.Max(12, suficienciaVal > 0 ? (suficienciaVal / 15m) * 100m : 12m));
 
     decimal costoVal = GetVal(modelData.CostoAdmin, 1);
     decimal costoPrev = GetVal(modelData.CostoAdmin, 0);
+    int efPct = (int)Math.Min(100, Math.Max(12, costoVal > 0 ? (costoVal / 70m) * 100m : 12m));
 
     decimal morosidadVal = GetVal(modelData.Morosidad, 1);
     decimal morosidadPrev = GetVal(modelData.Morosidad, 0);
+    int morPct = (int)Math.Min(100, Math.Max(12, morosidadVal > 0 ? (morosidadVal / 6m) * 100m : 12m));
 
     decimal compromisoVal = GetVal(modelData.Compromiso, 1);
     decimal compromisoPrev = GetVal(modelData.Compromiso, 0);
@@ -80,49 +96,162 @@
     </div>
 </div>
 
-<!-- ==================== FILA SUPERIOR: KPIS + INDICADORES ==================== -->
+<!-- ==================== FILA SUPERIOR: KPIS + CUENTAS + INDICADORES ==================== -->
 <div class="dashboard-top-grid">
     
-    <!-- Left 9 columns: 3 Sparkline KPI Cards -->
-    <div class="kpi-cards-wrapper">
+    <!-- Left 9 columns: 3 Sparkline KPI Cards + Cuentas Principales -->
+    <div style="grid-column: span 9; display: flex; flex-direction: column; justify-content: flex-start; gap: 20px;">
         
-        <!-- KPI 1: Suficiencia Patrimonial -->
-        <div class="modern-kpi-card">
-            <div class="kpi-title">
-                <span>Suficiencia Patrimonial</span>
-                <a href="javascript:getGraph('C1')" style="margin-left:auto; color:#94a3b8;" title="Ampliar gráfica"><i class="fa fa-line-chart"></i></a>
+        <!-- 3 Sparkline KPI Cards -->
+        <div class="kpi-cards-wrapper">
+            
+            <!-- KPI 1: Suficiencia Patrimonial -->
+            <div class="modern-kpi-card">
+                <div class="kpi-title">
+                    <span>Suficiencia Patrimonial</span>
+                    @SemaphoreBadge("suficiencia", suficienciaVal)
+                    <a href="javascript:getGraph('C1')" style="margin-left:auto; color:#94a3b8;" title="Ampliar gráfica"><i class="fa fa-line-chart"></i></a>
+                </div>
+                <div class="kpi-value-row">
+                    <div class="kpi-big-num">@FormatVal(modelData.Suficiencia, 1, "N1", "%")</div>
+                    @TrendPill(suficienciaVal, suficienciaPrev, false)
+                </div>
+                <div class="kpi-sparkline-container" id="sparkline_suficiencia"></div>
+                <div class="kpi-target-bar-wrapper">
+                    <div class="target-bar-info">
+                        <span>Meta SUGEF: 10.0%</span>
+                        <span>@(suficienciaVal >= 10m ? "Superada (+" + (suficienciaVal - 10m).ToString("N1") + "%)" : "Alerta")</span>
+                    </div>
+                    <div class="target-bar-track">
+                        <div class="target-bar-fill @(suficienciaVal >= 10m ? "success" : "warning")" style="width: @(sufPct)%;"></div>
+                    </div>
+                </div>
             </div>
-            <div class="kpi-value-row">
-                <div class="kpi-big-num">@FormatVal(modelData.Suficiencia, 1, "N1", "%")</div>
-                @TrendPill(suficienciaVal, suficienciaPrev, false)
+
+            <!-- KPI 2: Eficiencia -->
+            <div class="modern-kpi-card">
+                <div class="kpi-title">
+                    <span>Eficiencia</span>
+                    @SemaphoreBadge("eficiencia", costoVal)
+                    <a href="javascript:getGraph('C118')" style="margin-left:auto; color:#94a3b8;" title="Ampliar gráfica"><i class="fa fa-line-chart"></i></a>
+                </div>
+                <div class="kpi-value-row">
+                    <div class="kpi-big-num">@FormatVal(modelData.CostoAdmin, 1, "N1", "%")</div>
+                    @TrendPill(costoVal, costoPrev, false)
+                </div>
+                <div class="kpi-sparkline-container" id="sparkline_eficiencia"></div>
+                <div class="kpi-target-bar-wrapper">
+                    <div class="target-bar-info">
+                        <span>L&iacute;mite Deseable: 50.0%</span>
+                        <span>@Html.Raw(costoVal <= 50m ? "En Rango &Oacute;ptimo" : "+" + (costoVal - 50m).ToString("N1") + "% sobre l&iacute;mite")</span>
+                    </div>
+                    <div class="target-bar-track">
+                        <div class="target-bar-fill @(costoVal <= 50m ? "success" : (costoVal <= 60m ? "warning" : "danger"))" style="width: @(efPct)%;"></div>
+                    </div>
+                </div>
             </div>
-            <div class="kpi-sparkline-container" id="sparkline_suficiencia"></div>
+
+            <!-- KPI 3: Morosidad mayor a 90 días -->
+            <div class="modern-kpi-card">
+                <div class="kpi-title">
+                    <span>Morosidad mayor a 90 d&iacute;as</span>
+                    @SemaphoreBadge("morosidad", morosidadVal)
+                    <a href="javascript:getGraph('C22')" style="margin-left:auto; color:#94a3b8;" title="Ampliar gráfica"><i class="fa fa-line-chart"></i></a>
+                </div>
+                <div class="kpi-value-row">
+                    <div class="kpi-big-num">@FormatVal(modelData.Morosidad, 1, "N1", "%")</div>
+                    @TrendPill(morosidadVal, morosidadPrev, false)
+                </div>
+                <div class="kpi-sparkline-container" id="sparkline_morosidad"></div>
+                <div class="kpi-target-bar-wrapper">
+                    <div class="target-bar-info">
+                        <span>Umbral Regulativo: 3.0%</span>
+                        <span>@(morosidadVal <= 3m ? "Controlado" : "+" + (morosidadVal - 3m).ToString("N1") + "% excedido")</span>
+                    </div>
+                    <div class="target-bar-track">
+                        <div class="target-bar-fill @(morosidadVal <= 3m ? "success" : (morosidadVal <= 5m ? "warning" : "danger"))" style="width: @(morPct)%;"></div>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
-        <!-- KPI 2: Eficiencia -->
-        <div class="modern-kpi-card">
-            <div class="kpi-title">
-                <span>Eficiencia</span>
-                <a href="javascript:getGraph('C118')" style="margin-left:auto; color:#94a3b8;" title="Ampliar gráfica"><i class="fa fa-line-chart"></i></a>
-            </div>
-            <div class="kpi-value-row">
-                <div class="kpi-big-num">@FormatVal(modelData.CostoAdmin, 1, "N1", "%")</div>
-                @TrendPill(costoVal, costoPrev, true)
-            </div>
-            <div class="kpi-sparkline-container" id="sparkline_eficiencia"></div>
-        </div>
+        <!-- Cuentas Principales -->
+        <div class="cuentas-principales-wrapper" style="margin-bottom: 0;">
+            <div class="section-header-title">Cuentas principales (&#8353; Millones)</div>
+            
+            <div class="cuentas-cards-grid">
+                
+                <!-- Cuenta 1: Resultado del período acumulado -->
+                <div class="cuenta-card">
+                    <div class="cuenta-card-header">
+                        <div class="icon-circle-teal"><i class="fa fa-bar-chart"></i></div>
+                        <div class="cuenta-title">Resultado del periodo acumulado</div>
+                    </div>
+                    <div class="cuenta-big-value">@FormatVal(modelData.Compromiso, 1, "N0", "")</div>
+                    <div class="cuenta-subtable">
+                        <div class="subtable-col">
+                            <label>Periodo anterior</label>
+                            <span>@FormatVal(modelData.Compromiso, 0, "N0", "")</span>
+                        </div>
+                        <div class="subtable-col @(compromisoVar > 0 ? "val-positive" : (compromisoVar < 0 ? "val-negative" : ""))">
+                            <label>Variaci&oacute;n</label>
+                            <span>@compromisoVar.ToString("N0")</span>
+                        </div>
+                        <div class="subtable-col badge-cell @(compromisoVarPct > 0 ? "positive" : (compromisoVarPct < 0 ? "negative" : ""))">
+                            <label>Variaci&oacute;n %</label>
+                            <span>@compromisoVarPct.ToString("N1")%</span>
+                        </div>
+                    </div>
+                </div>
 
-        <!-- KPI 3: Morosidad mayor a 90 días -->
-        <div class="modern-kpi-card">
-            <div class="kpi-title">
-                <span>Morosidad mayor a 90 d&iacute;as</span>
-                <a href="javascript:getGraph('C22')" style="margin-left:auto; color:#94a3b8;" title="Ampliar gráfica"><i class="fa fa-line-chart"></i></a>
+                <!-- Cuenta 2: Cartera de crédito -->
+                <div class="cuenta-card">
+                    <div class="cuenta-card-header">
+                        <div class="icon-circle-blue"><i class="fa fa-credit-card"></i></div>
+                        <div class="cuenta-title">Cartera de cr&eacute;dito</div>
+                    </div>
+                    <div class="cuenta-big-value">@FormatVal(modelData.Activo, 1, "N0", "")</div>
+                    <div class="cuenta-subtable">
+                        <div class="subtable-col">
+                            <label>Periodo anterior</label>
+                            <span>@FormatVal(modelData.Activo, 0, "N0", "")</span>
+                        </div>
+                        <div class="subtable-col @(activoVar > 0 ? "val-positive" : (activoVar < 0 ? "val-negative" : ""))">
+                            <label>Variaci&oacute;n</label>
+                            <span>@activoVar.ToString("N0")</span>
+                        </div>
+                        <div class="subtable-col badge-cell @(activoVarPct > 0 ? "positive" : (activoVarPct < 0 ? "negative" : ""))">
+                            <label>Variaci&oacute;n %</label>
+                            <span>@activoVarPct.ToString("N1")%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cuenta 3: Obligaciones con el público -->
+                <div class="cuenta-card">
+                    <div class="cuenta-card-header">
+                        <div class="icon-circle-orange"><i class="fa fa-database"></i></div>
+                        <div class="cuenta-title">Obligaciones con el p&uacute;blico</div>
+                    </div>
+                    <div class="cuenta-big-value">@FormatVal(modelData.Riesgo, 1, "N0", "")</div>
+                    <div class="cuenta-subtable">
+                        <div class="subtable-col">
+                            <label>Periodo anterior</label>
+                            <span>@FormatVal(modelData.Riesgo, 0, "N0", "")</span>
+                        </div>
+                        <div class="subtable-col @(riesgoVar > 0 ? "val-positive" : (riesgoVar < 0 ? "val-negative" : ""))">
+                            <label>Variaci&oacute;n</label>
+                            <span>@riesgoVar.ToString("N0")</span>
+                        </div>
+                        <div class="subtable-col badge-cell @(riesgoVarPct > 0 ? "positive" : (riesgoVarPct < 0 ? "negative" : ""))">
+                            <label>Variaci&oacute;n %</label>
+                            <span>@riesgoVarPct.ToString("N1")%</span>
+                        </div>
+                    </div>
+                </div>
+
             </div>
-            <div class="kpi-value-row">
-                <div class="kpi-big-num">@FormatVal(modelData.Morosidad, 1, "N1", "%")</div>
-                @TrendPill(morosidadVal, morosidadPrev, true)
-            </div>
-            <div class="kpi-sparkline-container" id="sparkline_morosidad"></div>
         </div>
 
     </div>
@@ -136,7 +265,7 @@
                 <span class="indicator-name">Gastos De Administraci&oacute;n / Utilidad Operacional Bruta</span>
                 <div class="indicator-val-group">
                     <span>@FormatVal(modelData.CostoAdmin, 1, "N2", "%")</span>
-                    <i class="@TrendClass(costoVal, costoPrev, true)"></i>
+                    <i class="@TrendClass(costoVal, costoPrev, false)"></i>
                 </div>
             </div>
 
@@ -144,7 +273,7 @@
                 <span class="indicator-name">Cartera con morosidad mayor a 90 d&iacute;as / Cartera Directa</span>
                 <div class="indicator-val-group">
                     <span>@FormatVal(modelData.Morosidad, 1, "N2", "%")</span>
-                    <i class="@TrendClass(morosidadVal, morosidadPrev, true)"></i>
+                    <i class="@TrendClass(morosidadVal, morosidadPrev, false)"></i>
                 </div>
             </div>
 
@@ -225,84 +354,6 @@
 
 </div>
 
-<!-- ==================== FILA CENTRAL: CUENTAS PRINCIPALES ==================== -->
-<div class="cuentas-principales-wrapper">
-    <div class="section-header-title">Cuentas principales (&cent; Millones)</div>
-    
-    <div class="cuentas-cards-grid">
-        
-        <!-- Cuenta 1: Resultado del período acumulado -->
-        <div class="cuenta-card">
-            <div class="cuenta-card-header">
-                <div class="icon-circle-teal"><i class="fa fa-bar-chart"></i></div>
-                <div class="cuenta-title">Resultado del periodo acumulado</div>
-            </div>
-            <div class="cuenta-big-value">@FormatVal(modelData.Compromiso, 1, "N0", "")</div>
-            <div class="cuenta-subtable">
-                <div class="subtable-col">
-                    <label>Periodo anterior</label>
-                    <span>@FormatVal(modelData.Compromiso, 0, "N0", "")</span>
-                </div>
-                <div class="subtable-col @(compromisoVar > 0 ? "val-positive" : (compromisoVar < 0 ? "val-negative" : ""))">
-                    <label>Variaci&oacute;n</label>
-                    <span>@compromisoVar.ToString("N0")</span>
-                </div>
-                <div class="subtable-col badge-cell @(compromisoVarPct > 0 ? "positive" : (compromisoVarPct < 0 ? "negative" : ""))">
-                    <label>Variaci&oacute;n %</label>
-                    <span>@compromisoVarPct.ToString("N1")%</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Cuenta 2: Cartera de crédito -->
-        <div class="cuenta-card">
-            <div class="cuenta-card-header">
-                <div class="icon-circle-blue"><i class="fa fa-credit-card"></i></div>
-                <div class="cuenta-title">Cartera de cr&eacute;dito</div>
-            </div>
-            <div class="cuenta-big-value">@FormatVal(modelData.Activo, 1, "N0", "")</div>
-            <div class="cuenta-subtable">
-                <div class="subtable-col">
-                    <label>Periodo anterior</label>
-                    <span>@FormatVal(modelData.Activo, 0, "N0", "")</span>
-                </div>
-                <div class="subtable-col @(activoVar > 0 ? "val-positive" : (activoVar < 0 ? "val-negative" : ""))">
-                    <label>Variaci&oacute;n</label>
-                    <span>@activoVar.ToString("N0")</span>
-                </div>
-                <div class="subtable-col badge-cell @(activoVarPct > 0 ? "positive" : (activoVarPct < 0 ? "negative" : ""))">
-                    <label>Variaci&oacute;n %</label>
-                    <span>@activoVarPct.ToString("N1")%</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Cuenta 3: Obligaciones con el público -->
-        <div class="cuenta-card">
-            <div class="cuenta-card-header">
-                <div class="icon-circle-orange"><i class="fa fa-database"></i></div>
-                <div class="cuenta-title">Obligaciones con el p&uacute;blico</div>
-            </div>
-            <div class="cuenta-big-value">@FormatVal(modelData.Riesgo, 1, "N0", "")</div>
-            <div class="cuenta-subtable">
-                <div class="subtable-col">
-                    <label>Periodo anterior</label>
-                    <span>@FormatVal(modelData.Riesgo, 0, "N0", "")</span>
-                </div>
-                <div class="subtable-col @(riesgoVar > 0 ? "val-positive" : (riesgoVar < 0 ? "val-negative" : ""))">
-                    <label>Variaci&oacute;n</label>
-                    <span>@riesgoVar.ToString("N0")</span>
-                </div>
-                <div class="subtable-col badge-cell @(riesgoVarPct > 0 ? "positive" : (riesgoVarPct < 0 ? "negative" : ""))">
-                    <label>Variaci&oacute;n %</label>
-                    <span>@riesgoVarPct.ToString("N1")%</span>
-                </div>
-            </div>
-        </div>
-
-    </div>
-</div>
-
 <!-- Contenedor oculto de amCharts gauges para compatibilidad JS -->
 <div style="display:none;">
     <div id="chart_compromiso"></div>
@@ -332,7 +383,7 @@
                         <div class="box-header with-border" style="display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; border-radius: 12px 12px 0 0;">
                             <div style="display: flex; align-items: center; gap: 12px;">
                                 <img width="38" height="38" src="@Session["Logo"]" style="border-radius: 8px; background: #ffffff; padding: 2px; box-shadow: 0 2px 4px rgba(0,0,0,0.08);" />
-                                <h4 class="box-title" style="margin: 0; font-size: 15px; font-weight: 700; color: #0f172a;">Diferencial de tasas (porcentaje)</h4>
+                                <h4 class="box-title" style="margin: 0; font-size: 15px; font-weight: 700; color: #143750; border-left: 4px solid #0d7682; padding-left: 14px;">Diferencial de tasas (porcentaje)</h4>
                             </div>
                             <a class="btn-ampliar" data-toggle="tooltip" data-placement="top" title="Ampliar gráfico" href="javascript:mDiferencialTasas()">
                                 <i class="fa fa-line-chart"></i> Ampliar
@@ -351,7 +402,7 @@
                         <div class="box-header with-border" style="display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; border-radius: 12px 12px 0 0;">
                             <div style="display: flex; align-items: center; gap: 12px;">
                                 <img width="38" height="38" src="@Session["Logo"]" style="border-radius: 8px; background: #ffffff; padding: 2px; box-shadow: 0 2px 4px rgba(0,0,0,0.08);" />
-                                <h4 class="box-title" style="margin: 0; font-size: 15px; font-weight: 700; color: #0f172a;">Cobertura de m&aacute;rgenes</h4>
+                                <h4 class="box-title" style="margin: 0; font-size: 15px; font-weight: 700; color: #143750; border-left: 4px solid #0d7682; padding-left: 14px;">Cobertura de m&aacute;rgenes</h4>
                             </div>
                             <a class="btn-ampliar" data-toggle="tooltip" data-placement="top" title="Ampliar gráfico" href="javascript:mRentabilidad()">
                                 <i class="fa fa-line-chart"></i> Ampliar
@@ -373,7 +424,7 @@
                         <div class="box-header with-border" style="display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; border-radius: 12px 12px 0 0;">
                             <div style="display: flex; align-items: center; gap: 12px;">
                                 <img width="38" height="38" src="@Session["Logo"]" style="border-radius: 8px; background: #ffffff; padding: 2px; box-shadow: 0 2px 4px rgba(0,0,0,0.08);" />
-                                <h4 class="box-title" style="margin: 0; font-size: 15px; font-weight: 700; color: #0f172a;">Variaci&oacute;n interanual cartera</h4>
+                                <h4 class="box-title" style="margin: 0; font-size: 15px; font-weight: 700; color: #143750; border-left: 4px solid #0d7682; padding-left: 14px;">Variaci&oacute;n interanual cartera</h4>
                             </div>
                             <a class="btn-ampliar" data-toggle="tooltip" data-placement="top" title="Ampliar gráfico" href="javascript:mVariacionCartera()">
                                 <i class="fa fa-line-chart"></i> Ampliar
@@ -392,7 +443,7 @@
                         <div class="box-header with-border" style="display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; border-radius: 12px 12px 0 0;">
                             <div style="display: flex; align-items: center; gap: 12px;">
                                 <img width="38" height="38" src="@Session["Logo"]" style="border-radius: 8px; background: #ffffff; padding: 2px; box-shadow: 0 2px 4px rgba(0,0,0,0.08);" />
-                                <h4 class="box-title" style="margin: 0; font-size: 15px; font-weight: 700; color: #0f172a;">Mora de la cartera</h4>
+                                <h4 class="box-title" style="margin: 0; font-size: 15px; font-weight: 700; color: #143750; border-left: 4px solid #0d7682; padding-left: 14px;">Mora de la cartera</h4>
                             </div>
                             <a class="btn-ampliar" data-toggle="tooltip" data-placement="top" title="Ampliar gráfico" href="javascript:mMora()">
                                 <i class="fa fa-line-chart"></i> Ampliar
@@ -414,7 +465,7 @@
                         <div class="box-header with-border" style="display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; border-radius: 12px 12px 0 0;">
                             <div style="display: flex; align-items: center; gap: 12px;">
                                 <img width="38" height="38" src="@Session["Logo"]" style="border-radius: 8px; background: #ffffff; padding: 2px; box-shadow: 0 2px 4px rgba(0,0,0,0.08);" />
-                                <h4 class="box-title" style="margin: 0; font-size: 15px; font-weight: 700; color: #0f172a;">Variaci&oacute;n Capital Social</h4>
+                                <h4 class="box-title" style="margin: 0; font-size: 15px; font-weight: 700; color: #143750; border-left: 4px solid #0d7682; padding-left: 14px;">Variaci&oacute;n Capital Social</h4>
                             </div>
                             <a class="btn-ampliar" data-toggle="tooltip" data-placement="top" title="Ampliar gráfico" href="javascript:mCapitalSocial()">
                                 <i class="fa fa-line-chart"></i> Ampliar
@@ -433,7 +484,7 @@
                         <div class="box-header with-border" style="display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; border-radius: 12px 12px 0 0;">
                             <div style="display: flex; align-items: center; gap: 12px;">
                                 <img width="38" height="38" src="@Session["Logo"]" style="border-radius: 8px; background: #ffffff; padding: 2px; box-shadow: 0 2px 4px rgba(0,0,0,0.08);" />
-                                <h4 class="box-title" style="margin: 0; font-size: 15px; font-weight: 700; color: #0f172a;">Brecha de l&iacute;quidez</h4>
+                                <h4 class="box-title" style="margin: 0; font-size: 15px; font-weight: 700; color: #143750; border-left: 4px solid #0d7682; padding-left: 14px;">Brecha de l&iacute;quidez</h4>
                             </div>
                             <a class="btn-ampliar" data-toggle="tooltip" data-placement="top" title="Ampliar gráfico" href="javascript:mBrechaLiquidez()">
                                 <i class="fa fa-line-chart"></i> Ampliar
@@ -621,43 +672,76 @@
     function mSuficiencia() { $('#mSuficiencia').modal('show'); }
 
     $(document).ready(function () {
-        function createSparkline(containerId, dataArray, lineColor) {
+        function createSparkline(containerId, dataPoints, lineColor) {
             if (typeof Highcharts === 'undefined' || !document.getElementById(containerId)) return;
             Highcharts.chart(containerId, {
                 chart: {
-                    type: 'area',
+                    type: 'areaspline',
                     backgroundColor: null,
                     borderWidth: 0,
-                    margin: [2, 0, 2, 0],
-                    height: 45,
+                    margin: [4, 0, 0, 0],
+                    height: 65,
                     style: { overflow: 'visible' }
                 },
                 title: { text: '' },
                 credits: { enabled: false },
-                xAxis: { labels: { enabled: false }, title: { text: null }, startOnTick: false, endOnTick: false, tickPositions: [] },
-                yAxis: { endOnTick: false, startOnTick: false, labels: { enabled: false }, title: { text: null }, tickPositions: [0] },
+                xAxis: {
+                    categories: ['Periodo Inicial', 'Periodo Final'],
+                    visible: false,
+                    labels: { enabled: false },
+                    title: { text: null },
+                    startOnTick: false,
+                    endOnTick: false
+                },
+                yAxis: {
+                    visible: false,
+                    endOnTick: false,
+                    startOnTick: false,
+                    labels: { enabled: false },
+                    title: { text: null }
+                },
                 legend: { enabled: false },
-                tooltip: { enabled: false },
+                tooltip: {
+                    enabled: true,
+                    backgroundColor: '#143750',
+                    borderColor: '#88D1E2',
+                    borderWidth: 1,
+                    borderRadius: 8,
+                    shadow: true,
+                    style: { color: '#ffffff', fontSize: '11px', fontWeight: 'bold' },
+                    headerFormat: '<span style="font-size:10px; color:#cbd5e1;">{point.key}</span><br/>',
+                    pointFormat: '<span style="color:#88D1E2;">●</span> <b>{point.y:.1f}%</b>'
+                },
                 plotOptions: {
-                    series: {
-                        animation: false,
-                        lineWidth: 2,
+                    areaspline: {
+                        animation: {
+                            duration: 950
+                        },
+                        lineWidth: 2.5,
                         shadow: false,
-                        states: { hover: { lineWidth: 2 } },
-                        marker: { radius: 2 },
-                        fillOpacity: 0.15
+                        states: { hover: { lineWidth: 3 } },
+                        marker: {
+                            enabled: true,
+                            radius: 3,
+                            states: { hover: { enabled: true, radius: 5 } }
+                        },
+                        fillColor: {
+                            linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+                            stops: [
+                                [0, Highcharts.color(lineColor).setOpacity(0.35).get('rgba')],
+                                [1, Highcharts.color(lineColor).setOpacity(0.02).get('rgba')]
+                            ]
+                        }
                     }
                 },
                 series: [{
-                    data: dataArray,
+                    name: 'Indicador',
+                    data: dataPoints,
                     color: lineColor
                 }]
             });
         }
 
-        @{
-            var inv = System.Globalization.CultureInfo.InvariantCulture;
-        }
         var valSuf = @suficienciaVal.ToString(inv);
         var prevSuf = @suficienciaPrev.ToString(inv);
         var valCosto = @costoVal.ToString(inv);
@@ -665,8 +749,8 @@
         var valMora = @morosidadVal.ToString(inv);
         var prevMora = @morosidadPrev.ToString(inv);
 
-        createSparkline('sparkline_suficiencia', [prevSuf * 0.9, prevSuf * 0.95, prevSuf, valSuf * 0.98, valSuf], '#2563eb');
-        createSparkline('sparkline_eficiencia', [prevCosto * 0.9, prevCosto * 0.95, prevCosto, valCosto * 0.98, valCosto], '#2563eb');
-        createSparkline('sparkline_morosidad', [prevMora * 1.1, prevMora * 1.05, prevMora, valMora * 1.02, valMora], '#0d7682');
+        createSparkline('sparkline_suficiencia', [prevSuf, valSuf], '#2563eb');
+        createSparkline('sparkline_eficiencia', [prevCosto, valCosto], '#2563eb');
+        createSparkline('sparkline_morosidad', [prevMora, valMora], '#0d7682');
     });
 </script>

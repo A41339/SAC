@@ -15,7 +15,7 @@ namespace FGA.Controllers
 {
     public class AccountController : Controller
     {
-        private const string ContrasenaInvalida = "Usuario y contraseña inválidos";
+        private const string ContrasenaInvalida = "Usuario y contraseÃ±a invÃ¡lidos";
         readonly FGA_En_Linea.UsuarioService.UsuarioServiceClient db = new FGA_En_Linea.UsuarioService.UsuarioServiceClient();
         readonly FGA_En_Linea.ParametrosService.ParametrosServiceClient param = new FGA_En_Linea.ParametrosService.ParametrosServiceClient();
         readonly FGA_En_Linea.Bit_SessionesService.ServiceOf_Bit_SessionesClient bit = new FGA_En_Linea.Bit_SessionesService.ServiceOf_Bit_SessionesClient();
@@ -41,9 +41,13 @@ namespace FGA.Controllers
             if (login != null && login.Estado_Usuario_Id == Utility.Utilitarios.estadoActivo)
             {
                 Utility.PasswordGenerator generator = new Utility.PasswordGenerator();
-                string nuevaContrasena = generator.Generate();
-                login.Contrasena = nuevaContrasena;
+                generator.ExcludeSymbols = true;
                 Encripcion.Encripcion enc = new Encripcion.Encripcion();
+
+                string contrasenaEncriptada = generator.Generate();
+                string contrasenaPlana = enc.DecryptStr(contrasenaEncriptada);
+
+                login.Contrasena = contrasenaEncriptada;
                 login.CambiarClave = "S";
                 db.Update(login);
 
@@ -53,10 +57,10 @@ namespace FGA.Controllers
                         Estimad@ Usuario,
                         <br/>
                         <br/>
-                        Bienvenid@ al Sistema de Análisis Cooperativo SAC del Fondo de Fortalecimiento Cooperativo, nuestra entidad brinda soluciones financieras ágiles a las cooperativas de ahorro y crédito que contribuyan a mantener la solidez y estabilidad de nuestras afiliadas.
+                        Bienvenid@ al Sistema de AnÃ¡lisis Cooperativo SAC del Fondo de Fortalecimiento Cooperativo, nuestra entidad brinda soluciones financieras Ã¡giles a las cooperativas de ahorro y crÃ©dito que contribuyan a mantener la solidez y estabilidad de nuestras afiliadas.
                         <br/>
                         <br/>
-                        Para conocer más de nosotros le invitamos a visitar nuestro sitio web <a href='https://www.ffc.co.cr/'>ffc.co.cr</a>, llamar al 2257-1111 o puede contactar a las analistas de riesgo:
+                        Para conocer mÃ¡s de nosotros le invitamos a visitar nuestro sitio web <a href='https://www.ffc.co.cr/'>ffc.co.cr</a>, llamar al 2257-1111 o puede contactar a las analistas de riesgo:
                         <br/>
                         <br/>
                         Cinthya Salazar <a href='mailto:csalazar@ffc.co.cr'>csalazar@ffc.co.cr</a>
@@ -66,19 +70,19 @@ namespace FGA.Controllers
                         <br/>
                         <b>Usuario:</b> " + login.Identificacion +
                        "<br/>" +
-                       "<b>Contraseña Temporal:</b> " + enc.DecryptStr(login.Contrasena) +
+                       "<b>ContraseÃ±a Temporal:</b> " + contrasenaPlana +
                        "<br/>" +
-                       "La contraseña deberá de digitarse en la herramienta, no permite la opción copiar - pegar";
+                       "La contraseÃ±a deberÃ¡ de digitarse en la herramienta, no permite la opciÃ³n copiar - pegar";
 
-                    MailSend.Email.EnviarCorreoImagenes("Recuperación de contraseña", mensaje, correo, ServidorCorreo, CuentaCorreo, CuentaCorreo, PasswordCorreo);                  
-                    ViewBag.Msg = "Se ha generado una nueva contraseña.";
+                    MailSend.Email.EnviarCorreoImagenes("RecuperaciÃ³n de contraseÃ±a", mensaje, correo, ServidorCorreo, CuentaCorreo, CuentaCorreo, PasswordCorreo);                  
+                    ViewBag.Msg = "Se ha generado una nueva contraseÃ±a.";
                 }
                 catch (Exception e) {
                     ViewBag.Msg = e.Message;
                 }
             }
             else
-                ViewBag.Msg = "Usuario inválido";
+                ViewBag.Msg = "Usuario invÃ¡lido";
             return View();
         }
 
@@ -88,78 +92,71 @@ namespace FGA.Controllers
         [AllowAnonymous]
         public JsonResult doLogin(String identificacion, String contrasena)
         {
-
             Resultado ObjResultado = new Resultado();
             ObjResultado.exito = false;
+
+            if (!string.IsNullOrEmpty(identificacion)) identificacion = identificacion.Trim();
+            if (!string.IsNullOrEmpty(contrasena)) contrasena = contrasena.Trim();
+
             Encripcion.Encripcion enc = new Encripcion.Encripcion();
             var login = db.GetByCredentials(identificacion, enc.EncryptStr(contrasena));
 
-            if (login == null || login.Estado_Usuario.Id != Utility.Utilitarios.estadoActivo)
+            if (login == null || login.Estado_Usuario == null || login.Estado_Usuario.Id != Utility.Utilitarios.estadoActivo)
                 ObjResultado.mensaje = ContrasenaInvalida;
             else
             {
-                if (login.Entidad_Usuario.Activo == false)
+                if (login.Entidad_Usuario != null && login.Entidad_Usuario.Activo == false)
                     ObjResultado.mensaje = "La entidad " + login.Entidad_Usuario.Nombre + " no se encuentra activa.";
                 else
                 {
+                    var claims = new List<Claim>
+                        {
+                            new Claim(ClaimTypes.Name, login.Nombre.ToString()),
+                            new Claim(ClaimTypes.Role, login.Role_Usuario.Id.ToString()),
+                            new Claim(ClaimTypes.Sid, login.Id.ToString()),
+                            new Claim(ClaimTypes.Surname, login.Entidad_Usuario.Nombre),
+                            new Claim(ClaimTypes.Gender, login.Sexo_Usuario_Id.ToString()),
+                            new Claim("CambiarClave", login.CambiarClave),
+                            new Claim("Evaluacion", login.Entidad_Usuario.Ind_Evaluacion ? "S" : "N")
+                        };
 
-                    if (login == null || login.Estado_Usuario.Id != Utility.Utilitarios.estadoActivo)
-                        ObjResultado.mensaje = "Usuario inválido";
-                    else
+                    //BORRAR
+                    Session["Usuario"] = login;
+                    Session["Ind_Carga"] = login.Entidad_Usuario.Ind_Cargar;
+                    Session["IdEntidad"] = Utility.Utilitarios.entidadDefault;
+                    Session["IsFGA"] = login.Role_Usuario.EsEntidad ? 0 : 1;
+                    HttpRuntime.Cache.Insert("Login_" + login.Id.ToString(), login.Id.ToString(), null, DateTime.Now.AddMinutes(10), System.Web.Caching.Cache.NoSlidingExpiration);
+
+                    try
                     {
-                        var claims = new List<Claim>
-                            {
-                                new Claim(ClaimTypes.Name, login.Nombre.ToString()),
-                                new Claim(ClaimTypes.Role, login.Role_Usuario.Id.ToString()),
-                                new Claim(ClaimTypes.Sid, login.Id.ToString()),
-                                new Claim(ClaimTypes.Surname, login.Entidad_Usuario.Nombre),
-                                new Claim(ClaimTypes.Gender, login.Sexo_Usuario_Id.ToString()),
-                                new Claim("CambiarClave", login.CambiarClave),
-                                new Claim("Evaluacion", login.Entidad_Usuario.Ind_Evaluacion ? "S" : "N")
-                            };
-
-                        //BORRAR
-                        Session["Usuario"] = login;
-                        Session["Ind_Carga"] = login.Entidad_Usuario.Ind_Cargar;
-                        Session["IdEntidad"] = Utility.Utilitarios.entidadDefault;
-                        Session["IsFGA"] = login.Role_Usuario.EsEntidad ? 0 : 1;
-                        HttpRuntime.Cache.Insert("Login_" + login.Id.ToString(), login.Id.ToString(), null, DateTime.Now.AddMinutes(10), System.Web.Caching.Cache.NoSlidingExpiration);
-
-                        try
-                        {
-                            if (System.IO.File.Exists(Server.MapPath("~/Content/images/" + login.Entidad_Usuario.Nombre + ".jpg")))
-                                claims.Add(new Claim(ClaimTypes.UserData, login.Entidad_Usuario.Nombre + ".jpg"));
-                            else
-                                claims.Add(new Claim(ClaimTypes.UserData, string.IsNullOrEmpty(login.Entidad_Usuario.Logo) ? "default.png" : login.Entidad_Usuario.Logo));
-                        }
-                        catch (Exception)
-                        {
-                            claims.Add(new Claim(ClaimTypes.UserData, "default.png"));
-                        }
-
-                        Session.Timeout = 500; //login.Role_Usuario.EsEntidad ? 200 : 5; 
-
-                        var identity = new ClaimsIdentity(claims, DefaultAuthenticationTypes.ApplicationCookie);
-                        var authenticationManager = Request.GetOwinContext().Authentication;
-                        authenticationManager.SignIn(identity);
-                        var claimsPrincipal = new ClaimsPrincipal(identity);
-                        Thread.CurrentPrincipal = claimsPrincipal;
-
-                        Task.Run(() =>
-                        {
-                            Bit_Sessiones reg = new Bit_Sessiones();
-                            reg.Fecha = DateTime.Now;
-                            reg.IdEntidad = login.Entidad_Usuario_Id;
-                            reg.IdRole = login.Role_Usuario_Id;
-                            reg.IdUsuario = login.Id.Value;
-                            bit.Add(ref reg);
-                        });
-
-                        ObjResultado.exito = true;
-                        ObjResultado.mensaje = Url.Content(login.CambiarClave == "S" ? "~/Usuario/ChangePassword" : login.Role_Usuario.Url);
-
+                        if (System.IO.File.Exists(Server.MapPath("~/Content/images/" + login.Entidad_Usuario.Nombre + ".jpg")))
+                            claims.Add(new Claim(ClaimTypes.UserData, login.Entidad_Usuario.Nombre + ".jpg"));
+                        else
+                            claims.Add(new Claim(ClaimTypes.UserData, string.IsNullOrEmpty(login.Entidad_Usuario.Logo) ? "default.png" : login.Entidad_Usuario.Logo));
                     }
-                    //}
+                    catch (Exception)
+                    {
+                        claims.Add(new Claim(ClaimTypes.UserData, "default.png"));
+                    }
+
+                    var identity = new ClaimsIdentity(claims, DefaultAuthenticationTypes.ApplicationCookie);
+                    var authenticationManager = Request.GetOwinContext().Authentication;
+                    authenticationManager.SignIn(identity);
+                    var claimsPrincipal = new ClaimsPrincipal(identity);
+                    Thread.CurrentPrincipal = claimsPrincipal;
+
+                    Task.Run(() =>
+                    {
+                        Bit_Sessiones reg = new Bit_Sessiones();
+                        reg.Fecha = DateTime.Now;
+                        reg.IdEntidad = login.Entidad_Usuario_Id;
+                        reg.IdRole = login.Role_Usuario_Id;
+                        reg.IdUsuario = login.Id.Value;
+                        bit.Add(ref reg);
+                    });
+
+                    ObjResultado.exito = true;
+                    ObjResultado.mensaje = Url.Content(login.CambiarClave == "S" ? "~/Usuario/ChangePassword" : login.Role_Usuario.Url);
                 }
             }
             return Json(new { resultado = ObjResultado }, JsonRequestBehavior.AllowGet);
@@ -174,18 +171,18 @@ namespace FGA.Controllers
         //{
         //    Resultado ObjResultado = new Resultado();
         //    ObjResultado.exito = false;
-        //    ObjResultado.mensaje = "Debe dar click a la opción \"Ingresar\"";
+        //    ObjResultado.mensaje = "Debe dar click a la opciï¿½n \"Ingresar\"";
 
         //    if (!string.IsNullOrEmpty(otp))
         //    {
         //        var login = db.GetByIden(identificacion);
 
         //        if (login == null || login.Estado_Usuario.Id != Utility.Utilitarios.estadoActivo)
-        //            ObjResultado.mensaje = "Usuario inválido";
+        //            ObjResultado.mensaje = "Usuario invï¿½lido";
         //        else
         //        {
         //            if (login.OTP != Env.Encrypt(otp) && login.Entidad_Usuario_Id != "99")
-        //                ObjResultado.mensaje = "OTP inválido";
+        //                ObjResultado.mensaje = "OTP invï¿½lido";
         //            else
         //            {
         //                var claims = new List<Claim>
