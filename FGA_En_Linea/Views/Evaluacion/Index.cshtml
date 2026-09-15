@@ -4,201 +4,263 @@
 }
 
 <section class="content-header">
-    <h1>Evaluaciones</h1>
+    <h1>
+        <i class="fa fa-clipboard" style="color: #0284c7; margin-right: 8px;"></i>
+        Mantenimiento de Evaluaciones
+    </h1>
 </section>
+
 <section class="content">
     <div class="row">
         <div class="col-xs-12">
-            <div class="box box-solid box-info">
-                <div class="box-body">
-                    <div class="margin">
-                        <div class="btn-group">
-                            <a href="~/Evaluacion/Create" class="btn btn-dropbox">Crear una Categoría</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="box box-solid box-info">
-                <div class="box-body table-responsive">
-                    <div class="margin">
-                        <div class="streaming-table">
-                            <span id="found" class="label label-info"></span>
-                            <table id="tbEvaluacion" class="table table-striped table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>Acción</th>
-                                        <th class="hidden">Código</th>
-                                        <th>Título</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
 
-                            <div id="summary">
-                                <div>
-                                </div>
-                            </div>
-                        </div>
+            <!-- Barra de acciones -->
+            <div class="modern-table-card" style="margin-bottom: 20px;">
+                <div style="padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+                    <div>
+                        <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: #143750;">
+                            <i class="fa fa-list-alt" style="color: #0284c7; margin-right: 7px;"></i>
+                            Categorías de evaluación
+                        </h4>
+                        <p style="margin: 3px 0 0 0; font-size: 12px; color: #64748b;">Administre las categorías, subcomponentes y preguntas del proceso de autoevaluación</p>
                     </div>
-                    <br />
-                    <br />
+                    <a href="~/Evaluacion/Create" class="btn-modern-filter" style="text-decoration: none; padding: 9px 20px; border-radius: 8px; font-size: 13px;">
+                        <i class="fa fa-plus-circle"></i> Crear categoría
+                    </a>
                 </div>
             </div>
+
+            <!-- Tabla principal -->
+            <div class="modern-table-card">
+                <div class="table-responsive" style="padding: 16px 20px;">
+                    <span id="found" class="label label-info"></span>
+                    <table id="tbEvaluacion" class="table modern-data-table" style="width: 100%;">
+                        <thead>
+                            <tr>
+                                <th style="width: 120px;">Acción</th>
+                                <th class="hidden">Código</th>
+                                <th>Título</th>
+                                <th style="width: 110px; text-align: center;">Opciones</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                    <div id="summary"><div></div></div>
+                </div>
+            </div>
+
         </div>
     </div>
 </section>
 
-<section class="content">
-    <div class="modal fade" id="modalPreguntas" tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
-        <div class="modal-dialog  modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">
-                        <b><label id="preguntaTitle"></label></b>
-                    </h4>
-                </div>
-                <div class="margin">
-                    <div class="box box-solid box-info">
-                        <br />
-                        <div id="tblPreguntas">
+<!-- ═══════════════════════════════════════
+     MODAL: Preguntas de subcomponente
+═══════════════════════════════════════ -->
+<div class="modal fade" id="modalPreguntas" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" style="max-width: 880px; width: 92%; margin: 30px auto;">
+        <div class="modal-content" style="border-radius: 14px; overflow: hidden; border: none; box-shadow: 0 12px 36px rgba(0,0,0,0.2);">
+            <div class="modal-header" style="background: linear-gradient(135deg, #143750 0%, #0d7377 100%); padding: 18px 22px; display: flex; align-items: center; justify-content: space-between;">
+                <h4 class="modal-title" style="margin: 0; color: #ffffff; font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+                    <i class="fa fa-question-circle" style="font-size: 18px;"></i>
+                    <span id="preguntaTitle"></span>
+                </h4>
+                <button type="button" class="close" data-dismiss="modal" style="color: #fff; opacity: 0.85; font-size: 22px; text-shadow: none; margin: 0; padding: 0;">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="padding: 22px 24px; background: #f8fafc;">
+
+                <!-- Tabla de preguntas cargada via AJAX -->
+                <div id="tblPreguntas" style="margin-bottom: 20px;"></div>
+
+                <!-- Formulario para agregar pregunta -->
+                <div class="modern-table-card" style="padding: 18px 20px; margin-bottom: 0;">
+                    <h5 style="font-size: 13px; font-weight: 700; color: #143750; margin: 0 0 14px 0;">
+                        <i class="fa fa-plus-circle" style="color: #0284c7; margin-right: 6px;"></i>
+                        Nueva pregunta
+                    </h5>
+                    <div class="form-group" style="margin-bottom: 12px;">
+                        <label style="font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px; display: block;">Enunciado</label>
+                        <textarea id="EnunciadoPregunta" class="form-control modern-select" rows="3" placeholder="Escriba aquí el enunciado de la pregunta..." name="EnunciadoPregunta" style="resize: vertical; font-size: 13px;"></textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6" style="margin-bottom: 10px;">
+                            <label style="font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px; display: block;">
+                                <span class="label" style="background: #0284c7; color: #fff; padding: 2px 7px; border-radius: 4px; margin-right: 4px;">A</span> Opción A
+                            </label>
+                            <textarea id="OpcionA" class="form-control modern-select" rows="2" placeholder="Opción A" name="OpcionA" style="resize: vertical; font-size: 13px;"></textarea>
                         </div>
-                        <div class="box-body table-responsive">
-                            <br />
-                            <div class="col-lg-12 ">
-                                <textarea type="text" id="EnunciadoPregunta" class="form-control" placeholder="Enunciado" name="EnunciadoPregunta"></textarea>
-                            </div>
-                            <div class="col-lg-12">
-                                <textarea type="text" id="OpcionA" class="form-control" placeholder="Opción A" name="OpcionA"></textarea>
-                            </div>
-                            <div class="col-lg-12">
-                                <textarea type="text" id="OpcionB" class="form-control" placeholder="Opción B" name="OpcionB"></textarea>
-                            </div>
-                            <div class="col-lg-12">
-                                <textarea type="text" id="OpcionC" class="form-control" placeholder="Opción C" name="OpcionC"></textarea>
-                            </div>
-                            <div class="col-lg-12">
-                                <textarea type="text" id="OpcionD" class="form-control" placeholder="Opción D" name="OpcionD"></textarea>
-                            </div>
+                        <div class="col-md-6" style="margin-bottom: 10px;">
+                            <label style="font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px; display: block;">
+                                <span class="label" style="background: #059669; color: #fff; padding: 2px 7px; border-radius: 4px; margin-right: 4px;">B</span> Opción B
+                            </label>
+                            <textarea id="OpcionB" class="form-control modern-select" rows="2" placeholder="Opción B" name="OpcionB" style="resize: vertical; font-size: 13px;"></textarea>
                         </div>
-                        <br />
+                        <div class="col-md-6" style="margin-bottom: 10px;">
+                            <label style="font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px; display: block;">
+                                <span class="label" style="background: #d97706; color: #fff; padding: 2px 7px; border-radius: 4px; margin-right: 4px;">C</span> Opción C
+                            </label>
+                            <textarea id="OpcionC" class="form-control modern-select" rows="2" placeholder="Opción C" name="OpcionC" style="resize: vertical; font-size: 13px;"></textarea>
+                        </div>
+                        <div class="col-md-6" style="margin-bottom: 10px;">
+                            <label style="font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px; display: block;">
+                                <span class="label" style="background: #7c3aed; color: #fff; padding: 2px 7px; border-radius: 4px; margin-right: 4px;">D</span> Opción D
+                            </label>
+                            <textarea id="OpcionD" class="form-control modern-select" rows="2" placeholder="Opción D" name="OpcionD" style="resize: vertical; font-size: 13px;"></textarea>
+                        </div>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-success" id="btn_agregarPregunta">Agregar</button>
-                    <button type="button" class="btn btn-primary" data-dismiss="modal">Cancelar</button>
-                </div>
+            </div>
+            <div class="modal-footer" style="background: #ffffff; border-top: 1px solid #e2e8f0; padding: 14px 22px; display: flex; justify-content: flex-end; gap: 10px;">
+                <button type="button" class="btn-modern-filter" id="btn_agregarPregunta" style="padding: 9px 22px; border-radius: 8px; background: linear-gradient(135deg, #059669 0%, #0d7377 100%);">
+                    <i class="fa fa-save"></i> Agregar pregunta
+                </button>
+                <button type="button" class="btn-modern-filter" data-dismiss="modal" style="padding: 9px 22px; border-radius: 8px; background: #64748b;">
+                    <i class="fa fa-times"></i> Cerrar
+                </button>
             </div>
         </div>
     </div>
-</section>
+</div>
 
-<section class="content">
-    <div class="modal fade" id="modalSubCategorias" tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
-        <div class="modal-dialog  modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">
-                        <b><label id="subCategoriaTitle"></label></b>
-                    </h4>
-                </div>
-                <div class="margin">
-                    <div class="box box-solid box-info">
-                        <br />
-                        <div id="tblSubCategorias">
-                        </div>
-                        <div class="box-body table-responsive">
-                            <br />
-                            <div class="col-lg-12 ">
-                                <input type="text" id="EnunciadoSubCategoria" class="form-control" placeholder="Componente" name="EnunciadoSubCategoria" />
-                            </div>
-                        </div>
-                        <br />
+<!-- ═══════════════════════════════════════
+     MODAL: Subcomponentes de categoría
+═══════════════════════════════════════ -->
+<div class="modal fade" id="modalSubCategorias" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" style="max-width: 820px; width: 92%; margin: 30px auto;">
+        <div class="modal-content" style="border-radius: 14px; overflow: hidden; border: none; box-shadow: 0 12px 36px rgba(0,0,0,0.2);">
+            <div class="modal-header" style="background: linear-gradient(135deg, #143750 0%, #0d7377 100%); padding: 18px 22px; display: flex; align-items: center; justify-content: space-between;">
+                <h4 class="modal-title" style="margin: 0; color: #ffffff; font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+                    <i class="fa fa-sitemap" style="font-size: 18px;"></i>
+                    <span id="subCategoriaTitle"></span>
+                </h4>
+                <button type="button" class="close" data-dismiss="modal" style="color: #fff; opacity: 0.85; font-size: 22px; text-shadow: none; margin: 0; padding: 0;">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="padding: 22px 24px; background: #f8fafc;">
+                <!-- Tabla de componentes cargada via AJAX -->
+                <div id="tblSubCategorias" style="margin-bottom: 16px;"></div>
+
+                <!-- Formulario inline para nuevo componente -->
+                <div class="modern-table-card" style="padding: 16px 20px; margin-bottom: 0; border: 1px solid #e2e8f0; border-radius: 10px; background: #ffffff;">
+                    <h5 style="font-size: 13px; font-weight: 700; color: #143750; margin: 0 0 10px 0;">
+                        <i class="fa fa-plus-circle" style="color: #0284c7; margin-right: 6px;"></i>
+                        Agregar nuevo componente
+                    </h5>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <input type="text" id="EnunciadoSubCategoria" class="form-control modern-select" placeholder="Ej: Gobierno Corporativo – Composición" name="EnunciadoSubCategoria" style="font-size: 13px; flex: 1; height: 38px;" />
+                        <button type="button" class="btn-modern-filter" id="btn_agregarSubCategoria" style="padding: 0 20px; height: 38px; border-radius: 8px; background: linear-gradient(135deg, #059669 0%, #0d7377 100%); flex-shrink: 0;">
+                            <i class="fa fa-plus"></i> Agregar
+                        </button>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-success" id="btn_agregarSubCategoria">Agregar</button>
-                    <button type="button" class="btn btn-primary" data-dismiss="modal">Cancelar</button>
-                </div>
+            </div>
+            <div class="modal-footer" style="background: #ffffff; border-top: 1px solid #e2e8f0; padding: 14px 22px; display: flex; justify-content: flex-end;">
+                <button type="button" class="btn-modern-filter" data-dismiss="modal" style="padding: 9px 24px; border-radius: 8px; background: #64748b;">
+                    <i class="fa fa-times"></i> Cerrar
+                </button>
             </div>
         </div>
     </div>
-</section>
+</div>
 
-<section class="content">
-    <div class="modal fade" id="modalModificarPregunta" tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" id="lbl_tituloModificar">Modificar enunciado</h4>
-                </div>
-                <div class="margin">
-                    <div class="box box-solid box-info">
-                        <br />
-                        <div class="box-body table-responsive">
-                            <input id="MPreguntaId" name="MPreguntaId" class="hidden" />
-                            <div class="col-lg-12 ">
-                                <label>Enunciado</label>
-                                <textarea type="text" id="MPreguntaEnunciado" class="form-control" rows="5" placeholder="Pregunta" name="MEnunciado"></textarea>
-                            </div>
-                            <div class="col-lg-12">
-                                <label>Opción A</label>
-                                <textarea type="text" id="MOpcionA" class="form-control" rows="5" placeholder="Opción A" name="MOpcionA"></textarea>
-                            </div>
-                            <div class="col-lg-12">
-                                <label>Opción B</label>
-                                <textarea type="text" id="MOpcionB" class="form-control" rows="5" placeholder="Opción B" name="MOpcionB"></textarea>
-                            </div>
-                            <div class="col-lg-12">
-                                <label>Opción C</label>
-                                <textarea type="text" id="MOpcionC" class="form-control" rows="5" placeholder="Opción C" name="MOpcionC"></textarea>
-                            </div>
-                            <div class="col-lg-12">
-                                <label>Opción D</label>
-                                <textarea type="text" id="MOpcionD" class="form-control" rows="5" placeholder="Opción D" name="MOpcionD"></textarea>
-                            </div>
-                        </div>
-                        <br />
+<!-- ═══════════════════════════════════════
+     MODAL: Modificar pregunta
+═══════════════════════════════════════ -->
+<div class="modal fade" id="modalModificarPregunta" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" style="border-radius: 14px; overflow: hidden; border: none; box-shadow: 0 12px 36px rgba(0,0,0,0.2);">
+            <div class="modal-header" style="background: linear-gradient(135deg, #1e40af 0%, #143750 100%); padding: 18px 22px; display: flex; align-items: center; justify-content: space-between;">
+                <h4 class="modal-title" id="lbl_tituloModificar" style="margin: 0; color: #ffffff; font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+                    <i class="fa fa-edit"></i> Modificar pregunta
+                </h4>
+                <button type="button" class="close" data-dismiss="modal" style="color: #fff; opacity: 0.85; font-size: 22px; text-shadow: none; margin: 0; padding: 0;">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="padding: 22px 24px; background: #f8fafc;">
+                <input id="MPreguntaId" name="MPreguntaId" class="hidden" />
+                <div class="modern-table-card" style="padding: 18px 20px;">
+                    <div class="form-group" style="margin-bottom: 14px;">
+                        <label style="font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px; display: block;">Enunciado</label>
+                        <textarea id="MPreguntaEnunciado" class="form-control modern-select" rows="4" placeholder="Enunciado de la pregunta" name="MEnunciado" style="resize: vertical; font-size: 13px;"></textarea>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 10px;">
+                        <label style="font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px; display: block;">
+                            <span class="label" style="background: #0284c7; color: #fff; padding: 2px 7px; border-radius: 4px; margin-right: 4px;">A</span>
+                        </label>
+                        <textarea id="MOpcionA" class="form-control modern-select" rows="3" placeholder="Opción A" name="MOpcionA" style="resize: vertical; font-size: 13px;"></textarea>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 10px;">
+                        <label style="font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px; display: block;">
+                            <span class="label" style="background: #059669; color: #fff; padding: 2px 7px; border-radius: 4px; margin-right: 4px;">B</span>
+                        </label>
+                        <textarea id="MOpcionB" class="form-control modern-select" rows="3" placeholder="Opción B" name="MOpcionB" style="resize: vertical; font-size: 13px;"></textarea>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 10px;">
+                        <label style="font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px; display: block;">
+                            <span class="label" style="background: #d97706; color: #fff; padding: 2px 7px; border-radius: 4px; margin-right: 4px;">C</span>
+                        </label>
+                        <textarea id="MOpcionC" class="form-control modern-select" rows="3" placeholder="Opción C" name="MOpcionC" style="resize: vertical; font-size: 13px;"></textarea>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label style="font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px; display: block;">
+                            <span class="label" style="background: #7c3aed; color: #fff; padding: 2px 7px; border-radius: 4px; margin-right: 4px;">D</span>
+                        </label>
+                        <textarea id="MOpcionD" class="form-control modern-select" rows="3" placeholder="Opción D" name="MOpcionD" style="resize: vertical; font-size: 13px;"></textarea>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-success" id="btn_modificarPregunta">Modificar</button>
-                    <button type="button" class="btn btn-primary" data-dismiss="modal">Cancelar</button>
-                </div>
+            </div>
+            <div class="modal-footer" style="background: #ffffff; border-top: 1px solid #e2e8f0; padding: 14px 22px; display: flex; justify-content: flex-end; gap: 10px;">
+                <button type="button" class="btn-modern-filter" id="btn_modificarPregunta" style="padding: 9px 22px; border-radius: 8px;">
+                    <i class="fa fa-check"></i> Guardar cambios
+                </button>
+                <button type="button" class="btn-modern-filter" data-dismiss="modal" style="padding: 9px 22px; border-radius: 8px; background: #64748b;">
+                    <i class="fa fa-times"></i> Cancelar
+                </button>
             </div>
         </div>
     </div>
-</section>
+</div>
 
-<section class="content">
-    <div class="modal fade" id="modalModificarSubCategoria" tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" id="lbl_tituloMod">Modificar Componente</h4>
-                </div>
-                <div class="margin">
-                    <div class="box box-solid box-info">
-                        <div class="box-body table-responsive">
-                            <br />
-                            <input id="MSubCategoriaId" name="MSubCategoriaId" class="hidden" />
-                            <div class="col-lg-12 ">
-                                <label>Componente</label>
-                                <input type="text" id="MSubCategoriaEnunciado" class="form-control" placeholder="Pregunta" name="MSubCategoriaEnunciado" />
-                            </div>
-                        </div>
-                        <br />
+<!-- ═══════════════════════════════════════
+     MODAL: Modificar subcomponente
+═══════════════════════════════════════ -->
+<div class="modal fade" id="modalModificarSubCategoria" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" style="border-radius: 14px; overflow: hidden; border: none; box-shadow: 0 12px 36px rgba(0,0,0,0.2);">
+            <div class="modal-header" style="background: linear-gradient(135deg, #1e40af 0%, #143750 100%); padding: 18px 22px; display: flex; align-items: center; justify-content: space-between;">
+                <h4 class="modal-title" id="lbl_tituloMod" style="margin: 0; color: #ffffff; font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+                    <i class="fa fa-edit"></i> Modificar componente
+                </h4>
+                <button type="button" class="close" data-dismiss="modal" style="color: #fff; opacity: 0.85; font-size: 22px; text-shadow: none; margin: 0; padding: 0;">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="padding: 22px 24px; background: #f8fafc;">
+                <input id="MSubCategoriaId" name="MSubCategoriaId" class="hidden" />
+                <div class="modern-table-card" style="padding: 18px 20px;">
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label style="font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 6px; display: block;">
+                            <i class="fa fa-tag" style="color: #0284c7; margin-right: 5px;"></i>
+                            Nombre del componente
+                        </label>
+                        <input type="text" id="MSubCategoriaEnunciado" class="form-control modern-select" placeholder="Nombre del subcomponente" name="MSubCategoriaEnunciado" style="font-size: 13px;" />
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-success" id="btn_modificarSubCategoria">Modificar</button>
-                    <button type="button" class="btn btn-primary" data-dismiss="modal">Cancelar</button>
-                </div>
+            </div>
+            <div class="modal-footer" style="background: #ffffff; border-top: 1px solid #e2e8f0; padding: 14px 22px; display: flex; justify-content: flex-end; gap: 10px;">
+                <button type="button" class="btn-modern-filter" id="btn_modificarSubCategoria" style="padding: 9px 22px; border-radius: 8px;">
+                    <i class="fa fa-check"></i> Guardar cambios
+                </button>
+                <button type="button" class="btn-modern-filter" data-dismiss="modal" style="padding: 9px 22px; border-radius: 8px; background: #64748b;">
+                    <i class="fa fa-times"></i> Cancelar
+                </button>
             </div>
         </div>
     </div>
-</section>
-
+</div>
 
 <input id="idCategoria" runat="server" type="hidden" />
 <input id="idSubCategoria" runat="server" type="hidden" />
@@ -220,7 +282,6 @@
         $('#modalSubCategorias').modal('show');
         refreshGridSubCategorias();
     }
-
 
     function modificarPregunta(id, enunciado, opcionA, opcionB, opcionC, opcionD) {
         $('#modalModificarPregunta').modal('show');
@@ -244,9 +305,7 @@
            type: 'POST',
            cache: false,
            async: true,
-           data: {
-               'id': id
-           }
+           data: { 'id': id }
         });
         refreshGridPreguntas();
     }
@@ -257,22 +316,12 @@
            type: 'POST',
            cache: false,
            async: true,
-           data: {
-               'id': id
-           }
+           data: { 'id': id }
         });
         refreshGridSubCategorias();
     }
 
     $(document).on('click', '#btn_modificarPregunta', function () {
-
-        var id = $('#MPreguntaId').val();
-        var enunciado = $('#MPreguntaEnunciado').val();
-        var opcionA = $('#MOpcionA').val();
-        var opcionB = $('#MOpcionB').val();
-        var opcionC = $('#MOpcionC').val();
-        var opcionD = $('#MOpcionD').val();
-
         $.ajax({
             async: false,
             type: "GET",
@@ -280,31 +329,20 @@
             contentType: "application/json",
             url: '@Url.Action("ModificarPregunta", "Evaluacion")',
             data: {
-                'IdPregunta': id,
-                'Enunciado': enunciado,
-                'OpcionA': opcionA,
-                'OpcionB': opcionB,
-                'OpcionC': opcionC,
-                'OpcionD': opcionD
+                'IdPregunta': $('#MPreguntaId').val(),
+                'Enunciado': $('#MPreguntaEnunciado').val(),
+                'OpcionA': $('#MOpcionA').val(),
+                'OpcionB': $('#MOpcionB').val(),
+                'OpcionC': $('#MOpcionC').val(),
+                'OpcionD': $('#MOpcionD').val()
             }
         });
-
-        $('#MPreguntaId').val('');
-        $('#MPreguntaEnunciado').val('');
-        $('#MOpcionA').val('');
-        $('#MOpcionB').val('');
-        $('#MOpcionC').val('');
-        $('#MOpcionD').val('');
+        $('#MPreguntaId, #MPreguntaEnunciado, #MOpcionA, #MOpcionB, #MOpcionC, #MOpcionD').val('');
         $('#modalModificarPregunta').modal('hide');
         refreshGridPreguntas();
-     });
+    });
 
-
-     $(document).on('click', '#btn_modificarSubCategoria', function () {
-
-        var id = $('#MSubCategoriaId').val();
-        var enunciado = $('#MSubCategoriaEnunciado').val();
-
+    $(document).on('click', '#btn_modificarSubCategoria', function () {
         $.ajax({
             async: false,
             type: "GET",
@@ -312,26 +350,16 @@
             contentType: "application/json",
             url: '@Url.Action("ModificarSubCategoria", "Evaluacion")',
             data: {
-                'IdSubCategoria': id,
-                'Enunciado': enunciado
+                'IdSubCategoria': $('#MSubCategoriaId').val(),
+                'Enunciado': $('#MSubCategoriaEnunciado').val()
             }
         });
-
-        $('#MSubCategoriaId').val('');
-        $('#MSubCategoriaEnunciado').val('');
+        $('#MSubCategoriaId, #MSubCategoriaEnunciado').val('');
         $('#modalModificarSubCategoria').modal('hide');
         refreshGridSubCategorias();
-     });
+    });
 
     $(document).on('click', '#btn_agregarPregunta', function () {
-
-        var id = $("#idSubCategoria").val();
-        var enunciado = $('#EnunciadoPregunta').val();
-        var opcionA = $('#OpcionA').val();
-        var opcionB = $('#OpcionB').val();
-        var opcionC = $('#OpcionC').val();
-        var opcionD = $('#OpcionD').val();
-
         $.ajax({
             async: false,
             type: "GET",
@@ -339,28 +367,19 @@
             contentType: "application/json",
             url: '@Url.Action("AgregarPregunta", "Evaluacion")',
             data: {
-                'IdSubCategoria': id,
-                'Enunciado': enunciado,
-                'OpcionA': opcionA,
-                'OpcionB': opcionB,
-                'OpcionC': opcionC,
-                'OpcionD': opcionD
+                'IdSubCategoria': $("#idSubCategoria").val(),
+                'Enunciado': $('#EnunciadoPregunta').val(),
+                'OpcionA': $('#OpcionA').val(),
+                'OpcionB': $('#OpcionB').val(),
+                'OpcionC': $('#OpcionC').val(),
+                'OpcionD': $('#OpcionD').val()
             }
         });
-
-        $('#EnunciadoPregunta').val('');
-        $('#OpcionA').val('');
-        $('#OpcionB').val('');
-        $('#OpcionC').val('');
-        $('#OpcionD').val('');
+        $('#EnunciadoPregunta, #OpcionA, #OpcionB, #OpcionC, #OpcionD').val('');
         refreshGridPreguntas();
-     });
-
+    });
 
     $(document).on('click', '#btn_agregarSubCategoria', function () {
-
-        var id = $('#idCategoria').val();
-        var enunciado = $('#EnunciadoSubCategoria').val();
         $.ajax({
             async: false,
             type: "GET",
@@ -368,138 +387,103 @@
             contentType: "application/json",
             url: '@Url.Action("AgregarSubCategoria", "Evaluacion")',
             data: {
-                'IdCategoria': id,
-                'Enunciado': enunciado
+                'IdCategoria': $('#idCategoria').val(),
+                'Enunciado': $('#EnunciadoSubCategoria').val()
             }
         });
-
         $('#EnunciadoSubCategoria').val('');
         refreshGridSubCategorias();
-     });
+    });
 
     function refreshGridPreguntas() {
-         $.ajax({
+        $.ajax({
             url: '@Url.Action("GetGridPreguntas", "Evaluacion")',
             type: 'POST',
             cache: false,
             async: true,
-             success: function (result) {
-                 $('#tblPreguntas').html(result);
-            }
+            success: function (result) { $('#tblPreguntas').html(result); }
         });
     }
 
-     function refreshGridSubCategorias() {
-         $.ajax({
+    function refreshGridSubCategorias() {
+        $.ajax({
             url: '@Url.Action("GetGridSubCategorias", "Evaluacion")',
             type: 'POST',
             cache: false,
             async: true,
-             success: function (result) {
-                 $('#tblSubCategorias').html(result);
-            }
+            success: function (result) { $('#tblSubCategorias').html(result); }
         });
     }
 
     $(document).ready(function () {
         $("#tbEvaluacion").dataTable({
-        "bRetrieve": true,
-        "bProcessing": true,
-        "dom": 'lBfrtip',
-        "sAjaxSource": "@Url.Content("~/Evaluacion/GetGrid")",
-        "buttons": [
-                { extend: 'copyHtml5', exportOptions: { columns: ':visible' } }
-            ,{ extend: 'excelHtml5', exportOptions: { columns: ':visible' } }
-            ,{ extend: 'pdfHtml5', exportOptions: { columns: ':visible' } }
-            ,{ extend: 'print', exportOptions: { columns: ':visible' } }
-            ,'colvis'
-            ], columnDefs: [{ targets: [1], visible: false },
-                            { targets: [3], width: 100 } ],
-        "pageLength": 10,
-        "lengthMenu": [[5,10, 25, 50, -1], [5,10, 25, 50, "Todos"]],
-        "aoColumns": [
-        {
-            "mRender": function (oObj, type, row) {
-                var buttons = '<div class="text-center"> <div class="btn-group text-left"> <button type="button" class="btn btn-warning btn-xs dropdown-toggle" data-toggle="dropdown">Acción <span class="caret"></span></button>';
-                buttons += '<ul class="dropdown-menu pull-left" role="menu">';
-                                    buttons += '<li><a href="' + ControlerNameCompany + "/Edit/" + row[0] + '"><i class="fa fa-edit"></i>Modificar</a></li>';
-                                    buttons += '<li><a href="' + ControlerNameCompany + "/Delete/" + row[0] + '"><i class="fa fa-edit"></i>Borrar</a></li>';
-                buttons += '</ul>';
-                buttons += '</div></div>';
-                return buttons;
-            }
-            }, {}, {}, {}]
+            "bRetrieve": true,
+            "bProcessing": true,
+            "dom": 'lBfrtip',
+            "sAjaxSource": "@Url.Content("~/Evaluacion/GetGrid")",
+            "buttons": [
+                { extend: 'copyHtml5', exportOptions: { columns: ':visible' } },
+                { extend: 'excelHtml5', exportOptions: { columns: ':visible' } },
+                { extend: 'pdfHtml5', exportOptions: { columns: ':visible' } },
+                { extend: 'print', exportOptions: { columns: ':visible' } },
+                'colvis'
+            ],
+            columnDefs: [
+                { targets: [1], visible: false },
+                { targets: [3], width: 110 }
+            ],
+            "pageLength": 10,
+            "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "Todos"]],
+            "aoColumns": [
+                {
+                    "mRender": function (oObj, type, row) {
+                        return '<div class="text-center">'
+                            + '<div class="btn-group">'
+                            + '<button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" style="border-radius:6px; border:1px solid #cbd5e1; font-size:12px; padding:4px 10px; color:#374151;">'
+                            + '<i class="fa fa-cog" style="margin-right:4px;"></i> Acción <span class="caret"></span>'
+                            + '</button>'
+                            + '<ul class="dropdown-menu pull-left" role="menu" style="border-radius:10px; box-shadow:0 8px 24px rgba(0,0,0,0.12); border:1px solid #e2e8f0; min-width:160px; padding:6px 0;">'
+                            + '<li><a href="' + ControlerNameCompany + '/Edit/' + row[0] + '" style="padding:8px 16px; font-size:13px; color:#1e293b; display:flex; align-items:center; gap:8px;"><i class="fa fa-edit" style="color:#0284c7;"></i> Modificar</a></li>'
+                            + '<li><a href="' + ControlerNameCompany + '/Delete/' + row[0] + '" style="padding:8px 16px; font-size:13px; color:#ef4444; display:flex; align-items:center; gap:8px;"><i class="fa fa-trash"></i> Eliminar</a></li>'
+                            + '</ul></div></div>';
+                    }
+                },
+                {}, {}, {}
+            ]
         });
     });
 
+    /* ── Multi-modal z-index handler ─────────────────────────────── */
     (function ($, window) {
         'use strict';
-
-        var MultiModal = function (element) {
-            this.$element = $(element);
-            this.modalCount = 0;
-        };
-
+        var MultiModal = function (element) { this.$element = $(element); this.modalCount = 0; };
         MultiModal.BASE_ZINDEX = 1040;
-
         MultiModal.prototype.show = function (target) {
-            var that = this;
-            var $target = $(target);
-            var modalIndex = that.modalCount++;
-
+            var that = this, $target = $(target), modalIndex = that.modalCount++;
             $target.css('z-index', MultiModal.BASE_ZINDEX + (modalIndex * 20) + 10);
-
-            // Bootstrap triggers the show event at the beginning of the show function and before
-            // the modal backdrop element has been created. The timeout here allows the modal
-            // show function to complete, after which the modal backdrop will have been created
-            // and appended to the DOM.
             window.setTimeout(function () {
-                // we only want one backdrop; hide any extras
-                if (modalIndex > 0)
-                    $('.modal-backdrop').not(':first').addClass('hidden');
-
+                if (modalIndex > 0) $('.modal-backdrop').not(':first').addClass('hidden');
                 that.adjustBackdrop();
             });
         };
-
-        MultiModal.prototype.hidden = function (target) {
+        MultiModal.prototype.hidden = function () {
             this.modalCount--;
-
-            if (this.modalCount) {
-                this.adjustBackdrop();
-                // bootstrap removes the modal-open class when a modal is closed; add it back
-                $('body').addClass('modal-open');
-            }
+            if (this.modalCount) { this.adjustBackdrop(); $('body').addClass('modal-open'); }
         };
-
         MultiModal.prototype.adjustBackdrop = function () {
-            var modalIndex = this.modalCount - 1;
-            $('.modal-backdrop:first').css('z-index', MultiModal.BASE_ZINDEX + (modalIndex * 20));
+            $('.modal-backdrop:first').css('z-index', MultiModal.BASE_ZINDEX + ((this.modalCount - 1) * 20));
         };
-
         function Plugin(method, target) {
             return this.each(function () {
-                var $this = $(this);
-                var data = $this.data('multi-modal-plugin');
-
-                if (!data)
-                    $this.data('multi-modal-plugin', (data = new MultiModal(this)));
-
-                if (method)
-                    data[method](target);
+                var $this = $(this), data = $this.data('multi-modal-plugin');
+                if (!data) $this.data('multi-modal-plugin', (data = new MultiModal(this)));
+                if (method) data[method](target);
             });
         }
-
         $.fn.multiModal = Plugin;
         $.fn.multiModal.Constructor = MultiModal;
-
-        $(document).on('show.bs.modal', function (e) {
-            $(document).multiModal('show', e.target);
-        });
-
-        $(document).on('hidden.bs.modal', function (e) {
-            $(document).multiModal('hidden', e.target);
-        });
+        $(document).on('show.bs.modal', function (e) { $(document).multiModal('show', e.target); });
+        $(document).on('hidden.bs.modal', function (e) { $(document).multiModal('hidden', e.target); });
     }(jQuery, window));
 
 </script>

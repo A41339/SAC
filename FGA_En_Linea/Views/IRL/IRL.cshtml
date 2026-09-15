@@ -1,4 +1,4 @@
-﻿@{
+@{
     ViewBag.Title = "IRL";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -14,33 +14,22 @@
     @Html.AntiForgeryToken()
     <div class="row">
         <div class="col-xs-12">
-            <div class="box box-solid box-info">
-                <div class="box-body table-responsive">
-                    <div class="margin">
-                        <div class="streaming-table">
-                            <span id="found" class="label label-info"></span>
-                            <table class="table table-condensed table-striped table-bordered">
-                                <tr>
-                                    <td class="mobile">
-                                        @Html.Label("Entidad:")
-                                    </td>
-                                    <td>
-                                        @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", style = "width: 200px;" })
-                                    </td>
-                                    <td class="mobile">
-                                        @Html.Label("Periodo:")
-                                    </td>
-                                    <td nowrap="nowrap">
-                                        <input name="Periodo" id="Periodo" class="datecontrol" value="@Session["Periodo2"]" />
-                                    </td>
-                                    <td>
-                                        <label class="btn btn-facebook" onclick="javascript:consultarIRL()">
-                                            Generar
-                                        </label>
-                                    </td>
-                                </tr>
-                            </table>
+            <div class="modern-filter-card">
+                <div class="modern-filter-toolbar">
+                    <div class="filter-item">
+                        <label for="IdEntidad"><i class="fa fa-university"></i> Entidad:</label>
+                        @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", @class = "form-control modern-select", style = "min-width: 220px;" })
+                    </div>
+                    <div class="filter-item">
+                        <label for="Periodo"><i class="fa fa-calendar"></i> Periodo:</label>
+                        <div class="modern-input-wrapper" style="min-width: 140px;">
+                            <input name="Periodo" id="Periodo" class="datecontrol form-control modern-date-input" value="@Session["Periodo2"]" style="width: 100%;" />
                         </div>
+                    </div>
+                    <div class="filter-item" style="margin-left: auto;">
+                        <button type="button" class="btn-modern-filter" onclick="javascript:consultarIRL()">
+                            <i class="fa fa-refresh"></i> Generar
+                        </button>
                     </div>
                 </div>
             </div>

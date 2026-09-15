@@ -1,4 +1,4 @@
-﻿@model FGA.Models.EstatusCarga
+@model FGA.Models.EstatusCarga
 
 @{
     ViewBag.Title = "Consultar Archivos";
@@ -46,39 +46,22 @@
 <section class="content contenedor">
     @using (Html.BeginForm("Buscar", "Cierre", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmArchivo" }))
     {
-        <div class="row">
-            <div class="col-xs-12">
-                <div class="box box-solid box-info">
-                    <div class="box-body table-responsive">
-                        <div class="margin">
-                            <div class="streaming-table">
-                                <table class="table table-condensed table-striped table-bordered">
-                                    <tr>
-                                        <td class="mobile">
-                                            <label> Parámetros de búsqueda</label>
-                                        </td>
-                                        <td class="mobile">
-                                            @Html.Label("Entidad:")
-                                        </td>
-                                        <td>
-                                            @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", style = "width: 200px;" })
-                                        </td>
-                                        <td class="mobile">
-                                            @Html.Label("Periodo:")
-                                        </td>
-                                        <td>
-                                            <input name="Periodo" id="Periodo" class="datecontrol" value="@Session["Periodo"].ToString()" />
-                                        </td>
-                                        <td>
-                                            <label class="btn btn-facebook">
-                                                Generar<input type="submit" name="submit" style="display: none;">
-                                            </label>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
-                        </div>
+        <div class="modern-filter-card">
+            <div class="modern-filter-toolbar">
+                <div class="filter-item">
+                    <label><i class="fa fa-building"></i> Entidad</label>
+                    @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", @class = "modern-select", style = "min-width: 220px;" })
+                </div>
+                <div class="filter-item">
+                    <label><i class="fa fa-calendar"></i> Periodo</label>
+                    <div class="modern-input-wrapper" style="min-width: 150px; width: 150px;">
+                        <input name="Periodo" id="Periodo" class="datecontrol modern-date-input" value="@Session["Periodo"].ToString()" style="width: 100%;" />
                     </div>
+                </div>
+                <div class="filter-item">
+                    <button type="submit" name="submit" class="btn-modern-filter">
+                        <i class="fa fa-search"></i> Generar
+                    </button>
                 </div>
             </div>
         </div>
@@ -126,19 +109,19 @@
                                                     <td style="text-align: center;">
                                                         @if (item.XML_ID == FGA.Utility.Utilitarios.archivoCargado)
                                                         {
-                                                            <img src="~/Content/images/wait.png" />
+                                                            <span class="file-status-badge status-processing"><i class="fa fa-refresh fa-spin"></i> Procesando</span>
                                                         }
                                                         else if (item.XML_ID == FGA.Utility.Utilitarios.archivoAceptado)
                                                         {
-                                                            <img src="~/Content/images/check.png" />
+                                                            <span class="file-status-badge status-success"><i class="fa fa-check-circle"></i> Aceptado</span>
                                                         }
                                                         else if (item.XML_ID == FGA.Utility.Utilitarios.archivoPendiente)
                                                         {
-                                                            <img src="~/Content/images/warning.png" />
+                                                            <span class="file-status-badge status-pending"><i class="fa fa-clock-o"></i> Pendiente</span>
                                                         }
                                                         else
                                                         {
-                                                            <img src="~/Content/images/wrong.png" />
+                                                            <span class="file-status-badge status-error"><i class="fa fa-times-circle"></i> Con Errores</span>
                                                         }
                                                     </td>
                                                     <td class="mobile" style="text-align: center;">
@@ -164,27 +147,25 @@
                                                             <label>@Html.DisplayFor(modelItem => item.CANTIDAD) </label>
                                                         }
                                                     </td>
-                                                    @if (item.XML_ID != FGA.Utility.Utilitarios.archivoPendiente && item.XML_ID != FGA.Utility.Utilitarios.archivoCargado)
-                                                    {
-                                                        if (Session["IsFGA"].ToString() == "1" && item.XML_ID == FGA.Utility.Utilitarios.archivoAceptado)
+                                                    <td style="text-align: center;">
+                                                        @if (item.XML_ID != FGA.Utility.Utilitarios.archivoPendiente && item.XML_ID != FGA.Utility.Utilitarios.archivoCargado)
                                                         {
-                                                            <td>
+                                                            if (Session["IsFGA"] != null && Session["IsFGA"].ToString() == "1" && item.XML_ID == FGA.Utility.Utilitarios.archivoAceptado)
+                                                            {
                                                                 @Html.ActionLink("Borrar", "Eliminar", new { id = item.ID_ENCABEZADO }, new { @class = "btn btn-danger btn-xs" })
-                                                            </td>
-                                                        }
-                                                        if (Session["IsFGA"].ToString() == "1" && item.XML_ID != FGA.Utility.Utilitarios.archivoAceptado)
-                                                        {
-                                                            <td>
+                                                            }
+                                                            if (Session["IsFGA"] != null && Session["IsFGA"].ToString() == "1" && item.XML_ID != FGA.Utility.Utilitarios.archivoAceptado)
+                                                            {
                                                                 @Html.ActionLink("Aceptar", "AceptarArchivo", new { id = item.ID_ENCABEZADO }, new { @class = "btn btn-success btn-xs" })
-                                                            </td>
+                                                            }
+                                                            if (item.XML_ID == FGA.Utility.Utilitarios.archivoErrores)
+                                                            {
+                                                                <a href="@Url.Action("Details", "Cierre", new { id = item.ID_ENCABEZADO })" class="btn btn-xs btn-danger" style="border-radius: 6px; padding: 4px 10px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">
+                                                                    <i class="fa fa-exclamation-triangle"></i> Ver Errores
+                                                                </a>
+                                                            }
                                                         }
-                                                        if (item.XML_ID == FGA.Utility.Utilitarios.archivoErrores)
-                                                        {
-                                                            <td>
-                                                                @Html.ActionLink("Errores", "Details", new { id = item.ID_ENCABEZADO }, new { @class = "btn btn-warning btn-xs" })
-                                                            </td>
-                                                        }
-                                                    }
+                                                    </td>
                                                 </tr>
                                             }
                                         }
@@ -198,3 +179,46 @@
         </div>
     </div>
 </section>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        function posicionarCalendario() {
+            var $input = $('#Periodo');
+            var offset = $input.offset();
+            if (offset) {
+                var $menu = $('#MonthPicker_Periodo');
+                if ($menu.length) {
+                    var menuWidth = 215;
+                    var leftPos = offset.left;
+                    var winWidth = $(window).width();
+                    if (leftPos + menuWidth > winWidth - 10) {
+                        leftPos = Math.max(10, winWidth - menuWidth - 10);
+                    }
+                    $menu.css({
+                        top: (offset.top + $input.outerHeight() + 6) + 'px',
+                        left: leftPos + 'px',
+                        position: 'absolute',
+                        zIndex: 99999
+                    });
+                    $menu.find('.ui-state-highlight').removeClass('ui-state-highlight');
+                }
+            }
+        }
+
+        // Al hacer clic en el campo de texto
+        $('#Periodo').on('click', function () {
+            var $btn = $(this).siblings('img, .month-picker-open-button');
+            $btn.trigger('click');
+            setTimeout(posicionarCalendario, 10);
+            setTimeout(posicionarCalendario, 60);
+            setTimeout(posicionarCalendario, 180);
+        });
+
+        // Al hacer clic en el botón de calendario
+        $(document).on('click', '.month-picker-open-button, .modern-input-wrapper img', function () {
+            setTimeout(posicionarCalendario, 10);
+            setTimeout(posicionarCalendario, 60);
+            setTimeout(posicionarCalendario, 180);
+        });
+    });
+</script>

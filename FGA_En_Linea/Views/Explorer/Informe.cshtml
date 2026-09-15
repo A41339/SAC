@@ -2,149 +2,233 @@
     ViewBag.Title = "Nuevo informe";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<section class="content-header">
-    <h1>
-        Carga de informes
-    </h1>
+
+<section class="content-header" style="padding: 24px 20px 14px 20px;">
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+        <div>
+            <h1 style="margin: 0; font-size: 21px; font-weight: 700; color: #143750; display: flex; align-items: center; gap: 10px;">
+                <i class="fa fa-cloud-upload" style="color: #0284c7;"></i>
+                Carga y Envío de Informes
+            </h1>
+            <p style="margin: 6px 0 0 0; font-size: 13px; color: #64748b;">
+                Seleccione la entidad, el período y el tipo de informe para adjuntar y notificar a los destinatarios.
+            </p>
+        </div>
+    </div>
 </section>
+
 <section class="content">
     <div id="dropzone">
-        <div class="row">
-            <div class="col-xs-12">
-                <div class="box box-solid box-info" style="border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03); background: #ffffff; padding: 20px; margin-bottom: 20px;">
-                    <div style="display: flex; flex-wrap: wrap; gap: 16px; align-items: center; justify-content: space-between;">
-                        <div class="modern-filter-group">
-                            <label for="IdEntidad">Entidad</label>
-                            @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", @class = "modern-filter-input", @style = "width:180px;" })
-                        </div>
-                        <div class="modern-filter-group">
-                            <label for="Mes">Mes</label>
-                            @Html.DropDownList("Mes", Enumerable.Range(1, 12).Select(i => new SelectListItem
-                            {
-                                Value = i.ToString(),
-                                Text = System.Globalization.CultureInfo.CurrentUICulture.DateTimeFormat.GetMonthName(i).ToUpper(),
-                                Selected = (DateTime.Now.Month - 1 == i ? true : false)
-                            }), new { @id = "Mes", @class = "modern-filter-input", @style = "width:150px;" })
-                        </div>
-                        <div class="modern-filter-group">
-                            <label for="Anno">Año</label>
-                            @Html.DropDownList("Anno", Enumerable.Range(2018, DateTime.Now.Year - 2018 + 3).
-                                                       Select(i => new SelectListItem { Value = i.ToString(), Text = i.ToString(), Selected = (i == DateTime.Now.Year ? true : false) }),
-                                                       new { @id = "Anno", @class = "modern-filter-input", @style = "width:120px;" })
-                        </div>
-                        <div class="modern-filter-group">
-                            <label for="TipoInforme">Tipo Informe</label>
-                            @Html.DropDownList("TipoInforme", null, new { @id = "TipoInforme", @class = "modern-filter-input", @style = "width:180px;" })
-                        </div>
+
+        <!-- 1. Tarjeta de Configuración y Filtros -->
+        <div class="modern-table-card" style="margin-bottom: 22px; padding: 22px 24px; border: 1px solid #e2e8f0; border-radius: 12px; background: #ffffff; box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05);">
+            
+            <h4 style="margin: 0 0 16px 0; font-size: 14px; font-weight: 700; color: #143750; display: flex; align-items: center; gap: 7px;">
+                <i class="fa fa-sliders" style="color: #0284c7;"></i>
+                Parámetros del informe
+            </h4>
+
+            <div class="row">
+                <div class="col-md-3 col-sm-6" style="margin-bottom: 14px;">
+                    <label for="IdEntidad" style="font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 5px; display: flex; align-items: center; gap: 6px;">
+                        <i class="fa fa-building-o" style="color: #0284c7;"></i> Entidad
+                    </label>
+                    @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", @class = "form-control modern-select", @style = "width: 100%; height: 38px; font-size: 13px;" })
+                </div>
+
+                <div class="col-md-3 col-sm-6" style="margin-bottom: 14px;">
+                    <label for="Mes" style="font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 5px; display: flex; align-items: center; gap: 6px;">
+                        <i class="fa fa-calendar" style="color: #0284c7;"></i> Mes
+                    </label>
+                    @Html.DropDownList("Mes", Enumerable.Range(1, 12).Select(i => new SelectListItem
+                    {
+                        Value = i.ToString(),
+                        Text = System.Globalization.CultureInfo.CurrentUICulture.DateTimeFormat.GetMonthName(i).ToUpper(),
+                        Selected = (DateTime.Now.Month - 1 == i ? true : false)
+                    }), new { @id = "Mes", @class = "form-control modern-select", @style = "width: 100%; height: 38px; font-size: 13px;" })
+                </div>
+
+                <div class="col-md-3 col-sm-6" style="margin-bottom: 14px;">
+                    <label for="Anno" style="font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 5px; display: flex; align-items: center; gap: 6px;">
+                        <i class="fa fa-calendar-o" style="color: #0284c7;"></i> Año
+                    </label>
+                    @Html.DropDownList("Anno", Enumerable.Range(2018, DateTime.Now.Year - 2018 + 3).
+                                               Select(i => new SelectListItem { Value = i.ToString(), Text = i.ToString(), Selected = (i == DateTime.Now.Year ? true : false) }),
+                                               new { @id = "Anno", @class = "form-control modern-select", @style = "width: 100%; height: 38px; font-size: 13px;" })
+                </div>
+
+                <div class="col-md-3 col-sm-6" style="margin-bottom: 14px;">
+                    <label for="TipoInforme" style="font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 5px; display: flex; align-items: center; gap: 6px;">
+                        <i class="fa fa-file-text-o" style="color: #0284c7;"></i> Tipo de Informe
+                    </label>
+                    @Html.DropDownList("TipoInforme", null, new { @id = "TipoInforme", @class = "form-control modern-select", @style = "width: 100%; height: 38px; font-size: 13px;" })
+                </div>
+            </div>
+
+            <!-- Sección de destinatarios -->
+            <div style="margin-top: 10px; padding-top: 16px; border-top: 1px solid #f1f5f9;">
+                <div class="row">
+                    <div class="col-md-7 col-sm-12" style="margin-bottom: 12px;">
+                        <label style="font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+                            <i class="fa fa-users" style="color: #0284c7;"></i> Destinatarios configurados:
+                        </label>
+                        <div id="divDest"></div>
                     </div>
-                    <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #f1f5f9; display: flex; flex-wrap: wrap; gap: 16px; align-items: center;">
-                        <div class="modern-filter-group">
-                            <label>Destinatarios:</label>
-                            <div id="divDest" style="display: inline-block;"></div>
-                        </div>
-                        <div class="modern-filter-group" style="margin-left: auto;">
-                            <label for="txt_destinatario">Añadir destinatario:</label>
-                            <input id="txt_destinatario" class="modern-filter-input" style="width: 180px;" placeholder="email@ejemplo.com" />
-                            <a data-toggle="tooltip" data-placement="top" title="Agregar destinatario" href="javascript:AddDest();" class="btn btn-sm btn-primary" style="border-radius: 6px;"><i class="fa fa-plus"></i></a>
+                    <div class="col-md-5 col-sm-12">
+                        <label for="txt_destinatario" style="font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+                            <i class="fa fa-user-plus" style="color: #0284c7;"></i> Añadir otro destinatario:
+                        </label>
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                            <input id="txt_destinatario" class="form-control modern-select" style="flex: 1; height: 38px; font-size: 13px;" placeholder="ejemplo@entidad.fi.cr" />
+                            <button type="button" onclick="AddDest();" title="Agregar correo" class="btn-modern-filter" style="height: 38px; padding: 0 16px; border-radius: 8px; flex-shrink: 0; background: linear-gradient(135deg, #059669 0%, #0d7377 100%);">
+                                <i class="fa fa-plus"></i> Añadir
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
+
         </div>
-        @using (Html.BeginForm("UploadInforme", "Explorer", FormMethod.Post, new { enctype = "multipart/form-data", id = "my-awesome-dropzone", @class = "dropzone", style = "border-radius: 12px; border: 2px dashed #cbd5e1; background: #ffffff;" }))
-        {
-            <div class="fallback">
-                <input name="file" id="file" type="file" multiple />
-            </div>
-        }
-        <br />
-        <div style="text-align: right;">
-            <button type="submit" name="submit" id="btn_guardar" class="btn-modern-generate">
-                <i class="fa fa-upload"></i> Cargar y Enviar
+
+        <!-- 2. Área de carga Dropzone -->
+        <div class="modern-table-card" style="margin-bottom: 20px; padding: 22px 24px; border: 1px solid #e2e8f0; border-radius: 12px; background: #ffffff; box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05);">
+            <h4 style="margin: 0 0 14px 0; font-size: 14px; font-weight: 700; color: #143750; display: flex; align-items: center; gap: 7px;">
+                <i class="fa fa-paperclip" style="color: #0284c7;"></i>
+                Adjuntar archivo del informe
+            </h4>
+
+            @using (Html.BeginForm("UploadInforme", "Explorer", FormMethod.Post, new { enctype = "multipart/form-data", id = "my-awesome-dropzone", @class = "dropzone", style = "border-radius: 12px; border: 2px dashed #94a3b8; background: #f8fafc; min-height: 180px; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease;" }))
+            {
+                <div class="fallback">
+                    <input name="file" id="file" type="file" multiple />
+                </div>
+            }
+        </div>
+
+        <!-- 3. Botón de acción principal -->
+        <div style="display: flex; justify-content: flex-end; margin-bottom: 30px;">
+            <button type="button" name="submit" id="btn_guardar" class="btn-modern-filter" style="padding: 11px 32px; font-size: 14px; border-radius: 8px; font-weight: 700; height: 44px; box-shadow: 0 4px 14px rgba(56, 124, 147, 0.4);">
+                <i class="fa fa-paper-plane" style="margin-right: 8px;"></i> Cargar y Enviar informe
             </button>
         </div>
+
     </div>
 </section>
 
+<!-- ═══════════════════════════════════════
+     MODAL: Confirmación de envío
+═══════════════════════════════════════ -->
 <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="box box-primary">
-                <div class="box-header with-border">
-                    <a data-toggle="tooltip" data-placement="top"><i class="btn btn-md btn-warning icon fa fa-warning"></i></a>
-                    <h3 class="box-title">Confirmación de carga y envío del informe</h3>
-                </div>
-                <div class="box-body">
-                    <div class="form-group">
-                        <label>Para:</label>
-                        <input class="form-control" id="lbl_para" placeholder="Para:">
+    <div class="modal-dialog modal-lg" style="max-width: 860px; width: 92%; margin: 30px auto;">
+        <div class="modal-content" style="border-radius: 14px; overflow: hidden; border: none; box-shadow: 0 12px 36px rgba(0,0,0,0.2);">
+            
+            <div class="modal-header" style="background: linear-gradient(135deg, #143750 0%, #0d7377 100%); padding: 18px 22px; display: flex; align-items: center; justify-content: space-between;">
+                <h4 class="modal-title" style="margin: 0; color: #ffffff; font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+                    <i class="fa fa-envelope-o" style="font-size: 18px;"></i>
+                    Confirmación de carga y envío del informe
+                </h4>
+                <button type="button" class="close" data-dismiss="modal" style="color: #fff; opacity: 0.85; font-size: 22px; text-shadow: none; margin: 0; padding: 0;">
+                    <span>&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body" style="padding: 22px 24px; background: #f8fafc;">
+                
+                <div class="modern-table-card" style="padding: 18px 20px; border: 1px solid #e2e8f0; border-radius: 10px; background: #ffffff; margin-bottom: 16px;">
+                    <div class="form-group" style="margin-bottom: 12px;">
+                        <label style="font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 4px; display: block;">
+                            <i class="fa fa-envelope" style="color: #0284c7; margin-right: 5px;"></i> Para:
+                        </label>
+                        <input class="form-control modern-select" id="lbl_para" placeholder="Destinatarios" style="font-size: 13px; height: 38px;">
                     </div>
-                    <div class="form-group">
-                        <label>Asunto:</label>
-                        <input class="form-control" id="lbl_asunto" placeholder="Asunto:">
+                    
+                    <div class="row">
+                        <div class="col-md-6" style="margin-bottom: 12px;">
+                            <label style="font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 4px; display: block;">
+                                <i class="fa fa-tag" style="color: #0284c7; margin-right: 5px;"></i> Asunto:
+                            </label>
+                            <input class="form-control modern-select" id="lbl_asunto" placeholder="Asunto" style="font-size: 13px; height: 38px;">
+                        </div>
+                        <div class="col-md-6" style="margin-bottom: 12px;">
+                            <label style="font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 4px; display: block;">
+                                <i class="fa fa-building-o" style="color: #0284c7; margin-right: 5px;"></i> Cooperativa / Entidad:
+                            </label>
+                            <input class="form-control modern-select" id="lbl_cooperativa" placeholder="Cooperativa" style="font-size: 13px; height: 38px;">
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label>Cooperativa:</label>
-                        <input class="form-control" id="lbl_cooperativa" placeholder="Cooperativa:">
-                    </div>
-                    <div class="form-group">
+
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label style="font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 6px; display: block;">
+                            <i class="fa fa-align-left" style="color: #0284c7; margin-right: 5px;"></i> Mensaje del correo:
+                        </label>
                         <div id="txt_mail"></div>
                     </div>
-                    <div id="adjunto">
-                    </div>
                 </div>
-                <div class="box-footer">
-                    <div class="pull-right">
-                        <a href="javascript:DescartarInforme();" class="btn btn-danger"><i class="fa fa-times"></i> Descartar</a>
-                        <a href="javascript:ModificarInforme();" class="btn btn-default"><i class="fa fa-edit"></i> Modificar</a>
-                        <a href="javascript:GuardarInforme();" class="btn btn-primary"><i class="fa fa-envelope-o"></i> Enviar</a>
-                    </div>
+
+                <!-- Archivo adjunto -->
+                <div id="adjunto"></div>
+
+            </div>
+
+            <div class="modal-footer" style="background: #ffffff; border-top: 1px solid #e2e8f0; padding: 14px 22px; display: flex; justify-content: flex-end; gap: 10px;">
+                <button type="button" onclick="DescartarInforme();" class="btn-modern-filter" style="padding: 9px 20px; border-radius: 8px; background: #fee2e2; color: #ef4444; border-color: #fecaca; box-shadow: none;">
+                    <i class="fa fa-trash"></i> Descartar
+                </button>
+                <button type="button" onclick="ModificarInforme();" class="btn-modern-filter" style="padding: 9px 20px; border-radius: 8px; background: #64748b; box-shadow: none;">
+                    <i class="fa fa-edit"></i> Modificar
+                </button>
+                <button type="button" onclick="GuardarInforme();" class="btn-modern-filter" style="padding: 9px 24px; border-radius: 8px; background: linear-gradient(135deg, #059669 0%, #0d7377 100%);">
+                    <i class="fa fa-paper-plane"></i> Enviar informe
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     MODAL: Error
+═══════════════════════════════════════ -->
+<div id="modalError" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-sm" style="max-width: 440px; margin: 60px auto;">
+        <div class="modal-content" style="border-radius: 14px; overflow: hidden; border: none; box-shadow: 0 12px 36px rgba(0,0,0,0.25);">
+            <div class="modal-body" style="padding: 30px 24px 20px; text-align: center; background: #ffffff;">
+                <div style="width: 60px; height: 60px; border-radius: 50%; background: #fee2e2; color: #ef4444; display: inline-flex; align-items: center; justify-content: center; font-size: 26px; margin-bottom: 16px;">
+                    <i class="fa fa-exclamation-triangle"></i>
                 </div>
+                <h4 style="margin: 0 0 8px 0; font-size: 16px; font-weight: 700; color: #1e293b;">Ocurrió un error</h4>
+                <p id="lbl_mensajeError" style="font-size: 13px; color: #64748b; margin: 0; line-height: 1.5;"></p>
+            </div>
+            <div class="modal-footer" style="background: #f8fafc; border-top: 1px solid #f1f5f9; padding: 12px 20px; display: flex; justify-content: center;">
+                <button type="button" class="btn-modern-filter" data-dismiss="modal" style="width: 100%; border-radius: 8px; background: #ef4444; border-color: #ef4444; box-shadow: none;">
+                    Aceptar
+                </button>
             </div>
         </div>
     </div>
 </div>
 
-<div id="modalError" class="modal fade">
-    <div class="modal-dialog modal-fail">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div class="icon-box">
-                    <i class="material-icons"></i>
+<!-- ═══════════════════════════════════════
+     MODAL: Éxito
+═══════════════════════════════════════ -->
+<div id="modalSuccess" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-sm" style="max-width: 440px; margin: 60px auto;">
+        <div class="modal-content" style="border-radius: 14px; overflow: hidden; border: none; box-shadow: 0 12px 36px rgba(0,0,0,0.25);">
+            <div class="modal-body" style="padding: 30px 24px 20px; text-align: center; background: #ffffff;">
+                <div style="width: 60px; height: 60px; border-radius: 50%; background: #dcfce7; color: #16a34a; display: inline-flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 16px;">
+                    <i class="fa fa-check"></i>
                 </div>
+                <h4 style="margin: 0 0 8px 0; font-size: 16px; font-weight: 700; color: #1e293b;">¡Operación exitosa!</h4>
+                <p id="lbl_mensajeExito" style="font-size: 13px; color: #64748b; margin: 0; line-height: 1.5;"></p>
             </div>
-            <div class="modal-body">
-                <div style="margin-left:50px; margin-right: 50px;">
-                    <p id="lbl_mensajeError" class="text-center">Ha ocurrido un error.</p>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-danger btn-block" data-dismiss="modal">OK</button>
+            <div class="modal-footer" style="background: #f8fafc; border-top: 1px solid #f1f5f9; padding: 12px 20px; display: flex; justify-content: center;">
+                <button type="button" class="btn-modern-filter" data-dismiss="modal" style="width: 100%; border-radius: 8px; background: linear-gradient(135deg, #059669 0%, #0d7377 100%);">
+                    Aceptar
+                </button>
             </div>
         </div>
     </div>
 </div>
-
-<div id="modalSuccess" class="modal fade">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div class="icon-box">
-                    <i class="material-icons"></i>
-                </div>
-            </div>
-            <div class="modal-body">
-                <div style="margin-left:50px; margin-right: 50px;">
-                    <p id="lbl_mensajeExito" class="text-center"></p>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-primary btn-block" data-dismiss="modal">OK</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 
 @section ScriptsOrCss
 {
@@ -160,11 +244,12 @@
         maxFiles: 1,
         timeout: 18000000,
         acceptedFiles: "application/pdf",
+        dictDefaultMessage: '<i class="fa fa-cloud-upload" style="font-size: 44px; color: #0284c7; display: block; margin-bottom: 12px;"></i><span style="font-size: 15px; font-weight: 600; color: #1e293b; display: block; margin-bottom: 4px;">Arrastre aquí el informe en PDF o haga clic para seleccionar</span><span style="font-size: 12px; color: #64748b;">(Solo se permite 1 archivo en formato PDF, máx. 1024 MB)</span>',
         init: function () {
-                this.on("complete", function (data) {
-                    $('#adjunto').html(data.xhr.response);
-                });
-              }
+            this.on("complete", function (data) {
+                $('#adjunto').html(data.xhr.response);
+            });
+        }
     };
 
     $("#IdEntidad").change(function () {
@@ -192,7 +277,6 @@
     });
 
     function GuardarInforme() {
-
         var destinatarios = $('#lbl_para').val();
         var texto = $('#compose-textarea').val();
         var idEntidad = $('#IdEntidad').val();
@@ -221,7 +305,9 @@
                 }
                 else {
                     $("#lbl_mensajeExito").html(data.resultado.mensaje);
-                    $('.dropzone')[0].dropzone.removeAllFiles();
+                    if ($('.dropzone')[0] && $('.dropzone')[0].dropzone) {
+                        $('.dropzone')[0].dropzone.removeAllFiles();
+                    }
                     $("#modalSuccess").modal('show');
                     $('#confirmModal').modal('hide');
                 }
@@ -233,7 +319,9 @@
     }
 
     function DescartarInforme() {
-        $('.dropzone')[0].dropzone.removeAllFiles();
+        if ($('.dropzone')[0] && $('.dropzone')[0].dropzone) {
+            $('.dropzone')[0].dropzone.removeAllFiles();
+        }
         $('#confirmModal').modal('hide');
     }
 
@@ -242,45 +330,47 @@
     }
 
     function ActualizarDestinatarios() {
-         $.ajax({
+        $.ajax({
             url: '@Url.Action("GetFrom", "Explorer")',
             type: 'POST',
             cache: false,
             async: false,
             data: {
-                 'IdEntidad': $('#IdEntidad').val(),
+                'IdEntidad': $('#IdEntidad').val(),
             },
-             success: function (result) {
-                 $("#divDest").html(result);
+            success: function (result) {
+                $("#divDest").html(result);
             }
-         });
+        });
     }
 
     function ActualizarTexto() {
-         $.ajax({
+        $.ajax({
             url: '@Url.Action("GetTxtMail", "Explorer")',
             type: 'POST',
             cache: false,
             async: false,
             data: {
-               'IdInforme': $('#TipoInforme').val(),
+                'IdInforme': $('#TipoInforme').val(),
             },
             success: function (result) {
-               $("#txt_mail").html(result);
+                $("#txt_mail").html(result);
             }
-         });
+        });
     }
 
     function AddDest() {
-        $("#Destinatarios").append(new Option($('#txt_destinatario').val(), $('#txt_destinatario').val()));
-        $('#txt_destinatario').val('');
+        var correo = $('#txt_destinatario').val().trim();
+        if (correo.length > 0) {
+            $("#Destinatarios").append(new Option(correo, correo));
+            $('#txt_destinatario').val('');
+        }
     }
 
     function DelDest() {
-       $('#Destinatarios').find('option:selected').remove().end();
+        $('#Destinatarios').find('option:selected').remove();
     }
 
     ActualizarDestinatarios();
     ActualizarTexto();
-
 </script>

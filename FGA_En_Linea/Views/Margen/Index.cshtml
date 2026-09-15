@@ -1,4 +1,4 @@
-﻿@model FGA.Model.ModeloMargen_Financ
+@model FGA.Model.ModeloMargen_Financ
 
 @{
     ViewBag.Title = "Modelo de m&aacute;rgenes";
@@ -18,40 +18,28 @@
 
         <div class="row">
             <div class="col-xs-12">
-                <div class="box box-solid box-info">
-                    <div class="box-body table-responsive">
-                        <div class="margin">
-                            <div class="streaming-table">
-                                <span id="found" class="label label-info"></span>
-                                <table class="table table-condensed table-striped table-bordered">
-                                    <tr>
-                                        <td class="mobile">
-                                            @Html.Label("Entidad:")
-                                        </td>
-                                        <td>
-                                            @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", style = "width: 200px;" })
-                                        </td>
-
-                                        <td class="mobile">
-                                            @Html.Label("Inicial:")
-                                        </td>
-                                        <td nowrap="nowrap">
-                                            <input name="PeriodoI" id="PeriodoI" class="datecontrol" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MM/yyyy")" />
-                                        </td>
-                                        <td class="mobile">
-                                            @Html.Label("Final:")
-                                        </td>
-                                        <td nowrap="nowrap">
-                                            <input name="PeriodoF" id="PeriodoF" class="datecontrol" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MM/yyyy")" />
-                                        </td>
-                                        <td>
-                                            <label class="btn btn-facebook">
-                                                Generar<input type="submit" name="submit" style="display: none;">
-                                            </label>
-                                        </td>
-                                    </tr>
-                                </table>
+                <div class="modern-filter-card">
+                    <div class="modern-filter-toolbar">
+                        <div class="filter-item">
+                            <label for="IdEntidad"><i class="fa fa-university"></i> Entidad:</label>
+                            @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", @class = "form-control modern-select", style = "min-width: 220px;" })
+                        </div>
+                        <div class="filter-item">
+                            <label for="PeriodoI"><i class="fa fa-calendar"></i> Inicial:</label>
+                            <div class="modern-input-wrapper">
+                                <input name="PeriodoI" id="PeriodoI" class="datecontrol form-control modern-date-input" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MM/yyyy")" style="min-width: 130px;" />
                             </div>
+                        </div>
+                        <div class="filter-item">
+                            <label for="PeriodoF"><i class="fa fa-calendar"></i> Final:</label>
+                            <div class="modern-input-wrapper">
+                                <input name="PeriodoF" id="PeriodoF" class="datecontrol form-control modern-date-input" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MM/yyyy")" style="min-width: 130px;" />
+                            </div>
+                        </div>
+                        <div class="filter-item" style="margin-left: auto;">
+                            <button type="submit" name="submit" class="btn-modern-filter">
+                                <i class="fa fa-search"></i> Generar
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -124,7 +112,7 @@
 <div class="modal fade" id="mMargen" tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header" style="display: flex; align-items: center; justify-content: space-between; background-color: #143750 !important;">
+            <div class="modal-header">
                 <div style="display: flex; align-items: center; gap: 12px; background: transparent;">
                     <img width="40" height="40" src="@Session["Logo"]" style="border-radius: 6px; background: #ffffff; padding: 2px;" />
                     <h3 id="pEntidad1" class="modal-title" style="margin: 0; color: #ffffff !important; font-size: 16px; font-weight: 600;">Cobertura de margen financiero</h3>
@@ -144,7 +132,7 @@
 <div class="modal fade" id="mCobertura" tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header" style="display: flex; align-items: center; justify-content: space-between; background-color: #143750 !important;">
+            <div class="modal-header">
                 <div style="display: flex; align-items: center; gap: 12px; background: transparent;">
                     <img width="40" height="40" src="@Session["Logo"]" style="border-radius: 6px; background: #ffffff; padding: 2px;" />
                     <h3 id="pEntidad2" class="modal-title" style="margin: 0; color: #ffffff !important; font-size: 16px; font-weight: 600;">Cobertura de m&aacute;rgenes</h3>
@@ -164,7 +152,7 @@
 <div class="modal fade" id="mRentabilidad" tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header" style="display: flex; align-items: center; justify-content: space-between; background-color: #143750 !important;">
+            <div class="modal-header">
                 <div style="display: flex; align-items: center; gap: 12px; background: transparent;">
                     <img width="40" height="40" src="@Session["Logo"]" style="border-radius: 6px; background: #ffffff; padding: 2px;" />
                     <h3 id="pEntidad3" class="modal-title" style="margin: 0; color: #ffffff !important; font-size: 16px; font-weight: 600;">Indicadores de rentabilidad</h3>

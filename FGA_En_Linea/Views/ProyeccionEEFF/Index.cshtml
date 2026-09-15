@@ -17,43 +17,38 @@
         @Html.AntiForgeryToken()
         <div class="row">
             <div class="col-xs-12">
-                <div class="box box-solid box-info">
-                    <div class="box-body" style="padding: 12px 18px;">
-                        <div class="streaming-table modern-filter-card" style="padding: 12px 15px;">
-                            <span id="found" class="label label-info"></span>
-                            <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 15px;">
-                                <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 18px; flex: 1;">
-                                    <div style="display: inline-flex; align-items: center; gap: 8px;">
-                                        <label style="margin-bottom: 0; font-weight: 600; color: #475569;">Entidad:</label>
-                                        @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", @class = "form-control", style = "width: auto; min-width: 180px;" })
-                                    </div>
-                                    <div style="display: inline-flex; align-items: center; gap: 8px;">
-                                        <label style="margin-bottom: 0; font-weight: 600; color: #475569;">Fecha de corte:</label>
-                                        <div style="display: inline-flex; align-items: center; gap: 6px;">
-                                            <input name="PeriodoI" id="PeriodoI" class="datecontrol form-control" style="width: 140px;"
-                                                   value="@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["PeriodoI"].ToString()).Date.ToString("MMMM yyyy"))" />
-                                            <a class="text-right" data-toggle="tooltip" data-placement="top" title="Ayuda"
-                                               href="javascript:help('Fecha de corte', 'Fecha de base a partir de la que se genera los períodos proyectados, se podrán usar cortes del período vigente y el último cierre fiscal cargado, meses anteriores a ese no se podrán usar como base.' )"><i class="btn btn-xs btn-default icon fa fa-question"></i></a>
-                                        </div>
-                                    </div>
-                                    <div style="display: inline-flex; align-items: center; gap: 8px;">
-                                        <label style="margin-bottom: 0; font-weight: 600; color: #475569;">Periodos por proyectar:</label>
-                                        <div style="display: inline-flex; align-items: center; gap: 6px;">
-                                            <select id="ddlPlazo" name="ddlPlazo" class="form-control" style="width: auto; min-width: 200px;">
-                                                <option value="1" @(Model.ddlPlazo == "1" ? " selected" : "")>12 meses</option>
-                                                <option value="2" @(Model.ddlPlazo == "2" ? " selected" : "")>3 años (Primer año mensual)</option>
-                                            </select>
-                                            <a class="text-left" data-toggle="tooltip" data-placement="top" title="Ayuda"
-                                               href="javascript:help('Periodos por proyectar', 'La opción de 12 meses solo mostrará una proyección mensual de un año, la opción de 3 años mostrará el primer año en forma mensual. El segundo y tercero en forma anualizada')"><i class="btn btn-xs btn-default icon fa fa-question"></i></a>
-                                        </div>
-                                    </div>
+                <div class="modern-filter-card">
+                    <div class="modern-filter-toolbar">
+                        <div class="filter-item">
+                            <label for="IdEntidad"><i class="fa fa-university"></i> Entidad:</label>
+                            @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", @class = "form-control modern-select", style = "min-width: 200px;" })
+                        </div>
+                        <div class="filter-item">
+                            <label for="PeriodoI"><i class="fa fa-calendar"></i> Fecha de corte:</label>
+                            <div style="display: inline-flex; align-items: center; gap: 8px;">
+                                <div class="modern-input-wrapper">
+                                    <input name="PeriodoI" id="PeriodoI" class="datecontrol form-control modern-date-input" style="min-width: 140px;"
+                                           value="@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["PeriodoI"].ToString()).Date.ToString("MMMM yyyy"))" />
                                 </div>
-                                <div style="margin-left: auto;">
-                                    <label class="btn btn-facebook" style="margin-bottom: 0;">
-                                        Incluir supuestos<input type="submit" id="btn_supuestos" value="Consultar" name="command" style="display: none;">
-                                    </label>
-                                </div>
+                                <a data-toggle="tooltip" data-placement="top" title="Ayuda"
+                                   href="javascript:help('Fecha de corte', 'Fecha de base a partir de la que se genera los períodos proyectados, se podrán usar cortes del período vigente y el último cierre fiscal cargado, meses anteriores a ese no se podrán usar como base.' )"><i class="btn btn-xs btn-default icon fa fa-question"></i></a>
                             </div>
+                        </div>
+                        <div class="filter-item">
+                            <label for="ddlPlazo"><i class="fa fa-clock-o"></i> Periodos por proyectar:</label>
+                            <div style="display: inline-flex; align-items: center; gap: 8px;">
+                                <select id="ddlPlazo" name="ddlPlazo" class="form-control modern-select" style="min-width: 200px;">
+                                    <option value="1" @(Model.ddlPlazo == "1" ? " selected" : "")>12 meses</option>
+                                    <option value="2" @(Model.ddlPlazo == "2" ? " selected" : "")>3 a&ntilde;os (Primer a&ntilde;o mensual)</option>
+                                </select>
+                                <a data-toggle="tooltip" data-placement="top" title="Ayuda"
+                                   href="javascript:help('Periodos por proyectar', 'La opción de 12 meses solo mostrará una proyección mensual de un año, la opción de 3 años mostrará el primer año en forma mensual. El segundo y tercero en forma anualizada')"><i class="btn btn-xs btn-default icon fa fa-question"></i></a>
+                            </div>
+                        </div>
+                        <div class="filter-item" style="margin-left: auto;">
+                            <button type="submit" id="btn_supuestos" value="Consultar" name="command" class="btn-modern-filter">
+                                <i class="fa fa-sliders"></i> Incluir supuestos
+                            </button>
                         </div>
                     </div>
                 </div>

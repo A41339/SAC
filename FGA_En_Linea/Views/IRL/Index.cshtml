@@ -23,53 +23,34 @@
         @Html.AntiForgeryToken()
         <div class="row">
             <div class="col-xs-12">
-                <div class="streaming-table">
-                    <div class="box box-primary">
-                        <div class="box-body">
-                            <span id="found" class="label label-info"></span>
-                            <table class="table table-condensed table-striped table-bordered" style="padding-left: 10px;">
-                                <tr>
-                                    <td class="mobile">
-                                        @Html.Label("Entidad:")
-                                    </td>
-                                    <td nowrap="nowrap">
-                                        @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", @class = "form-control" })
-                                    </td>
-                                    <td class="mobile">
-                                        @Html.Label("Cuenta:")
-                                    </td>
-                                    <td nowrap="nowrap">
-                                        @Html.DropDownList("Cuentas", null, new { @id = "Cuentas", @class = "form-control" })
-                                    </td>
-                                    <td class="mobile">
-                                        @Html.Label("Periodo corte:")
-                                    </td>
-                                    <td nowrap="nowrap">
-                                        <input name="PeriodoC" id="PeriodoC" style="width: 100px" class="datecontrol" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MM/yyyy")" />
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="mobile">
-                                        @Html.Label("Periodos históricos:")
-                                    </td>
-                                    <td nowrap="nowrap">
-                                        <input name="PeriodosHist" id="PeriodosHist" class="form-control" type="number" value="@Session["PeriodosHist"]" />
-                                    </td>
-                                    <td class="mobile">
-                                        @Html.Label("Periodos a proyectar:")
-                                    </td>
-                                    <td nowrap="nowrap">
-                                        <input name="PeriodosProy" id="PeriodosProy" class="form-control" type="number" value="@Session["PeriodosProy"]" />
-                                    </td>
-                                    <td>
-                                    </td>
-                                    <td>
-                                        <label class="btn btn-facebook">
-                                            Generar<input type="submit" name="submit" style="display: none;">
-                                        </label>
-                                    </td>
-                                </tr>
-                            </table>
+                <div class="modern-filter-card">
+                    <div class="modern-filter-toolbar">
+                        <div class="filter-item">
+                            <label for="IdEntidad"><i class="fa fa-university"></i> Entidad:</label>
+                            @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", @class = "form-control modern-select", style = "min-width: 200px;" })
+                        </div>
+                        <div class="filter-item">
+                            <label for="Cuentas"><i class="fa fa-list-alt"></i> Cuenta:</label>
+                            @Html.DropDownList("Cuentas", null, new { @id = "Cuentas", @class = "form-control modern-select", style = "min-width: 220px;" })
+                        </div>
+                        <div class="filter-item">
+                            <label for="PeriodoC"><i class="fa fa-calendar"></i> Periodo corte:</label>
+                            <div class="modern-input-wrapper">
+                                <input name="PeriodoC" id="PeriodoC" class="datecontrol form-control modern-date-input" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MM/yyyy")" style="min-width: 120px;" />
+                            </div>
+                        </div>
+                        <div class="filter-item">
+                            <label for="PeriodosHist"><i class="fa fa-history"></i> Periodos hist.:</label>
+                            <input name="PeriodosHist" id="PeriodosHist" class="form-control" type="number" value="@Session["PeriodosHist"]" style="min-width: 100px; height: 38px;" />
+                        </div>
+                        <div class="filter-item">
+                            <label for="PeriodosProy"><i class="fa fa-line-chart"></i> Periodos proy.:</label>
+                            <input name="PeriodosProy" id="PeriodosProy" class="form-control" type="number" value="@Session["PeriodosProy"]" style="min-width: 100px; height: 38px;" />
+                        </div>
+                        <div class="filter-item" style="margin-left: auto;">
+                            <button type="submit" name="submit" class="btn-modern-filter">
+                                <i class="fa fa-search"></i> Generar
+                            </button>
                         </div>
                     </div>
                 </div>

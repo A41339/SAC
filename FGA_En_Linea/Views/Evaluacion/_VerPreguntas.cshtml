@@ -1,44 +1,122 @@
-﻿<div class="col-lg-12  col-xs-12 form-validate">
-    <div class="streaming-table">
-        <table id="tbPreguntas" class="table table-condensed table-striped table-bordered" width="100%">
+﻿<div class="modern-table-card" style="margin-bottom: 16px; border: 1px solid #e2e8f0; border-radius: 10px; overflow: hidden; background: #ffffff; box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);">
+    <div class="table-responsive" style="padding: 14px 18px;">
+        <table id="tbPreguntas" class="table modern-data-table" style="width: 100%; margin-bottom: 0;">
             <thead>
                 <tr>
-                    <th class="hidden">
-                        Id
-                    </th>
-                    <th>
-                        Enunciado
-                    </th>
-                    <th>
-                    </th>
+                    <th class="hidden">Id</th>
+                    <th style="text-align: left; padding: 10px 14px; font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.04em;">Enunciado</th>
+                    <th style="width: 90px; text-align: center; padding: 10px 14px; font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.04em;">Acciones</th>
                 </tr>
             </thead>
             <tbody></tbody>
         </table>
-        <div id="summary">
-            <div>
-            </div>
-        </div>
     </div>
 </div>
 
+<style>
+    #tbPreguntas th,
+    #tbPreguntas td {
+        vertical-align: middle !important;
+    }
+    #tbPreguntas tbody td:nth-child(1),
+    #tbPreguntas tbody td:first-child {
+        text-align: left !important;
+        font-size: 13px !important;
+        color: #1e293b !important;
+        padding: 12px 14px !important;
+        line-height: 1.4;
+    }
+    #tbPreguntas tbody td:nth-child(2),
+    #tbPreguntas tbody td:last-child {
+        text-align: center !important;
+        padding: 8px 14px !important;
+    }
+    #tbPreguntas tbody tr:hover {
+        background-color: #f8fafc !important;
+    }
+    #tbPreguntas_wrapper {
+        padding: 4px 0;
+    }
+    #tbPreguntas_wrapper .dataTables_filter {
+        text-align: right;
+        margin-bottom: 10px;
+    }
+    #tbPreguntas_wrapper .dataTables_filter label {
+        font-size: 12px;
+        color: #475569;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+    #tbPreguntas_wrapper .dataTables_filter input {
+        border-radius: 7px;
+        border: 1px solid #cbd5e1;
+        padding: 5px 10px;
+        font-size: 12px;
+        outline: none;
+        background: #f8fafc;
+        margin-left: 6px;
+    }
+    #tbPreguntas_wrapper .dataTables_filter input:focus {
+        border-color: #0284c7;
+        background: #ffffff;
+    }
+    #tbPreguntas_wrapper .dataTables_length {
+        margin-bottom: 10px;
+    }
+    #tbPreguntas_wrapper .dataTables_length label {
+        font-size: 12px;
+        color: #475569;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+    #tbPreguntas_wrapper .dataTables_length select {
+        border-radius: 7px;
+        border: 1px solid #cbd5e1;
+        padding: 4px 8px;
+        font-size: 12px;
+        background: #f8fafc;
+    }
+    #tbPreguntas_wrapper .dataTables_info {
+        font-size: 12px;
+        color: #64748b;
+        padding-top: 10px;
+    }
+    #tbPreguntas_wrapper .dataTables_paginate {
+        text-align: right;
+        padding-top: 6px;
+    }
+</style>
 
 <script type="text/javascript">
-
     $(document).ready(function () {
         $("#tbPreguntas").dataTable({
-        "bRetrieve": true,
-        "bProcessing": true,
-        "dom": 'lBfrtip',
+            "bRetrieve": true,
+            "bProcessing": true,
+            "dom": '<"row"<"col-sm-6"l><"col-sm-6"f>>rt<"row"<"col-sm-6"i><"col-sm-6"p>>',
             "sAjaxSource": "@Url.Content("~/Evaluacion/GetPreguntas/")" + $("#idSubCategoria").val(),
-        "buttons": [],
-            columnDefs: [{ targets: [0], visible: false },
-                         { targets: [2], width: 100 }],
-        "pageLength": 5,
-        "lengthMenu": [[5,10, 25, 50, -1], [5,10, 25, 50, "Todos"]],
-        "aoColumns": [
-            {}, {}, {}]
+            "buttons": [],
+            columnDefs: [
+                { targets: [0], visible: false },
+                { targets: [1], className: "text-left" },
+                { targets: [2], width: 90, className: "text-center" }
+            ],
+            "pageLength": 5,
+            "lengthMenu": [[5, 10, 25, -1], [5, 10, 25, "Todos"]],
+            "language": {
+                "sSearch": "Buscar:",
+                "sZeroRecords": "No se encontraron preguntas registradas",
+                "sInfo": "Mostrando _START_ a _END_ de _TOTAL_ preguntas",
+                "sInfoEmpty": "Mostrando 0 preguntas",
+                "oPaginate": {
+                    "sPrevious": "Anterior",
+                    "sNext": "Siguiente"
+                }
+            },
+            "aoColumns": [ {}, {}, {} ]
         });
     });
-
 </script>

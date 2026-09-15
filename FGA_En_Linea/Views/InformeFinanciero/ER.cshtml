@@ -4,67 +4,59 @@
     ViewBag.Title = "Estado Resultados";
 }
 
+<section class="content-header" style="padding: 24px 20px 14px 20px;">
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+        <div>
+            <h1 style="margin: 0; font-size: 21px; font-weight: 700; color: #143750; display: flex; align-items: center; gap: 10px;">
+                <i class="fa fa-line-chart" style="color: #0284c7;"></i>
+                Estado de Resultados
+            </h1>
+            <p style="margin: 6px 0 0 0; font-size: 13px; color: #64748b;">
+                Consulta comparativa del estado de resultados financiero, operativo y administrativo.
+            </p>
+        </div>
+    </div>
+</section>
+
 <section class="content">
-    <section class="content-header">
-        <h1>
-            Estado Resultados
-        </h1>
-    </section>
 
     @using (Html.BeginForm("LoadER", "InformeFinanciero", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmInforme" }))
     {
-        <div class="box box-solid box-info">
-            <div class="box-body table-responsive">
-                <div class="margin">
-                    <div class="streaming-table">
-                        <span id="found" class="label label-info"></span>
-                        <table class="table table-condensed table-striped table-bordered">
-                            <tr>
-                                <td class="mobile">
-                                    @Html.Label("Entidad:")
-                                </td>
-                                <td>
-                                    @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", style = "width: 200px;" })
-                                </td>
-                                <td class="mobile">
-                                    @Html.Label("Primer Periodo:")
-                                </td>
-                                <td nowrap="nowrap">
-                                    <input name="Periodo1" id="Periodo1" class="datecontrol" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MM/yyyy")" />
-                                </td>
-                                <td class="mobile">
-                                    @Html.Label("Mensual:")
-                                </td>
-                                <td nowrap="nowrap">
-                                    @Html.DropDownList("Mensual", new List<SelectListItem> {
-                                                                    new SelectListItem { Value = "0", Text = "NO" },
-                                                                    new SelectListItem { Value = "1", Text = "SÍ" }
-                                                                    }, new { @id = "Mensual" })
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="mobile">
-                                    @Html.Label("Segundo Periodo:")
-                                </td>
-                                <td nowrap="nowrap">
-                                    <input name="Periodo2" id="Periodo2" class="datecontrol" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MM/yyyy")" />
-                                </td>
-                                <td class="mobile">
-                                    @Html.Label("Tercer Periodo:")
-                                </td>
-                                <td>
-                                    <input name="Periodo3" id="Periodo3" class="datecontrol" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo3"].ToString()).ToString("MM/yyyy")" />
-                                </td>
-                                <td>
-                                    <label>
-                                        <button type="submit" class="btn btn-primary">Generar</button>
-                                    </label>
-                                </td>
-                                <td>
-                                </td>
-                            </tr>
-                        </table>
+        <div class="modern-filter-card" style="margin-bottom: 22px;">
+            <div class="modern-filter-toolbar">
+                <div class="filter-item">
+                    <label for="IdEntidad"><i class="fa fa-university"></i> Entidad:</label>
+                    @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", @class = "form-control modern-select", style = "min-width: 220px; height: 38px; font-size: 13px;" })
+                </div>
+                <div class="filter-item">
+                    <label for="Periodo1"><i class="fa fa-calendar"></i> Primer Per&iacute;odo:</label>
+                    <div class="modern-input-wrapper" style="min-width: 130px;">
+                        <input name="Periodo1" id="Periodo1" class="datecontrol form-control modern-date-input" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MM/yyyy")" style="width: 100%; height: 38px;" />
                     </div>
+                </div>
+                <div class="filter-item">
+                    <label for="Mensual"><i class="fa fa-sliders"></i> Mensual:</label>
+                    @Html.DropDownList("Mensual", new List<SelectListItem> {
+                        new SelectListItem { Value = "0", Text = "NO" },
+                        new SelectListItem { Value = "1", Text = "S&Iacute;" }
+                    }, new { @id = "Mensual", @class = "form-control modern-select", style = "min-width: 90px; height: 38px; font-size: 13px;" })
+                </div>
+                <div class="filter-item">
+                    <label for="Periodo2"><i class="fa fa-calendar"></i> Segundo Per&iacute;odo:</label>
+                    <div class="modern-input-wrapper" style="min-width: 130px;">
+                        <input name="Periodo2" id="Periodo2" class="datecontrol form-control modern-date-input" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MM/yyyy")" style="width: 100%; height: 38px;" />
+                    </div>
+                </div>
+                <div class="filter-item">
+                    <label for="Periodo3"><i class="fa fa-calendar-o"></i> Tercer Per&iacute;odo:</label>
+                    <div class="modern-input-wrapper" style="min-width: 130px;">
+                        <input name="Periodo3" id="Periodo3" class="datecontrol form-control modern-date-input" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo3"].ToString()).ToString("MM/yyyy")" style="width: 100%; height: 38px;" />
+                    </div>
+                </div>
+                <div class="filter-item" style="margin-left: auto;">
+                    <button type="submit" class="btn-modern-filter" style="height: 38px; padding: 0 24px;">
+                        <i class="fa fa-search"></i> Generar informe
+                    </button>
                 </div>
             </div>
         </div>
@@ -72,158 +64,137 @@
 
     @if (Session["TipoReporte"] != null)
     {
-        <div>
-            <div class="nav-tabs-custom">
-                <ul class="nav nav-tabs">
-                    <li class="active"><a href="#tab_1" data-toggle="tab">Estado de resultados</a></li>
-                    <li><a href="#tab_2" data-toggle="tab">Análisis</a></li>
-                    <li><a href="#tab_3" data-toggle="tab">Composición</a></li>
+        <div class="modern-table-card" style="border: 1px solid #e2e8f0; border-radius: 12px; background: #ffffff; box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05); overflow: hidden; padding: 22px; margin-bottom: 24px;">
+            <div class="nav-tabs-custom" style="box-shadow: none; margin-bottom: 0;">
+                <ul class="nav nav-tabs" style="border-bottom: 2px solid #e2e8f0; margin-bottom: 20px;">
+                    <li class="active">
+                        <a href="#tab_1" data-toggle="tab" style="font-weight: 700; font-size: 13px; color: #143750; border-radius: 8px 8px 0 0; padding: 10px 18px;">
+                            <i class="fa fa-file-text-o" style="color: #0284c7; margin-right: 6px;"></i> Estado de Resultados
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#tab_2" data-toggle="tab" style="font-weight: 700; font-size: 13px; color: #143750; border-radius: 8px 8px 0 0; padding: 10px 18px;">
+                            <i class="fa fa-line-chart" style="color: #059669; margin-right: 6px;"></i> An&aacute;lisis
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#tab_3" data-toggle="tab" style="font-weight: 700; font-size: 13px; color: #143750; border-radius: 8px 8px 0 0; padding: 10px 18px;">
+                            <i class="fa fa-pie-chart" style="color: #d97706; margin-right: 6px;"></i> Composici&oacute;n
+                        </a>
+                    </li>
                 </ul>
-                <div class="tab-content">
+                <div class="tab-content" style="padding: 0;">
                     <div class="tab-pane active" id="tab_1">
-                        <div class="box-body table-responsive">
-                            <div class="margin">
-                                <iframe src="~/Reportes/ReportView.aspx" width="1500" height="1400" style="border:none"></iframe>
-                            </div>
+                        <div class="table-responsive" style="border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0;">
+                            <iframe src="~/Reportes/ReportView.aspx" width="100%" height="900" style="border:none; display: block; min-height: 800px;"></iframe>
                         </div>
                     </div>
                     <div class="tab-pane" id="tab_2">
-                        <div class="box-body table-responsive">
-                            <div class="margin">
-                                <iframe src="~/Reportes/ReportView2.aspx" width="1500" height="1500" style="border:none"></iframe>
-                            </div>
+                        <div class="table-responsive" style="border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0;">
+                            <iframe src="~/Reportes/ReportView2.aspx" width="100%" height="900" style="border:none; display: block; min-height: 800px;"></iframe>
                         </div>
                     </div>
                     <div class="tab-pane" id="tab_3">
                         <div class="row">
-                            <div class="col-md-6">
-                                <div class="box box-primary">
-                                    <div class="box-body">
-                                        <div class="row">
-                                            <div class="col-xs-12">
-                                                <div class="box-body table-responsive">
-                                                    <span id="found" class="label label-info"></span>
-                                                    <table id="tbIngreso" class="table table-striped table-bordered" style="width:100%; height: 350px">
-                                                        <thead>
-                                                            <tr>
-                                                                <th colspan="5">
-                                                                    <img width="50" height="50" src="@Session["Logo"]" />
-                                                                    <label class="box-title">Ingresos</label>
-                                                                </th>
-                                                            </tr>
-                                                            <tr>
-                                                                <th class="hidden">
-                                                                </th>
-                                                                <th>
-                                                                </th>
-                                                                <th>
-                                                                    Financiero
-                                                                </th>
-                                                                <th>
-                                                                    Operativo
-                                                                </th>
-                                                                <th>
-                                                                    Recuperación
-                                                                </th>
-                                                                <th>
-                                                                    Ingreso Promedio
-                                                                </th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody></tbody>
-                                                    </table>
-                                                    <div id="summary">
-                                                        <div>
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                            </div>
-                                        </div>
+                            <div class="col-md-6" style="margin-bottom: 20px;">
+                                <div class="modern-table-card" style="border: 1px solid #e2e8f0; border-radius: 10px; padding: 18px; background: #ffffff;">
+                                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9;">
+                                        @if (Session["Logo"] != null)
+                                        {
+                                            <img width="36" height="36" src="@Session["Logo"]" style="border-radius: 6px; border: 1px solid #e2e8f0; object-fit: contain;" />
+                                        }
+                                        <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: #143750;">
+                                            Ingresos
+                                        </h4>
                                     </div>
+                                    <span id="found" class="label label-info"></span>
+                                    <div class="table-responsive">
+                                        <table id="tbIngreso" class="table modern-data-table" style="width:100%; min-height: 300px;">
+                                            <thead>
+                                                <tr>
+                                                    <th class="hidden"></th>
+                                                    <th></th>
+                                                    <th>Financiero</th>
+                                                    <th>Operativo</th>
+                                                    <th>Recuperaci&oacute;n</th>
+                                                    <th>Ingreso Promedio</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                        </table>
+                                    </div>
+                                    <div id="summary"><div></div></div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="box box-warning">
-                                    <div class="box-header with-border">
-                                        <img width="50" height="50" src="@Session["Logo"]" />
-                                        <h4 class="box-title">Ingreso</h4>
+                            <div class="col-md-6" style="margin-bottom: 20px;">
+                                <div class="modern-table-card" style="border: 1px solid #e2e8f0; border-radius: 10px; padding: 18px; background: #ffffff;">
+                                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9;">
+                                        @if (Session["Logo"] != null)
+                                        {
+                                            <img width="36" height="36" src="@Session["Logo"]" style="border-radius: 6px; border: 1px solid #e2e8f0; object-fit: contain;" />
+                                        }
+                                        <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: #143750;">
+                                            Ingreso
+                                        </h4>
                                     </div>
-                                    <div class="box-body">
+                                    <div>
                                         @(Model.composicionIngreso)
                                     </div>
                                 </div>
                             </div>
                         </div>
+
                         <div class="row">
-                            <div class="col-sm-12">
-                                <div class="col-md-12">
-                                    <div class="box box-primary">
-                                        <div class="box-body">
-                                            <div class="row">
-                                                <div class="col-xs-12">
-                                                    <div class="box-body table-responsive">
-                                                        <span id="found" class="label label-info"></span>
-                                                        <table id="tbGasto" class="table table-striped table-bordered" style="width:100%; height: 350px">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th colspan="6">
-                                                                        <img width="50" height="50" src="@Session["Logo"]" />
-                                                                        <label class="box-title">Gastos</label>
-                                                                    </th>
-                                                                </tr>
-                                                                <tr>
-                                                                    <th class="hidden">
-                                                                    </th>
-                                                                    <th>
-                                                                    </th>
-                                                                    <th>
-                                                                        Financiero
-                                                                    </th>
-                                                                    <th>
-                                                                        Estimación
-                                                                    </th>
-                                                                    <th>
-                                                                        Operativo
-                                                                    </th>
-                                                                    <th>
-                                                                        Administración
-                                                                    </th>
-                                                                    <th>
-                                                                        Impuesto
-                                                                    </th>
-
-                                                                    <th>
-                                                                        Gasto Promedio
-                                                                    </th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody></tbody>
-                                                        </table>
-                                                        <div id="summary">
-                                                            <div>
-                                                            </div>
-                                                        </div>
-
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                            <div class="col-md-7" style="margin-bottom: 20px;">
+                                <div class="modern-table-card" style="border: 1px solid #e2e8f0; border-radius: 10px; padding: 18px; background: #ffffff;">
+                                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9;">
+                                        @if (Session["Logo"] != null)
+                                        {
+                                            <img width="36" height="36" src="@Session["Logo"]" style="border-radius: 6px; border: 1px solid #e2e8f0; object-fit: contain;" />
+                                        }
+                                        <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: #143750;">
+                                            Gastos
+                                        </h4>
                                     </div>
+                                    <span id="found" class="label label-info"></span>
+                                    <div class="table-responsive">
+                                        <table id="tbGasto" class="table modern-data-table" style="width:100%; min-height: 300px;">
+                                            <thead>
+                                                <tr>
+                                                    <th class="hidden"></th>
+                                                    <th></th>
+                                                    <th>Financiero</th>
+                                                    <th>Estimaci&oacute;n</th>
+                                                    <th>Operativo</th>
+                                                    <th>Administraci&oacute;n</th>
+                                                    <th>Impuesto</th>
+                                                    <th>Gasto Promedio</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                        </table>
+                                    </div>
+                                    <div id="summary"><div></div></div>
                                 </div>
-                                <div class="col-md-12">
-                                    <div class="box box-warning">
-                                        <div class="box-header with-border">
-                                            <img width="50" height="50" src="@Session["Logo"]" />
-                                            <h4 class="box-title">Gasto</h4>
-                                        </div>
-                                        <div class="box-body">
-                                            @(Model.composicionGasto)
-                                        </div>
+                            </div>
+                            <div class="col-md-5" style="margin-bottom: 20px;">
+                                <div class="modern-table-card" style="border: 1px solid #e2e8f0; border-radius: 10px; padding: 18px; background: #ffffff;">
+                                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9;">
+                                        @if (Session["Logo"] != null)
+                                        {
+                                            <img width="36" height="36" src="@Session["Logo"]" style="border-radius: 6px; border: 1px solid #e2e8f0; object-fit: contain;" />
+                                        }
+                                        <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: #143750;">
+                                            Gasto
+                                        </h4>
+                                    </div>
+                                    <div>
+                                        @(Model.composicionGasto)
                                     </div>
                                 </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
             </div>

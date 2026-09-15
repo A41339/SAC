@@ -1,4 +1,4 @@
-﻿@model  FGA.Model.Composicion_cartera
+@model  FGA.Model.Composicion_cartera
 
 @{
     ViewBag.Title = "Composici&oacute;n de cartera";
@@ -20,78 +20,61 @@
 </section>
 
 <section class="content">
-    <div class="col-xs-12">
-        <div class="box box-solid box-info">
-            <div class="margin">
-                <div class="streaming-table">
-                    <span id="found" class="label label-info"></span>
-                    <table class="table table-condensed table-striped">
-                        <tr>
-                            <td class="mobile">
-                                <label>Entidad:</label>
-                            </td>
-                            <td>
-                                @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", style = "width: 350px;" })
-                            </td>
-                            <td class="mobile">
-                                <label>Gr&aacute;fico:</label>
-                            </td>
-                            <td>
-                                @Html.DropDownList("Grafico", null, new { @id = "Grafico", style = "width: 350px;" })
-                            </td>
-                            <td>
-                                <label class="btn btn-facebook">
-                                    Generar<input type="submit" name="submit" id="btn_buscar" style="display: none;">
-                                </label>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="mobile">
-                                <label>Inicial:</label>
-                            </td>
-                            <td nowrap="nowrap" class="form-group">
-                                <input name="PeriodoI" id="PeriodoI" class="datecontrol" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MM/yyyy")" />
-                            </td>
-                            <td class="mobile">
-                                <label>Final:</label>
-                            </td>
-                            <td nowrap="nowrap" class="form-group">
-                                <input name="PeriodoF" id="PeriodoF" class="datecontrol" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MM/yyyy")" />
-                            </td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td id="lbl_categoria" class="mobile hidden">
-                                <label>Categor&iacute;as:</label>
-                            </td>
-                            <td id="cmb_categoria" class="hidden">
-                                <select id="IdCategoria" name="CategoriaRiesgo" multiple="multiple">
-                                    @foreach (var detalle in Model.listaCategoriaRiesgo)
-                                    {
-                                        <option value="@detalle.CategoriaRiesgo">@detalle.CategoriaRiesgo</option>
-                                    }
-                                </select>
-                            </td>
-                            <td id="lbl_tipoCartera" class="mobile hidden">
-                                <label>Tipos de Cartera:</label>
-                            </td>
-                            <td id="cmb_tipoCartera" class="hidden">
-                                <select id="IdTipoCartera" name="TipoCartera" multiple="multiple">
-                                    @foreach (var detalle in Model.listaTiposCartera)
-                                    {
-                                        <option value="@detalle.Nombre">@detalle.Nombre</option>
-                                    }
-                                </select>
-                            </td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                    </table>
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="modern-filter-card">
+                <div class="modern-filter-toolbar">
+                    <div class="filter-item">
+                        <label for="IdEntidad"><i class="fa fa-university"></i> Entidad:</label>
+                        @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", @class = "form-control modern-select", style = "min-width: 250px;" })
+                    </div>
+                    <div class="filter-item">
+                        <label for="Grafico"><i class="fa fa-bar-chart"></i> Gr&aacute;fico:</label>
+                        @Html.DropDownList("Grafico", null, new { @id = "Grafico", @class = "form-control modern-select", style = "min-width: 250px;" })
+                    </div>
+                    <div class="filter-item">
+                        <label for="PeriodoI"><i class="fa fa-calendar"></i> Inicial:</label>
+                        <div class="modern-input-wrapper">
+                            <input name="PeriodoI" id="PeriodoI" class="datecontrol form-control modern-date-input" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MM/yyyy")" style="min-width: 130px;" />
+                        </div>
+                    </div>
+                    <div class="filter-item">
+                        <label for="PeriodoF"><i class="fa fa-calendar"></i> Final:</label>
+                        <div class="modern-input-wrapper">
+                            <input name="PeriodoF" id="PeriodoF" class="datecontrol form-control modern-date-input" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MM/yyyy")" style="min-width: 130px;" />
+                        </div>
+                    </div>
+                    <div id="cmb_categoria" class="filter-item hidden">
+                        <label id="lbl_categoria"><i class="fa fa-tags"></i> Categor&iacute;as:</label>
+                        <select id="IdCategoria" name="CategoriaRiesgo" multiple="multiple">
+                            @foreach (var detalle in Model.listaCategoriaRiesgo)
+                            {
+                                <option value="@detalle.CategoriaRiesgo">@detalle.CategoriaRiesgo</option>
+                            }
+                        </select>
+                    </div>
+                    <div id="cmb_tipoCartera" class="filter-item hidden">
+                        <label id="lbl_tipoCartera"><i class="fa fa-folder-open"></i> Tipos de Cartera:</label>
+                        <select id="IdTipoCartera" name="TipoCartera" multiple="multiple">
+                            @foreach (var detalle in Model.listaTiposCartera)
+                            {
+                                <option value="@detalle.Nombre">@detalle.Nombre</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="filter-item" style="margin-left: auto;">
+                        <button type="button" id="btn_buscar" class="btn-modern-filter">
+                            <i class="fa fa-search"></i> Generar
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
-        <div id="grafica">
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <div id="grafica">
+            </div>
         </div>
     </div>
 </section>
@@ -119,15 +102,15 @@
     function toggleCategoryTypes() {
         var val = $("#Grafico").val();
         if (val == 3) {
-            $("#cmb_categoria, #lbl_categoria").removeClass("hidden");
-            $("#cmb_tipoCartera, #lbl_tipoCartera").addClass("hidden");
+            $("#cmb_categoria, #lbl_categoria").removeClass("hidden").show();
+            $("#cmb_tipoCartera, #lbl_tipoCartera").addClass("hidden").hide();
         }
         else if (val == 7) {
-            $("#cmb_tipoCartera, #lbl_tipoCartera").removeClass("hidden");
-            $("#cmb_categoria, #lbl_categoria").addClass("hidden");
+            $("#cmb_tipoCartera, #lbl_tipoCartera").removeClass("hidden").show();
+            $("#cmb_categoria, #lbl_categoria").addClass("hidden").hide();
         }
         else {
-            $("#cmb_categoria, #lbl_categoria, #cmb_tipoCartera, #lbl_tipoCartera").addClass("hidden");
+            $("#cmb_categoria, #lbl_categoria, #cmb_tipoCartera, #lbl_tipoCartera").addClass("hidden").hide();
         }
     }
 

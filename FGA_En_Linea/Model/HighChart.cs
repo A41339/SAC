@@ -1,4 +1,4 @@
-﻿using DotNet.Highcharts;
+using DotNet.Highcharts;
 using DotNet.Highcharts.Enums;
 using DotNet.Highcharts.Helpers;
 using DotNet.Highcharts.Options;
@@ -20,7 +20,7 @@ namespace FGA.Model
                 {
                     Enabled = false
                 };
-                graph = new Highcharts(nombre) ;                
+                graph = new Highcharts(nombre);                
                 graph.SetCredits(credits);
                 graph.SetTitle(new Title()
                 {
@@ -30,8 +30,8 @@ namespace FGA.Model
                 {
                     BorderRadius = 0,
                     BorderWidth = 0,
-                    SpacingBottom = 0,
-                    SpacingTop = 10,
+                    SpacingBottom = 8,
+                    SpacingTop = 12,
                     SpacingLeft = 10,
                     SpacingRight = 10,
                     Height = (Heigh == 0 ? null : Heigh)
@@ -51,18 +51,30 @@ namespace FGA.Model
                         }
                     },                    
                 });
-                graph.SetNavigation(new Navigation { MenuItemStyle = "fontSize: '12px', color: 'black', fontWeight: '',  fontFamily: 'Arial, sans-serif'" });
+                graph.SetNavigation(new Navigation { MenuItemStyle = "fontSize: '12px', color: '#334155', fontWeight: '500', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'" });
                 graph.SetLegend(new Legend
                 {
                     Enabled = true,
-                    ItemStyle = "fontSize: '12px', color: 'black', fontWeight: '',  fontFamily: 'Arial, sans-serif'",                   
+                    ItemStyle = "fontSize: '12px', color: '#334155', fontWeight: '600', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'",
+                    ItemHoverStyle = "color: '#0d7682'",
+                    ItemMarginTop = 6,
+                    ItemMarginBottom = 4,
+                    ItemDistance = 16,
+                    SymbolRadius = 4
                 });
                 graph.SetTooltip(new Tooltip
                 {
                     Shared = true,
                     FollowTouchMove = true,
                     Enabled = true,
-                    Style = "fontSize: '12px', color: 'black', fontWeight: '',  fontFamily: 'Arial, sans-serif'"
+                    UseHTML = true,
+                    Formatter = "function() { return typeof window.formatGlobalChartTooltip === 'function' ? window.formatGlobalChartTooltip(this) : (this.x + ': ' + this.y); }",
+                    BackgroundColor = new BackColorOrGradient(ColorTranslator.FromHtml("#ffffff")),
+                    BorderColor = ColorTranslator.FromHtml("#e2e8f0"),
+                    BorderRadius = 8,
+                    BorderWidth = 1,
+                    Shadow = true,
+                    Style = "fontSize: '12px', color: '#1e293b', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'"
                 });
                
             }
@@ -475,18 +487,163 @@ namespace FGA.Model
             }
         }
 
+        public static PlotOptionsSpline getSpline(int width = 3)
+        {
+            try
+            {
+                return new PlotOptionsSpline
+                {
+                    DashStyle = DashStyles.Solid,
+                    LineWidth = (Number)width,
+                    Marker = new PlotOptionsSplineMarker
+                    {
+                        Enabled = System.Web.HttpContext.Current.Session[FGA.Utility.Utilitarios.show_LineDetail] is null ? false : true,
+                        Radius = (Number)4
+                    },
+                    DataLabels = new PlotOptionsSplineDataLabels
+                    {
+                        Enabled = System.Web.HttpContext.Current.Session[FGA.Utility.Utilitarios.show_LineDetail] is null ? false : true,
+                        Format = "{point.y:,.2f}",
+                        Style = "fontSize: '11px', fontWeight: '600', color: '#334155', textShadow: 'none', textOutline: 'none', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'",
+                        Inside = false,
+                        Overflow = "allow",
+                        Y = -10
+                    }
+                };
+            }
+            catch (Exception) { return null; }
+        }
+
+        public static PlotOptionsSpline getSplinePercent(int width = 3)
+        {
+            try
+            {
+                return new PlotOptionsSpline
+                {
+                    DashStyle = DashStyles.Solid,
+                    LineWidth = (Number)width,
+                    Marker = new PlotOptionsSplineMarker
+                    {
+                        Enabled = System.Web.HttpContext.Current.Session[FGA.Utility.Utilitarios.show_LineDetail] is null ? false : true,
+                        Radius = (Number)4
+                    },
+                    DataLabels = new PlotOptionsSplineDataLabels
+                    {
+                        Enabled = System.Web.HttpContext.Current.Session[FGA.Utility.Utilitarios.show_LineDetail] is null ? false : true,
+                        Format = "{point.y:,.2f}%",
+                        Style = "fontSize: '11px', fontWeight: '600', color: '#334155', textShadow: 'none', textOutline: 'none', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'",
+                        Inside = false,
+                        Overflow = "allow",
+                        Y = -10
+                    }
+                };
+            }
+            catch (Exception) { return null; }
+        }
+
+        public static PlotOptionsSpline getSplineDashPercent(int width = 2)
+        {
+            try
+            {
+                return new PlotOptionsSpline
+                {
+                    DashStyle = DashStyles.ShortDash,
+                    LineWidth = (Number)width,
+                    Marker = new PlotOptionsSplineMarker
+                    {
+                        Enabled = System.Web.HttpContext.Current.Session[FGA.Utility.Utilitarios.show_LineDetail] is null ? false : true,
+                        Radius = (Number)3.5
+                    },
+                    DataLabels = new PlotOptionsSplineDataLabels
+                    {
+                        Enabled = System.Web.HttpContext.Current.Session[FGA.Utility.Utilitarios.show_LineDetail] is null ? false : true,
+                        Format = "{point.y:,.2f}%",
+                        Style = "fontSize: '11px', fontWeight: '600', color: '#334155', textShadow: 'none', textOutline: 'none', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'",
+                        Inside = false,
+                        Overflow = "allow",
+                        Y = -10
+                    }
+                };
+            }
+            catch (Exception) { return null; }
+        }
+
+        public static PlotOptionsAreaspline getAreasplinePercent(double fillOpacity = 0.18, int lineWidth = 2)
+        {
+            try
+            {
+                return new PlotOptionsAreaspline
+                {
+                    FillOpacity = (Number)fillOpacity,
+                    LineWidth = (Number)lineWidth,
+                    Marker = new PlotOptionsAreasplineMarker
+                    {
+                        Enabled = false
+                    },
+                    DataLabels = new PlotOptionsAreasplineDataLabels
+                    {
+                        Enabled = System.Web.HttpContext.Current.Session[FGA.Utility.Utilitarios.show_LineDetail] is null ? false : true,
+                        Format = "{point.y:,.2f}%",
+                        Style = "fontSize: '11px', fontWeight: '600', color: '#0d7682', textShadow: 'none', textOutline: 'none', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'",
+                        Inside = false,
+                        Overflow = "allow",
+                        Y = -10
+                    }
+                };
+            }
+            catch (Exception) { return null; }
+        }
+
+        public static PlotOptionsColumn getColumnStyled(double borderRadius = 4, bool percent = true)
+        {
+            try
+            {
+                return new PlotOptionsColumn
+                {
+                    BorderRadius = (Number)borderRadius,
+                    BorderWidth = (Number)0,
+                    DataLabels = new PlotOptionsColumnDataLabels
+                    {
+                        Enabled = System.Web.HttpContext.Current.Session[FGA.Utility.Utilitarios.show_ColumnDetail] is null ? false : true,
+                        Format = percent ? "{point.y:,.2f}%" : "{point.y:,.0f}",
+                        Style = "fontSize: '11px', fontWeight: '600', color: '#334155', textShadow: 'none', textOutline: 'none', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'",
+                        Inside = false
+                    },
+                    MinPointLength = 10
+                };
+            }
+            catch (Exception) { return null; }
+        }
+
+        public static PlotOptions getPlotOptionsColumn(double borderRadius = 4, bool percent = true)
+        {
+            try
+            {
+                return new PlotOptions
+                {
+                    Column = getColumnStyled(borderRadius, percent)
+                };
+            }
+            catch (Exception) { return null; }
+        }
+
         public static XAxis GetXAxis(string[] values) {
             try
             {
                 return new XAxis
                 {
                     Categories = values,
+                    GridLineWidth = 1,
+                    GridLineColor = ColorTranslator.FromHtml("#f1f5f9"),
+                    GridLineDashStyle = DashStyles.Dash,
+                    LineColor = ColorTranslator.FromHtml("#cbd5e1"),
+                    TickColor = ColorTranslator.FromHtml("#cbd5e1"),
                     Labels = new XAxisLabels()
                     {
                         Step = System.Web.HttpContext.Current.Session[FGA.Utility.Utilitarios.show_DateEachN] is null ? 1 : 3,
-                        Style = "fontSize: '12px', color: 'black',  fontFamily: 'Arial, sans-serif'"                       
+                        Style = "fontSize: '11px', color: '#64748b', fontWeight: '500', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'"                       
                     },
-                     ShowEmpty = true,                     
+                    ShowEmpty = true,                     
                     Title = new XAxisTitle()
                     {
                         Text = " "
@@ -500,7 +657,7 @@ namespace FGA.Model
         {
             try
             {
-                string yLabel = System.Web.HttpContext.Current.Session[FGA.Utility.Utilitarios.show_YAxis] is null ? "fontSize: '0px'" : "fontSize: '12px', color: 'black',  fontFamily: 'Arial, sans-serif'";
+                string yLabel = System.Web.HttpContext.Current.Session[FGA.Utility.Utilitarios.show_YAxis] is null ? "fontSize: '0px'" : "fontSize: '11px', color: '#64748b', fontWeight: '500', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'";
                 return new YAxis()
                 {
                     Title = new YAxisTitle()
@@ -518,7 +675,10 @@ namespace FGA.Model
                     AllowDecimals = true, 
                     //Min = (Number?)pMin,
                     //Max = (Number?)pMax,
-                    GridLineWidth = 0,
+                    GridLineWidth = 1,
+                    GridLineColor = ColorTranslator.FromHtml("#f1f5f9"),
+                    GridLineDashStyle = DashStyles.Dash,
+                    LineColor = ColorTranslator.FromHtml("#cbd5e1"),
                     Type = (type is null ? AxisTypes.Logarithmic : type),
                     Reversed =  reversed                   
                 };
@@ -530,7 +690,7 @@ namespace FGA.Model
         {
             try
             {
-                string yLabel = System.Web.HttpContext.Current.Session[FGA.Utility.Utilitarios.show_YAxis] is null ? "fontSize: '0px'" : "fontSize: '12px', color: 'black',  fontFamily: 'Arial, sans-serif'";
+                string yLabel = System.Web.HttpContext.Current.Session[FGA.Utility.Utilitarios.show_YAxis] is null ? "fontSize: '0px'" : "fontSize: '11px', color: '#64748b', fontWeight: '500', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'";
                 return new YAxis()
                 {
                     Title = new YAxisTitle()
@@ -548,7 +708,10 @@ namespace FGA.Model
                     AllowDecimals = true,
                     Min = (Number?)pMin,
                     Max = (Number?)pMax,
-                    GridLineWidth = 0,
+                    GridLineWidth = 1,
+                    GridLineColor = ColorTranslator.FromHtml("#f1f5f9"),
+                    GridLineDashStyle = DashStyles.Dash,
+                    LineColor = ColorTranslator.FromHtml("#cbd5e1"),
                     Type = (type is null ? AxisTypes.Logarithmic : type),
                     Reversed = reversed
                 };
@@ -562,29 +725,29 @@ namespace FGA.Model
             switch (i)
             {
                 case 0:
-                    return ColorTranslator.FromHtml("#39aac5");
+                    return ColorTranslator.FromHtml("#0284c7"); // Azul Zafiro Primario
                 case 1:
-                    return ColorTranslator.FromHtml("#ed7c2f");
+                    return ColorTranslator.FromHtml("#ea580c"); // Ámbar / Naranja Cálido
                 case 2:
-                    return ColorTranslator.FromHtml("#d9d9d9");
+                    return ColorTranslator.FromHtml("#0d7682"); // Teal Institucional FGA
                 case 3:
-                    return ColorTranslator.FromHtml("#ddebf7");
+                    return ColorTranslator.FromHtml("#10b981"); // Esmeralda / Éxito
                 case 4:
-                    return ColorTranslator.FromHtml("#2a4781"); //aqui
+                    return ColorTranslator.FromHtml("#6366f1"); // Índigo / Violeta
                 case 5:
-                    return ColorTranslator.FromHtml("#f1a03d");
+                    return ColorTranslator.FromHtml("#f59e0b"); // Ámbar Dorado
                 case 6:
-                    return ColorTranslator.FromHtml("#4ba79e");
+                    return ColorTranslator.FromHtml("#06b6d4"); // Cyan Moderno
                 case 7:
-                    return ColorTranslator.FromHtml("#8c8c8c");
+                    return ColorTranslator.FromHtml("#ef4444"); // Rojo Coral / Alerta Mora
                 case 8:
-                    return ColorTranslator.FromHtml("#a3b0c1");
+                    return ColorTranslator.FromHtml("#8b5cf6"); // Púrpura Elegante
                 case 9:
-                    return ColorTranslator.FromHtml("#2e4b86");
+                    return ColorTranslator.FromHtml("#64748b"); // Slate Neutro
                 case 10:
-                    return ColorTranslator.FromHtml("#8b5a2b");
+                    return ColorTranslator.FromHtml("#0f766e"); // Teal Profundo
                 default:
-                    return ColorTranslator.FromHtml("#11333b");
+                    return ColorTranslator.FromHtml("#143750"); // Azul Marino Institucional
             }
         }
     }

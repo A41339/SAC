@@ -1,4 +1,24 @@
-@model FGA.Model.Modelo_IRL
+﻿@model FGA.Model.Modelo_IRL
+
+<style>
+    #tbIRL tbody td:nth-child(2),
+    #tbIRLR tbody td:nth-child(2),
+    #tbIRL tbody td.text-left,
+    #tbIRLR tbody td.text-left,
+    table#tbIRL tbody tr td:nth-child(2),
+    table#tbIRLR tbody tr td:nth-child(2),
+    #tbCuentas tbody td:first-child {
+        text-align: left !important;
+        padding-left: 14px !important;
+        font-weight: normal !important;
+    }
+
+    #tbIRL thead th:nth-child(2),
+    #tbIRLR thead th:nth-child(2) {
+        text-align: left !important;
+        padding-left: 14px !important;
+    }
+</style>
 
 <div id="tbl_IRLCuentas">
     <div class="col-md-6">
@@ -240,7 +260,7 @@
                     $(nRow).find('td:not(:eq(1))').attr('style', function(i, s) { return (s || '') + '; background-color: #ed7c2f !important; color: #ffffff !important; font-weight: 700 !important;'; });
                 }
 
-                $(nRow).find('td:eq(1)').attr('style', function(i, s) { return (s || '') + '; color: #1e293b !important; background-color: #ffffff !important; font-weight: 600 !important;'; });
+                $(nRow).find('td:eq(1)').attr('style', function(i, s) { return (s || '') + '; color: #1e293b !important; background-color: #ffffff !important; font-weight: normal !important; text-align: left !important; padding-left: 14px !important;'; });
 
             },
             "bRetrieve": true,
@@ -256,6 +276,9 @@
                 ],
                 columnDefs: [
                     {
+                        className: 'text-left', targets: [1]
+                    },
+                    {
                         className: 'text-right', targets: [2, 3, 4, 5, 6, 7, 8, 9]
                     },
             ],
@@ -270,6 +293,7 @@
         oTableRole = $("#tbIRLR").dataTable({
             "rowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
                 $(nRow).find('td:eq(0)').addClass('hidden');
+                $(nRow).find('td:eq(1)').attr('style', function(i, s) { return (s || '') + '; font-weight: normal !important; text-align: left !important; padding-left: 14px !important;'; });
             },
             "bRetrieve": true,
             "bProcessing": true,
@@ -283,6 +307,9 @@
                     ,'colvis'
                 ],
                 columnDefs: [
+                    {
+                        className: 'text-left', targets: [1]
+                    },
                     {
                         className: 'text-right', targets: [2, 3, 4, 5, 6, 7, 8, 9]
                     },

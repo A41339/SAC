@@ -26,6 +26,111 @@
     <script src="https://code.highcharts.com/modules/export-data.js"></script>
     <script src="https://code.highcharts.com/modules/offline-exporting.js"></script>
     <script>
+        window.formatGlobalChartTooltip = function (ctx) {
+            if (!ctx) return '';
+            var p0 = (ctx.points && ctx.points.length > 0) ? ctx.points[0] : (ctx.point || ctx);
+            var xAxis = (p0 && p0.series && p0.series.xAxis) ? p0.series.xAxis : null;
+
+            var headerText = '';
+            if (ctx.category !== undefined && ctx.category !== null && ('' + ctx.category).trim() !== '') {
+                headerText = '' + ctx.category;
+            } else if (p0 && p0.category !== undefined && p0.category !== null && ('' + p0.category).trim() !== '') {
+                headerText = '' + p0.category;
+            } else if (xAxis && xAxis.categories && p0 && p0.x !== undefined && xAxis.categories[p0.x]) {
+                headerText = '' + xAxis.categories[p0.x];
+            } else if (p0 && p0.key !== undefined && p0.key !== null) {
+                var kStr = '' + p0.key;
+                if (isNaN(Number(kStr)) || kStr.indexOf('-') !== -1 || kStr.indexOf('/') !== -1) {
+                    headerText = kStr;
+                }
+            } else if (p0 && p0.name) {
+                headerText = '' + p0.name;
+            }
+
+            // Suppress raw integer index (0, 1, 2...)
+            if (headerText && /^\d+$/.test(headerText.trim())) {
+                headerText = '';
+            }
+
+            function formatTooltipVal(point) {
+                var val = point.y;
+                if (val === null || typeof val === 'undefined') return '-';
+
+                var sName = (point.series && point.series.name) ? point.series.name.toLowerCase() : '';
+                var yAxisOpts = (point.series && point.series.yAxis && point.series.yAxis.options) ? point.series.yAxis.options : {};
+                var yTitle = (yAxisOpts.title && yAxisOpts.title.text) ? yAxisOpts.title.text.toLowerCase() : '';
+                var yLabels = yAxisOpts.labels || {};
+                var sSuffix = (point.series && point.series.tooltipOptions && point.series.tooltipOptions.valueSuffix) || '';
+
+                if (point.percentage !== undefined && point.series && point.series.type === 'column' &&
+                    point.series.chart && point.series.chart.options && point.series.chart.options.plotOptions &&
+                    point.series.chart.options.plotOptions.column && point.series.chart.options.plotOptions.column.stacking === 'percent') {
+                    return Highcharts.numberFormat(point.percentage, 2, '.', ',') + '%';
+                }
+
+                var isYAxisPercent = yTitle.indexOf('%') !== -1 ||
+                                     yTitle.indexOf('porcent') !== -1 ||
+                                     (yLabels.formatter && ('' + yLabels.formatter).indexOf('Percent') !== -1);
+
+                var isPct = sSuffix.indexOf('%') !== -1 ||
+                            sName.indexOf('%') !== -1 ||
+                            sName.indexOf('tasa') !== -1 ||
+                            sName.indexOf('porcent') !== -1 ||
+                            sName.indexOf('margen') !== -1 ||
+                            sName.indexOf('suficiencia') !== -1 ||
+                            sName.indexOf('cobertura') !== -1 ||
+                            sName.indexOf('mora') !== -1 ||
+                            sName.indexOf('al d') !== -1 ||
+                            isYAxisPercent;
+
+                if (isPct) {
+                    return Highcharts.numberFormat(val, 2, '.', ',') + '%';
+                }
+
+                if (val % 1 !== 0) {
+                    return Highcharts.numberFormat(val, 2, '.', ',');
+                } else {
+                    return Highcharts.numberFormat(val, 0, '.', ',');
+                }
+            }
+
+            var html = '<div class="fga-chart-tooltip">';
+            if (headerText && headerText.trim() !== '') {
+                html += '<div class="tt-header">' + headerText + '</div>';
+            }
+            html += '<table class="tt-table">';
+
+            if (ctx.points && ctx.points.length > 0) {
+                for (var i = 0; i < ctx.points.length; i++) {
+                    var pt = ctx.points[i];
+                    if (pt.series && pt.series.visible === false) continue;
+                    var sColor = (pt.color || (pt.series && pt.series.color) || '#0284c7');
+                    var sName = (pt.series && pt.series.name) ? pt.series.name : 'Valor';
+                    var sVal = formatTooltipVal(pt);
+
+                    html += '<tr>';
+                    html += '<td class="tt-bullet" style="color:' + sColor + '">&#9679;</td>';
+                    html += '<td class="tt-name">' + sName + ':</td>';
+                    html += '<td class="tt-val">' + sVal + '</td>';
+                    html += '</tr>';
+                }
+            } else {
+                var singlePt = ctx.point || ctx;
+                var sColor = (singlePt.color || (ctx.series && ctx.series.color) || '#0284c7');
+                var sName = (ctx.series && ctx.series.name) ? ctx.series.name : (singlePt.name || 'Valor');
+                var sVal = formatTooltipVal(singlePt);
+
+                html += '<tr>';
+                html += '<td class="tt-bullet" style="color:' + sColor + '">&#9679;</td>';
+                html += '<td class="tt-name">' + sName + ':</td>';
+                html += '<td class="tt-val">' + sVal + '</td>';
+                html += '</tr>';
+            }
+
+            html += '</table></div>';
+            return html;
+        };
+
         (function() {
             var anim = localStorage.getItem('fga_charts_animation');
             var isAnimEnabled = (anim === null || anim === 'true');
@@ -35,23 +140,74 @@
             if (typeof Highcharts !== 'undefined') {
                 Highcharts.setOptions({
                     chart: {
+                        style: {
+                            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
+                        },
                         animation: isAnimEnabled ? { duration: 1200, easing: 'easeOutCubic' } : false
                     },
+                    tooltip: {
+                        shared: true,
+                        useHTML: true,
+                        formatter: function () {
+                            return window.formatGlobalChartTooltip ? window.formatGlobalChartTooltip(this) : null;
+                        },
+                        backgroundColor: '#ffffff',
+                        borderColor: '#e2e8f0',
+                        borderRadius: 8,
+                        borderWidth: 1,
+                        shadow: {
+                            color: 'rgba(0, 0, 0, 0.08)',
+                            offsetX: 0,
+                            offsetY: 4,
+                            opacity: 0.1,
+                            width: 8
+                        },
+                        style: {
+                            color: '#1e293b',
+                            fontSize: '12px'
+                        }
+                    },
+                    legend: {
+                        itemStyle: {
+                            color: '#334155',
+                            fontWeight: '600',
+                            fontSize: '12px'
+                        },
+                        itemHoverStyle: {
+                            color: '#0d7682'
+                        }
+                    },
+                    colors: ['#1d6fa4', '#2d9f8f', '#5a7fc4', '#d4a843', '#4caf7d', '#b05770', '#6b8cba', '#8d6bbf', '#e07b45', '#7a8fa0'],
                     plotOptions: {
                         series: {
-                            animation: isAnimEnabled ? { duration: 1200 } : false
+                            animation: isAnimEnabled ? { duration: 1200 } : false,
+                            marker: {
+                                radius: 4,
+                                lineWidth: 0
+                            }
+                        },
+                        spline: {
+                            animation: isAnimEnabled ? { duration: 1200 } : false,
+                            lineWidth: 3
                         },
                         areaspline: {
-                            animation: isAnimEnabled ? { duration: 1200 } : false
+                            animation: isAnimEnabled ? { duration: 1200 } : false,
+                            fillOpacity: 0.18,
+                            lineWidth: 2
                         },
                         line: {
-                            animation: isAnimEnabled ? { duration: 1200 } : false
+                            animation: isAnimEnabled ? { duration: 1200 } : false,
+                            lineWidth: 2.5
                         },
                         column: {
-                            animation: isAnimEnabled ? { duration: 1000 } : false
+                            animation: isAnimEnabled ? { duration: 1000 } : false,
+                            borderRadius: 4,
+                            borderWidth: 0
                         },
                         bar: {
-                            animation: isAnimEnabled ? { duration: 1000 } : false
+                            animation: isAnimEnabled ? { duration: 1000 } : false,
+                            borderRadius: 4,
+                            borderWidth: 0
                         }
                     }
                 });
@@ -297,6 +453,9 @@
         });
 
         $(function () {
+            if (!$.connection || !$.connection.chatHub) {
+                return;
+            }
 
             var chat = $.connection.chatHub;
 
@@ -355,35 +514,37 @@
             $('#message').focus();
             $('#companyname').val('@Env.GetUserInfo("entidad")');
 
-            $.connection.hub.start().done(function () {
+            if ($.connection.hub) {
+                $.connection.hub.start().done(function () {
 
-                chat.server.connect($('#myid').val(), $('#myname').val(), $('#activecontactid').val(), $('#companyname').val());
+                    chat.server.connect($('#myid').val(), $('#myname').val(), $('#activecontactid').val(), $('#companyname').val());
 
-                $('#sendmessage').click(function () {
-                   chat.server.send($('#myid').val(), $('#activecontactid').val(), $('#message').val());
-                   $('#message').val('').focus();
-                });
+                    $('#sendmessage').click(function () {
+                       chat.server.send($('#myid').val(), $('#activecontactid').val(), $('#message').val());
+                       $('#message').val('').focus();
+                    });
 
-                $(document).on('click', '.contact', function () {
+                    $(document).on('click', '.contact', function () {
 
-                    var id = $(this).attr('id');
+                        var id = $(this).attr('id');
 
-                    $('.contact').removeClass('active');
-                    $(this).addClass('active');
-                    $('#activecontactid').val(id);
-                    $('#lbl_' + id).text('');
-                    $('#discussion').empty();
+                        $('.contact').removeClass('active');
+                        $(this).addClass('active');
+                        $('#activecontactid').val(id);
+                        $('#lbl_' + id).text('');
+                        $('#discussion').empty();
 
-                    chat.server.getHistory($('#myid').val(), $('#activecontactid').val(), 5);
-                });
-
-                $("#open_chat").click(function () {
-                    if ($('#chatContainer').hasClass('active')) {
-                         $('#discussion').empty();
                         chat.server.getHistory($('#myid').val(), $('#activecontactid').val(), 5);
-                    }
+                    });
+
+                    $("#open_chat").click(function () {
+                        if ($('#chatContainer').hasClass('active')) {
+                             $('#discussion').empty();
+                            chat.server.getHistory($('#myid').val(), $('#activecontactid').val(), 5);
+                        }
+                    });
                 });
-            });
+            }
         });
 
         function htmlEncode(value) {
@@ -434,18 +595,31 @@
 	 decimalPoint: '.',
         thousandsSep: ''
     },
+    colors: ['#1d6fa4', '#2d9f8f', '#5a7fc4', '#d4a843', '#4caf7d', '#b05770', '#6b8cba', '#8d6bbf', '#e07b45', '#7a8fa0'],
     chart: {
         backgroundColor: '#FFF',
 	spacingTop: 40
     },
     tooltip: {
-        backgroundColor: '#FFFFFF',
-        borderColor: '#CCCCCC',
-        style: {
-           color: '#333333'
+        shared: true,
+        useHTML: true,
+        formatter: function () {
+            return window.formatGlobalChartTooltip ? window.formatGlobalChartTooltip(this) : null;
         },
-        pointFormatter: function () {
-            return Highcharts.numberFormat(this.y, 2, ',', ' ');
+        backgroundColor: '#FFFFFF',
+        borderColor: '#e2e8f0',
+        borderRadius: 8,
+        borderWidth: 1,
+        shadow: {
+            color: 'rgba(0, 0, 0, 0.08)',
+            offsetX: 0,
+            offsetY: 4,
+            opacity: 0.1,
+            width: 8
+        },
+        style: {
+           color: '#1e293b',
+           fontSize: '12px'
         }
     },
     navigation: {

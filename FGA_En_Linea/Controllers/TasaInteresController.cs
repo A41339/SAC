@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -161,7 +161,8 @@ namespace FGA.Controllers
                                 Name = "Tasa Ponderada",
                                 Data = new Data(Variacion),
                                 Color = HighChart.GetColor(0),
-                                PlotOptionsLine = HighChart.getLine()
+                                Type = ChartTypes.Spline,
+                                PlotOptionsSpline = HighChart.getSplinePercent(3)
                             }
                         };
                         
@@ -253,22 +254,22 @@ namespace FGA.Controllers
                                 Name = "Tasa Crédito",
                                 Data = new Data(Credito),
                                 Color = HighChart.GetColor(0),
-                                Type = ChartTypes.Line,
-                                PlotOptionsLine = HighChart.getLinePercent()
+                                Type = ChartTypes.Spline,
+                                PlotOptionsSpline = HighChart.getSplinePercent(3)
                             },
                             new Series{
                                 Name = "Tasa Inversiones",
                                 Data = new Data(Inversion),
                                 Color = HighChart.GetColor(1),
-                                Type = ChartTypes.Line,
-                                PlotOptionsLine = HighChart.getLineDashPercent()
+                                Type = ChartTypes.Spline,
+                                PlotOptionsSpline = HighChart.getSplineDashPercent(2)
                             },
                             new Series{
                                 Name = "Tasa Activa Implícita",
                                 Data = new Data(TasaActivo),
                                 Color = HighChart.GetColor(2),
-                                Type = ChartTypes.Line,
-                                PlotOptionsLine = HighChart.getLineDashPercent()
+                                Type = ChartTypes.Spline,
+                                PlotOptionsSpline = HighChart.getSplineDashPercent(2)
                             }
                         };
 
@@ -394,22 +395,22 @@ namespace FGA.Controllers
                                 Name = "Tasa Captaciones",
                                 Data = new Data(Captaciones),
                                 Color = HighChart.GetColor(0),
-                                Type = ChartTypes.Line,
-                                PlotOptionsLine = HighChart.getLinePercent()
+                                Type = ChartTypes.Spline,
+                                PlotOptionsSpline = HighChart.getSplinePercent(3)
                             },
                             new Series{
                                 Name = "Tasa Obligaciones",
                                 Data = new Data(Obligaciones),
                                 Color = HighChart.GetColor(1),
-                                Type = ChartTypes.Line,
-                                PlotOptionsLine = HighChart.getLineDashPercent()
+                                Type = ChartTypes.Spline,
+                                PlotOptionsSpline = HighChart.getSplineDashPercent(2)
                             },
                             new Series{
                                 Name = "Tasa Pasiva Implícita",
                                 Data = new Data(TasaPasivo),
                                 Color = HighChart.GetColor(2),
-                                Type = ChartTypes.Line,
-                                PlotOptionsLine = HighChart.getLineDashPercent()
+                                Type = ChartTypes.Spline,
+                                PlotOptionsSpline = HighChart.getSplineDashPercent(2)
                             }
                         };
 
@@ -436,46 +437,46 @@ namespace FGA.Controllers
                         series = new Series[]
                         {
                         new Series{
+                            Name = "Margen Ponderado",
+                            Data = new Data(Margen),
+                            Color = ColorTranslator.FromHtml("#0d7682"),
+                            Type = ChartTypes.Areaspline,
+                            PlotOptionsAreaspline = HighChart.getAreasplinePercent(0.18, 2)
+                        },
+                        new Series{
                             Name = "Tasa Activa Implícita",
                             Data = new Data(TasaActivo),
-                            Color = HighChart.GetColor(0),
-                            Type = ChartTypes.Line,
-                            PlotOptionsLine = HighChart.getLinePercent()
+                            Color = ColorTranslator.FromHtml("#0284c7"),
+                            Type = ChartTypes.Spline,
+                            PlotOptionsSpline = HighChart.getSplinePercent(3)
                         },
                         new Series{
                             Name = "Tasa Pasiva Implícita",
                             Data = new Data(TasaPasivo),
-                            Color = HighChart.GetColor(1),
-                            Type = ChartTypes.Line,
-                            PlotOptionsLine = HighChart.getLinePercent()
-                        },
-                        new Series{
-                            Name = "Margen Ponderado",
-                            Data = new Data(Margen),
-                            Color = HighChart.GetColor(2),
-                            Type = ChartTypes.Line,
-                            PlotOptionsLine = HighChart.getLinePercent()
+                            Color = ColorTranslator.FromHtml("#ea580c"),
+                            Type = ChartTypes.Spline,
+                            PlotOptionsSpline = HighChart.getSplineDashPercent(2)
                         },
                         new Series{
                             Name = "Tasa Activa Implícita (Promedio)",
                             Data = new Data(TasaActivoP),
                             Color = HighChart.GetColor(3),
-                            Type = ChartTypes.Line,
-                            PlotOptionsLine = HighChart.getLineDashPercent()
+                            Type = ChartTypes.Spline,
+                            PlotOptionsSpline = HighChart.getSplineDashPercent(2)
                         },
                         new Series{
                             Name = "Tasa Pasiva Implícita (Promedio)",
                             Data = new Data(TasaPasivoP),
                             Color = HighChart.GetColor(4),
-                            Type = ChartTypes.Line,
-                            PlotOptionsLine = HighChart.getLineDashPercent()
+                            Type = ChartTypes.Spline,
+                            PlotOptionsSpline = HighChart.getSplineDashPercent(2)
                         },
                         new Series{
                             Name = "Margen Ponderado (Promedio)",
                             Data = new Data(MargenP),
                             Color = HighChart.GetColor(5),
-                            Type = ChartTypes.Line,
-                            PlotOptionsLine = HighChart.getLineDashPercent()
+                            Type = ChartTypes.Spline,
+                            PlotOptionsSpline = HighChart.getSplineDashPercent(2)
                         }
                         };
 

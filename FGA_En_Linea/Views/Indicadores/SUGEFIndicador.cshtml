@@ -1,4 +1,4 @@
-@{
+﻿@{
     ViewBag.Title = "Sugef - Indicador";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -60,7 +60,7 @@
                                         <th> Bancos privados y cooperativos </th>
                                         <th> Empresas financieras no bancarias </th>
                                         <th> Otras entidades financieras </th>
-                                        <th> Organizaciones cooperativas de ahorro y crédito </th>
+                                        <th> Organizaciones cooperativas de ahorro y cr&eacute;dito </th>
                                         <th> Entidades autorizadas sistema financiero nacional vivienda </th>
                                         <th> Total </th>
                                         <th style="width: 50px;"></th>
@@ -78,42 +78,65 @@
             </div>
         </div>
     </div>
+</section>
 
-    <div class="modal fade" id="graphModal" tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div id="grafica">
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
-                </div>
+<!-- Modal Grafico Detalle -->
+<div class="modal fade" id="graphModal" tabindex="-1" role="dialog" aria-labelledby="graphModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" style="max-width: 900px; width: 92%; margin: 30px auto;">
+        <div class="modal-content" style="border-radius: 14px; overflow: hidden; border: none; box-shadow: 0 16px 40px rgba(0,0,0,0.25);">
+            <div id="grafica"></div>
+            <div class="modal-footer" style="background: #f8fafc; border-top: 1px solid #e2e8f0; padding: 12px 20px; display: flex; justify-content: flex-end;">
+                <button type="button" class="btn-modern-filter" data-dismiss="modal" style="padding: 8px 22px; border-radius: 8px; background: #64748b;">
+                    <i class="fa fa-times"></i> Cerrar
+                </button>
             </div>
         </div>
     </div>
+</div>
 
-</section>
+<style>
+    /* Prevenir parpadeo en graficos dentro de modales */
+    #graphModal .modal-body {
+        overflow: hidden !important;
+    }
+    #graphModal .highcharts-container {
+        overflow: visible !important;
+    }
+    #graphModal .highcharts-tooltip,
+    #graphModal .highcharts-tooltip * {
+        pointer-events: none !important;
+    }
+</style>
 
 <script type="text/javascript">
 
      function getGraph(id, estilo) {
-
         $.ajax({
             url: '@Url.Action("GraficaDetalleSugef", "Indicadores")',
             type: 'POST',
             cache: false,
-            async: false,
+            async: true,
             data: {
-                    'PeriodoI':  $('#PeriodoI').val(),
-                    'PeriodoF':  $('#PeriodoF').val(),
-                    'Id': id
+                'PeriodoI':  $('#PeriodoI').val(),
+                'PeriodoF':  $('#PeriodoF').val(),
+                'Id': id
             },
-                success: function (result) {
+            success: function (result) {
                 $('#grafica').html(result);
+                $('#graphModal').modal('show');
             }
         });
-
-        $('#graphModal').modal('show');
     }
+
+    $('#graphModal').on('shown.bs.modal', function () {
+        if (typeof Highcharts !== 'undefined' && Highcharts.charts) {
+            Highcharts.charts.forEach(function (c) {
+                if (c) {
+                    try { c.reflow(); } catch (e) {}
+                }
+            });
+        }
+    });
 
     function formatMillion() {
         return this.value;

@@ -28,54 +28,43 @@
 
         <div class="row">
             <div class="col-xs-12">
-                <div class="box box-solid box-info">
-                    <div class="box-body table-responsive">
-                        <div class="margin">
-                            <div class="streaming-table">
-                                <span id="found" class="label label-info"></span>
-                                <table class="table table-condensed table-striped table-bordered">
-                                    <tr>
-                                        <td class="mobile">
-                                            @Html.Label("Entidad:")
-                                        </td>
-                                        <td>
-                                            @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", style = "width: 200px;" })
-                                        </td>
-                                        <td class="mobile">
-                                            @Html.Label("Periodo 1:")
-                                        </td>
-                                        <td nowrap="nowrap">
-                                            <input name="Periodo1" id="Periodo1" class="datecontrol" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MM/yyyy")" />
-                                        </td>
-                                        <td>
-                                            <label class="btn btn-facebook">
-                                                Generar<input type="submit" name="submit" style="display: none;">
-                                            </label>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="mobile">
-                                            @Html.Label("Periodo 2:")
-                                        </td>
-                                        <td nowrap="nowrap">
-                                            <input name="Periodo2" id="Periodo2" class="datecontrol" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MM/yyyy")" />
-                                        </td>
-                                        <td class="mobile">
-                                            @Html.Label("Periodo 3:")
-                                        </td>
-                                        <td nowrap="nowrap">
-                                            <input name="Periodo3" id="Periodo3" class="datecontrol" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo3"].ToString()).ToString("MM/yyyy")" />
-                                        </td>
-                                        <td>
-                                            @Html.Label("Dos periodos:")
-                                            @Html.CheckBox("chkprivate", false)
-                                        </td>
-                                    </tr>
-                                </table>
+                <div class="modern-filter-card">
+                    <div class="modern-filter-toolbar">
+                        <div class="filter-item">
+                            <label for="IdEntidad"><i class="fa fa-university"></i> Entidad:</label>
+                            @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", @class = "form-control modern-select", style = "min-width: 220px;" })
+                        </div>
+                        <div class="filter-item">
+                            <label for="Periodo1"><i class="fa fa-calendar"></i> Periodo 1:</label>
+                            <div class="modern-input-wrapper">
+                                <input name="Periodo1" id="Periodo1" class="datecontrol form-control modern-date-input" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MM/yyyy")" style="min-width: 130px;" />
                             </div>
+                        </div>
+                        <div class="filter-item">
+                            <label for="Periodo2"><i class="fa fa-calendar"></i> Periodo 2:</label>
+                            <div class="modern-input-wrapper">
+                                <input name="Periodo2" id="Periodo2" class="datecontrol form-control modern-date-input" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MM/yyyy")" style="min-width: 130px;" />
+                            </div>
+                        </div>
+                        <div class="filter-item">
+                            <label for="Periodo3"><i class="fa fa-calendar"></i> Periodo 3:</label>
+                            <div class="modern-input-wrapper">
+                                <input name="Periodo3" id="Periodo3" class="datecontrol form-control modern-date-input" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo3"].ToString()).ToString("MM/yyyy")" style="min-width: 130px;" />
+                            </div>
+                        </div>
+                        <div class="filter-item" style="display: inline-flex; align-items: center; gap: 8px; margin-top: 22px;">
+                            @Html.CheckBox("chkprivate", false, new { style = "width: 18px; height: 18px; margin: 0; cursor: pointer;" })
+                            <label for="chkprivate" style="margin-bottom: 0; cursor: pointer;">Dos periodos</label>
+                        </div>
+                        <div class="filter-item" style="margin-left: auto;">
+                            <button type="submit" name="submit" class="btn-modern-filter">
+                                <i class="fa fa-search"></i> Generar
+                            </button>
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
                 <div>
                     <div class="nav-tabs-custom">
                         <ul class="nav nav-tabs">

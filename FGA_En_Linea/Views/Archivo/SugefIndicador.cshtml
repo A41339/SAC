@@ -14,33 +14,49 @@
     @using (Html.BeginForm("SugefIndicador", "Archivo", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmFile" }))
     {
         @Html.AntiForgeryToken()
-        <div class="box box-solid box-info">
-            <div class="box-body table-responsive">
-                <div class="margin">
-                    <div class="streaming-table">
-                        <span id="found" class="label label-info"></span>
-                        <table>
-                            <tr>
-                                <td>
-                                    <label class="btn btn-default">
-                                        Browse&hellip; <input type="file" name="xlsFile" style="display: none;">
-                                    </label>
-                                </td>
-                                <td>
-                                    <label class="btn btn-facebook">
-                                        Cargar<input type="submit" name="submit" style="display: none;">
-                                    </label>
-                                </td>
-                            </tr>
-                        </table>
-                        <br />
-                        <div class="progress">
-                            <div class="progress-bar"></div>
-                            <div class="percent">0%</div>
-                        </div>
-                        <div id="status" style="color: darkred;"></div>
+        <div class="modern-upload-card">
+            <div class="modern-upload-header">
+                <div class="modern-upload-title-box">
+                    <div class="upload-icon-circle">
+                        <i class="fa fa-file-excel-o"></i>
+                    </div>
+                    <div>
+                        <h4 class="modern-upload-title">Carga de Archivo SUGEF - Indicador</h4>
+                        <p class="modern-upload-subtitle">Seleccione el archivo Excel (.xls, .xlsx) correspondiente</p>
                     </div>
                 </div>
+            </div>
+
+            <div class="modern-upload-body">
+                <div class="modern-upload-controls">
+                    <label class="btn-modern-browse" for="xlsFileInput">
+                        <i class="fa fa-folder-open"></i>
+                        <span>Examinar&hellip;</span>
+                        <input type="file" name="xlsFile" id="xlsFileInput" accept=".xls,.xlsx" style="display: none;">
+                    </label>
+
+                    <div class="modern-file-pill" id="filePill">
+                        <i class="fa fa-file-excel-o file-pill-icon"></i>
+                        <span class="file-pill-name">Ning&uacute;n archivo seleccionado</span>
+                    </div>
+
+                    <button type="submit" class="btn-modern-upload" id="btnUploadSubmit" disabled>
+                        <i class="fa fa-cloud-upload"></i>
+                        <span>Cargar</span>
+                    </button>
+                </div>
+
+                <div class="modern-upload-progress" id="uploadProgressWrapper" style="display: none;">
+                    <div class="progress-info">
+                        <span class="progress-label"><i class="fa fa-spinner fa-spin"></i> Subiendo archivo al servidor...</span>
+                        <span class="percent">0%</span>
+                    </div>
+                    <div class="progress modern-progress-track">
+                        <div class="progress-bar modern-progress-bar" role="progressbar" style="width: 0%;"></div>
+                    </div>
+                </div>
+
+                <div id="status" class="modern-upload-status"></div>
             </div>
         </div>
     }
@@ -52,32 +68,64 @@
 
 <script>
     (function () {
-
         var bar = $('.progress-bar');
         var percent = $('.percent');
         var status = $('#status');
+        var fileInput = $('#xlsFileInput');
+        var filePill = $('#filePill');
+        var fileNameSpan = $('#filePill .file-pill-name');
+        var submitBtn = $('#btnUploadSubmit');
+        var progressWrapper = $('#uploadProgressWrapper');
+
+        fileInput.on('change', function () {
+            var fullPath = $(this).val();
+            var fileName = fullPath.split('\\').pop().split('/').pop();
+            if (fileName && fileName.trim() !== '') {
+                fileNameSpan.text(fileName);
+                filePill.addClass('has-file');
+                submitBtn.prop('disabled', false);
+            } else {
+                fileNameSpan.html('Ning&uacute;n archivo seleccionado');
+                filePill.removeClass('has-file');
+                submitBtn.prop('disabled', true);
+            }
+        });
 
         $('form').ajaxForm({
             beforeSend: function () {
                 status.empty();
                 var percentVal = '0%';
-                bar.width(percentVal)
+                bar.width(percentVal);
                 percent.html(percentVal);
+                progressWrapper.slideDown(200);
+                submitBtn.prop('disabled', true);
             },
             uploadProgress: function (event, position, total, percentComplete) {
                 var percentVal = percentComplete + '%';
-                bar.width(percentVal)
+                bar.width(percentVal);
                 percent.html(percentVal);
             },
             success: function () {
                 var percentVal = '100%';
-                bar.width(percentVal)
+                bar.width(percentVal);
                 percent.html(percentVal);
             },
             complete: function (xhr) {
-                status.html(xhr.responseText);
                 if (xhr.responseText == '') {
+                    status.html('<div class="alert alert-success" style="margin-top: 14px; padding: 10px 16px; border-radius: 8px; font-weight: 500;"><i class="fa fa-check-circle" style="margin-right: 6px;"></i> Archivo procesado exitosamente.</div>');
                     loadPartialView();
+
+                    setTimeout(function () {
+                        progressWrapper.slideUp(300);
+                        fileInput.val('');
+                        fileNameSpan.html('Ning&uacute;n archivo seleccionado');
+                        filePill.removeClass('has-file');
+                        submitBtn.prop('disabled', true);
+                    }, 2500);
+                } else {
+                    progressWrapper.slideUp(300);
+                    submitBtn.prop('disabled', false);
+                    status.html('<div class="alert alert-danger" style="margin-top: 14px; padding: 10px 16px; border-radius: 8px; font-weight: 500;"><i class="fa fa-exclamation-circle" style="margin-right: 6px;"></i> ' + xhr.responseText + '</div>');
                 }
             }
         });

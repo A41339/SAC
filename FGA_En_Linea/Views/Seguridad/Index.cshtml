@@ -2,7 +2,22 @@
 
 @{
     ViewBag.Title = "Sesiones";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
+<section class="content-header" style="padding: 24px 20px 14px 20px;">
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+        <div>
+            <h1 style="margin: 0; font-size: 21px; font-weight: 700; color: #143750; display: flex; align-items: center; gap: 10px;">
+                <i class="fa fa-shield" style="color: #0284c7;"></i>
+                Monitoreo de Sesiones y Accesos
+            </h1>
+            <p style="margin: 6px 0 0 0; font-size: 13px; color: #64748b;">
+                Supervise la actividad y los accesos de usuarios por entidad y tipo de rol en tiempo real.
+            </p>
+        </div>
+    </div>
+</section>
 
 <section class="content">
 
@@ -11,23 +26,18 @@
         @Html.AntiForgeryToken()
         <div class="row">
             <div class="col-xs-12">
-                <div class="streaming-table">
-                    <div class="box box-primary">
-                        <div class="box-body">
-                            <span id="found" class="label label-info"></span>
-                            <table class="table table-condensed table-striped table-bordered" style="padding-left: 10px;">
-                                <tr>
-                                    <td>
-                                        @Html.Label("Fecha:")
-                                        <input name="Fecha" id="Fecha" style="width: 100px" class="datecontrol" value="@Session["Fecha"]" />
-                                    </td>
-                                    <td>
-                                        <label class="btn btn-facebook">
-                                            Generar<input type="submit" name="submit" style="display: none;">
-                                        </label>
-                                    </td>
-                                </tr>
-                            </table>
+                <div class="modern-filter-card" style="margin-bottom: 20px;">
+                    <div class="modern-filter-toolbar">
+                        <div class="filter-item">
+                            <label for="Fecha"><i class="fa fa-calendar"></i> Fecha:</label>
+                            <div class="modern-input-wrapper">
+                                <input name="Fecha" id="Fecha" class="datecontrol form-control modern-date-input" value="@Session["Fecha"]" style="min-width: 140px;" />
+                            </div>
+                        </div>
+                        <div class="filter-item" style="margin-left: auto;">
+                            <button type="submit" name="submit" class="btn-modern-filter">
+                                <i class="fa fa-search"></i> Consultar fecha
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -37,22 +47,50 @@
 
     <div class="row">
         <div class="col-xs-12">
-            <div class="box box-solid box-info">
-                <div class="box-body table-responsive">
-                    <div class="margin">
-                        <div class="streaming-table">
-                            <span id="found" class="label label-info"></span>
-                            <br />
-                            <div id="files">
-                                @Html.Partial("DetailSession", Model)
-                            </div>
-                        </div>
+            <div class="modern-table-card" style="border: 1px solid #e2e8f0; border-radius: 12px; background: #ffffff; box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05); overflow: hidden; padding: 20px 22px; margin-bottom: 24px;">
+                
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+                    <div>
+                        <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: #143750; display: flex; align-items: center; gap: 7px;">
+                            <i class="fa fa-users" style="color: #0284c7;"></i>
+                            Actividad de sesiones por entidad
+                        </h4>
+                        <p style="margin: 3px 0 0 0; font-size: 12px; color: #64748b;">
+                            Actualización automática cada 10 segundos · Período consultado: <strong>@Session["Fecha"]</strong>
+                        </p>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span class="live-badge" style="display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; color: #059669; background: #dcfce7; padding: 4px 10px; border-radius: 20px;">
+                            <span style="width: 7px; height: 7px; border-radius: 50%; background: #10b981;"></span> EN VIVO
+                        </span>
+                        <button type="button" onclick="loadPartialView();" class="btn-modern-filter" style="padding: 5px 14px; font-size: 12px; height: 32px; border-radius: 7px;" title="Actualizar ahora">
+                            <i class="fa fa-refresh"></i> Actualizar
+                        </button>
                     </div>
                 </div>
+
+                <div id="files">
+                    @Html.Partial("DetailSession", Model)
+                </div>
+
             </div>
         </div>
     </div>
 </section>
+
+<style>
+    /* Centrado de columnas de cantidades y roles en la tabla de sesiones */
+    #tbRole th.mobile,
+    #tbRole td.mobile,
+    #tbRole th:nth-child(n+3),
+    #tbRole td:nth-child(n+3) {
+        text-align: center !important;
+    }
+    #tbRole td:nth-child(n+3) span {
+        margin: 0 auto !important;
+        text-align: center !important;
+    }
+</style>
 
 <script type="text/javascript">
 

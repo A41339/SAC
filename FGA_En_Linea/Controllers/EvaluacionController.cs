@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -191,8 +191,10 @@ namespace FGA.Controllers
                 var result = from c in tak
                              select new string[] { c.Id.ToString(),
                                                     Convert.ToString(c.Enunciado),
-                                                    "<a data-toggle=\"tooltip\" data-placement=\"top\" title=\"Borrar\" href=\"javascript:borrarPregunta('" + c.Id + "')\" class=\"btn_danger\"><i class=\"btn btn-danger icon fa fa-trash\"></i></a> " +
-                                                    "<a data-toggle=\"tooltip\" data-placement=\"top\" title=\"Modificar\" href=\"javascript:modificarPregunta('" + c.Id + "','" + c.Enunciado + "','" + c.OpcionA + "','" + c.OpcionB + "','" + c.OpcionC + "','" + c.OpcionD + "')\" class=\"btn_info\"><i class=\"btn btn-info icon fa fa-edit\"></i></a>"
+                                                     "<div style=\"display:flex;gap:6px;align-items:center;\">" +
+                                                     "<a data-toggle=\"tooltip\" data-placement=\"top\" title=\"Borrar\" href=\"javascript:borrarPregunta('" + c.Id + "')\" style=\"display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:7px;background:#ef4444;color:#fff;border:none;cursor:pointer;text-decoration:none;\"><i class=\"fa fa-trash\" style=\"font-size:13px;\"></i></a>" +
+                                                     "<a data-toggle=\"tooltip\" data-placement=\"top\" title=\"Modificar\" href=\"javascript:modificarPregunta('" + c.Id + "','" + c.Enunciado + "','" + c.OpcionA + "','" + c.OpcionB + "','" + c.OpcionC + "','" + c.OpcionD + "')\" style=\"display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:7px;background:#143750;color:#fff;border:none;cursor:pointer;text-decoration:none;\"><i class=\"fa fa-edit\" style=\"font-size:13px;\"></i></a>" +
+                                                     "</div>"
                               };
 
                 return Json(new { aaData = result }, JsonRequestBehavior.AllowGet);
@@ -210,9 +212,11 @@ namespace FGA.Controllers
                 var result = from c in tak
                              select new string[] { c.Id.ToString(),
                                                     Convert.ToString(c.Enunciado),
-                                                    "<a data-toggle=\"tooltip\" data-placement=\"top\" title=\"Borrar\" href=\"javascript:borrarSubCategoria('" + c.Id + "')\" class=\"btn_danger\"><i class=\"btn btn-danger icon fa fa-trash\"></i></a> " +
-                                                    "<a data-toggle=\"tooltip\" data-placement=\"top\" title=\"Modificar\" href=\"javascript:modificarSubCategoria('" + c.Id + "','" + c.Enunciado + "')\" class=\"btn_info\"><i class=\"btn btn-info icon fa fa-edit\"></i></a>" +
-                                                    "<a data-toggle=\"tooltip\" data-placement=\"top\" title=\"Preguntas\" href=\"javascript:verPreguntas('" + c.Id.ToString() + "','" + c.Enunciado + "')\" class=\"btn_aceptar\"><i class=\"btn btn-success icon fa fa-question\"></i></a>"
+                                                     "<div style=\"display:flex;gap:6px;align-items:center;\">" +
+                                                     "<a data-toggle=\"tooltip\" data-placement=\"top\" title=\"Borrar\" href=\"javascript:borrarSubCategoria('" + c.Id + "')\" style=\"display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:7px;background:#ef4444;color:#fff;border:none;cursor:pointer;text-decoration:none;\"><i class=\"fa fa-trash\" style=\"font-size:13px;\"></i></a>" +
+                                                     "<a data-toggle=\"tooltip\" data-placement=\"top\" title=\"Modificar\" href=\"javascript:modificarSubCategoria('" + c.Id + "','" + c.Enunciado + "')\" style=\"display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:7px;background:#143750;color:#fff;border:none;cursor:pointer;text-decoration:none;\"><i class=\"fa fa-edit\" style=\"font-size:13px;\"></i></a>" +
+                                                     "<a data-toggle=\"tooltip\" data-placement=\"top\" title=\"Preguntas\" href=\"javascript:verPreguntas('" + c.Id.ToString() + "','" + c.Enunciado + "')\" style=\"display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:7px;background:#059669;color:#fff;border:none;cursor:pointer;text-decoration:none;\"><i class=\"fa fa-question\" style=\"font-size:13px;\"></i></a>" +
+                                                     "</div>"
                               };
 
                 return Json(new { aaData = result }, JsonRequestBehavior.AllowGet);

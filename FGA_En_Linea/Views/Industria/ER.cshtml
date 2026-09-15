@@ -1,50 +1,50 @@
 ﻿@{
-    ViewBag.Title = "Estado de Resultados";
+    ViewBag.Title = "Estado de Resultados del Sistema Financiero";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<section class="content-header">
-    <h1>
-        Estado de Resultados
-    </h1>
+<section class="content-header" style="padding: 24px 20px 14px 20px;">
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+        <div>
+            <h1 style="margin: 0; font-size: 21px; font-weight: 700; color: #143750; display: flex; align-items: center; gap: 10px;">
+                <i class="fa fa-file-text-o" style="color: #0284c7;"></i>
+                Estado de Resultados del Sistema Financiero
+            </h1>
+            <p style="margin: 6px 0 0 0; font-size: 13px; color: #64748b;">
+                Descarga y consulta del estado de resultados consolidado de la industria financiera.
+            </p>
+        </div>
+    </div>
 </section>
 
 <section class="content">
-
-    <div class="box box-solid box-info">
-        <div class="box-body table-responsive">
-            <div class="margin">
-                <div class="streaming-table">
-                    <span id="found" class="label label-info"></span>
-                    <table class="table table-condensed table-striped table-bordered">
-
-                        <tr>
-                            <td class="mobile">
-                                @Html.Label("Primer Periodo:")
-                            </td>
-                            <td>
-                                <input name="Periodo1" id="Periodo1" class="datecontrol" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToShortDateString()" />
-                            </td>
-                            <td>
-                                @Html.Label("Segundo Periodo:")
-                            </td>
-                            <td>
-                                <input name="Periodo2" id="Periodo2" class="datecontrol" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToShortDateString()" />
-
-                            </td>
-                            <td>
-                                <a id="download" href="javascript:download();" class="btn btn-primary"><span>Generar</span></a>
-                            </td>
-                        </tr>
-                    </table>
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="modern-filter-card" style="margin-bottom: 22px;">
+                <div class="modern-filter-toolbar">
+                    <div class="filter-item">
+                        <label for="Periodo1"><i class="fa fa-calendar"></i> Primer Per&iacute;odo:</label>
+                        <div class="modern-input-wrapper">
+                            <input name="Periodo1" id="Periodo1" class="datecontrol form-control modern-date-input" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToShortDateString()" style="min-width: 140px; height: 38px;" />
+                        </div>
+                    </div>
+                    <div class="filter-item">
+                        <label for="Periodo2"><i class="fa fa-calendar-o"></i> Segundo Per&iacute;odo:</label>
+                        <div class="modern-input-wrapper">
+                            <input name="Periodo2" id="Periodo2" class="datecontrol form-control modern-date-input" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToShortDateString()" style="min-width: 140px; height: 38px;" />
+                        </div>
+                    </div>
+                    <div class="filter-item" style="margin-left: auto;">
+                        <a id="download" href="javascript:download();" class="btn-modern-filter" style="height: 38px; padding: 0 24px; display: inline-flex; align-items: center; gap: 8px;">
+                            <i class="fa fa-file-text-o"></i> Generar informe
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-
-    <div id="reportes">
-    </div>
+    <div id="reportes"></div>
 </section>
 
 <script type="text/javascript">

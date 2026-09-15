@@ -102,78 +102,78 @@
         background: linear-gradient(-90deg, @colorSuficiencia 100%, transparent 100%, transparent), linear-gradient(270deg, #308446 100%, #308446 100%, #308446);
         border-radius: 50%;
                 box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
-                height: 150px;
-        margin: 2em auto;
+        height: 150px;
+        margin: 0 auto;
         position: relative;
         width: 150px;
-            -webkit-transition: all .3s linear;
-                transition: all .3s linear;
-            }
+        -webkit-transition: all .3s linear;
+        transition: all .3s linear;
+    }
 
-        .circular-suficiencia::before {
-            background-color: #FAFAFA;
-            border-radius: 50%;
-            box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
-            color: rgba(0, 0, 0, 0.54);
-            content: '@(Model.IndSuficiencia.Value.ToString("N2"))%';
-            font-size: 40px;
-            font-weight: bold;
+    .circular-suficiencia::before {
+        background-color: #FAFAFA;
+        border-radius: 50%;
+        box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+        color: rgba(0, 0, 0, 0.54);
+        content: '@(Model.IndSuficiencia.Value.ToString("N2"))%';
+        font-size: 40px;
+        font-weight: bold;
         height: 100%;
         left: 0;
-            line-height: 150px;
+        line-height: 150px;
         position: absolute;
-            text-align: center;
+        text-align: center;
         top: 0;
-            -webkit-transform: scale(0.87);
-            transform: scale(0.87);
-            width: 100%;
-        }
+        -webkit-transform: scale(0.87);
+        transform: scale(0.87);
+        width: 100%;
+    }
 
     .circular-cn1 {
         background: -webkit-gradient(linear, right top, left top, color-stop(100%, #eb636b), color-stop(100%, transparent), to(transparent)),
                     -webkit-gradient(linear, right top, left top, color-stop(100%, #eb636b), color-stop(100%, #eb636b), to(#eb636b));
         background: linear-gradient(-90deg, @colorCN1 100%, transparent 100%, transparent), linear-gradient(270deg, #eb636b 100%, #eb636b 100%, #eb636b);
         border-radius: 50%;
-            box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+        box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
         height: 150px;
-        margin: 2em auto;
+        margin: 0 auto;
         position: relative;
         width: 150px;
-            -webkit-transition: all .3s linear;
+        -webkit-transition: all .3s linear;
         transition: all .3s linear;
-        }
+    }
 
-        .circular-cn1::before {
-            background-color: #FAFAFA;
-            border-radius: 50%;
-            box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+    .circular-cn1::before {
+        background-color: #FAFAFA;
+        border-radius: 50%;
+        box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
         color: rgba(0, 0, 0, 0.54);
         content: '@(Model.CN1.Value.ToString("N2"))%';
-            font-size: 40px;
-            font-weight: bold;
+        font-size: 40px;
+        font-weight: bold;
         height: 100%;
         left: 0;
-            line-height: 150px;
+        line-height: 150px;
         position: absolute;
-            text-align: center;
+        text-align: center;
         top: 0;
-            -webkit-transform: scale(0.87);
+        -webkit-transform: scale(0.87);
         transform: scale(0.87);
         width: 100%;
-        }
+    }
 
     .circular-ccn1 {
         background: -webkit-gradient(linear, right top, left top, color-stop(100%, #03A9F4), color-stop(100%, transparent), to(transparent)), -webkit-gradient(linear, right top, left top, color-stop(100%, #03A9F4), color-stop(100%, #E0E0E0), to(#E0E0E0));
         background: linear-gradient(-90deg, @colorCCN1 100%, transparent 100%, transparent), linear-gradient(270deg, #03A9F4 100%, #E0E0E0 100%, #E0E0E0);
         border-radius: 50%;
-            box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+        box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
         height: 150px;
-        margin: 2em auto;
+        margin: 0 auto;
         position: relative;
         width: 150px;
-            -webkit-transition: all .3s linear;
+        -webkit-transition: all .3s linear;
         transition: all .3s linear;
-        }
+    }
 
         .circular-ccn1::before {
             background-color: #FAFAFA;
@@ -196,50 +196,36 @@
 </style>
 <div class="row">
     <div class="col-xs-12">
-        <div class="box box-solid box-info">
-            <div class="box-body table-responsive">
-                <div class="margin">
-                    <div class="streaming-table">
-                        <span id="found" class="label label-info"></span>
-                        <table class="table table-condensed table-striped table-bordered">
-                            <tr>
-                                <td>
-                                    @Html.Label("Entidad:")
-                                </td>
-                                <td>
-                                    @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", style = "width: 200px;" })
-                                </td>
-
-                                <td>
-                                    @Html.Label("Fecha de corte:")
-                                </td>
-                                <td nowrap="nowrap">
-                                    <input name="PeriodoI" id="PeriodoI" class="datecontrol"
-                                           value="@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["PeriodoI"].ToString()).Date.ToString("MMMM yyyy"))" />
-                                    <a class="text-right" data-toggle="tooltip" data-placement="top" title="Ayuda"
-                                       href="javascript:help('Fecha de corte', 'Fecha de base a partir de la que se calcularán los escenarios tomando en cuenta 48 meses anteriores del capital social.' )"><i class="btn btn-xs btn-default icon fa fa-question"></i></a>
-                                </td>
-                                <td>
-                                    @Html.Label("Tipo de escenario:")
-                                </td>
-                                <td nowrap="nowrap">
-                                    <div class="row">
-                                        <div class="col-xs-8">
-                                            <select id="ddlEscenario" name="ddlEscenario" style="width:220px">
-                                                <option value="1" @(Model is null ? "selected" : Model.TipoEscenario == 1 ? " selected" : "")>Actual</option>
-                                                <option value="2" @(Model is null ? "selected" : Model.TipoEscenario == 2 ? " selected" : "")>Esenario Conservador</option>
-                                                <option value="3" @(Model is null ? "selected" : Model.TipoEscenario == 3 ? " selected" : "")>Esenario Máximo</option>
-                                                <option value="4" @(Model is null ? "selected" : Model.TipoEscenario == 4 ? " selected" : "")>Manual</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <input type="button" class="btn btn-facebook" value="Generar" onclick="generarSimulacion()" />
-                                </td>
-                            </tr>
-                        </table>
+        <div class="modern-filter-card">
+            <div class="modern-filter-toolbar">
+                <div class="filter-item">
+                    <label for="IdEntidad"><i class="fa fa-university"></i> Entidad:</label>
+                    @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", @class = "form-control modern-select", style = "min-width: 200px;" })
+                </div>
+                <div class="filter-item">
+                    <label for="PeriodoI"><i class="fa fa-calendar"></i> Fecha de corte:</label>
+                    <div style="display: inline-flex; align-items: center; gap: 8px;">
+                        <div class="modern-input-wrapper">
+                            <input name="PeriodoI" id="PeriodoI" class="datecontrol form-control modern-date-input" style="min-width: 140px;"
+                                   value="@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["PeriodoI"].ToString()).Date.ToString("MMMM yyyy"))" />
+                        </div>
+                        <a data-toggle="tooltip" data-placement="top" title="Ayuda"
+                           href="javascript:help('Fecha de corte', 'Fecha de base a partir de la que se calcular&aacute;n los escenarios tomando en cuenta 48 meses anteriores del capital social.' )"><i class="btn btn-xs btn-default icon fa fa-question"></i></a>
                     </div>
+                </div>
+                <div class="filter-item">
+                    <label for="ddlEscenario"><i class="fa fa-sliders"></i> Tipo de escenario:</label>
+                    <select id="ddlEscenario" name="ddlEscenario" class="form-control modern-select" style="min-width: 220px;">
+                        <option value="1" @(Model is null ? "selected" : Model.TipoEscenario == 1 ? " selected" : "")>Actual</option>
+                        <option value="2" @(Model is null ? "selected" : Model.TipoEscenario == 2 ? " selected" : "")>Escenario Conservador</option>
+                        <option value="3" @(Model is null ? "selected" : Model.TipoEscenario == 3 ? " selected" : "")>Escenario M&aacute;ximo</option>
+                        <option value="4" @(Model is null ? "selected" : Model.TipoEscenario == 4 ? " selected" : "")>Manual</option>
+                    </select>
+                </div>
+                <div class="filter-item" style="margin-left: auto;">
+                    <button type="button" class="btn-modern-filter" onclick="generarSimulacion()">
+                        <i class="fa fa-search"></i> Generar
+                    </button>
                 </div>
             </div>
         </div>
@@ -248,478 +234,413 @@
 
 <div class=@(Model.Mostrar == false ? "invisible" : "visible")>
     <div class="tab-pane" id="tab1C">
-        <div class="box-body table-responsive">
-            <div class="col-sm-12">
-                <div class="col-xs-12 col-md-3 text-center">
-                    <div class="box">
-                        <div class="box-header">
-                            <h3><b>Suficiencia</b></h3>
+        <div class="box-body" style="padding: 10px 0;">
+            <!-- Fila superior: Indicadores y Suficiencia de Escenarios -->
+            <div class="row">
+                <!-- Suficiencia Dial -->
+                <div class="col-xs-12 col-sm-6 col-md-3">
+                    <div class="simula-kpi-card">
+                        <div class="simula-kpi-header">
+                            <h3 class="simula-kpi-title"><i class="fa fa-pie-chart" style="color: #0284c7;"></i> Suficiencia</h3>
                         </div>
-                        <div class="">
-                            <div class="row flip-boxes">
-                                <div class="flip-box">
-                                    <div class="front">
-                                        <div class="text-center">
-                                            <div>
-                                                <div class="">
-                                                    <div class="circular-suficiencia"> </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                        <div class="simula-kpi-body">
+                            <div class="simula-flip-container">
+                                <div class="simula-flip-card">
+                                    <div class="simula-flip-front">
+                                        <div class="circular-suficiencia"></div>
+                                        <span style="font-size: 11px; color: #94a3b8; margin-top: 6px; display: inline-flex; align-items: center; gap: 4px;">
+                                            <i class="fa fa-info-circle"></i> Pasa el cursor para ver rangos
+                                        </span>
                                     </div>
-                                    <div class="back">
-                                        <div class='my-legend'>
-                                            <div style="display: flex; justify-content: center;">
-                                                <div class='my-legend'>
-                                                    <br />
-                                                    @if (Model.Perfil != 2)
-                                                    {
-                                                        <p style="font-size: 1.3rem;"><b>Normalidad 1:</b> Igual o mayor al 14%</p>
-                                                        <p style="font-size: 1.3rem;">
-                                                            <b>Normalidad 2:</b> Menor al 14% pero igual o mayor a 12%
-                                                        </p>
-                                                        <p style="font-size: 1.3rem;">
-                                                            <b>Normalidad 3:</b> Menor al 12% pero igual o mayor al 10%
-                                                        </p>
-                                                        <p style="font-size: 1.3rem;">
-                                                            <b>Irregularidad 1:</b> Menor al 10% pero mayor o igual al 9%
-                                                        </p>
-                                                        <p style="font-size: 1.3rem;">
-                                                            <b>Irregularidad 2:</b> Menor al 9% pero mayor o igual a 8%
-                                                        </p>
-                                                        <p style="font-size: 1.3rem;">
-                                                            <b>Irregularidad 3:</b> Menor al 8%
-                                                        </p>
-                                                    }
-                                                    else
-                                                    {
-                                                        <p style="font-size: 1.3rem;"><b>Normalidad 1:</b> Igual o mayor al 16%</p>
-                                                        <p style="font-size: 1.3rem;">
-                                                            <b>Normalidad 2:</b> Menor al 16% pero igual o mayor a 14%
-                                                        </p>
-                                                        <p style="font-size: 1.3rem;">
-                                                            <b>Normalidad 3:</b> Menor al 14% pero igual o mayor al 12%
-                                                        </p>
-                                                        <p style="font-size: 1.3rem;">
-                                                            <b>Irregularidad 1:</b> Menor al 12% pero mayor o igual al 10%
-                                                        </p>
-                                                        <p style="font-size: 1.3rem;">
-                                                            <b>Irregularidad 2:</b> Menor al 10% pero mayor o igual a 9%
-                                                        </p>
-                                                        <p style="font-size: 1.3rem;">
-                                                            <b>Irregularidad 3:</b> Menor al 9%
-                                                        </p>
-                                                    }
-                                                </div>
-                                            </div>
+                                    <div class="simula-flip-back">
+                                        <div class="simula-legend-title">
+                                            <i class="fa fa-list-ul" style="color: #0284c7;"></i> Rangos Normativos
+                                        </div>
+                                        <div class="simula-legend-list">
+                                            @if (Model.Perfil != 2)
+                                            {
+                                                <div class="simula-legend-row"><span class="legend-dot" style="background: #10b981;"></span><span class="legend-label">Normalidad 1</span><span class="legend-val">&ge; 14.0%</span></div>
+                                                <div class="simula-legend-row"><span class="legend-dot" style="background: #22c55e;"></span><span class="legend-label">Normalidad 2</span><span class="legend-val">12% - 14%</span></div>
+                                                <div class="simula-legend-row"><span class="legend-dot" style="background: #84cc16;"></span><span class="legend-label">Normalidad 3</span><span class="legend-val">10% - 12%</span></div>
+                                                <div class="simula-legend-row"><span class="legend-dot" style="background: #eab308;"></span><span class="legend-label">Irregularidad 1</span><span class="legend-val">9% - 10%</span></div>
+                                                <div class="simula-legend-row"><span class="legend-dot" style="background: #f97316;"></span><span class="legend-label">Irregularidad 2</span><span class="legend-val">8% - 9%</span></div>
+                                                <div class="simula-legend-row"><span class="legend-dot" style="background: #ef4444;"></span><span class="legend-label">Irregularidad 3</span><span class="legend-val">&lt; 8.0%</span></div>
+                                            }
+                                            else
+                                            {
+                                                <div class="simula-legend-row"><span class="legend-dot" style="background: #10b981;"></span><span class="legend-label">Normalidad 1</span><span class="legend-val">&ge; 16.0%</span></div>
+                                                <div class="simula-legend-row"><span class="legend-dot" style="background: #22c55e;"></span><span class="legend-label">Normalidad 2</span><span class="legend-val">14% - 16%</span></div>
+                                                <div class="simula-legend-row"><span class="legend-dot" style="background: #84cc16;"></span><span class="legend-label">Normalidad 3</span><span class="legend-val">12% - 14%</span></div>
+                                                <div class="simula-legend-row"><span class="legend-dot" style="background: #eab308;"></span><span class="legend-label">Irregularidad 1</span><span class="legend-val">10% - 12%</span></div>
+                                                <div class="simula-legend-row"><span class="legend-dot" style="background: #f97316;"></span><span class="legend-label">Irregularidad 2</span><span class="legend-val">9% - 10%</span></div>
+                                                <div class="simula-legend-row"><span class="legend-dot" style="background: #ef4444;"></span><span class="legend-label">Irregularidad 3</span><span class="legend-val">&lt; 9.0%</span></div>
+                                            }
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="text-center">
-                        </div>
-                        <div class="box-footer">
-                            <h3>
-                                @if (Model.Perfil != 2)
-                                {
-                                    <label class="label label-success">Normalidad mayor a 10%</label>
-                                }
-                                else
-                                {
-                                    <label class="label label-success">Normalidad mayor a 12%</label>
-                                }
-                            </h3>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xs-12 col-md-3 text-center">
-                    <div class="box">
-                        <div class="box-header">
-                            <h3><b>CN1</b></h3>
-                        </div>
-                        <div class="row flip-boxes">
-                            <div class="flip-box">
-                                <div class="front">
-                                    <div class="text-center">
-                                        <div>
-                                            <div class="">
-                                                <div class="circular-cn1"> </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="back">
-                                    <br /><br />  <br />
-                                    <div class='my-legend'>
-                                        <br /> <br /> <br />
-                                        <div style="display: flex; justify-content: center;">
-                                            <div class='legend-scale'>
-                                                <ul class='legend-labels'>
-                                                    @if (Model.Perfil != 2)
-                                                    {
-                                                        <li><span style='background: #0f9747;'></span>>= 8</li>
-                                                        <li><span style='background: yellow;'></span>7 - 8</li>
-                                                        <li><span style='background: #ee1f25;'></span>6 - 7</li>
-                                                        <li><span style='background: #ee1f25;'></span>< 6</li>
-                                                    }
-                                                    else
-                                                    {
-                                                        <li><span style='background: #0f9747;'></span>>= 12.5</li>
-                                                        <li><span style='background: yellow;'></span>11.25 - 12.5</li>
-                                                        <li><span style='background: #ee1f25;'></span>10 - 11.25</li>
-                                                        <li><span style='background: #ee1f25;'></span>< 10</li>
-                                                    }
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="text-center">
-                        </div>
-                        <div class="box-footer">
-                            <h3>
-                                @if (Model.Perfil != 2)
-                                {
-                                    <label class="label label-success">Normalidad mayor a 8%</label>
-                                }
-                                else
-                                {
-                                    <label class="label label-success">Normalidad mayor a 10%</label>
-                                }
-
-                            </h3>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xs-12 col-md-3 text-center">
-                    <div class="box">
-                        <div class="box-header">
-                            <h3>
-                                <b style="padding-right:10px;">CCN1</b>
-                            </h3>
-                        </div>
-                        <div class="row flip-boxes">
-                            <div class="flip-box">
-                                <div class="front">
-                                    <div class="text-center">
-                                        <div>
-                                            <div class="">
-                                                <div class="circular-ccn1"> </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="back">
-                                    <br /><br />  <br />
-                                    <div class='my-legend'>
-                                        <br /> <br /> <br />
-                                        <div style="display: flex; justify-content: center;">
-                                            <div class='legend-scale'>
-                                                <ul class='legend-labels'>
-                                                    @if (Model.Perfil != 2)
-                                                    {
-                                                        <li><span style='background: #336699;'></span>>= 6.5</li>
-                                                        <li><span style='background: yellow;'></span>6.5 - 5.5</li>
-                                                        <li><span style='background: #ee1f25;'></span>5.5 - 4.5</li>
-                                                        <li><span style='background: #ee1f25;'></span>< 4.5</li>
-                                                    }
-                                                    else
-                                                    {
-                                                        <li><span style='background: #336699;'></span>>= 11</li>
-                                                        <li><span style='background: yellow;'></span>11 - 9.75</li>
-                                                        <li><span style='background: #ee1f25;'></span>9.75 - 8.5</li>
-                                                        <li><span style='background: #ee1f25;'></span>< 8.5</li>
-                                                    }
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="text-center">
-                        </div>
-                        <div class="box-footer">
-                            <h3>
-                                @if (Model.Perfil != 2)
-                                {
-                                    <label class="label label-success">Normalidad mayor a 6.5%</label>
-                                }
-                                else
-                                {
-                                    <label class="label label-success">Normalidad mayor a 8.5%</label>
-                                }
-                            </h3>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xs-12 col-md-3 text-center">
-                    <div class="box">
-                        <div class="box-header">
-                            <h3>
-                                <b style="padding-right:10px;">Suficiencia de Escenarios</b>
-                            </h3>
-                        </div>
-                        <div class="text-center">
-                            <table id="tbResultados" class="table table-striped table-bordered" style="padding: 15px;">
-                                <tbody>
-                                    <tr>
-                                        <td align="left">
-                                            Capital base
-                                        </td>
-                                        <td class="text-right">
-                                            <input name="CapitalBase" readonly id="CapitalBase" class="text-right" style="width: 170px; border-style: none" value="@Model.CapitalBase.Value.ToString("N2")" />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td align="left">
-                                            IMCA
-                                        </td>
-                                        <td class="text-right">
-                                            <input name="IMCA" id="IMCA" class="text-right" style="width: 170px; border-style: none" value="@Model.Imca.Value.ToString("N2")" />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td align="left">
-                                            % IMCA/Capital
-                                        </td>
-                                        <td class="text-right">
-                                            <input name="IMCA_Capital" readonly id="IMCA_Capital" class="text-right" style="width: 170px; border-style: none" value="@Model.ImcaCapital.Value.ToString("N2")%" />
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            <br />
-                        </div>
-                        <div class="box-footer">
-                            <input type="submit" id="btn_generar" value="Descargar reporte" class="btn btn-info" name="command" />
+                        <div class="simula-kpi-footer text-center">
+                            @if (Model.Perfil != 2)
+                            {
+                                <span class="simula-badge-status"><i class="fa fa-check-circle"></i> Normalidad mayor a 10%</span>
+                            }
+                            else
+                            {
+                                <span class="simula-badge-status"><i class="fa fa-check-circle"></i> Normalidad mayor a 12%</span>
+                            }
                         </div>
                     </div>
                 </div>
 
-                <div class="col-md-5">
-                    <div class="box box-primary">
-                        <div class="box-body">
-                            <span id="found" class="label label-info"></span>
-                            <div class="box-header with-border">
-                                <img width="50" height="50" src="@Session["Logo"]" />
-                                <h4 class="box-title">Variables de simulación</h4>
+                <!-- CN1 Dial -->
+                <div class="col-xs-12 col-sm-6 col-md-3">
+                    <div class="simula-kpi-card">
+                        <div class="simula-kpi-header">
+                            <h3 class="simula-kpi-title"><i class="fa fa-dashboard" style="color: #0284c7;"></i> CN1</h3>
+                        </div>
+                        <div class="simula-kpi-body">
+                            <div class="simula-flip-container">
+                                <div class="simula-flip-card">
+                                    <div class="simula-flip-front">
+                                        <div class="circular-cn1"></div>
+                                        <span style="font-size: 11px; color: #94a3b8; margin-top: 6px; display: inline-flex; align-items: center; gap: 4px;">
+                                            <i class="fa fa-info-circle"></i> Pasa el cursor para ver rangos
+                                        </span>
+                                    </div>
+                                    <div class="simula-flip-back">
+                                        <div class="simula-legend-title">
+                                            <i class="fa fa-list-ul" style="color: #0284c7;"></i> Rangos Normativos
+                                        </div>
+                                        <div class="simula-legend-list">
+                                            @if (Model.Perfil != 2)
+                                            {
+                                                <div class="simula-legend-row"><span class="legend-dot" style="background: #10b981;"></span><span class="legend-label">Normalidad</span><span class="legend-val">&ge; 8.0%</span></div>
+                                                <div class="simula-legend-row"><span class="legend-dot" style="background: #eab308;"></span><span class="legend-label">Alerta</span><span class="legend-val">7.0% - 8.0%</span></div>
+                                                <div class="simula-legend-row"><span class="legend-dot" style="background: #f97316;"></span><span class="legend-label">Irregularidad</span><span class="legend-val">6.0% - 7.0%</span></div>
+                                                <div class="simula-legend-row"><span class="legend-dot" style="background: #ef4444;"></span><span class="legend-label">Cr&iacute;tico</span><span class="legend-val">&lt; 6.0%</span></div>
+                                            }
+                                            else
+                                            {
+                                                <div class="simula-legend-row"><span class="legend-dot" style="background: #10b981;"></span><span class="legend-label">Normalidad</span><span class="legend-val">&ge; 12.5%</span></div>
+                                                <div class="simula-legend-row"><span class="legend-dot" style="background: #eab308;"></span><span class="legend-label">Alerta</span><span class="legend-val">11.25% - 12.5%</span></div>
+                                                <div class="simula-legend-row"><span class="legend-dot" style="background: #f97316;"></span><span class="legend-label">Irregularidad</span><span class="legend-val">10.0% - 11.25%</span></div>
+                                                <div class="simula-legend-row"><span class="legend-dot" style="background: #ef4444;"></span><span class="legend-label">Cr&iacute;tico</span><span class="legend-val">&lt; 10.0%</span></div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <table id="tbSimulacion" class="table table-striped table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th class="text-left">Riesgos totales</th>
-                                        <th class="text-center">
-                                            <div class="row">
-                                                % Crecimiento
-                                            </div>
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>
-                                            Cartera de créditos y productos asociados a ponderar (neto estimaciones)
-                                        </td>
-                                        <td class="text-right">
-                                            <input name="porc_Cartera" id="porc_Cartera" class="text-right" style="width: 70px; border-style: none" value="@(Model.Porc_Cartera)%" />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            Inversiones valores asociados a ponderar (neto de estimaciones)
-                                        </td>
-                                        <td class="text-right">
-                                            <input name="porc_Inver" id="porc_Inver" class="text-right" style="width: 70px; border-style: none" value="@(Model.Porc_Inver)%" />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            Activos a plazo en BCCR y gobierno ME
-                                        </td>
-                                        <td class="text-right">
-                                            <input name="porc_Activos" id="porc_Activos" class="text-right" style="width: 70px; border-style: none" value="@(Model.Porc_Activos)%" />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            Disponibilidades y productos ponderar (neto estimaciones)
-                                        </td>
-                                        <td class="text-right">
-                                            <input name="porc_Disponibilidades" id="porc_Disponibilidades" class="text-right" style="width: 70px; border-style: none" value="@(Model.Porc_Disponibilidades)%" />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            Inmuebles, mobiliario y equipo en uso
-                                        </td>
-                                        <td class="text-right">
-                                            <input name="porc_Inmuebles" id="porc_Inmuebles" class="text-right" style="width: 70px; border-style: none" value="@(Model.Porc_Inmuebles)%" />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            Posición neta total en moneda extranjera
-                                        </td>
-                                        <td class="text-right">
-                                            <input name="porc_Posicion" id="porc_Posicion" class="text-right" style="width: 70px; border-style: none" value="@(Model.Porc_Posicion)%" />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            Incremento del excedente del periodo
-                                        </td>
-                                        <td class="text-right">
-                                            <input name="porc_Incremento" id="porc_Incremento" class="text-right" style="width: 70px; border-style: none" value="@(Model.Porc_Incremento)%" />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            U.O.B.A promedio anual
-                                        </td>
-                                        <td class="text-right">
-                                            <input name="porc_UOBA" id="porc_UOBA" class="text-right" style="width: 70px; border-style: none" value="@(Model.Porc_Uoba)%" />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            Incremento del capital social
-                                        </td>
-                                        <td class="text-right">
-                                            <input name="porc_Capital" id="porc_Capital" class="text-right" style="width: 70px; border-style: none" value="@(Model.Porc_Capital)%" />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            % de retiro según estatuto
-                                        </td>
-                                        <td class="text-right">
-                                            <input name="porc_Retiro" id="porc_Retiro" class="text-right" style="width: 70px; border-style: none" value="@(Model.Porc_Retiro)%" />
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                        </div>
+                        <div class="simula-kpi-footer text-center">
+                            @if (Model.Perfil != 2)
+                            {
+                                <span class="simula-badge-status"><i class="fa fa-check-circle"></i> Normalidad mayor a 8%</span>
+                            }
+                            else
+                            {
+                                <span class="simula-badge-status"><i class="fa fa-check-circle"></i> Normalidad mayor a 10%</span>
+                            }
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="box box-primary">
-                        <div class="box-body">
-                            <span id="found" class="label label-info"></span>
-                            <div class="box-header with-border">
-                                <img width="50" height="50" src="@Session["Logo"]" />
-                                <h4 class="box-title">Variables de simulación</h4>
+
+                <!-- CCN1 Dial -->
+                <div class="col-xs-12 col-sm-6 col-md-3">
+                    <div class="simula-kpi-card">
+                        <div class="simula-kpi-header">
+                            <h3 class="simula-kpi-title"><i class="fa fa-shield" style="color: #0284c7;"></i> CCN1</h3>
+                        </div>
+                        <div class="simula-kpi-body">
+                            <div class="simula-flip-container">
+                                <div class="simula-flip-card">
+                                    <div class="simula-flip-front">
+                                        <div class="circular-ccn1"></div>
+                                        <span style="font-size: 11px; color: #94a3b8; margin-top: 6px; display: inline-flex; align-items: center; gap: 4px;">
+                                            <i class="fa fa-info-circle"></i> Pasa el cursor para ver rangos
+                                        </span>
+                                    </div>
+                                    <div class="simula-flip-back">
+                                        <div class="simula-legend-title">
+                                            <i class="fa fa-list-ul" style="color: #0284c7;"></i> Rangos Normativos
+                                        </div>
+                                        <div class="simula-legend-list">
+                                            @if (Model.Perfil != 2)
+                                            {
+                                                <div class="simula-legend-row"><span class="legend-dot" style="background: #0284c7;"></span><span class="legend-label">Normalidad</span><span class="legend-val">&ge; 6.5%</span></div>
+                                                <div class="simula-legend-row"><span class="legend-dot" style="background: #eab308;"></span><span class="legend-label">Alerta</span><span class="legend-val">5.5% - 6.5%</span></div>
+                                                <div class="simula-legend-row"><span class="legend-dot" style="background: #f97316;"></span><span class="legend-label">Irregularidad</span><span class="legend-val">4.5% - 5.5%</span></div>
+                                                <div class="simula-legend-row"><span class="legend-dot" style="background: #ef4444;"></span><span class="legend-label">Cr&iacute;tico</span><span class="legend-val">&lt; 4.5%</span></div>
+                                            }
+                                            else
+                                            {
+                                                <div class="simula-legend-row"><span class="legend-dot" style="background: #0284c7;"></span><span class="legend-label">Normalidad</span><span class="legend-val">&ge; 11.0%</span></div>
+                                                <div class="simula-legend-row"><span class="legend-dot" style="background: #eab308;"></span><span class="legend-label">Alerta</span><span class="legend-val">9.75% - 11.0%</span></div>
+                                                <div class="simula-legend-row"><span class="legend-dot" style="background: #f97316;"></span><span class="legend-label">Irregularidad</span><span class="legend-val">8.5% - 9.75%</span></div>
+                                                <div class="simula-legend-row"><span class="legend-dot" style="background: #ef4444;"></span><span class="legend-label">Cr&iacute;tico</span><span class="legend-val">&lt; 8.5%</span></div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <table id="tbSimulacion" class="table table-striped table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th class="text-left">Capital Base</th>
-                                        <th class="text-center">
-                                            <div class="row">
-                                                % Crecimiento
-                                            </div>
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>
-                                            Reserva Legal
-                                        </td>
-                                        <td class="text-right">
-                                            <input name="porc_Legal" id="porc_Legal" class="text-right" style="width: 70px; border-style: none" value="@Model.Porc_Legal%" />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            Excedente del periodo
-                                        </td>
-                                        <td class="text-right">
-                                            <input name="porc_Excedente" id="porc_Excedente" class="text-right" style="width: 70px; border-style: none" value="@Model.Porc_Excedentes%" />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            Reservas voluntarias
-                                        </td>
-                                        <td class="text-right">
-                                            <input name="porc_Voluntarias" id="porc_Voluntarias" class="text-right" style="width: 70px; border-style: none" value="@Model.Porc_Voluntarias%" />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            Aportes por incrementos de capital
-                                        </td>
-                                        <td class="text-right">
-                                            <input name="porc_Aportes" id="porc_Aportes" class="text-right" style="width: 70px; border-style: none" value="@Model.Porc_Aportes%" />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            Donaciones y otras contribuciones no capitalizables
-                                        </td>
-                                        <td class="text-right">
-                                            <input name="porc_Donaciones" id="porc_Donaciones" class="text-right" style="width: 70px; border-style: none" value="@Model.Porc_Donaciones%" />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            Ajuste por revaluación de participaciones en otras empresas
-                                        </td>
-                                        <td class="text-right">
-                                            <input name="porc_Revaluacion" id="porc_Revaluacion" class="text-right" style="width: 70px; border-style: none" value="@Model.Porc_Revaluacion%" />
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                        </div>
+                        <div class="simula-kpi-footer text-center">
+                            @if (Model.Perfil != 2)
+                            {
+                                <span class="simula-badge-status"><i class="fa fa-check-circle"></i> Normalidad mayor a 6.5%</span>
+                            }
+                            else
+                            {
+                                <span class="simula-badge-status"><i class="fa fa-check-circle"></i> Normalidad mayor a 8.5%</span>
+                            }
                         </div>
                     </div>
                 </div>
-                <div class="col-xs-12 col-md-3 text-center">
-                    <div class="box">
-                        <div class="box-header">
-                            <h3>
-                                <b style="padding-right:10px;">Suficiencia Objetivo</b>
-                            </h3>
+
+                <!-- Suficiencia de Escenarios -->
+                <div class="col-xs-12 col-sm-6 col-md-3">
+                    <div class="simula-kpi-card">
+                        <div class="simula-kpi-header">
+                            <h3 class="simula-kpi-title"><i class="fa fa-line-chart" style="color: #0284c7;"></i> Suficiencia de Escenarios</h3>
                         </div>
-                        <div class="text-center">
-                            <input id="suficienciaObjetivo" style="border-width: 0px; font-size: 30px; background-color: #ffe5c4; margin-bottom: 10px;" class="text-center" value="@Model.Porc_SuficienciaObjetivo%" />
-                            <br />
-                            <table id="tbResultados" class="table table-striped table-bordered" style="padding: 15px;">
+                        <div class="simula-kpi-body" style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
+                            <table id="tbResultados" class="table simula-summary-table">
                                 <tbody>
                                     <tr>
-                                        <td align="left">
-                                            Capital base
-                                        </td>
+                                        <td class="text-left" style="font-weight: 600;">Capital Base</td>
                                         <td class="text-right">
-                                            <input name="SCapitalBase" readonly id="SCapitalBase" class="text-right" style="width: 170px; border-style: none" value="@Model.SCapitalBase.Value.ToString("N2")" />
+                                            <input name="CapitalBase" readonly id="CapitalBase" class="simula-input-val" value="@Model.CapitalBase.Value.ToString("N2")" />
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td align="left">
-                                            IMCA
-                                        </td>
+                                        <td class="text-left" style="font-weight: 600;">IMCA</td>
                                         <td class="text-right">
-                                            <input name="SIMCA" id="SIMCA" class="text-right" style="width: 170px; border-style: none" value="@Model.SImca.Value.ToString("N2")" />
+                                            <input name="IMCA" id="IMCA" class="simula-input-val" value="@Model.Imca.Value.ToString("N2")" />
                                         </td>
                                     </tr>
-                                    <tr>
-                                        <td align="left">
-                                            % IMCA/Capital
-                                        </td>
+                                    <tr class="highlight-row">
+                                        <td class="text-left" style="font-weight: 700;">% IMCA / Capital</td>
                                         <td class="text-right">
-                                            <input name="SIMCA_Capital" readonly id="SIMCA_Capital" class="text-right" style="width: 170px; border-style: none" value="@Model.SImcaCapital.Value.ToString("N2")%" />
+                                            <input name="IMCA_Capital" readonly id="IMCA_Capital" class="simula-input-val" style="font-weight: 700; color: #166534;" value="@Model.ImcaCapital.Value.ToString("N2")%" />
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
-                            <br />
-                            <div class="box-footer">
-                                <input type="button" name="btn_simular" id="btn_simulacion" value="Simular" onclick="generarSimulacion()" class="btn btn-info" />
+                        </div>
+                        <div class="simula-kpi-footer text-center" style="padding-top: 14px;">
+                            <button type="submit" id="btn_generar" value="Descargar reporte" class="btn-modern-export" name="command" style="width: 100%;">
+                                <i class="fa fa-download"></i> Descargar reporte
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fila inferior: Tablas de Variables de Simulación y Suficiencia Objetivo -->
+            <div class="row">
+                <!-- Variables de Simulación: Riesgos Totales -->
+                <div class="col-xs-12 col-md-5">
+                    <div class="simula-table-card">
+                        <div style="display: flex; align-items: center; justify-content: space-between; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9; margin-bottom: 14px;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                @if (Session["Logo"] != null && !string.IsNullOrEmpty(Session["Logo"].ToString()))
+                                {
+                                    <img width="36" height="36" src="@Session["Logo"]" style="object-fit: contain; border-radius: 4px;" alt="Logo" />
+                                }
+                                else
+                                {
+                                    <div style="background: #e0f2fe; color: #0284c7; width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 15px;">
+                                        <i class="fa fa-sliders"></i>
+                                    </div>
+                                }
+                                <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: #1e293b;">Variables de simulaci&oacute;n: Riesgos Totales</h4>
                             </div>
+                            <span class="badge" style="background: #e0f2fe; color: #0369a1; font-weight: 600; padding: 4px 10px; border-radius: 12px; font-size: 11px;">10 Variables</span>
+                        </div>
+                        <table id="tbSimulacion" class="table table-hover table-striped simula-detail-table">
+                            <thead>
+                                <tr>
+                                    <th class="text-left" style="width: 75%;">Riesgos Totales</th>
+                                    <th class="text-right" style="width: 25%;">% Crecimiento</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Cartera de cr&eacute;ditos y productos asociados a ponderar (neto estimaciones)</td>
+                                    <td class="text-right">
+                                        <input name="porc_Cartera" id="porc_Cartera" class="simula-input-pct" value="@(Model.Porc_Cartera)%" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Inversiones valores asociados a ponderar (neto de estimaciones)</td>
+                                    <td class="text-right">
+                                        <input name="porc_Inver" id="porc_Inver" class="simula-input-pct" value="@(Model.Porc_Inver)%" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Activos a plazo en BCCR y gobierno ME</td>
+                                    <td class="text-right">
+                                        <input name="porc_Activos" id="porc_Activos" class="simula-input-pct" value="@(Model.Porc_Activos)%" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Disponibilidades y productos ponderar (neto estimaciones)</td>
+                                    <td class="text-right">
+                                        <input name="porc_Disponibilidades" id="porc_Disponibilidades" class="simula-input-pct" value="@(Model.Porc_Disponibilidades)%" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Inmuebles, mobiliario y equipo en uso</td>
+                                    <td class="text-right">
+                                        <input name="porc_Inmuebles" id="porc_Inmuebles" class="simula-input-pct" value="@(Model.Porc_Inmuebles)%" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Posici&oacute;n neta total en moneda extranjera</td>
+                                    <td class="text-right">
+                                        <input name="porc_Posicion" id="porc_Posicion" class="simula-input-pct" value="@(Model.Porc_Posicion)%" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Incremento del excedente del per&iacute;odo</td>
+                                    <td class="text-right">
+                                        <input name="porc_Incremento" id="porc_Incremento" class="simula-input-pct" value="@(Model.Porc_Incremento)%" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>U.O.B.A. promedio anual</td>
+                                    <td class="text-right">
+                                        <input name="porc_UOBA" id="porc_UOBA" class="simula-input-pct" value="@(Model.Porc_Uoba)%" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Incremento del capital social</td>
+                                    <td class="text-right">
+                                        <input name="porc_Capital" id="porc_Capital" class="simula-input-pct" value="@(Model.Porc_Capital)%" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>% de retiro seg&uacute;n estatuto</td>
+                                    <td class="text-right">
+                                        <input name="porc_Retiro" id="porc_Retiro" class="simula-input-pct" value="@(Model.Porc_Retiro)%" />
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Variables de Simulación: Capital Base -->
+                <div class="col-xs-12 col-md-4">
+                    <div class="simula-table-card">
+                        <div style="display: flex; align-items: center; justify-content: space-between; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9; margin-bottom: 14px;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                @if (Session["Logo"] != null && !string.IsNullOrEmpty(Session["Logo"].ToString()))
+                                {
+                                    <img width="36" height="36" src="@Session["Logo"]" style="object-fit: contain; border-radius: 4px;" alt="Logo" />
+                                }
+                                else
+                                {
+                                    <div style="background: #dcfce7; color: #059669; width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 15px;">
+                                        <i class="fa fa-university"></i>
+                                    </div>
+                                }
+                                <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: #1e293b;">Variables de simulaci&oacute;n: Capital Base</h4>
+                            </div>
+                            <span class="badge" style="background: #dcfce7; color: #047857; font-weight: 600; padding: 4px 10px; border-radius: 12px; font-size: 11px;">6 Variables</span>
+                        </div>
+                        <table id="tbSimulacionCapital" class="table table-hover table-striped simula-detail-table">
+                            <thead>
+                                <tr>
+                                    <th class="text-left" style="width: 70%;">Capital Base</th>
+                                    <th class="text-right" style="width: 30%;">% Crecimiento</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Reserva Legal</td>
+                                    <td class="text-right">
+                                        <input name="porc_Legal" id="porc_Legal" class="simula-input-pct" value="@Model.Porc_Legal%" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Excedente del per&iacute;odo</td>
+                                    <td class="text-right">
+                                        <input name="porc_Excedente" id="porc_Excedente" class="simula-input-pct" value="@Model.Porc_Excedentes%" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Reservas voluntarias</td>
+                                    <td class="text-right">
+                                        <input name="porc_Voluntarias" id="porc_Voluntarias" class="simula-input-pct" value="@Model.Porc_Voluntarias%" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Aportes por incrementos de capital</td>
+                                    <td class="text-right">
+                                        <input name="porc_Aportes" id="porc_Aportes" class="simula-input-pct" value="@Model.Porc_Aportes%" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Donaciones y otras contribuciones no capitalizables</td>
+                                    <td class="text-right">
+                                        <input name="porc_Donaciones" id="porc_Donaciones" class="simula-input-pct" value="@Model.Porc_Donaciones%" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Ajuste por revaluaci&oacute;n de participaciones en otras empresas</td>
+                                    <td class="text-right">
+                                        <input name="porc_Revaluacion" id="porc_Revaluacion" class="simula-input-pct" value="@Model.Porc_Revaluacion%" />
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Suficiencia Objetivo -->
+                <div class="col-xs-12 col-md-3">
+                    <div class="simula-table-card text-center" style="display: flex; flex-direction: column; justify-content: space-between; min-height: 480px;">
+                        <div>
+                            <div class="simula-kpi-header">
+                                <h4 style="margin: 0; font-size: 16px; font-weight: 700; color: #1e293b;">
+                                    <i class="fa fa-bullseye" style="color: #ea580c; margin-right: 6px;"></i> Suficiencia Objetivo
+                                </h4>
+                            </div>
+
+                            <div style="margin: 16px 0 20px 0;">
+                                <label for="suficienciaObjetivo" style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 6px;">Meta de Suficiencia</label>
+                                <input id="suficienciaObjetivo" class="simula-objetivo-input" value="@Model.Porc_SuficienciaObjetivo%" />
+                            </div>
+
+                            <table id="tbResultados" class="table simula-summary-table">
+                                <tbody>
+                                    <tr>
+                                        <td class="text-left" style="font-weight: 600;">Capital Base</td>
+                                        <td class="text-right">
+                                            <input name="SCapitalBase" readonly id="SCapitalBase" class="simula-input-val" value="@Model.SCapitalBase.Value.ToString("N2")" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-left" style="font-weight: 600;">IMCA</td>
+                                        <td class="text-right">
+                                            <input name="SIMCA" id="SIMCA" class="simula-input-val" value="@Model.SImca.Value.ToString("N2")" />
+                                        </td>
+                                    </tr>
+                                    <tr class="highlight-row">
+                                        <td class="text-left" style="font-weight: 700;">% IMCA / Capital</td>
+                                        <td class="text-right">
+                                            <input name="SIMCA_Capital" readonly id="SIMCA_Capital" class="simula-input-val" style="font-weight: 700; color: #166534;" value="@Model.SImcaCapital.Value.ToString("N2")%" />
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div style="margin-top: 24px;">
+                            <button type="button" name="btn_simular" id="btn_simulacion" value="Simular" onclick="generarSimulacion()" class="btn-modern-filter" style="width: 100%; height: 42px; font-size: 14px;">
+                                <i class="fa fa-refresh"></i> Simular
+                            </button>
                         </div>
                     </div>
                 </div>

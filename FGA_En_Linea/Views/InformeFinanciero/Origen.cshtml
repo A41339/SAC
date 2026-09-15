@@ -1,54 +1,53 @@
 ﻿@{
-    ViewBag.Title = "Origen y aplicación";
+    ViewBag.Title = "Origen y Aplicaci&oacute;n de Fondos";
 }
 
-<section class="content">
-    <section class="content-header">
-        <h1>
-            Origen y aplicación
-        </h1>
-    </section>
+<section class="content-header" style="padding: 24px 20px 14px 20px;">
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+        <div>
+            <h1 style="margin: 0; font-size: 21px; font-weight: 700; color: #143750; display: flex; align-items: center; gap: 10px;">
+                <i class="fa fa-exchange" style="color: #0284c7;"></i>
+                Origen y Aplicaci&oacute;n de Fondos
+            </h1>
+            <p style="margin: 6px 0 0 0; font-size: 13px; color: #64748b;">
+                An&aacute;lisis del flujo y aplicaci&oacute;n de recursos financieros por per&iacute;odo.
+            </p>
+        </div>
+    </div>
+</section>
 
-    <div class="box box-solid box-info">
-        <div class="box-body table-responsive">
-            <div class="margin">
-                <div class="streaming-table">
-                    <span id="found" class="label label-info"></span>
-                    <table class="table table-condensed table-striped table-bordered">
-                        <tr>
-                            <td class="mobile">
-                                @Html.Label("Entidad:")
-                            </td>
-                            <td>
-                                @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", style = "width: 200px;" })
-                            </td>
-                            <td class="mobile">
-                                @Html.Label("Periodo Inicial:")
-                            </td>
-                            <td nowrap="nowrap">
-                                <input name="Periodo1" id="Periodo1" class="datecontrol" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MM/yyyy")" />
-                            </td>
-                            <td class="mobile">
-                                @Html.Label("Periodo Final:")
-                            </td>
-                            <td nowrap="nowrap">
-                                <input name="Periodo2" id="Periodo2" class="datecontrol" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MM/yyyy")" />
-                            </td>
-                            <td>
-                                <label>
-                                    <button type="submit" id="btn_buscar" class="btn btn-primary">Generar</button>
-                                </label>
-                            </td>
-                        </tr>
-                    </table>
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="modern-filter-card" style="margin-bottom: 22px;">
+                <div class="modern-filter-toolbar">
+                    <div class="filter-item">
+                        <label for="IdEntidad"><i class="fa fa-university"></i> Entidad:</label>
+                        @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", @class = "form-control modern-select", style = "min-width: 220px; height: 38px; font-size: 13px;" })
+                    </div>
+                    <div class="filter-item">
+                        <label for="Periodo1"><i class="fa fa-calendar"></i> Per&iacute;odo Inicial:</label>
+                        <div class="modern-input-wrapper">
+                            <input name="Periodo1" id="Periodo1" class="datecontrol form-control modern-date-input" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MM/yyyy")" style="min-width: 140px; height: 38px;" />
+                        </div>
+                    </div>
+                    <div class="filter-item">
+                        <label for="Periodo2"><i class="fa fa-calendar-o"></i> Per&iacute;odo Final:</label>
+                        <div class="modern-input-wrapper">
+                            <input name="Periodo2" id="Periodo2" class="datecontrol form-control modern-date-input" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MM/yyyy")" style="min-width: 140px; height: 38px;" />
+                        </div>
+                    </div>
+                    <div class="filter-item" style="margin-left: auto;">
+                        <button type="button" id="btn_buscar" class="btn-modern-filter" style="height: 38px; padding: 0 24px;">
+                            <i class="fa fa-search"></i> Generar informe
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="detail">
-
-    </div>
+    <div id="detail"></div>
     @*@if (Session["TipoReporte"] != null)
         {
             <div class="box box-solid box-info">

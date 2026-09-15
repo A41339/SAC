@@ -248,15 +248,17 @@ namespace FGA.Controllers
                     new Series{
                         Name = "Variaci\u00f3n interanual neta",
                         Data = new Data(CarteraTotalNeta),
-                        Color = ColorTranslator.FromHtml("#39aac5"),
-                        PlotOptionsLine = HighChart.getLine()
+                        Color = ColorTranslator.FromHtml("#0284c7"),
+                        Type = ChartTypes.Spline,
+                        PlotOptionsSpline = HighChart.getSplinePercent(3)
                     },
                     new Series
                     {
                         Name = "Variaci\u00f3n interanual bruta",
                         Data = new Data(CarteraTotalBruta),
-                        Color = ColorTranslator.FromHtml("#ed7c2f"),
-                        PlotOptionsLine = HighChart.getLine()
+                        Color = ColorTranslator.FromHtml("#ea580c"),
+                        Type = ChartTypes.Spline,
+                        PlotOptionsSpline = HighChart.getSplinePercent(2)
                     }
                 };
 
@@ -294,10 +296,11 @@ namespace FGA.Controllers
                 var series = new Series[]
                 {
                     new Series{
-                    Name = "Variaci\u00f3n anual del capital social",
-                    Data = new Data(Variacion),
-                    Color = ColorTranslator.FromHtml("#7d7d7d"),
-                    PlotOptionsLine = HighChart.getLine()
+                        Name = "Variaci\u00f3n anual del capital social",
+                        Data = new Data(Variacion),
+                        Color = ColorTranslator.FromHtml("#6366f1"),
+                        Type = ChartTypes.Spline,
+                        PlotOptionsSpline = HighChart.getSplinePercent(3)
                     }
                 };
 
@@ -327,9 +330,9 @@ namespace FGA.Controllers
 
                 int i = 0;
 
-                foreach (var grupo in agrupadoPorPeriodo) //etalle.PERIODO.Month.ToString() + "-" + detalle.PERIODO.Year.ToString();
+                foreach (var grupo in agrupadoPorPeriodo)
                 {
-                    Fechas[i] = grupo.Key.Value.Month.ToString () + "-" + grupo.Key.Value.Year.ToString(); // ajusta formato si es necesario
+                    Fechas[i] = grupo.Key.Value.Month.ToString () + "-" + grupo.Key.Value.Year.ToString();
                     Suficiencia[i] = grupo.FirstOrDefault(x => x.Nombre.Trim().Equals("Suficiencia", StringComparison.OrdinalIgnoreCase))?.Monto ?? 0;
                     CN1[i] = grupo.FirstOrDefault(x => x.Nombre.Trim().Equals("CN1", StringComparison.OrdinalIgnoreCase))?.Monto ?? 0;
                     CNN1[i] = grupo.FirstOrDefault(x => x.Nombre.Trim().Equals("CCN1", StringComparison.OrdinalIgnoreCase))?.Monto ?? 0;
@@ -347,29 +350,29 @@ namespace FGA.Controllers
                         Name = "Suficiencia",
                         Data = new Data(Suficiencia),
                         Color = HighChart.GetColor(0),
-                        Type = ChartTypes.Line,
-                        PlotOptionsLine = HighChart.getLinePercent()
+                        Type = ChartTypes.Spline,
+                        PlotOptionsSpline = HighChart.getSplinePercent(3)
                     },
                     new Series{
                         Name = "CN1",
                         Data = new Data(CN1),
                         Color = HighChart.GetColor(1),
-                        Type = ChartTypes.Line,
-                        PlotOptionsLine = HighChart.getLinePercent()
+                        Type = ChartTypes.Spline,
+                        PlotOptionsSpline = HighChart.getSplinePercent(2)
                     },
                     new Series{
                         Name = "CCN1",
                         Data = new Data(CNN1),
                         Color = HighChart.GetColor(2),
-                        Type = ChartTypes.Line,
-                        PlotOptionsLine = HighChart.getLinePercent()
+                        Type = ChartTypes.Spline,
+                        PlotOptionsSpline = HighChart.getSplinePercent(2)
                     },
                     new Series{
                         Name = "Apalancamiento",
                         Data = new Data(Apalancamiento),
                         Color = HighChart.GetColor(4),
-                        Type = ChartTypes.Line,
-                        PlotOptionsLine = HighChart.getLinePercent()
+                        Type = ChartTypes.Spline,
+                        PlotOptionsSpline = HighChart.getSplinePercent(2)
                     }
                 };
 
@@ -416,18 +419,7 @@ namespace FGA.Controllers
                         max = max > decimal.Parse(Brecha[i].ToString()) ? max : decimal.Parse(Brecha[i].ToString());
                     }
 
-                    XAxis x = new XAxis()
-                    {
-                        Categories = Rangos,
-                        Labels = new XAxisLabels()
-                        {
-                            Style = "fontSize: '12px', color: 'black'",
-                        },
-                        Title = new XAxisTitle()
-                        {
-                            Text = " "
-                        }
-                    };
+                    XAxis x = HighChart.GetXAxis(Rangos);
 
                     HighChart.ConfigChart(ref view.BrechaLiquidez, "IRL", null, 320);
                     view.BrechaLiquidez.SetPlotOptions(HighChart.getLabelPercent());
@@ -444,16 +436,16 @@ namespace FGA.Controllers
                             new Series{
                                 Name = "Raz\u00f3n IRL por banda",
                                 Data = new Data(Brecha),
-                                Color = ColorTranslator.FromHtml("#d9d9d9"),
-                                Type = ChartTypes.Line,
-                                PlotOptionsLine = HighChart.getLinePercent()
+                                Color = ColorTranslator.FromHtml("#0284c7"),
+                                Type = ChartTypes.Spline,
+                                PlotOptionsSpline = HighChart.getSplinePercent(3)
                             },
                             new Series{
                                 Name = "Raz\u00f3n IRL acumulado",
                                 Data = new Data(Acumulada),
-                                Color = ColorTranslator.FromHtml("#ed7c2f"),
-                                Type = ChartTypes.Line,
-                                PlotOptionsLine = HighChart.getLinePercent()
+                                Color = ColorTranslator.FromHtml("#ea580c"),
+                                Type = ChartTypes.Spline,
+                                PlotOptionsSpline = HighChart.getSplineDashPercent(2)
                             }
                         };
 
@@ -498,25 +490,25 @@ namespace FGA.Controllers
                 var series = new Series[]
                 {
                     new Series{
+                        Name = "Margen Ponderado",
+                        Data = new Data(Margen),
+                        Color = ColorTranslator.FromHtml("#0d7682"),
+                        Type = ChartTypes.Areaspline,
+                        PlotOptionsAreaspline = HighChart.getAreasplinePercent(0.18, 2)
+                    },
+                    new Series{
                         Name = "Tasa Activa Impl\u00edcita",
                         Data = new Data(TasaActivo),
-                        Color = HighChart.GetColor(0),
-                        Type = ChartTypes.Line,
-                        PlotOptionsLine = HighChart.getLinePercent()
+                        Color = ColorTranslator.FromHtml("#0284c7"),
+                        Type = ChartTypes.Spline,
+                        PlotOptionsSpline = HighChart.getSplinePercent(3)
                     },
                     new Series{
                         Name = "Tasa Pasiva Impl\u00edcita",
                         Data = new Data(TasaPasivo),
-                        Color = HighChart.GetColor(1),
-                        Type = ChartTypes.Line,
-                        PlotOptionsLine = HighChart.getLineDashPercent()
-                    },
-                    new Series{
-                        Name = "Margen Ponderado",
-                        Data = new Data(Margen),
-                        Color = HighChart.GetColor(2),
-                        Type = ChartTypes.Areaspline,
-                        PlotOptionsLine = HighChart.getLinePercent()
+                        Color = ColorTranslator.FromHtml("#ea580c"),
+                        Type = ChartTypes.Spline,
+                        PlotOptionsSpline = HighChart.getSplineDashPercent(2)
                     }
                 };
 
@@ -564,23 +556,23 @@ namespace FGA.Controllers
                     new Series{
                         Name = "Margen Financiero",
                         Data = new Data(MargenFinanciero),
-                        Color = ColorTranslator.FromHtml("#ed7c2f"),
-                        Type = ChartTypes.Line,
-                        PlotOptionsLine = HighChart.getLine()
+                        Color = ColorTranslator.FromHtml("#0284c7"),
+                        Type = ChartTypes.Spline,
+                        PlotOptionsSpline = HighChart.getSplinePercent(3)
                     },
                     new Series{
                         Name = "Margen Operativo",
                         Data = new Data(MargenOperativo),
-                        Color = ColorTranslator.FromHtml("#d9d9d9"),
-                        Type = ChartTypes.Line,
-                        PlotOptionsLine = HighChart.getLine()
+                        Color = ColorTranslator.FromHtml("#10b981"),
+                        Type = ChartTypes.Spline,
+                        PlotOptionsSpline = HighChart.getSplinePercent(2)
                     },
                     new Series{
                         Name = "Margen Total",
                         Data = new Data(MargenTotal),
-                        Color = ColorTranslator.FromHtml("#39aac5"),
-                        Type = ChartTypes.Line,
-                        PlotOptionsLine = HighChart.getLine()
+                        Color = ColorTranslator.FromHtml("#0d7682"),
+                        Type = ChartTypes.Spline,
+                        PlotOptionsSpline = HighChart.getSplinePercent(3)
                     }
            };
 
@@ -631,16 +623,19 @@ namespace FGA.Controllers
                         new YAxis()
                         {
                             Id = "Mora",
-                            GridLineWidth = 0,
+                            GridLineWidth = 1,
+                            GridLineColor = ColorTranslator.FromHtml("#f1f5f9"),
+                            GridLineDashStyle = DashStyles.Dash,
+                            LineColor = ColorTranslator.FromHtml("#cbd5e1"),
                             Title = new YAxisTitle()
                             {
                                 Text = "Mora",
-                                Style = "fontSize: '12px', color: 'black',  fontFamily: 'Arial, sans-serif'",
+                                Style = "fontSize: '11px', color: '#64748b', fontWeight: '500', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'",
                             },
                             Labels = new YAxisLabels()
                             {
                                 Formatter = "formatPercent",
-                                Style = "fontSize: '12px', color: 'black',  fontFamily: 'Arial, sans-serif'",
+                                Style = "fontSize: '11px', color: '#64748b', fontWeight: '500', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'",
                             },
                             Opposite = true,
                             Min = 0
@@ -652,11 +647,11 @@ namespace FGA.Controllers
                             Title = new YAxisTitle()
                             {
                                 Text = "Al d\u00eda",
-                                Style = "fontSize: '0px', color: 'black',  fontFamily: 'Arial, sans-serif'",
+                                Style = "fontSize: '0px', color: 'transparent'",
                             },
                             Labels = new YAxisLabels()
                             {
-                                Style = "fontSize: '0px', color: 'black',  fontFamily: 'Arial, sans-serif'",
+                                Style = "fontSize: '0px', color: 'transparent'",
                             },
                         }
                     };
@@ -664,12 +659,23 @@ namespace FGA.Controllers
                     view.Mora.SetYAxis(yAsis.ToArray());
                     view.pMora.SetYAxis(yAsis.ToArray());
 
-                    view.Mora.SetPlotOptions(HighChart.getLabelPercent());
-                    view.pMora.SetPlotOptions(HighChart.getLabelPercent());
+                    view.Mora.SetPlotOptions(HighChart.getPlotOptionsColumn(4, true));
+                    view.pMora.SetPlotOptions(HighChart.getPlotOptionsColumn(4, true));
 
                     var series = new Series[listaSeries.Count() + 1];
                     Series serie;
                     int i = 0;
+
+                    // Paleta graduada semafórica para los tramos de mora
+                    Color[] moraColores = new Color[]
+                    {
+                        ColorTranslator.FromHtml("#10b981"), // 1 - 30 días: Verde esmeralda
+                        ColorTranslator.FromHtml("#06b6d4"), // 31 - 60 días: Cyan
+                        ColorTranslator.FromHtml("#f59e0b"), // 61 - 90 días: Ámbar
+                        ColorTranslator.FromHtml("#ea580c"), // 91 - 180 días: Naranja cálido
+                        ColorTranslator.FromHtml("#e11d48"), // Más de 180 días: Rojo alerta
+                        ColorTranslator.FromHtml("#991b1b")  // Cobro Judicial: Borgoña / Rojo oscuro
+                    };
 
                     foreach (Serie detalle in listaSeries.OrderByDescending(o => o.total))
                     {
@@ -678,8 +684,9 @@ namespace FGA.Controllers
                             Type = ChartTypes.Column,
                             Name = detalle.nombre,
                             Data = new Data(detalle.valores),
-                            Color = HighChart.GetColor(i),
+                            Color = i < moraColores.Length ? moraColores[i] : HighChart.GetColor(i),
                             YAxis = "Mora",
+                            PlotOptionsColumn = HighChart.getColumnStyled(4, true)
                         };
 
                         series[i] = serie;
@@ -688,12 +695,12 @@ namespace FGA.Controllers
 
                     serie = new Series
                     {
-                        Type = ChartTypes.Line,
+                        Type = ChartTypes.Spline,
                         Name = "Al d\u00eda",
                         Data = new Data(AlDia),
-                        Color = HighChart.GetColor(i),
+                        Color = ColorTranslator.FromHtml("#0284c7"),
                         YAxis = "AlDia",
-                        PlotOptionsLine = HighChart.getLinePercent()
+                        PlotOptionsSpline = HighChart.getSplinePercent(3)
                     };
 
                     series[i] = serie;

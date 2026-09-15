@@ -26,6 +26,61 @@
         z-index: 999999 !important;
         pointer-events: none !important;
     }
+
+    /* Animación de alerta pulsante para valores e indicadores en rojo */
+    @@keyframes alertGlowPulse {
+        0%, 100% {
+            border-color: #fca5a5;
+            box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.35), 0 1px 3px rgba(239, 68, 68, 0.15);
+        }
+        50% {
+            border-color: #ef4444;
+            box-shadow: 0 0 0 3.5px rgba(239, 68, 68, 0.35), 0 0 14px rgba(239, 68, 68, 0.7), inset 0 0 4px rgba(239, 68, 68, 0.2);
+        }
+    }
+
+    .indicator-var-pill.negative,
+    span.indicator-var-pill.negative {
+        background-color: #fef2f2 !important;
+        color: #dc2626 !important;
+        border: 1px solid #fca5a5 !important;
+        animation: alertGlowPulse 1.8s infinite ease-in-out !important;
+        will-change: box-shadow, border-color;
+    }
+
+    .kpi-trend-pill.negative,
+    span.kpi-trend-pill.negative {
+        background-color: #fee2e2 !important;
+        color: #b91c1c !important;
+        border: 1px solid #fca5a5 !important;
+        animation: alertGlowPulse 1.8s infinite ease-in-out !important;
+        will-change: box-shadow, border-color;
+    }
+
+    .semaphore-badge.status-danger,
+    .semaphore-badge.danger,
+    .semaphore-badge.alert {
+        background-color: #fee2e2 !important;
+        color: #b91c1c !important;
+        border: 1px solid #fca5a5 !important;
+        animation: alertGlowPulse 1.8s infinite ease-in-out !important;
+        will-change: box-shadow, border-color;
+    }
+
+    .subtable-col.badge-cell.negative,
+    div.subtable-col.badge-cell.negative {
+        background-color: #fee2e2 !important;
+        border-color: #fca5a5 !important;
+        animation: alertGlowPulse 1.8s infinite ease-in-out !important;
+        will-change: box-shadow, border-color;
+    }
+
+    .subtable-col.val-negative {
+        background-color: #fff5f5 !important;
+        border-color: #fca5a5 !important;
+        animation: alertGlowPulse 1.8s infinite ease-in-out !important;
+        will-change: box-shadow, border-color;
+    }
 </style>
 
 @functions {
@@ -569,7 +624,7 @@
 <div class="modal fade" id="defModal" tabindex="-1" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header" style="display: flex; align-items: center; justify-content: space-between; background-color: #143750 !important;">
+            <div class="modal-header">
                 <div style="display: flex; align-items: center; gap: 12px; background: transparent;">
                     <img width="40" height="40" src="@Session["Logo"]" style="border-radius: 6px; background: #ffffff; padding: 2px;" />
                     <h3 id="titulo" class="modal-title" style="margin: 0; color: #ffffff !important; font-size: 16px; font-weight: 600;"></h3>
@@ -589,7 +644,7 @@
 <div class="modal fade" id="mDiferencialTasas" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header" style="display: flex; align-items: center; justify-content: space-between; background-color: #143750 !important;">
+            <div class="modal-header">
                 <div style="display: flex; align-items: center; gap: 12px; background: transparent;">
                     <img width="40" height="40" src="@Session["Logo"]" style="border-radius: 6px; background: #ffffff; padding: 2px;" />
                     <h3 class="modal-title" style="margin: 0; color: #ffffff !important; font-size: 16px; font-weight: 600;">Diferencial de Tasas</h3>
@@ -609,7 +664,7 @@
 <div class="modal fade" id="mCapitalSocial" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header" style="display: flex; align-items: center; justify-content: space-between; background-color: #143750 !important;">
+            <div class="modal-header">
                 <div style="display: flex; align-items: center; gap: 12px; background: transparent;">
                     <img width="40" height="40" src="@Session["Logo"]" style="border-radius: 6px; background: #ffffff; padding: 2px;" />
                     <h3 class="modal-title" style="margin: 0; color: #ffffff !important; font-size: 16px; font-weight: 600;">Variaci&oacute;n del Capital Social</h3>
@@ -629,7 +684,7 @@
 <div class="modal fade" id="mVariacionCartera" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header" style="display: flex; align-items: center; justify-content: space-between; background-color: #143750 !important;">
+            <div class="modal-header">
                 <div style="display: flex; align-items: center; gap: 12px; background: transparent;">
                     <img width="40" height="40" src="@Session["Logo"]" style="border-radius: 6px; background: #ffffff; padding: 2px;" />
                     <h3 class="modal-title" style="margin: 0; color: #ffffff !important; font-size: 16px; font-weight: 600;">Variaci&oacute;n Interanual de la Cartera</h3>
@@ -649,7 +704,7 @@
 <div class="modal fade" id="mMora" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header" style="display: flex; align-items: center; justify-content: space-between; background-color: #143750 !important;">
+            <div class="modal-header">
                 <div style="display: flex; align-items: center; gap: 12px; background: transparent;">
                     <img width="40" height="40" src="@Session["Logo"]" style="border-radius: 6px; background: #ffffff; padding: 2px;" />
                     <h3 class="modal-title" style="margin: 0; color: #ffffff !important; font-size: 16px; font-weight: 600;">Mora de la Cartera</h3>
@@ -669,7 +724,7 @@
 <div class="modal fade" id="mBrechaLiquidez" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header" style="display: flex; align-items: center; justify-content: space-between; background-color: #143750 !important;">
+            <div class="modal-header">
                 <div style="display: flex; align-items: center; gap: 12px; background: transparent;">
                     <img width="40" height="40" src="@Session["Logo"]" style="border-radius: 6px; background: #ffffff; padding: 2px;" />
                     <h3 class="modal-title" style="margin: 0; color: #ffffff !important; font-size: 16px; font-weight: 600;">Brecha de Liquidez</h3>
@@ -689,7 +744,7 @@
 <div class="modal fade" id="mRentabilidad" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header" style="display: flex; align-items: center; justify-content: space-between; background-color: #143750 !important;">
+            <div class="modal-header">
                 <div style="display: flex; align-items: center; gap: 12px; background: transparent;">
                     <img width="40" height="40" src="@Session["Logo"]" style="border-radius: 6px; background: #ffffff; padding: 2px;" />
                     <h3 class="modal-title" style="margin: 0; color: #ffffff !important; font-size: 16px; font-weight: 600;">Cobertura de m&aacute;rgenes</h3>
@@ -709,7 +764,7 @@
 <div class="modal fade" id="mSuficiencia" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header" style="display: flex; align-items: center; justify-content: space-between; background-color: #143750 !important;">
+            <div class="modal-header">
                 <div style="display: flex; align-items: center; gap: 12px; background: transparent;">
                     <img width="40" height="40" src="@Session["Logo"]" style="border-radius: 6px; background: #ffffff; padding: 2px;" />
                     <h3 class="modal-title" style="margin: 0; color: #ffffff !important; font-size: 16px; font-weight: 600;">Nivel y Calidad del Capital</h3>

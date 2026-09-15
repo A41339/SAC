@@ -1,73 +1,79 @@
 ﻿@model FGA.Model.Graficos_SF
 
 @{
-    ViewBag.Title = "Origen y aplicación";
+    ViewBag.Title = "Origen y Aplicaci&oacute;n del Sistema Financiero";
 }
 
+<section class="content-header" style="padding: 24px 20px 14px 20px;">
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+        <div>
+            <h1 style="margin: 0; font-size: 21px; font-weight: 700; color: #143750; display: flex; align-items: center; gap: 10px;">
+                <i class="fa fa-exchange" style="color: #0284c7;"></i>
+                Origen y Aplicaci&oacute;n del Sistema Financiero
+            </h1>
+            <p style="margin: 6px 0 0 0; font-size: 13px; color: #64748b;">
+                An&aacute;lisis de flujos de fondos y variaci&oacute;n patrimonial del sector financiero.
+            </p>
+        </div>
+    </div>
+</section>
+
 <section class="content">
-    <section class="content-header">
-        <h1>
-            Origen y aplicación
-        </h1>
-    </section>
     @using (Html.BeginForm("Origen", "Industria", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmInforme" }))
     {
-        <div class="box box-solid box-info">
-            <div class="box-body table-responsive">
-                <div class="margin">
-                    <div class="streaming-table">
-                        <span id="found" class="label label-info"></span>
-                        <table class="table table-condensed table-striped table-bordered">
-                            <tr>
-
-                                <td class="mobile">
-                                    @Html.Label("Periodo Inicial:")
-                                </td>
-                                <td nowrap="nowrap">
-                                    <input name="Periodo1" id="Periodo1" class="datecontrol" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToShortDateString()" />
-                                </td>
-                                <td class="mobile">
-                                    @Html.Label("Periodo Final:")
-                                </td>
-                                <td nowrap="nowrap">
-                                    <input name="Periodo2" id="Periodo2" class="datecontrol" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToShortDateString()" />
-                                </td>
-                                <td>
-                                    <label>
-                                        <button type="submit" id="btn_buscar" class="btn btn-primary">Generar</button>
-                                    </label>
-                                </td>
-                            </tr>
-                        </table>
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="modern-filter-card" style="margin-bottom: 22px;">
+                    <div class="modern-filter-toolbar">
+                        <div class="filter-item">
+                            <label for="Periodo1"><i class="fa fa-calendar"></i> Per&iacute;odo Inicial:</label>
+                            <div class="modern-input-wrapper">
+                                <input name="Periodo1" id="Periodo1" class="datecontrol form-control modern-date-input" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToShortDateString()" style="min-width: 140px; height: 38px;" />
+                            </div>
+                        </div>
+                        <div class="filter-item">
+                            <label for="Periodo2"><i class="fa fa-calendar-o"></i> Per&iacute;odo Final:</label>
+                            <div class="modern-input-wrapper">
+                                <input name="Periodo2" id="Periodo2" class="datecontrol form-control modern-date-input" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToShortDateString()" style="min-width: 140px; height: 38px;" />
+                            </div>
+                        </div>
+                        <div class="filter-item" style="margin-left: auto;">
+                            <button type="submit" id="btn_buscar" class="btn-modern-filter" style="height: 38px; padding: 0 24px;">
+                                <i class="fa fa-search"></i> Generar informe
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     }
 
-    <div>
-        <div class="nav-tabs-custom">
-            <ul class="nav nav-tabs">
-                <li class="active"><a href="#tab_1" data-toggle="tab">Origen y Aplicación</a></li>
-                <li><a href="#tab_2" data-toggle="tab">Variación</a></li>
+    <div class="modern-table-card" style="border: 1px solid #e2e8f0; border-radius: 12px; background: #ffffff; box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05); overflow: hidden; padding: 22px; margin-bottom: 24px;">
+        <div class="nav-tabs-custom" style="box-shadow: none; margin-bottom: 0;">
+            <ul class="nav nav-tabs" style="border-bottom: 2px solid #e2e8f0; margin-bottom: 20px;">
+                <li class="active">
+                    <a href="#tab_1" data-toggle="tab" style="font-weight: 700; font-size: 13px; color: #143750; border-radius: 8px 8px 0 0; padding: 10px 18px;">
+                        <i class="fa fa-file-text-o" style="color: #0284c7; margin-right: 6px;"></i> Origen y Aplicaci&oacute;n
+                    </a>
+                </li>
+                <li>
+                    <a href="#tab_2" data-toggle="tab" style="font-weight: 700; font-size: 13px; color: #143750; border-radius: 8px 8px 0 0; padding: 10px 18px;">
+                        <i class="fa fa-line-chart" style="color: #059669; margin-right: 6px;"></i> Variaci&oacute;n
+                    </a>
+                </li>
             </ul>
-            <div class="tab-content">
+            <div class="tab-content" style="padding: 0;">
                 <div class="tab-pane active" id="tab_1">
-                    <div class="row">
-
-                        @if (Session["TipoReporte"] != null)
-                        {
-                            <iframe src="~/Reportes/ReportView.aspx" width="1500" height="1500" style="border:none"></iframe>
-                        }
-                    </div>
+                    @if (Session["TipoReporte"] != null)
+                    {
+                        <div class="table-responsive" style="border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0;">
+                            <iframe src="~/Reportes/ReportView.aspx" width="100%" height="900" style="border:none; display: block; min-height: 800px;"></iframe>
+                        </div>
+                    }
                 </div>
                 <div class="tab-pane" id="tab_2">
-                    <div class="row">
-                        <div class="col-sm-10">
-                            <div class="col-md-10">
-                                @(Model.variacion)
-                            </div>
-                        </div>
+                    <div style="padding: 10px 0;">
+                        @(Model.variacion)
                     </div>
                 </div>
             </div>

@@ -1,7 +1,7 @@
 ﻿@model FGA.Model.Modelo_Evaluacion
 
 @{
-    ViewBag.Title = "evaluación";
+    ViewBag.Title = "Evaluación";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -14,9 +14,9 @@
 </section>
 
 <section class="content">
-    <div class="modal fade" id="modal-container" tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
-        <div class="modal-dialog  modal-lg">
-            <div class="modal-content">
+    <div class="modal fade" id="modal-container" tabindex="-1" role="dialog" aria-labelledby="evalModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" style="border-radius: 14px; overflow: hidden; border: none; box-shadow: 0 12px 36px rgba(0,0,0,0.25);">
                 <div id="tblPreguntas">
 
                 </div>
@@ -24,33 +24,31 @@
         </div>
     </div>
 </section>
-<div class="modal fade" id="defModal" tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
-    <div class="modal-dialog ">
-        <div class="modal-content">
+<div class="modal fade" id="defModal" tabindex="-1" role="dialog" aria-labelledby="defModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" style="border-radius: 14px; overflow: hidden; border: none; box-shadow: 0 12px 36px rgba(0,0,0,0.25);">
             <div class="modal-header">
-                <div class="box-header with-border">
-                    <h3 id="titulo" style="padding-bottom: 10px;" class="box-title"></h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: #fff; opacity: 0.85; font-size: 24px; text-shadow: none;">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 id="titulo" class="modal-title" style="color: #fff; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+                    <i class="fa fa-info-circle" style="color: #86d2dd;"></i> Instrucciones
+                </h4>
+            </div>
+            <div class="modal-body" style="padding: 24px; background: #fff;">
+                <div class="text-justify" style="font-size: 14px; line-height: 1.65; color: #334155;" id="definicion">
+                    <p>La evaluación consta de un total de 166 preguntas distribuidas en 4 componentes cualitativos con sus respectivos subcomponentes, cada subcomponente tendrá una serie de criterios para evaluar.</p>
+                    <p>Para iniciar la autoevaluación se deberán designar los responsables de atender cada componente, es posible designar dos responsables que deben haber sido dados de alta previamente como usuarios del SAC.</p>
+                    <p>No existe un límite de tiempo para responder. Cada pregunta tendrá cuatro opciones de respuesta, no existen respuestas buenas o malas, sino que las réplicas buscan situar a la entidad en la opción que refleje mejor su realidad además de contar con la evidencia para respaldar tal afirmación.</p>
+                    <p>Al salir se autoguardará la última pregunta completada, es factible devolverse a alguna pregunta y cambiar la respuesta si así lo amerita, sin embargo, no es posible adelantar las preguntas sin antes dar respuesta. Cada subcomponente le indicará la cantidad de preguntas y el nivel de avance tanto del subcomponente como del componente.</p>
+                    <p>Es posible elaborar la autoevaluación de todos los componentes en forma simultánea, al igual que es viable evaluar varios subcomponentes al mismo tiempo.</p>
+                    <p>Una vez completada la autoevaluación de cada componente se le indicará antes de salvar y enviar la autoevaluación, ya que una vez enviada no se podrá acceder de nuevo a la misma.</p>
                 </div>
             </div>
-            <div class="modal-body">
-                <p class="text-justify" style="font-size: 14px" id="definicion">
-                    <br />
-                    La evaluación consta de un total de 166 preguntas distribuidas en 4 componentes cualitativos con sus respectivos subcomponentes, cada subcomponente tendrá una serie de criterios para evaluar.
-                    <br /><br />
-                    Para iniciar la autoevaluación se deberáán designar los responsables de atender cada componente, es posible designar dos responsables que deben haber sido dados de alta previamente como usuarios del SAC.
-                    <br /><br />
-                    No existe un límite de tiempo para responder. Cada pregunta tendrá cuatro opciónes de respuesta, no existen respuestas buenas o malas, sino que las réplicas buscan situar a la entidad en la opción que refleje mejor su realidad además de contar con la evidencia para respaldar tal afirmación.
-                    <br /><br />
-                    Al salir se autoguardará la última pregunta completada, es factible devolverse a alguna pregunta y cambiar la respuesta si así lo amerita, sin embargo, no es posible adelantar las preguntas sin antes dar respuesta. Cada subcomponente le indicará la cantidad de preguntas y el nivel de avance tanto del subcomponente como del componente.
-                    <br /><br />
-                    Es posible elaborar la autoevaluación de todos los componentes en forma simultánea, al igual que es viable evaluar varios subcomponentes al mismo tiempo.
-                    <br /><br />
-                    Una vez completada la autoevaluación de cada componente se le indicará antes de salvar y enviar la autoevaluación, ya que una vez enviada no se podrá acceder de nuevo a la misma.
-                    <br />
-                </p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+            <div class="modal-footer" style="background: #f8fafc; border-top: 1px solid #e2e8f0; padding: 12px 24px;">
+                <button type="button" class="btn btn-default" data-dismiss="modal" style="border-radius: 6px; font-weight: 500;">
+                    <i class="fa fa-times"></i> Cerrar
+                </button>
             </div>
         </div>
     </div>
@@ -75,21 +73,37 @@
         window.location.reload();
     });
 
-    function generarevaluación(id) {
+    function generarEvaluacion(id) {
+        if (!id || id === "0" || id === 0) {
+            return;
+        }
         $.ajax({
-           url: '@Url.Action("ViewEval", "evaluación")',
-           type: 'POST',
-           cache: false,
-           async: true,
-           data: {
-               'id': id
-           },
+            url: '@Url.Action("ViewEval", "Evaluacion")',
+            type: 'POST',
+            cache: false,
+            async: true,
+            data: {
+                'id': id
+            },
             success: function (result) {
                 $('#tblPreguntas').html(result);
-                $('#modal-container').modal('show');
+                var modalElem = document.getElementById('modal-container');
+                if (window.bootstrap && window.bootstrap.Modal) {
+                    var bsModal = bootstrap.Modal.getInstance(modalElem) || new bootstrap.Modal(modalElem);
+                    bsModal.show();
+                } else if (typeof $('#modal-container').modal === 'function') {
+                    $('#modal-container').modal('show');
+                }
             },
+            error: function (xhr, status, error) {
+                console.error("Error al cargar la evaluación:", status, error);
+            }
         });
     }
+
+    // Alias para compatibilidad con llamadas existentes
+    window.generarevaluación = generarEvaluacion;
+    window.generarEvaluacion = generarEvaluacion;
 
     $.fn.jqueryBootstrapWizard.labels = {
         btn_back: 'Atrás',

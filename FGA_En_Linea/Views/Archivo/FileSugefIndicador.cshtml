@@ -32,24 +32,24 @@
                                         <td class="mobile" style="text-align: center;">
                                             <label>@Html.DisplayFor(modelItem => item.PERIODO)</label>
                                         </td>
-                                        <td style="text-align: center;">
-                                            @if (item.XML_ID == FGA.Utility.Utilitarios.archivoCargado)
-                                            {
-                                                <img src="~/Content/images/wait.png" />
-                                            }
-                                            else if (item.XML_ID == FGA.Utility.Utilitarios.archivoAceptado)
-                                            {
-                                                <img src="~/Content/images/check.png" />
-                                            }
-                                            else if (item.XML_ID == FGA.Utility.Utilitarios.archivoPendiente)
-                                            {
-                                                <img src="~/Content/images/warning.png" />
-                                            }
-                                            else
-                                            {
-                                                <img src="~/Content/images/wrong.png" />
-                                            }
-                                        </td>
+                                         <td style="text-align: center;">
+                                             @if (item.XML_ID == FGA.Utility.Utilitarios.archivoCargado)
+                                             {
+                                                 <span class="file-status-badge status-processing"><i class="fa fa-refresh fa-spin"></i> Procesando</span>
+                                             }
+                                             else if (item.XML_ID == FGA.Utility.Utilitarios.archivoAceptado)
+                                             {
+                                                 <span class="file-status-badge status-success"><i class="fa fa-check-circle"></i> Aceptado</span>
+                                             }
+                                             else if (item.XML_ID == FGA.Utility.Utilitarios.archivoPendiente)
+                                             {
+                                                 <span class="file-status-badge status-pending"><i class="fa fa-clock-o"></i> Pendiente</span>
+                                             }
+                                             else
+                                             {
+                                                 <span class="file-status-badge status-error"><i class="fa fa-times-circle"></i> Con Errores</span>
+                                             }
+                                         </td>
                                         <td class="mobile" style="text-align: center;">
                                             <label>@Html.DisplayFor(modelItem => item.USUARIO)</label>
                                         </td>

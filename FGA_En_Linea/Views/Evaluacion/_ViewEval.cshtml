@@ -1,116 +1,146 @@
 ﻿@model  FGA.Model.Modelo_Evaluacion
 
-<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css'>
-<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js'></script>
-<script src='https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js'></script>
-<script src="~/Scripts/bootstrap-multi-step-form3.js"></script>
-<style>
-    .contenedor {
-        max-width: 80%;
-        margin: 0 auto;
-        background-color: #fff;
-        padding: 20px;
-        border-radius: 8px;
-        border-color: black;
-        box-shadow: 0 0 10px black;
-    }
-</style>
-<div class="modal-dialog modal-lg">
-    <div>
-        <div class="modal-body">
+@if (Model == null || Model.evaluaciones == null || Model.evaluaciones.Count == 0)
+{
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" data-bs-dismiss="modal" aria-label="Close" style="color: #fff; opacity: 0.85; font-size: 24px; text-shadow: none;">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title" style="color: #fff; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+            <i class="fa fa-info-circle" style="color: #86d2dd;"></i> Cuestionario de Autoevaluación
+        </h4>
+    </div>
+    <div class="modal-body" style="padding: 36px 24px; text-align: center; background: #fff;">
+        <div style="font-size: 42px; color: #f59e0b; margin-bottom: 12px;">
+            <i class="fa fa-exclamation-circle"></i>
+        </div>
+        <h4 style="color: #1e293b; font-weight: 700; margin-bottom: 8px;">No se encontraron preguntas</h4>
+        <p style="color: #64748b; font-size: 14px; max-width: 440px; margin: 0 auto 20px auto;">
+            No hay preguntas disponibles para el subcomponente seleccionado o no cuenta con los permisos necesarios.
+        </p>
+        <button type="button" class="btn btn-default" data-dismiss="modal" data-bs-dismiss="modal" style="border-radius: 6px; font-weight: 500; padding: 8px 24px;">
+            <i class="fa fa-times"></i> Cerrar
+        </button>
+    </div>
+    return;
+}
 
-            @if (FGA.Utility.Utilitarios.GetSubCategoriaPorcentaje(Model.evaluaciones[0].IdSubCategoria, Model.evaluaciones) != 100)
-            {
-                <div class="text-right">
-                    <button type="button" class="btn btn-xs btn-danger" data-dismiss="modal">X</button> <label class="title">Salir</label>
-                </div>
+<script src="~/Scripts/bootstrap-multi-step-form3.js"></script>
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" data-bs-dismiss="modal" aria-label="Close" style="color: #fff; opacity: 0.85; font-size: 24px; text-shadow: none;">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <h4 class="modal-title" style="color: #fff; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+        <i class="fa fa-pencil-square-o" style="color: #86d2dd;"></i> Cuestionario de Autoevaluación
+    </h4>
+</div>
+
+<div class="modal-body" style="padding: 24px; background: #fff;">
+    @if (FGA.Utility.Utilitarios.GetSubCategoriaPorcentaje(Model.evaluaciones[0].IdSubCategoria, Model.evaluaciones) != 100)
+    {
+        <div style="display: flex; justify-content: flex-end; margin-bottom: 12px;">
+            <button type="button" class="btn btn-sm btn-default" data-dismiss="modal" data-bs-dismiss="modal" style="border-radius: 6px; font-weight: 500;">
+                <i class="fa fa-times"></i> Salir
+            </button>
+        </div>
+    }
+
+    <div class="container-fluid" style="padding: 0;">
+        <div class="card mt-2" style="border: none; box-shadow: none;">
+            @{
+                int i = 1;
+                bool stepActivo = false;
+                int opcion = 0;
+                foreach (var eval in Model.evaluaciones)
+                {
+                    stepActivo = (eval.OpcionSeleccionada == 0 || i == Model.evaluaciones.Count) && opcion == 0 ? true : false;
+                    if (stepActivo)
+                    {
+                        opcion = i;
+                    }
+
+                    if (FGA.Utility.Utilitarios.GetSubCategoriaPorcentaje(Model.evaluaciones[0].IdSubCategoria, Model.evaluaciones) < 100)
+                    {
+                        <div class="card-body step" style="@(stepActivo ? "" : "display: none;") padding: 0;">
+                            <div class="eval-question-box">
+                                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                                    <span class="badge" style="background: #e0f2fe; color: #0284c7; font-size: 13px; font-weight: 700; padding: 6px 14px; border-radius: 20px;">
+                                        <i class="fa fa-question-circle"></i> Pregunta @(i) de @(Model.evaluaciones.Count)
+                                    </span>
+                                </div>
+                                <h4 class="eval-question-title">
+                                    @(i.ToString() + ". " + eval.Enunciado)
+                                </h4>
+                            </div>
+
+                            <div class="eval-options-list" style="margin-bottom: 20px;">
+                                <label class="eval-option-item" for="A_@eval.IdPregunta">
+                                    <input type="radio" onchange="Respuesta(1, @eval.IdPregunta)" @(eval.OpcionSeleccionada == 1 ? "checked" : "") name="pregunta @eval.IdPregunta.ToString()" id="A_@eval.IdPregunta" />
+                                    <span style="font-size: 14px; color: #1e293b; line-height: 1.5;"><strong>A.</strong> @eval.OpcionA</span>
+                                </label>
+                                <label class="eval-option-item" for="B_@eval.IdPregunta">
+                                    <input type="radio" onchange="Respuesta(2, @eval.IdPregunta)" @(eval.OpcionSeleccionada == 2 ? "checked" : "") name="pregunta @eval.IdPregunta.ToString()" id="B_@eval.IdPregunta" />
+                                    <span style="font-size: 14px; color: #1e293b; line-height: 1.5;"><strong>B.</strong> @eval.OpcionB</span>
+                                </label>
+                                <label class="eval-option-item" for="C_@eval.IdPregunta">
+                                    <input type="radio" onchange="Respuesta(3, @eval.IdPregunta)" @(eval.OpcionSeleccionada == 3 ? "checked" : "") name="pregunta @eval.IdPregunta.ToString()" id="C_@eval.IdPregunta" />
+                                    <span style="font-size: 14px; color: #1e293b; line-height: 1.5;"><strong>C.</strong> @eval.OpcionC</span>
+                                </label>
+                                <label class="eval-option-item" for="D_@eval.IdPregunta">
+                                    <input type="radio" onchange="Respuesta(4, @eval.IdPregunta)" @(eval.OpcionSeleccionada == 4 ? "checked" : "") name="pregunta @eval.IdPregunta.ToString()" id="D_@eval.IdPregunta" />
+                                    <span style="font-size: 14px; color: #1e293b; line-height: 1.5;"><strong>D.</strong> @eval.OpcionD</span>
+                                </label>
+                            </div>
+                            @{
+                                i = i + 1;
+                                if (i == Model.evaluaciones.Count + 1)
+                                {
+                                    <div style="margin-top: 14px; padding: 14px 20px; border-radius: 10px; background: #fff1f2; border: 1px solid #fecdd3;">
+                                        <p id="alert" style="color: #be123c; font-size: 13px; font-weight: 600; margin: 0;">
+                                            <i class="fa fa-exclamation-triangle"></i> Recuerde que al enviar este subcomponente no podrá ingresar nuevamente a la autoevaluación.
+                                        </p>
+                                        <p id="success" class="hidden" style="color: #047857; font-size: 13px; font-weight: 600; margin: 0;">
+                                            <i class="fa fa-check-circle"></i> Evaluación enviada exitosamente.
+                                        </p>
+                                    </div>
+                                    <br />
+                                }
+                            }
+                        </div>
+                    }
+                }
+
+                if (FGA.Utility.Utilitarios.GetSubCategoriaPorcentaje(Model.evaluaciones[0].IdSubCategoria, Model.evaluaciones) == 100)
+                {
+                    <div style="text-align: center; padding: 40px 20px;">
+                        <div style="width: 64px; height: 64px; border-radius: 50%; background: #d1fae5; color: #059669; display: inline-flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 16px;">
+                            <i class="fa fa-check"></i>
+                        </div>
+                        <h4 style="color: #143750; font-weight: 700; margin-bottom: 8px;">Subcomponente Completado</h4>
+                        <p style="color: #64748b; font-size: 14px; max-width: 480px; margin: 0 auto 24px auto;">
+                            El usuario ha finalizado de completar el subcomponente. La evaluación fue enviada y no podrá volver a ingresar.
+                        </p>
+                        <button type="button" class="btn btn-default" data-dismiss="modal" data-bs-dismiss="modal" style="border-radius: 6px; font-weight: 600; padding: 8px 24px;">
+                            <i class="fa fa-times"></i> Salir
+                        </button>
+                    </div>
+                }
             }
 
-            <div class="container d-flex justify-content-center">
-                <br />
-                <div class="card mt-3">
-                    @{
-                        int i = 1;
-                        bool stepActivo = false;
-                        int opcion = 0;
-                        foreach (var eval in Model.evaluaciones)
-                        {
-                            stepActivo = (eval.OpcionSeleccionada == 0 || i == Model.evaluaciones.Count) && opcion == 0 ? true : false;
-                            if (stepActivo)
-                            {
-                                opcion = i;
-                            }
-
-                            if (FGA.Utility.Utilitarios.GetSubCategoriaPorcentaje(Model.evaluaciones[0].IdSubCategoria, Model.evaluaciones) < 100)
-                            {
-                                <div class="card-body p-5 step" style="@(stepActivo ? "" : "display: none")">
-                                    <div class="pull-right">
-                                        <h4>
-                                            <b>Subcomponente @(i + "/" + Model.evaluaciones.Count)</b>
-                                        </h4>
-                                    </div>
-                                    <br /><br /><br />
-                                    <div class="bg-info clearfix">
-                                        <div class="pull-left">
-                                            <label class="title bold">
-                                                <b>@(i.ToString() + ". " + eval.Enunciado + " ")</b>
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <br /> <br />
-                                    <ul>
-                                        <li style="padding-bottom:25px" class="title"><input type="radio" onchange="Respuesta(1, @eval.IdPregunta)" @(eval.OpcionSeleccionada == 1 ? "checked" : "") name="pregunta @eval.IdPregunta.ToString()" id="A @eval.IdPregunta" />@("  A. " + eval.OpcionA)</li>
-                                        <li style="padding-bottom:25px" class="title"><input type="radio" onchange="Respuesta(2, @eval.IdPregunta)" @(eval.OpcionSeleccionada == 2 ? "checked" : "") name="pregunta @eval.IdPregunta.ToString()" id="B @eval.IdPregunta" />@("  B. " + eval.OpcionB)</li>
-                                        <li style="padding-bottom:25px" class="title"><input type="radio" onchange="Respuesta(3, @eval.IdPregunta)" @(eval.OpcionSeleccionada == 3 ? "checked" : "") name="pregunta @eval.IdPregunta.ToString()" id="C @eval.IdPregunta" />@("  C. " + eval.OpcionC)</li>
-                                        <li style="padding-bottom:25px" class="title"><input type="radio" onchange="Respuesta(4, @eval.IdPregunta)" @(eval.OpcionSeleccionada == 4 ? "checked" : "") name="pregunta @eval.IdPregunta.ToString()" id="D @eval.IdPregunta" />@("  D. " + eval.OpcionD)</li>
-                                    </ul>
-                                    @{
-                                        i = i + 1;
-                                        if (i == Model.evaluaciones.Count + 1)
-                                        {
-                                            <br />
-                                            <label id="alert" class="title text-danger">
-                                                <b>Recuerde que al enviar este subcomponente no podrá ingresar nuevamente a la autoevaluación</b>
-                                            </label>
-                                            <label id="success" class="hidden title text-success">
-                                                <b>Evaluación enviada exitosamente</b>
-                                            </label>
-
-                                            <br />
-                                        }
-                                    }
-                                </div>
-                            }
-                        }
-
-                        if (FGA.Utility.Utilitarios.GetSubCategoriaPorcentaje(Model.evaluaciones[0].IdSubCategoria, Model.evaluaciones) == 100)
-                        {
-                            <br /><br /><br /><br /><br />
-                            <div class="contenedor">
-                                <br /><br />
-                                <label class="title">El usuario ha finalizado de completar el subcomponente, la evaluación fue enviada y no podrá volver a ingresar</label>
-                                <br>
-                                <div class="text-right">
-                                    <br />
-                                    <button type="button" class="btn btn-danger" data-dismiss="modal">Salir</button>  <label class="title"></label>
-                                </div>
-                                <br /><br />
-                            </div>
-                            <br /><br /><br />
-                        }
-                    }
-                    <br /> <br />
-                    <div class="card-footer">
-                        @if (Model.evaluaciones[0].Confirmada.Contains(";" + Model.evaluaciones[0].IdSubCategoria.ToString() + ";") == false)
-                        {
-                            <button class="action back btn btn-danger" style="display: none">Atrás</button>
-                            <button class="action next btn btn-success" @(Model.evaluaciones[0].OpcionSeleccionada == 0 ? "disabled" : "")>Siguiente</button>
-                            <button class="action submit btn btn-success" style="display: none">Enviar</button>
-                        }
-                    </div>
-                    <br />
-                    <br />
-                </div>
+            <div class="card-footer" style="background: transparent; border-top: 1px solid #e2e8f0; padding: 16px 0 0 0; display: flex; justify-content: flex-end; gap: 10px;">
+                @if (Model.evaluaciones[0].Confirmada.Contains(";" + Model.evaluaciones[0].IdSubCategoria.ToString() + ";") == false)
+                {
+                    <button class="action back btn btn-default" style="display: none; border-radius: 6px; font-weight: 600;">
+                        <i class="fa fa-chevron-left"></i> Atrás
+                    </button>
+                    <button class="action next btn btn-primary" style="border-radius: 6px; font-weight: 600; background: #0284c7; border-color: #0284c7;" @(Model.evaluaciones[0].OpcionSeleccionada == 0 ? "disabled" : "")>
+                        Siguiente <i class="fa fa-chevron-right"></i>
+                    </button>
+                    <button class="action submit btn btn-success" style="display: none; border-radius: 6px; font-weight: 600; background: #10b981; border-color: #10b981;">
+                        <i class="fa fa-paper-plane"></i> Enviar
+                    </button>
+                }
             </div>
         </div>
     </div>

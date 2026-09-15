@@ -10,17 +10,39 @@
         jList = serializer.Serialize(list);
         jList = jList.Replace("\"", "$");
     }
-
-    <p>
-        @if (upperEnabled && bool.Parse(Session["FullAccess"].ToString()) == true)
-        {
-            <a id="top" href="javascript:goTop();" style="padding-left: .4em;"><span>Inicio</span></a>
-            <a id="upper" href='javascript:goUpper("@Model");' style="padding-left: .4em;"><span>Arriba</span></a>
-        }
-
-        <a id="download" href="javascript:download();" style="padding-left: .4em;"><span>Descargar</span></a>
-    </p>
 }
+
+<div style="display: flex; align-items: center; gap: 10px; padding: 12px 0 8px 0; flex-wrap: wrap;">
+
+    @if (upperEnabled && bool.Parse(Session["FullAccess"].ToString()) == true)
+    {
+        <button type="button" onclick="goTop();"
+                class="btn-modern-filter"
+                style="padding: 7px 16px; border-radius: 8px; font-size: 12px; height: 34px; background: linear-gradient(135deg, #475569 0%, #334155 100%); box-shadow: 0 2px 8px rgba(71,85,105,0.3);">
+            <i class="fa fa-home"></i> Inicio
+        </button>
+
+        <button type="button" onclick='goUpper("@Model");'
+                class="btn-modern-filter"
+                style="padding: 7px 16px; border-radius: 8px; font-size: 12px; height: 34px; background: linear-gradient(135deg, #475569 0%, #334155 100%); box-shadow: 0 2px 8px rgba(71,85,105,0.3);">
+            <i class="fa fa-arrow-up"></i> Nivel superior
+        </button>
+    }
+
+    <button type="button" onclick="download();"
+            class="btn-modern-filter"
+            style="padding: 7px 18px; border-radius: 8px; font-size: 12px; height: 34px;">
+        <i class="fa fa-download"></i> Descargar selección
+    </button>
+
+    @if (list != null && list.Count > 0)
+    {
+        <span style="font-size: 12px; color: #64748b; display: flex; align-items: center; gap: 5px;">
+            <i class="fa fa-check-square" style="color: #0284c7;"></i>
+            @list.Count elemento(s) seleccionado(s)
+        </span>
+    }
+</div>
 
 <script type="text/javascript">
     function goUpper(path) {
@@ -33,7 +55,7 @@
             success: function (data) {
                 $('#listpane').html(data);
             }
-        })
+        });
     }
 
     function goTop() {
@@ -45,9 +67,8 @@
             dataType: "html",
             success: function (data) {
                 $('#listpane').html(data);
-
             }
-        })
+        });
     }
 
     function download() {
@@ -56,4 +77,3 @@
         window.location.href = path;
     }
 </script>
-

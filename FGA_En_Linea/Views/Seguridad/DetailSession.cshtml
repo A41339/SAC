@@ -1,55 +1,126 @@
 ﻿@model IEnumerable<Entities.Entities.Procedures.FGA_Consultar_Sessiones_Result>
 
 <div id="dialog"></div>
-<table id="tbRole" class="table table-striped table-bordered" style="width: 100%;">
-    <thead>
-        <tr>
-            <th style="width: 70px; text-align: center;"></th>
-            <th style="width: 20%; text-align: center;"> Entidad </th>
-            <th class="mobile" style="width: 10%; text-align: center;">Periodo</th>
-            <th style="width: 14%; text-align: center;"> Usuario carga </th>
-            <th style="width: 16%; text-align: center;"> Usuario administrador </th>
-            <th class="mobile" style="width: 14%; text-align: center;"> Usuario maestro </th>
-            <th class="mobile" style="width: 14%; text-align: center;"> Usuario director </th>
-            <th class="mobile" style="width: 12%; text-align: center;"> Total de ingresos </th>
-        </tr>
-    </thead>
-    <tbody style="font-size: 12px;">
-        @if (Model != null)
-        {
-            foreach (var item in Model)
+<div class="table-responsive" style="border-radius: 10px; border: 1px solid #e2e8f0; overflow: hidden;">
+    <table id="tbRole" class="table modern-data-table" style="width: 100%; margin-bottom: 0;">
+        <thead>
+            <tr style="background: #f8fafc;">
+                <th style="width: 55px; text-align: center !important; padding: 12px 6px;"></th>
+                <th style="text-align: left !important; padding: 12px 14px; font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.04em;">Entidad</th>
+                <th class="mobile" style="text-align: center !important; padding: 12px 10px; font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.04em;">Período</th>
+                <th style="text-align: center !important; padding: 12px 10px; font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.04em;">Usuario carga</th>
+                <th style="text-align: center !important; padding: 12px 10px; font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.04em;">Usuario admin</th>
+                <th class="mobile" style="text-align: center !important; padding: 12px 10px; font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.04em;">Usuario maestro</th>
+                <th class="mobile" style="text-align: center !important; padding: 12px 10px; font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.04em;">Usuario director</th>
+                <th class="mobile" style="text-align: center !important; padding: 12px 12px; font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.04em;">Total ingresos</th>
+            </tr>
+        </thead>
+        <tbody style="font-size: 13px;">
+            @if (Model != null && Model.Any())
+            {
+                foreach (var item in Model)
+                {
+                    <tr class="session-row">
+                        <td style="text-align: center !important; vertical-align: middle; padding: 8px;">
+                            @Html.HiddenFor(modelItem => item.IDENTIDAD)
+                            @{
+                                string ruta = Url.Content("~/Content/images/" + @item.NOMBRE + ".jpg");
+                                <img width="36" height="36" src="@ruta" style="border-radius: 8px; object-fit: contain; background: #ffffff; border: 1px solid #e2e8f0; padding: 2px;" onerror="this.style.display='none';" />
+                            }
+                        </td>
+                        <td style="text-align: left !important; vertical-align: middle; font-weight: 600; color: #143750; padding: 10px 14px;">
+                            @Html.DisplayFor(modelItem => item.NOMBRE)
+                        </td>
+                        <td class="mobile" style="text-align: center !important; vertical-align: middle; color: #64748b; font-size: 12px;">
+                            @FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Fecha"].ToString()).ToString("MMMM-yy"))
+                        </td>
+                        <td style="text-align: center !important; vertical-align: middle;">
+                            @if (item.Usuario_Carga > 0)
+                            {
+                                <span style="background: #e0f2fe; color: #0284c7; padding: 4px 12px; border-radius: 6px; font-weight: 700; font-size: 12px; display: inline-flex; align-items: center; justify-content: center; min-width: 28px; margin: 0 auto;">@item.Usuario_Carga</span>
+                            }
+                            else
+                            {
+                                <span style="color: #cbd5e1; font-weight: 600; display: inline-block; width: 100%; text-align: center;">-</span>
+                            }
+                        </td>
+                        <td style="text-align: center !important; vertical-align: middle;">
+                            @if (item.Usuario_Administrador > 0)
+                            {
+                                <span style="background: #fef3c7; color: #b45309; padding: 4px 12px; border-radius: 6px; font-weight: 700; font-size: 12px; display: inline-flex; align-items: center; justify-content: center; min-width: 28px; margin: 0 auto;">@item.Usuario_Administrador</span>
+                            }
+                            else
+                            {
+                                <span style="color: #cbd5e1; font-weight: 600; display: inline-block; width: 100%; text-align: center;">-</span>
+                            }
+                        </td>
+                        <td class="mobile" style="text-align: center !important; vertical-align: middle;">
+                            @if (item.Usuario_Maestro > 0)
+                            {
+                                <span style="background: #f3e8ff; color: #7e22ce; padding: 4px 12px; border-radius: 6px; font-weight: 700; font-size: 12px; display: inline-flex; align-items: center; justify-content: center; min-width: 28px; margin: 0 auto;">@item.Usuario_Maestro</span>
+                            }
+                            else
+                            {
+                                <span style="color: #cbd5e1; font-weight: 600; display: inline-block; width: 100%; text-align: center;">-</span>
+                            }
+                        </td>
+                        <td class="mobile" style="text-align: center !important; vertical-align: middle;">
+                            @if (item.Usuario_Director > 0)
+                            {
+                                <span style="background: #dcfce7; color: #15803d; padding: 4px 12px; border-radius: 6px; font-weight: 700; font-size: 12px; display: inline-flex; align-items: center; justify-content: center; min-width: 28px; margin: 0 auto;">@item.Usuario_Director</span>
+                            }
+                            else
+                            {
+                                <span style="color: #cbd5e1; font-weight: 600; display: inline-block; width: 100%; text-align: center;">-</span>
+                            }
+                        </td>
+                        <td class="mobile" style="text-align: center !important; vertical-align: middle;">
+                            <span style="background: linear-gradient(135deg, #143750 0%, #0d7377 100%); color: #ffffff; padding: 4px 12px; border-radius: 12px; font-weight: 700; font-size: 12px; display: inline-flex; align-items: center; justify-content: center; min-width: 32px; margin: 0 auto; box-shadow: 0 2px 6px rgba(20, 55, 80, 0.2);">
+                                @item.Total_Ingresos
+                            </span>
+                        </td>
+                    </tr>
+                }
+            }
+            else
             {
                 <tr>
-                    <td style="text-align: center; background-color: white;">
-                        @Html.HiddenFor(modelItem => item.IDENTIDAD)
-                        @{
-                            string ruta = Url.Content("~/Content/images/" + @item.NOMBRE + ".jpg");
-                            <img width="40" height="40" src="@ruta" />
-                        }
-                    </td>
-                    <td style="text-align: center;">
-                        <label>@Html.DisplayFor(modelItem => item.NOMBRE)</label>
-                    </td>
-                    <td class="mobile" style="text-align: center;">
-                        <label>@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Fecha"].ToString()).ToString("MMMM-yy"))</label>
-                    </td>
-                    <td style="text-align: center;">
-                        <label>@(item.Usuario_Carga == 0 ? "" : item.Usuario_Carga.Value.ToString())</label>
-                    </td>
-                    <td style="text-align: center;">
-                        <label>@(item.Usuario_Administrador == 0 ? "" : item.Usuario_Administrador.Value.ToString())</label>
-                    </td>
-                    <td style="text-align: center;">
-                        <label>@(item.Usuario_Maestro == 0 ? "" : item.Usuario_Maestro.Value.ToString())</label>
-                    </td>
-                    <td style="text-align: center;">
-                        <label>@(item.Usuario_Director == 0 ? "" : item.Usuario_Director.Value.ToString())</label>
-                    </td>
-                    <td style="text-align: center;">
-                        <label>@item.Total_Ingresos</label>
+                    <td colspan="8" style="text-align: center !important; padding: 24px; color: #94a3b8;">
+                        <i class="fa fa-info-circle" style="margin-right: 6px;"></i> No se registran sesiones activas para la fecha seleccionada.
                     </td>
                 </tr>
             }
-        }
-    </tbody>
-</table>
+        </tbody>
+    </table>
+</div>
+
+<style>
+    /* Asegurar que las columnas de cantidad de conexiones estén 100% centradas */
+    #tbRole th.mobile,
+    #tbRole td.mobile,
+    #tbRole th:nth-child(n+3),
+    #tbRole td:nth-child(n+3) {
+        text-align: center !important;
+    }
+    #tbRole th:nth-child(1),
+    #tbRole td:nth-child(1) {
+        text-align: center !important;
+        width: 55px !important;
+    }
+    #tbRole th:nth-child(2),
+    #tbRole td:nth-child(2) {
+        text-align: left !important;
+    }
+    #tbRole td:nth-child(n+3) span {
+        margin: 0 auto !important;
+    }
+    .session-row {
+        transition: background-color 0.15s ease;
+    }
+    .session-row:hover {
+        background-color: #f8fafc !important;
+    }
+    #tbRole td, #tbRole th {
+        border-color: #f1f5f9 !important;
+    }
+</style>

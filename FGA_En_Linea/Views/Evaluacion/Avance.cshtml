@@ -1,92 +1,128 @@
 ﻿@model IEnumerable<Entities.Entities.Procedures.FGA_Consultar_Avance_Result>
 
 @{
-    ViewBag.Title = "Avance";
+    ViewBag.Title = "Avance de Evaluación";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    int totalEntidades = Model != null ? Model.Count(m => m.IDENTIDAD != "0") : 0;
 }
 
-<section class="content-header">
-    <h1>Avance</h1>
+<section class="content-header" style="padding: 15px 15px 10px 15px;">
+    <h1 style="display: flex; align-items: center; gap: 10px; font-size: 22px; font-weight: 700; color: #1e293b; margin: 0;">
+        <i class="fa fa-line-chart" style="color: #0284c7;"></i> Monitoreo de Avance
+    </h1>
 </section>
+
 <section class="content">
     <div class="row">
         <div class="col-xs-12">
-            <div class="box box-solid box-info">
-                <div class="box-body table-responsive">
-                    <div class="margin">
-                        <div class="streaming-table">
-                            <span id="found" class="label label-info"></span>
-                            <table id="tbAvance" class="table table-striped table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th></th>
-                                        <th>Entidad</th>
-                                        @foreach (var detalle in Model)
+            <div class="modern-table-card">
+                <div class="modern-table-header">
+                    <div>
+                        <h3 class="modern-table-title">
+                            <i class="fa fa-shield" style="color: #0284c7; margin-right: 6px;"></i> Avance por Entidad y Componente
+                        </h3>
+                        <p class="modern-table-subtitle">Supervisión Basada en Riesgo (Reglamento SUGEF 24-22)</p>
+                    </div>
+                    <div>
+                        <span class="badge" style="background: #e0f2fe; color: #0284c7; font-size: 13px; font-weight: 600; padding: 7px 16px; border-radius: 20px;">
+                            <i class="fa fa-university" style="margin-right: 4px;"></i> @totalEntidades Entidades
+                        </span>
+                    </div>
+                </div>
+
+                <div class="table-responsive" style="padding: 16px 28px 28px 28px;">
+                    <table id="tbAvance" class="table modern-data-table" style="width: 100%;">
+                        <thead>
+                            <tr>
+                                <th style="width: 65px; text-align: center; padding: 16px 10px;"></th>
+                                <th style="text-align: left; padding: 16px 16px; min-width: 160px; font-weight: 700; color: #1e293b;">Entidad</th>
+                                @foreach (var detalle in Model)
+                                {
+                                    if (detalle.IDENTIDAD == "0")
+                                    {
+                                        foreach (var categoria in detalle.VALORES.Split(';'))
                                         {
-                                            if (detalle.IDENTIDAD == "0")
+                                            <th class="text-center" style="padding: 16px 14px; font-weight: 700; color: #1e293b; font-size: 13px; min-width: 150px; line-height: 1.4; vertical-align: middle;">
+                                                @categoria
+                                            </th>
+                                        }
+                                    }
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var detalle in Model)
+                            {
+                                var categorias = detalle.CATEGORIAS.Split(';');
+                                var idCategoria = 0;
+                                if (detalle.IDENTIDAD != "0")
+                                {
+                                    <tr>
+                                        <td style="text-align: center; vertical-align: middle; padding: 14px 10px;">
+                                            @{
+                                                string ruta = Url.Content("~/Content/images/" + @detalle.ENTIDAD + ".jpg");
+                                                <img width="42" height="42" src="@ruta" alt="@detalle.ENTIDAD" style="object-fit: contain; border-radius: 8px; background: #fff; padding: 3px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.06);" />
+                                            }
+                                        </td>
+                                        <td style="vertical-align: middle; font-weight: 600; color: #1e293b; padding: 14px 16px; font-size: 13.5px;">
+                                            @detalle.ENTIDAD
+                                        </td>
+                                        @{
+                                            idCategoria = 0;
+                                            foreach (var categoria in detalle.VALORES.Split(';'))
                                             {
-                                                foreach (var categoria in detalle.VALORES.Split(';'))
+                                                string valorTexto = (categoria ?? "").Trim();
+                                                decimal valorNum = 0;
+                                                decimal.TryParse(valorTexto.Replace("%", "").Replace(",", "."), System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out valorNum);
+                                                string badgeClass = "avance-badge-zero";
+                                                string iconClass = "fa-circle-o";
+                                                if (valorNum >= 100)
                                                 {
-                                                    <td class="text-center">@categoria</td>
+                                                    badgeClass = "avance-badge-success";
+                                                    iconClass = "fa-check-circle";
                                                 }
+                                                else if (valorNum > 0)
+                                                {
+                                                    badgeClass = "avance-badge-warning";
+                                                    iconClass = "fa-clock-o";
+                                                }
+
+                                                <td class="text-center" style="vertical-align: middle; padding: 14px 10px;">
+                                                    <a data-toggle="tooltip" class="cursor avance-badge @badgeClass" onclick="javascript:desglose('@detalle.IDENTIDAD', '@categorias[idCategoria]')" data-placement="top" title="Consultar desglose de @categoria">
+                                                        <i class="fa @iconClass"></i> @categoria
+                                                    </a>
+                                                </td>
+                                                idCategoria += 1;
                                             }
                                         }
                                     </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var detalle in Model)
-                                    {
-                                        var categorias = detalle.CATEGORIAS.Split(';');
-                                        var idCategoria = 0;
-                                        if (detalle.IDENTIDAD != "0")
-                                        {
-                                            <tr>
-                                                <td style="text-align: center; background-color: white;">
-                                                    @{
-                                                        string ruta = Url.Content("~/Content/images/" + @detalle.ENTIDAD + ".jpg");
-                                                        <img width="40" height="40" src="@ruta" />
-                                                    }
-                                                </td>
-                                                <td>
-                                                    @detalle.ENTIDAD
-                                                </td>
-                                                @{
-                                                    idCategoria = 0;
-                                                    foreach (var categoria in detalle.VALORES.Split(';'))
-                                                    {
-                                                        <td class="text-right">
-                                                            <a data-toggle="tooltip" class="cursor" onclick="javascript:desglose(@detalle.IDENTIDAD, @categorias[idCategoria])" data-placement="top" title="Consultar">@categoria</a>
-                                                        </td>
-                                                        idCategoria += 1;
-                                                    }
-                                                }
-                                            </tr>
-                                        }
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <br />
-                    <br />
+                                }
+                            }
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<div class="modal fade" id="modalDesglose" tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
+<div class="modal fade" id="modalDesglose" tabindex="-1" role="dialog" aria-labelledby="modalDesgloseLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-        <div class="modal-content">
+        <div class="modal-content" style="border-radius: 12px; overflow: hidden; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
             <div class="modal-header">
-                <div class="box-header with-border">
-                    <h3 id="titulo" style="padding-bottom: 10px;" class="box-title"></h3>
-                </div>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: #fff; opacity: 0.85; font-size: 24px; text-shadow: none;">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 id="titulo" class="modal-title" style="color: #fff; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+                    <i class="fa fa-list-alt" style="color: #86d2dd;"></i> Desglose de Avance por Categoría
+                </h4>
             </div>
-            <div id="desglose" class="modal-body">
+            <div id="desglose" class="modal-body" style="padding: 24px; background: #fff;">
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+            <div class="modal-footer" style="background: #f8fafc; border-top: 1px solid #e2e8f0; padding: 12px 24px;">
+                <button type="button" class="btn btn-default" data-dismiss="modal" style="border-radius: 6px; font-weight: 500;">
+                    <i class="fa fa-times"></i> Cerrar
+                </button>
             </div>
         </div>
     </div>
@@ -95,7 +131,7 @@
 <script type="text/javascript">
     function desglose(idEntidad, idCategoria) {
         $.ajax({
-           url: '@Url.Action("GetDesglose", "Evaluacion")',
+            url: '@Url.Action("GetDesglose", "Evaluacion")',
             type: 'POST',
             cache: false,
             async: true,

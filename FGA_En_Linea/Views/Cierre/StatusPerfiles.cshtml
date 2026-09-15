@@ -1,4 +1,4 @@
-@model IEnumerable<Entities.Entities.Procedures.FGA_Consultar_Monitor_Result>
+﻿@model IEnumerable<Entities.Entities.Procedures.FGA_Consultar_Monitor_Result>
 
 <div id="dialog"></div>
 
@@ -6,12 +6,12 @@
 {
     @Html.AntiForgeryToken()
     <div class="modern-table-card">
-        <table id="tbRole" class="table modern-data-table" style="width: 100%;">
+        <table id="tbRole" class="table table-striped table-bordered modern-data-table" style="width: 100%;">
             <thead>
                 <tr>
-                    <th style="width: 38%; text-align: center;">Entidad</th>
+                    <th style="width: 40%; text-align: center;">Entidad</th>
                     <th style="width: 35%; text-align: center;">Perfil de Supervisi&oacute;n</th>
-                    <th class="mobile" style="width: 27%; text-align: center;">&Uacute;lt. Per&iacute;odo Cargado</th>
+                    <th class="mobile" style="width: 25%; text-align: center;">&Uacute;lt. Per&iacute;odo Cargado</th>
                 </tr>
             </thead>
             <tbody>
@@ -38,9 +38,9 @@
                         string fechaIcon = isSinCierre ? "fa-minus-circle" : "fa-calendar-check-o";
 
                         <tr>
-                            <td style="text-align: left; padding-left: 24px;">
+                            <td style="text-align: left; padding-left: 36px;">
                                 @Html.HiddenFor(modelItem => item.IDENTIDAD)
-                                <div class="entity-cell-group" onclick="javascript:CargarEntidad(@(item.IDENTIDAD))">
+                                <div class="entity-cell-group" onclick="javascript:CargarEntidad(@(item.IDENTIDAD))" style="cursor: pointer;">
                                     <div class="entity-logo-box">
                                         <img src="@Url.Content("~/Content/images/" + item.NOMBRE + ".jpg")" alt="@item.NOMBRE" />
                                     </div>

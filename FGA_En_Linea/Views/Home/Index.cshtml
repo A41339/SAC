@@ -1,4 +1,4 @@
-@{
+﻿@{
     ViewBag.Title = "Dashboard";
 }
 
@@ -26,41 +26,52 @@
         </div>
     </div>
 
-    <div class="modern-filter-bar">
-        <div class="modern-filter-group">
-            <label for="IdEntidad">Entidad</label>
-            @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", @class = "modern-filter-input", style = "width: 200px;" })
-        </div>
-        <div class="modern-filter-group">
-            <label id="Periodo1L" for="Periodo1">Periodo Inicial</label>
-            <input name="Periodo1" id="Periodo1" class="datecontrol modern-filter-input" style="width: 130px;" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MM/yyyy")" />
-        </div>
-        <div class="modern-filter-group">
-            <label id="Periodo2L" for="Periodo2">Periodo Final</label>
-            <input name="Periodo2" id="Periodo2" class="datecontrol modern-filter-input" style="width: 130px;" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MM/yyyy")" />
-        </div>
+    <div class="modern-filter-card">
+        <div class="modern-filter-toolbar">
+            <div class="filter-item">
+                <label for="IdEntidad"><i class="fa fa-university"></i> Entidad:</label>
+                @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", @class = "form-control modern-select", style = "min-width: 200px;" })
+            </div>
+            <div class="filter-item">
+                <label id="Periodo1L" for="Periodo1"><i class="fa fa-calendar"></i> Periodo Inicial:</label>
+                <div class="modern-input-wrapper">
+                    <input name="Periodo1" id="Periodo1" class="datecontrol form-control modern-date-input" style="min-width: 130px;" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MM/yyyy")" />
+                </div>
+            </div>
+            <div class="filter-item">
+                <label id="Periodo2L" for="Periodo2"><i class="fa fa-calendar"></i> Periodo Final:</label>
+                <div class="modern-input-wrapper">
+                    <input name="Periodo2" id="Periodo2" class="datecontrol form-control modern-date-input" style="min-width: 130px;" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MM/yyyy")" />
+                </div>
+            </div>
 
-        <!-- Botones de Selección Rápida de Períodos -->
-        <div class="quick-period-group" style="display: flex; align-items: center; gap: 5px;">
-            <button type="button" class="btn-quick-period" onclick="setQuickPeriod('month')" title="Último Mes">Mes</button>
-            <button type="button" class="btn-quick-period" onclick="setQuickPeriod('quarter')" title="Trimestre Actual">Trimestre</button>
-            <button type="button" class="btn-quick-period" onclick="setQuickPeriod('ytd')" title="Año a la Fecha">YTD</button>
-            <button type="button" class="btn-quick-period" onclick="setQuickPeriod('year')" title="Últimos 12 Meses">12 Meses</button>
-        </div>
+            <!-- Botones de Selección Rápida de Períodos -->
+            <div class="filter-item">
+                <label><i class="fa fa-clock-o"></i> Acceso R&aacute;pido:</label>
+                <div class="quick-period-group" style="display: flex; align-items: center; gap: 5px;">
+                    <button type="button" class="btn-quick-period" onclick="setQuickPeriod('month')" title="&Uacute;ltimo Mes">Mes</button>
+                    <button type="button" class="btn-quick-period" onclick="setQuickPeriod('quarter')" title="Trimestre Actual">Trimestre</button>
+                    <button type="button" class="btn-quick-period" onclick="setQuickPeriod('ytd')" title="A&ntilde;o a la Fecha">YTD</button>
+                    <button type="button" class="btn-quick-period" onclick="setQuickPeriod('year')" title="&Uacute;ltimos 12 Meses">12 Meses</button>
+                </div>
+            </div>
 
-        <div>
-            <button class="btn-modern-generate" onclick="javascript:getContent()">
-                <i class="fa fa-download"></i> Generar Reporte
-            </button>
-        </div>
+            <div class="filter-item">
+                <button type="button" class="btn-modern-generate" onclick="javascript:getContent()">
+                    <i class="fa fa-download"></i> Generar Reporte
+                </button>
+            </div>
 
-        <!-- Interruptor para Activar/Desactivar Animaciones en Gráficos -->
-        <div class="anim-toggle-container" style="margin-left: auto; display: flex; align-items: center; gap: 8px;">
-            <span class="anim-toggle-label" style="font-size: 12.5px; font-weight: 600; color: #475569; display: flex; align-items: center; gap: 6px; cursor: pointer;" onclick="toggleChartAnimations()">
-                <i class="fa fa-magic" style="color: #387c93;"></i> Animaciones
-            </span>
-            <div class="modern-switch active" id="toggleAnimSwitch" onclick="toggleChartAnimations()" title="Activar o desactivar animaciones en los gráficos" role="button" tabindex="0">
-                <div class="switch-knob"></div>
+            <!-- Interruptor para Activar/Desactivar Animaciones en Gráficos -->
+            <div class="filter-item" style="margin-left: auto; align-self: flex-end; padding-bottom: 6px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span class="anim-toggle-label" style="font-size: 12.5px; font-weight: 600; color: #475569; display: flex; align-items: center; gap: 6px; cursor: pointer;" onclick="toggleChartAnimations()">
+                        <i class="fa fa-magic" style="color: #387c93;"></i> Animaciones
+                    </span>
+                    <div class="modern-switch active" id="toggleAnimSwitch" onclick="toggleChartAnimations()" title="Activar o desactivar animaciones en los gráficos" role="button" tabindex="0">
+                        <div class="switch-knob"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

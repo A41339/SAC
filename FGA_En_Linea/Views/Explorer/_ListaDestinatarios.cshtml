@@ -1,17 +1,14 @@
 ﻿@model IEnumerable<string>
 
-<table>
-    <tr>
-        <td>
-            <select id="Destinatarios" style="width: 100%; min-width: 200px; min-height: 100px" name="lst_destinatarios" multiple="multiple">
-                @foreach (var detalle in Model)
-                {
-                    <option value="@detalle">@detalle</option>
-                }
-            </select>
-        </td>
-        <td>
-            <a style="padding: 10px" data-toggle="tooltip" data-placement="top" title="Eliminar" href="javascript:DelDest();"><i class="btn btn-xs btn-danger icon fa fa-remove"></i></a>
-        </td>
-    </tr>
-</table>
+<div style="display: flex; align-items: flex-start; gap: 8px;">
+    <select id="Destinatarios" class="form-control" style="min-width: 260px; height: 95px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 12px; color: #1e293b; background: #f8fafc; padding: 6px;" name="lst_destinatarios" multiple="multiple">
+        @foreach (var detalle in Model)
+        {
+            <option value="@detalle" style="padding: 4px 6px; border-radius: 4px;">@detalle</option>
+        }
+    </select>
+    <button type="button" onclick="DelDest();" data-toggle="tooltip" data-placement="top" title="Quitar destinatario seleccionado"
+            style="width: 34px; height: 34px; border-radius: 7px; background: #fee2e2; color: #ef4444; border: 1px solid #fecaca; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease;">
+        <i class="fa fa-trash" style="font-size: 13px;"></i>
+    </button>
+</div>

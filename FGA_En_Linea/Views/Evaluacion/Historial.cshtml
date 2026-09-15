@@ -8,34 +8,27 @@
     <h1>Historial</h1>
 </section>
 <section class="content">
-    <div class="box box-solid box-info">
-        <div class="box-body table-responsive">
-            @using (Html.BeginForm("Buscar", "Evaluacion", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmBuscar" }))
-            {
-                @Html.AntiForgeryToken()
-                <div class="margin">
-                    <div class="streaming-table">
-                        <span id="found" class="label label-info"></span>
-                        <table class="table table-condensed table-striped table-bordered">
-                            <tr>
-                                <td class="mobile">
-                                    @Html.Label("Entidad:")
-                                </td>
-                                <td>
-                                    @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", style = "width: 200px;" })
-                                </td>
-                                <td>
-                                    <label class="btn btn-facebook">
-                                        Generar<input type="submit" name="submit" style="display: none;">
-                                    </label>
-                                </td>
-                            </tr>
-                        </table>
+    @using (Html.BeginForm("Buscar", "Evaluacion", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmBuscar" }))
+    {
+        @Html.AntiForgeryToken()
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="modern-filter-card">
+                    <div class="modern-filter-toolbar">
+                        <div class="filter-item">
+                            <label for="IdEntidad"><i class="fa fa-university"></i> Entidad:</label>
+                            @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", @class = "form-control modern-select", style = "min-width: 250px;" })
+                        </div>
+                        <div class="filter-item" style="margin-left: auto;">
+                            <button type="submit" name="submit" class="btn-modern-filter">
+                                <i class="fa fa-search"></i> Generar
+                            </button>
+                        </div>
                     </div>
                 </div>
-            }
+            </div>
         </div>
-    </div>
+    }
 
     <div class="row">
         <div class="col-xs-12">

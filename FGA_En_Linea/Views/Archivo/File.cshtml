@@ -41,19 +41,19 @@
                                                 <td style="text-align: center;">
                                                     @if (item.XML_ID == FGA.Utility.Utilitarios.archivoCargado)
                                                     {
-                                                        <img src="~/Content/images/wait.png" />
+                                                        <span class="file-status-badge status-processing"><i class="fa fa-refresh fa-spin"></i> Procesando</span>
                                                     }
                                                     else if (item.XML_ID == FGA.Utility.Utilitarios.archivoAceptado)
                                                     {
-                                                        <img src="~/Content/images/check.png" />
+                                                        <span class="file-status-badge status-success"><i class="fa fa-check-circle"></i> Aceptado</span>
                                                     }
                                                     else if (item.XML_ID == FGA.Utility.Utilitarios.archivoPendiente)
                                                     {
-                                                        <img src="~/Content/images/warning.png" />
+                                                        <span class="file-status-badge status-pending"><i class="fa fa-clock-o"></i> Pendiente</span>
                                                     }
                                                     else
                                                     {
-                                                        <img src="~/Content/images/wrong.png" />
+                                                        <span class="file-status-badge status-error"><i class="fa fa-times-circle"></i> Con Errores</span>
                                                     }
                                                 </td>
                                                 <td class="mobile" style="text-align: center;">
@@ -82,7 +82,9 @@
                                                 <td style="text-align: center;">
                                                     @if (item.XML_ID == FGA.Utility.Utilitarios.archivoErrores)
                                                     {
-                                                        @Html.ActionLink("Errores", "Details", new { id = item.ID_ENCABEZADO }, new { @class = "btn btn-danger btn-xs" })
+                                                        <a href="@Url.Action("Details", "Archivo", new { id = item.ID_ENCABEZADO })" class="btn btn-xs btn-danger" style="border-radius: 6px; padding: 4px 10px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">
+                                                            <i class="fa fa-exclamation-triangle"></i> Ver Errores
+                                                        </a>
                                                     }
                                                 </td>
                                             </tr>

@@ -1,5 +1,5 @@
 ﻿@{
-    ViewBag.Title = "Cartera";
+    ViewBag.Title = "Cartera por Industria";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -11,60 +11,52 @@
     <script type="text/javascript" src="~/Content/multiselect/dist/js/bootstrap-multiselect.js"></script>
 }
 
-<section class="content-header">
-    <h1>
-        Cartera
-    </h1>
+<section class="content-header" style="padding: 24px 20px 14px 20px;">
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+        <div>
+            <h1 style="margin: 0; font-size: 21px; font-weight: 700; color: #143750; display: flex; align-items: center; gap: 10px;">
+                <i class="fa fa-industry" style="color: #0284c7;"></i>
+                Cartera por Industria
+            </h1>
+            <p style="margin: 6px 0 0 0; font-size: 13px; color: #64748b;">
+                An&aacute;lisis comparativo y gr&aacute;ficos de cartera por sector industrial y per&iacute;odo.
+            </p>
+        </div>
+    </div>
 </section>
 
 <section class="content">
-    <div class="col-xs-12">
-        <div class="box box-solid box-info">
-            <div class="margin">
-                <div class="streaming-table">
-                    <span id="found" class="label label-info"></span>
-                    <table class="table table-condensed table-striped">
-                        <tr>
-                            <td class="mobile">
-                                @Html.Label("Sector:")
-                            </td>
-                            <td>
-                                @Html.DropDownList("Sectores", null, new { @id = "IdSector", style = "width: 220px;" })
-                            </td>
-                            <td class="mobile">
-                                @Html.Label("Gráfico:")
-                            </td>
-                            <td>
-                                @Html.DropDownList("Grafico", null, new { @id = "Grafico", style = "width: 220px;" })
-                            </td>
-                            <td>
-                                <label class="btn btn-facebook">
-                                    Generar<input type="submit" name="submit" id="btn_buscar" style="display: none;">
-                                </label>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="mobile">
-                                @Html.Label("Periodo:")
-                            </td>
-                            <td nowrap="nowrap" class="form-group">
-                                <input name="PeriodoI" id="PeriodoI" class="datecontrol" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MM/yyyy")" />
-                            </td>
-                            <td class="mobile">
-                               @* @Html.Label("Final:")*@
-                            </td>
-                            <td nowrap="nowrap" class="form-group">
-                                @*<input name="PeriodoF" id="PeriodoF" class="datecontrol" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MM/yyyy")" />*@
-                            </td>
-                            <td></td>
-                        </tr>                        
-                    </table>
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="modern-filter-card" style="margin-bottom: 22px;">
+                <div class="modern-filter-toolbar">
+                    <div class="filter-item">
+                        <label for="IdSector"><i class="fa fa-industry"></i> Sector:</label>
+                        @Html.DropDownList("Sectores", null, new { @id = "IdSector", @class = "form-control modern-select", style = "min-width: 220px; height: 38px; font-size: 13px;" })
+                    </div>
+                    <div class="filter-item">
+                        <label for="Grafico"><i class="fa fa-bar-chart"></i> Gr&aacute;fico:</label>
+                        @Html.DropDownList("Grafico", null, new { @id = "Grafico", @class = "form-control modern-select", style = "min-width: 240px; height: 38px; font-size: 13px;" })
+                    </div>
+                    <div class="filter-item">
+                        <label for="PeriodoI"><i class="fa fa-calendar"></i> Per&iacute;odo:</label>
+                        <div class="modern-input-wrapper">
+                            <input name="PeriodoI" id="PeriodoI" class="datecontrol form-control modern-date-input" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MM/yyyy")" style="min-width: 130px; height: 38px;" />
+                        </div>
+                    </div>
+                    <div class="filter-item" style="margin-left: auto;">
+                        <button type="button" id="btn_buscar" class="btn-modern-filter" style="height: 38px; padding: 0 24px;">
+                            <i class="fa fa-search"></i> Generar informe
+                        </button>
+                    </div>
                 </div>
             </div>
-
-
         </div>
-        <div id="grafica">
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <div id="grafica" class="modern-table-card" style="border: 1px solid #e2e8f0; border-radius: 12px; background: #ffffff; box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05); overflow: hidden; padding: 20px; margin-bottom: 24px;">
+            </div>
         </div>
     </div>
 </section>

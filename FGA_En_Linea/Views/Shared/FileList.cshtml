@@ -4,62 +4,107 @@
     @Html.Partial("ActionLinks", ViewData["Parent"] == null ? string.Empty : ViewData["Parent"])
 </div>
 
-<div class="row">
-    <div class="col-xs-12">
-        <div class="box box-solid box-info">
-            <div class="box-body table-responsive">
-                <div class="margin">
-                    <div class="streaming-table">
-                        <span id="found" class="label label-info"></span>
-                        <br />
-                        @Html.Label("Doble click en la carpeta para navegar")
-                        <br />
-                        <br />
-                        <table id="listview" class="table table-striped table-bordered">
-                            <tr class="noselect">
-                                <th id="one"> </th>
-                                <th id="two">
-                                    Nombre
-                                </th>
-                                <th id="three">
-                                    Fecha modificación
-                                </th>
-                            </tr>
-                            @{
-                                foreach (var item in Model)
-                                {
-                                    <tr class="t-row noselect">
-                                        <td class="one" onclick="IsCheckBoxCheck()">
-                                            @Html.CheckBox("fileCheck", new { value = item.FullPath })
-                                        </td>
-                                        <td class="cursor">
-                                            <img width="24" height="24" alt="@item.Category.ToString()" src="@Url.Content("~/Content/Images/" + item.Category.ToString() + ".png")"
-                                                 style="vertical-align: middle;" />
-                                            <span style="padding-left: 2px;">
-                                                @item.Name.ToUpper()
-                                            </span>
-                                        </td>
-                                        <td class="three">
-                                            @Html.Hidden("fullPath", item.FullPath)
-                                            @String.Format("{0:g}", item.Modified)
-                                        </td>
-                                    </tr>
-                                }
-                            }
-                        </table>
-                    </div>
-                </div>
-            </div>
+<div class="modern-table-card" style="margin-top: 8px;">
+
+    <!-- Encabezado de la tarjeta -->
+    <div style="padding: 16px 22px; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+        <div>
+            <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: #143750;">
+                <i class="fa fa-folder" style="color: #d97706; margin-right: 7px;"></i>
+                Explorador de archivos
+            </h4>
+            <p style="margin: 3px 0 0 0; font-size: 12px; color: #64748b;">
+                Doble clic en una carpeta para navegar · Marque archivos y use <strong>Descargar</strong> para obtenerlos
+            </p>
         </div>
+        <span id="found" class="label label-info" style="font-size: 11px;"></span>
+    </div>
+
+    <!-- Tabla de archivos -->
+    <div class="table-responsive" style="padding: 0;">
+        <table id="listview" class="table" style="margin-bottom: 0; width: 100%;">
+            <thead>
+                <tr class="noselect" style="background: #f8fafc;">
+                    <th id="one" style="width: 42px; padding: 10px 14px; border-bottom: 2px solid #e2e8f0;"></th>
+                    <th id="two" style="padding: 10px 14px; font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: .04em; border-bottom: 2px solid #e2e8f0;">
+                        <i class="fa fa-file" style="margin-right: 5px; color: #94a3b8;"></i> Nombre
+                    </th>
+                    <th id="three" style="padding: 10px 14px; font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: .04em; border-bottom: 2px solid #e2e8f0; width: 200px;">
+                        <i class="fa fa-calendar" style="margin-right: 5px; color: #94a3b8;"></i> Fecha de modificación
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    foreach (var item in Model)
+                    {
+                        bool isFolder = item.Category.ToString().ToLower() == "folder" || item.Category.ToString().ToLower() == "directory";
+                        string iconColor = isFolder ? "#d97706" : "#0284c7";
+                        <tr class="t-row noselect explorer-row">
+                            <td class="one" onclick="IsCheckBoxCheck()" style="padding: 10px 14px; text-align: center; vertical-align: middle;">
+                                @Html.CheckBox("fileCheck", new { value = item.FullPath, style = "width:16px; height:16px; cursor:pointer;" })
+                            </td>
+                            <td class="cursor" style="padding: 10px 14px; vertical-align: middle; font-size: 13px; color: #1e293b;">
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <span style="width: 32px; height: 32px; border-radius: 8px; background: @(isFolder ? "#fef3c7" : "#e0f2fe"); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                        <img width="18" height="18" alt="@item.Category.ToString()" src="@Url.Content("~/Content/Images/" + item.Category.ToString() + ".png")" style="display: block;" />
+                                    </span>
+                                    <span style="font-weight: @(isFolder ? "600" : "400"); color: @(isFolder ? "#143750" : "#374151");">
+                                        @item.Name.ToUpper()
+                                    </span>
+                                </div>
+                            </td>
+                            <td class="three" style="padding: 10px 14px; vertical-align: middle; font-size: 12px; color: #64748b;">
+                                @Html.Hidden("fullPath", item.FullPath)
+                                <i class="fa fa-clock-o" style="margin-right: 5px; color: #94a3b8;"></i>
+                                @String.Format("{0:g}", item.Modified)
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pie de tarjeta: info de items -->
+    <div style="padding: 10px 22px; border-top: 1px solid #f1f5f9; background: #f8fafc; font-size: 12px; color: #94a3b8; display: flex; align-items: center; gap: 6px;">
+        <i class="fa fa-info-circle"></i>
+        <span>@Model.Count() elemento(s) en esta carpeta</span>
     </div>
 </div>
 
-<script type="text/javascript">
+<style>
+    .explorer-row {
+        transition: background 0.15s ease;
+        cursor: default;
+    }
+    .explorer-row:hover {
+        background: #f0f9ff !important;
+    }
+    .explorer-row.t-state-selected,
+    .explorer-row.t-state-selected:hover {
+        background: #e0f2fe !important;
+    }
+    .explorer-row.t-state-selected td {
+        color: #0284c7 !important;
+        font-weight: 600;
+    }
+    #listview td {
+        border-top: 1px solid #f1f5f9 !important;
+        border-left: none !important;
+        border-right: none !important;
+        border-bottom: none !important;
+    }
+    #listview tr:first-child td {
+        border-top: none !important;
+    }
+</style>
 
-     $(function () {
+<script type="text/javascript">
+    $(function () {
         $.extend($.fn.disableTextSelect = function () {
             return this.each(function () {
-                    $(this).mousedown(function () { return false; });
+                $(this).mousedown(function () { return false; });
             });
         });
     });
@@ -73,40 +118,39 @@
         $("#listview .t-row:first").click();
     });
 
-      $("#listview .t-row").dblclick(function () {
-            var path = getApplicationPath();
-            var filename = jQuery("input[name=fullPath]", this).val();
-            $.ajax({
-                type: "POST",
-                url: path + "Explorer/GetFiles",
-                data: { path: filename },
-                cache: false,
-                dataType: "html",
-                success: function (data) {
-                    $('#listpane').html(data);
-
-                }
-            })
+    $(document).on("dblclick", "#listview .t-row", function () {
+        var path = getApplicationPath();
+        var filename = jQuery("input[name=fullPath]", this).val();
+        $.ajax({
+            type: "POST",
+            url: path + "Explorer/GetFiles",
+            data: { path: filename },
+            cache: false,
+            dataType: "html",
+            success: function (data) {
+                $('#listpane').html(data);
+            }
         });
+    });
 
     function IsCheckBoxCheck() {
         var list = new Object;
-            var i = 0;
-            var filename = '@ViewData["Parent"]';
-            var path = getApplicationPath();
-            $("input:checkbox:checked").each(function () {
-                list[i++] = $(this).val();
-            });
-            $.ajax({
-                type: "POST",
-                url: path + "Explorer/LoadActionLinks",
-                data: { path: filename, list: list },
-                cache: false,
-                dataType: "html",
-                success: function (data) {
-                    $('#commands').html(data);
-                }
-            })
+        var i = 0;
+        var filename = '@ViewData["Parent"]';
+        var path = getApplicationPath();
+        $("input:checkbox:checked").each(function () {
+            list[i++] = $(this).val();
+        });
+        $.ajax({
+            type: "POST",
+            url: path + "Explorer/LoadActionLinks",
+            data: { path: filename, list: list },
+            cache: false,
+            dataType: "html",
+            success: function (data) {
+                $('#commands').html(data);
+            }
+        });
     }
 
     function getApplicationPath() {
@@ -118,5 +162,4 @@
             path += '/';
         return path;
     }
-
 </script>

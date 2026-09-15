@@ -1,11 +1,19 @@
 ﻿@{
-    ViewBag.Title = "Balanza comprobación";
+    ViewBag.Title = "Balanza de Comprobaci&oacute;n";
 }
 
-<section class="content-header">
-    <h1>
-        Balanza comprobación
-    </h1>
+<section class="content-header" style="padding: 24px 20px 14px 20px;">
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+        <div>
+            <h1 style="margin: 0; font-size: 21px; font-weight: 700; color: #143750; display: flex; align-items: center; gap: 10px;">
+                <i class="fa fa-book" style="color: #0284c7;"></i>
+                Balanza de Comprobaci&oacute;n
+            </h1>
+            <p style="margin: 6px 0 0 0; font-size: 13px; color: #64748b;">
+                Generaci&oacute;n y consulta de balanza de comprobaci&oacute;n financiera comparativa por entidad y per&iacute;odo.
+            </p>
+        </div>
+    </div>
 </section>
 
 <section class="content">
@@ -13,55 +21,41 @@
     {
         @Html.AntiForgeryToken()
 
-        <div class="box box-solid box-info">
-            <div class="box-body table-responsive">
-                <div class="margin">
-                    <div class="streaming-table">
-                        <span id="found" class="label label-info"></span>
-                        <table class="table table-condensed table-striped table-bordered">
-                            <tr>
-                                <td class="mobile">
-                                    @Html.Label("Entidad:")
-                                </td>
-                                <td>
-                                    @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", style = "width: 200px;" })
-                                </td>
-                                <td class="mobile">
-                                    @Html.Label("Mensual:")
-                                </td>
-                                <td nowrap="nowrap">
-                                    @Html.DropDownList("Mensual", new List<SelectListItem> {
-                                                                    new SelectListItem { Value = "0", Text = "NO" },
-                                                                    new SelectListItem { Value = "1", Text = "SÍ" }
-                                                                    }, new { @id = "Mensual" })
-                                </td>
-                                <td>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="mobile">
-                                    @Html.Label("Primer Periodo:")
-                                </td>
-                                <td>
-                                    <input name="Periodo1" id="Periodo1" class="datecontrol" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MM/yyyy")" />
-                                </td>
-                                <td>
-                                    @Html.Label("Segundo Periodo:")
-                                </td>
-                                <td>
-                                    <input name="Periodo2" id="Periodo2" class="datecontrol" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MM/yyyy")" />
-
-                                </td>
-                                <td>
-                                    <button type="submit" id="btn_buscar" class="btn btn-primary">Generar</button>
-                                </td>
-                            </tr>
-                        </table>
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="modern-filter-card" style="margin-bottom: 22px;">
+                    <div class="modern-filter-toolbar">
+                        <div class="filter-item">
+                            <label for="IdEntidad"><i class="fa fa-university"></i> Entidad:</label>
+                            @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", @class = "form-control modern-select", style = "min-width: 220px; height: 38px; font-size: 13px;" })
+                        </div>
+                        <div class="filter-item">
+                            <label for="Mensual"><i class="fa fa-calendar-check-o"></i> Mensual:</label>
+                            @Html.DropDownList("Mensual", new List<SelectListItem> {
+                                new SelectListItem { Value = "0", Text = "NO" },
+                                new SelectListItem { Value = "1", Text = "S&Iacute;" }
+                            }, new { @id = "Mensual", @class = "form-control modern-select", style = "min-width: 100px; height: 38px; font-size: 13px;" })
+                        </div>
+                        <div class="filter-item">
+                            <label for="Periodo1"><i class="fa fa-calendar"></i> Primer Per&iacute;odo:</label>
+                            <div class="modern-input-wrapper">
+                                <input name="Periodo1" id="Periodo1" class="datecontrol form-control modern-date-input" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MM/yyyy")" style="min-width: 130px; height: 38px;" />
+                            </div>
+                        </div>
+                        <div class="filter-item">
+                            <label for="Periodo2"><i class="fa fa-calendar-o"></i> Segundo Per&iacute;odo:</label>
+                            <div class="modern-input-wrapper">
+                                <input name="Periodo2" id="Periodo2" class="datecontrol form-control modern-date-input" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MM/yyyy")" style="min-width: 130px; height: 38px;" />
+                            </div>
+                        </div>
+                        <div class="filter-item" style="margin-left: auto;">
+                            <button type="submit" id="btn_buscar" class="btn-modern-filter" style="height: 38px; padding: 0 24px;">
+                                <i class="fa fa-search"></i> Generar informe
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-
-
     }
 </section>

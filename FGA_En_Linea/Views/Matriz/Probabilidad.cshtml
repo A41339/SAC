@@ -1,4 +1,4 @@
-﻿@{
+@{
     ViewBag.Title = "Matrices";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -15,39 +15,28 @@
         @Html.AntiForgeryToken()
         <div class="row">
             <div class="col-xs-12">
-                <div class="box box-solid box-info">
-                    <div class="box-body table-responsive">
-                        <div class="margin">
-                            <div class="streaming-table">
-                                <span id="found" class="label label-info"></span>
-                                <table class="table table-condensed table-striped table-bordered">
-                                    <tr>
-                                        <td class="mobile">
-                                            @Html.Label("Entidad:")
-                                        </td>
-                                        <td>
-                                            @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", style = "width: 200px;" })
-                                        </td>
-                                        <td class="mobile">
-                                            @Html.Label("Inicial:")
-                                        </td>
-                                        <td nowrap="nowrap">
-                                            <input name="PeriodoI" id="PeriodoI" class="datecontrol" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MM/yyyy")" />
-                                        </td>
-                                        <td class="mobile">
-                                            @Html.Label("Final:")
-                                        </td>
-                                        <td nowrap="nowrap">
-                                            <input name="PeriodoF" id="PeriodoF" class="datecontrol" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MM/yyyy")" />
-                                        </td>
-                                        <td>
-                                            <label class="btn btn-facebook">
-                                                Generar<input type="submit" name="submit" style="display: none;">
-                                            </label>
-                                        </td>
-                                    </tr>
-                                </table>
+                <div class="modern-filter-card">
+                    <div class="modern-filter-toolbar">
+                        <div class="filter-item">
+                            <label for="IdEntidad"><i class="fa fa-university"></i> Entidad:</label>
+                            @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", @class = "form-control modern-select", style = "min-width: 220px;" })
+                        </div>
+                        <div class="filter-item">
+                            <label for="PeriodoI"><i class="fa fa-calendar"></i> Inicial:</label>
+                            <div class="modern-input-wrapper" style="min-width: 140px; width: 140px;">
+                                <input name="PeriodoI" id="PeriodoI" class="datecontrol form-control modern-date-input" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MM/yyyy")" style="width: 100%;" />
                             </div>
+                        </div>
+                        <div class="filter-item">
+                            <label for="PeriodoF"><i class="fa fa-calendar"></i> Final:</label>
+                            <div class="modern-input-wrapper" style="min-width: 140px; width: 140px;">
+                                <input name="PeriodoF" id="PeriodoF" class="datecontrol form-control modern-date-input" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MM/yyyy")" style="width: 100%;" />
+                            </div>
+                        </div>
+                        <div class="filter-item" style="margin-left: auto;">
+                            <button type="submit" name="submit" class="btn-modern-filter">
+                                <i class="fa fa-search"></i> Generar
+                            </button>
                         </div>
                     </div>
                 </div>

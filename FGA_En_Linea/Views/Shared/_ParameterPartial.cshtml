@@ -1,91 +1,119 @@
 ﻿
 <aside class="control-sidebar control-sidebar-dark">
-    <ul class="nav nav-tabs nav-justified control-sidebar-tabs">
-        <li><a href="#control-sidebar-settings-tab" data-toggle="tab"><i class="fa fa-gears"></i></a></li>
-       @* <li><a href="#control-sidebar-task-tab" data-toggle="tab"><i class="fa fa-home"></i></a></li>*@
-    </ul>
-    <div class="tab-content">
-        <div class="tab-pane active" id="control-sidebar-settings-tab">
-            @using (Html.BeginForm("Layout", "Config", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmConfig" }))
-            {
-                <h4 class="control-sidebar-heading">Gráficos</h4>
-                <div class="form-group">
-                    <label class="control-sidebar-subheading">
-                        Mostrar eje Y
-                        <input id="@FGA.Utility.Utilitarios.show_YAxis" type="checkbox" class="config pull-right" @(Session[FGA.Utility.Utilitarios.show_YAxis] is null ? string.Empty : "checked=checked") />
-                    </label>
-                    <p>
-                        Permite ocultar el eje y de los gráficos
-                    </p>
-                </div>
-                <div class="form-group">
-                    <label class="control-sidebar-subheading">
-                        Saltar fechas en eje X
-                        <input id="@FGA.Utility.Utilitarios.show_DateEachN" type="checkbox" class="config pull-right" @(Session[FGA.Utility.Utilitarios.show_DateEachN] is null ? string.Empty : "checked=checked") />
-                    </label>
-                    <p>
-                        Permite saltar las fechas en el eje x para que se muestren cada 3 periodos
-                    </p>
-                </div>
-                <div class="form-group">
-                    <label class="control-sidebar-subheading">
-                        Valores en columnas
-                        <input id="@FGA.Utility.Utilitarios.show_ColumnDetail" type="checkbox" class="config pull-right" @(Session[FGA.Utility.Utilitarios.show_ColumnDetail] is null ? string.Empty : "checked=checked") />
-                    </label>
-                    <p>
-                        Indica si se debe mostrar o no los valores en las columnas
-                    </p>
-                </div>
-                <div class="form-group">
-                    <label class="control-sidebar-subheading">
-                        Valores en líneas
-                        <input id="@FGA.Utility.Utilitarios.show_LineDetail" type="checkbox" class="config pull-right" @(Session[FGA.Utility.Utilitarios.show_LineDetail] is null ? string.Empty : "checked=checked") />
-                    </label>
-                    <p>
-                        Indica si se debe mostrar o no los valores en las líneas
-                    </p>
-                </div>
-                <div class="form-group">
-                    <label class="control-sidebar-subheading">
-                        Menú oculto
-                        <input id="@FGA.Utility.Utilitarios.show_MenuOculto" type="checkbox" class="config pull-right" @(Session[FGA.Utility.Utilitarios.show_MenuOculto] is null ? string.Empty : "checked=checked") />
-                    </label>
-                    <p>
-                        Indica si el menú debe aparecer oculto
-                    </p>
-                </div>
-            }
+    <div class="pref-header">
+        <div class="pref-header-info">
+            <div class="pref-header-icon">
+                <i class="fa fa-sliders"></i>
+            </div>
+            <div>
+                <h4 class="pref-header-title">Preferencias</h4>
+                <p class="pref-header-subtitle">Visualización y entorno analítico</p>
+            </div>
         </div>
-        <div class="tab-pane" id="control-sidebar-task-tab">
-            <h3 class="control-sidebar-heading">Tareas</h3>
-            <ul class="control-sidebar-menu">
-                <li>
-                    <a href="javascript:void(0)">
-                        <h4 class="control-sidebar-subheading">
-                            Chat
-                            <span class="label label-danger pull-right">70%</span>
-                        </h4>
+        <a href="#" data-toggle="control-sidebar" class="pref-close-btn" title="Cerrar panel">
+            <i class="fa fa-times"></i>
+        </a>
+    </div>
 
-                        <div class="progress progress-xxs">
-                            <div class="progress-bar progress-bar-warning" style="width: 70%"></div>
-                        </div>
-                    </a>
-                </li>
-                <li>
-                    <a href="javascript:void(0)">
-                        <h4 class="control-sidebar-subheading">
-                            Proyecciones
-                            <span class="label label-danger pull-right">0%</span>
-                        </h4>
+    <div class="pref-body">
+        @using (Html.BeginForm("Layout", "Config", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmConfig" }))
+        {
+            <div class="pref-section-heading">
+                <i class="fa fa-bar-chart"></i> Opciones de Gráficos
+            </div>
 
-                        <div class="progress progress-xxs">
-                            <div class="progress-bar progress-bar-danger" style="width: 0%"></div>
-                        </div>
-                    </a>
-                </li>
-            </ul>
+            <div class="pref-item">
+                <div class="pref-text">
+                    <div class="pref-label">
+                        <i class="fa fa-arrows-v"></i> Mostrar eje Y
+                    </div>
+                    <span class="pref-desc">Permite ocultar o visualizar el eje vertical de los gráficos</span>
+                </div>
+                <div class="pref-control">
+                    <label class="modern-switch" title="Mostrar/ocultar eje Y">
+                        <input id="@FGA.Utility.Utilitarios.show_YAxis" type="checkbox" class="config" @(Session[FGA.Utility.Utilitarios.show_YAxis] is null ? string.Empty : "checked=checked") />
+                        <span class="modern-switch-slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="pref-item">
+                <div class="pref-text">
+                    <div class="pref-label">
+                        <i class="fa fa-calendar"></i> Saltar fechas en eje X
+                    </div>
+                    <span class="pref-desc">Muestra las fechas del eje horizontal cada 3 periodos</span>
+                </div>
+                <div class="pref-control">
+                    <label class="modern-switch" title="Saltar fechas cada 3 periodos">
+                        <input id="@FGA.Utility.Utilitarios.show_DateEachN" type="checkbox" class="config" @(Session[FGA.Utility.Utilitarios.show_DateEachN] is null ? string.Empty : "checked=checked") />
+                        <span class="modern-switch-slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="pref-item">
+                <div class="pref-text">
+                    <div class="pref-label">
+                        <i class="fa fa-columns"></i> Valores en columnas
+                    </div>
+                    <span class="pref-desc">Muestra etiquetas de valores numéricos sobre las columnas</span>
+                </div>
+                <div class="pref-control">
+                    <label class="modern-switch" title="Mostrar valores en columnas">
+                        <input id="@FGA.Utility.Utilitarios.show_ColumnDetail" type="checkbox" class="config" @(Session[FGA.Utility.Utilitarios.show_ColumnDetail] is null ? string.Empty : "checked=checked") />
+                        <span class="modern-switch-slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="pref-item">
+                <div class="pref-text">
+                    <div class="pref-label">
+                        <i class="fa fa-line-chart"></i> Valores en líneas
+                    </div>
+                    <span class="pref-desc">Muestra etiquetas de valores numéricos sobre las líneas</span>
+                </div>
+                <div class="pref-control">
+                    <label class="modern-switch" title="Mostrar valores en líneas">
+                        <input id="@FGA.Utility.Utilitarios.show_LineDetail" type="checkbox" class="config" @(Session[FGA.Utility.Utilitarios.show_LineDetail] is null ? string.Empty : "checked=checked") />
+                        <span class="modern-switch-slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="pref-section-heading" style="margin-top: 18px;">
+                <i class="fa fa-desktop"></i> Navegación y Entorno
+            </div>
+
+            <div class="pref-item">
+                <div class="pref-text">
+                    <div class="pref-label">
+                        <i class="fa fa-bars"></i> Menú lateral colapsado
+                    </div>
+                    <span class="pref-desc">Mantiene el menú lateral contraído para mayor espacio visual</span>
+                </div>
+                <div class="pref-control">
+                    <label class="modern-switch" title="Colapsar menú lateral">
+                        <input id="@FGA.Utility.Utilitarios.show_MenuOculto" type="checkbox" class="config" @(Session[FGA.Utility.Utilitarios.show_MenuOculto] is null ? string.Empty : "checked=checked") />
+                        <span class="modern-switch-slider"></span>
+                    </label>
+                </div>
+            </div>
+        }
+
+        <div class="pref-footer-note">
+            <i class="fa fa-info-circle"></i>
+            <span>Los cambios se guardan y aplican automáticamente a su sesión de usuario.</span>
         </div>
-
     </div>
 </aside>
 <div class="control-sidebar-bg"></div>
+
+<script type="text/javascript">
+    $(document).on('click', '.pref-close-btn', function (e) {
+        e.preventDefault();
+        $('.control-sidebar').removeClass('control-sidebar-open');
+        $('body').removeClass('control-sidebar-open');
+    });
+</script>
