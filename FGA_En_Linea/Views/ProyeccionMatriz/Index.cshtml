@@ -1,4 +1,4 @@
-﻿@model FGA.Model.Modelo_PMatriz
+@model FGA.Model.Modelo_PMatriz
 
 @{
     ViewBag.Title = "Supuestos de Proyecci&oacute;n de Mora";
@@ -6,14 +6,21 @@
 }
 
 <section class="content-header">
-    <h1>
+    <h1 class="modern-page-title">
+        <i class="fa fa-sliders" style="color: #0284c7;"></i>
         Supuestos de Proyecci&oacute;n de Mora
+        <small>Configuraci&oacute;n y an&aacute;lisis de transici&oacute;n de cartera</small>
     </h1>
+    <ol class="breadcrumb">
+        <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
+        <li><a href="#">Proyecciones</a></li>
+        <li class="active">Mora</li>
+    </ol>
 </section>
 
 <section class="content">
     <div>
-        <div class="nav-tabs-custom">
+        <div class="nav-tabs-custom" style="border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); border: 1px solid #e2e8f0; overflow: hidden; background: #ffffff;">
             <ul class="nav nav-tabs">
                 <li class="@(Model.Buscar ? "" : "active")"><a href="#tab_1" data-toggle="tab">Supuestos</a></li>
                 <li @(Model.Buscar ? "class=active" : "class=hidden")><a href="#tab_2" data-toggle="tab">Proyecci&oacute;n</a></li>

@@ -1,4 +1,4 @@
-﻿@model FGA.Model.Modelo_PEEFF
+@model FGA.Model.Modelo_PEEFF
 
 @{
     ViewBag.Title = "M&oacute;dulo de proyecciones";
@@ -6,9 +6,16 @@
 }
 
 <section class="content-header">
-    <h1>
-        M&oacute;dulo de proyecciones
+    <h1 class="modern-page-title">
+        <i class="fa fa-line-chart" style="color: #0284c7;"></i>
+        M&oacute;dulo de Proyecciones
+        <small>Supuestos, balances, estados de resultados, mora e indicadores proyectados</small>
     </h1>
+    <ol class="breadcrumb">
+        <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
+        <li><a href="#">Proyecciones</a></li>
+        <li class="active">Estados Financieros</li>
+    </ol>
 </section>
 
 <section class="content">
@@ -57,7 +64,7 @@
 
         if (Model.Supuestos == true)
         {
-            <div id="menuTab" class="nav-tabs-custom">
+            <div id="menuTab" class="nav-tabs-custom" style="border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); border: 1px solid #e2e8f0; overflow: hidden; background: #ffffff;">
                 <ul class="nav nav-tabs">
                     <li id="tab1" class="@(Model.proyeccion ? "" : "active")"><a href="#tab1C" data-toggle="tab">Supuestos de proyecci&oacute;n</a></li>
                     <li id="tab3" @(@Session["TipoReporte"] is null ? "class=hidden" : "class=''")><a href="#tab3C" data-toggle="tab">Balance proyectado</a></li>
