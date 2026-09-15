@@ -14,9 +14,16 @@
 }
 
 <section class="content-header">
-    <h1>
-        Composici&oacute;n de la cartera
+    <h1 class="modern-page-title">
+        <i class="fa fa-pie-chart" style="color: #0284c7;"></i>
+        Composici&oacute;n de la Cartera
+        <small>Distribuci&oacute;n, categor&iacute;as de riesgo y tipos de cartera</small>
     </h1>
+    <ol class="breadcrumb">
+        <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
+        <li><a href="#">Cartera</a></li>
+        <li class="active">Composici&oacute;n</li>
+    </ol>
 </section>
 
 <section class="content">
@@ -117,6 +124,7 @@
     $(document).ready(function () {
         initMultiselects();
         toggleCategoryTypes();
+        refreshGraph();
     });
 
     $("#Grafico").change(function () {
