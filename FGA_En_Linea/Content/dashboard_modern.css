@@ -1203,41 +1203,65 @@ table.table > tbody > tr > td {
     transition: background-color 0.15s ease !important;
 }
 
-/* Keep Action Column, Badges, Dropdowns & Center-Classed Cells Centered */
-table.table td:first-child,
-.table td:first-child,
-table.dataTable tbody td:first-child,
+/* Action Column, Badges, & Centered Cells */
+table.table td.action-cell,
+.table td.action-cell,
 table td.text-center,
 .table td.text-center,
-table td.action-cell,
-table td.badge-cell,
-table td.mobile,
-.streaming-table table td:first-child {
+table.dataTable tbody td.text-center,
+table.dataTable thead th.text-center,
+table td.badge-cell {
     text-align: center !important;
 }
 
-/* Table Header Alignment - Centered by default */
+/* Form Filter Labels in Tables */
+table td.mobile,
+.table td.mobile {
+    text-align: right !important;
+    font-weight: 600 !important;
+    color: #1e293b !important;
+    vertical-align: middle !important;
+    white-space: nowrap !important;
+}
+
+/* Table Header Alignment - Default */
 table.table th, 
 .table th, 
 table.dataTable thead th {
     text-align: center !important;
 }
 
-/* Explicit Utility Classes for Header & Cell Alignment */
+/* Explicit Utility Classes for Header & Cell Alignment with High Specificity */
+table th.text-left,
+table td.text-left,
+.table th.text-left,
+.table td.text-left,
+table.table th.text-left,
+table.table td.text-left,
+table.dataTable thead th.text-left,
+table.dataTable tbody td.text-left,
+table.dataTable thead th:first-child.text-left,
+table.dataTable tbody td:first-child.text-left,
+.streaming-table table tbody td.text-left,
+.streaming-table table thead th.text-left {
+    text-align: left !important;
+    padding-left: 16px !important;
+}
+
 table th.text-right,
 table td.text-right,
 .table th.text-right,
 .table td.text-right,
+table.table th.text-right,
+table.table td.text-right,
+table.dataTable thead th.text-right,
+table.dataTable tbody td.text-right,
 table th.numeric-col,
-table td.numeric-col {
+table td.numeric-col,
+.streaming-table table tbody td.text-right,
+.streaming-table table thead th.text-right {
     text-align: right !important;
-}
-
-table th.text-left,
-table td.text-left,
-.table th.text-left,
-.table td.text-left {
-    text-align: left !important;
+    padding-right: 16px !important;
 }
 
 /* Alternate Striping & Hover */
@@ -1834,16 +1858,16 @@ table.dataTable.cell-border {
 .modern-kpi-card {
     background: var(--card-bg);
     border-radius: 12px;
-    padding: 14px 16px 0px 16px;
+    padding: 16px 16px 14px 16px;
     box-shadow: var(--card-shadow);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     border: 1px solid var(--border-color);
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    height: 165px;
+    height: auto;
+    min-height: 205px;
     box-sizing: border-box;
-    align-self: start;
     animation: dashboardCardFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
@@ -1956,9 +1980,20 @@ table.dataTable.cell-border {
 }
 
 .kpi-sparkline-container {
-    height: 60px;
+    height: 55px;
     width: 100%;
     margin-top: 0;
+    overflow: visible !important;
+}
+
+.kpi-sparkline-container .highcharts-container,
+.kpi-sparkline-container svg {
+    overflow: visible !important;
+}
+
+.highcharts-tooltip-container {
+    z-index: 999999 !important;
+    pointer-events: none !important;
 }
 
 .modern-indicators-panel {
@@ -2004,17 +2039,55 @@ table.dataTable.cell-border {
     color: #475569;
     font-weight: 500;
     font-size: 11.5px;
-    max-width: 72%;
+    max-width: 56%;
     line-height: 1.25;
 }
 
 .indicator-val-group {
     display: flex;
     align-items: center;
+    justify-content: flex-end;
     gap: 6px;
     font-weight: 700;
     color: #143750;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.indicator-main-val {
     font-size: 12.5px;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.indicator-var-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 10.5px;
+    font-weight: 600;
+    padding: 2px 5px;
+    border-radius: 4px;
+    line-height: 1.1;
+    cursor: default;
+}
+
+.indicator-var-pill.positive {
+    background-color: #ecfdf5 !important;
+    color: #059669 !important;
+    border: 1px solid #a7f3d0 !important;
+}
+
+.indicator-var-pill.negative {
+    background-color: #fef2f2 !important;
+    color: #dc2626 !important;
+    border: 1px solid #fecaca !important;
+}
+
+.indicator-var-pill.neutral {
+    background-color: #f1f5f9 !important;
+    color: #64748b !important;
+    border: 1px solid #e2e8f0 !important;
 }
 
 .cuentas-principales-wrapper {
@@ -3979,6 +4052,130 @@ form table .btn,
     margin-bottom: 0 !important;
     vertical-align: middle !important;
 }
+
+/* IRL Table Row Highlighting (Blue & Orange rows text contrast fix) */
+#tbIRL tbody tr.irl-row-blue td:not(:nth-child(2)),
+#tbIRLR tbody tr.irl-row-blue td:not(:nth-child(2)),
+table.dataTable tbody tr.irl-row-blue td:not(:nth-child(2)),
+td[style*="#0B4E91"], td[style*="0B4E91"], td[style*="rgb(11, 78, 145)"] {
+    background-color: #0B4E91 !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+}
+
+#tbIRL tbody tr.irl-row-orange td:not(:nth-child(2)),
+#tbIRLR tbody tr.irl-row-orange td:not(:nth-child(2)),
+table.dataTable tbody tr.irl-row-orange td:not(:nth-child(2)),
+td[style*="#ed7c2f"], td[style*="ed7c2f"], td[style*="rgb(237, 124, 47)"] {
+    background-color: #ed7c2f !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+}
+
+/* Ocultar botón de guardar / exportar de Highcharts en sparklines de tarjetas KPI */
+.kpi-sparkline-container .highcharts-contextbutton,
+.kpi-sparkline-container .highcharts-exporting-group {
+    display: none !important;
+}
+
+/* ==========================================================================
+   Interruptor Moderno de Animaciones de Gráficos (ON/OFF)
+   ========================================================================== */
+.anim-toggle-container {
+    background: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 10px !important;
+    padding: 6px 14px !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+    transition: all 0.25s ease !important;
+    user-select: none;
+}
+
+.anim-toggle-container:hover {
+    border-color: #387c93 !important;
+    box-shadow: 0 2px 8px rgba(56, 124, 147, 0.15) !important;
+}
+
+.anim-toggle-label {
+    font-size: 12.5px !important;
+    font-weight: 600 !important;
+    color: #334155 !important;
+    margin-bottom: 0 !important;
+    letter-spacing: 0.2px;
+}
+
+.modern-switch {
+    width: 44px;
+    height: 24px;
+    background: #cbd5e1;
+    border-radius: 12px;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.modern-switch .switch-knob {
+    width: 18px;
+    height: 18px;
+    background: #ffffff;
+    border-radius: 50%;
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+}
+
+.modern-switch.active {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
+}
+
+.modern-switch.active .switch-knob {
+    transform: translateX(20px);
+}
+
+/* ==========================================================================
+   24. DataTables RowGroup & Category Header Contrast
+   ========================================================================== */
+table.dataTable tr.dtrg-group td,
+table.dataTable tr.dtrg-start td,
+table.dataTable tr.group-header-row td,
+table.dataTable tbody tr.dtrg-group td,
+table.dataTable tbody tr.dtrg-start td,
+table.dataTable tbody tr.group-header-row td,
+.dataTables_wrapper table.dataTable tbody tr.dtrg-group td,
+.dataTables_wrapper table.dataTable tbody tr.dtrg-start td,
+.dataTables_wrapper table.dataTable tbody tr.group-header-row td,
+.streaming-table table tbody tr.group-header-row td,
+.streaming-table table tbody tr.dtrg-group td {
+    background: linear-gradient(135deg, #143750 0%, #1e4b6e 100%) !important;
+    background-color: #143750 !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    font-size: 13.5px !important;
+    letter-spacing: 0.5px !important;
+    border: none !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4) !important;
+}
+
+table.dataTable tr.dtrg-group td *,
+table.dataTable tr.dtrg-start td *,
+table.dataTable tr.group-header-row td *,
+table.dataTable tbody tr.dtrg-group td *,
+table.dataTable tbody tr.dtrg-start td *,
+table.dataTable tbody tr.group-header-row td *,
+.dataTables_wrapper table.dataTable tbody tr.dtrg-group td *,
+.dataTables_wrapper table.dataTable tbody tr.dtrg-start td *,
+.dataTables_wrapper table.dataTable tbody tr.group-header-row td *,
+.streaming-table table tbody tr.group-header-row td * {
+    color: #ffffff !important;
+}
+
+
+
 
 
 

@@ -18,7 +18,7 @@
     <div class="dashboard-welcome-banner">
         <div class="welcome-text-group">
             <h2 class="welcome-title"><i class="fa fa-tachometer"></i> Centro de Mando Ejecutivo FFC</h2>
-            <p class="welcome-subtitle">Monitoreo din&aacute;mico de suficiencia patrimonial, eficiencia operacional y mora en tiempo real.</p>
+            <p class="welcome-subtitle">Monitoreo din&aacute;mico de suficiencia patrimonial, compromiso patrimonial y mora en tiempo real.</p>
         </div>
         <div class="welcome-status-group">
             <span class="system-health-chip"><span class="health-pulse-dot"></span><i class="fa fa-shield"></i> Estatus Sist&eacute;mico: <strong>Saludable & Regulado (SUGEF)</strong></span>
@@ -52,6 +52,16 @@
             <button class="btn-modern-generate" onclick="javascript:getContent()">
                 <i class="fa fa-download"></i> Generar Reporte
             </button>
+        </div>
+
+        <!-- Interruptor para Activar/Desactivar Animaciones en Gráficos -->
+        <div class="anim-toggle-container" style="margin-left: auto; display: flex; align-items: center; gap: 8px;">
+            <span class="anim-toggle-label" style="font-size: 12.5px; font-weight: 600; color: #475569; display: flex; align-items: center; gap: 6px; cursor: pointer;" onclick="toggleChartAnimations()">
+                <i class="fa fa-magic" style="color: #387c93;"></i> Animaciones
+            </span>
+            <div class="modern-switch active" id="toggleAnimSwitch" onclick="toggleChartAnimations()" title="Activar o desactivar animaciones en los gráficos" role="button" tabindex="0">
+                <div class="switch-knob"></div>
+            </div>
         </div>
     </div>
     <div>
@@ -224,14 +234,98 @@
         }, 150);
     }
 
+    // ==========================================
+    // Control de Animaciones en Gráficos Highcharts
+    // ==========================================
+    function getChartAnimationPreference() {
+        var pref = localStorage.getItem('fga_charts_animation');
+        if (pref === null) {
+            try { localStorage.setItem('fga_charts_animation', 'true'); } catch (e) {}
+            return true;
+        }
+        return pref === 'true';
+    }
+
+    function applyHighchartsAnimationSettings(enabled) {
+        if (typeof Highcharts === 'undefined') return;
+        Highcharts.setOptions({
+            chart: {
+                animation: enabled ? { duration: 1200, easing: 'easeOutCubic' } : false
+            },
+            plotOptions: {
+                series: {
+                    animation: enabled ? { duration: 1200 } : false
+                },
+                areaspline: {
+                    animation: enabled ? { duration: 1200 } : false
+                },
+                line: {
+                    animation: enabled ? { duration: 1200 } : false
+                },
+                column: {
+                    animation: enabled ? { duration: 1000 } : false
+                }
+            }
+        });
+    }
+
+    function updateAnimationSwitchUI(enabled) {
+        var sw = $('#toggleAnimSwitch');
+        if (enabled) {
+            sw.addClass('active');
+        } else {
+            sw.removeClass('active');
+        }
+    }
+
+    function toggleChartAnimations() {
+        var current = getChartAnimationPreference();
+        var next = !current;
+        localStorage.setItem('fga_charts_animation', next ? 'true' : 'false');
+        updateAnimationSwitchUI(next);
+        applyHighchartsAnimationSettings(next);
+
+        // Si ya hay gráficos Highcharts renderizados, actualizarlos en tiempo real
+        if (typeof Highcharts !== 'undefined' && Highcharts.charts) {
+            Highcharts.charts.forEach(function (chart) {
+                if (chart && chart.series) {
+                    chart.update({
+                        chart: {
+                            animation: next ? { duration: 1000, easing: 'easeOutCubic' } : false
+                        },
+                        plotOptions: {
+                            series: {
+                                animation: next ? { duration: 1000 } : false
+                            }
+                        }
+                    }, false);
+
+                    if (next) {
+                        chart.series.forEach(function (s) {
+                            if (s.animate) {
+                                s.animate(true);
+                                s.animate(false);
+                            }
+                        });
+                    }
+                    chart.redraw(next ? { duration: 800 } : false);
+                }
+            });
+        }
+    }
+
+    // Inicializar configuración global de animación previa a la creación de los gráficos
+    var initialAnimPref = getChartAnimationPreference();
+    applyHighchartsAnimationSettings(initialAnimPref);
+
     getContent();
 
     $(document).ready(function () {
-       if(@(Env.GetUserInfo("roleid") == FGA.Utility.Utilitarios.roleGerencial.ToString())) {
+        updateAnimationSwitchUI(initialAnimPref);
+
+        if(@(Env.GetUserInfo("roleid") == FGA.Utility.Utilitarios.roleGerencial.ToString())) {
             $('.highcharts-button').css("display", "none");
         }
-
-
     });
 
 </script>

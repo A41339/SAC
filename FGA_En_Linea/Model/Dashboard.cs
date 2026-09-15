@@ -1,26 +1,27 @@
-﻿using DotNet.Highcharts;
+using DotNet.Highcharts;
 
 namespace FGA.Models
 {
     public class Dashboard
     {
         public static int cantidad = 2;
-        public int idCompromiso = 3;
-        public int idMorosidad = 22;
-        public int idRiesgo = 333;
-        public int idActivo = 60;
-        public int idPerdidaEsperada = 30;
-        public int idPerdidaAcumulada = 127;
-        public int idRiesgoTasa = 342;
-        public int idRiesgoCambiario = 351;
-        public int idCostoAdmin = 118;
-        public int idSuficiencia = 1;
-        public int idCalceMes = 192;
-        public int idCalce3Mes = 258;
-        public int idICL = 100000;
-        public int idApalancamiento = 1100;
-        public int idCN1 = -1;
-        public int idCCN1 = -2;
+        // Identificadores de la Serie 8000 para el nuevo Dashboard (coexistencia con sitio viejo)
+        public int idCompromiso = 8003;
+        public int idMorosidad = 8022;
+        public int idRiesgo = 8333;
+        public int idActivo = 8060;
+        public int idPerdidaEsperada = 8030;
+        public int idPerdidaAcumulada = 8127;
+        public int idRiesgoTasa = 8342;
+        public int idRiesgoCambiario = 8351;
+        public int idCostoAdmin = 8118;
+        public int idSuficiencia = 8001;
+        public int idCalceMes = 8192;
+        public int idCalce3Mes = 8258;
+        public int idICL = 8900;
+        public int idApalancamiento = 9100;
+        public int idCN1 = 8991;
+        public int idCCN1 = 8992;
 
         public bool prudencial = false;
 
@@ -43,6 +44,27 @@ namespace FGA.Models
         public decimal[] Apalancamiento = new decimal[cantidad];
         public decimal[] CN1 = new decimal[cantidad];
         public decimal[] CNN1 = new decimal[cantidad];
+
+        public int idResultadoPeriodo = 8400;
+        public int idCarteraCredito = 8130;
+        public int idObligacionesPublico = 8210;
+
+        public decimal[] ResultadoPeriodo = new decimal[cantidad];
+        public decimal[] CarteraCredito = new decimal[cantidad];
+        public decimal[] ObligacionesPublico = new decimal[cantidad];
+
+        // Indicadores reales de Cartera y Otros Indicadores
+        public int idDeudores100 = 8002;
+        public int idInversionesTitulos = 8104;
+        public int idCaptacionesPlazo = 8106;
+        public int idEstimacionesMora = 8109;
+        public int idRentabilidad = 8112;
+
+        public decimal[] Deudores100 = new decimal[cantidad];
+        public decimal[] InversionesTitulos = new decimal[cantidad];
+        public decimal[] CaptacionesPlazo = new decimal[cantidad];
+        public decimal[] EstimacionesMora = new decimal[cantidad];
+        public decimal[] Rentabilidad = new decimal[cantidad];
 
         public Highcharts BrechaLiquidez;
         public Highcharts DiferencialTasas;

@@ -1,4 +1,4 @@
-﻿@model FGA.Model.Modelo_IRL
+@model FGA.Model.Modelo_IRL
 
 <div id="tbl_IRLCuentas">
     <div class="col-md-6">
@@ -10,7 +10,7 @@
                             <span id="found" class="label label-info"></span>
                             <div class="box-header with-border">
                                 <img width="50" height="50" src="@Session["Logo"]" />
-                                <h4 class="box-title">Indicador de riesgo de líquidez</h4>
+                                <h4 class="box-title">Indicador de riesgo de liquidez</h4>
                             </div>
                             <table id="tbCuentas" class="table table-striped table-bordered" style="width:100%; height: 350px">
                                 <thead>
@@ -73,7 +73,7 @@
                             <div class="col-md-12">
                                 <div class="box-header with-border">
                                     <img width="50" height="50" src="@Session["Logo"]" />
-                                    <h4 class="box-title">Indicador de riesgo de líquidez (IRL)</h4>
+                                    <h4 class="box-title">Indicador de riesgo de liquidez (IRL)</h4>
                                 </div>
                                 <div class="box-body">
                                     @(Model.IRLGraph)
@@ -113,7 +113,7 @@
                                         <th colspan="10">
                                             <div class="box-header with-border">
                                                 <img width="50" height="50" src="@Session["Logo"]" />
-                                                <h4 class="box-title">Índice de riesgo de líquidez</h4>
+                                                <h4 class="box-title">&Iacute;ndice de riesgo de liquidez</h4>
                                             </div>
                                         </th>
                                     </tr>
@@ -173,7 +173,7 @@
                                             <th colspan="10">
                                                 <div class="box-header with-border">
                                                     <img width="50" height="50" src="@Session["Logo"]" />
-                                                    <h4 class="box-title">Índice de riesgo de líquidez</h4>
+                                                    <h4 class="box-title">&Iacute;ndice de riesgo de liquidez</h4>
                                                 </div>
                                             </th>
                                         </tr>
@@ -231,16 +231,16 @@
                 }
 
                 if (parseInt(aData[10]) == 1){
-                    $(nRow).find('td').css('background-color', '#0B4E91');
-                    $(nRow).find('td').css('color', 'white');
+                    $(nRow).addClass('irl-row-blue');
+                    $(nRow).find('td:not(:eq(1))').attr('style', function(i, s) { return (s || '') + '; background-color: #0B4E91 !important; color: #ffffff !important; font-weight: 700 !important;'; });
                 }
 
                 if (parseInt(aData[11]) == 1){
-                    $(nRow).find('td').css('background-color', '#ed7c2f');
+                    $(nRow).addClass('irl-row-orange');
+                    $(nRow).find('td:not(:eq(1))').attr('style', function(i, s) { return (s || '') + '; background-color: #ed7c2f !important; color: #ffffff !important; font-weight: 700 !important;'; });
                 }
 
-                $(nRow).find('td:eq(1)').css('color', 'black');
-                $(nRow).find('td:eq(1)').css('background-color', 'white');
+                $(nRow).find('td:eq(1)').attr('style', function(i, s) { return (s || '') + '; color: #1e293b !important; background-color: #ffffff !important; font-weight: 600 !important;'; });
 
             },
             "bRetrieve": true,

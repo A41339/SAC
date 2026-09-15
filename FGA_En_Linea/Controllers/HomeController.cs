@@ -1,4 +1,4 @@
-﻿using DotNet.Highcharts.Enums;
+using DotNet.Highcharts.Enums;
 using DotNet.Highcharts.Helpers;
 using DotNet.Highcharts.Options;
 using Entities.Entities.Procedures;
@@ -158,6 +158,16 @@ namespace FGA.Controllers
                                     SetDashboardValue(view.Apalancamiento, result, view.idApalancamiento);
                                     SetDashboardValue(view.CN1, result, view.idCN1);
                                     SetDashboardValue(view.CNN1, result, view.idCCN1);
+
+                                    SetDashboardValue(view.ResultadoPeriodo, result, view.idResultadoPeriodo);
+                                    SetDashboardValue(view.CarteraCredito, result, view.idCarteraCredito);
+                                    SetDashboardValue(view.ObligacionesPublico, result, view.idObligacionesPublico);
+
+                                    SetDashboardValue(view.Deudores100, result, view.idDeudores100);
+                                    SetDashboardValue(view.InversionesTitulos, result, view.idInversionesTitulos);
+                                    SetDashboardValue(view.CaptacionesPlazo, result, view.idCaptacionesPlazo);
+                                    SetDashboardValue(view.EstimacionesMora, result, view.idEstimacionesMora);
+                                    SetDashboardValue(view.Rentabilidad, result, view.idRentabilidad);
                                 }
                                 catch { }
                             }
@@ -182,11 +192,26 @@ namespace FGA.Controllers
 
         private void SetDashboardValue(decimal[] targetArray, FGA_Consultar_Dashboard_Result[] results, int id)
         {
-            var item = results.FirstOrDefault(o => o.ID == id);
-            if (item != null)
+            var items = results.Where(o => o.ID == id).ToList();
+            if (items.Count > 1)
             {
-                targetArray[0] = item.CALIFICACION ?? 0;
-                targetArray[1] = item.MONTO ?? 0;
+                var itemsWithPeriod = items.Where(o => o.PERIODO.HasValue).OrderBy(o => o.PERIODO).ToList();
+                var first = itemsWithPeriod.Count > 0 ? itemsWithPeriod.First() : items.First();
+                var last = itemsWithPeriod.Count > 0 ? itemsWithPeriod.Last() : items.Last();
+
+                targetArray[0] = first.MONTO ?? 0;
+                targetArray[1] = last.MONTO ?? 0;
+            }
+            else if (items.Count == 1)
+            {
+                var item = items[0];
+                targetArray[0] = item.MONTO ?? 0;
+                targetArray[1] = item.CALIFICACION ?? item.MONTO ?? 0;
+            }
+            else
+            {
+                targetArray[0] = 0;
+                targetArray[1] = 0;
             }
         }
 
@@ -221,14 +246,14 @@ namespace FGA.Controllers
                 var series = new Series[]
                 {
                     new Series{
-                        Name = "Variaci�n interanual neta",
+                        Name = "Variaci\u00f3n interanual neta",
                         Data = new Data(CarteraTotalNeta),
                         Color = ColorTranslator.FromHtml("#39aac5"),
                         PlotOptionsLine = HighChart.getLine()
                     },
                     new Series
                     {
-                        Name = "Variaci�n interanual bruta",
+                        Name = "Variaci\u00f3n interanual bruta",
                         Data = new Data(CarteraTotalBruta),
                         Color = ColorTranslator.FromHtml("#ed7c2f"),
                         PlotOptionsLine = HighChart.getLine()
@@ -269,7 +294,7 @@ namespace FGA.Controllers
                 var series = new Series[]
                 {
                     new Series{
-                    Name = "Variaci�n anual del capital social",
+                    Name = "Variaci\u00f3n anual del capital social",
                     Data = new Data(Variacion),
                     Color = ColorTranslator.FromHtml("#7d7d7d"),
                     PlotOptionsLine = HighChart.getLine()
@@ -417,14 +442,14 @@ namespace FGA.Controllers
                     var series = new Series[]
                         {
                             new Series{
-                                Name = "Raz�n IRL por banda",
+                                Name = "Raz\u00f3n IRL por banda",
                                 Data = new Data(Brecha),
                                 Color = ColorTranslator.FromHtml("#d9d9d9"),
                                 Type = ChartTypes.Line,
                                 PlotOptionsLine = HighChart.getLinePercent()
                             },
                             new Series{
-                                Name = "Raz�n IRL acumulado",
+                                Name = "Raz\u00f3n IRL acumulado",
                                 Data = new Data(Acumulada),
                                 Color = ColorTranslator.FromHtml("#ed7c2f"),
                                 Type = ChartTypes.Line,
@@ -473,14 +498,14 @@ namespace FGA.Controllers
                 var series = new Series[]
                 {
                     new Series{
-                        Name = "Tasa Activa Impl�cita",
+                        Name = "Tasa Activa Impl\u00edcita",
                         Data = new Data(TasaActivo),
                         Color = HighChart.GetColor(0),
                         Type = ChartTypes.Line,
                         PlotOptionsLine = HighChart.getLinePercent()
                     },
                     new Series{
-                        Name = "Tasa Pasiva Impl�cita",
+                        Name = "Tasa Pasiva Impl\u00edcita",
                         Data = new Data(TasaPasivo),
                         Color = HighChart.GetColor(1),
                         Type = ChartTypes.Line,
@@ -579,11 +604,11 @@ namespace FGA.Controllers
                     object[] AlDia = new object[numPeriodos];
 
                     List<Serie> listaSeries = new List<Serie>();
-                    listaSeries.Add(new Serie(numPeriodos, "1 - 30 d�as"));
-                    listaSeries.Add(new Serie(numPeriodos, "31 - 60 d�as"));
-                    listaSeries.Add(new Serie(numPeriodos, "61 - 90 d�as"));
-                    listaSeries.Add(new Serie(numPeriodos, "91 - 180 d�as"));
-                    listaSeries.Add(new Serie(numPeriodos, "M�s de 180 d�as"));
+                    listaSeries.Add(new Serie(numPeriodos, "1 - 30 d\u00edas"));
+                    listaSeries.Add(new Serie(numPeriodos, "31 - 60 d\u00edas"));
+                    listaSeries.Add(new Serie(numPeriodos, "61 - 90 d\u00edas"));
+                    listaSeries.Add(new Serie(numPeriodos, "91 - 180 d\u00edas"));
+                    listaSeries.Add(new Serie(numPeriodos, "M\u00e1s de 180 d\u00edas"));
                     listaSeries.Add(new Serie(numPeriodos, "Cobro Judicial"));
 
                     for (int j = 0; j < numPeriodos; j++)
@@ -626,7 +651,7 @@ namespace FGA.Controllers
                             GridLineWidth = 0,
                             Title = new YAxisTitle()
                             {
-                                Text = "Al d�a",
+                                Text = "Al d\u00eda",
                                 Style = "fontSize: '0px', color: 'black',  fontFamily: 'Arial, sans-serif'",
                             },
                             Labels = new YAxisLabels()
@@ -664,7 +689,7 @@ namespace FGA.Controllers
                     serie = new Series
                     {
                         Type = ChartTypes.Line,
-                        Name = "Al d�a",
+                        Name = "Al d\u00eda",
                         Data = new Data(AlDia),
                         Color = HighChart.GetColor(i),
                         YAxis = "AlDia",
