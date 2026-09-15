@@ -1,25 +1,28 @@
-﻿@model IEnumerable<Entities.Entities.Procedures.FGA_Consultar_Monitor_Result>
+@model IEnumerable<Entities.Entities.Procedures.FGA_Consultar_Monitor_Result>
 
 @{
-    ViewBag.Title = "Perfiles";
+    ViewBag.Title = "Perfiles de Supervisi&oacute;n";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<section class="content">
+<section class="content-header">
+    <h1 class="modern-page-title">
+        <i class="fa fa-sliders" style="color: #0284c7;"></i>
+        Perfiles de Supervisi&oacute;n
+        <small>Consulta y selecci&oacute;n de entidad por perfil de supervisi&oacute;n</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
+        <li><a href="#">Cierre</a></li>
+        <li class="active">Perfiles</li>
+    </ol>
+</section>
 
+<section class="content">
     <div class="row">
         <div class="col-xs-12">
-            <div class="box box-solid box-info">
-                <div class="box-body table-responsive">
-                    <div class="margin">
-                        <div class="streaming-table">
-                            <span id="found" class="label label-info"></span>
-                            <br />
-                            <div id="files">
-                                @Html.Partial("StatusPerfiles", Model)
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div id="files">
+                @Html.Partial("StatusPerfiles", Model)
             </div>
         </div>
     </div>

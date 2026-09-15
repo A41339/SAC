@@ -1,44 +1,43 @@
-﻿@{
+@{
     ViewBag.Title = "Errores";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <section class="content-header">
-    <h1>
+    <h1 class="modern-page-title">
+        <i class="fa fa-exclamation-triangle" style="color: #ef4444;"></i>
         Lista de Errores
+        <small>Detalle de inconsistencias detectadas en la carga de archivos</small>
     </h1>
+    <ol class="breadcrumb">
+        <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
+        <li><a href="@Url.Action("Index", "Cierre")">Cierre</a></li>
+        <li class="active">Errores</li>
+    </ol>
 </section>
 
 <section class="content">
-    <!-- Small boxes (Stat box) -->
     <div class="row">
         <div class="col-xs-12">
-            <div class="box box-solid box-info">
-                <div class="box-body table-responsive">
-                    <div class="margin">
-                        <div class="streaming-table">
-                            <span id="found" class="label label-info"></span>
-                            <table id="tbError" class="table table-striped table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th> Archivo  </th>
-                                        <th> Error  </th>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
+            <div class="modern-table-card">
+                <table id="tbError" class="table table-striped table-bordered modern-data-table" style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th style="width: 35%;">Archivo</th>
+                            <th style="width: 65%;">Descripci&oacute;n del Error</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
 
-                            <div id="summary">
-                                <div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="box-footer">
-                        <a href="@(Request.UrlReferrer != null ? Request.UrlReferrer.ToString() : Url.Action("Index", "Cierre"))" class="btn-modern-back">
-                            <i class="fa fa-arrow-left"></i> Regresar a Consultar Archivos
-                        </a>
-                    </div>
+                <div id="summary">
+                    <div></div>
+                </div>
+
+                <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid #e2e8f0;">
+                    <a href="@(Request.UrlReferrer != null ? Request.UrlReferrer.ToString() : Url.Action("Index", "Cierre"))" class="btn-modern-back">
+                        <i class="fa fa-arrow-left"></i> Regresar a Consultar Archivos
+                    </a>
                 </div>
             </div>
         </div>

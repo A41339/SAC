@@ -1,13 +1,13 @@
 ﻿@model FGA.Model.Modelo_PMatriz
 
 @{
-    ViewBag.Title = "Supuestos de Proyección de Mora";
+    ViewBag.Title = "Supuestos de Proyecci&oacute;n de Mora";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <section class="content-header">
     <h1>
-        Supuestos de Proyección de Mora
+        Supuestos de Proyecci&oacute;n de Mora
     </h1>
 </section>
 
@@ -16,7 +16,7 @@
         <div class="nav-tabs-custom">
             <ul class="nav nav-tabs">
                 <li class="@(Model.Buscar ? "" : "active")"><a href="#tab_1" data-toggle="tab">Supuestos</a></li>
-                <li @(Model.Buscar ? "class=active" : "class=hidden")><a href="#tab_2" data-toggle="tab">Proyección</a></li>
+                <li @(Model.Buscar ? "class=active" : "class=hidden")><a href="#tab_2" data-toggle="tab">Proyecci&oacute;n</a></li>
             </ul>
             <div class="tab-content">
                 <div class="tab-pane @(Model.Buscar ? "" : "active")" id="tab_1">
@@ -41,7 +41,7 @@
                                                     <option id="3" value="12" @(Session["TipoTasa"].ToString() == "12" ? "selected" : "")>Espec&iacute;fica anual</option>
                                                 </select>
                                                 <a class="text-right" data-toggle="tooltip" data-placement="top" title="Ayuda"
-                                                   href="javascript:help('Tasa', 'Puede elegir entre las siguientes tres opciones: <br/><br/> a) Crecimiento sugerido: está dado de acuerdo con los períodos históricos y el cálculo interno de FGA. No podrá ser modificado. <br/><br/> b) Tasa especifica se puede incluir de forma manual ya sea una tasa anual o mensual, debe escoger en la seguilla de al lado el tipo mensual o anual.<br/><br/> c) Tasa por estacionalidad: se incluye en forma manual una tasa de crecimiento para cada mes proyectado')"><i class="btn btn-xs btn-default icon fa fa-question"></i></a>
+                                                   href="javascript:help('Tasa', 'Puede elegir entre las siguientes tres opciones: <br/><br/> a) Crecimiento sugerido: est&aacute; dado de acuerdo con los per&iacute;odos hist&oacute;ricos y el c&aacute;lculo interno de FGA. No podr&aacute; ser modificado. <br/><br/> b) Tasa especifica se puede incluir de forma manual ya sea una tasa anual o mensual, debe escoger en la seguilla de al lado el tipo mensual o anual.<br/><br/> c) Tasa por estacionalidad: se incluye en forma manual una tasa de crecimiento para cada mes proyectado')"><i class="btn btn-xs btn-default icon fa fa-question"></i></a>
                                             </div>
                                         </div>
                                         <div class="filter-item">
@@ -59,7 +59,7 @@
                                             <div style="display: inline-flex; align-items: center; gap: 6px;">
                                                 <input name="PeriodoEstimar" type="number" id="PeriodoEstimar" class="form-control" value="@Session["PeriodoEstimar"]" style="min-width: 90px; height: 38px;" />
                                                 <a class="text-right" data-toggle="tooltip" data-placement="top" title="Ayuda"
-                                                   href="javascript:help('Meses por proyectar', 'En este cuadro se elige la cantidad de meses a proyectar de la cartera de crédito, tomando como base el último mes cargado')"><i class="btn btn-xs btn-default icon fa fa-question"></i></a>
+                                                   href="javascript:help('Meses por proyectar', 'En este cuadro se elige la cantidad de meses a proyectar de la cartera de cr&eacute;dito, tomando como base el &uacute;ltimo mes cargado')"><i class="btn btn-xs btn-default icon fa fa-question"></i></a>
                                             </div>
                                         </div>
                                         <div class="filter-item">
@@ -67,7 +67,7 @@
                                             <div style="display: inline-flex; align-items: center; gap: 6px;">
                                                 <input name="PeriodoCrecimiento" type="number" id="PeriodoCrecimiento" class="form-control" value="@Session["PeriodoCrecimiento"]" style="min-width: 90px; height: 38px;" />
                                                 <a class="text-right" data-toggle="tooltip" data-placement="top" title="Ayuda"
-                                                   href="javascript:help('Periodos históricos', 'El número a elegir será la cantidad de meses históricos que se tomarán como base para la proyección de la cartera de crédito, considerar que el mínimo son 12 meses')"><i class="btn btn-xs btn-default icon fa fa-question"></i></a>
+                                                   href="javascript:help('Periodos hist&oacute;ricos', 'El n&uacute;mero a elegir ser&aacute; la cantidad de meses hist&oacute;ricos que se tomar&aacute;n como base para la proyecci&oacute;n de la cartera de cr&eacute;dito, considerar que el m&iacute;nimo son 12 meses')"><i class="btn btn-xs btn-default icon fa fa-question"></i></a>
                                             </div>
                                         </div>
                                         <div class="filter-item">
@@ -77,7 +77,7 @@
                                                     <input name="PeriodoI" id="PeriodoI" class="datecontrol form-control modern-date-input" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["PeriodoI"].ToString()).ToString("MM/yyyy")" style="min-width: 130px;" />
                                                 </div>
                                                 <a class="text-right" data-toggle="tooltip" data-placement="top" title="Ayuda"
-                                                   href="javascript:help('Periodo inicial', 'El mínimo de meses históricos que se deben de tomar son 12 meses')"><i class="btn btn-xs btn-default icon fa fa-question"></i></a>
+                                                   href="javascript:help('Periodo inicial', 'El m&iacute;nimo de meses hist&oacute;ricos que se deben de tomar son 12 meses')"><i class="btn btn-xs btn-default icon fa fa-question"></i></a>
                                             </div>
                                         </div>
                                         <div class="filter-item">
@@ -87,7 +87,7 @@
                                                     <input name="PeriodoF" id="PeriodoF" class="datecontrol form-control modern-date-input" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["PeriodoF"].ToString()).ToString("MM/yyyy")" style="min-width: 130px;" />
                                                 </div>
                                                 <a class="text-right" data-toggle="tooltip" data-placement="top" title="Ayuda"
-                                                   href="javascript:help('Periodo final', 'El mes idóneo a escoger es el último período cargado')"><i class="btn btn-xs btn-default icon fa fa-question"></i></a>
+                                                   href="javascript:help('Periodo final', 'El mes id&oacute;neo a escoger es el &uacute;ltimo per&iacute;odo cargado')"><i class="btn btn-xs btn-default icon fa fa-question"></i></a>
                                             </div>
                                         </div>
                                         <div class="filter-item" style="margin-left: auto;">
@@ -105,7 +105,7 @@
 
                     @if (Model.Buscar)
                     {
-                        <div class="box box-solid box-info">
+                        <div class="modern-table-card">
                             <div class="row">
                                 <div class="margin">
                                     <br />
@@ -119,12 +119,12 @@
                                                 </tr>
                                                 <tr>
                                                     <th>Periodo</th>
-                                                    <th>Al día</th>
-                                                    <th>1-30 días</th>
-                                                    <th>31-60 días</th>
-                                                    <th>61-90 días</th>
-                                                    <th>91-180 días</th>
-                                                    <th>Más de 180 días</th>
+                                                    <th>Al d&iacute;a</th>
+                                                    <th>1-30 d&iacute;as</th>
+                                                    <th>31-60 d&iacute;as</th>
+                                                    <th>61-90 d&iacute;as</th>
+                                                    <th>91-180 d&iacute;as</th>
+                                                    <th>M&aacute;s de 180 d&iacute;as</th>
                                                     <th>Cobro Judicial</th>
                                                 </tr>
                                             </thead>
@@ -136,7 +136,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md-7">
-                                        <div class="box box-info">
+                                        <div class="modern-table-card">
                                             <div class="box-header with-border">
                                                 <img width="50" height="50" src="@Session["Logo"]" />
                                                 <h4 class="box-title">Mora Estimada</h4>
@@ -157,8 +157,8 @@
                                                 </tr>
                                                 <tr>
                                                     <th>Periodo</th>
-                                                    <th>Cartera vencida a más de un día</th>
-                                                    <th>Cartera vencida a más de 30 días</th>
+                                                    <th>Cartera vencida a m&aacute;s de un d&iacute;a</th>
+                                                    <th>Cartera vencida a m&aacute;s de 30 d&iacute;as</th>
                                                 </tr>
                                             </thead>
                                             <tbody></tbody>
@@ -180,9 +180,9 @@
                                                     <th>Periodo</th>
                                                     <th>Cartera total</th>
                                                     <th>En mora</th>
-                                                    <th>Estimación nivel de mora</th>
+                                                    <th>Estimaci&oacute;n nivel de mora</th>
                                                     <th>Mora / Cartera total</th>
-                                                    <th>Estimación mora</th>
+                                                    <th>Estimaci&oacute;n mora</th>
                                                 </tr>
                                             </thead>
                                             <tbody></tbody>
@@ -199,17 +199,17 @@
                                                 <tr>
                                                     <th colspan="8">
                                                         <img width="50" height="50" src="@Session["Logo"]" />
-                                                        <h4 class="box-title">Proyección de Mora</h4>
+                                                        <h4 class="box-title">Proyecci&oacute;n de Mora</h4>
                                                     </th>
                                                 </tr>
                                                 <tr>
                                                     <th>Periodo</th>
-                                                    <th>Al día</th>
-                                                    <th>1-30 días</th>
-                                                    <th>31-60 días</th>
-                                                    <th>61-90 días</th>
-                                                    <th>91-180 días</th>
-                                                    <th>Más de 180 días</th>
+                                                    <th>Al d&iacute;a</th>
+                                                    <th>1-30 d&iacute;as</th>
+                                                    <th>31-60 d&iacute;as</th>
+                                                    <th>61-90 d&iacute;as</th>
+                                                    <th>91-180 d&iacute;as</th>
+                                                    <th>M&aacute;s de 180 d&iacute;as</th>
                                                     <th>Cobro Judicial</th>
                                                 </tr>
                                             </thead>
@@ -222,10 +222,10 @@
                                     </div>
 
                                     <div class="col-md-12">
-                                        <div class="box box-primary">
+                                        <div class="modern-table-card">
                                             <div class="box-header with-border">
                                                 <img width="50" height="50" src="@Session["Logo"]" />
-                                                <h3 class="box-title">Distribución de la Mora</h3>
+                                                <h3 class="box-title">Distribuci&oacute;n de la Mora</h3>
                                             </div>
                                             <div class="box-body">
                                                 @(Model.DistribucionMora)

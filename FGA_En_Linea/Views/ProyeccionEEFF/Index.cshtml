@@ -31,7 +31,7 @@
                                            value="@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["PeriodoI"].ToString()).Date.ToString("MMMM yyyy"))" />
                                 </div>
                                 <a data-toggle="tooltip" data-placement="top" title="Ayuda"
-                                   href="javascript:help('Fecha de corte', 'Fecha de base a partir de la que se genera los períodos proyectados, se podrán usar cortes del período vigente y el último cierre fiscal cargado, meses anteriores a ese no se podrán usar como base.' )"><i class="btn btn-xs btn-default icon fa fa-question"></i></a>
+                                   href="javascript:help('Fecha de corte', 'Fecha de base a partir de la que se genera los per&iacute;odos proyectados, se podr&aacute;n usar cortes del per&iacute;odo vigente y el &uacute;ltimo cierre fiscal cargado, meses anteriores a ese no se podr&aacute;n usar como base.' )"><i class="btn btn-xs btn-default icon fa fa-question"></i></a>
                             </div>
                         </div>
                         <div class="filter-item">
@@ -42,7 +42,7 @@
                                     <option value="2" @(Model.ddlPlazo == "2" ? " selected" : "")>3 a&ntilde;os (Primer a&ntilde;o mensual)</option>
                                 </select>
                                 <a data-toggle="tooltip" data-placement="top" title="Ayuda"
-                                   href="javascript:help('Periodos por proyectar', 'La opción de 12 meses solo mostrará una proyección mensual de un año, la opción de 3 años mostrará el primer año en forma mensual. El segundo y tercero en forma anualizada')"><i class="btn btn-xs btn-default icon fa fa-question"></i></a>
+                                   href="javascript:help('Periodos por proyectar', 'La opci&oacute;n de 12 meses solo mostrar&aacute; una proyecci&oacute;n mensual de un a&ntilde;o, la opci&oacute;n de 3 a&ntilde;os mostrar&aacute; el primer a&ntilde;o en forma mensual. El segundo y tercero en forma anualizada')"><i class="btn btn-xs btn-default icon fa fa-question"></i></a>
                             </div>
                         </div>
                         <div class="filter-item" style="margin-left: auto;">
@@ -59,11 +59,11 @@
         {
             <div id="menuTab" class="nav-tabs-custom">
                 <ul class="nav nav-tabs">
-                    <li id="tab1" class="@(Model.proyeccion ? "" : "active")"><a href="#tab1C" data-toggle="tab">Supuestos de proyección</a></li>
+                    <li id="tab1" class="@(Model.proyeccion ? "" : "active")"><a href="#tab1C" data-toggle="tab">Supuestos de proyecci&oacute;n</a></li>
                     <li id="tab3" @(@Session["TipoReporte"] is null ? "class=hidden" : "class=''")><a href="#tab3C" data-toggle="tab">Balance proyectado</a></li>
-                    <li id="tab2" @(@Session["TipoReporte3"] is null ? "class=hidden" : "class=''")><a href="#tab2C" data-toggle="tab">Análisis balance proyectado</a></li>
+                    <li id="tab2" @(@Session["TipoReporte3"] is null ? "class=hidden" : "class=''")><a href="#tab2C" data-toggle="tab">An&aacute;lisis balance proyectado</a></li>
                     <li id="tab5" @(@Session["TipoReporte2"] is null ? "class=hidden" : "class=''")><a href="#tab5C" data-toggle="tab">Estado resultados proyectado</a></li>
-                    <li id="tab4" @(@Session["TipoReporte4"] is null ? "class=hidden" : "class=''")><a href="#tab4C" data-toggle="tab">Análisis estado resultados proyectado</a></li>
+                    <li id="tab4" @(@Session["TipoReporte4"] is null ? "class=hidden" : "class=''")><a href="#tab4C" data-toggle="tab">An&aacute;lisis estado resultados proyectado</a></li>
                     <li id="tab6" @(@Session["TipoReporte2"] is null ? "class=hidden" : "class=''")><a href="#tab6C" data-toggle="tab">Mora</a></li>
                     <li id="tab7" @(@Session["TipoReporte"] is null ? "class=hidden" : "class=''")><a href="#tab7C" data-toggle="tab">Indicadores</a></li>
                 </ul>
@@ -71,17 +71,17 @@
                     <div class="tab-pane" id="tab1C">
                         <div class="box-body table-responsive">
                             <div class="col-md-6">
-                                <div class="box box-primary">
+                                <div class="modern-table-card">
                                     <div class="box-body">
                                         <span id="found" class="label label-info"></span>
                                         <div class="box-header with-border">
                                             <img width="50" height="50" src="@Session["Logo"]" />
-                                            <h4 class="box-title">Supuestos de proyección</h4>
+                                            <h4 class="box-title">Supuestos de proyecci&oacute;n</h4>
                                         </div>
                                         <table id="tbSupuestos" class="table table-striped table-bordered">
                                             <thead>
                                                 <tr>
-                                                    <th class="text-left">Tasa de la intermediación</th>
+                                                    <th class="text-left">Tasa de la intermediaci&oacute;n</th>
                                                     <th class="text-center">
                                                         <div class="row">
                                                             <div class="col-xs-5">
@@ -92,7 +92,7 @@
                                                             </div>
                                                             <div class="col-xs-1">
                                                                 <a class="text-right" data-toggle="tooltip" data-placement="top" title="Ayuda"
-                                                                   href="javascript:help('Tasa de la intermediación', 'Las tasas mostradas  en referencia son sugeridas de acuerdo con la información con la que cuenta FFC, en la opción manual el usuario puede modificarlas.')"><i class="btn btn-xs btn-default icon fa fa-question"></i></a>
+                                                                   href="javascript:help('Tasa de la intermediaci&oacute;n', 'Las tasas mostradas  en referencia son sugeridas de acuerdo con la informaci&oacute;n con la que cuenta FFC, en la opci&oacute;n manual el usuario puede modificarlas.')"><i class="btn btn-xs btn-default icon fa fa-question"></i></a>
                                                             </div>
                                                         </div>
                                                     </th>
@@ -104,7 +104,7 @@
                                             <tbody>
                                                 <tr>
                                                     <td>
-                                                        Tasa cartera nueva colocación
+                                                        Tasa cartera nueva colocaci&oacute;n
                                                     </td>
                                                     <td class="text-right">
                                                         <input name="tasaNuevaColocacion" readonly id="tasaNuevaColocacion" class="text-right" style="width: 70px; border-style: none" value="@(Model.TasaNuevaColocacion)%" />
@@ -115,7 +115,7 @@
                                                 </tr>
                                                 <tr>
                                                     <td>
-                                                        Tasa de crédito cartera vigente
+                                                        Tasa de cr&eacute;dito cartera vigente
                                                     </td>
                                                     <td class="text-right">
                                                         <input name="tasaCarteraVigente" readonly id="tasaCarteraVigente" class="text-right" style="width: 70px; border-style: none" value="@(Model.TasaCarteraVigente)%" />
@@ -174,7 +174,7 @@
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <div class="box box-primary">
+                                <div class="modern-table-card">
                                     <div class="box-body">
                                         <div class="row">
                                             <div class="col-xs-12">
@@ -197,7 +197,7 @@
                                                                     </div>
                                                                     <div class="col-xs-1">
                                                                         <a class="text-right" data-toggle="tooltip" data-placement="top" title="Ayuda"
-                                                                           href="javascript:help('Tipo de crecimiento', 'El usuario puede escoger entre sugerido o manual, el crecimiento sugerido le indica datos en cada línea calculados por FFC, la opción manual permite incluir la tasa anual en cada línea determinada por la entidad.')"><i class="btn btn-xs btn-default icon fa fa-question"></i></a>
+                                                                           href="javascript:help('Tipo de crecimiento', 'El usuario puede escoger entre sugerido o manual, el crecimiento sugerido le indica datos en cada l&iacute;nea calculados por FFC, la opci&oacute;n manual permite incluir la tasa anual en cada l&iacute;nea determinada por la entidad.')"><i class="btn btn-xs btn-default icon fa fa-question"></i></a>
                                                                     </div>
                                                                 </div>
                                                             </th>
@@ -276,14 +276,14 @@
                                                         </tr>
                                                         <tr>
                                                             <td>
-                                                                Ingreso por recuperación de incobrables
+                                                                Ingreso por recuperaci&oacute;n de incobrables
                                                             </td>
                                                             <td class="text-right">
                                                                 <input name="RecuperacionIncobrable" id="RecuperacionIncobrable" class="text-right" style="width: 70px; border-style: none" value="@Model.RecuperacionIncobrable" />
                                                             </td>
                                                             <td>
                                                                 <a class="text-right" data-toggle="tooltip" data-placement="top" title="Ayuda"
-                                                                   href="javascript:help('Ingreso por recuperación de incobrables', 'Se refiere al monto adicional que la entidad puede proyectar como ingresos adicionales en la recuperación de incobrables o estimaciones de forma anual. Incluir el dato en millones')"><i class="btn btn-xs btn-default icon fa fa-question"></i></a>
+                                                                   href="javascript:help('Ingreso por recuperaci&oacute;n de incobrables', 'Se refiere al monto adicional que la entidad puede proyectar como ingresos adicionales en la recuperaci&oacute;n de incobrables o estimaciones de forma anual. Incluir el dato en millones')"><i class="btn btn-xs btn-default icon fa fa-question"></i></a>
                                                             </td>
                                                         </tr>
                                                     </tbody>
@@ -294,12 +294,12 @@
                                 </div>
                             </div>
                             <div class="col-md-12">
-                                <div class="box box-primary">
+                                <div class="modern-table-card">
                                     <div class="box-body">
                                         <div class="row">
                                             <div class="col-xs-12">
                                                 <div class="box-header with-border">
-                                                    <h5 style="color: #0B4E91" class="text-justify">Estimado usuario: Los supuestos mostrados son calculados de acuerdo con la metodología de FFC y se muestran como sugerencia, sin embargo, pueden ser cambiados en forma manual al dar click en la opción. Los selecciónados serán los utilizados en las proyecciones</h5>
+                                                    <h5 style="color: #0B4E91" class="text-justify">Estimado usuario: Los supuestos mostrados son calculados de acuerdo con la metodolog&iacute;a de FFC y se muestran como sugerencia, sin embargo, pueden ser cambiados en forma manual al dar click en la opci&oacute;n. Los seleccionados ser&aacute;n los utilizados en las proyecciones</h5>
                                                     <br />
                                                     <div class="text-center">
                                                         <table>
@@ -381,7 +381,7 @@
                     <div class="tab-pane" id="tab6C">
                         <div class="box-body table-responsive">
                             <div class="margin">
-                                <div class="box box-solid box-info">
+                                <div class="modern-table-card">
                                     <div class="row">
                                         <div class="margin">
                                             <br />
@@ -412,7 +412,7 @@
                                                 </div>
                                             </div>
                                             <div class="col-md-12">
-                                                <div class="box box-info">
+                                                <div class="modern-table-card">
                                                     <div class="box-header with-border">
                                                         <img width="50" height="50" src="@Session["Logo"]" />
                                                         <h4 class="box-title">Mora Agrupada</h4>
@@ -428,7 +428,7 @@
                                                         <tr>
                                                             <th colspan="8">
                                                                 <img width="50" height="50" src="@Session["Logo"]" />
-                                                                <h4 class="box-title">Proyección de Mora</h4>
+                                                                <h4 class="box-title">Proyecci&oacute;n de Mora</h4>
                                                             </th>
                                                         </tr>
                                                         <tr>
@@ -462,23 +462,23 @@
                                                     </thead>
                                                     <tbody>
                                                         <tr>
-                                                            <td>Igual o menor a 30 días</td>
+                                                            <td>Igual o menor a 30 d&iacute;as</td>
                                                             <td>0%</td>
                                                         </tr>
                                                         <tr>
-                                                            <td>Igual o menor a 60 días</td>
+                                                            <td>Igual o menor a 60 d&iacute;as</td>
                                                             <td>7.5%</td>
                                                         </tr>
                                                         <tr>
-                                                            <td>Igual o menor a 90 días</td>
+                                                            <td>Igual o menor a 90 d&iacute;as</td>
                                                             <td>25%</td>
                                                         </tr>
                                                         <tr>
-                                                            <td>Igual o menor a 180 días</td>
+                                                            <td>Igual o menor a 180 d&iacute;as</td>
                                                             <td>50%</td>
                                                         </tr>
                                                         <tr>
-                                                            <td>Más de 180 días</td>
+                                                            <td>M&aacute;s de 180 d&iacute;as</td>
                                                             <td>75%</td>
                                                         </tr>
                                                         <tr>
@@ -499,7 +499,7 @@
                                                         </tr>
                                                         <tr>
                                                             <th>Periodo</th>
-                                                            <th>Estimación Sobre Cartera de Crédito / Cartera Mayor a 90 Días y CJ</th>
+                                                            <th>Estimaci&oacute;n Sobre Cartera de Cr&eacute;dito / Cartera Mayor a 90 D&iacute;as y CJ</th>
                                                             <th>Mora / Cartera Total</th>
                                                         </tr>
                                                     </thead>
@@ -520,7 +520,7 @@
                     <div class="tab-pane" id="tab7C">
                         <div class="box-body table-responsive">
                             <div class="margin">
-                                <div class="box box-solid box-info">
+                                <div class="modern-table-card">
                                     <div class="row">
                                         <div class="margin">
                                             <br />
@@ -554,10 +554,10 @@
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
-                                                <div class="box box-info">
+                                                <div class="modern-table-card">
                                                     <div class="box-header with-border">
                                                         <img width="50" height="50" src="@Session["Logo"]" />
-                                                        <h4 class="box-title">Saldo y variación de la cartera de crédito proyectada</h4>
+                                                        <h4 class="box-title">Saldo y variaci&oacute;n de la cartera de cr&eacute;dito proyectada</h4>
                                                     </div>
                                                     <div class="box-body">
                                                         @(Model.gCartera)
@@ -565,7 +565,7 @@
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
-                                                <div class="box box-info">
+                                                <div class="modern-table-card">
                                                     <div class="box-header with-border">
                                                         <img width="50" height="50" src="@Session["Logo"]" />
                                                         <h4 class="box-title">Saldo del activo productivo y pasivo con costo proyectado</h4>
@@ -576,10 +576,10 @@
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
-                                                <div class="box box-info">
+                                                <div class="modern-table-card">
                                                     <div class="box-header with-border">
                                                         <img width="50" height="50" src="@Session["Logo"]" />
-                                                        <h4 class="box-title">Saldo y variación interanual de las obligaciones con el público proyectado</h4>
+                                                        <h4 class="box-title">Saldo y variaci&oacute;n interanual de las obligaciones con el p&uacute;blico proyectado</h4>
                                                     </div>
                                                     <div class="box-body">
                                                         @(Model.gObligacionPublico)
@@ -587,10 +587,10 @@
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
-                                                <div class="box box-info">
+                                                <div class="modern-table-card">
                                                     <div class="box-header with-border">
                                                         <img width="50" height="50" src="@Session["Logo"]" />
-                                                        <h4 class="box-title">Saldo y variación interanual del capital social</h4>
+                                                        <h4 class="box-title">Saldo y variaci&oacute;n interanual del capital social</h4>
                                                     </div>
                                                     <div class="box-body">
                                                         @(Model.gCapitalSocial)
@@ -598,7 +598,7 @@
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
-                                                <div class="box box-info">
+                                                <div class="modern-table-card">
                                                     <div class="box-header with-border">
                                                         <img width="50" height="50" src="@Session["Logo"]" />
                                                         <h4 class="box-title">Comparativo de los resultados proyectados</h4>
@@ -609,11 +609,11 @@
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
-                                                <div class="box box-info">
+                                                <div class="modern-table-card">
                                                     <div class="box-header with-border">
                                                         <img width="50" height="50" src="@Session["Logo"]" />
                                                         <h4 class="box-title">
-                                                            Indicador evaluación de rendimientos proyectado
+                                                            Indicador evaluaci&oacute;n de rendimientos proyectado
                                                         </h4>
                                                     </div>
                                                     <div class="box-body">
@@ -622,7 +622,7 @@
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
-                                                <div class="box box-info">
+                                                <div class="modern-table-card">
                                                     <div class="box-header with-border">
                                                         <img width="50" height="50" src="@Session["Logo"]" />
                                                         <h4 class="box-title">Indicador de eficiencia proyectado</h4>
@@ -837,7 +837,7 @@
     }
 
     $("#BorrarConfirm").button().click(function () {
-        if (!confirm("Desea borrar los últimos supuestos guardados")) {
+        if (!confirm("Desea borrar los &uacute;ltimos supuestos guardados")) {
             return false;
         }
         $("#Borrar").click();
@@ -849,7 +849,7 @@
         "bRetrieve": true,
         "ordering": false,
         "bProcessing": true,
-        "bpáginate": false,
+        "bPaginate": false,
         "bFilter": false,
         "bInfo": false,
         "dom": 'lBfrtip',
@@ -870,7 +870,7 @@
         "bRetrieve": true,
         "ordering": false,
         "bProcessing": true,
-        "bpáginate": false,
+        "bPaginate": false,
         "bFilter": false,
         "bInfo": false,
         "dom": 'lBfrtip',
@@ -896,7 +896,7 @@
         "bRetrieve": true,
         "ordering": false,
         "bProcessing": true,
-        "bpáginate": false,
+        "bPaginate": false,
         "bFilter": false,
         "bInfo": false,
         "dom": 'lBfrtip',
@@ -922,7 +922,7 @@
         "bRetrieve": true,
         "ordering": false,
         "bProcessing": true,
-        "bpáginate": false,
+        "bPaginate": false,
         "bFilter": false,
         "bInfo": false,
         "dom": 'lBfrtip',

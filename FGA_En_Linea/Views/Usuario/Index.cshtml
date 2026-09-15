@@ -1,56 +1,50 @@
-﻿@{
+@{
     ViewBag.Title = "Usuarios";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <section class="content-header">
-    <h1>
-        Administración de usuarios
+    <h1 class="modern-page-title">
+        <i class="fa fa-users" style="color: #0284c7;"></i>
+        Administraci&oacute;n de Usuarios
+        <small>Gesti&oacute;n de usuarios, roles y accesos al sistema</small>
     </h1>
+    <ol class="breadcrumb">
+        <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
+        <li><a href="#">Seguridad</a></li>
+        <li class="active">Usuarios</li>
+    </ol>
 </section>
 
 <section class="content">
     <div class="row">
         <div class="col-xs-12">
-            <div class="box box-solid box-info">
-                 <div class="box-body">
-                    <div class="margin">
-                        <div class="btn-group">
-                            <a href="~/Usuario/Create" class="btn btn-dropbox">Crear un Usuario</a>
-                        </div>
-                    </div>
-                 </div><!-- /.box-body -->
+            <div style="margin-bottom: 16px;">
+                <a href="@Url.Action("Create", "Usuario")" class="btn-modern-filter" style="display: inline-flex; align-items: center; gap: 8px; text-decoration: none; padding: 9px 20px;">
+                    <i class="fa fa-user-plus"></i> Crear un Usuario
+                </a>
             </div>
-            <div class="box box-solid box-info">
-                <div class="box-body table-responsive">
-                    <div class="margin">
-                        <div class="streaming-table">
-                            <span id="found" class="label label-info"></span>
-
-                            <table id="tbUser" class="table table-striped table-bordered">
-                                <thead class="header">
-                                    <tr>
-                                        <th>Acción</th>
-                                        <th> Nombre  </th>
-                                        <th> Identificación  </th>
-                                        <th> Email  </th>
-                                        <th> Estado  </th>
-                                        <th> Perfil  </th>
-                                        <th> Entidad  </th>
-                                        <th> Género  </th>
-                                        <th> Teléfono  </th>
-                                        <th> Puesto  </th>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
-                            <br />
-                            <div id="summary">
-                                <div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+            <div class="modern-table-card">
+                <span id="found" class="label label-info"></span>
+                <table id="tbUser" class="table table-striped table-bordered modern-data-table" style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>Acci&oacute;n</th>
+                            <th>Nombre</th>
+                            <th>Identificaci&oacute;n</th>
+                            <th>Email</th>
+                            <th>Estado</th>
+                            <th>Perfil</th>
+                            <th>Entidad</th>
+                            <th>G&eacute;nero</th>
+                            <th>Tel&eacute;fono</th>
+                            <th>Puesto</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+                <div id="summary">
+                    <div></div>
                 </div>
             </div>
         </div>
@@ -80,7 +74,7 @@
                 "aoColumns": [
                 {
                     "mRender": function (oObj, type, row) {
-                        var buttons = '<div class="text-center"> <div class="btn-group text-left"> <button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" style="border-radius:6px; border:1px solid #cbd5e1; font-size:12px; padding:4px 10px; color:#374151;"><i class="fa fa-cog" style="margin-right:4px;"></i> Acción <span class="caret"></span></button>';
+                        var buttons = '<div class="text-center"> <div class="btn-group text-left"> <button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" style="border-radius:6px; border:1px solid #cbd5e1; font-size:12px; padding:4px 10px; color:#374151;"><i class="fa fa-cog" style="margin-right:4px;"></i> Acci&oacute;n <span class="caret"></span></button>';
                         buttons += '<ul class="dropdown-menu pull-left" role="menu">';
                         buttons += '<li><a href="' + ControlerNameUser + "/Edit/" + row[0] + '"><i class="fa fa-edit"></i>Modificar</a></li>';
                         buttons += '<li><a href="' + ControlerNameUser + "/Details/" + row[0] + '"><i class="fa fa-search"></i>Consultar</a></li>';

@@ -1,21 +1,21 @@
 ﻿@model FGA.Models.Seccion
 
 @{
-    ViewBag.Title = "Editar una sección";
+    ViewBag.Title = "Editar una secci&oacute;n";
     if (Ajax.IsThisAjaxRequest())
     {
         Layout = null;
     }
 }
 
-@Html.StarkAjaxFormSubmiter("frmSeccion", "tbSeccion", true, "Acción ejecutada con éxito")
+@Html.StarkAjaxFormSubmiter("frmSeccion", "tbSeccion", true, "Acci&oacute;n ejecutada con &eacute;xito")
 
 @{
     if (!Ajax.IsThisAjaxRequest())
     {
         <section class="content-header">
             <h1>
-                Editar la sección @Model.Nombre
+                Editar la secci&oacute;n @Model.Nombre
             </h1>
         </section>
     }
@@ -48,7 +48,7 @@
 
                                 @if (Model.Id < (int)FGA.Utility.Utilitarios.enum_secciones.banner || Model.Id == (int)FGA.Utility.Utilitarios.enum_secciones.unase)
                                 {
-                                    @Html.Label("Título:")
+                                    @Html.Label("T&iacute;tulo:")
                                     @Html.EditorFor(model => model.Detalle1)
                                 }
                                 else if (Model.Id == (int)FGA.Utility.Utilitarios.enum_secciones.banner)
@@ -72,7 +72,7 @@
                                 else if (Model.Id == (int)FGA.Utility.Utilitarios.enum_secciones.popUp)
                                 {
                                     @Html.Label("Habilitar:")
-                                    @Html.DropDownList("Detalle1", new List<SelectListItem> { new SelectListItem { Value = "S", Text = "Sí" },
+                                    @Html.DropDownList("Detalle1", new List<SelectListItem> { new SelectListItem { Value = "S", Text = "S&iacute;" },
                                                                                          new SelectListItem { Value = "N", Text = "No" }},
                                                                                          new { @id = "Detalle1", style = "width: 100px;" })
 
@@ -81,7 +81,7 @@
                             <div class="form-group">
                                 @if (Model.Id < (int)FGA.Utility.Utilitarios.enum_secciones.banner)
                                 {
-                                    @Html.Label("Sub título:")
+                                    @Html.Label("Sub t&iacute;tulo:")
                                     @Html.EditorFor(model => model.Detalle2)
                                 }
                                 else if (Model.Id == (int)FGA.Utility.Utilitarios.enum_secciones.banner)
@@ -91,7 +91,7 @@
                                 }
                                 else if (Model.Id == (int)FGA.Utility.Utilitarios.enum_secciones.parametros)
                                 {
-                                    @Html.Label("Teléfono:")
+                                    @Html.Label("Tel&eacute;fono:")
                                     @Html.EditorFor(model => model.Detalle2)
                                 }
                                 else if (Model.Id == (int)FGA.Utility.Utilitarios.enum_secciones.piePagina)

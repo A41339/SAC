@@ -1,25 +1,28 @@
-﻿@{
+@{
     ViewBag.Title = "Solicitudes de cambio";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <section class="content-header">
-    <h1>
-        Solicitudes de cambio
+    <h1 class="modern-page-title">
+        <i class="fa fa-exchange" style="color: #0284c7;"></i>
+        Solicitudes de Cambio
+        <small>Gesti&oacute;n, flujo y aprobaci&oacute;n de solicitudes de cambio de estado</small>
     </h1>
+    <ol class="breadcrumb">
+        <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
+        <li><a href="#">Gesti&oacute;n</a></li>
+        <li class="active">Solicitudes de Cambio</li>
+    </ol>
 </section>
 
 <section class="content">
     <div class="row">
         <div class="col-xs-12">
-            <div class="box box-solid box-info">
-                <div class="box-body">
-                    <div class="margin">
-                        <div class="btn-group">
-                            <a href="~/SolicitudCambio/Create" class="btn btn-dropbox">Crear una Solicitud</a>
-                        </div>
-                    </div>
-                </div>
+            <div style="margin-bottom: 16px;">
+                <a href="@Url.Action("Create", "SolicitudCambio")" class="btn-modern-filter" style="display: inline-flex; align-items: center; gap: 8px; text-decoration: none; padding: 9px 20px;">
+                    <i class="fa fa-plus"></i> Crear una Solicitud
+                </a>
             </div>
             <div id="solicitudes">
                 @Html.Partial("_VerSolicitudes")
@@ -35,7 +38,7 @@
                 <h4 class="modal-title" id="deleteLabel">Motivo del rechazo</h4>
             </div>
             <div class="modal-body">
-                <p>Describa el motivo de la devolución</p>
+                <p>Describa el motivo de la devoluci&oacute;n</p>
                 @Html.TextArea("txt_motivoRechazo", new
                 {
                                   cols = "50",
