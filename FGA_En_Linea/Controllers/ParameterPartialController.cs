@@ -1,4 +1,4 @@
-﻿using System.Web.Mvc;
+using System.Web.Mvc;
 
 namespace Site.Controllers
 {
@@ -16,15 +16,23 @@ namespace Site.Controllers
             return PartialView("_ParameterPartial");
         }
 
-        public ActionResult Config(bool yAxis, bool columnDetail, bool lineDetail, bool dateDetail, bool menuDetail)
+        [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Post)]
+        public ActionResult Config(bool yAxis = false, bool columnDetail = true, bool lineDetail = true, bool dateDetail = false, bool menuDetail = false)
         {
-            Session[FGA.Utility.Utilitarios.isModified] = yAxis;
-            Session[FGA.Utility.Utilitarios.show_YAxis] = yAxis == true ? yAxis : (bool?)null;
-            Session[FGA.Utility.Utilitarios.show_ColumnDetail] = columnDetail == true ? columnDetail : (bool?)null;
-            Session[FGA.Utility.Utilitarios.show_LineDetail] = lineDetail == true ? lineDetail : (bool?)null;
-            Session[FGA.Utility.Utilitarios.show_DateEachN] = dateDetail == true ? dateDetail : (bool?)null;
-            Session[FGA.Utility.Utilitarios.show_MenuOculto] = menuDetail == true ? menuDetail : (bool?)null;
-            return Json(true);
+            try
+            {
+                Session[FGA.Utility.Utilitarios.isModified] = true;
+                Session[FGA.Utility.Utilitarios.show_YAxis] = yAxis ? (bool?)true : null;
+                Session[FGA.Utility.Utilitarios.show_ColumnDetail] = columnDetail ? (bool?)true : null;
+                Session[FGA.Utility.Utilitarios.show_LineDetail] = lineDetail ? (bool?)true : null;
+                Session[FGA.Utility.Utilitarios.show_DateEachN] = dateDetail ? (bool?)true : null;
+                Session[FGA.Utility.Utilitarios.show_MenuOculto] = menuDetail ? (bool?)true : null;
+                return Json(true, JsonRequestBehavior.AllowGet);
+            }
+            catch (System.Exception ex)
+            {
+                return Json(new { success = false, error = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
         }
     }
 }
