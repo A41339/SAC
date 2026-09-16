@@ -424,6 +424,21 @@
                 margin: 14mm 16mm;
             }
         }
+        body.in-iframe .toolbar-screen {
+            display: none !important;
+        }
+        body.in-iframe {
+            background: #ffffff !important;
+            padding: 0 !important;
+        }
+        body.in-iframe .report-container {
+            margin: 0 auto !important;
+            box-shadow: none !important;
+            border-radius: 0 !important;
+            border: none !important;
+            padding: 20px 24px !important;
+            max-width: 100% !important;
+        }
     </style>
 </head>
 <body>
@@ -654,6 +669,13 @@
         </div>
 
     </div>
-
+ 
+    <script type="text/javascript">
+        try {
+            if (window.self !== window.top) {
+                document.body.classList.add('in-iframe');
+            }
+        } catch (e) { }
+    </script>
 </body>
 </html>

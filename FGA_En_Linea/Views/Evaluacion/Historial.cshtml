@@ -76,6 +76,47 @@
     </div>
 </section>
 
+<!-- Modal Popup para Reporte Ejecutivo -->
+<div class="modal fade" id="modalReporteEjecutivo" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" style="max-width: 1080px; width: 95%; margin: 20px auto;">
+        <div class="modal-content" style="border-radius: 12px; overflow: hidden; border: none; box-shadow: 0 16px 40px rgba(0,0,0,0.25);">
+            <div class="modal-header" style="background: linear-gradient(135deg, #143750 0%, #0d7377 100%); padding: 14px 20px; display: flex; align-items: center; justify-content: space-between;">
+                <h4 class="modal-title" style="margin: 0; color: #ffffff; font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+                    <i class="fa fa-file-text-o" style="font-size: 17px; color: #86d2dd;"></i>
+                    <span>Reporte Ejecutivo de Evaluaci&oacute;n</span>
+                </h4>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <button type="button" class="btn btn-sm" id="btnImprimirModal" style="background: #0284c7; color: #ffffff; border: none; border-radius: 6px; padding: 6px 14px; font-weight: 600; font-size: 12px; display: inline-flex; align-items: center; gap: 6px; cursor: pointer;">
+                        <i class="fa fa-print"></i> Imprimir
+                    </button>
+                    <button type="button" class="btn btn-sm" id="btnNuevaPestanaModal" style="background: rgba(255,255,255,0.15); color: #ffffff; border: 1px solid rgba(255,255,255,0.25); border-radius: 6px; padding: 6px 12px; font-size: 12px; display: inline-flex; align-items: center; gap: 6px; cursor: pointer;" title="Abrir en pesta&ntilde;a nueva">
+                        <i class="fa fa-external-link"></i>
+                    </button>
+                    <button type="button" class="close" data-dismiss="modal" style="color: #ffffff; opacity: 0.85; font-size: 24px; text-shadow: none; margin: 0; padding: 0; line-height: 1;">
+                        <span>&times;</span>
+                    </button>
+                </div>
+            </div>
+            <div class="modal-body" style="padding: 0; background: #f8fafc; position: relative; min-height: 420px;">
+                <div id="modalReporteLoader" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 80px 20px; color: #64748b;">
+                    <i class="fa fa-spinner fa-spin fa-2x" style="color: #0284c7; margin-bottom: 12px;"></i>
+                    <span style="font-size: 14px; font-weight: 600; color: #334155;">Generando reporte ejecutivo...</span>
+                    <span style="font-size: 12px; color: #64748b; margin-top: 4px;">Cargando preguntas, respuestas y calificaciones</span>
+                </div>
+                <iframe id="iframeReporteEjecutivo" src="" style="width: 100%; height: 78vh; border: none; display: none;"></iframe>
+            </div>
+            <div class="modal-footer" style="background: #ffffff; border-top: 1px solid #e2e8f0; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center;">
+                <small style="color: #64748b; font-size: 11.5px;">
+                    <i class="fa fa-shield text-info"></i> Supervisi&oacute;n Basada en Riesgo &middot; FFC
+                </small>
+                <button type="button" class="btn btn-default" data-dismiss="modal" style="border-radius: 6px; font-weight: 600; padding: 6px 18px; font-size: 12px;">
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <style>
     #tbHistorial thead th {
         text-transform: none !important;
@@ -104,34 +145,62 @@
 <script type="text/javascript">
 
     var ControlerNameCompany = "@Url.Content("~/Evaluacion")";
+    var reporteUrlActual = "";
 
     $(document).ready(function () {
         $("#tbHistorial").dataTable({
-        "bRetrieve": true,
-        "bProcessing": true,
-        "dom": 'lBfrtip',
-        "sAjaxSource": "@Url.Content("~/Evaluacion/GetHistorial")",
-        "buttons": [
-                { extend: 'copyHtml5', exportOptions: { columns: ':visible' } }
-            ,{ extend: 'excelHtml5', exportOptions: { columns: ':visible' } }
-            ,{ extend: 'pdfHtml5', exportOptions: { columns: ':visible' } }
-            ,{ extend: 'print', exportOptions: { columns: ':visible' } }
-            ,'colvis'
+            "bRetrieve": true,
+            "bProcessing": true,
+            "dom": 'lBfrtip',
+            "sAjaxSource": "@Url.Content("~/Evaluacion/GetHistorial")",
+            "buttons": [
+                { extend: 'copyHtml5', exportOptions: { columns: ':visible' } },
+                { extend: 'excelHtml5', exportOptions: { columns: ':visible' } },
+                { extend: 'pdfHtml5', exportOptions: { columns: ':visible' } },
+                { extend: 'print', exportOptions: { columns: ':visible' } },
+                'colvis'
             ],
-        "pageLength": 10,
-        "order": [[2, 'asc']] ,
-	rowGroup: {
-       	 dataSrc: 2
-   	},
-        "lengthMenu": [[5,10, 25, 50, -1], [5,10, 25, 50, "Todos"]],
-        "aoColumns": [
-            {}, {}, {}, {}, {}, {}, {}, {}, {}]
+            "pageLength": 10,
+            "order": [[2, 'asc']],
+            rowGroup: {
+                dataSrc: 2
+            },
+            "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "Todos"]],
+            "aoColumns": [
+                {}, {}, {}, {}, {}, {}, {}, {}, {}
+            ]
         });
 
         $("#btnReporteEjecutivo").click(function () {
             var entidad = $("#IdEntidad").val();
-            var url = "@Url.Action("ReporteEjecutivo", "Evaluacion")" + "?idEntidad=" + encodeURIComponent(entidad);
-            window.open(url, "_blank");
+            reporteUrlActual = "@Url.Action("ReporteEjecutivo", "Evaluacion")" + "?idEntidad=" + encodeURIComponent(entidad);
+
+            $("#modalReporteLoader").show();
+            $("#iframeReporteEjecutivo").hide();
+            $("#iframeReporteEjecutivo").attr("src", reporteUrlActual);
+
+            $("#modalReporteEjecutivo").modal("show");
+        });
+
+        $("#iframeReporteEjecutivo").on("load", function () {
+            if ($(this).attr("src")) {
+                $("#modalReporteLoader").hide();
+                $(this).show();
+            }
+        });
+
+        $("#btnImprimirModal").click(function () {
+            var iframe = document.getElementById("iframeReporteEjecutivo");
+            if (iframe && iframe.contentWindow) {
+                iframe.contentWindow.focus();
+                iframe.contentWindow.print();
+            }
+        });
+
+        $("#btnNuevaPestanaModal").click(function () {
+            if (reporteUrlActual) {
+                window.open(reporteUrlActual, "_blank");
+            }
         });
     });
 
