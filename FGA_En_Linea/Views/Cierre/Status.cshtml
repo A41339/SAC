@@ -1,18 +1,36 @@
 @model IEnumerable<Entities.Entities.Procedures.FGA_Consultar_Monitor_Result>
 
 <div id="dialog"></div>
+<style>
+    #tbRole th,
+    #tbRole td {
+        vertical-align: middle !important;
+    }
+    #tbRole td:nth-child(n+2),
+    #tbRole th:nth-child(n+2) {
+        text-align: center !important;
+    }
+</style>
 <div class="modern-table-card">
     <table id="tbRole" class="table table-striped table-bordered modern-data-table" style="width: 100%;">
         <thead>
             <tr>
-                <th style="width: 25%; text-align: center;">Entidad</th>
-                <th class="mobile" style="width: 16%; text-align: center;">&Uacute;lt. Per&iacute;odo Cargado</th>
-                <th style="width: 16%; text-align: center;">Per&iacute;odo Pendiente</th>
-                <th style="width: 21%; text-align: center;">Detalle</th>
-                <th class="mobile" style="width: 10%; text-align: center;">Pendientes</th>
-                @if (Session["IsFGA"].ToString() == "1")
+                @if (Session["IsFGA"] != null && Session["IsFGA"].ToString() == "1")
                 {
-                    <th style="width: 12%; text-align: center;">Ejecutar</th>
+                    <th style="width: 24%; text-align: left; padding-left: 28px; vertical-align: middle;">Entidad</th>
+                    <th class="mobile" style="width: 17%; text-align: center; vertical-align: middle;">&Uacute;lt. Per&iacute;odo Cargado</th>
+                    <th style="width: 17%; text-align: center; vertical-align: middle;">Per&iacute;odo Pendiente</th>
+                    <th style="width: 14%; text-align: center; vertical-align: middle;">Detalle</th>
+                    <th class="mobile" style="width: 13%; text-align: center; vertical-align: middle;">Pendientes</th>
+                    <th style="width: 15%; text-align: center; vertical-align: middle;">Ejecutar</th>
+                }
+                else
+                {
+                    <th style="width: 28%; text-align: left; padding-left: 28px; vertical-align: middle;">Entidad</th>
+                    <th class="mobile" style="width: 20%; text-align: center; vertical-align: middle;">&Uacute;lt. Per&iacute;odo Cargado</th>
+                    <th style="width: 20%; text-align: center; vertical-align: middle;">Per&iacute;odo Pendiente</th>
+                    <th style="width: 16%; text-align: center; vertical-align: middle;">Detalle</th>
+                    <th class="mobile" style="width: 16%; text-align: center; vertical-align: middle;">Pendientes</th>
                 }
             </tr>
         </thead>
@@ -32,7 +50,7 @@
                     string actFechaBadgeClass = isActSinCierre ? "badge-periodo-none" : "badge-periodo-older";
 
                     <tr>
-                        <td style="text-align: left; padding-left: 24px;">
+                        <td style="text-align: left; padding-left: 28px; vertical-align: middle;">
                             @Html.HiddenFor(modelItem => item.IDENTIDAD)
                             <div class="entity-cell-group">
                                 <div class="entity-logo-box">
@@ -41,26 +59,38 @@
                                 <span class="entity-name-text">@item.NOMBRE</span>
                             </div>
                         </td>
-                        <td class="mobile" style="text-align: center;">
-                            <span class="badge-periodo @ultFechaBadgeClass">
-                                <i class="fa @(isSinCierre ? "fa-minus-circle" : "fa-calendar-check-o")"></i> @ultFechaText
-                            </span>
+                        <td class="mobile" style="text-align: center !important; vertical-align: middle !important;">
+                            <div style="display: flex; justify-content: center; align-items: center; width: 100%;">
+                                <span class="badge-periodo @ultFechaBadgeClass">
+                                    <i class="fa @(isSinCierre ? "fa-minus-circle" : "fa-calendar-check-o")"></i> @ultFechaText
+                                </span>
+                            </div>
                         </td>
-                        <td style="text-align: center;">
-                            <span class="badge-periodo @actFechaBadgeClass">
-                                <i class="fa @(isActSinCierre ? "fa-minus-circle" : "fa-clock-o")"></i> @actFechaText
-                            </span>
+                        <td style="text-align: center !important; vertical-align: middle !important;">
+                            <div style="display: flex; justify-content: center; align-items: center; width: 100%;">
+                                <span class="badge-periodo @actFechaBadgeClass">
+                                    <i class="fa @(isActSinCierre ? "fa-minus-circle" : "fa-clock-o")"></i> @actFechaText
+                                </span>
+                            </div>
                         </td>
-                        <td style="text-align: center; color: #475569; font-weight: 500;">
-                            @item.ARCHIVOS
+                        <td style="text-align: center !important; vertical-align: middle !important;">
+                            <div style="display: flex; justify-content: center; align-items: center; width: 100%;">
+                                <span class="badge-detalle-archivos">
+                                    @item.ARCHIVOS
+                                </span>
+                            </div>
                         </td>
-                        <td style="text-align: center;" class="mobile">
-                            @Html.ActionLink("Ver", "VerPendientes", "Cierre", new { id = item.IDENTIDAD }, new { @class = "new-value-link btn btn-info btn-xs", style = "border-radius: 12px; padding: 3px 12px; font-weight: 600;" })
+                        <td class="mobile" style="text-align: center !important; vertical-align: middle !important;">
+                            <div style="display: flex; justify-content: center; align-items: center; width: 100%;">
+                                @Html.ActionLink("Ver", "VerPendientes", "Cierre", new { id = item.IDENTIDAD }, new { @class = "new-value-link btn btn-info btn-xs", style = "border-radius: 12px; padding: 4px 16px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center;" })
+                            </div>
                         </td>
-                        @if (Session["IsFGA"].ToString() == "1")
+                        @if (Session["IsFGA"] != null && Session["IsFGA"].ToString() == "1")
                         {
-                            <td style="text-align: center;">
-                                @Html.ActionLink("Ejecutar Cierre", "Cierre", new { id = item.IDENTIDAD, periodo = item.PERIODO_ACTUAL }, new { @class = "btn btn-primary btn-xs", style = "border-radius: 12px; padding: 3px 12px; font-weight: 600;" })
+                            <td style="text-align: center !important; vertical-align: middle !important;">
+                                <div style="display: flex; justify-content: center; align-items: center; width: 100%;">
+                                    @Html.ActionLink("Ejecutar Cierre", "Cierre", new { id = item.IDENTIDAD, periodo = item.PERIODO_ACTUAL }, new { @class = "btn btn-primary btn-xs", style = "border-radius: 12px; padding: 4px 16px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center;" })
+                                </div>
                             </td>
                         }
                     </tr>
