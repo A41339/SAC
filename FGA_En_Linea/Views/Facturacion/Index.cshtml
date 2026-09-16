@@ -1,11 +1,19 @@
 @{
-    ViewBag.Title = "Contribuciones";
+    ViewBag.Title = "Facturaci&oacute;n de Contribuciones";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <section class="content-header">
-    <h1 id="TituloContribuciones">
-        FGD BCCR
+    <h1 class="modern-page-title">
+        <i class="fa fa-calculator" style="color: #0284c7;"></i>
+        <span id="TituloContribuciones">Facturaci&oacute;n de Contribuciones</span>
+        <small id="SubtituloContribuciones">Generaci&oacute;n y consulta de reportes de facturaci&oacute;n FGD BCCR y FEE-FFC</small>
     </h1>
+    <ol class="breadcrumb">
+        <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
+        <li><a href="#">Facturaci&oacute;n</a></li>
+        <li class="active" id="BreadcrumbContribuciones">Contribuciones</li>
+    </ol>
 </section>
 
 <section class="content">
@@ -60,10 +68,10 @@
 
         if (Session["TipoReporte"] != null || Session["TipoReporte2"] != null)
         {
-            <div class="nav-tabs-custom">
+            <div class="nav-tabs-custom" style="border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); border: 1px solid #e2e8f0; overflow: hidden; background: #ffffff; margin-top: 20px;">
                 <ul class="nav nav-tabs">
-                    <li class="active"><a href="#tab_1" data-toggle="tab">FGD</a></li>
-                    <li><a href="#tab_2" data-toggle="tab">FFC</a></li>
+                    <li class="active"><a href="#tab_1" data-toggle="tab"><i class="fa fa-shield" style="margin-right: 6px; color: #0284c7;"></i> FGD (BCCR)</a></li>
+                    <li><a href="#tab_2" data-toggle="tab"><i class="fa fa-university" style="margin-right: 6px; color: #0284c7;"></i> FEE-FFC</a></li>
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane active" id="tab_1">
@@ -98,24 +106,28 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
+        function actualizarEncabezado(tabId) {
+            if (tabId === '#tab_2') {
+                $('#TituloContribuciones').html('Facturaci&oacute;n - FEE-FFC');
+                $('#SubtituloContribuciones').text('C\u00E1lculo y detalle de facturaci\u00F3n de contribuciones FEE-FFC');
+                $('#BreadcrumbContribuciones').text('FEE-FFC');
+            } else if (tabId === '#tab_1') {
+                $('#TituloContribuciones').html('Facturaci&oacute;n - FGD BCCR');
+                $('#SubtituloContribuciones').text('C\u00E1lculo y detalle de facturaci\u00F3n de contribuciones FGD BCCR');
+                $('#BreadcrumbContribuciones').text('FGD BCCR');
+            }
+        }
+
         // Al hacer clic en las pestanas
         $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-            var tabId = $(e.target).attr('href'); // Obtiene el ID de la pestana activa
-
-            // Cambiar el titulo dependiendo del tab activo
-            if (tabId === '#tab_1') {
-                $('#TituloContribuciones').text('FGD BCCR');
-            } else if (tabId === '#tab_2') {
-                $('#TituloContribuciones').text('FEE-FFC');
-            }
+            var tabId = $(e.target).attr('href');
+            actualizarEncabezado(tabId);
         });
 
-        // Asegurar que el titulo se actualice al cargar la pagina por si ya esta en el tab 1 o 2
+        // Asegurar que el titulo se actualice al cargar la pagina si ya hay tab activo
         var activeTab = $('.nav-tabs .active a').attr('href');
-        if (activeTab === '#tab_1') {
-            $('#TituloContribuciones').text('FGD BCCR');
-        } else if (activeTab === '#tab_2') {
-            $('#TituloContribuciones').text('FEE-FFC');
+        if (activeTab) {
+            actualizarEncabezado(activeTab);
         }
     });
 </script>
