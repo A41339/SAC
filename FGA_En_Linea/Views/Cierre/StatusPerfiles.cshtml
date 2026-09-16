@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Entities.Entities.Procedures.FGA_Consultar_Monitor_Result>
+@model IEnumerable<Entities.Entities.Procedures.FGA_Consultar_Monitor_Result>
 
 <div id="dialog"></div>
 
@@ -69,25 +69,39 @@
 
 <script type="text/javascript">
     $(function () {
-        $('.new-value-link').click(function () {
+        $(document).off('click', '.new-value-link').on('click', '.new-value-link', function () {
             var href = this.href;
-            $('#dialog').dialog({
+            var $dlg = $('#dialog');
+            if (!$dlg.length) {
+                $dlg = $('<div id="dialog"></div>').appendTo('body');
+            }
+            $dlg.dialog({
+                title: 'Archivos Pendientes',
                 modal: true,
+                width: 560,
+                maxHeight: 520,
+                position: { my: "center top", at: "center top+70", of: window },
                 open: function (event, ui) {
-                    $(this).load(href, function (result) {
+                    $dlg.html('<div style="text-align:center; padding: 30px;"><i class="fa fa-spinner fa-spin fa-2x" style="color: #0284c7;"></i><p style="margin-top: 10px; color: #64748b; font-weight: 500;">Cargando archivos pendientes...</p></div>');
+                    $dlg.dialog("option", "position", { my: "center top", at: "center top+70", of: window });
+                    $dlg.load(href, function (result) {
+                        $dlg.dialog("option", "position", { my: "center top", at: "center top+70", of: window });
                         $('#new-value-form').submit(function () {
                             $.ajax({
                                 url: this.action,
                                 type: this.method,
                                 data: $(this).serialize(),
                                 success: function (json) {
-                                    $('#dialog').dialog('close');
+                                    $dlg.dialog('close');
                                     $('#NewValue').val(json.newValue);
                                 }
                             });
                             return false;
                         });
                     });
+                },
+                close: function () {
+                    $(this).dialog('destroy').remove();
                 }
             });
             return false;
