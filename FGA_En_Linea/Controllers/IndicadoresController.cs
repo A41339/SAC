@@ -505,28 +505,44 @@ namespace FGA.Controllers
             foreach (var indicador in cmb_indicadores)
             {
                 var tak = sp.FGA_Consultar_Grafico_Indicador(Entidades, PeriodoI, PeriodoF, indicador);
+                int takCount = tak != null ? tak.Length : 0;
 
                 for (int j = 0; j < numPeriodos; j++)
                 {
-                    listaSeries[i].nombre = tak[j].NOMBRE;
-                    fechas[j] = tak[j].PERIODO.Value.Month.ToString() + "-" + tak[j].PERIODO.Value.Year.ToString();
-                    listaSeries[i].total += tak[j].MONTO;
-                    listaSeries[i].porcentual = tak[j].IND_PORCENTAJE;
-                    listaSeries[i].valores[j] = tak[j].MONTO;
-
-                    if (promedio)
+                    if (j < takCount && tak[j] != null)
                     {
-                        ViewBag.Title = tak[j].NOMBRE;
-                        listaSeries[i + 1].nombre = tak[j].NOMBRE + " (Promedio)";
-                        listaSeries[i + 1].total += tak[j].PROMEDIO;
-                        listaSeries[i + 1].porcentual = tak[j].IND_PORCENTAJE;
-                        listaSeries[i + 1].valores[j] = tak[j].PROMEDIO;
-                    }
+                        listaSeries[i].nombre = tak[j].NOMBRE;
+                        fechas[j] = tak[j].PERIODO.HasValue ? (tak[j].PERIODO.Value.Month.ToString() + "-" + tak[j].PERIODO.Value.Year.ToString()) : PeriodoI.AddMonths(j).ToString("M-yyyy");
+                        listaSeries[i].total += tak[j].MONTO;
+                        listaSeries[i].porcentual = tak[j].IND_PORCENTAJE;
+                        listaSeries[i].valores[j] = tak[j].MONTO;
 
-                    if (tak[j].IND_PORCENTAJE == "S")
-                        existePorc = true;
+                        if (promedio)
+                        {
+                            ViewBag.Title = tak[j].NOMBRE;
+                            listaSeries[i + 1].nombre = tak[j].NOMBRE + " (Promedio)";
+                            listaSeries[i + 1].total += tak[j].PROMEDIO;
+                            listaSeries[i + 1].porcentual = tak[j].IND_PORCENTAJE;
+                            listaSeries[i + 1].valores[j] = tak[j].PROMEDIO;
+                        }
+
+                        if (tak[j].IND_PORCENTAJE == "S")
+                            existePorc = true;
+                        else
+                            existeMonto = true;
+                    }
                     else
-                        existeMonto = true;
+                    {
+                        if (string.IsNullOrEmpty(fechas[j]))
+                        {
+                            DateTime dt = PeriodoI.AddMonths(j);
+                            fechas[j] = dt.Month.ToString() + "-" + dt.Year.ToString();
+                        }
+                    }
+                }
+                if (string.IsNullOrEmpty(ViewBag.Title) && takCount > 0 && tak[0] != null)
+                {
+                    ViewBag.Title = tak[0].NOMBRE;
                 }
                 i += 1;
             }

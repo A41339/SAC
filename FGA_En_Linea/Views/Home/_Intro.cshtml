@@ -17,10 +17,23 @@
     .kpi-sparkline-container {
         height: 55px !important;
         overflow: visible !important;
+        pointer-events: none !important;
     }
     .kpi-sparkline-container .highcharts-container,
     .kpi-sparkline-container svg {
         overflow: visible !important;
+        pointer-events: none !important;
+    }
+    .clickable-kpi-card {
+        cursor: pointer;
+        user-select: none;
+    }
+    .clickable-kpi-card .kpi-expand-btn {
+        transition: color 0.2s ease, transform 0.2s ease;
+    }
+    .clickable-kpi-card:hover .kpi-expand-btn {
+        color: #0d7377 !important;
+        transform: scale(1.22);
     }
     .highcharts-tooltip-container {
         z-index: 999999 !important;
@@ -226,11 +239,11 @@
         <div class="kpi-cards-wrapper">
             
             <!-- KPI 1: Suficiencia Patrimonial -->
-            <div class="modern-kpi-card">
+            <div class="modern-kpi-card clickable-kpi-card" onclick="getGraph('S1')" title="Ampliar gr&aacute;fica detallada" role="button" tabindex="0">
                 <div class="kpi-title">
                     <span>Suficiencia Patrimonial</span>
                     @SemaphoreBadge("suficiencia", suficienciaVal)
-                    <a href="javascript:getGraph('C1')" style="margin-left:auto; color:#94a3b8;" title="Ampliar gr&aacute;fica"><i class="fa fa-line-chart"></i></a>
+                    <span class="kpi-expand-btn" style="margin-left:auto; color:#94a3b8;" title="Ampliar gr&aacute;fica"><i class="fa fa-line-chart"></i></span>
                 </div>
                 <div class="kpi-value-row">
                     <div class="kpi-big-num">@FormatVal(modelData.Suficiencia, 1, "N2", "%")</div>
@@ -249,11 +262,11 @@
             </div>
 
             <!-- KPI 2: Compromiso Patrimonial -->
-            <div class="modern-kpi-card">
+            <div class="modern-kpi-card clickable-kpi-card" onclick="getGraph('C3')" title="Ampliar gr&aacute;fica detallada" role="button" tabindex="0">
                 <div class="kpi-title">
                     <span>Compromiso Patrimonial</span>
                     @SemaphoreBadge("compromiso", compromisoVal)
-                    <a href="javascript:getGraph('C3')" style="margin-left:auto; color:#94a3b8;" title="Ampliar gr&aacute;fica"><i class="fa fa-line-chart"></i></a>
+                    <span class="kpi-expand-btn" style="margin-left:auto; color:#94a3b8;" title="Ampliar gr&aacute;fica"><i class="fa fa-line-chart"></i></span>
                 </div>
                 <div class="kpi-value-row">
                     <div class="kpi-big-num">@FormatVal(modelData.Compromiso, 1, "N2", "%")</div>
@@ -271,12 +284,12 @@
                 </div>
             </div>
 
-            <!-- KPI 3: Morosidad mayor a 90 días -->
-            <div class="modern-kpi-card">
+            <!-- KPI 3: Morosidad mayor a 90 d&iacute;as -->
+            <div class="modern-kpi-card clickable-kpi-card" onclick="getGraph('C22')" title="Ampliar gr&aacute;fica detallada" role="button" tabindex="0">
                 <div class="kpi-title">
                     <span>Morosidad mayor a 90 d&iacute;as</span>
                     @SemaphoreBadge("morosidad", morosidadVal)
-                    <a href="javascript:getGraph('C22')" style="margin-left:auto; color:#94a3b8;" title="Ampliar gr&aacute;fica"><i class="fa fa-line-chart"></i></a>
+                    <span class="kpi-expand-btn" style="margin-left:auto; color:#94a3b8;" title="Ampliar gr&aacute;fica"><i class="fa fa-line-chart"></i></span>
                 </div>
                 <div class="kpi-value-row">
                     <div class="kpi-big-num">@FormatVal(modelData.Morosidad, 1, "N2", "%")</div>
