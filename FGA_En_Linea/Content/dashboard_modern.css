@@ -6863,6 +6863,70 @@ input.modern-date-input:focus {
 /* ==========================================================================
    33. Panel Lateral de Configuración y Preferencias (.control-sidebar)
    ========================================================================== */
+.control-sidebar-toggle-wrapper {
+    display: flex !important;
+    align-items: center !important;
+    height: 50px !important;
+}
+
+.control-sidebar-toggle-btn {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-width: 50px !important;
+    height: 50px !important;
+    padding: 0 16px !important;
+    color: #cbd5e1 !important;
+    cursor: pointer !important;
+    transition: all 0.25s ease !important;
+    position: relative !important;
+    z-index: 1045 !important;
+    text-decoration: none !important;
+}
+
+.control-sidebar-toggle-btn:hover,
+.control-sidebar-toggle-btn:focus {
+    color: #ffffff !important;
+    background-color: rgba(255, 255, 255, 0.12) !important;
+    text-decoration: none !important;
+}
+
+.control-sidebar-toggle-btn i {
+    font-size: 17px !important;
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    pointer-events: none !important;
+}
+
+.control-sidebar-toggle-btn:hover i {
+    transform: rotate(60deg) !important;
+    color: #86d2dd !important;
+}
+
+body.control-sidebar-open .control-sidebar-toggle-btn {
+    color: #38bdf8 !important;
+    background-color: rgba(56, 189, 248, 0.15) !important;
+}
+
+body.control-sidebar-open .control-sidebar-toggle-btn i {
+    transform: rotate(90deg) !important;
+    color: #38bdf8 !important;
+}
+
+/* Telon de fondo desenfocado para cerrar al hacer clic afuera */
+.control-sidebar-backdrop {
+    position: fixed !important;
+    top: 50px !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: calc(100vh - 50px) !important;
+    background: rgba(15, 23, 42, 0.4) !important;
+    backdrop-filter: blur(2px) !important;
+    -webkit-backdrop-filter: blur(2px) !important;
+    z-index: 1035 !important;
+    display: none;
+    cursor: pointer !important;
+}
+
 .control-sidebar.control-sidebar-dark {
     position: fixed !important;
     top: 50px !important;

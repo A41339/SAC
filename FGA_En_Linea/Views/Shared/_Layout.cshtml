@@ -330,8 +330,10 @@
                                 </li>
                             </ul>
                         </li>
-                        <li>
-                            <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
+                        <li class="control-sidebar-toggle-wrapper">
+                            <a href="javascript:void(0);" data-toggle="control-sidebar" class="control-sidebar-toggle-btn needsclick" title="Preferencias del Sistema">
+                                <i class="fa fa-gears"></i>
+                            </a>
                         </li>
                     </ul>
                 </div>
@@ -353,7 +355,6 @@
                 </div>
             </section>
         </aside>
-        <div style="width:250px !important" class="control-sidebar-bg"></div>
         <div class="content-wrapper">
             @RenderBody()
         </div>
@@ -706,6 +707,65 @@
         window.addEventListener('drop', function (e) {
             e.preventDefault();
         }, false);
+
+        // =========================================================================
+        // Control Sidebar (Panel de Preferencias) - Controlador Robusto Garantizado
+        // =========================================================================
+        function toggleControlSidebar(e) {
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            var $sidebar = $('.control-sidebar');
+            var $body = $('body');
+            var isOpen = $sidebar.hasClass('control-sidebar-open') || $body.hasClass('control-sidebar-open');
+
+            if (isOpen) {
+                closeControlSidebar();
+            } else {
+                openControlSidebar();
+            }
+        }
+
+        function openControlSidebar() {
+            var $sidebar = $('.control-sidebar');
+            var $body = $('body');
+            var $backdrop = $('#control-sidebar-backdrop');
+            if (!$backdrop.length) {
+                $backdrop = $('<div id="control-sidebar-backdrop" class="control-sidebar-backdrop"></div>').appendTo('body');
+            }
+            $sidebar.addClass('control-sidebar-open');
+            $body.addClass('control-sidebar-open');
+            $backdrop.stop(true, true).fadeIn(200);
+        }
+
+        function closeControlSidebar() {
+            $('.control-sidebar').removeClass('control-sidebar-open');
+            $('body').removeClass('control-sidebar-open');
+            $('#control-sidebar-backdrop').stop(true, true).fadeOut(200);
+        }
+
+        // Delegacion autoritativa
+        $(document).off('click', '[data-toggle="control-sidebar"]').on('click', '[data-toggle="control-sidebar"]', toggleControlSidebar);
+        $(document).off('click', '.pref-close-btn').on('click', '.pref-close-btn', function (e) {
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            closeControlSidebar();
+        });
+        $(document).off('click', '#control-sidebar-backdrop').on('click', '#control-sidebar-backdrop', function (e) {
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            closeControlSidebar();
+        });
+        $(document).on('keydown', function (e) {
+            if (e.keyCode === 27) {
+                closeControlSidebar();
+            }
+        });
     });
 </script>
 
