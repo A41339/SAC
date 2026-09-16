@@ -6,8 +6,10 @@
     string idEntidad = ViewBag.IdEntidad != null ? ViewBag.IdEntidad.ToString() : "";
     string fechaReporte = ViewBag.FechaReporte != null ? ViewBag.FechaReporte.ToString() : DateTime.Now.ToString("dd/MM/yyyy HH:mm");
     int totalPreguntas = Model != null ? Model.Count : 0;
-    int totalFuertes = Model != null ? Model.Count(m => !string.IsNullOrEmpty(m.FUERTE) && m.FUERTE.Trim() != "0" && m.FUERTE.Trim().ToUpper() != "NO") : 0;
-    int totalAceptables = Model != null ? Model.Count(m => !string.IsNullOrEmpty(m.ACEPTABLE) && m.ACEPTABLE.Trim() != "0" && m.ACEPTABLE.Trim().ToUpper() != "NO") : 0;
+    int totalFuertes = Model != null ? Model.Count(m => !string.IsNullOrEmpty(m.OPCIONSELECCIONADA) && m.OPCIONSELECCIONADA.Trim().Equals("D", StringComparison.OrdinalIgnoreCase)) : 0;
+    int totalAceptables = Model != null ? Model.Count(m => !string.IsNullOrEmpty(m.OPCIONSELECCIONADA) && m.OPCIONSELECCIONADA.Trim().Equals("C", StringComparison.OrdinalIgnoreCase)) : 0;
+    int totalMejorables = Model != null ? Model.Count(m => !string.IsNullOrEmpty(m.OPCIONSELECCIONADA) && m.OPCIONSELECCIONADA.Trim().Equals("B", StringComparison.OrdinalIgnoreCase)) : 0;
+    int totalDebiles = Model != null ? Model.Count(m => !string.IsNullOrEmpty(m.OPCIONSELECCIONADA) && m.OPCIONSELECCIONADA.Trim().Equals("A", StringComparison.OrdinalIgnoreCase)) : 0;
     var agrupadoComponentes = Model != null ? Model.GroupBy(m => m.NOMCATEGORIA).ToList() : null;
 }
 
@@ -210,6 +212,16 @@
             background: #ecfdf5;
             color: #047857;
             border: 1px solid #a7f3d0;
+        }
+        .badge-mejorable {
+            background: #fffbeb;
+            color: #b45309;
+            border: 1px solid #fde68a;
+        }
+        .badge-debil {
+            background: #fef2f2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
         }
         .component-block {
             margin-bottom: 32px;
@@ -472,15 +484,27 @@
                 <span class="summary-value">@totalPreguntas evaluadas</span>
             </div>
             <div class="summary-item">
-                <span class="summary-label">Calificaciones Fuertes</span>
+                <span class="summary-label">Calificaciones Fuertes (D)</span>
                 <span class="badge-metric badge-fuerte">
                     <i class="fa fa-shield"></i> @totalFuertes Fuertes
                 </span>
             </div>
             <div class="summary-item">
-                <span class="summary-label">Calificaciones Aceptables</span>
+                <span class="summary-label">Calificaciones Aceptables (C)</span>
                 <span class="badge-metric badge-aceptable">
                     <i class="fa fa-check-circle"></i> @totalAceptables Aceptables
+                </span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Calificaciones Mejorables (B)</span>
+                <span class="badge-metric badge-mejorable">
+                    <i class="fa fa-exclamation-circle"></i> @totalMejorables Mejorables
+                </span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Calificaciones D&eacute;biles (A)</span>
+                <span class="badge-metric badge-debil">
+                    <i class="fa fa-times-circle"></i> @totalDebiles D&eacute;biles
                 </span>
             </div>
         </div>
@@ -499,13 +523,36 @@
             foreach (var comp in agrupadoComponentes)
             {
                 var subcomponentes = comp.GroupBy(s => s.NOMSUBCATEGORIA).ToList();
+                int compFuertes = comp.Count(m => !string.IsNullOrEmpty(m.OPCIONSELECCIONADA) && m.OPCIONSELECCIONADA.Trim().Equals("D", StringComparison.OrdinalIgnoreCase));
+                int compAceptables = comp.Count(m => !string.IsNullOrEmpty(m.OPCIONSELECCIONADA) && m.OPCIONSELECCIONADA.Trim().Equals("C", StringComparison.OrdinalIgnoreCase));
+                int compMejorables = comp.Count(m => !string.IsNullOrEmpty(m.OPCIONSELECCIONADA) && m.OPCIONSELECCIONADA.Trim().Equals("B", StringComparison.OrdinalIgnoreCase));
+                int compDebiles = comp.Count(m => !string.IsNullOrEmpty(m.OPCIONSELECCIONADA) && m.OPCIONSELECCIONADA.Trim().Equals("A", StringComparison.OrdinalIgnoreCase));
+
                 <div class="component-block">
                     <div class="component-header">
                         <h2 class="component-title">
                             <i class="fa fa-folder-open-o"></i>
                             Componente: @comp.Key
                         </h2>
-                        <span class="component-count">@comp.Count() preguntas</span>
+                        <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                            <span class="component-count">@comp.Count() preguntas</span>
+                            @if (compFuertes > 0)
+                            {
+                                <span class="component-count" style="background: rgba(3,105,161,0.3);"><i class="fa fa-shield"></i> @compFuertes Fuertes</span>
+                            }
+                            @if (compAceptables > 0)
+                            {
+                                <span class="component-count" style="background: rgba(4,120,87,0.3);"><i class="fa fa-check-circle"></i> @compAceptables Aceptables</span>
+                            }
+                            @if (compMejorables > 0)
+                            {
+                                <span class="component-count" style="background: rgba(180,83,9,0.3);"><i class="fa fa-exclamation-circle"></i> @compMejorables Mejorables</span>
+                            }
+                            @if (compDebiles > 0)
+                            {
+                                <span class="component-count" style="background: rgba(185,28,28,0.3);"><i class="fa fa-times-circle"></i> @compDebiles D&eacute;biles</span>
+                            }
+                        </div>
                     </div>
 
                     @foreach (var sub in subcomponentes)
@@ -518,7 +565,13 @@
 
                             @foreach (var preg in sub)
                             {
-                                <div class="question-card">
+                                string opSel = (preg.OPCIONSELECCIONADA ?? "").Trim().ToUpper();
+                                string borderCol = "#0284c7";
+                                if (opSel == "C") { borderCol = "#10b981"; }
+                                else if (opSel == "B") { borderCol = "#f59e0b"; }
+                                else if (opSel == "A") { borderCol = "#ef4444"; }
+
+                                <div class="question-card" style="border-left-color: @borderCol;">
                                     <div class="question-meta">
                                         <span class="question-id">
                                             <i class="fa fa-question-circle" style="color: #0284c7;"></i>
@@ -546,16 +599,28 @@
                                             </div>
                                         </div>
                                         <div class="answer-qualification">
-                                            @if (!string.IsNullOrEmpty(preg.FUERTE) && preg.FUERTE.Trim() != "0" && preg.FUERTE.Trim().ToUpper() != "NO")
+                                            @if (opSel == "D")
                                             {
                                                 <span class="badge-metric badge-fuerte">
                                                     <i class="fa fa-shield"></i> Fuerte
                                                 </span>
                                             }
-                                            else if (!string.IsNullOrEmpty(preg.ACEPTABLE) && preg.ACEPTABLE.Trim() != "0" && preg.ACEPTABLE.Trim().ToUpper() != "NO")
+                                            else if (opSel == "C")
                                             {
                                                 <span class="badge-metric badge-aceptable">
                                                     <i class="fa fa-check-circle"></i> Aceptable
+                                                </span>
+                                            }
+                                            else if (opSel == "B")
+                                            {
+                                                <span class="badge-metric badge-mejorable">
+                                                    <i class="fa fa-exclamation-circle"></i> Mejorable
+                                                </span>
+                                            }
+                                            else if (opSel == "A")
+                                            {
+                                                <span class="badge-metric badge-debil">
+                                                    <i class="fa fa-times-circle"></i> D&eacute;bil
                                                 </span>
                                             }
                                         </div>
