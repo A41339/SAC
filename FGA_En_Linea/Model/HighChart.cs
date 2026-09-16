@@ -745,9 +745,27 @@ namespace FGA.Model
                 case 9:
                     return ColorTranslator.FromHtml("#64748b"); // Slate Neutro
                 case 10:
+                    return ColorTranslator.FromHtml("#e11d48"); // Rojo Alerta Crítica / Mora >180 días
+                case 11:
+                    return ColorTranslator.FromHtml("#991b1b"); // Borgoña / Cobro Judicial
+                case 12:
                     return ColorTranslator.FromHtml("#0f766e"); // Teal Profundo
                 default:
                     return ColorTranslator.FromHtml("#143750"); // Azul Marino Institucional
+            }
+        }
+
+        public static System.Drawing.Color GetMoraColor(int tramo)
+        {
+            switch (tramo)
+            {
+                case 0: return GetColor(3);  // 1 - 30 días: Verde esmeralda (#10b981)
+                case 1: return GetColor(6);  // 31 - 60 días: Cyan (#06b6d4)
+                case 2: return GetColor(5);  // 61 - 90 días: Ámbar (#f59e0b)
+                case 3: return GetColor(1);  // 91 - 180 días: Naranja cálido (#ea580c)
+                case 4: return GetColor(10); // Más de 180 días: Rojo alerta (#e11d48)
+                case 5: return GetColor(11); // Cobro Judicial: Borgoña / Rojo oscuro (#991b1b)
+                default: return GetColor(7); // Alerta genérica (#ef4444)
             }
         }
     }
