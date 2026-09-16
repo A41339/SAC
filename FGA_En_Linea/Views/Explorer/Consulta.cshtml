@@ -1,13 +1,30 @@
-﻿@{
+@{
     ViewBag.Title = "Consulta de Informes";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <section class="content-header">
-    <h1>
+    <h1 class="modern-page-title">
+        <i class="fa fa-folder-open-o" style="color: #0284c7;"></i>
         Consulta de Informes
+        <small>Descarga y revisi&oacute;n de reportes y documentaci&oacute;n por entidad</small>
     </h1>
+    <ol class="breadcrumb">
+        <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
+        <li><a href="#">Reportes</a></li>
+        <li class="active">Consulta de Informes</li>
+    </ol>
 </section>
+<style>
+    #tbInforme th,
+    #tbInforme td {
+        vertical-align: middle !important;
+    }
+    #tbInforme th:nth-child(n+2),
+    #tbInforme td:nth-child(n+2) {
+        text-align: center !important;
+    }
+</style>
 <section class="content">
     @using (Html.BeginForm("BuscarInformes", "Explorer", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmInformes" }))
     {
@@ -19,7 +36,7 @@
                     @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", @class = "form-control modern-select", style = "min-width: 240px;" })
                 </div>
                 <div class="filter-item">
-                    <label for="Periodos"><i class="fa fa-calendar"></i> Periodo:</label>
+                    <label for="Periodos"><i class="fa fa-calendar"></i> Per&iacute;odo:</label>
                     @Html.DropDownList("Periodos", null, new { @id = "Periodos", @class = "form-control modern-select", style = "min-width: 160px;" })
                 </div>
                 <div class="filter-item" style="margin-left: auto;">
@@ -37,7 +54,7 @@
                 <h3 class="modern-table-title">
                     <i class="fa fa-folder-open-o" style="color: #0284c7; margin-right: 6px;"></i> Reportes e Informes Cargados
                 </h3>
-                <p class="modern-table-subtitle">Listado de archivos y documentación disponible para consulta y descarga</p>
+                <p class="modern-table-subtitle">Listado de archivos y documentaci&oacute;n disponible para consulta y descarga</p>
             </div>
             @if (Session["Logo"] != null && !string.IsNullOrEmpty(Session["Logo"].ToString()))
             {
@@ -50,10 +67,10 @@
             <table id="tbInforme" class="table modern-data-table" style="width:100%">
                 <thead>
                     <tr>
-                        <th style="width: 45%;">Informe</th>
-                        <th style="width: 20%;">Periodo</th>
-                        <th style="width: 20%;">Descarga</th>
-                        <th style="width: 15%; text-align: center;">Acciones</th>
+                        <th style="width: 40%; text-align: left; vertical-align: middle;">Informe</th>
+                        <th style="width: 20%; text-align: center; vertical-align: middle;">Per&iacute;odo</th>
+                        <th style="width: 25%; text-align: center; vertical-align: middle;">Descarga</th>
+                        <th style="width: 15%; text-align: center; vertical-align: middle;">Acciones</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
