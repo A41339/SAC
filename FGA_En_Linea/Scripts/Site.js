@@ -99,5 +99,11 @@ $(function () {
         buttonImage: 'https://www.ffc.co.cr/FFC/Content/images/calendar.png',
         dateFormat: 'dd-mm-yy'
     });
+
+    // Prevencion de arrastre en opciones del menu lateral para evitar bloqueo de puntero / congelamiento
+    $(document).on('dragstart', '.main-sidebar, .sidebar-menu, .sidebar-menu a, .sidebar-menu li, .sidebar-logout-btn', function (e) {
+        e.preventDefault();
+        return false;
+    });
 });
 

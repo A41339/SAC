@@ -214,16 +214,16 @@ namespace FGA
                             }
                         }
 
-                        sb.Append("<li class=\"treeview " + menuStyle + "\"> <a href=\"#\"> " + item.Menu_MenuId.MenuIcon + "<span style=\"font-size:13px;\">" + item.Menu_MenuId.MenuText + "</span><span class=\"pull-right-container\"> <i class=\"fa fa-angle-left pull-right\"></i></span> </a><ul class=\"treeview-menu\">");
+                        sb.Append("<li class=\"treeview " + menuStyle + "\"> <a href=\"#\" draggable=\"false\"> " + item.Menu_MenuId.MenuIcon + "<span style=\"font-size:13px;\">" + item.Menu_MenuId.MenuText + "</span><span class=\"pull-right-container\"> <i class=\"fa fa-angle-left pull-right\"></i></span> </a><ul class=\"treeview-menu\">");
                         sb.Append(GetMenuBar(item.Menu_MenuId.Id, q));
                         sb.Append("</li>");
                     }
                     else
                     {
                         if (item.Menu_MenuId.ParentId == null)
-                            sb.Append("<li class=\"" + menuStyle + "\"> <a style=\"font-size:13px;\" href=\"" + MicrosoftHelper.MSHelper.GetSiteRoot() + "/" + item.Menu_MenuId.MenuURL + "\">" + item.Menu_MenuId.MenuIcon + "  <span style=\"font-size:13px;\">" + item.Menu_MenuId.MenuText + "</span> <span class=\"pull-right-container\"></span></a></li>");
+                            sb.Append("<li class=\"" + menuStyle + "\"> <a draggable=\"false\" style=\"font-size:13px;\" href=\"" + MicrosoftHelper.MSHelper.GetSiteRoot() + "/" + item.Menu_MenuId.MenuURL + "\">" + item.Menu_MenuId.MenuIcon + "  <span style=\"font-size:13px;\">" + item.Menu_MenuId.MenuText + "</span> <span class=\"pull-right-container\"></span></a></li>");
                         else
-                            sb.Append("<li class=\"" + menuStyle + "\"> <a style=\"font-size:13px;\" href=\"" + MicrosoftHelper.MSHelper.GetSiteRoot() + "/" + item.Menu_MenuId.MenuURL + "\">" + item.Menu_MenuId.MenuIcon + " " + item.Menu_MenuId.MenuText + "</a></li>");
+                            sb.Append("<li class=\"" + menuStyle + "\"> <a draggable=\"false\" style=\"font-size:13px;\" href=\"" + MicrosoftHelper.MSHelper.GetSiteRoot() + "/" + item.Menu_MenuId.MenuURL + "\">" + item.Menu_MenuId.MenuIcon + " " + item.Menu_MenuId.MenuText + "</a></li>");
                     }
                 }
                 sb.Append("</ul>");

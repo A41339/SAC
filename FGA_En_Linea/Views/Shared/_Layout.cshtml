@@ -2,10 +2,10 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="description" content="Somos un sistema de protección que brinda Garantía a los ahorrantes y también otorga respaldo institucional a las Cooperativas socias.">
+    <meta name="description" content="Somos un sistema de protecci&oacute;n que brinda Garant&iacute;a a los ahorrantes y tambi&eacute;n otorga respaldo institucional a las Cooperativas socias.">
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="FGA Confía" />
-    <meta property="og:description" content="Somos un sistema de protección que brinda Garantía a los ahorrantes y también otorga respaldo institucional a las Cooperativas socias." />
+    <meta property="og:title" content="FGA Conf&iacute;a" />
+    <meta property="og:description" content="Somos un sistema de protecci&oacute;n que brinda Garant&iacute;a a los ahorrantes y tambi&eacute;n otorga respaldo institucional a las Cooperativas socias." />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>@Html.Raw(ViewBag.Title) - FFC</title>
     <meta content="width=device-width, initial-scale=0.8, maximum-scale=1, user-scalable=no" name="viewport">
@@ -346,7 +346,7 @@
                     @Env.GetMenuBarPage(null)
                 </div>
                 <div class="sidebar-logout-wrapper">
-                    <a href="~/Account/signout" class="sidebar-logout-btn">
+                    <a href="~/Account/signout" class="sidebar-logout-btn" draggable="false">
                         <i class="fa fa-sign-out"></i>
                         <span>Cerrar Sesi&oacute;n</span>
                     </a>
@@ -688,6 +688,24 @@
                 }
             }
         });
+
+        // Prevencion estricta de arrastre en opciones del menu lateral
+        // Evita que el navegador inicie HTML5 drag y bloquee el flujo de eventos del raton
+        $(document).on('dragstart', '.main-sidebar, .sidebar-menu, .sidebar-menu a, .sidebar-menu li, .sidebar-logout-btn', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+        });
+
+        $('.main-sidebar a, .sidebar-menu a, .sidebar-menu li').attr('draggable', 'false');
+
+        // Prevenir que soltar enlaces o elementos en la ventana cause navegacion indeseada o congelamiento
+        window.addEventListener('dragover', function (e) {
+            e.preventDefault();
+        }, false);
+        window.addEventListener('drop', function (e) {
+            e.preventDefault();
+        }, false);
     });
 </script>
 
