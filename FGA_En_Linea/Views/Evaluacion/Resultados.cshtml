@@ -1,10 +1,19 @@
 @{
-    ViewBag.Title = "Resultados";
+    ViewBag.Title = "Resultados de Evaluaci&oacute;n";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <section class="content-header">
-    <h1>Resultados</h1>
+    <h1 class="modern-page-title">
+        <i class="fa fa-bar-chart" style="color: #0284c7;"></i>
+        Resultados de Evaluaci&oacute;n
+        <small>Distribuci&oacute;n de calificaciones por componente y subcomponente</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
+        <li><a href="#">Evaluaci&oacute;n</a></li>
+        <li class="active">Resultados</li>
+    </ol>
 </section>
 <section class="content">
     @using (Html.BeginForm("BuscarResultados", "Evaluacion", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmBuscar" }))
