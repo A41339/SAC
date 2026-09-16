@@ -64,6 +64,39 @@ namespace FGA.Controllers
             return View();
         }
 
+        public ActionResult ReporteEjecutivo(string idEntidad)
+        {
+            Load();
+            if (string.IsNullOrEmpty(idEntidad))
+            {
+                idEntidad = Session["IdEntidad"] != null ? Session["IdEntidad"].ToString() : "0";
+            }
+
+            var entidadService = new FGA_En_Linea.EntidadService.EntidadServiceClient();
+            string nombreEntidad = string.Empty;
+            try
+            {
+                var entObj = entidadService.Get(idEntidad);
+                if (entObj != null)
+                {
+                    nombreEntidad = entObj.Nombre;
+                }
+            }
+            catch (Exception) { }
+
+            if (string.IsNullOrEmpty(nombreEntidad) && Session["NomEntidad"] != null)
+            {
+                nombreEntidad = Session["NomEntidad"].ToString();
+            }
+
+            ViewBag.IdEntidad = idEntidad;
+            ViewBag.NombreEntidad = nombreEntidad;
+            ViewBag.FechaReporte = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
+
+            var historial = spService.FGA_ConsultarHistorial_X_Categoria(idEntidad, null);
+            return View(historial != null ? historial.ToList() : new System.Collections.Generic.List<Entities.Entities.Procedures.FGA_Consultar_Historial_X_Categoria_Result>());
+        }
+
         public PartialViewResult GetDesglose(String idEntidad, int idCategoria)
         {
             var desglose = spService.FGA_ConsultarAvance_X_Categoria(idEntidad, idCategoria);

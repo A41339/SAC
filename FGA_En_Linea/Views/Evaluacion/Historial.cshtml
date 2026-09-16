@@ -28,9 +28,12 @@
                             <label for="IdEntidad"><i class="fa fa-university"></i> Entidad:</label>
                             @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", @class = "form-control modern-select", style = "min-width: 250px;" })
                         </div>
-                        <div class="filter-item" style="margin-left: auto;">
+                        <div class="filter-item" style="margin-left: auto; display: flex; gap: 10px; align-items: center;">
                             <button type="submit" name="submit" class="btn-modern-filter">
                                 <i class="fa fa-search"></i> Generar
+                            </button>
+                            <button type="button" id="btnReporteEjecutivo" class="btn-modern-filter" style="background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); border-color: #0284c7;">
+                                <i class="fa fa-print"></i> Reporte Ejecutivo Imprimible
                             </button>
                         </div>
                     </div>
@@ -109,6 +112,12 @@
         "lengthMenu": [[5,10, 25, 50, -1], [5,10, 25, 50, "Todos"]],
         "aoColumns": [
             {}, {}, {}, {}, {}, {}, {}, {}, {}]
+        });
+
+        $("#btnReporteEjecutivo").click(function () {
+            var entidad = $("#IdEntidad").val();
+            var url = "@Url.Action("ReporteEjecutivo", "Evaluacion")" + "?idEntidad=" + encodeURIComponent(entidad);
+            window.open(url, "_blank");
         });
     });
 
