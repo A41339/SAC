@@ -1,4 +1,4 @@
-﻿@{
+@{
     Layout = null;
 }
 <!DOCTYPE html>
@@ -15,24 +15,39 @@
 
 <body class="login-page">
     <div class="login-wrapper">
-        <!-- Columna Izquierda: Brand / Hero Panel con Red de Particulas -->
+        <!-- Columna Izquierda: Brand / Hero Panel con Curvas y Propuesta de Valor FFC -->
         <div class="login-hero">
-            <canvas id="heroParticles" class="hero-canvas"></canvas>
-            <div class="hero-bg-shapes">
-                <div class="glow-orb orb-1"></div>
-                <div class="glow-orb orb-2"></div>
+            <!-- Curved Wave Overlay -->
+            <div class="hero-wave-bg">
+                <svg class="hero-wave-svg" viewBox="0 0 800 1000" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="waveGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#2F5597" stop-opacity="0.95" />
+                            <stop offset="100%" stop-color="#31859C" stop-opacity="0.95" />
+                        </linearGradient>
+                        <linearGradient id="waveGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#1e447a" stop-opacity="0.6" />
+                            <stop offset="100%" stop-color="#1d556a" stop-opacity="0.7" />
+                        </linearGradient>
+                    </defs>
+                    <rect width="800" height="1000" fill="url(#waveGrad1)" />
+                    <path d="M-100 420 C 220 380, 480 620, 900 320 L 900 1100 L -100 1100 Z" fill="url(#waveGrad2)" />
+                    <path d="M-100 660 C 260 520, 420 780, 900 480 L 900 1100 L -100 1100 Z" fill="#143750" opacity="0.55" />
+                    <path d="M-100 840 C 300 700, 560 930, 900 720 L 900 1100 L -100 1100 Z" fill="#31859C" opacity="0.35" />
+                </svg>
             </div>
-            
+
+            <canvas id="heroParticles" class="hero-canvas"></canvas>
+
             <div class="hero-header">
-                <div class="hero-logo-box">
-                    <img src="~/Content/images/FFC.jpg" alt="FFC Logo" />
+                <div class="hero-brand-logo-group">
+                    <img src="~/Content/images/FFC_Logo_Blanco.png?v=1.0" alt="FFC - Fondo de Fortalecimiento Cooperativo" class="ffc-official-logo" />
                 </div>
-                <span class="hero-brand-text">FFC</span>
             </div>
 
             <div class="hero-body">
-                <span class="hero-tag">Sistema de An&aacute;lisis Cooperativo (SAC)</span>
-                <h1 class="hero-title">Soluciones Financieras &Aacute;giles para el Sector Cooperativo</h1>
+                <span class="hero-tag">SISTEMA DE AN&Aacute;LISIS COOPERATIVO (SAC)</span>
+                <h1 class="hero-title">Informaci&oacute;n financiera para un sector cooperativo m&aacute;s fuerte</h1>
                 <p class="hero-subtitle">
                     Ingrese su correo electr&oacute;nico registrado. Le enviaremos una clave temporal y las instrucciones para acceder al Sistema de An&aacute;lisis Cooperativo del FFC.
                 </p>
@@ -54,10 +69,22 @@
         <!-- Columna Derecha: Formulario de Recuperacion -->
         <div class="login-form-section">
             <div class="login-card">
+                <div class="form-sac-brand">
+                    <div class="sac-logo-row">
+                        <span class="sac-brand-name">SAC</span>
+                        <div class="sac-brand-bars">
+                            <span class="bar bar-1"></span>
+                            <span class="bar bar-2"></span>
+                            <span class="bar bar-3"></span>
+                            <span class="bar bar-4"></span>
+                        </div>
+                    </div>
+                    <span class="sac-brand-desc">Sistema de An&aacute;lisis Cooperativo</span>
+                </div>
+
                 <div class="form-header">
-                    <img class="form-sac-logo" src="~/Content/images/Logo_Login2.png?v=2.0" alt="SAC Logo" />
                     <h2>Recuperar Contrase&ntilde;a</h2>
-                    <p>Ingrese su correo institucional registrado</p>
+                    <p>Ingrese su correo institucional registrado.</p>
                 </div>
                 
                 <form action="" method="post">
@@ -71,7 +98,7 @@
                     
                     @if (ViewBag.Msg != null)
                     {
-                        <div style="margin-bottom: 22px; padding: 14px 18px; background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; color: #166534; font-size: 13.5px; font-weight: 600; text-align: center;">
+                        <div style="margin-bottom: 22px; padding: 14px 18px; background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; color: #166534; font-size: 13px; font-weight: 600; text-align: center;">
                             <i class="fa fa-check-circle"></i> @ViewBag.Msg
                         </div>
                     }
