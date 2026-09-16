@@ -45,16 +45,81 @@ body.modern-dashboard-body,
     min-height: calc(100vh - 50px);
 }
 
-.content-header > h1 {
-    font-size: 22px !important;
-    font-weight: 700 !important;
-    color: #0f172a !important;
-    margin-bottom: 15px;
+/* ==========================================================================
+   Estandarizacion de Encabezados de Pagina (Titulo y Subtitulo en 2 Lineas)
+   ========================================================================== */
+.content-header {
+    position: relative !important;
+    padding: 22px 20px 14px 20px !important;
 }
 
-.content-header .breadcrumb {
-    background: transparent;
-    font-size: 12px;
+.content-header > h1,
+.content-header h1.modern-page-title,
+.content-header h1 {
+    margin: 0 !important;
+    font-size: 21px !important;
+    font-weight: 700 !important;
+    color: #143750 !important;
+    line-height: 1.25 !important;
+    display: block !important;
+}
+
+.content-header > h1 > i,
+.content-header h1.modern-page-title > i,
+.content-header h1 > i {
+    color: #0284c7 !important;
+    margin-right: 10px !important;
+    font-size: 21px !important;
+    vertical-align: -1px !important;
+    display: inline-block !important;
+}
+
+.content-header > h1 > small,
+.content-header h1.modern-page-title small,
+.content-header h1 small,
+.content-header p.modern-page-subtitle,
+.content-header p {
+    display: block !important;
+    margin: 6px 0 0 0 !important;
+    padding-left: 0 !important;
+    font-size: 13px !important;
+    font-weight: 400 !important;
+    color: #64748b !important;
+    line-height: 1.4 !important;
+    letter-spacing: 0.1px !important;
+}
+
+.content-header > .breadcrumb {
+    position: absolute !important;
+    top: 22px !important;
+    right: 20px !important;
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    font-size: 12px !important;
+}
+
+@media (max-width: 767px) {
+    .content-header > .breadcrumb {
+        position: static !important;
+        margin-top: 8px !important;
+        padding: 0 !important;
+    }
+}
+
+/* Modo Presentacion Oscuro para Encabezados */
+body.dark-presentation-mode .content-header > h1,
+body.dark-presentation-mode .content-header h1.modern-page-title,
+body.dark-presentation-mode .content-header h1 {
+    color: #f8fafc !important;
+}
+
+body.dark-presentation-mode .content-header > h1 > small,
+body.dark-presentation-mode .content-header h1.modern-page-title small,
+body.dark-presentation-mode .content-header h1 small,
+body.dark-presentation-mode .content-header p.modern-page-subtitle,
+body.dark-presentation-mode .content-header p {
+    color: #94a3b8 !important;
 }
 
 /* ==========================================================================

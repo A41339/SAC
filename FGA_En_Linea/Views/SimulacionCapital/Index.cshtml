@@ -1,15 +1,21 @@
-﻿@model FGA.Model.Modelo_Simulacion
+@model FGA.Model.Modelo_Simulacion
 
 @{
-    ViewBag.Title = "Módulo de simulación";
+    ViewBag.Title = "M\u00f3dulo de simulaci\u00f3n";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<section class="content-header" style="padding: 15px 15px 10px 15px;">
-    <h1 style="display: flex; align-items: center; gap: 10px; font-size: 22px; font-weight: 700; color: #1e293b; margin: 0;">
+<section class="content-header">
+    <h1 class="modern-page-title">
         <i class="fa fa-calculator" style="color: #0284c7;"></i>
-        <span>M&oacute;dulo de Simulaci&oacute;n: ISP - IMCA</span>
+        M&oacute;dulo de Simulaci&oacute;n: ISP - IMCA
+        <small>Simulaci&oacute;n y proyecci&oacute;n de adecuaci&oacute;n patrimonial y suficiencia de capital</small>
     </h1>
+    <ol class="breadcrumb">
+        <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
+        <li><a href="#">Simulaci&oacute;n</a></li>
+        <li class="active">ISP - IMCA</li>
+    </ol>
 </section>
 
 @using (Html.BeginForm("LoadReportAsync", "SimulacionCapital", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmInforme" }))
