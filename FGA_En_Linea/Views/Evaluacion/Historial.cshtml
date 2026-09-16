@@ -1,11 +1,20 @@
-﻿@{
-    ViewBag.Title = "Historial";
+@{
+    ViewBag.Title = "Historial de Evaluaci&oacute;n";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <script src="https://cdn.datatables.net/rowgroup/1.1.2/js/dataTables.rowGroup.min.js"></script>
 
 <section class="content-header">
-    <h1>Historial</h1>
+    <h1 class="modern-page-title">
+        <i class="fa fa-history" style="color: #0284c7;"></i>
+        Historial de Evaluaci&oacute;n
+        <small>Registro cronol&oacute;gico y detalle de respuestas por entidad</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
+        <li><a href="#">Evaluaci&oacute;n</a></li>
+        <li class="active">Historial</li>
+    </ol>
 </section>
 <section class="content">
     @using (Html.BeginForm("Buscar", "Evaluacion", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmBuscar" }))
@@ -32,41 +41,48 @@
 
     <div class="row">
         <div class="col-xs-12">
-            <div class="box box-solid box-info">
-                <div class="box-body table-responsive">
-                    <div class="margin">
-                        <div class="streaming-table">
-                            <span id="found" class="label label-info"></span>
-                            <table id="tbHistorial" class="table table-striped table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>Fecha</th>
-                                        <th>Usuario</th>
-                                        <th>Componente</th>
-                                        <th>Subcomponente</th>
-                                        <th>Pregunta</th>
-                                        <th>Opcion Seleccionada</th>
-                                        <th>Detalle Respuesta</th>
-                                        <th>Aceptable</th>
-                                        <th>Fuerte</th>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
+            <div class="modern-table-card">
+                <div class="table-responsive" style="padding: 10px 16px 20px 16px;">
+                    <div class="streaming-table">
+                        <span id="found" class="label label-info"></span>
+                        <table id="tbHistorial" class="table table-striped table-bordered modern-data-table" style="width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Usuario</th>
+                                    <th>Componente</th>
+                                    <th>Subcomponente</th>
+                                    <th>Pregunta</th>
+                                    <th>Opci&oacute;n seleccionada</th>
+                                    <th>Detalle respuesta</th>
+                                    <th>Aceptable</th>
+                                    <th>Fuerte</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
 
-                            <div id="summary">
-                                <div>
-                                </div>
+                        <div id="summary">
+                            <div>
                             </div>
                         </div>
                     </div>
-                    <br />
-                    <br />
                 </div>
             </div>
         </div>
     </div>
 </section>
+
+<style>
+    #tbHistorial thead th {
+        text-transform: none !important;
+        font-size: 13px !important;
+        font-weight: 600 !important;
+        letter-spacing: normal !important;
+        color: #143750 !important;
+        vertical-align: middle !important;
+    }
+</style>
 
 <script type="text/javascript">
 
