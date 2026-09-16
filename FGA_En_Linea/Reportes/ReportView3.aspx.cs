@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.Reporting.WebForms;
 using System.Collections.Generic;
 using System.Security.Principal;
@@ -110,7 +110,7 @@ namespace FGA.Reportes
                         DateTime feccorte = Utility.Utilitarios.ConvertirAFecha(this.Session["PeriodoI"].ToString());
                         DateTime inicio = Session["Plazo"].ToString() == "1" ? feccorte : feccorte.Month == 12 ? feccorte : (new DateTime(feccorte.Year, 1, 1)).AddMonths(-1);
 
-                        parameters.Add(new ReportParameter("Logo", this.Session["Logo"].ToString().Replace("https://www.ffc.co.cr/FFC", "http://10.171.1.26/ffc"), true));
+                        parameters.Add(new ReportParameter("Logo", Env.ObtenerRutaLogoReporte(this.Session["Logo"]), true));
                         parameters.Add(new ReportParameter("IDENTIDAD", this.Session["IdEntidad"].ToString()));
                         parameters.Add(new ReportParameter("PERIODOINICIO", inicio.ToString()));
                         parameters.Add(new ReportParameter("PERIODOCORTE", feccorte.ToString()));
@@ -135,7 +135,7 @@ namespace FGA.Reportes
                         {
                             if (rptName != "Report_Origen_Aplic_SF")
                             {
-                                parameters.Add(new ReportParameter("Logo", this.Session["Logo"].ToString().Replace("https://www.ffc.co.cr/FFC", "http://10.171.1.26/ffc"), true));
+                                parameters.Add(new ReportParameter("Logo", Env.ObtenerRutaLogoReporte(this.Session["Logo"]), true));
                                 parameters.Add(new ReportParameter("IDENTIDAD", this.Session["IdEntidad"].ToString()));
                             }
                             else

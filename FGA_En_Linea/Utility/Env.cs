@@ -231,5 +231,30 @@ namespace FGA
 
             return MvcHtmlString.Create(sb.ToString());
         }
+
+        public static string ObtenerRutaLogoReporte(object sessionLogo)
+        {
+            if (sessionLogo == null)
+                return string.Empty;
+
+            string logo = sessionLogo.ToString();
+            // Reemplaza dinamicamente cualquier variante del dominio publico (ej. /FFC, /FFC2, /FFC3) por la ruta del servidor interno
+            string rutaReporte = System.Text.RegularExpressions.Regex.Replace(
+                logo,
+                @"https?://(www\.)?ffc\.co\.cr/FFC[0-9]*",
+                "http://10.171.1.26/ffc",
+                System.Text.RegularExpressions.RegexOptions.IgnoreCase
+            );
+
+            // Respaldo para normalizar cualquier sufijo numerico en la IP interna a /ffc
+            rutaReporte = System.Text.RegularExpressions.Regex.Replace(
+                rutaReporte,
+                @"http://10\.171\.1\.26/ffc[0-9]+",
+                "http://10.171.1.26/ffc",
+                System.Text.RegularExpressions.RegexOptions.IgnoreCase
+            );
+
+            return rutaReporte;
+        }
     }
 }
