@@ -173,8 +173,10 @@ namespace FGA
                 var evaluacion = Env.GetUserInfo("evaluacion") == "S" ? -1 : Utility.Utilitarios.opcionEvaluacion;
                 var globle = men.GetMenu(RoleId).Where(o => o.MenuId != evaluacion).ToArray();
 
+                int? activeMenuId = DetermineActiveMenuId((MenuPermission[])globle);
+
                 sb.Append("<ul class=\"sidebar-menu\"  data-widget=\"tree\">");
-                sb.Append(GetMenuBar(ParentId, (MenuPermission[])globle));
+                sb.Append(GetMenuBar(ParentId, (MenuPermission[])globle, activeMenuId));
                 return MvcHtmlString.Create(sb.ToString());
             }
             catch (Exception e)
@@ -184,46 +186,132 @@ namespace FGA
             return null;
         }
 
+        private static string NormalizeMenuPath(string path)
+        {
+            if (string.IsNullOrEmpty(path))
+                return string.Empty;
+
+            path = path.Trim().Trim('/').ToLower();
+
+            if (HttpContext.Current != null && HttpContext.Current.Request != null)
+            {
+                string appPath = (HttpContext.Current.Request.ApplicationPath ?? "").Trim('/').ToLower();
+                if (!string.IsNullOrEmpty(appPath) && (path == appPath || path.StartsWith(appPath + "/")))
+                {
+                    path = path.Substring(appPath.Length).Trim('/');
+                }
+            }
+
+            if (path.EndsWith("/index"))
+            {
+                path = path.Substring(0, path.Length - 6);
+            }
+            else if (path == "index")
+            {
+                path = string.Empty;
+            }
+
+            return path;
+        }
+
+        private static int? DetermineActiveMenuId(MenuPermission[] permissions)
+        {
+            if (permissions == null || permissions.Length == 0 || HttpContext.Current == null || HttpContext.Current.Request == null)
+                return null;
+
+            string currentRaw = HttpContext.Current.Request.Url.AbsolutePath ?? "";
+            string currentNorm = NormalizeMenuPath(currentRaw);
+
+            if (string.IsNullOrEmpty(currentNorm))
+            {
+                currentNorm = "home";
+            }
+
+            int? bestMatchId = null;
+            int bestMatchScore = -1;
+
+            foreach (var p in permissions)
+            {
+                if (p.Menu_MenuId == null) continue;
+                string url = p.Menu_MenuId.MenuURL;
+                if (string.IsNullOrEmpty(url) || url == "#" || url.StartsWith("javascript"))
+                    continue;
+
+                string itemNorm = NormalizeMenuPath(url);
+                if (string.IsNullOrEmpty(itemNorm))
+                    continue;
+
+                int score = -1;
+
+                if (currentNorm == itemNorm)
+                {
+                    score = 10000 + itemNorm.Length;
+                }
+                else if (currentNorm.StartsWith(itemNorm + "/"))
+                {
+                    score = 5000 + itemNorm.Length;
+                }
+                else if (!itemNorm.Contains("/") && currentNorm.StartsWith(itemNorm + "/"))
+                {
+                    score = 1000 + itemNorm.Length;
+                }
+
+                if (score > bestMatchScore)
+                {
+                    bestMatchScore = score;
+                    bestMatchId = p.Menu_MenuId.Id;
+                }
+            }
+
+            return bestMatchId;
+        }
+
+        private static bool HasActiveDescendant(MenuPermission[] q, int parentId, int targetActiveId)
+        {
+            if (q == null) return false;
+            foreach (var child in q.Where(i => i.Menu_MenuId.ParentId == parentId))
+            {
+                if (child.Menu_MenuId.Id == targetActiveId)
+                    return true;
+                if (HasActiveDescendant(q, child.Menu_MenuId.Id, targetActiveId))
+                    return true;
+            }
+            return false;
+        }
+
         private static MvcHtmlString GetMenuBar(Nullable<int> ParentId, MenuPermission[] q)
         {
-            var rawPath = HttpContext.Current.Request.Url.AbsolutePath.ToLower();
+            int? activeMenuId = DetermineActiveMenuId(q);
+            return GetMenuBar(ParentId, q, activeMenuId);
+        }
+
+        private static MvcHtmlString GetMenuBar(Nullable<int> ParentId, MenuPermission[] q, int? activeMenuId)
+        {
             StringBuilder sb = new StringBuilder();
-            var menuStyle = string.Empty;
 
             if (q != null)
             {
                 foreach (var item in q.Where(i => i.Menu_MenuId.ParentId == ParentId).OrderBy(i => i.SortOrder))
                 {
-                    menuStyle = string.Empty;
-                    string itemUrl = (item.Menu_MenuId.MenuURL ?? "").Trim('/').ToLower();
+                    bool isSelfActive = activeMenuId.HasValue && item.Menu_MenuId.Id == activeMenuId.Value;
+                    bool hasChildren = q.Any(j => j.Menu_MenuId.ParentId == item.Menu_MenuId.Id);
 
-                    if (!string.IsNullOrEmpty(itemUrl) && (rawPath.Equals("/" + itemUrl) || rawPath.StartsWith("/" + itemUrl + "/") || (itemUrl.Length > 2 && rawPath.Contains(itemUrl))))
+                    if (hasChildren)
                     {
-                        menuStyle = "active";
-                    }
+                        bool isTreeActive = (activeMenuId.HasValue && HasActiveDescendant(q, item.Menu_MenuId.Id, activeMenuId.Value)) || isSelfActive;
+                        string treeStyle = isTreeActive ? "menu-open active" : string.Empty;
 
-                    if (q.Count(j => j.Menu_MenuId.ParentId == item.Menu_MenuId.Id) > 0)
-                    {
-                        foreach (var detalle in q.Where(i => i.Menu_MenuId.ParentId == item.Menu_MenuId.Id))
-                        {
-                            string detUrl = (detalle.Menu_MenuId.MenuURL ?? "").Trim('/').ToLower();
-                            if (!string.IsNullOrEmpty(detUrl) && (rawPath.Equals("/" + detUrl) || rawPath.StartsWith("/" + detUrl + "/") || (detUrl.Length > 2 && rawPath.Contains(detUrl))))
-                            {
-                                menuStyle = "menu-open active";
-                                break;
-                            }
-                        }
-
-                        sb.Append("<li class=\"treeview " + menuStyle + "\"> <a href=\"#\" draggable=\"false\"> " + item.Menu_MenuId.MenuIcon + "<span style=\"font-size:13px;\">" + item.Menu_MenuId.MenuText + "</span><span class=\"pull-right-container\"> <i class=\"fa fa-angle-left pull-right\"></i></span> </a><ul class=\"treeview-menu\">");
-                        sb.Append(GetMenuBar(item.Menu_MenuId.Id, q));
+                        sb.Append("<li class=\"treeview " + treeStyle + "\"> <a href=\"#\" draggable=\"false\"> " + item.Menu_MenuId.MenuIcon + "<span style=\"font-size:13px;\">" + item.Menu_MenuId.MenuText + "</span><span class=\"pull-right-container\"> <i class=\"fa fa-angle-left pull-right\"></i></span> </a><ul class=\"treeview-menu\">");
+                        sb.Append(GetMenuBar(item.Menu_MenuId.Id, q, activeMenuId));
                         sb.Append("</li>");
                     }
                     else
                     {
+                        string itemStyle = isSelfActive ? "active" : string.Empty;
                         if (item.Menu_MenuId.ParentId == null)
-                            sb.Append("<li class=\"" + menuStyle + "\"> <a draggable=\"false\" style=\"font-size:13px;\" href=\"" + MicrosoftHelper.MSHelper.GetSiteRoot() + "/" + item.Menu_MenuId.MenuURL + "\">" + item.Menu_MenuId.MenuIcon + "  <span style=\"font-size:13px;\">" + item.Menu_MenuId.MenuText + "</span> <span class=\"pull-right-container\"></span></a></li>");
+                            sb.Append("<li class=\"" + itemStyle + "\"> <a draggable=\"false\" style=\"font-size:13px;\" href=\"" + MicrosoftHelper.MSHelper.GetSiteRoot() + "/" + item.Menu_MenuId.MenuURL + "\">" + item.Menu_MenuId.MenuIcon + "  <span style=\"font-size:13px;\">" + item.Menu_MenuId.MenuText + "</span> <span class=\"pull-right-container\"></span></a></li>");
                         else
-                            sb.Append("<li class=\"" + menuStyle + "\"> <a draggable=\"false\" style=\"font-size:13px;\" href=\"" + MicrosoftHelper.MSHelper.GetSiteRoot() + "/" + item.Menu_MenuId.MenuURL + "\">" + item.Menu_MenuId.MenuIcon + " " + item.Menu_MenuId.MenuText + "</a></li>");
+                            sb.Append("<li class=\"" + itemStyle + "\"> <a draggable=\"false\" style=\"font-size:13px;\" href=\"" + MicrosoftHelper.MSHelper.GetSiteRoot() + "/" + item.Menu_MenuId.MenuURL + "\">" + item.Menu_MenuId.MenuIcon + " " + item.Menu_MenuId.MenuText + "</a></li>");
                     }
                 }
                 sb.Append("</ul>");

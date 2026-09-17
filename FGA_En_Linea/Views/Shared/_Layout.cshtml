@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -720,18 +720,55 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
-        var currentPath = window.location.pathname.toLowerCase();
+        var currentPath = (window.location.pathname || '').toLowerCase().replace(/\/+$/, '');
+        var appPath = '@Url.Content("~")'.toLowerCase().replace(/\/+$/, '');
+        var relPath = currentPath;
+        if (appPath && relPath.indexOf(appPath) === 0) {
+            relPath = relPath.substring(appPath.length);
+        }
+        relPath = relPath.replace(/^\/+/, '');
+        var relPathNoIndex = relPath.replace(/\/index$/, '');
+
+        var bestLink = null;
+        var bestScore = -1;
+
         $('.sidebar-menu li a').each(function () {
             var href = $(this).attr('href');
-            if (href && href !== '#' && href !== 'javascript:void(0)') {
-                var cleanHref = href.toLowerCase().replace(window.location.origin.toLowerCase(), '');
-                if (cleanHref && (currentPath === cleanHref || (cleanHref.length > 3 && currentPath.indexOf(cleanHref) === 0))) {
-                    $('.sidebar-menu li').removeClass('active');
-                    $(this).closest('li').addClass('active');
-                    $(this).closest('.treeview').addClass('active menu-open');
-                }
+            if (!href || href === '#' || href.indexOf('javascript:') === 0) {
+                return;
+            }
+
+            var linkPath = (this.pathname || '').toLowerCase().replace(/\/+$/, '');
+            var linkRel = linkPath;
+            if (appPath && linkRel.indexOf(appPath) === 0) {
+                linkRel = linkRel.substring(appPath.length);
+            }
+            linkRel = linkRel.replace(/^\/+/, '');
+            var linkRelNoIndex = linkRel.replace(/\/index$/, '');
+
+            if (!linkRel) return;
+
+            var score = -1;
+            if (relPath === linkRel || (relPathNoIndex && relPathNoIndex === linkRelNoIndex)) {
+                score = 10000 + linkRel.length;
+            } else if (relPath.indexOf(linkRel + '/') === 0) {
+                score = 5000 + linkRel.length;
+            } else if (linkRel.indexOf('/') === -1 && relPath.indexOf(linkRel + '/') === 0) {
+                score = 1000 + linkRel.length;
+            }
+
+            if (score > bestScore) {
+                bestScore = score;
+                bestLink = $(this);
             }
         });
+
+        if (bestLink) {
+            $('.sidebar-menu li').removeClass('active');
+            $('.sidebar-menu li.treeview').removeClass('menu-open active');
+            bestLink.closest('li').addClass('active');
+            bestLink.parents('.treeview').addClass('active menu-open');
+        }
 
         // Prevencion estricta de arrastre en opciones del menu lateral
         // Evita que el navegador inicie HTML5 drag y bloquee el flujo de eventos del raton
