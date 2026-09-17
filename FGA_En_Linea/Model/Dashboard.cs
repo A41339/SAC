@@ -88,6 +88,8 @@ namespace FGA.Models
     {
         public string PeriodoAnterior { get; set; } = "";
         public string PeriodoActual { get; set; } = "";
+        public string PeriodoRefMensual { get; set; } = "";
+        public string PeriodoRefInteranual { get; set; } = "";
         public decimal MontoAnterior { get; set; }
         public decimal MontoActual { get; set; }
         public decimal VarMensualMonto { get; set; }
@@ -95,6 +97,7 @@ namespace FGA.Models
         public decimal VarInteranualMonto { get; set; }
         public decimal VarInteranualPct { get; set; }
         public bool HasData { get; set; }
+        public bool HasMensual { get; set; }
         public bool HasInteranual { get; set; }
     }
 }

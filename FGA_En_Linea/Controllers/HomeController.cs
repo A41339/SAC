@@ -151,10 +151,10 @@ namespace FGA.Controllers
                                 DateTime anoAntFecha = regActual.PERIODO.AddYears(-1);
                                 var regAnoAnt = listPerdida.FirstOrDefault(o => o.PERIODO.Year == anoAntFecha.Year && o.PERIODO.Month == anoAntFecha.Month);
 
-                                decimal actualMonto = regActual?.ESTIMACION_MATRIZ ?? 0;
-                                decimal anteriorMonto = regAnterior?.ESTIMACION_MATRIZ ?? 0;
-                                decimal mesAntMonto = regMesAnt?.ESTIMACION_MATRIZ ?? 0;
-                                decimal anoAntMonto = regAnoAnt?.ESTIMACION_MATRIZ ?? 0;
+                                decimal actualMonto = regActual?.PERDIDA_ESTIMADA ?? 0;
+                                decimal anteriorMonto = regAnterior?.PERDIDA_ESTIMADA ?? 0;
+                                decimal mesAntMonto = regMesAnt?.PERDIDA_ESTIMADA ?? 0;
+                                decimal anoAntMonto = regAnoAnt?.PERDIDA_ESTIMADA ?? 0;
 
                                 decimal varMensualMonto = actualMonto - mesAntMonto;
                                 decimal varMensualPct = mesAntMonto != 0 ? (varMensualMonto / Math.Abs(mesAntMonto)) * 100 : 0;
@@ -166,6 +166,8 @@ namespace FGA.Controllers
                                 {
                                     PeriodoAnterior = regAnterior != null ? regAnterior.PERIODO.ToString("MM/yyyy") : PeriodoI.ToString("MM/yyyy"),
                                     PeriodoActual = regActual != null ? regActual.PERIODO.ToString("MM/yyyy") : PeriodoF.ToString("MM/yyyy"),
+                                    PeriodoRefMensual = regMesAnt != null ? regMesAnt.PERIODO.ToString("MM/yyyy") : mesAntFecha.ToString("MM/yyyy"),
+                                    PeriodoRefInteranual = regAnoAnt != null ? regAnoAnt.PERIODO.ToString("MM/yyyy") : anoAntFecha.ToString("MM/yyyy"),
                                     MontoAnterior = anteriorMonto,
                                     MontoActual = actualMonto,
                                     VarMensualMonto = varMensualMonto,
@@ -173,7 +175,8 @@ namespace FGA.Controllers
                                     VarInteranualMonto = varInteranualMonto,
                                     VarInteranualPct = varInteranualPct,
                                     HasData = true,
-                                    HasInteranual = regAnoAnt != null && anoAntMonto != 0
+                                    HasMensual = regMesAnt != null,
+                                    HasInteranual = regAnoAnt != null
                                 };
                             }
                         }
