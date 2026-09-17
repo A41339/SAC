@@ -48,7 +48,7 @@
                 </div>
             </div>
 
-            <!-- Botones de Selección Rápida de Períodos -->
+            <!-- Botones de Selección Rápida de Periodos -->
             <div class="filter-item">
                 <label><i class="fa fa-clock-o"></i> Acceso R&aacute;pido:</label>
                 <div class="quick-period-group" style="display: flex; align-items: center; gap: 5px;">
@@ -106,6 +106,9 @@
     }
 
     function formatMillion() {
+        if (typeof Highcharts !== 'undefined' && Highcharts.numberFormat) {
+            return Highcharts.numberFormat(this.value, 0, '.', ',');
+        }
         return this.value;
     }
 

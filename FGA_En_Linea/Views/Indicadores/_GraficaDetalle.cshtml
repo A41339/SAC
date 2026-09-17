@@ -13,6 +13,20 @@
     </button>
 </div>
 <div class="modal-body" style="padding: 20px 24px; background: #ffffff; overflow-y: auto;">
+    <script type="text/javascript">
+        if (typeof Highcharts !== 'undefined') {
+            Highcharts.setOptions({
+                lang: {
+                    thousandsSep: ',',
+                    decimalPoint: '.'
+                }
+            });
+            if (Highcharts.defaultOptions && Highcharts.defaultOptions.lang) {
+                Highcharts.defaultOptions.lang.thousandsSep = ',';
+                Highcharts.defaultOptions.lang.decimalPoint = '.';
+            }
+        }
+    </script>
     <div style="width: 100%; min-height: 400px; overflow: visible;">
         @(Model)
     </div>

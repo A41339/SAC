@@ -45,6 +45,21 @@
             return res;
         };
 
+        window.fixDomEncoding = function () {
+            try {
+                if (!document.body) return;
+                var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
+                var node;
+                while (node = walker.nextNode()) {
+                    if (node.nodeValue && node.nodeValue.indexOf('Ã') !== -1) {
+                        node.nodeValue = window.sanitizeTextAccents(node.nodeValue);
+                    }
+                }
+            } catch (e) {}
+        };
+        $(document).ready(function () { window.fixDomEncoding(); });
+        $(document).ajaxComplete(function () { window.fixDomEncoding(); });
+
         window.formatGlobalChartTooltip = function (ctx) {
             if (!ctx) return '';
             var p0 = (ctx.points && ctx.points.length > 0) ? ctx.points[0] : (ctx.point || ctx);
@@ -153,6 +168,17 @@
             return html;
         };
 
+        window.formatMillion = function () {
+            if (typeof Highcharts !== 'undefined' && Highcharts.numberFormat) {
+                return Highcharts.numberFormat(this.value, 0, '.', ',');
+            }
+            return this.value;
+        };
+
+        window.formatPercent = function () {
+            return this.value + " %";
+        };
+
         (function() {
             var anim = localStorage.getItem('fga_charts_animation');
             var isAnimEnabled = (anim === null || anim === 'true');
@@ -162,6 +188,9 @@
             if (typeof Highcharts !== 'undefined') {
                 Highcharts.setOptions({
                     lang: {
+                        thousandsSep: ',',
+                        decimalPoint: '.',
+                        numericSymbols: null,
                         categoryHeader: 'Per\u00edodo',
                         categoryDatetimeHeader: 'Fecha',
                         viewData: '<i class="fa fa-table" style="color: #4338ca; margin-right: 10px; width: 16px; text-align: center;"></i> Ver datos',
@@ -250,6 +279,10 @@
                         }
                     }
                 });
+                if (Highcharts.defaultOptions && Highcharts.defaultOptions.lang) {
+                    Highcharts.defaultOptions.lang.thousandsSep = ',';
+                    Highcharts.defaultOptions.lang.decimalPoint = '.';
+                }
             }
         })();
     </script>
@@ -1014,7 +1047,7 @@
                     }
                 }
 
-                // Encabezados thead: sustitución de categoría por Período y decodificación de tildes/HTML
+                // Encabezados thead: sustitución de categoría por Periodo y decodificación de tildes/HTML
                 $tbl.find('thead th, thead td').each(function (idx) {
                     var $cell = $(this);
                     var $btn = $cell.find('button');
@@ -1032,7 +1065,7 @@
                     }
                 });
 
-                // Celdas tbody: asegurar que las etiquetas de período y texto no tengan artefactos
+                // Celdas tbody: asegurar que las etiquetas de periodo y texto no tengan artefactos
                 $tbl.find('tbody tr').each(function () {
                     var $firstCell = $(this).find('th:first-child, td:first-child');
                     if ($firstCell.length) {

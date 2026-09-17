@@ -1,4 +1,20 @@
-﻿@model DotNet.Highcharts.Highcharts
+@model DotNet.Highcharts.Highcharts
+
+<script type="text/javascript">
+    if (typeof Highcharts !== 'undefined') {
+        Highcharts.setOptions({
+            lang: {
+                thousandsSep: ',',
+                decimalPoint: '.'
+            }
+        });
+        if (Highcharts.defaultOptions && Highcharts.defaultOptions.lang) {
+            Highcharts.defaultOptions.lang.thousandsSep = ',';
+            Highcharts.defaultOptions.lang.decimalPoint = '.';
+        }
+    }
+</script>
+
 <div class="modal-header">
     <div style="display: flex; align-items: center; gap: 12px;">
         <img width="42" height="42" src="@Session["Logo"]" style="border-radius: 8px; background: #ffffff; padding: 3px; box-shadow: 0 2px 6px rgba(0,0,0,0.15);" />
@@ -14,10 +30,18 @@
 
 <script type="text/javascript">
     function formatMillion() {
+        if (typeof Highcharts !== 'undefined' && Highcharts.numberFormat) {
+            var decimals = (this.value % 1 !== 0) ? 2 : 0;
+            return Highcharts.numberFormat(this.value, decimals, '.', ',');
+        }
         return this.value;
     }
 
     function formatPercent() {
+        if (typeof Highcharts !== 'undefined' && Highcharts.numberFormat) {
+            var decimals = (this.value % 1 !== 0) ? 2 : 0;
+            return Highcharts.numberFormat(this.value, decimals, '.', ',') + ' %';
+        }
         return this.value + " %";
     }
 </script>

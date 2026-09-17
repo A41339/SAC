@@ -158,12 +158,22 @@
     });
 
     function formatMillion() {
-        $("#entidad").text($("#Grafico :selected").text() + " en millones");
-        $("#pEntidad").text($("#Grafico :selected").text() + " en millones");
+        if ($("#Grafico").length && $("#Grafico :selected").length) {
+            $("#entidad").text($("#Grafico :selected").text() + " en millones");
+            $("#pEntidad").text($("#Grafico :selected").text() + " en millones");
+        }
+        if (typeof Highcharts !== 'undefined' && Highcharts.numberFormat) {
+            var decimals = (this.value % 1 !== 0) ? 2 : 0;
+            return Highcharts.numberFormat(this.value, decimals, '.', ',');
+        }
         return this.value;
     }
 
     function formatPercent() {
+        if (typeof Highcharts !== 'undefined' && Highcharts.numberFormat) {
+            var decimals = (this.value % 1 !== 0) ? 2 : 0;
+            return Highcharts.numberFormat(this.value, decimals, '.', ',') + ' %';
+        }
         return this.value + " %";
     }
 
