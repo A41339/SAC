@@ -367,51 +367,49 @@
 
 </section>
 
-@section Scripts {
-    <script>
-        $(function () {
-            var urlActualizarFiltros = '@Url.Action("ActualizarFiltros", "Modulo")';
+<script>
+    $(function () {
+        var urlActualizarFiltros = '@Url.Action("ActualizarFiltros", "Modulo")';
 
-            function actualizarFiltrosHub(recargarFechaCierre) {
-                var entidadId = $('#hubEntidad').val();
-                var periodo = $('#hubPeriodo').val();
-                var tipoComp = $('#hubTipoComparacion').val();
+        function actualizarFiltrosHub(recargarFechaCierre) {
+            var entidadId = $('#hubEntidad').val();
+            var periodo = $('#hubPeriodo').val();
+            var tipoComp = $('#hubTipoComparacion').val();
 
-                $.ajax({
-                    url: urlActualizarFiltros,
-                    type: 'POST',
-                    data: {
-                        idEntidad: entidadId,
-                        periodo: recargarFechaCierre ? '' : periodo,
-                        tipoComparacion: tipoComp
-                    },
-                    success: function (res) {
-                        if (res && res.success) {
-                            if (recargarFechaCierre && res.periodo) {
-                                $('#hubPeriodo').val(res.periodo);
-                            }
+            $.ajax({
+                url: urlActualizarFiltros,
+                type: 'POST',
+                data: {
+                    idEntidad: entidadId,
+                    periodo: recargarFechaCierre ? '' : periodo,
+                    tipoComparacion: tipoComp
+                },
+                success: function (res) {
+                    if (res && res.success) {
+                        if (recargarFechaCierre && res.periodo) {
+                            $('#hubPeriodo').val(res.periodo);
                         }
-                    },
-                    error: function (xhr, status, err) {
-                        console.error('Error al sincronizar filtros:', err);
                     }
-                });
-            }
-
-            // Al cambiar la Entidad
-            $('#hubEntidad').on('change', function () {
-                actualizarFiltrosHub(true);
+                },
+                error: function (xhr, status, err) {
+                    console.error('Error al sincronizar filtros:', err);
+                }
             });
+        }
 
-            // Al cambiar el Tipo de Comparación
-            $('#hubTipoComparacion').on('change', function () {
-                actualizarFiltrosHub(false);
-            });
-
-            // Al cambiar la Fecha en MonthPicker
-            $('#hubPeriodo').on('change', function () {
-                actualizarFiltrosHub(false);
-            });
+        // Al cambiar la Entidad
+        $('#hubEntidad').on('change', function () {
+            actualizarFiltrosHub(true);
         });
-    </script>
-}
+
+        // Al cambiar el Tipo de Comparación
+        $('#hubTipoComparacion').on('change', function () {
+            actualizarFiltrosHub(false);
+        });
+
+        // Al cambiar la Fecha en MonthPicker
+        $('#hubPeriodo').on('change', function () {
+            actualizarFiltrosHub(false);
+        });
+    });
+</script>
