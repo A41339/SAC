@@ -1,4 +1,4 @@
-using DotNet.Highcharts.Enums;
+﻿using DotNet.Highcharts.Enums;
 using DotNet.Highcharts.Helpers;
 using DotNet.Highcharts.Options;
 using Entities.Entities.Procedures;
@@ -313,7 +313,7 @@ namespace FGA.Controllers
         {
             if (tak.Count() > 0)
             {
-                HighChart.ConfigChart(ref view.pSuficiencia, "pSuficiencia", (ChartTypes?)600);
+                HighChart.ConfigChart(ref view.pSuficiencia, "pSuficiencia", null, 460);
 
                 var agrupadoPorPeriodo = tak
                 .GroupBy(x => x.Periodo)

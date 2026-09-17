@@ -1,4 +1,4 @@
-﻿@model FGA.Models.Dashboard
+@model FGA.Models.Dashboard
 
 <script src="https://code.highcharts.com/highcharts.js"></script>
 
@@ -14,26 +14,39 @@
         padding-top: 8px !important;
         border-top: 1px dashed #e2e8f0 !important;
     }
-    .kpi-sparkline-container {
+        .clickable-kpi-card {
+        cursor: pointer !important;
+        user-select: none;
+        transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease !important;
+    }
+    .clickable-kpi-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(47, 85, 151, 0.12) !important;
+        border-color: #93c5fd !important;
+    }
+    .clickable-kpi-card * {
+        cursor: pointer !important;
+    }
+    .clickable-kpi-card .kpi-sparkline-container {
         height: 55px !important;
         overflow: visible !important;
-        pointer-events: none !important;
+        cursor: pointer !important;
     }
-    .kpi-sparkline-container .highcharts-container,
-    .kpi-sparkline-container svg {
+    .clickable-kpi-card .kpi-sparkline-container .highcharts-container,
+    .clickable-kpi-card .kpi-sparkline-container svg {
         overflow: visible !important;
-        pointer-events: none !important;
-    }
-    .clickable-kpi-card {
-        cursor: pointer;
-        user-select: none;
+        cursor: pointer !important;
     }
     .clickable-kpi-card .kpi-expand-btn {
-        transition: color 0.2s ease, transform 0.2s ease;
+        transition: color 0.2s ease, transform 0.2s ease, background-color 0.2s ease;
+        padding: 4px 6px;
+        border-radius: 6px;
+        color: #64748b;
     }
     .clickable-kpi-card:hover .kpi-expand-btn {
         color: #2F5597 !important;
-        transform: scale(1.22);
+        background: #eff6ff !important;
+        transform: scale(1.18);
     }
     .highcharts-tooltip-container {
         z-index: 999999 !important;
@@ -239,11 +252,11 @@
         <div class="kpi-cards-wrapper">
             
             <!-- KPI 1: Suficiencia Patrimonial -->
-            <div class="modern-kpi-card clickable-kpi-card" onclick="getGraph('S1')" title="Ampliar gr&aacute;fica detallada" role="button" tabindex="0">
+            <div class="modern-kpi-card clickable-kpi-card" onclick="mSuficiencia()" title="Nivel y Calidad del Capital (Click para ampliar gr&aacute;fico)" role="button" tabindex="0">
                 <div class="kpi-title">
                     <span>Suficiencia Patrimonial</span>
                     @SemaphoreBadge("suficiencia", suficienciaVal)
-                    <span class="kpi-expand-btn" style="margin-left:auto; color:#94a3b8;" title="Ampliar gr&aacute;fica"><i class="fa fa-line-chart"></i></span>
+                    <span class="kpi-expand-btn" onclick="event.stopPropagation(); mSuficiencia();" style="margin-left:auto; color:#94a3b8;" title="Nivel y Calidad del Capital (Ampliar)"><i class="fa fa-line-chart"></i></span>
                 </div>
                 <div class="kpi-value-row">
                     <div class="kpi-big-num">@FormatVal(modelData.Suficiencia, 1, "N2", "%")</div>
@@ -266,7 +279,7 @@
                 <div class="kpi-title">
                     <span>Eficiencia Operativa</span>
                     @SemaphoreBadge("eficiencia", costoVal)
-                    <span class="kpi-expand-btn" style="margin-left:auto; color:#94a3b8;" title="Ampliar gr&aacute;fica"><i class="fa fa-line-chart"></i></span>
+                    <span class="kpi-expand-btn" onclick="event.stopPropagation(); getGraph('C118');" style="margin-left:auto; color:#94a3b8;" title="Eficiencia Operativa (Ampliar)"><i class="fa fa-line-chart"></i></span>
                 </div>
                 <div class="kpi-value-row">
                     <div class="kpi-big-num">@FormatVal(modelData.CostoAdmin, 1, "N2", "%")</div>
@@ -285,11 +298,11 @@
             </div>
 
             <!-- KPI 3: Morosidad mayor a 90 d&iacute;as -->
-            <div class="modern-kpi-card clickable-kpi-card" onclick="getGraph('C22')" title="Ampliar gr&aacute;fica detallada" role="button" tabindex="0">
+            <div class="modern-kpi-card clickable-kpi-card" onclick="getGraph('C22')" title="Morosidad mayor a 90 d&iacute;as (Click para ampliar gr&aacute;fico)" role="button" tabindex="0">
                 <div class="kpi-title">
                     <span>Morosidad mayor a 90 d&iacute;as</span>
                     @SemaphoreBadge("morosidad", morosidadVal)
-                    <span class="kpi-expand-btn" style="margin-left:auto; color:#94a3b8;" title="Ampliar gr&aacute;fica"><i class="fa fa-line-chart"></i></span>
+                    <span class="kpi-expand-btn" onclick="event.stopPropagation(); getGraph('C22');" style="margin-left:auto; color:#94a3b8;" title="Morosidad &gt; 90 d&iacute;as (Ampliar)"><i class="fa fa-line-chart"></i></span>
                 </div>
                 <div class="kpi-value-row">
                     <div class="kpi-big-num">@FormatVal(modelData.Morosidad, 1, "N2", "%")</div>
@@ -774,21 +787,23 @@
     </div>
 </div>
 
-<div class="modal fade" id="mSuficiencia" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
+<div class="modal fade" id="mSuficiencia" tabindex="-1" role="dialog" aria-labelledby="mSuficienciaLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" style="max-width: 920px; width: 92%; margin: 30px auto;">
+        <div class="modal-content" style="border-radius: 14px; overflow: hidden; border: none; box-shadow: 0 16px 40px rgba(0,0,0,0.25);">
+            <div class="modal-header" style="background: linear-gradient(135deg, #2F5597 0%, #1e3a8a 100%); padding: 14px 20px; display: flex; align-items: center; justify-content: space-between;">
                 <div style="display: flex; align-items: center; gap: 12px; background: transparent;">
-                    <img width="40" height="40" src="@Session["Logo"]" style="border-radius: 6px; background: #ffffff; padding: 2px;" />
-                    <h3 class="modal-title" style="margin: 0; color: #ffffff !important; font-size: 16px; font-weight: 600;">Nivel y Calidad del Capital</h3>
+                    <img width="38" height="38" src="@Session["Logo"]" style="border-radius: 6px; background: #ffffff; padding: 2px;" />
+                    <h3 class="modal-title" style="margin: 0; color: #ffffff !important; font-size: 16px; font-weight: 600;">Nivel y Calidad del Capital &mdash; Suficiencia, CN1, CCN1 y Apalancamiento</h3>
                 </div>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: #ffffff !important; opacity: 0.9;"><span aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: #ffffff !important; opacity: 0.9; font-size: 22px;"><span aria-hidden="true">&times;</span></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="padding: 20px; min-height: 480px;">
                 @modelData.pSuficiencia
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+            <div class="modal-footer" style="background: #f8fafc; border-top: 1px solid #e2e8f0; padding: 12px 20px; display: flex; justify-content: flex-end;">
+                <button type="button" class="btn btn-default" data-dismiss="modal" style="padding: 8px 22px; border-radius: 8px; font-weight: 600;">
+                    <i class="fa fa-times"></i> Cerrar
+                </button>
             </div>
         </div>
     </div>
@@ -807,7 +822,7 @@
     $(document).ready(function () {
         var animPref = (typeof getChartAnimationPreference === 'function') ? getChartAnimationPreference() : (localStorage.getItem('fga_charts_animation') !== 'false');
 
-        function createSparkline(containerId, dataPoints, lineColor) {
+                function createSparkline(containerId, dataPoints, lineColor, clickCallback) {
             if (typeof Highcharts === 'undefined' || !document.getElementById(containerId)) return;
 
             var p0 = parseFloat(dataPoints[0]) || 0;
@@ -816,7 +831,6 @@
             var maxVal = Math.max(p0, p1);
             var diff = Math.abs(maxVal - minVal);
 
-            // Margen dinámico adaptativo para que la variación e inclinación sean claramente visibles
             var padding = diff > 0 ? (diff * 0.45) : (minVal !== 0 ? Math.abs(minVal) * 0.08 : 1);
             if (padding < 0.05) padding = 0.05;
 
@@ -830,8 +844,15 @@
                     borderWidth: 0,
                     margin: [4, 4, 4, 4],
                     height: 55,
-                    style: { overflow: 'visible' },
-                    animation: animPref ? { duration: 1100, easing: 'easeOutCubic' } : false
+                    style: { overflow: 'visible', cursor: 'pointer' },
+                    animation: animPref ? { duration: 1100, easing: 'easeOutCubic' } : false,
+                    events: {
+                        click: function () {
+                            if (typeof clickCallback === 'function') {
+                                clickCallback();
+                            }
+                        }
+                    }
                 },
                 title: { text: '' },
                 credits: { enabled: false },
@@ -867,11 +888,19 @@
                     pointFormat: '<span style="color:#88D1E2;">&#9679;</span> <b>{point.y:.2f}%</b>'
                 },
                 plotOptions: {
+                    series: {
+                        cursor: 'pointer',
+                        events: {
+                            click: function () {
+                                if (typeof clickCallback === 'function') {
+                                    clickCallback();
+                                }
+                            }
+                        }
+                    },
                     areaspline: {
                         threshold: yMin,
-                        animation: animPref ? {
-                            duration: 1100
-                        } : false,
+                        animation: animPref ? { duration: 1100 } : false,
                         lineWidth: 3,
                         shadow: false,
                         states: { hover: { lineWidth: 4 } },
@@ -897,7 +926,7 @@
             });
         }
 
-                var valSuf = @suficienciaVal.ToString(inv);
+        var valSuf = @suficienciaVal.ToString(inv);
         var prevSuf = @suficienciaPrev.ToString(inv);
         var valCosto = @costoVal.ToString(inv);
         var prevCosto = @costoPrev.ToString(inv);
@@ -905,13 +934,39 @@
         var prevMora = @morosidadPrev.ToString(inv);
 
         if (animPref) {
-            setTimeout(function () { createSparkline('sparkline_suficiencia', [prevSuf, valSuf], '#2F5597'); }, 60);
-            setTimeout(function () { createSparkline('sparkline_eficiencia', [prevCosto, valCosto], '#3d6cb9'); }, 200);
-            setTimeout(function () { createSparkline('sparkline_morosidad', [prevMora, valMora], '#2F5597'); }, 340);
+            setTimeout(function () { createSparkline('sparkline_suficiencia', [prevSuf, valSuf], '#2F5597', mSuficiencia); }, 60);
+            setTimeout(function () { createSparkline('sparkline_eficiencia', [prevCosto, valCosto], '#3d6cb9', function () { getGraph('C118'); }); }, 200);
+            setTimeout(function () { createSparkline('sparkline_morosidad', [prevMora, valMora], '#2F5597', function () { getGraph('C22'); }); }, 340);
         } else {
-            createSparkline('sparkline_suficiencia', [prevSuf, valSuf], '#2F5597');
-            createSparkline('sparkline_eficiencia', [prevCosto, valCosto], '#3d6cb9');
-            createSparkline('sparkline_morosidad', [prevMora, valMora], '#2F5597');
+            createSparkline('sparkline_suficiencia', [prevSuf, valSuf], '#2F5597', mSuficiencia);
+            createSparkline('sparkline_eficiencia', [prevCosto, valCosto], '#3d6cb9', function () { getGraph('C118'); });
+            createSparkline('sparkline_morosidad', [prevMora, valMora], '#2F5597', function () { getGraph('C22'); });
         }
+
+        // Delegacion de clic directo sobre el contenedor del grafico y todos sus elementos
+        $('#sparkline_suficiencia').on('click', function (e) {
+            e.stopPropagation();
+            mSuficiencia();
+        });
+        $('#sparkline_eficiencia').on('click', function (e) {
+            e.stopPropagation();
+            getGraph('C118');
+        });
+        $('#sparkline_morosidad').on('click', function (e) {
+            e.stopPropagation();
+            getGraph('C22');
+        });
+
+        $('#mSuficiencia').on('shown.bs.modal', function () {
+            if (typeof Highcharts !== 'undefined' && Highcharts.charts) {
+                setTimeout(function () {
+                    Highcharts.charts.forEach(function (c) {
+                        if (c) {
+                            try { c.reflow(); } catch (e) {}
+                        }
+                    });
+                }, 100);
+            }
+        });
     });
 </script>
