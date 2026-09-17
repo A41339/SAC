@@ -1,4 +1,4 @@
-@model FGA.Models.Dashboard
+﻿@model FGA.Models.Dashboard
 
 <script src="https://code.highcharts.com/highcharts.js"></script>
 
@@ -261,25 +261,25 @@
                 </div>
             </div>
 
-            <!-- KPI 2: Compromiso Patrimonial -->
-            <div class="modern-kpi-card clickable-kpi-card" onclick="getGraph('C3')" title="Ampliar gr&aacute;fica detallada" role="button" tabindex="0">
+                        <!-- KPI 2: Eficiencia Operativa (Gastos de Administracion / Utilidad Operacional Bruta) -->
+            <div class="modern-kpi-card clickable-kpi-card" onclick="getGraph('C118')" title="Gastos de Administraci&oacute;n / Utilidad Operacional Bruta (Click para ampliar)" role="button" tabindex="0">
                 <div class="kpi-title">
-                    <span>Compromiso Patrimonial</span>
-                    @SemaphoreBadge("compromiso", compromisoVal)
+                    <span>Eficiencia Operativa</span>
+                    @SemaphoreBadge("eficiencia", costoVal)
                     <span class="kpi-expand-btn" style="margin-left:auto; color:#94a3b8;" title="Ampliar gr&aacute;fica"><i class="fa fa-line-chart"></i></span>
                 </div>
                 <div class="kpi-value-row">
-                    <div class="kpi-big-num">@FormatVal(modelData.Compromiso, 1, "N2", "%")</div>
-                    @TrendPill(compromisoVal, compromisoPrev, true)
+                    <div class="kpi-big-num">@FormatVal(modelData.CostoAdmin, 1, "N2", "%")</div>
+                    @TrendPill(costoVal, costoPrev, true)
                 </div>
-                <div class="kpi-sparkline-container" id="sparkline_compromiso"></div>
+                <div class="kpi-sparkline-container" id="sparkline_eficiencia"></div>
                 <div class="kpi-target-bar-wrapper">
                     <div class="target-bar-info">
-                        <span>Meta SUGEF: &le; 0.00%</span>
-                        <span>@Html.Raw(compromisoVal <= 0m ? "Sin Compromiso (" + compromisoVal.ToString("N2") + "%)" : (compromisoVal <= 10m ? "Tolerable (&le;10%)" : (compromisoVal <= 20m ? "Bajo Observaci&oacute;n" : "Alerta &gt;20%")))</span>
+                        <span>Meta: &le; 50.00%</span>
+                        <span>@Html.Raw(costoVal <= 50m ? "&Oacute;ptimo (" + costoVal.ToString("N2") + "%)" : (costoVal <= 60m ? "Aceptable (&le;60%)" : "Alerta &gt;60%"))</span>
                     </div>
                     <div class="target-bar-track">
-                        <div class="target-bar-fill @(compromisoVal <= 10m ? "success" : (compromisoVal <= 20m ? "warning" : "danger"))" style="width: @(compPct)%;"></div>
+                        <div class="target-bar-fill @(costoVal <= 50m ? "success" : (costoVal <= 60m ? "warning" : "danger"))" style="width: @(efPct)%;"></div>
                     </div>
                 </div>
             </div>
@@ -897,20 +897,20 @@
             });
         }
 
-        var valSuf = @suficienciaVal.ToString(inv);
+                var valSuf = @suficienciaVal.ToString(inv);
         var prevSuf = @suficienciaPrev.ToString(inv);
-        var valComp = @compromisoVal.ToString(inv);
-        var prevComp = @compromisoPrev.ToString(inv);
+        var valCosto = @costoVal.ToString(inv);
+        var prevCosto = @costoPrev.ToString(inv);
         var valMora = @morosidadVal.ToString(inv);
         var prevMora = @morosidadPrev.ToString(inv);
 
         if (animPref) {
-            setTimeout(function () { createSparkline('sparkline_suficiencia', [prevSuf, valSuf], '#0284c7'); }, 60);
-            setTimeout(function () { createSparkline('sparkline_compromiso', [prevComp, valComp], '#ea580c'); }, 200);
+            setTimeout(function () { createSparkline('sparkline_suficiencia', [prevSuf, valSuf], '#2F5597'); }, 60);
+            setTimeout(function () { createSparkline('sparkline_eficiencia', [prevCosto, valCosto], '#3d6cb9'); }, 200);
             setTimeout(function () { createSparkline('sparkline_morosidad', [prevMora, valMora], '#2F5597'); }, 340);
         } else {
-            createSparkline('sparkline_suficiencia', [prevSuf, valSuf], '#0284c7');
-            createSparkline('sparkline_compromiso', [prevComp, valComp], '#ea580c');
+            createSparkline('sparkline_suficiencia', [prevSuf, valSuf], '#2F5597');
+            createSparkline('sparkline_eficiencia', [prevCosto, valCosto], '#3d6cb9');
             createSparkline('sparkline_morosidad', [prevMora, valMora], '#2F5597');
         }
     });

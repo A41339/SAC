@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -138,455 +138,18 @@
                 try { localStorage.setItem('fga_charts_animation', 'true'); } catch (e) {}
             }
             if (typeof Highcharts !== 'undefined') {
-                Highcharts.setOptions({
-                    chart: {
-                        style: {
-                            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
-                        },
-                        animation: isAnimEnabled ? { duration: 1200, easing: 'easeOutCubic' } : false
-                    },
-                    tooltip: {
-                        shared: true,
-                        useHTML: true,
-                        formatter: function () {
-                            return window.formatGlobalChartTooltip ? window.formatGlobalChartTooltip(this) : null;
-                        },
-                        backgroundColor: '#ffffff',
-                        borderColor: '#e2e8f0',
-                        borderRadius: 8,
-                        borderWidth: 1,
-                        shadow: {
-                            color: 'rgba(0, 0, 0, 0.08)',
-                            offsetX: 0,
-                            offsetY: 4,
-                            opacity: 0.1,
-                            width: 8
-                        },
-                        style: {
-                            color: '#1e293b',
-                            fontSize: '12px'
-                        }
-                    },
-                    legend: {
-                        itemStyle: {
-                            color: '#334155',
-                            fontWeight: '600',
-                            fontSize: '12px'
-                        },
-                        itemHoverStyle: {
-                            color: '#2F5597'
-                        }
-                    },
-                    colors: ['#1d6fa4', '#2d9f8f', '#5a7fc4', '#d4a843', '#4caf7d', '#b05770', '#6b8cba', '#8d6bbf', '#e07b45', '#7a8fa0'],
-                    plotOptions: {
-                        series: {
-                            animation: isAnimEnabled ? { duration: 1200 } : false,
-                            marker: {
-                                radius: 4,
-                                lineWidth: 0
-                            }
-                        },
-                        spline: {
-                            animation: isAnimEnabled ? { duration: 1200 } : false,
-                            lineWidth: 3
-                        },
-                        areaspline: {
-                            animation: isAnimEnabled ? { duration: 1200 } : false,
-                            fillOpacity: 0.18,
-                            lineWidth: 2
-                        },
-                        line: {
-                            animation: isAnimEnabled ? { duration: 1200 } : false,
-                            lineWidth: 2.5
-                        },
-                        column: {
-                            animation: isAnimEnabled ? { duration: 1000 } : false,
-                            borderRadius: 4,
-                            borderWidth: 0
-                        },
-                        bar: {
-                            animation: isAnimEnabled ? { duration: 1000 } : false,
-                            borderRadius: 4,
-                            borderWidth: 0
-                        }
-                    }
-                });
-            }
-        })();
-    </script>
-</head>
-
-<style>
-    /* Highcharts Export Hamburger Button Styling */
-    .highcharts-contextbutton,
-    .highcharts-button,
-    .highcharts-exporting-group {
-        display: block !important;
-        opacity: 1 !important;
-        visibility: visible !important;
-        cursor: pointer !important;
-    }
-
-    .highcharts-credits {
-        display: none !important;
-    }
-
-    /* Hide glitched text inside Highcharts export button */
-    .highcharts-button text,
-    .highcharts-contextbutton text,
-    .highcharts-button-symbol text,
-    .highcharts-button tspan {
-        display: none !important;
-    }
-
-    /* Clean white rounded box background */
-    .highcharts-button .highcharts-button-box,
-    .highcharts-contextbutton .highcharts-button-box {
-        fill: #ffffff !important;
-        stroke: #cbd5e1 !important;
-        stroke-width: 1px !important;
-        rx: 6px !important;
-        ry: 6px !important;
-    }
-
-    .highcharts-button:hover .highcharts-button-box,
-    .highcharts-contextbutton:hover .highcharts-button-box {
-        fill: #f1f5f9 !important;
-        stroke: #94a3b8 !important;
-    }
-
-    /* Draw 3 clean SVG lines (hamburger bars) for the symbol */
-    .highcharts-button-symbol,
-    .highcharts-contextbutton .highcharts-button-symbol {
-        opacity: 1 !important;
-        visibility: visible !important;
-        stroke: #475569 !important;
-        stroke-width: 2px !important;
-        fill: none !important;
-    }
-
-    .highcharts-button:hover .highcharts-button-symbol,
-    .highcharts-contextbutton:hover .highcharts-button-symbol {
-        stroke: #143750 !important;
-    }
-</style>
-
-@{
-    var isCollapsed = Session[FGA.Utility.Utilitarios.show_MenuOculto] is null ? "" : "sidebar-collapse";
-}
-
-<body id="body" class="hold-transition skin-blue modern-dashboard-body @isCollapsed sidebar-mini">
-    <div id="starkloader" style="top: 30%; left: 50%; position: fixed; z-index: 9999; display: none;width:50px;">
-        <img src="~/Content/notifire/loading3.gif" />
-    </div>
-    <div class="wrapper">
-        <header class="main-header">
-            <div class="header-bg-backdrop">
-                <div class="glow-orb header-orb-1"></div>
-                <div class="glow-orb header-orb-2"></div>
-                <canvas id="headerCanvas" class="header-particle-canvas"></canvas>
-            </div>
-            <a href="~/Home/Index" class="logo" style="text-decoration: none;">
-                <span class="logo-mini" style="font-weight: 800; font-size: 18px; color: #ffffff; letter-spacing: 1px;">FFC</span>
-                <div class="logo-lg" style="display: flex; align-items: center; justify-content: flex-start; padding-left: 16px; height: 100%;">
-                    <img src="~/Content/images/FFC_Logo_Blanco.png" alt="FFC - Fondo de Fortalecimiento Cooperativo" style="max-height: 40px; width: auto; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.25)); transition: transform 0.25s ease;" />
-                </div>
-            </a>
-            <nav class="navbar navbar-static-top">
-                <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
-                    <span class="sr-only">Toggle navigation</span>
-                </a>
-                <div class="navbar-custom-menu">
-                    <ul class="nav navbar-nav">
-                        <li class="dropdown user user-menu">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                @{ var sexo = int.Parse(Env.GetUserInfo("gender")) == 1 ? "~/Content/theme/dist/img/mujer.png" : "~/Content/theme/dist/img/hombre.png"; }
-                                <img src="@Url.Content(sexo)" class="user-image" alt="Usuario" />
-                                <span class="hidden-xs contenedor">@Env.GetUserInfo("name")</span>
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li class="user-header">
-                                    <img src="~/Content/images/@Env.GetUserInfo("logo")" class="img-circle" alt="User Image" />
-                                    <p>
-                                        @Env.GetUserInfo("name")
-                                        <small>Fecha: @DateTime.Now.Date.ToShortDateString() </small>
-                                    </p>
-                                </li>
-                                <li class="user-footer">
-                                    <div class="pull-left">
-                                        <a href="~/Usuario/ChangePassword/@Env.GetUserInfo("userid")" class="btn btn-default btn-flat">Perfil</a>
-                                    </div>
-                                    <div class="pull-right">
-                                        <a href="~/Account/signout" class="btn btn-default btn-flat">Cerrar sesi&oacute;n</a>
-                                    </div>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="control-sidebar-toggle-wrapper">
-                            <a href="javascript:void(0);" data-toggle="control-sidebar" class="control-sidebar-toggle-btn needsclick" title="Preferencias del Sistema">
-                                <i class="fa fa-gears"></i>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
-        </header>
-        <aside class="main-sidebar modern-sidebar">
-            <div class="glow-orb sidebar-orb-1"></div>
-            <div class="glow-orb sidebar-orb-2"></div>
-            <canvas id="sidebarCanvas" class="sidebar-particle-canvas"></canvas>
-            <section class="sidebar" style="display: flex; flex-direction: column; min-height: calc(100vh - 60px);">
-                <div>
-                    @Env.GetMenuBarPage(null)
-                </div>
-                <div class="sidebar-logout-wrapper">
-                    <a href="~/Account/signout" class="sidebar-logout-btn" draggable="false">
-                        <i class="fa fa-sign-out"></i>
-                        <span>Cerrar Sesi&oacute;n</span>
-                    </a>
-                </div>
-            </section>
-        </aside>
-        <div class="content-wrapper">
-            @RenderBody()
-        </div>
-        <div id="chatContainer" class="small-chat-box fadeInRight animated" style="display: none !important;">
-            <div id="sidebar-chat">
-                <div id="profile">
-                    <div class="wrap">
-                        <img id="profile-img" src="~/Content/images/@Env.GetUserInfo("logo")" class="online" alt="" />
-                        <p>@Env.GetUserInfo("entidad")</p>
-                    </div>
-                </div>
-                <div id="contacts">
-                    <ul id="contact_panel"></ul>
-                </div>
-            </div>
-            <div id="discussion" class="content">
-                <div class="left">
-                    <div class="author-name">
-                        FGA
-                    </div>
-                    <div class="chat-message">
-                        Estamos para servirle
-                    </div>
-                </div>
-            </div>
-            <div class="form-chat">
-                <div class="input-group input-group-sm">
-                    <input id="message" name="message" type="text" class="form-control" onkeypress="return onEnterDown(event)"> <span class="input-group-btn">
-                        <button id="sendmessage" class="btn btn-primary" type="button">
-                            Enviar
-                        </button>
-                    </span>
-                </div>
-            </div>
-        </div>
-        <div id="small-chat" style="display: none !important;">
-            <span id="alert_chat" class="badge badge-warning float-right"></span>
-            <a id="open_chat" class="open-small-chat">
-                <i class="fa fa-comments"></i>
-            </a>
-        </div>
-        <input type="hidden" id="activecontactid" />
-        <input type="hidden" id="myid" />
-        <input type="hidden" id="myname" />
-        <input type="hidden" id="companyname" />
-
-        @Html.Action("Index", "ParameterPartial")
-    </div>
-</body>
-
-<script type="text/javascript">
-
-        // Open close small chat
-        $('.open-small-chat').on('click', function (e) {
-            e.preventDefault();
-            $(this).children().toggleClass('fa-comments').toggleClass('fa-times');
-            $('.small-chat-box').toggleClass('active');
-            $('.message').focus();
-        });
-
-        // Initialize slimscroll for small chat
-        $('.small-chat-box .content').slimScroll({
-            height: '400px',
-            railOpacity: 0.4
-        });
-
-        $(document).on('change', '.config', function () {
-
-            if ($('#ckc_configMenu').is(":checked"))
-                $('body').addClass('sidebar-collapse');
-            else
-                $('body').removeClass('sidebar-collapse');
-
-            $.ajax({
-                async: true,
-                type: "GET",
-                dataType: "json",
-                contentType: "application/json",
-                url: '@Url.Action("Config", "ParameterPartial")',
-                data: {
-                    'yAxis': $('#ckc_configYAxis').is(":checked"),
-                    'columnDetail': $('#ckc_configColumnDetail').is(":checked"),
-                    'lineDetail': $('#ckc_configLineDetail').is(":checked"),
-                    'dateDetail': $('#ckc_configDateEach').is(":checked"),
-                    'menuDetail': $('#ckc_configMenu').is(":checked")
-                }
-            });
-        });
-
-        function onEnterDown(event) {
-	        if (event.which == 13 || event.keyCode == 13)
-		         $("#sendmessage").click();
-        }
-
-        $("#open_chat").click(function () {
-            $('#alert_chat').text('');
-        });
-
-        $(function () {
-            if (!$.connection || !$.connection.chatHub) {
-                return;
-            }
-
-            var chat = $.connection.chatHub;
-
-            chat.client.addNewMessageToPage = function (name, to, message, time, idTo, idFrom) {
-
-                var count = '';
-
-                if ($('#activecontactid').val() == idTo) {
-                    if (idFrom == $('#myid').val())
-                        $('#discussion').append('<div class="right"> <div class="author-name"> ' + htmlEncode(name) + '<br/> <small class="chat-date"> ' + time + ' </small></div><div class="chat-message active"> ' + htmlEncode(message) + '</div></div>');
-                    else
-                        $('#discussion').append('<div class="left"> <div class="author-name"> ' + htmlEncode(name) + '<br/> <small class="chat-date"> ' + time + ' </small></div><div class="chat-message"> ' + htmlEncode(message) + '</div></div>');
-                }
-                else {
-                    var msjO = $('#lbl_' + idTo).text();
-                    if (msjO == '')
-                        msjO = 1;
-                    else
-                        msjO = parseInt(msjO) + 1;
-
-                    $('#lbl_' + idTo).text(msjO);
-                }
-
-                if (!$('#chatContainer').hasClass('active')) {
-                    count = $('#alert_chat').text();
-                    if (count == '')
-                        count = 1;
-                    else
-                        count = parseInt(count) + 1;
-                }
-
-                $('#alert_chat').text(count);
-                $('#discussion').animate({scrollTop: $('#discussion').get(0).scrollHeight}, 1000);
-            };
-
-            chat.client.addContact = function (idUser, name, company, logo) {
-                if ($('#companyname').val() != company) {
-                    if (company == '@FGA.Utility.Utilitarios.nombreEntidadAdmin'){
-                        $('#contact_panel').append('<li  class="contact active"><div class="wrap"> <span class="contact-status online"></span><img src="' + logo + '" alt="" />' +
-                            '<div class="meta"> <p class="name">' + company + '</p>  </div></div></li>');
-                    }
-                    else {
-                         $('#contact_panel').append('<li id="' + idUser + '" class="contact"><div class="wrap"> <span class="contact-status online"></span><img src="' + logo + '" alt="" />' +
-                            '<div class="meta"> <p class="name">' + company + ' <label id="lbl_' + idUser + '" class="badge badge-warning float-right"></label></p> <p class="preview">' + name + '</p></div></div></li>');
-                    }
-                }
-            };
-
-            chat.client.clearContacts = function () {
-                $('#contact_panel').empty();
-            };
-
-            $('#activecontactid').val('@FGA.Utility.Utilitarios.entidadAdministradora');
-            $('#myid').val('@Env.GetUserInfo("userid")');
-            $('#myname').val('@Env.GetUserInfo("name")');
-            $('#message').focus();
-            $('#companyname').val('@Env.GetUserInfo("entidad")');
-
-            if ($.connection.hub) {
-                $.connection.hub.start().done(function () {
-
-                    chat.server.connect($('#myid').val(), $('#myname').val(), $('#activecontactid').val(), $('#companyname').val());
-
-                    $('#sendmessage').click(function () {
-                       chat.server.send($('#myid').val(), $('#activecontactid').val(), $('#message').val());
-                       $('#message').val('').focus();
-                    });
-
-                    $(document).on('click', '.contact', function () {
-
-                        var id = $(this).attr('id');
-
-                        $('.contact').removeClass('active');
-                        $(this).addClass('active');
-                        $('#activecontactid').val(id);
-                        $('#lbl_' + id).text('');
-                        $('#discussion').empty();
-
-                        chat.server.getHistory($('#myid').val(), $('#activecontactid').val(), 5);
-                    });
-
-                    $("#open_chat").click(function () {
-                        if ($('#chatContainer').hasClass('active')) {
-                             $('#discussion').empty();
-                            chat.server.getHistory($('#myid').val(), $('#activecontactid').val(), 5);
-                        }
-                    });
-                });
-            }
-        });
-
-        function htmlEncode(value) {
-            var encodedValue = $('<div />').text(value).html();
-            return encodedValue;
-        }
-
-      $(function () {
-        $('.tableHighChart').DataTable();
-      });
-
-
-    if (window.Highcharts && Highcharts.SVGRenderer && Highcharts.SVGRenderer.prototype.symbols) {
-        var customPrinterSymbol = function (x, y, w, h) {
-            return [
-                'M', x + 3, y + 5,
-                'L', x + 3, y + 1,
-                'L', x + 13, y + 1,
-                'L', x + 13, y + 5,
-                'M', x + 1, y + 6,
-                'L', x + 15, y + 6,
-                'C', x + 15.6, y + 6, x + 16, y + 6.4, x + 16, y + 7,
-                'L', x + 16, y + 11,
-                'C', x + 16, y + 11.6, x + 15.6, y + 12, x + 15, y + 12,
-                'L', x + 13, y + 12,
-                'L', x + 13, y + 10,
-                'L', x + 3, y + 10,
-                'L', x + 3, y + 12,
-                'L', x + 1, y + 12,
-                'C', x + 0.4, y + 12, x, y + 11.6, x, y + 11,
-                'L', x, y + 7,
-                'C', x, y + 6.4, x + 0.4, y + 6, x + 1, y + 6,
-                'Z',
-                'M', x + 4, y + 9,
-                'L', x + 12, y + 9,
-                'L', x + 12, y + 14,
-                'L', x + 4, y + 14,
-                'Z'
-            ];
-        };
-        Highcharts.SVGRenderer.prototype.symbols.printer = customPrinterSymbol;
-        Highcharts.SVGRenderer.prototype.symbols.menu = customPrinterSymbol;
-        Highcharts.SVGRenderer.prototype.symbols.menuball = customPrinterSymbol;
-    }
-
-    Highcharts.setOptions({
+                    Highcharts.setOptions({
         lang: {
             decimalPoint: '.',
-            thousandsSep: ''
+            thousandsSep: '',
+            viewData: '<i class="fa fa-table" style="color: #4338ca; margin-right: 10px; width: 16px; text-align: center;"></i> Ver tabla',
+            downloadPNG: '<i class="fa fa-picture-o" style="color: #0284c7; margin-right: 10px; width: 16px; text-align: center;"></i> Descargar PNG',
+            downloadJPEG: '<i class="fa fa-picture-o" style="color: #0284c7; margin-right: 10px; width: 16px; text-align: center;"></i> Descargar JPEG',
+            downloadSVG: '<i class="fa fa-share-alt" style="color: #0284c7; margin-right: 10px; width: 16px; text-align: center;"></i> Descargar SVG',
+            downloadCSV: '<i class="fa fa-file-excel-o" style="color: #15803d; margin-right: 10px; width: 16px; text-align: center;"></i> Descargar CSV',
+            downloadXLS: '<i class="fa fa-file-excel-o" style="color: #15803d; margin-right: 10px; width: 16px; text-align: center;"></i> Descargar Excel (XLS)',
+            downloadPDF: '<i class="fa fa-file-pdf-o" style="color: #dc2626; margin-right: 10px; width: 16px; text-align: center;"></i> Descargar PDF',
+            contextButtonTitle: 'Descargar opciones del gr\u00e1fico'
         },
         colors: ['#2F5597', '#ea580c', '#3d6cb9', '#10b981', '#6366f1', '#f59e0b', '#204880', '#ef4444', '#8b5cf6', '#64748b', '#e11d48', '#991b1b'],
         chart: {
@@ -617,37 +180,75 @@
     },
     navigation: {
         menuStyle: {
-            background: '#FFFFFF',
-            border: '1px solid #CCCCCC'
+            background: '#ffffff',
+            border: '1px solid #e2e8f0',
+            borderRadius: '10px',
+            boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.12), 0 8px 10px -6px rgba(0, 0, 0, 0.08)',
+            padding: '6px',
+            zIndex: 99999
         },
         menuItemStyle: {
-            color: '#333333',
-            background: '#FFFFFF'
+            color: '#1e3a8a',
+            background: '#ffffff',
+            padding: '8px 14px',
+            fontWeight: '600',
+            fontSize: '13px',
+            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+            borderRadius: '6px',
+            cursor: 'pointer',
+            transition: 'all 0.15s ease'
         },
         menuItemHoverStyle: {
-            background: '#E6E6E6',
-            color: '#000000'
+            background: '#eff6ff',
+            color: '#1d4ed8'
         }
     },
     exporting: {
         tableCaption: '',
         buttons: {
 	        contextButton: {
-                symbol: 'printer',
-                symbolStroke: '#143750',
-                symbolFill: 'none',
-                symbolStrokeWidth: 1.5,
+                text: '<i class="fa fa-download" style="margin-right: 6px;"></i> Descargar <i class="fa fa-angle-down" style="margin-left: 6px;"></i>',
+                symbol: null,
                 theme: {
-                    fill: '#ffffff',
-                    stroke: '#cbd5e1',
+                    fill: '#2F5597',
+                    stroke: '#204880',
                     'stroke-width': 1,
-                    r: 6
-                }
+                    r: 6,
+                    padding: 7,
+                    style: {
+                        color: '#ffffff',
+                        fontWeight: '600',
+                        fontSize: '12px',
+                        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+                        cursor: 'pointer'
+                    },
+                    states: {
+                        hover: {
+                            fill: '#204880',
+                            style: {
+                                color: '#ffffff'
+                            }
+                        },
+                        select: {
+                            fill: '#1b3866'
+                        }
+                    }
+                },
+                menuItems: [
+                    'viewData',
+                    'separator',
+                    'downloadPNG',
+                    'downloadJPEG',
+                    'downloadSVG',
+                    'separator',
+                    'downloadCSV',
+                    'downloadXLS',
+                    'downloadPDF'
+                ]
             }
     	}
      }
     });
-
     if (document.getElementById('container')) {
         Highcharts.chart('container', {
             exporting: {

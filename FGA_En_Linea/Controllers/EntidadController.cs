@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Data;
 using System.Linq;
 using System.Net;
@@ -18,15 +18,15 @@ namespace FGA.Controllers
         {
             try
             {
-                var tak = ent.GetAll();
+                var tak = ent.GetAll().Where(c => c != null && c.Id != "-1" && (c.Nombre == null || !c.Nombre.ToUpper().Contains("TODAS LAS COOPERATIVAS"))).ToArray();
                 var result = from c in tak
                              select new string[] { c.Id.ToString(),
                                                     Convert.ToString(c.Id),
                                                     Convert.ToString(c.Identificacion),
                                                     Convert.ToString(c.Nombre),
                                                     Convert.ToString(c.Activo == true ? "Activo" : "Inactivo"),
-                                                    Convert.ToString(c.Ind_Cargar == true ? "Sí" : "No"),
-                                                    Convert.ToString(c.Ind_Validar == true ? "Sí" : "No"),
+                                                    Convert.ToString(c.Ind_Cargar == true ? "Sï¿½" : "No"),
+                                                    Convert.ToString(c.Ind_Validar == true ? "Sï¿½" : "No"),
                                                     };
                 return Json(new { aaData = result }, JsonRequestBehavior.AllowGet);
             }
