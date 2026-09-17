@@ -1,0 +1,651 @@
+@model FGA.Models.RolPermisosViewModel
+@{
+    ViewBag.Title = "Permisos de Menú - " + Model.RolNombre;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .permisos-banner {
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 20px 24px;
+        margin-bottom: 20px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        border: 1px solid #e2e8f0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+    .permisos-title {
+        margin: 0;
+        font-size: 22px;
+        font-weight: 700;
+        color: #0f172a;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    .permisos-subtitle {
+        margin: 4px 0 0 0;
+        font-size: 13px;
+        color: #64748b;
+    }
+    .permisos-toolbar {
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 14px 20px;
+        margin-bottom: 20px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+    .modulo-card {
+        background: #ffffff;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        margin-bottom: 16px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        overflow: hidden;
+        transition: box-shadow 0.2s;
+    }
+    .modulo-card:hover {
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.07);
+    }
+    .modulo-header {
+        padding: 16px 20px;
+        background: #ffffff;
+        border-bottom: 1px solid #f1f5f9;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+        user-select: none;
+    }
+    .modulo-header-left {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+    .modulo-icon-box {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 17px;
+        flex-shrink: 0;
+    }
+    .modulo-title-text {
+        font-size: 16px;
+        font-weight: 700;
+        color: #1e293b;
+        margin: 0;
+    }
+    .badge-count-pill {
+        font-size: 11px;
+        font-weight: 600;
+        padding: 4px 10px;
+        border-radius: 9999px;
+        background-color: #f1f5f9;
+        color: #475569;
+        border: 1px solid #e2e8f0;
+        margin-left: 8px;
+    }
+    .badge-count-pill.has-perms {
+        background-color: #dcfce7;
+        color: #15803d;
+        border-color: #bbf7d0;
+    }
+    .modulo-header-right {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+    .table-permisos {
+        margin-bottom: 0;
+        border: none;
+    }
+    .table-permisos th {
+        background: #f8fafc;
+        color: #475569;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-top: none !important;
+        border-bottom: 1px solid #e2e8f0 !important;
+        padding: 10px 16px;
+    }
+    .table-permisos td {
+        padding: 12px 16px;
+        vertical-align: middle !important;
+        border-top: 1px solid #f1f5f9 !important;
+        font-size: 13px;
+        color: #334155;
+    }
+    .perm-checkbox-cell {
+        text-align: center;
+        width: 90px;
+    }
+    .custom-perm-chk {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+        accent-color: #0284c7;
+        margin: 0 auto;
+        vertical-align: middle;
+    }
+    .perm-sub-row td {
+        background: #fafafa;
+    }
+    .sticky-save-bar {
+        position: sticky;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: #ffffff;
+        border-top: 1px solid #e2e8f0;
+        box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
+        padding: 14px 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        z-index: 1000;
+        border-radius: 12px 12px 0 0;
+        margin-top: 24px;
+    }
+    .btn-action-pill {
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 500;
+        padding: 6px 12px;
+        border: 1px solid #cbd5e1;
+        background: #ffffff;
+        color: #334155;
+        transition: all 0.15s;
+    }
+    .btn-action-pill:hover {
+        background: #f1f5f9;
+        color: #0f172a;
+    }
+</style>
+
+<section class="content-header">
+    <div class="permisos-banner">
+        <div>
+            <h1 class="permisos-title">
+                <i class="fa fa-key" style="color: #0284c7;"></i>
+                Matriz de Permisos de Men&uacute;
+            </h1>
+            <p class="permisos-subtitle">
+                Configurando accesos para el perfil: <strong>@Model.RolNombre</strong>
+                @if (Model.EsEntidad)
+                {
+                    <span class="badge" style="background:#e0f2fe; color:#0369a1; font-weight:600; font-size:11px; margin-left:6px; border:1px solid #bae6fd;">
+                        <i class="fa fa-institution"></i> Entidad Financiera
+                    </span>
+                }
+                else
+                {
+                    <span class="badge" style="background:#f3e8ff; color:#7e22ce; font-weight:600; font-size:11px; margin-left:6px; border:1px solid #e9d5ff;">
+                        <i class="fa fa-shield"></i> FGA / Administrador
+                    </span>
+                }
+            </p>
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <label for="cboCambiarRol" style="margin: 0; font-size: 13px; font-weight: 600; color: #475569;">Cambiar Rol:</label>
+            <select id="cboCambiarRol" class="form-control" style="width: 220px; border-radius: 8px; font-weight: 500; height: 38px;">
+                @foreach (var r in Model.ListaRoles)
+                {
+                    <option value="@r.Id" @(r.Id == Model.RolId ? "selected" : "")>@r.Nombre</option>
+                }
+            </select>
+            <a href="@Url.Action("Index", "Role")" class="btn btn-default" style="border-radius: 8px; font-weight: 500; height: 38px; display: inline-flex; align-items: center; gap: 6px;">
+                <i class="fa fa-arrow-left"></i> Volver
+            </a>
+        </div>
+    </div>
+
+    <ol class="breadcrumb" style="position: static; float: none; background: transparent; padding: 0 0 10px 4px;">
+        <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
+        <li><a href="#">Seguridad</a></li>
+        <li><a href="@Url.Action("Index", "Role")">Roles</a></li>
+        <li class="active">Permisos: @Model.RolNombre</li>
+    </ol>
+</section>
+
+<section class="content" style="padding-top: 0; padding-bottom: 80px;">
+    <!-- Barra de BÃºsqueda y Acciones RÃ¡pidas -->
+    <div class="permisos-toolbar">
+        <div style="display: flex; align-items: center; gap: 10px; flex-grow: 1; max-width: 380px;">
+            <i class="fa fa-search" style="color: #94a3b8; font-size: 15px;"></i>
+            <input type="text" id="txtBuscarOpcion" class="form-control" placeholder="Buscar m&oacute;dulo, sub-m&oacute;dulo o reporte..." style="border-radius: 8px; border: 1px solid #cbd5e1; height: 36px; font-size: 13px;" />
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+            <button type="button" class="btn-action-pill" id="btnMarcarTodoLectura" title="Habilita lectura en todos los m&oacute;dulos y opciones">
+                <i class="fa fa-check-square-o" style="color:#0284c7; margin-right:4px;"></i> Marcar Todo Lectura
+            </button>
+            <button type="button" class="btn-action-pill" id="btnDesmarcarTodo" title="Quita todos los permisos configurados">
+                <i class="fa fa-square-o" style="color:#dc2626; margin-right:4px;"></i> Desmarcar Todo
+            </button>
+            <button type="button" class="btn-action-pill" id="btnExpandirTodo">
+                <i class="fa fa-expand" style="margin-right:4px;"></i> Expandir Todo
+            </button>
+            <button type="button" class="btn-action-pill" id="btnColapsarTodo">
+                <i class="fa fa-compress" style="margin-right:4px;"></i> Colapsar Todo
+            </button>
+        </div>
+    </div>
+
+    <!-- AcordeÃ³n de MÃ³dulos -->
+    <div id="contenedorModulos">
+        @foreach (var modulo in Model.Modulos)
+        {
+            <div class="modulo-card" id="modulo-card-@modulo.MenuId" data-moduloid="@modulo.MenuId" data-searchtext="@modulo.MenuText">
+                <!-- Fila de Cabecera del MÃ³dulo RaÃ­z -->
+                <div class="modulo-header" data-toggle="collapse" data-target="#collapse-@modulo.MenuId">
+                    <div class="modulo-header-left">
+                        <div class="modulo-icon-box" style="background-color: @modulo.ColorFondo; color: @modulo.ColorIcono;">
+                            <i class="@modulo.MenuIcon"></i>
+                        </div>
+                        <div>
+                            <span class="modulo-title-text">@modulo.MenuText</span>
+                            <span class="badge-count-pill" id="badge-cnt-@modulo.MenuId">0 activas</span>
+                        </div>
+                    </div>
+                    <div class="modulo-header-right" onclick="event.stopPropagation();">
+                        <label style="display: flex; align-items: center; gap: 8px; margin: 0; cursor: pointer; font-size: 13px; font-weight: 600; color: #334155;">
+                            <input type="checkbox" class="chk-modulo-master custom-perm-chk" data-moduloid="@modulo.MenuId" data-menuid="@modulo.MenuId" @(modulo.IsRead ? "checked" : "") />
+                            <span>Habilitar M&oacute;dulo</span>
+                        </label>
+                        <button type="button" class="btn btn-xs btn-default btn-collapse-toggle" style="border-radius: 4px; border: 1px solid #cbd5e1; padding: 2px 8px;" onclick="$('#collapse-@modulo.MenuId').collapse('toggle');">
+                            <i class="fa fa-chevron-down toggle-icon-@modulo.MenuId"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Contenido colapsable con tabla de opciones -->
+                <div id="collapse-@modulo.MenuId" class="collapse in">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-permisos">
+                            <thead>
+                                <tr>
+                                    <th>Opci&oacute;n de Men&uacute; / Reporte</th>
+                                    <th class="perm-checkbox-cell" title="Permiso de Visualizaci&oacute;n y Acceso">Lectura</th>
+                                    <th class="perm-checkbox-cell" title="Permiso para Registrar / Agregar Datos">Crear</th>
+                                    <th class="perm-checkbox-cell" title="Permiso para Modificar Datos Existentes">Modificar</th>
+                                    <th class="perm-checkbox-cell" title="Permiso para Eliminar Registros">Eliminar</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in modulo.SubOpciones)
+                                {
+                                    <tr class="perm-row" data-menuid="@item.MenuId" data-parentid="@modulo.MenuId" data-moduloid="@modulo.MenuId" data-searchtext="@(modulo.MenuText + " " + item.MenuText)">
+                                        <td>
+                                            <div style="display: flex; align-items: center; gap: 8px; font-weight: 600; color: #1e293b;">
+                                                <i class="@item.MenuIcon" style="color: #64748b; font-size: 14px; width: 18px; text-align: center;"></i>
+                                                <span>@item.MenuText</span>
+                                                @if (item.EsSubModulo)
+                                                {
+                                                    <span class="badge" style="background:#e0f2fe; color:#0369a1; font-weight:600; font-size:10px; border:1px solid #bae6fd; padding: 3px 8px;">
+                                                        Sub-m&oacute;dulo
+                                                    </span>
+                                                }
+                                            </div>
+                                        </td>
+                                        <td class="perm-checkbox-cell">
+                                            <input type="checkbox" class="chk-perm chk-perm-read custom-perm-chk" data-perm="read" @(item.IsRead ? "checked" : "") />
+                                        </td>
+                                        <td class="perm-checkbox-cell">
+                                            @if (!item.EsSubModulo)
+                                            {
+                                                <input type="checkbox" class="chk-perm chk-perm-create custom-perm-chk" data-perm="create" @(item.IsCreate ? "checked" : "") />
+                                            }
+                                            else
+                                            {
+                                                <span style="color:#cbd5e1;">-</span>
+                                            }
+                                        </td>
+                                        <td class="perm-checkbox-cell">
+                                            @if (!item.EsSubModulo)
+                                            {
+                                                <input type="checkbox" class="chk-perm chk-perm-update custom-perm-chk" data-perm="update" @(item.IsUpdate ? "checked" : "") />
+                                            }
+                                            else
+                                            {
+                                                <span style="color:#cbd5e1;">-</span>
+                                            }
+                                        </td>
+                                        <td class="perm-checkbox-cell">
+                                            @if (!item.EsSubModulo)
+                                            {
+                                                <input type="checkbox" class="chk-perm chk-perm-delete custom-perm-chk" data-perm="delete" @(item.IsDelete ? "checked" : "") />
+                                            }
+                                            else
+                                            {
+                                                <span style="color:#cbd5e1;">-</span>
+                                            }
+                                        </td>
+                                    </tr>
+
+                                    <!-- Si el item es un sub-mÃ³dulo con opciones nietas -->
+                                    if (item.EsSubModulo && item.Hijos != null && item.Hijos.Count > 0)
+                                    {
+                                        foreach (var hijo in item.Hijos)
+                                        {
+                                            <tr class="perm-row perm-sub-row" data-menuid="@hijo.MenuId" data-parentid="@item.MenuId" data-moduloid="@modulo.MenuId" data-searchtext="@(modulo.MenuText + " " + item.MenuText + " " + hijo.MenuText)">
+                                                <td style="padding-left: 42px;">
+                                                    <div style="display: flex; align-items: center; gap: 8px; color: #334155; font-weight: 500;">
+                                                        <i class="fa fa-level-up fa-rotate-90" style="color: #94a3b8; font-size: 12px;"></i>
+                                                        <i class="@hijo.MenuIcon" style="color: #64748b; font-size: 13px; width: 16px; text-align: center;"></i>
+                                                        <span>@hijo.MenuText</span>
+                                                    </div>
+                                                </td>
+                                                <td class="perm-checkbox-cell">
+                                                    <input type="checkbox" class="chk-perm chk-perm-read custom-perm-chk" data-perm="read" @(hijo.IsRead ? "checked" : "") />
+                                                </td>
+                                                <td class="perm-checkbox-cell">
+                                                    <input type="checkbox" class="chk-perm chk-perm-create custom-perm-chk" data-perm="create" @(hijo.IsCreate ? "checked" : "") />
+                                                </td>
+                                                <td class="perm-checkbox-cell">
+                                                    <input type="checkbox" class="chk-perm chk-perm-update custom-perm-chk" data-perm="update" @(hijo.IsUpdate ? "checked" : "") />
+                                                </td>
+                                                <td class="perm-checkbox-cell">
+                                                    <input type="checkbox" class="chk-perm chk-perm-delete custom-perm-chk" data-perm="delete" @(hijo.IsDelete ? "checked" : "") />
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Barra Inferior Fija de Guardado -->
+    <div class="sticky-save-bar">
+        <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+            <div style="font-size: 14px; font-weight: 600; color: #0f172a; display: flex; align-items: center; gap: 8px;">
+                <i class="fa fa-shield" style="color: #0284c7; font-size: 16px;"></i>
+                <span>Opciones con acceso activo: <strong id="cntOpcionesActivas" style="color: #16a34a;">0</strong></span>
+            </div>
+            <span style="color: #cbd5e1;">|</span>
+            <small style="color: #64748b; font-size: 12px;">
+                Al guardar, los permisos y el men&uacute; de navegaci&oacute;n se sincronizan inmediatamente en tiempo real.
+            </small>
+        </div>
+        <div>
+            <button type="button" id="btnGuardarPermisos" class="btn btn-success" style="background: linear-gradient(135deg, #16a34a 0%, #15803d 100%); border-color: #15803d; font-weight: 700; font-size: 14px; padding: 10px 28px; border-radius: 8px; box-shadow: 0 4px 10px rgba(22, 163, 74, 0.35); display: inline-flex; align-items: center; gap: 8px;">
+                <i class="fa fa-save"></i> Guardar Permisos
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- Modal NotificaciÃ³n Ã‰xito / Error -->
+<div class="modal fade" id="modalFeedbackPermisos" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-sm" style="max-width: 400px; margin: 100px auto;">
+        <div class="modal-content" style="border-radius: 14px; border: none; overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.15);">
+            <div class="modal-body text-center" style="padding: 28px 24px;">
+                <div id="feedbackIconContainer" style="margin-bottom: 16px;">
+                    <i class="fa fa-check-circle" style="font-size: 48px; color: #16a34a;"></i>
+                </div>
+                <h4 id="feedbackModalTitle" style="font-weight: 700; color: #0f172a; margin-bottom: 8px;">Permisos Sincronizados</h4>
+                <p id="feedbackModalMessage" style="font-size: 13px; color: #64748b; margin-bottom: 20px; line-height: 1.5;">
+                    Los permisos han sido actualizados exitosamente en la base de datos y la cach&eacute; del sistema se ha refrescado.
+                </p>
+                <div style="display: flex; gap: 10px; justify-content: center;">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" style="border-radius: 6px; font-weight: 500;">Continuar Aqu&iacute;</button>
+                    <a href="@Url.Action("Index", "Role")" class="btn btn-primary" style="background-color: #0284c7; border-color: #0284c7; border-radius: 6px; font-weight: 600;">Volver a Roles</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var rolId = @Model.RolId;
+        var guardarPermisosUrl = "@Url.Action("GuardarPermisos", "Role")";
+        var permisosUrlBase = "@Url.Action("Permisos", "Role")";
+
+        // Cambio rÃ¡pido de rol desde el select
+        $('#cboCambiarRol').on('change', function () {
+            var nuevoRolId = $(this).val();
+            if (nuevoRolId) {
+                window.location.href = permisosUrlBase + '/' + nuevoRolId;
+            }
+        });
+
+        // Actualizar contadores de opciones activas
+        function recalcularContadores() {
+            var totalActivas = 0;
+
+            $('.modulo-card').each(function () {
+                var $card = $(this);
+                var moduloId = $card.data('moduloid');
+                var activasEnModulo = 0;
+                var totalEnModulo = $card.find('.perm-row').length;
+
+                $card.find('.perm-row').each(function () {
+                    var isRead = $(this).find('.chk-perm-read').is(':checked');
+                    var isCreate = $(this).find('.chk-perm-create').is(':checked');
+                    var isUpdate = $(this).find('.chk-perm-update').is(':checked');
+                    var isDelete = $(this).find('.chk-perm-delete').is(':checked');
+
+                    if (isRead || isCreate || isUpdate || isDelete) {
+                        activasEnModulo++;
+                    }
+                });
+
+                totalActivas += activasEnModulo;
+
+                var $badge = $('#badge-cnt-' + moduloId);
+                $badge.text(activasEnModulo + ' / ' + totalEnModulo + ' activas');
+                if (activasEnModulo > 0) {
+                    $badge.addClass('has-perms');
+                } else {
+                    $badge.removeClass('has-perms');
+                }
+
+                // Sincronizar master checkbox del mÃ³dulo
+                var $master = $card.find('.chk-modulo-master');
+                if (activasEnModulo > 0) {
+                    $master.prop('checked', true);
+                } else if (totalEnModulo > 0 && activasEnModulo === 0) {
+                    $master.prop('checked', false);
+                }
+            });
+
+            $('#cntOpcionesActivas').text(totalActivas);
+        }
+
+        recalcularContadores();
+
+        // Al cambiar cualquier permiso en una fila
+        $(document).on('change', '.chk-perm', function () {
+            var $row = $(this).closest('.perm-row');
+            var permType = $(this).data('perm');
+            var isChecked = $(this).is(':checked');
+
+            // Regla: Si se marca Crear, Modificar o Eliminar, debe obligatoriamente marcarse Lectura
+            if ((permType === 'create' || permType === 'update' || permType === 'delete') && isChecked) {
+                $row.find('.chk-perm-read').prop('checked', true);
+            }
+
+            // Regla: Si se desmarca Lectura, desmarcar automÃ¡ticamente Crear, Modificar y Eliminar
+            if (permType === 'read' && !isChecked) {
+                $row.find('.chk-perm-create, .chk-perm-update, .chk-perm-delete').prop('checked', false);
+            }
+
+            // Si se marcÃ³ un hijo, asegurar que el master del mÃ³dulo raÃ­z estÃ© marcado
+            if (isChecked) {
+                var moduloId = $row.data('moduloid');
+                $('#modulo-card-' + moduloId).find('.chk-modulo-master').prop('checked', true);
+
+                // Si es sub-fila, marcar tambiÃ©n la lectura del sub-mÃ³dulo padre
+                if ($row.hasClass('perm-sub-row')) {
+                    var parentId = $row.data('parentid');
+                    $('.perm-row[data-menuid="' + parentId + '"]').find('.chk-perm-read').prop('checked', true);
+                }
+            }
+
+            recalcularContadores();
+        });
+
+        // Checkbox Maestro del MÃ³dulo: Marcar / Desmarcar todas las opciones del mÃ³dulo
+        $(document).on('change', '.chk-modulo-master', function () {
+            var moduloId = $(this).data('moduloid');
+            var isChecked = $(this).is(':checked');
+            var $card = $('#modulo-card-' + moduloId);
+
+            $card.find('.chk-perm-read').prop('checked', isChecked);
+            if (!isChecked) {
+                $card.find('.chk-perm-create, .chk-perm-update, .chk-perm-delete').prop('checked', false);
+            }
+
+            recalcularContadores();
+        });
+
+        // Marcar Todo Lectura
+        $('#btnMarcarTodoLectura').on('click', function () {
+            $('.chk-perm-read').prop('checked', true);
+            $('.chk-modulo-master').prop('checked', true);
+            recalcularContadores();
+        });
+
+        // Desmarcar Todo
+        $('#btnDesmarcarTodo').on('click', function () {
+            $('.chk-perm').prop('checked', false);
+            $('.chk-modulo-master').prop('checked', false);
+            recalcularContadores();
+        });
+
+        // Expandir Todo
+        $('#btnExpandirTodo').on('click', function () {
+            $('.modulo-card .collapse').collapse('show');
+        });
+
+        // Colapsar Todo
+        $('#btnColapsarTodo').on('click', function () {
+            $('.modulo-card .collapse').collapse('hide');
+        });
+
+        // BÃºsqueda en vivo de mÃ³dulos y opciones
+        $('#txtBuscarOpcion').on('keyup', function () {
+            var query = $.trim($(this).val()).toLowerCase();
+
+            if (!query) {
+                $('.modulo-card').show();
+                $('.perm-row').show();
+                return;
+            }
+
+            $('.modulo-card').each(function () {
+                var $card = $(this);
+                var anyRowVisible = false;
+
+                $card.find('.perm-row').each(function () {
+                    var searchText = ($(this).data('searchtext') || "").toString().toLowerCase();
+                    if (searchText.indexOf(query) !== -1) {
+                        $(this).show();
+                        anyRowVisible = true;
+                    } else {
+                        $(this).hide();
+                    }
+                });
+
+                if (anyRowVisible) {
+                    $card.show();
+                    $card.find('.collapse').collapse('show');
+                } else {
+                    $card.hide();
+                }
+            });
+        });
+
+        // Guardar Permisos (AJAX POST)
+        $('#btnGuardarPermisos').on('click', function () {
+            var $btn = $(this);
+            $btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Guardando y Sincronizando...');
+
+            var listaPermisos = [];
+
+            // 1. MÃ³dulos raÃ­ces (master)
+            $('.chk-modulo-master').each(function () {
+                var mId = parseInt($(this).data('menuid'), 10);
+                var isChecked = $(this).is(':checked');
+                if (isChecked) {
+                    listaPermisos.push({
+                        MenuId: mId,
+                        IsRead: true,
+                        IsCreate: false,
+                        IsUpdate: false,
+                        IsDelete: false
+                    });
+                }
+            });
+
+            // 2. Filas de opciones y sub-mÃ³dulos
+            $('.perm-row').each(function () {
+                var mId = parseInt($(this).data('menuid'), 10);
+                var isRead = $(this).find('.chk-perm-read').is(':checked');
+                var isCreate = $(this).find('.chk-perm-create').is(':checked');
+                var isUpdate = $(this).find('.chk-perm-update').is(':checked');
+                var isDelete = $(this).find('.chk-perm-delete').is(':checked');
+
+                if (isRead || isCreate || isUpdate || isDelete) {
+                    listaPermisos.push({
+                        MenuId: mId,
+                        IsRead: isRead,
+                        IsCreate: isCreate,
+                        IsUpdate: isUpdate,
+                        IsDelete: isDelete
+                    });
+                }
+            });
+
+            $.ajax({
+                url: guardarPermisosUrl,
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify({
+                    rolId: rolId,
+                    permisos: listaPermisos
+                }),
+                success: function (res) {
+                    $btn.prop('disabled', false).html('<i class="fa fa-save"></i> Guardar Permisos');
+                    if (res && res.success) {
+                        $('#feedbackIconContainer').html('<i class="fa fa-check-circle" style="font-size: 48px; color: #16a34a;"></i>');
+                        $('#feedbackModalTitle').text('Permisos Sincronizados');
+                        $('#feedbackModalMessage').text(res.message || 'Los permisos han sido sincronizados correctamente.');
+                        $('#modalFeedbackPermisos').modal('show');
+                    } else {
+                        $('#feedbackIconContainer').html('<i class="fa fa-exclamation-circle" style="font-size: 48px; color: #dc2626;"></i>');
+                        $('#feedbackModalTitle').text('Error al Guardar');
+                        $('#feedbackModalMessage').text(res.message || 'No fue posible actualizar los permisos.');
+                        $('#modalFeedbackPermisos').modal('show');
+                    }
+                },
+                error: function () {
+                    $btn.prop('disabled', false).html('<i class="fa fa-save"></i> Guardar Permisos');
+                    $('#feedbackIconContainer').html('<i class="fa fa-exclamation-circle" style="font-size: 48px; color: #dc2626;"></i>');
+                    $('#feedbackModalTitle').text('Error de Conexi\u00f3n');
+                    $('#feedbackModalMessage').text('Ocurri\u00f3 un error de comunicaci\u00f3n con el servidor.');
+                    $('#modalFeedbackPermisos').modal('show');
+                }
+            });
+        });
+    });
+</script>

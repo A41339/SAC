@@ -1,72 +1,461 @@
 @{
-      ViewBag.Title = "Roles";
-      Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Roles";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<style>
+    .role-header-banner {
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 20px 24px;
+        margin-bottom: 20px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        border: 1px solid #e2e8f0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+    .role-header-title {
+        margin: 0;
+        font-size: 22px;
+        font-weight: 700;
+        color: #0f172a;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    .role-header-subtitle {
+        margin: 4px 0 0 0;
+        font-size: 13px;
+        color: #64748b;
+    }
+    .btn-create-role {
+        background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+        color: #ffffff !important;
+        font-weight: 600;
+        font-size: 14px;
+        padding: 10px 20px;
+        border-radius: 8px;
+        border: none;
+        box-shadow: 0 4px 6px -1px rgba(2, 132, 199, 0.25);
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+    }
+    .btn-create-role:hover {
+        background: linear-gradient(135deg, #0369a1 0%, #075985 100%);
+        box-shadow: 0 6px 10px -1px rgba(2, 132, 199, 0.35);
+        transform: translateY(-1px);
+    }
+    .modern-table-card {
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 24px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+    .modal-role-custom .modal-content {
+        border-radius: 14px;
+        border: none;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        overflow: hidden;
+    }
+    .modal-role-custom .modal-header {
+        background: #f8fafc;
+        border-bottom: 1px solid #e2e8f0;
+        padding: 18px 24px;
+    }
+    .modal-role-custom .modal-title {
+        font-weight: 700;
+        font-size: 18px;
+        color: #0f172a;
+        margin: 0;
+    }
+    .modal-role-custom .modal-body {
+        padding: 24px;
+    }
+    .modal-role-custom .modal-footer {
+        background: #f8fafc;
+        border-top: 1px solid #e2e8f0;
+        padding: 16px 24px;
+    }
+    .form-group-custom label {
+        font-weight: 600;
+        color: #334155;
+        font-size: 13px;
+        margin-bottom: 6px;
+    }
+    .form-group-custom .form-control {
+        border-radius: 8px;
+        border: 1px solid #cbd5e1;
+        padding: 10px 14px;
+        height: auto;
+        font-size: 14px;
+        box-shadow: none;
+        transition: border-color 0.2s;
+    }
+    .form-group-custom .form-control:focus {
+        border-color: #0284c7;
+        box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+    }
+    .custom-switch-label {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+        font-weight: 500;
+        color: #334155;
+        margin: 8px 0;
+    }
+    .custom-switch-label input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+        accent-color: #0284c7;
+    }
+</style>
+
 <section class="content-header">
-    <h1 class="modern-page-title">
-        <i class="fa fa-shield" style="color: #0284c7;"></i>
-        Administraci&oacute;n de Roles
-        <small>Cat&aacute;logo de perfiles y niveles de autorizaci&oacute;n</small>
-    </h1>
-    <ol class="breadcrumb">
+    <div class="role-header-banner">
+        <div>
+            <h1 class="role-header-title">
+                <i class="fa fa-shield" style="color: #0284c7;"></i>
+                Administraci&oacute;n de Roles
+            </h1>
+            <p class="role-header-subtitle">
+                Gesti&oacute;n de perfiles de usuario y configuraci&oacute;n de la matriz de permisos de men&uacute;
+            </p>
+        </div>
+        <div>
+            <button type="button" class="btn-create-role" id="btnNuevoRol">
+                <i class="fa fa-plus-circle"></i> Nuevo Rol
+            </button>
+        </div>
+    </div>
+    <ol class="breadcrumb" style="position: static; float: none; background: transparent; padding: 0 0 10px 4px;">
         <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
         <li><a href="#">Seguridad</a></li>
         <li class="active">Roles</li>
     </ol>
 </section>
 
-<section class="content">
+<section class="content" style="padding-top: 0;">
     <div class="row">
         <div class="col-xs-12">
+            <div id="roleAlertMessage" style="display:none; margin-bottom: 16px;"></div>
+
             <div class="modern-table-card">
-                <span id="found" class="label label-info"></span>
                 <table id="tbRole" class="table table-striped table-bordered modern-data-table" style="width: 100%;">
                     <thead>
                         <tr>
-                            <th style="width: 20%; text-align: center;">Id</th>
+                            <th style="width: 60px; text-align: center;">Id</th>
                             <th>Nombre del Rol</th>
+                            <th style="width: 170px; text-align: center;">Tipo de Perfil</th>
+                            <th style="width: 110px; text-align: center;">Estado</th>
+                            <th style="width: 220px; text-align: center;">Acciones</th>
                         </tr>
                     </thead>
                     <tbody></tbody>
                 </table>
-
-                <div id="summary">
-                    <div></div>
-                </div>
             </div>
         </div>
     </div>
 </section>
 
-     <script type="text/javascript">
+<!-- Modal Crear / Editar Rol -->
+<div class="modal fade modal-role-custom" id="modalRol" tabindex="-1" role="dialog" aria-labelledby="modalRolTitle" aria-hidden="true">
+    <div class="modal-dialog" style="max-width: 500px; margin: 60px auto;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="font-size: 24px; margin-top: -4px;">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="modalRolTitle">
+                    <i class="fa fa-shield" style="color: #0284c7; margin-right: 6px;"></i>
+                    <span id="lblModalTitulo">Nuevo Rol</span>
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div id="modalRolError" class="alert alert-danger" style="display:none; border-radius: 8px; font-size: 13px;"></div>
+                <form id="formRol">
+                    <input type="hidden" id="rolId" name="rolId" value="0" />
+                    
+                    <div class="form-group-custom" style="margin-bottom: 18px;">
+                        <label for="rolNombre">Nombre del Rol *</label>
+                        <input type="text" class="form-control" id="rolNombre" name="rolNombre" maxlength="100" placeholder="Ej. Analista de Riesgos, Auditor, etc." required />
+                    </div>
 
-        $(document).ready(function () {
-            var oTableRole = "";
-            var ControlerNameRole = "@Url.Content("~/Role")";
-            // debugger;
-            oTableRole = $("#tbRole").dataTable({  
+                    <div style="background: #f8fafc; border-radius: 8px; padding: 14px 16px; margin-bottom: 16px; border: 1px solid #e2e8f0;">
+                        <label class="custom-switch-label" style="margin-bottom: 6px;">
+                            <input type="checkbox" id="rolEsEntidad" name="rolEsEntidad" />
+                            <span>Es Rol de Entidad Financiera</span>
+                        </label>
+                        <small style="color: #64748b; display: block; margin-left: 28px; line-height: 1.4;">
+                            Marque si este rol ser&aacute; asignado a usuarios pertenecientes a entidades financieras asociadas (bancos, cooperativas, etc.). Desmarque si es para personal interno de FGA o Administradores.
+                        </small>
+                    </div>
+
+                    <div style="background: #f8fafc; border-radius: 8px; padding: 14px 16px; border: 1px solid #e2e8f0;">
+                        <label class="custom-switch-label" style="margin: 0;">
+                            <input type="checkbox" id="rolActivo" name="rolActivo" checked />
+                            <span>Rol Activo</span>
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" style="border-radius: 6px; font-weight: 500;">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="btnGuardarRol" style="background-color: #0284c7; border-color: #0284c7; border-radius: 6px; font-weight: 600;">
+                    <i class="fa fa-save"></i> Guardar Rol
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Confirmar Eliminación -->
+<div class="modal fade modal-role-custom" id="modalEliminarRol" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" style="max-width: 440px; margin: 80px auto;">
+        <div class="modal-content">
+            <div class="modal-header" style="background: #fff1f2; border-bottom: 1px solid #fecdd3;">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" style="color: #be123c;">
+                    <i class="fa fa-exclamation-triangle" style="margin-right: 6px;"></i> Confirmar Eliminaci&oacute;n
+                </h4>
+            </div>
+            <div class="modal-body" style="font-size: 14px; color: #334155; line-height: 1.5;">
+                <p>&iquest;Est&aacute; seguro de que desea eliminar el rol <strong id="lblEliminarRolNombre"></strong>?</p>
+                <p style="margin-bottom: 0; color: #64748b; font-size: 13px;">
+                    Esta acci&oacute;n remover&aacute; permanentemente el rol y todos sus permisos de men&uacute; asignados. Solo podr&aacute; eliminarse si no cuenta con usuarios activos.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" style="border-radius: 6px;">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="btnConfirmarEliminar" style="border-radius: 6px; font-weight: 600;">
+                    <i class="fa fa-trash"></i> S&iacute;, Eliminar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var rolToDeleteId = 0;
+        var permisosUrlBase = "@Url.Action("Permisos", "Role")";
+        var getGridUrl = "@Url.Action("GetGrid", "Role")";
+        var getRoleUrl = "@Url.Action("GetRole", "Role")";
+        var guardarRolUrl = "@Url.Action("GuardarRol", "Role")";
+        var eliminarRolUrl = "@Url.Action("EliminarRol", "Role")";
+
+        var oTableRole = $("#tbRole").dataTable({
             "bRetrieve": true,
             "bProcessing": true,
             "dom": 'lBfrtip',
-            "sAjaxSource": "@Url.Content("~/Role/GetGrid")",
+            "sAjaxSource": getGridUrl,
             "buttons": [
-                 { extend: 'copyHtml5', exportOptions: { columns: ':visible' } }
-                ,{ extend: 'excelHtml5', exportOptions: { columns: ':visible' } }
-                ,{ extend: 'csvHtml5', exportOptions: { columns: ':visible' } }
-                ,{ extend: 'pdfHtml5', exportOptions: { columns: ':visible' } }
-                ,{ extend: 'print', exportOptions: { columns: ':visible' } } 
-                ,'colvis'
-            ], columnDefs: [{   visible: false }],
+                { extend: 'copyHtml5', exportOptions: { columns: ':visible' } },
+                { extend: 'excelHtml5', exportOptions: { columns: ':visible' } },
+                { extend: 'csvHtml5', exportOptions: { columns: ':visible' } },
+                { extend: 'pdfHtml5', exportOptions: { columns: ':visible' } },
+                { extend: 'print', exportOptions: { columns: ':visible' } },
+                'colvis'
+            ],
             "pageLength": 10,
-            "lengthMenu": [[5,10, 25, 50, -1], [5,10, 25, 50, "Todos"]],
-                "aoColumns": [
- {}
-,{}
-        ]
+            "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "Todos"]],
+            "language": {
+                "sProcessing": "Procesando...",
+                "sLengthMenu": "Mostrar _MENU_ registros",
+                "sZeroRecords": "No se encontraron resultados",
+                "sEmptyTable": "Ning\u00fan dato disponible en esta tabla",
+                "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_",
+                "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0",
+                "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+                "sSearch": "Buscar rol:",
+                "oPaginate": {
+                    "sFirst": "Primero",
+                    "sLast": "\u00daltimo",
+                    "sNext": "Siguiente",
+                    "sPrevious": "Anterior"
+                }
+            },
+            "aoColumns": [
+                {
+                    "sClass": "text-center",
+                    "mRender": function (data, type, row) {
+                        return '<span style="font-weight:600; color:#64748b;">' + row[0] + '</span>';
+                    }
+                },
+                {
+                    "mRender": function (data, type, row) {
+                        return '<div style="font-weight:600; color:#0f172a; font-size:14px;"><i class="fa fa-shield" style="color:#0284c7; margin-right:8px;"></i>' + row[1] + '</div>';
+                    }
+                },
+                {
+                    "sClass": "text-center",
+                    "mRender": function (data, type, row) {
+                        if (row[2] === "1" || row[2] === "true") {
+                            return '<span class="badge" style="background-color: #e0f2fe; color: #0369a1; font-weight: 600; font-size: 12px; padding: 5px 12px; border-radius: 9999px; border: 1px solid #bae6fd;"><i class="fa fa-institution"></i> Entidad Financiera</span>';
+                        } else {
+                            return '<span class="badge" style="background-color: #f3e8ff; color: #7e22ce; font-weight: 600; font-size: 12px; padding: 5px 12px; border-radius: 9999px; border: 1px solid #e9d5ff;"><i class="fa fa-shield"></i> FGA / Administrador</span>';
+                        }
+                    }
+                },
+                {
+                    "sClass": "text-center",
+                    "mRender": function (data, type, row) {
+                        if (row[3] === "1" || row[3] === "true") {
+                            return '<span class="badge" style="background-color: #dcfce7; color: #15803d; font-weight: 600; font-size: 12px; padding: 5px 12px; border-radius: 9999px; border: 1px solid #bbf7d0;"><i class="fa fa-check-circle"></i> Activo</span>';
+                        } else {
+                            return '<span class="badge" style="background-color: #f1f5f9; color: #64748b; font-weight: 600; font-size: 12px; padding: 5px 12px; border-radius: 9999px; border: 1px solid #cbd5e1;"><i class="fa fa-times-circle"></i> Inactivo</span>';
+                        }
+                    }
+                },
+                {
+                    "sClass": "text-center",
+                    "mRender": function (data, type, row) {
+                        var id = row[0];
+                        var nombre = unescape(row[1] || "");
+                        var btnPermisos = '<a href="' + permisosUrlBase + '/' + id + '" class="btn btn-sm btn-primary" style="background-color: #0284c7; border-color: #0284c7; border-radius: 6px; font-weight: 500; padding: 4px 10px; margin-right: 4px;" title="Configurar Permisos de Men\u00fa"><i class="fa fa-key"></i> <span class="hidden-xs">Permisos</span></a>';
+                        var btnEdit = '<button type="button" class="btn btn-sm btn-default btn-edit-role" data-id="' + id + '" style="border-radius: 6px; border: 1px solid #cbd5e1; padding: 4px 10px; margin-right: 4px; color: #334155;" title="Editar Rol"><i class="fa fa-pencil"></i></button>';
+                        var btnDelete = '<button type="button" class="btn btn-sm btn-default btn-delete-role" data-id="' + id + '" data-nombre="' + escape(row[1]) + '" style="border-radius: 6px; border: 1px solid #fecaca; padding: 4px 10px; color: #dc2626;" title="Eliminar Rol"><i class="fa fa-trash"></i></button>';
+                        return '<div style="display: inline-flex; align-items: center;">' + btnPermisos + btnEdit + btnDelete + '</div>';
+                    }
+                }
+            ]
+        });
 
+        function showAlert(type, message) {
+            var alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
+            var iconClass = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle';
+            var html = '<div class="alert ' + alertClass + ' alert-dismissible" style="border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">' +
+                '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+                '<i class="fa ' + iconClass + '" style="margin-right: 6px;"></i> ' + message +
+                '</div>';
+            $('#roleAlertMessage').html(html).fadeIn();
+            setTimeout(function () {
+                $('#roleAlertMessage').fadeOut();
+            }, 6000);
+        }
+
+        // Abrir modal Nuevo Rol
+        $('#btnNuevoRol').on('click', function () {
+            $('#lblModalTitulo').text('Nuevo Rol');
+            $('#rolId').val('0');
+            $('#rolNombre').val('');
+            $('#rolEsEntidad').prop('checked', false);
+            $('#rolActivo').prop('checked', true);
+            $('#modalRolError').hide();
+            $('#modalRol').modal('show');
+            setTimeout(function () { $('#rolNombre').focus(); }, 400);
         });
-        
+
+        // Abrir modal Editar Rol
+        $(document).on('click', '.btn-edit-role', function () {
+            var id = $(this).data('id');
+            $('#modalRolError').hide();
+
+            $.getJSON(getRoleUrl, { id: id }, function (res) {
+                if (res && res.success && res.role) {
+                    $('#lblModalTitulo').text('Editar Rol: ' + res.role.nombre);
+                    $('#rolId').val(res.role.id);
+                    $('#rolNombre').val(res.role.nombre);
+                    $('#rolEsEntidad').prop('checked', res.role.esEntidad === true);
+                    $('#rolActivo').prop('checked', res.role.activo === true);
+                    $('#modalRol').modal('show');
+                    setTimeout(function () { $('#rolNombre').focus(); }, 400);
+                } else {
+                    showAlert('error', res.message || 'No se pudo cargar la informaci\u00f3n del rol.');
+                }
+            }).fail(function () {
+                showAlert('error', 'Error al consultar el rol en el servidor.');
+            });
         });
-    </script>
+
+        // Guardar Rol (Crear / Editar)
+        $('#btnGuardarRol').on('click', function () {
+            var id = parseInt($('#rolId').val(), 10) || 0;
+            var nombre = $.trim($('#rolNombre').val());
+            var esEntidad = $('#rolEsEntidad').is(':checked');
+            var activo = $('#rolActivo').is(':checked');
+
+            if (!nombre || nombre.length < 3) {
+                $('#modalRolError').text('El nombre del rol debe tener al menos 3 caracteres.').show();
+                return;
+            }
+
+            var $btn = $(this);
+            $btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Guardando...');
+
+            $.ajax({
+                url: guardarRolUrl,
+                type: 'POST',
+                data: {
+                    id: id > 0 ? id : null,
+                    nombre: nombre,
+                    activo: activo,
+                    esEntidad: esEntidad
+                },
+                success: function (res) {
+                    $btn.prop('disabled', false).html('<i class="fa fa-save"></i> Guardar Rol');
+                    if (res && res.success) {
+                        $('#modalRol').modal('hide');
+                        showAlert('success', res.message);
+                        oTableRole.fnReloadAjax();
+                    } else {
+                        $('#modalRolError').text(res.message || 'Error al guardar el rol.').show();
+                    }
+                },
+                error: function () {
+                    $btn.prop('disabled', false).html('<i class="fa fa-save"></i> Guardar Rol');
+                    $('#modalRolError').text('Error de conexi\u00f3n con el servidor.').show();
+                }
+            });
+        });
+
+        // Abrir modal Confirmar Eliminación
+        $(document).on('click', '.btn-delete-role', function () {
+            rolToDeleteId = $(this).data('id');
+            var rawNombre = $(this).data('nombre');
+            var nombre = unescape(rawNombre || "");
+            $('#lblEliminarRolNombre').text('"' + nombre + '"');
+            $('#modalEliminarRol').modal('show');
+        });
+
+        // Confirmar Eliminación
+        $('#btnConfirmarEliminar').on('click', function () {
+            if (!rolToDeleteId) return;
+
+            var $btn = $(this);
+            $btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Eliminando...');
+
+            $.ajax({
+                url: eliminarRolUrl,
+                type: 'POST',
+                data: { id: rolToDeleteId },
+                success: function (res) {
+                    $btn.prop('disabled', false).html('<i class="fa fa-trash"></i> S\u00ed, Eliminar');
+                    $('#modalEliminarRol').modal('hide');
+                    if (res && res.success) {
+                        showAlert('success', res.message);
+                        oTableRole.fnReloadAjax();
+                    } else {
+                        showAlert('error', res.message || 'No fue posible eliminar el rol.');
+                    }
+                },
+                error: function () {
+                    $btn.prop('disabled', false).html('<i class="fa fa-trash"></i> S\u00ed, Eliminar');
+                    $('#modalEliminarRol').modal('hide');
+                    showAlert('error', 'Error de comunicaci\u00f3n al intentar eliminar el rol.');
+                }
+            });
+        });
+    });
+</script>
 
