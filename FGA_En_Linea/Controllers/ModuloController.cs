@@ -98,10 +98,11 @@ namespace FGA.Controllers
                     .ToList();
 
                 var tarjetas = new List<ModuloTarjetaItem>();
+                int cardIndex = 0;
                 foreach (var child in childPerms)
                 {
                     var m = child.Menu_MenuId;
-                    var cardMeta = MenuCatalogService.GetCardMeta(m.MenuText, m.MenuURL, m.MenuIcon);
+                    var cardMeta = MenuCatalogService.GetCardMeta(m.MenuText, m.MenuURL, m.MenuIcon, cardIndex++);
 
                     bool isSubMenu = string.Equals(m.MenuURL?.Trim(), "root", StringComparison.OrdinalIgnoreCase)
                                      || string.IsNullOrWhiteSpace(m.MenuURL)
