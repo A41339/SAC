@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -46,10 +46,11 @@
             return res;
         };
 
-        window.fixDomEncoding = function () {
+        window.fixDomEncoding = function (root) {
             try {
-                if (!document.body) return;
-                var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
+                var target = root || document.body;
+                if (!target) return;
+                var walker = document.createTreeWalker(target, NodeFilter.SHOW_TEXT, null, false);
                 var node;
                 while (node = walker.nextNode()) {
                     if (node.nodeValue && node.nodeValue.indexOf('Ã') !== -1) {
@@ -58,8 +59,19 @@
                 }
             } catch (e) {}
         };
-        $(document).ready(function () { window.fixDomEncoding(); });
+        $(document).ready(function () { 
+            window.fixDomEncoding(); 
+            if (window.MutationObserver && document.body) {
+                var fixTimer = null;
+                var observer = new MutationObserver(function () {
+                    if (fixTimer) clearTimeout(fixTimer);
+                    fixTimer = setTimeout(function () { window.fixDomEncoding(); }, 50);
+                });
+                observer.observe(document.body, { childList: true, subtree: true });
+            }
+        });
         $(document).ajaxComplete(function () { window.fixDomEncoding(); });
+        $(document).on('draw.dt init.dt page.dt order.dt search.dt', function () { window.fixDomEncoding(); });
 
         window.formatGlobalChartTooltip = function (ctx) {
             if (!ctx) return '';

@@ -1,4 +1,4 @@
-@{
+﻿@{
     ViewBag.Title = "Categorías";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -10,41 +10,31 @@
     </h1>
     <ol class="breadcrumb">
         <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
-        <li><a href="@Url.Action("Index", "Modulo", new { id = 9000 })" class="breadcrumb-parent-pill" title="Volver al menú de Mantenimientos"><i class="fa fa-wrench" style="margin-right: 4px;"></i> Mantenimientos</a></li>
+        <li><a href="@Url.Action("Index", "Modulo", new { id = 9000 })" class="breadcrumb-parent-pill" title="Volver al men&uacute; de Mantenimientos"><i class="fa fa-wrench" style="margin-right: 4px;"></i> Mantenimientos</a></li>
         <li class="active">Categor&iacute;as</li>
     </ol>
 </section>
 
-<section class="content">
+<section class="content" style="padding-top: 0;">
+    <!-- Contenedor general en dos columnas -->
     <div class="row">
-        <div class="col-xs-12">
-
-            <!-- Barra de acciones -->
-            <div class="modern-table-card" style="margin-bottom: 20px;">
-                <div style="padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
-                    <div>
-                        <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: #143750;">
-                            <i class="fa fa-list-alt" style="color: #0284c7; margin-right: 7px;"></i>
-                            Categorías de evaluación
-                        </h4>
-                        <p style="margin: 3px 0 0 0; font-size: 12px; color: #64748b;">Administre las categorías, subcomponentes y preguntas del proceso de autoevaluación</p>
-                    </div>
-                    <a href="~/Evaluacion/Create" class="btn-modern-filter" style="text-decoration: none; padding: 9px 20px; border-radius: 8px; font-size: 13px;">
-                        <i class="fa fa-plus-circle"></i> Crear categoría
-                    </a>
+        <!-- Columna izquierda: Listado de Categorías -->
+        <div class="col-md-5 col-xs-12">
+            <div class="modern-table-card" style="padding: 0; overflow: hidden; margin-bottom: 20px;">
+                <div style="padding: 16px 20px; border-bottom: 1px solid #e2e8f0; background: #ffffff; display: flex; align-items: center; justify-content: space-between;">
+                    <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: #143750; display: flex; align-items: center; gap: 8px;">
+                        <i class="fa fa-list-alt" style="color: #0284c7;"></i>
+                        Categor&iacute;as del Sistema
+                    </h4>
                 </div>
-            </div>
-
-            <!-- Tabla principal -->
-            <div class="modern-table-card">
                 <div class="table-responsive" style="padding: 16px 20px;">
                     <span id="found" class="label label-info"></span>
                     <table id="tbEvaluacion" class="table modern-data-table" style="width: 100%;">
                         <thead>
                             <tr>
-                                <th style="width: 120px;">Acción</th>
-                                <th class="hidden">Código</th>
-                                <th>Título</th>
+                                <th style="width: 120px;">Acci&oacute;n</th>
+                                <th class="hidden">C&oacute;digo</th>
+                                <th>T&iacute;tulo</th>
                                 <th style="width: 110px; text-align: center;">Opciones</th>
                             </tr>
                         </thead>
@@ -445,7 +435,7 @@
                         return '<div class="text-center">'
                             + '<div class="btn-group">'
                             + '<button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" style="border-radius:6px; border:1px solid #cbd5e1; font-size:12px; padding:4px 10px; color:#374151;">'
-                            + '<i class="fa fa-cog" style="margin-right:4px;"></i> Acción <span class="caret"></span>'
+                            + '<i class="fa fa-cog" style="margin-right:4px;"></i> Acci&oacute;n <span class="caret"></span>'
                             + '</button>'
                             + '<ul class="dropdown-menu pull-left" role="menu" style="border-radius:10px; box-shadow:0 8px 24px rgba(0,0,0,0.12); border:1px solid #e2e8f0; min-width:160px; padding:6px 0;">'
                             + '<li><a href="' + ControlerNameCompany + '/Edit/' + row[0] + '" style="padding:8px 16px; font-size:13px; color:#1e293b; display:flex; align-items:center; gap:8px;"><i class="fa fa-edit" style="color:#0284c7;"></i> Modificar</a></li>'

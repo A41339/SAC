@@ -10,7 +10,7 @@
     </h1>
     <ol class="breadcrumb">
         <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
-        <li><a href="#">Administraci&oacute;n</a></li>
+        <li><a href="@Url.Action("Index", "Modulo", new { id = 9000 })" class="breadcrumb-parent-pill" title="Volver al men&uacute; de Mantenimientos"><i class="fa fa-wrench" style="margin-right: 4px;"></i> Mantenimientos</a></li>
         <li class="active">Calendario</li>
     </ol>
 </section>
@@ -26,7 +26,7 @@
                             <a href="~/Calendario/Create" class="btn btn-dropbox">Crear un Calendario</a>
                         </div>
                     </div>
-                </div>
+                </div><!-- /.box-body -->
             </div>
             <div class="box box-solid box-info">
                 <div class="box-body table-responsive">
@@ -36,10 +36,10 @@
                             <table id="tbCalendar" class="table table-striped table-bordered">
                                 <thead>
                                     <tr>
-                                        <th>Acción</th>
-                                        <th>Periodo</th>
-                                        <th>Día que se debe enviar el mensaje</th>
-                                        <th>Día límite para subir los archivos</th>
+                                        <th>Acci&oacute;n</th>
+                                        <th>Per&iacute;odo</th>
+                                        <th>D&iacute;a que se debe enviar el mensaje</th>
+                                        <th>D&iacute;a l&iacute;mite para subir los archivos</th>
                                         <th>Enviado</th>
                                     </tr>
                                 </thead>
@@ -83,7 +83,7 @@
                 {
                     "mRender": function (oObj, type, row) {
 
-                    var buttons = '<div class="text-center"> <div class="btn-group text-left"> <button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" style="border-radius:6px; border:1px solid #cbd5e1; font-size:12px; padding:4px 10px; color:#374151;"><i class="fa fa-cog" style="margin-right:4px;"></i> Acción <span class="caret"></span></button>';
+                    var buttons = '<div class="text-center"> <div class="btn-group text-left"> <button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" style="border-radius:6px; border:1px solid #cbd5e1; font-size:12px; padding:4px 10px; color:#374151;"><i class="fa fa-cog" style="margin-right:4px;"></i> Acci&oacute;n <span class="caret"></span></button>';
                     buttons += '<ul class="dropdown-menu pull-left" role="menu">';
                                      buttons += '<li><a href="' + ControlerNameCalendar + "/Edit/" + row[0] + '"><i class="fa fa-edit"></i>Modificar</a></li>';
                                      buttons += '<li><a href="' + ControlerNameCalendar + "/Details/" + row[0] + '"><i class="fa fa-edit"></i>Consultar</a></li>';
