@@ -172,7 +172,8 @@ namespace FGA.Controllers
                                     VarMensualPct = varMensualPct,
                                     VarInteranualMonto = varInteranualMonto,
                                     VarInteranualPct = varInteranualPct,
-                                    HasData = true
+                                    HasData = true,
+                                    HasInteranual = regAnoAnt != null && anoAntMonto != 0
                                 };
                             }
                         }

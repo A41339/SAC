@@ -258,14 +258,165 @@
                 </div>
             }
 
-            <!-- PASO 5: AUTOEVALUACIÓN -->
+<!-- PASO 5: AUTOEVALUACIÓN -->
             <div class="tab-pane @(Model.eval.ToString().ToLower() == "true" ? "active" : "")" id="paso5" role="tabpanel" aria-labelledby="paso5-tab">
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding: 0 10px;">
-                    <div>
-                        <h2 style="color: #143750; font-weight: 700; font-size: 22px; margin: 0;">
-                            <i class="fa fa-shield" style="color: #0284c7; margin-right: 8px;"></i> Supervisión Basada en Riesgo (SUGEF 24-22)
-                        </h2>
-                        <p style="color: #64748b; font-size: 14px; margin: 4px 0 0 0;">Seleccione un componente y subcomponente para responder los criterios</p>
+                
+                <style>
+                    .eval-section-title-wrap {
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        margin-bottom: 22px;
+                        padding: 0 4px;
+                    }
+                    .eval-section-title {
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
+                    }
+                    .eval-section-title-bar {
+                        display: inline-block;
+                        width: 5px;
+                        height: 22px;
+                        background: #0284c7;
+                        border-radius: 2px;
+                    }
+                    .eval-section-title h3 {
+                        margin: 0;
+                        font-size: 18px;
+                        font-weight: 700;
+                        color: #1e40af;
+                        letter-spacing: -0.2px;
+                    }
+                    .eval-cards-grid {
+                        display: grid;
+                        grid-template-columns: repeat(3, 1fr);
+                        gap: 22px;
+                    }
+                    @media (max-width: 1199px) {
+                        .eval-cards-grid {
+                            grid-template-columns: repeat(2, 1fr);
+                        }
+                    }
+                    @media (max-width: 767px) {
+                        .eval-cards-grid {
+                            grid-template-columns: 1fr;
+                        }
+                    }
+                    .eval-consult-card {
+                        background: #ffffff;
+                        border: 1px solid #dbeafe;
+                        border-radius: 14px;
+                        padding: 22px 24px;
+                        box-shadow: 0 4px 16px rgba(30, 58, 138, 0.04);
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: space-between;
+                        min-height: 260px;
+                        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+                        position: relative;
+                    }
+                    .eval-consult-card:hover {
+                        transform: translateY(-3px);
+                        box-shadow: 0 10px 24px rgba(30, 58, 138, 0.09);
+                        border-color: #93c5fd;
+                    }
+                    .eval-consult-header {
+                        display: flex;
+                        align-items: center;
+                        gap: 14px;
+                        margin-bottom: 12px;
+                        position: relative;
+                    }
+                    .eval-icon-circle-box {
+                        width: 48px;
+                        height: 48px;
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        flex-shrink: 0;
+                    }
+                    .eval-consult-title {
+                        font-size: 16px;
+                        font-weight: 700;
+                        color: #1e40af;
+                        margin: 0;
+                        line-height: 1.3;
+                        flex: 1;
+                        padding-right: 22px;
+                    }
+                    .eval-consult-chevron {
+                        position: absolute;
+                        right: 0;
+                        top: 50%;
+                        transform: translateY(-50%);
+                        color: #1d4ed8;
+                        font-size: 18px;
+                        font-weight: 900;
+                        transition: transform 0.2s ease, color 0.2s ease;
+                        cursor: pointer;
+                    }
+                    .eval-consult-card:hover .eval-consult-chevron {
+                        transform: translateY(-50%) translateX(4px);
+                        color: #0284c7;
+                    }
+                    .eval-consult-desc {
+                        font-size: 12.5px;
+                        line-height: 1.55;
+                        color: #475569;
+                        margin: 0 0 18px 0;
+                        text-align: justify;
+                    }
+                    .eval-consult-footer {
+                        margin-top: auto;
+                        padding-top: 14px;
+                        border-top: 1px solid #f1f5f9;
+                        display: flex;
+                        flex-direction: column;
+                        gap: 10px;
+                    }
+                    .eval-field-row {
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
+                    }
+                    .eval-field-label {
+                        font-size: 13px;
+                        font-weight: 700;
+                        color: #1e40af;
+                        white-space: nowrap;
+                        margin: 0;
+                        min-width: 105px;
+                    }
+                    .eval-field-select {
+                        flex: 1;
+                        height: 32px;
+                        padding: 3px 10px;
+                        font-size: 12.5px;
+                        color: #64748b;
+                        background-color: #ffffff;
+                        border: 1px solid #93c5fd;
+                        border-radius: 6px;
+                        outline: none;
+                        cursor: pointer;
+                        transition: border-color 0.2s, box-shadow 0.2s;
+                    }
+                    .eval-field-select:focus {
+                        border-color: #0284c7;
+                        box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+                    }
+                    .eval-avance-val-highlight {
+                        font-size: 15px;
+                        font-weight: 800;
+                        color: #0284c7;
+                    }
+                </style>
+
+                <div class="eval-section-title-wrap">
+                    <div class="eval-section-title">
+                        <span class="eval-section-title-bar"></span>
+                        <h3>Seleccione la opci&oacute;n que desea consultar</h3>
                     </div>
                     <div class="dropdown">
                         <button class="eval-fab-btn dropdown-toggle" type="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Menú de Navegación">
@@ -302,14 +453,10 @@
 
                 @if (Model != null && Model.listaCategorias.Count > 0)
                 {
-                    int i = 0;
-                    string color = "";
-                    var categoria = 0;
-                    var permiso = 0;
-                    <div class="row">
+                    <div class="eval-cards-grid">
                         @foreach (var eval in Model.listaCategorias)
                         {
-                            permiso = 0;
+                            var permiso = 0;
                             if (Session["IsFGA"].ToString() == "1")
                             {
                                 permiso = 1;
@@ -325,77 +472,126 @@
                                 }
                             }
 
-                            color = (i == 0 ? "#1e40af" : i == 1 ? "#475569" : i == 2 ? "#059669" : i == 3 ? "#d97706" : i == 4 ? "#b45309" : "#0f172a");
-                            i = i + 1;
-                            <div class="col-lg-4 col-md-6 col-sm-12">
-                                <div class="eval-component-card">
-                                    <div class="eval-component-card-top-accent" style="background: @color;"></div>
-                                    <div class="text-center" style="margin-bottom: 14px;">
-                                        @{
-                                            try
-                                            {
-                                                string ruta = "https://www.ffc.co.cr/img/secciones/categoria/" + eval.Imagen + ".jpg";
-                                                <img class="eval-component-img" style="@(permiso == 0 ? "filter: grayscale(1); opacity: 0.7;" : "")" src="@ruta" width="140" height="140" alt="@eval.Titulo" />
-                                            }
-                                            catch (Exception) { }
-                                        }
-                                    </div>
-                                    <div class="text-center">
-                                        <h4 style="color: @color; font-size: 18px; font-weight: 700; margin: 0 0 12px 0;">
+                            // Obtener icono, colores y descripción según el componente
+                            string tituloLower = (eval.Titulo ?? "").ToLowerInvariant();
+                            string cardIcon = "fa fa-university";
+                            string cardBg = "#e0f2fe";
+                            string cardColor = "#0284c7";
+                            string cardDesc = "Evalúa la estructura, funcionamiento y prácticas de gobierno de la entidad, incluyendo la conformación y desempeño de los órganos de dirección, la gestión de conflictos de interés, la transparencia y la rendición de cuentas.";
+
+                            if (tituloLower.Contains("gobierno"))
+                            {
+                                cardIcon = "fa fa-university";
+                                cardBg = "#e0f2fe";
+                                cardColor = "#0284c7";
+                                cardDesc = "Evalúa la estructura, funcionamiento y prácticas de gobierno de la entidad, incluyendo la conformación y desempeño de los órganos de dirección, la gestión de conflictos de interés, la transparencia y la rendición de cuentas.";
+                            }
+                            else if (tituloLower.Contains("riesgo"))
+                            {
+                                cardIcon = "fa fa-shield";
+                                cardBg = "#e0f2fe";
+                                cardColor = "#0284c7";
+                                cardDesc = "Analiza la estructura y efectividad del marco de gestión de riesgos, incluyendo la identificación, medición, monitoreo, control y mitigación de los riesgos, así como la suficiencia de políticas, procesos y recursos.";
+                            }
+                            else if (tituloLower.Contains("econ") || tituloLower.Contains("financier"))
+                            {
+                                cardIcon = "fa fa-line-chart";
+                                cardBg = "#ffedd5";
+                                cardColor = "#ea580c";
+                                cardDesc = "Evalúa la sostenibilidad financiera de la entidad, considerando la calidad de los activos, la rentabilidad, la liquidez, la adecuación de capital y la capacidad para hacer frente a sus obligaciones.";
+                            }
+                            else if (tituloLower.Contains("legal") || tituloLower.Contains("regulator"))
+                            {
+                                cardIcon = "fa fa-balance-scale";
+                                cardBg = "#ffedd5";
+                                cardColor = "#ea580c";
+                                cardDesc = "Analiza el grado de cumplimiento del marco normativo aplicable, incluyendo leyes, reglamentos, normas y disposiciones emitidas por el supervisor, así como la efectividad de los sistemas de control para garantizar su observancia.";
+                            }
+                            else if (tituloLower.Contains("capital") || tituloLower.Contains("suficiencia"))
+                            {
+                                cardIcon = "fa fa-database";
+                                cardBg = "#e0f2fe";
+                                cardColor = "#0284c7";
+                                cardDesc = "Evalúa la suficiencia del capital en relación con los riesgos asumidos, la calidad de los fondos propios y la capacidad de la entidad para mantener niveles de capital acordes con su perfil de riesgos.";
+                            }
+
+                            if (!string.IsNullOrEmpty(eval.Descripcion))
+                            {
+                                cardDesc = eval.Descripcion;
+                            }
+
+                            // Cálculo del porcentaje inicial promedio del componente
+                            int subCatCount = eval.SubCategorias != null ? eval.SubCategorias.Count : 0;
+                            decimal avanceTotal = 0;
+                            if (subCatCount > 0 && Model.evaluaciones != null)
+                            {
+                                foreach (var sub in eval.SubCategorias)
+                                {
+                                    avanceTotal += FGA.Utility.Utilitarios.GetSubCategoriaPorcentaje(sub.Id, Model.evaluaciones);
+                                }
+                            }
+                            decimal avancePromedio = subCatCount > 0 ? Math.Round(avanceTotal / subCatCount, 0) : 0;
+
+                            <div class="eval-consult-card" style="@(permiso == 0 ? "opacity: 0.82;" : "")">
+                                <div>
+                                    <div class="eval-consult-header">
+                                        <div class="eval-icon-circle-box" style="background-color: @cardBg; color: @cardColor;">
+                                            <i class="@cardIcon" style="font-size: 22px;"></i>
+                                        </div>
+                                        <h4 class="eval-consult-title">
                                             @eval.Titulo
                                         </h4>
-                                        @if (eval.SubCategorias.Count > 0)
-                                        {
-                                            string detail = string.Empty;
-                                            <div style="margin-bottom: 12px;">
-                                                <label style="font-size: 13px; font-weight: 600; color: #64748b; margin-bottom: 4px; display: block; text-align: left;">
-                                                    Subcomponente:
-                                                </label>
-                                                <select class="form-control modern-select" style="width: 100%; font-size: 13px;" id="@("C" + eval.Id)" onchange="javascript:calcularPorcentaje('@("C" + eval.Id)')" name="subCategoria">
-                                                    <option value="0">@(permiso == 0 ? "No aparece como responsable" : "-- Seleccione --")</option>
-                                                    @if (permiso != 0)
-                                                    {
-                                                        categoria = 0;
-                                                        foreach (var item in eval.SubCategorias)
-                                                        {
-                                                            categoria = item.Id;
-                                                            if (FGA.Utility.Utilitarios.GetSubCategoriaPorcentaje(categoria, Model.evaluaciones) == 100)
-                                                            {
-                                                                detail = " (Completado)";
-                                                            }
-                                                            else
-                                                            {
-                                                                detail = " (Pendiente)";
-                                                            }
-                                                            <option value="@item.Id">
-                                                                @(item.Enunciado + detail)
-                                                            </option>
-                                                        }
-                                                    }
-                                                </select>
-                                            </div>
+                                        <div class="eval-consult-chevron" onclick="javascript:focusSubcomp('@("C" + eval.Id)')" title="Abrir subcomponente">
+                                            <i class="fa fa-chevron-right"></i>
+                                        </div>
+                                    </div>
+                                    <p class="eval-consult-desc">
+                                        @cardDesc
+                                    </p>
+                                </div>
 
-                                            var porcentajeCat = FGA.Utility.Utilitarios.GetPorcentaje(categoria, Model.evaluaciones);
-                                            <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 10px;">
-                                                <span style="font-size: 13px; font-weight: 600; color: #475569;">Avance:</span>
-                                                <span id="@("porc_avance_C" + eval.Id)" style="font-size: 14px; font-weight: 700; color: #0284c7;">@(porcentajeCat)</span>
-                                            </div>
-                                            <div class="eval-progress-container">
-                                                <div id="@("bar_C" + eval.Id)" class="eval-progress-fill" style="width: @(porcentajeCat);"></div>
-                                            </div>
-                                        }
+                                <div class="eval-consult-footer">
+                                    <div class="eval-field-row">
+                                        <label class="eval-field-label">Subcomponente:</label>
+                                        <select class="eval-field-select" id="@("C" + eval.Id)" onchange="javascript:calcularPorcentaje('@("C" + eval.Id)')" name="subCategoria">
+                                            <option value="0">@(permiso == 0 ? "No autorizado como responsable" : "--Seleccione--")</option>
+                                            @if (permiso != 0 && eval.SubCategorias.Count > 0)
+                                            {
+                                                foreach (var item in eval.SubCategorias)
+                                                {
+                                                    string detail = FGA.Utility.Utilitarios.GetSubCategoriaPorcentaje(item.Id, Model.evaluaciones) == 100 
+                                                        ? " (Completado)" 
+                                                        : " (Pendiente)";
+                                                    <option value="@item.Id">
+                                                        @(item.Enunciado + detail)
+                                                    </option>
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+
+                                    <div class="eval-field-row">
+                                        <label class="eval-field-label">Avance:</label>
+                                        <span id="@("porc_avance_C" + eval.Id)" class="eval-avance-val-highlight">
+                                            @(avancePromedio)%
+                                        </span>
                                     </div>
                                 </div>
                             </div>
+
                             <input type="hidden" value="0" id="S0" />
-                            foreach (var item in eval.SubCategorias)
+                            if (eval.SubCategorias != null)
                             {
-                                <input type="hidden" value="@(FGA.Utility.Utilitarios.GetPorcentaje(item.Id, Model.evaluaciones))" id="@("S" + item.Id.ToString())" />
+                                foreach (var item in eval.SubCategorias)
+                                {
+                                    <input type="hidden" value="@(FGA.Utility.Utilitarios.GetPorcentaje(item.Id, Model.evaluaciones))" id="@("S" + item.Id.ToString())" />
+                                }
                             }
                         }
                     </div>
                 }
             </div>
+
         </div>
     </div>
 </div>
@@ -406,6 +602,8 @@
     function back(id) {
         $($('#navWizardSteps li > a')[id]).tab('show');
     }
+
+    function focusSubcomp(selectId) { var el = document.getElementById(selectId); if (el) { el.focus(); if (el.selectedIndex > 0) { calcularPorcentaje(selectId); } } }
 
     function calcularPorcentaje(id) {
         var subCategoria = $('#' + id).val();

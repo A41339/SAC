@@ -95,6 +95,7 @@ namespace FGA.Models
         public decimal VarInteranualMonto { get; set; }
         public decimal VarInteranualPct { get; set; }
         public bool HasData { get; set; }
+        public bool HasInteranual { get; set; }
     }
 }
 
