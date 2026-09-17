@@ -9,6 +9,8 @@ namespace FGA.Models
         public string Titulo { get; set; } = "";
         public string Subtitulo { get; set; } = "";
         public string NotaPie { get; set; } = "";
+        public int? ParentMenuId { get; set; }
+        public string ParentMenuTitulo { get; set; } = "";
 
         // Filtros globales
         public string IdEntidad { get; set; } = "";
@@ -30,5 +32,7 @@ namespace FGA.Models
         public string ColorFondoIcono { get; set; } = "#e0f2fe";
         public string ColorIcono { get; set; } = "#0284c7";
         public int SortOrder { get; set; }
+        public bool EsSubModulo { get; set; }
+        public int CantidadOpciones { get; set; }
     }
 }

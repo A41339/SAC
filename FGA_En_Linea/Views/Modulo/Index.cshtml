@@ -257,6 +257,14 @@
 <section class="content-header" style="padding: 24px 20px 10px 20px;">
     <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
         <div class="hub-header">
+            @if (Model.ParentMenuId.HasValue && !string.IsNullOrEmpty(Model.ParentMenuTitulo))
+            {
+                <div style="margin-bottom: 8px;">
+                    <a href="@Url.Action("Index", "Modulo", new { id = Model.ParentMenuId.Value })" style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: #0284c7; text-decoration: none;">
+                        <i class="fa fa-arrow-left"></i> Volver a @Model.ParentMenuTitulo
+                    </a>
+                </div>
+            }
             <h1>
                 @Model.Titulo
             </h1>
@@ -267,6 +275,10 @@
     </div>
     <ol class="breadcrumb">
         <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
+        @if (Model.ParentMenuId.HasValue && !string.IsNullOrEmpty(Model.ParentMenuTitulo))
+        {
+            <li><a href="@Url.Action("Index", "Modulo", new { id = Model.ParentMenuId.Value })">@Model.ParentMenuTitulo</a></li>
+        }
         <li class="active">@Model.Titulo</li>
     </ol>
 </section>
@@ -340,7 +352,15 @@
                         <div class="hub-card-icon-badge" style="background-color: @tarjeta.ColorFondoIcono; color: @tarjeta.ColorIcono;">
                             <i class="@tarjeta.Icono"></i>
                         </div>
-                        <i class="fa fa-chevron-right hub-card-arrow"></i>
+                        <div style="display: flex; align-items: center; gap: 8px; margin-left: auto;">
+                            @if (tarjeta.EsSubModulo)
+                            {
+                                <span style="display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 600; color: #0284c7; background: #e0f2fe; padding: 3px 8px; border-radius: 6px;">
+                                    <i class="fa fa-folder-open-o"></i> Subm&oacute;dulo@(tarjeta.CantidadOpciones > 0 ? " (" + tarjeta.CantidadOpciones + ")" : "")
+                                </span>
+                            }
+                            <i class="fa fa-chevron-right hub-card-arrow"></i>
+                        </div>
                     </div>
                     <div class="hub-card-title">@tarjeta.Titulo</div>
                     <p class="hub-card-desc">@tarjeta.Descripcion</p>

@@ -32,6 +32,16 @@ namespace FGA.Utility
                 Subtitulo = "An\u00e1lisis de colocaci\u00f3n, morosidad y concentraci\u00f3n de la cartera de cr\u00e9dito",
                 NotaPie = "Nota: Informaci\u00f3n calculada con base en los saldos y categor\u00edas de riesgo registradas."
             },
+            ["Cartera de Cr\u00e9dito"] = new ModuloMeta
+            {
+                Subtitulo = "An\u00e1lisis de colocaci\u00f3n, morosidad y concentraci\u00f3n de la cartera de cr\u00e9dito",
+                NotaPie = "Nota: Informaci\u00f3n calculada con base en los saldos y categor\u00edas de riesgo registradas."
+            },
+            ["Cartera de Credito"] = new ModuloMeta
+            {
+                Subtitulo = "An\u00e1lisis de colocaci\u00f3n, morosidad y concentraci\u00f3n de la cartera de cr\u00e9dito",
+                NotaPie = "Nota: Informaci\u00f3n calculada con base en los saldos y categor\u00edas de riesgo registradas."
+            },
             ["Cr\u00e9ditos"] = new ModuloMeta
             {
                 Subtitulo = "Plataforma de negociaci\u00f3n y gesti\u00f3n de cartera crediticia interinstitucional",
@@ -164,6 +174,20 @@ namespace FGA.Utility
             },
 
             // === CARTERA ===
+            ["Cartera de Cr\u00e9dito"] = new CardMeta
+            {
+                Descripcion = "Monitoreo de colocaci\u00f3n, morosidad, acuerdos regulatorios y transici\u00f3n de riesgo.",
+                Icono = "fa fa-pie-chart",
+                ColorFondoIcono = "#e0e7ff",
+                ColorIcono = "#4338ca"
+            },
+            ["Cartera de Credito"] = new CardMeta
+            {
+                Descripcion = "Monitoreo de colocaci\u00f3n, morosidad, acuerdos regulatorios y transici\u00f3n de riesgo.",
+                Icono = "fa fa-pie-chart",
+                ColorFondoIcono = "#e0e7ff",
+                ColorIcono = "#4338ca"
+            },
             ["Cartera 14-21"] = new CardMeta
             {
                 Descripcion = "Monitoreo de saldos de cartera seg\u00fan acuerdo SUGEF 14-21.",

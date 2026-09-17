@@ -103,10 +103,27 @@ namespace FGA.Controllers
                     var m = child.Menu_MenuId;
                     var cardMeta = MenuCatalogService.GetCardMeta(m.MenuText, m.MenuURL, m.MenuIcon);
 
-                    string cleanUrl = (m.MenuURL ?? "").Trim();
-                    if (!cleanUrl.StartsWith("~") && !cleanUrl.StartsWith("/"))
+                    bool isSubMenu = string.Equals(m.MenuURL?.Trim(), "root", StringComparison.OrdinalIgnoreCase)
+                                     || string.IsNullOrWhiteSpace(m.MenuURL)
+                                     || m.MenuURL.Trim() == "#"
+                                     || allPermitted.Any(c => c.Menu_MenuId != null && c.Menu_MenuId.ParentId == m.Id);
+
+                    string targetUrl = "";
+                    int subOptionsCount = 0;
+
+                    if (isSubMenu)
                     {
-                        cleanUrl = "~/" + cleanUrl;
+                        targetUrl = Url.Action("Index", "Modulo", new { id = m.Id });
+                        subOptionsCount = allPermitted.Count(c => c.Menu_MenuId != null && c.Menu_MenuId.ParentId == m.Id);
+                    }
+                    else
+                    {
+                        string cleanUrl = (m.MenuURL ?? "").Trim();
+                        if (!cleanUrl.StartsWith("~") && !cleanUrl.StartsWith("/"))
+                        {
+                            cleanUrl = "~/" + cleanUrl;
+                        }
+                        targetUrl = Url.Content(cleanUrl);
                     }
 
                     tarjetas.Add(new ModuloTarjetaItem
@@ -114,11 +131,13 @@ namespace FGA.Controllers
                         Id = m.Id,
                         Titulo = m.MenuText ?? "",
                         Descripcion = cardMeta.Descripcion,
-                        Url = Url.Content(cleanUrl),
+                        Url = targetUrl,
                         Icono = cardMeta.Icono,
                         ColorFondoIcono = cardMeta.ColorFondoIcono,
                         ColorIcono = cardMeta.ColorIcono,
-                        SortOrder = child.SortOrder ?? m.SortOrder ?? 0
+                        SortOrder = child.SortOrder ?? m.SortOrder ?? 0,
+                        EsSubModulo = isSubMenu,
+                        CantidadOpciones = subOptionsCount
                     });
                 }
 
@@ -135,12 +154,27 @@ namespace FGA.Controllers
                     formattedPeriodo = DateTime.Now.ToString("MM/yyyy");
                 }
 
+                // Si el módulo actual tiene un padre (es un sub-módulo), obtener info del padre
+                int? parentMenuId = null;
+                string parentMenuTitulo = "";
+                if (rootPerm.Menu_MenuId.ParentId.HasValue)
+                {
+                    var parentPerm = allPermitted.FirstOrDefault(p => p.Menu_MenuId != null && p.Menu_MenuId.Id == rootPerm.Menu_MenuId.ParentId.Value);
+                    if (parentPerm != null && parentPerm.Menu_MenuId != null)
+                    {
+                        parentMenuId = parentPerm.Menu_MenuId.Id;
+                        parentMenuTitulo = parentPerm.Menu_MenuId.MenuText ?? "";
+                    }
+                }
+
                 var model = new ModuloHubViewModel
                 {
                     MenuId = rootId,
                     Titulo = titulo,
                     Subtitulo = moduloMeta.Subtitulo,
                     NotaPie = moduloMeta.NotaPie,
+                    ParentMenuId = parentMenuId,
+                    ParentMenuTitulo = parentMenuTitulo,
                     IdEntidad = Session["IdEntidad"]?.ToString() ?? "",
                     PeriodoReferencia = formattedPeriodo,
                     TipoComparacion = Session["TipoComparacion"]?.ToString() ?? "Mensual",
