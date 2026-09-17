@@ -119,26 +119,50 @@ namespace FGA.Utility
                 Subtitulo = "Evaluaci\u00f3n y seguimiento de la Supervisi\u00f3n Basada en Riesgos (SBR)",
                 NotaPie = "Nota: Los resultados de autoevaluaci\u00f3n se procesan seg\u00fan la metodolog\u00eda SUGEF."
             },
+            ["Mantenimientos"] = new ModuloMeta
+            {
+                Subtitulo = "Gestión de catálogos, fórmulas, entidades, parámetros y roles del sistema",
+                NotaPie = "Nota: Los cambios y configuraciones quedan debidamente registrados en la bitácora del sistema."
+            },
+            ["Mantenimiento"] = new ModuloMeta
+            {
+                Subtitulo = "Gestión de catálogos, fórmulas, entidades, parámetros y roles del sistema",
+                NotaPie = "Nota: Los cambios y configuraciones quedan debidamente registrados en la bitácora del sistema."
+            },
             ["Administracion"] = new ModuloMeta
             {
-                Subtitulo = "Gesti\u00f3n de usuarios, roles, par\u00e1metros y configuraciones del sistema",
-                NotaPie = "Nota: Los cambios en configuraciones quedan auditados en la bit\u00e1cora de seguridad."
+                Subtitulo = "Gestión de usuarios, roles, parámetros y configuraciones del sistema",
+                NotaPie = "Nota: Los cambios en configuraciones quedan auditados en la bitácora de seguridad."
             },
-            ["Administraci\u00f3n"] = new ModuloMeta
+            ["Administración"] = new ModuloMeta
             {
-                Subtitulo = "Gesti\u00f3n de usuarios, roles, par\u00e1metros y configuraciones del sistema",
-                NotaPie = "Nota: Los cambios en configuraciones quedan auditados en la bit\u00e1cora de seguridad."
+                Subtitulo = "Gestión de usuarios, roles, parámetros y configuraciones del sistema",
+                NotaPie = "Nota: Los cambios en configuraciones quedan auditados en la bitácora de seguridad."
             },
             ["Seguridad"] = new ModuloMeta
             {
-                Subtitulo = "Monitoreo de sesiones activas y auditor\u00eda de accesos a la plataforma",
-                NotaPie = "Nota: Los registros de sesi\u00f3n se actualizan autom\u00e1ticamente en tiempo real."
+                Subtitulo = "Monitoreo de sesiones activas y auditoría de accesos a la plataforma",
+                NotaPie = "Nota: Los registros de sesión se actualizan automáticamente en tiempo real."
             }
         };
 
         // Metadatos de tarjetas hijas (por coincidencia de URL o texto)
         private static readonly Dictionary<string, CardMeta> Tarjetas = new Dictionary<string, CardMeta>(StringComparer.OrdinalIgnoreCase)
         {
+            ["Role/Index"] = new CardMeta
+            {
+                Descripcion = "Gestión de perfiles de usuario y configuración de permisos de acceso al menú",
+                Icono = "fa fa-shield",
+                ColorFondoIcono = "#e0f2fe",
+                ColorIcono = "#0284c7"
+            },
+            ["Roles"] = new CardMeta
+            {
+                Descripcion = "Gestión de perfiles de usuario y configuración de permisos de acceso al menú",
+                Icono = "fa fa-shield",
+                ColorFondoIcono = "#e0f2fe",
+                ColorIcono = "#0284c7"
+            },
             // === ESTRUCTURA FINANCIERA (Maqueta original) ===
             ["Estados Financieros"] = new CardMeta
             {

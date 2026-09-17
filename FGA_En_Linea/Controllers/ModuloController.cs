@@ -80,9 +80,19 @@ namespace FGA.Controllers
                 else if (!string.IsNullOrWhiteSpace(modulo))
                 {
                     string modClean = modulo.Trim();
+
+                    // 0. Si se envió un ID numérico en el parámetro modulo (ej. ?modulo=9000)
+                    if (int.TryParse(modClean, out int parsedId))
+                    {
+                        rootPerm = allPermitted.FirstOrDefault(p => p.Menu_MenuId != null && p.Menu_MenuId.Id == parsedId);
+                    }
+
                     // 1. Coincidencia exacta por nombre
-                    rootPerm = allPermitted.FirstOrDefault(p => p.Menu_MenuId != null && p.Menu_MenuId.MenuText != null &&
-                        string.Equals(p.Menu_MenuId.MenuText.Trim(), modClean, StringComparison.OrdinalIgnoreCase));
+                    if (rootPerm == null)
+                    {
+                        rootPerm = allPermitted.FirstOrDefault(p => p.Menu_MenuId != null && p.Menu_MenuId.MenuText != null &&
+                            string.Equals(p.Menu_MenuId.MenuText.Trim(), modClean, StringComparison.OrdinalIgnoreCase));
+                    }
 
                     // 2. Coincidencia normalizada sin tildes ni mayúsculas
                     if (rootPerm == null)
@@ -93,13 +103,17 @@ namespace FGA.Controllers
                              NormalizarTexto(p.Menu_MenuId.MenuText).Contains(modNorm) ||
                              modNorm.Contains(NormalizarTexto(p.Menu_MenuId.MenuText))));
 
-                        // 3. Mapeo de alias comunes hacia su módulo contenedor (ej. Seguridad -> Administración)
+                        // 3. Mapeo de alias comunes hacia su módulo contenedor (Mantenimientos 9000 / Administración)
                         if (rootPerm == null)
                         {
-                            if (modNorm == "seguridad" || modNorm == "roles" || modNorm == "usuarios" || modNorm == "evaluacion" || modNorm == "evaluaciones")
+                            if (modNorm == "seguridad" || modNorm == "roles" || modNorm == "usuarios" ||
+                                modNorm == "evaluacion" || modNorm == "evaluaciones" ||
+                                modNorm.Contains("administra") || modNorm.Contains("mantenimiento"))
                             {
-                                rootPerm = allPermitted.FirstOrDefault(p => p.Menu_MenuId != null && p.Menu_MenuId.MenuText != null &&
-                                    (NormalizarTexto(p.Menu_MenuId.MenuText) == "administracion" || NormalizarTexto(p.Menu_MenuId.MenuText).Contains("administra")));
+                                // Prioridad 1: Módulo 9000 (Mantenimientos)
+                                rootPerm = allPermitted.FirstOrDefault(p => p.Menu_MenuId != null && p.Menu_MenuId.Id == 9000)
+                                           ?? allPermitted.FirstOrDefault(p => p.Menu_MenuId != null && p.Menu_MenuId.MenuText != null &&
+                                               (NormalizarTexto(p.Menu_MenuId.MenuText).Contains("mantenimiento") || NormalizarTexto(p.Menu_MenuId.MenuText).Contains("administra")));
                             }
                         }
                     }
@@ -316,6 +330,7 @@ namespace FGA.Controllers
         {
             if (string.IsNullOrEmpty(s)) return string.Empty;
             return s.Trim().ToLower()
+                .Replace("ã³", "o").Replace("ã¡", "a").Replace("ã©", "e").Replace("ã­", "i").Replace("ãº", "u").Replace("ã±", "n")
                 .Replace("á", "a").Replace("é", "e").Replace("í", "i").Replace("ó", "o").Replace("ú", "u")
                 .Replace("ñ", "n");
         }

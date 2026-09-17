@@ -1451,6 +1451,7 @@
             // Vinculación interactiva y auto-resolución del Menú Papá en Breadcrumbs
             // ==========================================================================
             var moduloBaseUrl = '@Url.Action("Index", "Modulo")';
+            var moduloMantenimientosUrl = '@Url.Action("Index", "Modulo", new { id = 9000 })';
 
             // 1. Obtener el módulo padre raíz activo desde el menú lateral (calculado autoritativamente por el servidor)
             var $activeSidebarLink = $('.sidebar-menu li.active > a').first();
@@ -1462,12 +1463,13 @@
                 parentModuleUrl = $activeSidebarLink.attr('href');
                 parentModuleName = $.trim($activeSidebarLink.find('span').first().text());
                 var $i = $activeSidebarLink.find('i').first();
-                parentModuleIcon = ($i.length && $i.attr('class')) ? $i.attr('class') : 'fa fa-cogs';
+                parentModuleIcon = ($i.length && $i.attr('class')) ? $i.attr('class') : 'fa fa-wrench';
             }
 
             function normalizar(texto) {
                 if (!texto) return '';
                 return texto.toLowerCase()
+                    .replace(/ã³/g, 'o').replace(/ã¡/g, 'a').replace(/ã©/g, 'e').replace(/ã­/g, 'i').replace(/ãº/g, 'u').replace(/ã±/g, 'n')
                     .replace(/á/g, 'a').replace(/é/g, 'e').replace(/í/g, 'i').replace(/ó/g, 'o').replace(/ú/g, 'u').replace(/ñ/g, 'n').trim();
             }
 
@@ -1475,11 +1477,13 @@
                 if (!texto) return null;
                 var tNorm = normalizar(texto);
 
-                // Si coincide con alias de administración, retornar administración
-                if (tNorm === 'seguridad' || tNorm === 'roles' || tNorm === 'usuarios' || tNorm === 'evaluacion' || tNorm === 'evaluaciones') {
-                    if (parentModuleUrl && normalizar(parentModuleName).indexOf('administra') !== -1) {
+                // Si coincide con mantenimiento, administración, roles o seguridad, apuntar directamente al módulo 9000 (Mantenimientos)
+                if (tNorm === 'seguridad' || tNorm === 'roles' || tNorm === 'usuarios' || tNorm === 'evaluacion' || tNorm === 'evaluaciones' ||
+                    tNorm.indexOf('administra') !== -1 || tNorm.indexOf('mantenimiento') !== -1) {
+                    if (parentModuleUrl && (parentModuleUrl.indexOf('9000') !== -1 || normalizar(parentModuleName).indexOf('mantenimiento') !== -1)) {
                         return parentModuleUrl;
                     }
+                    return moduloMantenimientosUrl;
                 }
 
                 var found = null;
@@ -1490,7 +1494,7 @@
                         return false;
                     }
                 });
-                return found || (moduloBaseUrl + '?modulo=' + encodeURIComponent(texto));
+                return found || moduloMantenimientosUrl;
             }
 
             $('.breadcrumb').each(function () {
@@ -1530,10 +1534,14 @@
 
                     if (!norm || norm === 'inicio') return;
 
-                    // Si el elemento dice "Seguridad" o "Evaluación" y el padre es Administración, corregir al padre
-                    if ((norm === 'seguridad' || norm === 'evaluacion' || norm === 'evaluaciones') && parentModuleName && normalizar(parentModuleName).indexOf('administra') !== -1) {
-                        $li.html('<a href="' + parentModuleUrl + '" class="breadcrumb-parent-pill" title="Volver al menú principal de ' + parentModuleName + '">' +
-                            '<i class="' + parentModuleIcon + '"></i> ' + parentModuleName + '</a>');
+                    // Si el elemento es Seguridad, Roles, Evaluación, Administración o Mantenimientos, garantizar enlace al papá 9000
+                    if (norm === 'seguridad' || norm === 'evaluacion' || norm === 'evaluaciones' ||
+                        norm.indexOf('administra') !== -1 || norm.indexOf('mantenimiento') !== -1) {
+                        var pUrl = (parentModuleUrl && parentModuleUrl.indexOf('9000') !== -1) ? parentModuleUrl : moduloMantenimientosUrl;
+                        var pName = (parentModuleName && normalizar(parentModuleName).indexOf('mantenimiento') !== -1) ? parentModuleName : 'Mantenimientos';
+                        var pIcon = (parentModuleIcon && parentModuleIcon.indexOf('wrench') !== -1) ? parentModuleIcon : 'fa fa-wrench';
+                        $li.html('<a href="' + pUrl + '" class="breadcrumb-parent-pill" title="Volver al menú de ' + pName + '">' +
+                            '<i class="' + pIcon + '" style="margin-right: 4px;"></i> ' + pName + '</a>');
                         return;
                     }
 
@@ -1542,7 +1550,7 @@
                         $li.html('<a href="' + targetUrl + '" class="breadcrumb-parent-pill" title="Volver al menú principal de ' + rawText + '">' + rawText + '</a>');
                     } else {
                         var href = $a.attr('href');
-                        if (!href || href === '#' || href === '' || href.indexOf('javascript') === 0) {
+                        if (!href || href === '#' || href === '' || href.indexOf('javascript') === 0 || href.indexOf('modulo=') !== -1) {
                             var targetUrl = resolverUrlModulo(rawText);
                             $a.attr('href', targetUrl);
                         }
