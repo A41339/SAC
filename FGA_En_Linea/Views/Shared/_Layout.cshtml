@@ -139,6 +139,10 @@
             }
             if (typeof Highcharts !== 'undefined') {
                 Highcharts.setOptions({
+                    lang: {
+                        viewData: '<i class="fa fa-table" style="color: #4338ca; margin-right: 10px; width: 16px; text-align: center;"></i> Ver datos',
+                        hideData: '<i class="fa fa-table" style="color: #4338ca; margin-right: 10px; width: 16px; text-align: center;"></i> Ocultar datos'
+                    },
                     chart: {
                         style: {
                             fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
@@ -726,7 +730,13 @@
         lang: {
             decimalPoint: '.',
             thousandsSep: '',
-            viewData: '<i class="fa fa-table" style="color: #4338ca; margin-right: 10px; width: 16px; text-align: center;"></i> Ver tabla',
+            viewData: '<i class="fa fa-table" style="color: #4338ca; margin-right: 10px; width: 16px; text-align: center;"></i> Ver datos',
+            hideData: '<i class="fa fa-table" style="color: #4338ca; margin-right: 10px; width: 16px; text-align: center;"></i> Ocultar datos',
+            exportData: {
+                annotationHeader: 'Anotaciones',
+                categoryHeader: 'Categoría',
+                categoryDatetimeHeader: 'Fecha/Hora'
+            },
             downloadPNG: '<i class="fa fa-picture-o" style="color: #0284c7; margin-right: 10px; width: 16px; text-align: center;"></i> Descargar PNG',
             downloadJPEG: '<i class="fa fa-picture-o" style="color: #0284c7; margin-right: 10px; width: 16px; text-align: center;"></i> Descargar JPEG',
             downloadSVG: '<i class="fa fa-share-alt" style="color: #0284c7; margin-right: 10px; width: 16px; text-align: center;"></i> Descargar SVG',
@@ -905,7 +915,7 @@
             bestLink.parents('.treeview').addClass('active menu-open');
         }
 
-        // Estilo dinamico y ultra-robusto para separadores del menu de exportacion de Highcharts
+        // Estilo dinamico y ultra-robusto para separadores y traducciones del menu de exportacion de Highcharts
         function cleanHighchartsSeparators() {
             $('.highcharts-separator, li[role="separator"], .highcharts-menu-item.highcharts-separator, .highcharts-contextmenu hr, .highcharts-menu hr, div[class*="highcharts"] hr, .highcharts-container hr').each(function () {
                 var $el = $(this);
@@ -913,6 +923,17 @@
                 var $p = $el.parent();
                 if ($p.is('li') && !$p.hasClass('highcharts-separator')) {
                     $p.attr('style', 'display:block !important; padding:0 !important; margin:3px 0 !important; height:1px !important; min-height:0 !important; max-height:1px !important; line-height:0 !important; background:transparent !important; cursor:default !important; pointer-events:none !important;');
+                }
+            });
+
+            // Normalizar y traducir dinamicamente cualquier opcion o boton "Hide data table" / "View data table"
+            $('.highcharts-menu-item, .highcharts-contextmenu li, button, .highcharts-data-table button').each(function () {
+                var $t = $(this);
+                var raw = $.trim($t.text()).toLowerCase();
+                if (raw === 'hide data table' || raw.indexOf('hide data') !== -1) {
+                    $t.html('<i class="fa fa-table" style="color: #4338ca; margin-right: 10px; width: 16px; text-align: center;"></i> Ocultar datos');
+                } else if (raw === 'view data table' || raw.indexOf('view data') !== -1) {
+                    $t.html('<i class="fa fa-table" style="color: #4338ca; margin-right: 10px; width: 16px; text-align: center;"></i> Ver datos');
                 }
             });
         }
@@ -923,6 +944,12 @@
             setTimeout(cleanHighchartsSeparators, 40);
             setTimeout(cleanHighchartsSeparators, 100);
             setTimeout(cleanHighchartsSeparators, 250);
+        });
+
+        $(document).on('click', '.highcharts-menu-item, .highcharts-contextmenu li, .highcharts-data-table button', function () {
+            setTimeout(cleanHighchartsSeparators, 20);
+            setTimeout(cleanHighchartsSeparators, 80);
+            setTimeout(cleanHighchartsSeparators, 200);
         });
 
         $(document).on('mouseenter mouseover', '.highcharts-menu-item, .highcharts-contextmenu, .highcharts-menu', function () {
