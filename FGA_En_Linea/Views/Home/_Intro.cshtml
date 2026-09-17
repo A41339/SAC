@@ -446,18 +446,18 @@
 
             <div class="table-responsive" style="margin-bottom: 0;">
             <style>
-                .perdida-esperada-card .table td { text-align: center !important; }
-                .perdida-esperada-card .table td:first-child { text-align: left !important; padding-left: 14px !important; }
-                .perdida-esperada-card .table th { text-align: center !important; }
-                .perdida-esperada-card .table th:first-child { text-align: left !important; padding-left: 14px !important; }
+                .perdida-esperada-card .table td { text-align: center !important; vertical-align: middle !important; }
+                .perdida-esperada-card .table tbody td:first-child { text-align: left !important; padding-left: 14px !important; }
+                .perdida-esperada-card .table th { text-align: center !important; vertical-align: middle !important; }
+                .perdida-esperada-card .table thead tr:first-child th:first-child { text-align: left !important; padding-left: 14px !important; }
             </style>
                 <table class="table table-bordered" style="margin-bottom: 0; border: 1px solid #bae6fd; font-size: 13px; background-color: #ffffff;">
                     <thead>
                         <tr style="background-color: #e0f2fe; color: #0369a1;">
                             <th rowspan="2" style="vertical-align: middle; font-weight: 600; border: 1px solid #bae6fd; text-align: left; padding-left: 14px;">Concepto</th>
-                            <th rowspan="2" style="vertical-align: middle; font-weight: 600; border: 1px solid #bae6fd; min-width: 90px;">@(string.IsNullOrEmpty(modelData?.PerdidaEsperadaTabla?.PeriodoAnterior) ? "Anterior" : modelData.PerdidaEsperadaTabla.PeriodoAnterior)</th>
-                            <th rowspan="2" style="vertical-align: middle; font-weight: 600; border: 1px solid #bae6fd; min-width: 90px;">@(string.IsNullOrEmpty(modelData?.PerdidaEsperadaTabla?.PeriodoActual) ? "Actual" : modelData.PerdidaEsperadaTabla.PeriodoActual)</th>
-                            <th colspan="2" style="vertical-align: middle; font-weight: 600; border: 1px solid #bae6fd; padding: 7px 8px;">
+                            <th rowspan="2" style="vertical-align: middle; font-weight: 600; border: 1px solid #bae6fd; min-width: 90px; text-align: center !important;">@(string.IsNullOrEmpty(modelData?.PerdidaEsperadaTabla?.PeriodoAnterior) ? "Anterior" : modelData.PerdidaEsperadaTabla.PeriodoAnterior)</th>
+                            <th rowspan="2" style="vertical-align: middle; font-weight: 600; border: 1px solid #bae6fd; min-width: 90px; text-align: center !important;">@(string.IsNullOrEmpty(modelData?.PerdidaEsperadaTabla?.PeriodoActual) ? "Actual" : modelData.PerdidaEsperadaTabla.PeriodoActual)</th>
+                            <th colspan="2" style="vertical-align: middle; font-weight: 600; border: 1px solid #bae6fd; padding: 7px 8px; text-align: center !important;">
                                 <div style="font-size: 13px; font-weight: 700; color: #0369a1; line-height: 1.2;">Variaci&oacute;n mensual</div>
                                 @if (!string.IsNullOrEmpty(modelData?.PerdidaEsperadaTabla?.PeriodoRefMensual))
                                 {
@@ -468,7 +468,7 @@
                                     </div>
                                 }
                             </th>
-                            <th colspan="2" style="vertical-align: middle; font-weight: 600; border: 1px solid #bae6fd; padding: 7px 8px;">
+                            <th colspan="2" style="vertical-align: middle; font-weight: 600; border: 1px solid #bae6fd; padding: 7px 8px; text-align: center !important;">
                                 <div style="font-size: 13px; font-weight: 700; color: #0369a1; line-height: 1.2;">Variaci&oacute;n anual</div>
                                 @if (!string.IsNullOrEmpty(modelData?.PerdidaEsperadaTabla?.PeriodoRefInteranual))
                                 {
@@ -481,21 +481,137 @@
                             </th>
                         </tr>
                         <tr style="background-color: #e0f2fe; color: #0369a1;">
-                            <th style="font-weight: 600; border: 1px solid #bae6fd; font-size: 12px; min-width: 85px;">Variaci&oacute;n</th>
-                            <th style="font-weight: 600; border: 1px solid #bae6fd; font-size: 12px; min-width: 70px;">%</th>
-                            <th style="font-weight: 600; border: 1px solid #bae6fd; font-size: 12px; min-width: 85px;">Variaci&oacute;n</th>
-                            <th style="font-weight: 600; border: 1px solid #bae6fd; font-size: 12px; min-width: 70px;">%</th>
+                            <th style="font-weight: 600; border: 1px solid #bae6fd; font-size: 12px; min-width: 90px; text-align: center !important; vertical-align: middle !important;">Variaci&oacute;n</th>
+                            <th style="font-weight: 600; border: 1px solid #bae6fd; font-size: 12px; min-width: 75px; text-align: center !important; vertical-align: middle !important;">%</th>
+                            <th style="font-weight: 600; border: 1px solid #bae6fd; font-size: 12px; min-width: 90px; text-align: center !important; vertical-align: middle !important;">Variaci&oacute;n</th>
+                            <th style="font-weight: 600; border: 1px solid #bae6fd; font-size: 12px; min-width: 75px; text-align: center !important; vertical-align: middle !important;">%</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr style="background-color: #ffffff; color: #1e40af; font-weight: 700; text-align: center !important;">
                             <td style="text-align: left !important; padding-left: 14px; border: 1px solid #e0f2fe; font-weight: 700; color: #1e40af;">P&eacute;rdidas esperadas</td>
-                            <td style="text-align: center !important; border: 1px solid #e0f2fe; font-size: 14px; color: #1e40af;">@(modelData?.PerdidaEsperadaTabla != null ? modelData.PerdidaEsperadaTabla.MontoAnterior.ToString("N3") : "0.000")</td>
-                            <td style="text-align: center !important; border: 1px solid #e0f2fe; font-size: 14px; color: #1e40af;">@(modelData?.PerdidaEsperadaTabla != null ? modelData.PerdidaEsperadaTabla.MontoActual.ToString("N3") : "0.000")</td>
-                            <td style="text-align: center !important; border: 1px solid #e0f2fe; font-size: 14px; color: #1e40af;">@(modelData?.PerdidaEsperadaTabla != null ? (modelData.PerdidaEsperadaTabla.HasMensual ? modelData.PerdidaEsperadaTabla.VarMensualMonto.ToString("N3") : "N/D") : "N/D")</td>
-                            <td style="text-align: center !important; border: 1px solid #e0f2fe; font-size: 14px; color: #1e40af;">@(modelData?.PerdidaEsperadaTabla != null ? (modelData.PerdidaEsperadaTabla.HasMensual ? modelData.PerdidaEsperadaTabla.VarMensualPct.ToString("N1") + "%" : "N/D") : "N/D")</td>
-                            <td style="text-align: center !important; border: 1px solid #e0f2fe; font-size: 14px; color: #1e40af;">@(modelData?.PerdidaEsperadaTabla != null ? (modelData.PerdidaEsperadaTabla.HasInteranual ? modelData.PerdidaEsperadaTabla.VarInteranualMonto.ToString("N3") : "N/D") : "N/D")</td>
-                            <td style="text-align: center !important; border: 1px solid #e0f2fe; font-size: 14px; color: #1e40af;">@(modelData?.PerdidaEsperadaTabla != null ? (modelData.PerdidaEsperadaTabla.HasInteranual ? modelData.PerdidaEsperadaTabla.VarInteranualPct.ToString("N1") + "%" : "N/D") : "N/D")</td>
+                            <td style="text-align: center !important; vertical-align: middle !important; border: 1px solid #e0f2fe; font-size: 14px; color: #1e40af;">@(modelData?.PerdidaEsperadaTabla != null ? modelData.PerdidaEsperadaTabla.MontoAnterior.ToString("N3") : "0.000")</td>
+                            <td style="text-align: center !important; vertical-align: middle !important; border: 1px solid #e0f2fe; font-size: 14px; color: #1e40af;">@(modelData?.PerdidaEsperadaTabla != null ? modelData.PerdidaEsperadaTabla.MontoActual.ToString("N3") : "0.000")</td>
+                            
+                            <!-- Variación Mensual: Valor -->
+                            <td style="text-align: center !important; vertical-align: middle !important; border: 1px solid #e0f2fe; font-size: 13.5px;">
+                                @if (modelData?.PerdidaEsperadaTabla != null && modelData.PerdidaEsperadaTabla.HasMensual)
+                                {
+                                    var v = modelData.PerdidaEsperadaTabla.VarMensualMonto;
+                                    if (v > 0)
+                                    {
+                                        <span style="display: inline-flex; align-items: center; justify-content: center; gap: 3px; color: #16a34a; font-weight: 700;">
+                                            <i class="fa fa-caret-up" style="font-size: 14px;"></i> +@v.ToString("N3")
+                                        </span>
+                                    }
+                                    else if (v < 0)
+                                    {
+                                        <span style="display: inline-flex; align-items: center; justify-content: center; gap: 3px; color: #dc2626; font-weight: 700;">
+                                            <i class="fa fa-caret-down" style="font-size: 14px;"></i> @v.ToString("N3")
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span style="display: inline-flex; align-items: center; justify-content: center; gap: 3px; color: #64748b; font-weight: 600;">
+                                            <i class="fa fa-minus" style="font-size: 10px;"></i> 0.000
+                                        </span>
+                                    }
+                                }
+                                else
+                                {
+                                    <span style="color: #94a3b8; font-weight: 600;">N/D</span>
+                                }
+                            </td>
+
+                            <!-- Variación Mensual: % -->
+                            <td style="text-align: center !important; vertical-align: middle !important; border: 1px solid #e0f2fe; font-size: 12.5px;">
+                                @if (modelData?.PerdidaEsperadaTabla != null && modelData.PerdidaEsperadaTabla.HasMensual)
+                                {
+                                    var p = modelData.PerdidaEsperadaTabla.VarMensualPct;
+                                    if (p > 0)
+                                    {
+                                        <span style="display: inline-flex; align-items: center; justify-content: center; gap: 3px; color: #15803d; background: #dcfce7; border: 1px solid #bbf7d0; padding: 2px 7px; border-radius: 10px; font-weight: 700;">
+                                            <i class="fa fa-caret-up" style="font-size: 12px;"></i> +@p.ToString("N1")%
+                                        </span>
+                                    }
+                                    else if (p < 0)
+                                    {
+                                        <span style="display: inline-flex; align-items: center; justify-content: center; gap: 3px; color: #b91c1c; background: #fee2e2; border: 1px solid #fecaca; padding: 2px 7px; border-radius: 10px; font-weight: 700;">
+                                            <i class="fa fa-caret-down" style="font-size: 12px;"></i> @p.ToString("N1")%
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span style="display: inline-flex; align-items: center; justify-content: center; gap: 3px; color: #64748b; background: #f1f5f9; border: 1px solid #e2e8f0; padding: 2px 7px; border-radius: 10px; font-weight: 600;">
+                                            <i class="fa fa-minus" style="font-size: 10px;"></i> 0.0%
+                                        </span>
+                                    }
+                                }
+                                else
+                                {
+                                    <span style="color: #94a3b8; font-weight: 600;">N/D</span>
+                                }
+                            </td>
+
+                            <!-- Variación Anual: Valor -->
+                            <td style="text-align: center !important; vertical-align: middle !important; border: 1px solid #e0f2fe; font-size: 13.5px;">
+                                @if (modelData?.PerdidaEsperadaTabla != null && modelData.PerdidaEsperadaTabla.HasInteranual)
+                                {
+                                    var v = modelData.PerdidaEsperadaTabla.VarInteranualMonto;
+                                    if (v > 0)
+                                    {
+                                        <span style="display: inline-flex; align-items: center; justify-content: center; gap: 3px; color: #16a34a; font-weight: 700;">
+                                            <i class="fa fa-caret-up" style="font-size: 14px;"></i> +@v.ToString("N3")
+                                        </span>
+                                    }
+                                    else if (v < 0)
+                                    {
+                                        <span style="display: inline-flex; align-items: center; justify-content: center; gap: 3px; color: #dc2626; font-weight: 700;">
+                                            <i class="fa fa-caret-down" style="font-size: 14px;"></i> @v.ToString("N3")
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span style="display: inline-flex; align-items: center; justify-content: center; gap: 3px; color: #64748b; font-weight: 600;">
+                                            <i class="fa fa-minus" style="font-size: 10px;"></i> 0.000
+                                        </span>
+                                    }
+                                }
+                                else
+                                {
+                                    <span style="color: #94a3b8; font-weight: 600;">N/D</span>
+                                }
+                            </td>
+
+                            <!-- Variación Anual: % -->
+                            <td style="text-align: center !important; vertical-align: middle !important; border: 1px solid #e0f2fe; font-size: 12.5px;">
+                                @if (modelData?.PerdidaEsperadaTabla != null && modelData.PerdidaEsperadaTabla.HasInteranual)
+                                {
+                                    var p = modelData.PerdidaEsperadaTabla.VarInteranualPct;
+                                    if (p > 0)
+                                    {
+                                        <span style="display: inline-flex; align-items: center; justify-content: center; gap: 3px; color: #15803d; background: #dcfce7; border: 1px solid #bbf7d0; padding: 2px 7px; border-radius: 10px; font-weight: 700;">
+                                            <i class="fa fa-caret-up" style="font-size: 12px;"></i> +@p.ToString("N1")%
+                                        </span>
+                                    }
+                                    else if (p < 0)
+                                    {
+                                        <span style="display: inline-flex; align-items: center; justify-content: center; gap: 3px; color: #b91c1c; background: #fee2e2; border: 1px solid #fecaca; padding: 2px 7px; border-radius: 10px; font-weight: 700;">
+                                            <i class="fa fa-caret-down" style="font-size: 12px;"></i> @p.ToString("N1")%
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span style="display: inline-flex; align-items: center; justify-content: center; gap: 3px; color: #64748b; background: #f1f5f9; border: 1px solid #e2e8f0; padding: 2px 7px; border-radius: 10px; font-weight: 600;">
+                                            <i class="fa fa-minus" style="font-size: 10px;"></i> 0.0%
+                                        </span>
+                                    }
+                                }
+                                else
+                                {
+                                    <span style="color: #94a3b8; font-weight: 600;">N/D</span>
+                                }
+                            </td>
                         </tr>
                     </tbody>
                 </table>
