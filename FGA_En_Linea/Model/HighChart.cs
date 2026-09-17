@@ -69,11 +69,9 @@ namespace FGA.Model
                     Enabled = true,
                     UseHTML = true,
                     Formatter = "function() { return typeof window.formatGlobalChartTooltip === 'function' ? window.formatGlobalChartTooltip(this) : (this.x + ': ' + this.y); }",
-                    BackgroundColor = new BackColorOrGradient(ColorTranslator.FromHtml("#ffffff")),
-                    BorderColor = ColorTranslator.FromHtml("#e2e8f0"),
-                    BorderRadius = 8,
-                    BorderWidth = 1,
-                    Shadow = true,
+                    BackgroundColor = new BackColorOrGradient(Color.Transparent),
+                    BorderWidth = 0,
+                    Shadow = false,
                     Style = "fontSize: '12px', color: '#1e293b', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'"
                 });
                

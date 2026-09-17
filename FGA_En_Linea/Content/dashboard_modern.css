@@ -4342,29 +4342,37 @@ body.dark-presentation-mode .entity-cell-group:hover .entity-name-text {
     background: #ffffff;
     border: 1px solid #e2e8f0;
     border-radius: 8px;
-    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.12);
-    padding: 8px 12px;
-    min-width: 190px;
-    max-width: 320px;
+    box-shadow: 0 6px 22px rgba(15, 23, 42, 0.16);
+    padding: 10px 14px;
+    min-width: 220px;
+    max-width: 580px;
+    width: max-content;
+    box-sizing: border-box;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     color: #1e293b;
     pointer-events: none;
+    word-break: normal;
+    overflow-wrap: break-word;
 }
 
 .fga-chart-tooltip .tt-header {
-    font-size: 12px;
+    font-size: 12.5px;
     font-weight: 700;
     color: #2F5597;
-    padding-bottom: 5px;
-    margin-bottom: 6px;
+    padding-bottom: 6px;
+    margin-bottom: 8px;
     border-bottom: 1px solid #e2e8f0;
     letter-spacing: 0.2px;
+    line-height: 1.35;
+    word-break: normal;
+    overflow-wrap: break-word;
 }
 
 .fga-chart-tooltip .tt-table {
     width: 100%;
     border-collapse: collapse;
     margin: 0;
+    table-layout: auto;
 }
 
 .fga-chart-tooltip .tt-table tr {
@@ -4372,7 +4380,7 @@ body.dark-presentation-mode .entity-cell-group:hover .entity-name-text {
 }
 
 .fga-chart-tooltip .tt-table td {
-    padding: 3px 0;
+    padding: 4px 0;
     vertical-align: middle;
     border: none !important;
 }
@@ -4381,23 +4389,30 @@ body.dark-presentation-mode .entity-cell-group:hover .entity-name-text {
     width: 14px;
     font-size: 14px;
     line-height: 1;
-    padding-right: 6px !important;
+    padding-right: 8px !important;
+    vertical-align: middle;
 }
 
 .fga-chart-tooltip .tt-name {
-    font-size: 11.5px;
+    font-size: 12px;
     color: #475569;
     font-weight: 500;
-    padding-right: 14px !important;
-    white-space: nowrap;
+    padding-right: 16px !important;
+    white-space: normal;
+    word-break: normal;
+    overflow-wrap: break-word;
+    max-width: 420px;
+    line-height: 1.35;
 }
 
 .fga-chart-tooltip .tt-val {
-    font-size: 11.5px;
+    font-size: 12px;
     color: #0f172a;
     font-weight: 700;
     text-align: right;
     white-space: nowrap;
+    vertical-align: middle;
+    padding-left: 10px !important;
 }
 
 /* Dark Presentation Mode Tooltip */
@@ -7504,6 +7519,10 @@ body.control-sidebar-open .control-sidebar-bg {
 .fga-chart-tooltip,
 .fga-chart-tooltip * {
     pointer-events: none !important;
+}
+
+.highcharts-tooltip-container {
+    z-index: 999999 !important;
 }
 
 /* Prevenir apariciÃ³n de barras de desplazamiento parpadeantes en modales de grÃ¡ficos */
