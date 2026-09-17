@@ -1,0 +1,417 @@
+@model FGA.Models.ModuloHubViewModel
+
+@{
+    ViewBag.Title = Model.Titulo;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    /* === ESTILOS DEL HUB DE MÓDULOS === */
+    .hub-container {
+        padding: 10px 15px 30px 15px;
+    }
+
+    .hub-header {
+        margin-bottom: 20px;
+    }
+
+    .hub-header h1 {
+        margin: 0;
+        font-size: 24px;
+        font-weight: 700;
+        color: #0f2d4a;
+        letter-spacing: -0.02em;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .hub-header p {
+        margin: 6px 0 0 0;
+        font-size: 13.5px;
+        color: #64748b;
+    }
+
+    /* Barra de Filtros */
+    .hub-filter-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 16px 20px;
+        margin-bottom: 26px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    .hub-filter-row {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 18px;
+    }
+
+    .hub-filter-item {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .hub-filter-item label {
+        margin: 0;
+        font-size: 12.5px;
+        font-weight: 600;
+        color: #334155;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    /* Tooltip interactivo informativo */
+    .hub-info-tooltip {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        cursor: pointer;
+        color: #0284c7;
+        font-size: 13px;
+        outline: none;
+    }
+
+    .hub-info-tooltip .hub-tooltip-content {
+        visibility: hidden;
+        opacity: 0;
+        position: absolute;
+        bottom: calc(100% + 10px);
+        left: 50%;
+        transform: translateX(-50%) translateY(4px);
+        width: 290px;
+        background: #1e293b;
+        color: #ffffff;
+        text-align: left;
+        padding: 12px 14px;
+        border-radius: 8px;
+        font-size: 11.5px;
+        font-weight: 400;
+        line-height: 1.45;
+        box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.3);
+        z-index: 1050;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        pointer-events: none;
+    }
+
+    .hub-info-tooltip .hub-tooltip-content::after {
+        content: "";
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        margin-left: -6px;
+        border-width: 6px;
+        border-style: solid;
+        border-color: #1e293b transparent transparent transparent;
+    }
+
+    .hub-info-tooltip:hover .hub-tooltip-content,
+    .hub-info-tooltip:focus .hub-tooltip-content {
+        visibility: visible;
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+
+    /* Sección de tarjetas */
+    .hub-section-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .hub-section-bar {
+        width: 4px;
+        height: 18px;
+        background: #008891;
+        border-radius: 2px;
+        flex-shrink: 0;
+    }
+
+    .hub-section-text {
+        font-size: 15px;
+        font-weight: 700;
+        color: #1e293b;
+        letter-spacing: -0.01em;
+    }
+
+    /* Grid de tarjetas */
+    .hub-cards-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 22px;
+    }
+
+    @@media (max-width: 1200px) {
+        .hub-cards-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .hub-cards-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* Tarjeta individual */
+    .hub-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        padding: 22px 24px;
+        display: flex;
+        flex-direction: column;
+        text-decoration: none !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        cursor: pointer;
+        min-height: 145px;
+    }
+
+    .hub-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 26px -6px rgba(15, 45, 74, 0.12), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+        border-color: #cbd5e1;
+    }
+
+    .hub-card-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 14px;
+    }
+
+    .hub-card-icon-badge {
+        width: 46px;
+        height: 46px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 19px;
+        transition: transform 0.2s ease;
+    }
+
+    .hub-card:hover .hub-card-icon-badge {
+        transform: scale(1.05);
+    }
+
+    .hub-card-arrow {
+        color: #94a3b8;
+        font-size: 16px;
+        transition: transform 0.2s ease, color 0.2s ease;
+    }
+
+    .hub-card:hover .hub-card-arrow {
+        color: #0284c7;
+        transform: translateX(4px);
+    }
+
+    .hub-card-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: #0f172a;
+        margin: 0 0 6px 0;
+        line-height: 1.3;
+        transition: color 0.2s ease;
+    }
+
+    .hub-card:hover .hub-card-title {
+        color: #0284c7;
+    }
+
+    .hub-card-desc {
+        font-size: 12.8px;
+        line-height: 1.45;
+        color: #64748b;
+        margin: 0;
+    }
+
+    /* Banner de pie de nota */
+    .hub-footer-note {
+        margin-top: 32px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 12px 18px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: #475569;
+        font-size: 13px;
+    }
+
+    .hub-footer-note i {
+        color: #0284c7;
+        font-size: 16px;
+        flex-shrink: 0;
+    }
+</style>
+
+<section class="content-header" style="padding: 24px 20px 10px 20px;">
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+        <div class="hub-header">
+            <h1>
+                @Model.Titulo
+            </h1>
+            <p>
+                @Model.Subtitulo
+            </p>
+        </div>
+    </div>
+    <ol class="breadcrumb">
+        <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
+        <li class="active">@Model.Titulo</li>
+    </ol>
+</section>
+
+<section class="content hub-container">
+
+    <!-- BARRA DE FILTROS -->
+    <div class="hub-filter-card">
+        <div class="hub-filter-row">
+            <!-- Entidad -->
+            <div class="hub-filter-item" style="flex: 1 1 300px; max-width: 420px;">
+                <label for="hubEntidad">
+                    <i class="fa fa-university" style="color: #64748b;"></i> Entidad:
+                </label>
+                @Html.DropDownList("Entidades", Model.Entidades, new { id = "hubEntidad", @class = "form-control modern-select", style = "width: 100%; height: 38px; font-size: 13px;" })
+            </div>
+
+            <!-- Tipo de Comparación -->
+            <div class="hub-filter-item" style="min-width: 170px;">
+                <label for="hubTipoComparacion">
+                    Tipo de comparaci&oacute;n:
+                    <span class="hub-info-tooltip" tabindex="0" title="Información sobre tipos de comparación">
+                        <i class="fa fa-info-circle"></i>
+                        <span class="hub-tooltip-content">
+                            <strong style="color: #38bdf8;">Tipos de Comparaci&oacute;n:</strong><br />
+                            &bull; <strong>Mensual:</strong> Compara con el mes inmediato anterior.<br />
+                            &bull; <strong>Trimestral:</strong> Compara con 3 meses atr&aacute;s.<br />
+                            &bull; <strong>Interanual:</strong> Compara con el mismo mes del a&ntilde;o anterior.
+                        </span>
+                    </span>
+                </label>
+                <select id="hubTipoComparacion" class="form-control modern-select" style="height: 38px; font-size: 13px;">
+                    <option value="Mensual" @(Model.TipoComparacion == "Mensual" ? "selected" : "")>Mensual</option>
+                    <option value="Trimestral" @(Model.TipoComparacion == "Trimestral" ? "selected" : "")>Trimestral</option>
+                    <option value="Interanual" @(Model.TipoComparacion == "Interanual" ? "selected" : "")>Interanual</option>
+                </select>
+            </div>
+
+            <!-- Período de referencia -->
+            <div class="hub-filter-item" style="min-width: 160px;">
+                <label for="hubPeriodo">
+                    Per&iacute;odo de referencia:
+                    <span class="hub-info-tooltip" tabindex="0" title="Período de referencia">
+                        <i class="fa fa-info-circle"></i>
+                        <span class="hub-tooltip-content">
+                            Fecha base (mes y a&ntilde;o) a partir de la cual se procesar&aacute;n las consultas y variaciones del m&oacute;dulo.
+                        </span>
+                    </span>
+                </label>
+                <div class="modern-input-wrapper" style="width: 100%;">
+                    <input id="hubPeriodo" class="datecontrol form-control modern-date-input" value="@Model.PeriodoReferencia" style="width: 100%; height: 38px; font-size: 13px;" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECCIÓN DE CONSULTAS DISPONIBLES -->
+    <div class="hub-section-title">
+        <div class="hub-section-bar"></div>
+        <span class="hub-section-text">Seleccione la consulta que desea visualizar</span>
+    </div>
+
+    <!-- GRID DE TARJETAS -->
+    <div class="hub-cards-grid">
+        @if (Model.Tarjetas != null && Model.Tarjetas.Count > 0)
+        {
+            foreach (var tarjeta in Model.Tarjetas)
+            {
+                <a href="@tarjeta.Url" class="hub-card" draggable="false">
+                    <div class="hub-card-top">
+                        <div class="hub-card-icon-badge" style="background-color: @tarjeta.ColorFondoIcono; color: @tarjeta.ColorIcono;">
+                            <i class="@tarjeta.Icono"></i>
+                        </div>
+                        <i class="fa fa-chevron-right hub-card-arrow"></i>
+                    </div>
+                    <div class="hub-card-title">@tarjeta.Titulo</div>
+                    <p class="hub-card-desc">@tarjeta.Descripcion</p>
+                </a>
+            }
+        }
+        else
+        {
+            <div style="grid-column: 1 / -1; padding: 40px; text-align: center; background: #ffffff; border-radius: 12px; border: 1px dashed #cbd5e1; color: #64748b;">
+                <i class="fa fa-folder-open-o" style="font-size: 36px; margin-bottom: 10px; color: #94a3b8;"></i>
+                <p style="margin: 0; font-size: 14px;">No hay opciones disponibles en este m&oacute;dulo para su rol actual.</p>
+            </div>
+        }
+    </div>
+
+    <!-- NOTA AL PIE -->
+    @if (!string.IsNullOrEmpty(Model.NotaPie))
+    {
+        <div class="hub-footer-note">
+            <i class="fa fa-info-circle"></i>
+            <span>@Model.NotaPie</span>
+        </div>
+    }
+
+</section>
+
+@section Scripts {
+    <script>
+        $(function () {
+            var urlActualizarFiltros = '@Url.Action("ActualizarFiltros", "Modulo")';
+
+            function actualizarFiltrosHub(recargarFechaCierre) {
+                var entidadId = $('#hubEntidad').val();
+                var periodo = $('#hubPeriodo').val();
+                var tipoComp = $('#hubTipoComparacion').val();
+
+                $.ajax({
+                    url: urlActualizarFiltros,
+                    type: 'POST',
+                    data: {
+                        idEntidad: entidadId,
+                        periodo: recargarFechaCierre ? '' : periodo,
+                        tipoComparacion: tipoComp
+                    },
+                    success: function (res) {
+                        if (res && res.success) {
+                            if (recargarFechaCierre && res.periodo) {
+                                $('#hubPeriodo').val(res.periodo);
+                            }
+                        }
+                    },
+                    error: function (xhr, status, err) {
+                        console.error('Error al sincronizar filtros:', err);
+                    }
+                });
+            }
+
+            // Al cambiar la Entidad
+            $('#hubEntidad').on('change', function () {
+                actualizarFiltrosHub(true);
+            });
+
+            // Al cambiar el Tipo de Comparación
+            $('#hubTipoComparacion').on('change', function () {
+                actualizarFiltrosHub(false);
+            });
+
+            // Al cambiar la Fecha en MonthPicker
+            $('#hubPeriodo').on('change', function () {
+                actualizarFiltrosHub(false);
+            });
+        });
+    </script>
+}

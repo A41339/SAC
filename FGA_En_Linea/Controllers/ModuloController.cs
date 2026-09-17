@@ -1,0 +1,236 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web.Mvc;
+using FGA.Models;
+using FGA.Utility;
+
+namespace FGA.Controllers
+{
+    public class ModuloController : BaseController
+    {
+        public ActionResult Index(int? id, string IdEntidad = null, string Periodo = null, string TipoComparacion = "Mensual")
+        {
+            if (!string.IsNullOrWhiteSpace(IdEntidad))
+            {
+                Session["IdEntidad"] = IdEntidad;
+            }
+
+            Load();
+
+            if (!string.IsNullOrWhiteSpace(Periodo))
+            {
+                try
+                {
+                    DateTime refDate = Utilitarios.ConvertirAFecha(Periodo);
+                    Session["Periodo"] = refDate.ToShortDateString();
+                    Session["Periodo2"] = refDate.ToShortDateString();
+                }
+                catch { }
+            }
+
+            if (!string.IsNullOrWhiteSpace(TipoComparacion))
+            {
+                Session["TipoComparacion"] = TipoComparacion;
+            }
+            else if (Session["TipoComparacion"] == null)
+            {
+                Session["TipoComparacion"] = "Mensual";
+            }
+
+            // Sincronizar Periodo1 y Periodo2 según TipoComparacion
+            try
+            {
+                string periodoActualStr = Session["Periodo"]?.ToString() ?? Session["Periodo2"]?.ToString();
+                if (!string.IsNullOrEmpty(periodoActualStr))
+                {
+                    DateTime refDate = Utilitarios.ConvertirAFecha(periodoActualStr);
+                    Session["Periodo2"] = refDate.ToShortDateString();
+
+                    string tipo = Session["TipoComparacion"]?.ToString() ?? "Mensual";
+                    if (tipo.Equals("Trimestral", StringComparison.OrdinalIgnoreCase))
+                    {
+                        Session["Periodo1"] = refDate.AddMonths(-3).ToShortDateString();
+                    }
+                    else if (tipo.Equals("Interanual", StringComparison.OrdinalIgnoreCase))
+                    {
+                        Session["Periodo1"] = refDate.AddYears(-1).ToShortDateString();
+                    }
+                    else
+                    {
+                        Session["Periodo1"] = refDate.AddMonths(-1).ToShortDateString();
+                    }
+                }
+            }
+            catch { }
+
+            int roleId = 0;
+            int.TryParse(Env.GetUserInfo("roleid"), out roleId);
+
+            using (var men = new FGA_En_Linea.MenuPermissionService.MenuPermissionServiceClient())
+            {
+                var evaluacion = Env.GetUserInfo("evaluacion") == "S" ? -1 : Utilitarios.opcionEvaluacion;
+                var allPermitted = men.GetMenu(roleId).Where(o => o.MenuId != evaluacion).ToArray();
+
+                MenuPermission rootPerm = null;
+                if (id.HasValue)
+                {
+                    rootPerm = allPermitted.FirstOrDefault(p => p.Menu_MenuId != null && p.Menu_MenuId.Id == id.Value);
+                }
+                else
+                {
+                    // Buscar primer menú raíz que tenga hijos
+                    rootPerm = allPermitted.FirstOrDefault(p => p.Menu_MenuId != null && p.Menu_MenuId.ParentId == null && allPermitted.Any(c => c.Menu_MenuId != null && c.Menu_MenuId.ParentId == p.Menu_MenuId.Id));
+                }
+
+                if (rootPerm == null || rootPerm.Menu_MenuId == null)
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+
+                int rootId = rootPerm.Menu_MenuId.Id;
+                string titulo = rootPerm.Menu_MenuId.MenuText ?? "";
+                var moduloMeta = MenuCatalogService.GetModuloMeta(titulo);
+
+                var childPerms = allPermitted
+                    .Where(p => p.Menu_MenuId != null && p.Menu_MenuId.ParentId == rootId)
+                    .OrderBy(p => p.SortOrder ?? p.Menu_MenuId.SortOrder ?? 0)
+                    .ToList();
+
+                var tarjetas = new List<ModuloTarjetaItem>();
+                foreach (var child in childPerms)
+                {
+                    var m = child.Menu_MenuId;
+                    var cardMeta = MenuCatalogService.GetCardMeta(m.MenuText, m.MenuURL, m.MenuIcon);
+
+                    string cleanUrl = (m.MenuURL ?? "").Trim();
+                    if (!cleanUrl.StartsWith("~") && !cleanUrl.StartsWith("/"))
+                    {
+                        cleanUrl = "~/" + cleanUrl;
+                    }
+
+                    tarjetas.Add(new ModuloTarjetaItem
+                    {
+                        Id = m.Id,
+                        Titulo = m.MenuText ?? "",
+                        Descripcion = cardMeta.Descripcion,
+                        Url = Url.Content(cleanUrl),
+                        Icono = cardMeta.Icono,
+                        ColorFondoIcono = cardMeta.ColorFondoIcono,
+                        ColorIcono = cardMeta.ColorIcono,
+                        SortOrder = child.SortOrder ?? m.SortOrder ?? 0
+                    });
+                }
+
+                string formattedPeriodo = "";
+                try
+                {
+                    if (Session["Periodo"] != null)
+                    {
+                        formattedPeriodo = Utilitarios.ConvertirAFecha(Session["Periodo"].ToString()).ToString("MM/yyyy");
+                    }
+                }
+                catch
+                {
+                    formattedPeriodo = DateTime.Now.ToString("MM/yyyy");
+                }
+
+                var model = new ModuloHubViewModel
+                {
+                    MenuId = rootId,
+                    Titulo = titulo,
+                    Subtitulo = moduloMeta.Subtitulo,
+                    NotaPie = moduloMeta.NotaPie,
+                    IdEntidad = Session["IdEntidad"]?.ToString() ?? "",
+                    PeriodoReferencia = formattedPeriodo,
+                    TipoComparacion = Session["TipoComparacion"]?.ToString() ?? "Mensual",
+                    Entidades = ViewBag.Entidades as SelectList,
+                    Tarjetas = tarjetas
+                };
+
+                return View(model);
+            }
+        }
+
+        [HttpPost]
+        public JsonResult ActualizarFiltros(string idEntidad, string periodo, string tipoComparacion)
+        {
+            try
+            {
+                string nuevaFechaPeriodo = null;
+                if (!string.IsNullOrEmpty(idEntidad))
+                {
+                    Session["IdEntidad"] = idEntidad;
+                    using (var ent = new FGA_En_Linea.EntidadService.EntidadServiceClient())
+                    {
+                        var e = ent.Get(idEntidad);
+                        if (e != null)
+                        {
+                            Session["NomEntidad"] = e.Nombre;
+                        }
+                    }
+
+                    if (string.IsNullOrEmpty(periodo))
+                    {
+                        using (var sp = new FGA_En_Linea.SPService.SPClient())
+                        {
+                            var fechaCierre = sp.FGA_Consultar_FechaCierre(idEntidad);
+                            Session["Periodo"] = fechaCierre.ToShortDateString();
+                            nuevaFechaPeriodo = fechaCierre.ToString("MM/yyyy");
+                            periodo = fechaCierre.ToShortDateString();
+                        }
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(periodo))
+                {
+                    DateTime refDate = Utilitarios.ConvertirAFecha(periodo);
+                    Session["Periodo"] = refDate.ToShortDateString();
+                    Session["Periodo2"] = refDate.ToShortDateString();
+
+                    string tipo = tipoComparacion ?? Session["TipoComparacion"]?.ToString() ?? "Mensual";
+                    Session["TipoComparacion"] = tipo;
+
+                    if (tipo.Equals("Trimestral", StringComparison.OrdinalIgnoreCase))
+                    {
+                        Session["Periodo1"] = refDate.AddMonths(-3).ToShortDateString();
+                    }
+                    else if (tipo.Equals("Interanual", StringComparison.OrdinalIgnoreCase))
+                    {
+                        Session["Periodo1"] = refDate.AddYears(-1).ToShortDateString();
+                    }
+                    else
+                    {
+                        Session["Periodo1"] = refDate.AddMonths(-1).ToShortDateString();
+                    }
+                }
+                else if (!string.IsNullOrEmpty(tipoComparacion))
+                {
+                    Session["TipoComparacion"] = tipoComparacion;
+                    if (Session["Periodo2"] != null)
+                    {
+                        DateTime refDate = Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString());
+                        if (tipoComparacion.Equals("Trimestral", StringComparison.OrdinalIgnoreCase))
+                        {
+                            Session["Periodo1"] = refDate.AddMonths(-3).ToShortDateString();
+                        }
+                        else if (tipoComparacion.Equals("Interanual", StringComparison.OrdinalIgnoreCase))
+                        {
+                            Session["Periodo1"] = refDate.AddYears(-1).ToShortDateString();
+                        }
+                        else
+                        {
+                            Session["Periodo1"] = refDate.AddMonths(-1).ToShortDateString();
+                        }
+                    }
+                }
+
+                return Json(new { success = true, periodo = nuevaFechaPeriodo });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+    }
+}

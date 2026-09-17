@@ -227,6 +227,28 @@ namespace FGA
                 currentNorm = "home";
             }
 
+            // Detección para Hub de módulos: /Modulo/Index/{id} o /Modulo/{id}
+            if (currentNorm.StartsWith("modulo/index/") || currentNorm.StartsWith("modulo/"))
+            {
+                var parts = currentNorm.Split('/');
+                if (parts.Length >= 2)
+                {
+                    string lastPart = parts[parts.Length - 1];
+                    if (int.TryParse(lastPart, out int modId))
+                    {
+                        return modId;
+                    }
+                }
+            }
+            else if (currentNorm == "modulo" || currentNorm == "modulo/index")
+            {
+                var firstRoot = permissions.FirstOrDefault(p => p.Menu_MenuId != null && p.Menu_MenuId.ParentId == null && permissions.Any(c => c.Menu_MenuId != null && c.Menu_MenuId.ParentId == p.Menu_MenuId.Id));
+                if (firstRoot != null && firstRoot.Menu_MenuId != null)
+                {
+                    return firstRoot.Menu_MenuId.Id;
+                }
+            }
+
             int? bestMatchId = null;
             int bestMatchScore = -1;
 
@@ -295,23 +317,20 @@ namespace FGA
                 {
                     bool isSelfActive = activeMenuId.HasValue && item.Menu_MenuId.Id == activeMenuId.Value;
                     bool hasChildren = q.Any(j => j.Menu_MenuId.ParentId == item.Menu_MenuId.Id);
+                    bool isTreeActive = (activeMenuId.HasValue && HasActiveDescendant(q, item.Menu_MenuId.Id, activeMenuId.Value)) || isSelfActive;
+                    string itemStyle = isTreeActive ? "active" : string.Empty;
+
+                    string menuIcon = string.IsNullOrWhiteSpace(item.Menu_MenuId.MenuIcon) ? "<i class=\"fa fa-folder-o\"></i>" : item.Menu_MenuId.MenuIcon;
 
                     if (hasChildren)
                     {
-                        bool isTreeActive = (activeMenuId.HasValue && HasActiveDescendant(q, item.Menu_MenuId.Id, activeMenuId.Value)) || isSelfActive;
-                        string treeStyle = isTreeActive ? "menu-open active" : string.Empty;
-
-                        sb.Append("<li class=\"treeview " + treeStyle + "\"> <a href=\"#\" draggable=\"false\"> " + item.Menu_MenuId.MenuIcon + "<span style=\"font-size:13px;\">" + item.Menu_MenuId.MenuText + "</span><span class=\"pull-right-container\"> <i class=\"fa fa-angle-left pull-right\"></i></span> </a><ul class=\"treeview-menu\">");
-                        sb.Append(GetMenuBar(item.Menu_MenuId.Id, q, activeMenuId));
-                        sb.Append("</li>");
+                        // Enlace directo al Hub del módulo raíz
+                        sb.Append("<li class=\"" + itemStyle + "\"> <a draggable=\"false\" style=\"font-size:13px;\" href=\"" + MicrosoftHelper.MSHelper.GetSiteRoot() + "/Modulo/Index/" + item.Menu_MenuId.Id + "\">" + menuIcon + "  <span style=\"font-size:13px;\">" + item.Menu_MenuId.MenuText + "</span> <span class=\"pull-right-container\"></span></a></li>");
                     }
                     else
                     {
-                        string itemStyle = isSelfActive ? "active" : string.Empty;
-                        if (item.Menu_MenuId.ParentId == null)
-                            sb.Append("<li class=\"" + itemStyle + "\"> <a draggable=\"false\" style=\"font-size:13px;\" href=\"" + MicrosoftHelper.MSHelper.GetSiteRoot() + "/" + item.Menu_MenuId.MenuURL + "\">" + item.Menu_MenuId.MenuIcon + "  <span style=\"font-size:13px;\">" + item.Menu_MenuId.MenuText + "</span> <span class=\"pull-right-container\"></span></a></li>");
-                        else
-                            sb.Append("<li class=\"" + itemStyle + "\"> <a draggable=\"false\" style=\"font-size:13px;\" href=\"" + MicrosoftHelper.MSHelper.GetSiteRoot() + "/" + item.Menu_MenuId.MenuURL + "\">" + item.Menu_MenuId.MenuIcon + " " + item.Menu_MenuId.MenuText + "</a></li>");
+                        // Opción raíz sin hijos (enlace directo)
+                        sb.Append("<li class=\"" + itemStyle + "\"> <a draggable=\"false\" style=\"font-size:13px;\" href=\"" + MicrosoftHelper.MSHelper.GetSiteRoot() + "/" + item.Menu_MenuId.MenuURL + "\">" + menuIcon + "  <span style=\"font-size:13px;\">" + item.Menu_MenuId.MenuText + "</span> <span class=\"pull-right-container\"></span></a></li>");
                     }
                 }
                 sb.Append("</ul>");
