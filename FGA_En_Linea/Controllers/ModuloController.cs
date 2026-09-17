@@ -9,7 +9,7 @@ namespace FGA.Controllers
 {
     public class ModuloController : BaseController
     {
-        public ActionResult Index(int? id, string IdEntidad = null, string Periodo = null, string TipoComparacion = "Mensual")
+        public ActionResult Index(int? id, string modulo = null, string IdEntidad = null, string Periodo = null, string TipoComparacion = "Mensual")
         {
             if (!string.IsNullOrWhiteSpace(IdEntidad))
             {
@@ -77,7 +77,25 @@ namespace FGA.Controllers
                 {
                     rootPerm = allPermitted.FirstOrDefault(p => p.Menu_MenuId != null && p.Menu_MenuId.Id == id.Value);
                 }
-                else
+                else if (!string.IsNullOrWhiteSpace(modulo))
+                {
+                    string modClean = modulo.Trim();
+                    // 1. Coincidencia exacta por nombre
+                    rootPerm = allPermitted.FirstOrDefault(p => p.Menu_MenuId != null && p.Menu_MenuId.MenuText != null &&
+                        string.Equals(p.Menu_MenuId.MenuText.Trim(), modClean, StringComparison.OrdinalIgnoreCase));
+
+                    // 2. Coincidencia normalizada sin tildes ni mayúsculas
+                    if (rootPerm == null)
+                    {
+                        string modNorm = NormalizarTexto(modClean);
+                        rootPerm = allPermitted.FirstOrDefault(p => p.Menu_MenuId != null && p.Menu_MenuId.MenuText != null &&
+                            (NormalizarTexto(p.Menu_MenuId.MenuText) == modNorm ||
+                             NormalizarTexto(p.Menu_MenuId.MenuText).Contains(modNorm) ||
+                             modNorm.Contains(NormalizarTexto(p.Menu_MenuId.MenuText))));
+                    }
+                }
+
+                if (rootPerm == null)
                 {
                     // Buscar primer menú raíz que tenga hijos
                     rootPerm = allPermitted.FirstOrDefault(p => p.Menu_MenuId != null && p.Menu_MenuId.ParentId == null && allPermitted.Any(c => c.Menu_MenuId != null && c.Menu_MenuId.ParentId == p.Menu_MenuId.Id));
@@ -266,6 +284,14 @@ namespace FGA.Controllers
             {
                 return Json(new { success = false, message = ex.Message });
             }
+        }
+
+        private static string NormalizarTexto(string s)
+        {
+            if (string.IsNullOrEmpty(s)) return string.Empty;
+            return s.Trim().ToLower()
+                .Replace("á", "a").Replace("é", "e").Replace("í", "i").Replace("ó", "o").Replace("ú", "u")
+                .Replace("ñ", "n");
         }
     }
 }

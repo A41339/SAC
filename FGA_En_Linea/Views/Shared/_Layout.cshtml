@@ -487,6 +487,21 @@
         background-color: #e2e8f0 !important;
         border-color: #e2e8f0 !important;
     }
+
+    /* Estilos interactivos para el breadcrumb de retorno a modulos */
+    .breadcrumb > li > a {
+        color: #0284c7;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.15s ease;
+    }
+    .breadcrumb > li > a:hover {
+        color: #0369a1;
+        text-decoration: underline;
+    }
+    .breadcrumb > li > a.breadcrumb-hub-link {
+        cursor: pointer;
+    }
 </style>
 
 @{
@@ -1287,6 +1302,50 @@
         $(document).ready(function () {
             initCanvas('headerCanvas', 22);
             initCanvas('sidebarCanvas', 28);
+
+            // Vinculacion interactiva de los items del breadcrumb al Hub de modulos
+            var moduloBaseUrl = '@Url.Action("Index", "Modulo")';
+
+            function resolverUrlModulo(texto) {
+                if (!texto) return null;
+                var tNorm = texto.toLowerCase()
+                    .replace(/á/g, 'a').replace(/é/g, 'e').replace(/í/g, 'i').replace(/ó/g, 'o').replace(/ú/g, 'u').replace(/ñ/g, 'n').trim();
+
+                var found = null;
+                $('.sidebar-menu li a').each(function () {
+                    var sText = $(this).find('span').first().text().toLowerCase()
+                        .replace(/á/g, 'a').replace(/é/g, 'e').replace(/í/g, 'i').replace(/ó/g, 'o').replace(/ú/g, 'u').replace(/ñ/g, 'n').trim();
+                    if (sText && (sText === tNorm || tNorm.indexOf(sText) !== -1 || sText.indexOf(tNorm) !== -1)) {
+                        found = $(this).attr('href');
+                        return false;
+                    }
+                });
+                return found || (moduloBaseUrl + '?modulo=' + encodeURIComponent(texto));
+            }
+
+            $('.breadcrumb li a').each(function () {
+                var $a = $(this);
+                var href = $a.attr('href');
+                if (!href || href === '#' || href === '' || href.indexOf('javascript') === 0) {
+                    var rawText = $.trim($a.text());
+                    if (rawText && rawText.toLowerCase() !== 'inicio') {
+                        var targetUrl = resolverUrlModulo(rawText);
+                        $a.attr('href', targetUrl);
+                        $a.attr('title', 'Volver al menu principal de ' + rawText);
+                        $a.addClass('breadcrumb-hub-link');
+                    }
+                }
+            });
+
+            $('.breadcrumb li:not(.active):not(:first-child)').each(function () {
+                if ($(this).find('a').length === 0) {
+                    var rawText = $.trim($(this).text());
+                    if (rawText && rawText.toLowerCase() !== 'inicio') {
+                        var targetUrl = resolverUrlModulo(rawText);
+                        $(this).html('<a href="' + targetUrl + '" class="breadcrumb-hub-link" title="Volver al menu principal de ' + rawText + '">' + rawText + '</a>');
+                    }
+                }
+            });
         });
     })();
 </script>
