@@ -9,6 +9,15 @@
 }
 
 <script src="~/Scripts/jquery-form.js"></script>
+@if (!Ajax.IsThisAjaxRequest())
+{
+    <section class="content-header">
+        <h1>
+            <i class="fa fa-file-excel-o"></i> SUGEF - Balance
+            <small>Carga y procesamiento de balance de comprobaci&oacute;n mensual SUGEF.</small>
+        </h1>
+    </section>
+}
 <section class="content contenedor">
 
     @using (Html.BeginForm("Sugef", "Archivo", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmFile" }))

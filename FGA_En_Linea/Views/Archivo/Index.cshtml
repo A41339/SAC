@@ -16,6 +16,15 @@
 </style>
 
 <script src="~/Scripts/jquery-form.js"></script>
+@if (!Ajax.IsThisAjaxRequest())
+{
+    <section class="content-header">
+        <h1>
+            <i class="fa fa-cloud-upload"></i> Carga de Archivos XML
+            <small>Carga, procesamiento y validaci&oacute;n de estados financieros en formato XML.</small>
+        </h1>
+    </section>
+}
 <section class="content contenedor">
 
     @using (Html.BeginForm("Index", "Archivo", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmFile" }))

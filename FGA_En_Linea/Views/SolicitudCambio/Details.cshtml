@@ -1,4 +1,13 @@
-﻿@model FGA.Models.SolicitudView
+﻿@if (!Ajax.IsThisAjaxRequest())
+{
+    <section class="content-header">
+        <h1>
+            <i class="fa fa-info-circle"></i> Detalle de Solicitud de Cambio #@Model.solicitud.Id
+            <small>Consulta y revisi&oacute;n del flujo de aprobaci&oacute;n y par&aacute;metros del cambio solicitado.</small>
+        </h1>
+    </section>
+}
+@model FGA.Models.SolicitudView
 
 @{
     ViewBag.Title = "Editar";
