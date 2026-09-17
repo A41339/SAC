@@ -33,7 +33,7 @@
             printButtonTitle: "Importar",
             rangeSelectorFrom: "Desde",
             rangeSelectorTo: "Hasta",
-            rangeSelectorZoom: "Período",
+            rangeSelectorZoom: "Periodo",
             downloadPNG: 'Descargar imagen PNG',
             downloadJPEG: 'Descargar imagen JPEG',
             downloadPDF: 'Descargar PDF',

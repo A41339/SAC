@@ -44,7 +44,7 @@ namespace FGA.Controllers
             model.ddlCrecimiento = ddlCrecimiento;
 
             if (model.AlertaProyeccion == 0)
-                model.mensaje = "Se podrán usar cortes del período vigente y el último cierre fiscal cargado, meses anteriores a ese no se podrán usar como base.";
+                model.mensaje = "Se podrán usar cortes del periodo vigente y el último cierre fiscal cargado, meses anteriores a ese no se podrán usar como base.";
 
             Session["IdEntidad"] = Entidades;
             Session["PeriodoI"] = PeriodoI.ToShortDateString();
