@@ -974,6 +974,19 @@
             chartMenuObserver.observe(document.body, { childList: true, subtree: true });
         }
 
+        // Reflow global automatico de graficos Highcharts en cualquier modal al abrirse
+        $(document).on('shown.bs.modal', '.modal', function () {
+            if (typeof Highcharts !== 'undefined' && Highcharts.charts) {
+                setTimeout(function () {
+                    Highcharts.charts.forEach(function (c) {
+                        if (c) {
+                            try { c.reflow(); } catch (e) {}
+                        }
+                    });
+                }, 50);
+            }
+        });
+
         // Prevencion estricta de arrastre en opciones del menu lateral
         // Evita que el navegador inicie HTML5 drag y bloquee el flujo de eventos del raton
         $(document).on('dragstart', '.main-sidebar, .sidebar-menu, .sidebar-menu a, .sidebar-menu li, .sidebar-logout-btn', function (e) {
