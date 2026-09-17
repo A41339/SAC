@@ -1,4 +1,4 @@
-﻿/* ==========================================================================
+/* ==========================================================================
    FFC - Theme Global Moderno & Inherited UI Styles
    ========================================================================== */
 
@@ -789,12 +789,13 @@ body.sidebar-collapse .sidebar-menu > li > a > span:not(.pull-right-container) {
     flex-shrink: 0 !important;
 }
 
-/* Hover State - Sutil deslizamiento e iluminaciÃ³n */
+/* Hover State - Contraste claro sobre fondo institucional */
 .sidebar-menu > li:not(.active):hover > a,
 .sidebar-menu > li:not(.active):focus > a {
     color: #ffffff !important;
-    background-color: rgba(255, 255, 255, 0.12) !important;
-    transform: translateX(4px) !important;
+    background-color: rgba(255, 255, 255, 0.20) !important;
+    border-left: 3px solid rgba(255, 255, 255, 0.55) !important;
+    transform: translateX(3px) !important;
 }
 
 .sidebar-menu > li:not(.active):hover > a > i:first-child {
@@ -851,21 +852,29 @@ body.sidebar-collapse .sidebar-menu > li > a > span:not(.pull-right-container) {
 }
 
 .sidebar-menu > li.active > a > i:first-child {
-    color: #2F5597 !important;
+    color: #ffffff !important;
     transform: scale(1.08) !important;
 }
 
-/* SubmenÃºs Plegables con LÃ­nea GuÃ­a Conectora */
+/* Prevenir fondo negro en item padre cuando treeview está abierto */
+.sidebar-menu > li.active.treeview > a,
+.sidebar-menu > li.treeview.menu-open > a {
+    color: #ffffff !important;
+    background: linear-gradient(135deg, #3d6cb9 0%, #2F5597 100%) !important;
+    border-left: none !important;
+}
+
+/* Submenús Plegables */
 .sidebar-menu .treeview-menu {
-    background: rgba(8, 25, 46, 0.6) !important;
+    background: rgba(0, 18, 45, 0.55) !important;
     border-radius: 8px !important;
     margin: 4px 0 6px 8px !important;
     padding: 6px 0 6px 8px !important;
-    border-left: 2px solid rgba(255, 255, 255, 0.12) !important;
+    border-left: 2px solid rgba(255, 255, 255, 0.18) !important;
 }
 
 .sidebar-menu .treeview-menu > li > a {
-    color: #94a3b8 !important;
+    color: #b8cce8 !important;
     padding: 8px 12px !important;
     font-size: 13px !important;
     border-radius: 6px !important;
@@ -876,11 +885,19 @@ body.sidebar-collapse .sidebar-menu > li > a > span:not(.pull-right-container) {
     white-space: nowrap !important;
 }
 
-.sidebar-menu .treeview-menu > li.active > a,
 .sidebar-menu .treeview-menu > li > a:hover {
     color: #ffffff !important;
-    background-color: rgba(255, 255, 255, 0.06) !important;
+    background-color: rgba(255, 255, 255, 0.18) !important;
+    border-left: 2px solid rgba(255, 255, 255, 0.6) !important;
     font-weight: 600 !important;
+    transform: translateX(3px) !important;
+}
+
+.sidebar-menu .treeview-menu > li.active > a {
+    color: #ffffff !important;
+    background-color: rgba(255, 255, 255, 0.22) !important;
+    border-left: 2px solid #ffffff !important;
+    font-weight: 700 !important;
 }
 
 /* Ocultar flechas secundarias superfluas */
