@@ -129,6 +129,21 @@ namespace FGA.Utility
                 Subtitulo = "Gestión de catálogos, fórmulas, entidades, parámetros y roles del sistema",
                 NotaPie = "Nota: Los cambios y configuraciones quedan debidamente registrados en la bitácora del sistema."
             },
+            ["Perfiles"] = new ModuloMeta
+            {
+                Subtitulo = "Gestión de usuarios, perfiles y seguridad de acceso al sistema",
+                NotaPie = "Nota: Los cambios de contraseñas y permisos de usuario quedan auditados en la bitácora de seguridad."
+            },
+            ["Control de Accesos"] = new ModuloMeta
+            {
+                Subtitulo = "Gestión de usuarios, perfiles y seguridad de acceso al sistema",
+                NotaPie = "Nota: Los cambios de contraseñas y permisos de usuario quedan auditados en la bitácora de seguridad."
+            },
+            ["Control de Acceso"] = new ModuloMeta
+            {
+                Subtitulo = "Gestión de usuarios, perfiles y seguridad de acceso al sistema",
+                NotaPie = "Nota: Los cambios de contraseñas y permisos de usuario quedan auditados en la bitácora de seguridad."
+            },
             ["Administracion"] = new ModuloMeta
             {
                 Subtitulo = "Gestión de usuarios, roles, parámetros y configuraciones del sistema",
@@ -521,18 +536,97 @@ namespace FGA.Utility
                 ColorIcono = "#7c3aed"
             },
 
-            // === GOBIERNO CORPORATIVO ===
-            ["Autoevaluaci\u00f3n SBR"] = new CardMeta
+            // === GOBIERNO CORPORATIVO Y EVALUACIÓN ===
+            ["Autoevaluaci\u00f3n"] = new CardMeta
             {
                 Descripcion = "Formularios de autoevaluaci\u00f3n de supervisi\u00f3n basada en riesgos.",
-                Icono = "fa fa-check-square-o",
+                Icono = "fa fa-pencil-square-o",
                 ColorFondoIcono = "#e0f2fe",
                 ColorIcono = "#0284c7"
             },
+            ["Autoevaluacion"] = new CardMeta
+            {
+                Descripcion = "Formularios de autoevaluaci\u00f3n de supervisi\u00f3n basada en riesgos.",
+                Icono = "fa fa-pencil-square-o",
+                ColorFondoIcono = "#e0f2fe",
+                ColorIcono = "#0284c7"
+            },
+            ["Autoevaluaci\u00f3n SBR"] = new CardMeta
+            {
+                Descripcion = "Formularios de autoevaluaci\u00f3n de supervisi\u00f3n basada en riesgos.",
+                Icono = "fa fa-pencil-square-o",
+                ColorFondoIcono = "#e0f2fe",
+                ColorIcono = "#0284c7"
+            },
+            ["Avance"] = new CardMeta
+            {
+                Descripcion = "Monitoreo del porcentaje de avance y nivel de respuestas completadas.",
+                Icono = "fa fa-line-chart",
+                ColorFondoIcono = "#ffedd5",
+                ColorIcono = "#ea580c"
+            },
             ["Avance de Evaluaci\u00f3n"] = new CardMeta
             {
-                Descripcion = "Monitoreo del porcentaje de avance y respuestas completadas.",
-                Icono = "fa fa-tasks",
+                Descripcion = "Monitoreo del porcentaje de avance y nivel de respuestas completadas.",
+                Icono = "fa fa-line-chart",
+                ColorFondoIcono = "#ffedd5",
+                ColorIcono = "#ea580c"
+            },
+            ["Historial"] = new CardMeta
+            {
+                Descripcion = "Consulta de autoevaluaciones concluidas y registros de per\u00edodos anteriores.",
+                Icono = "fa fa-history",
+                ColorFondoIcono = "#f3e8ff",
+                ColorIcono = "#7c3aed"
+            },
+            ["Historial de Evaluaci\u00f3n"] = new CardMeta
+            {
+                Descripcion = "Consulta de autoevaluaciones concluidas y registros de per\u00edodos anteriores.",
+                Icono = "fa fa-history",
+                ColorFondoIcono = "#f3e8ff",
+                ColorIcono = "#7c3aed"
+            },
+            ["Resultados"] = new CardMeta
+            {
+                Descripcion = "Visualizaci\u00f3n de calificaciones globales y reportes consolidados.",
+                Icono = "fa fa-pie-chart",
+                ColorFondoIcono = "#dcfce7",
+                ColorIcono = "#16a34a"
+            },
+            ["Resultados de Evaluaci\u00f3n"] = new CardMeta
+            {
+                Descripcion = "Visualizaci\u00f3n de calificaciones globales y reportes consolidados.",
+                Icono = "fa fa-pie-chart",
+                ColorFondoIcono = "#dcfce7",
+                ColorIcono = "#16a34a"
+            },
+
+            // === PERFILES Y CONTROL DE ACCESOS ===
+            ["Administraci\u00f3n de usuarios"] = new CardMeta
+            {
+                Descripcion = "Gesti\u00f3n de cuentas de usuario, asignaci\u00f3n de roles y estados de acceso.",
+                Icono = "fa fa-users",
+                ColorFondoIcono = "#dbeafe",
+                ColorIcono = "#2563eb"
+            },
+            ["Administracion de usuarios"] = new CardMeta
+            {
+                Descripcion = "Gesti\u00f3n de cuentas de usuario, asignaci\u00f3n de roles y estados de acceso.",
+                Icono = "fa fa-users",
+                ColorFondoIcono = "#dbeafe",
+                ColorIcono = "#2563eb"
+            },
+            ["Cambiar contrase\u00f1a"] = new CardMeta
+            {
+                Descripcion = "Actualizaci\u00f3n de clave de acceso personal y par\u00e1metros de seguridad de la cuenta.",
+                Icono = "fa fa-key",
+                ColorFondoIcono = "#fef3c7",
+                ColorIcono = "#d97706"
+            },
+            ["Cambiar contrasena"] = new CardMeta
+            {
+                Descripcion = "Actualizaci\u00f3n de clave de acceso personal y par\u00e1metros de seguridad de la cuenta.",
+                Icono = "fa fa-key",
                 ColorFondoIcono = "#fef3c7",
                 ColorIcono = "#d97706"
             },

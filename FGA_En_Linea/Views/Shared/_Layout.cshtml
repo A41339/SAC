@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -1463,6 +1463,7 @@
             // Vinculación interactiva y auto-resolución del Menú Papá en Breadcrumbs
             // ==========================================================================
             var moduloBaseUrl = '@Url.Action("Index", "Modulo")';
+            var moduloPerfilesUrl = '@Url.Action("Index", "Modulo", new { id = 8000 })';
             var moduloMantenimientosUrl = '@Url.Action("Index", "Modulo", new { id = 9000 })';
 
             // 1. Obtener el módulo padre raíz activo desde el menú lateral (calculado autoritativamente por el servidor)
@@ -1489,8 +1490,17 @@
                 if (!texto) return null;
                 var tNorm = normalizar(texto);
 
-                // Si coincide con mantenimiento, administración, roles o seguridad, apuntar directamente al módulo 9000 (Mantenimientos)
-                if (tNorm === 'seguridad' || tNorm === 'roles' || tNorm === 'usuarios' || tNorm === 'evaluacion' || tNorm === 'evaluaciones' ||
+                // Control de accesos / Perfiles (Módulo 8000)
+                if (tNorm === 'perfiles' || tNorm === 'usuarios' || tNorm === 'usuario' || tNorm === 'cambiar contrasena' ||
+                    tNorm.indexOf('control de acceso') !== -1 || tNorm.indexOf('seguridad') !== -1) {
+                    if (parentModuleUrl && (parentModuleUrl.indexOf('8000') !== -1 || normalizar(parentModuleName).indexOf('perfil') !== -1 || normalizar(parentModuleName).indexOf('acceso') !== -1)) {
+                        return parentModuleUrl;
+                    }
+                    return moduloPerfilesUrl;
+                }
+
+                // Mantenimientos / Administración (Módulo 9000)
+                if (tNorm === 'roles' || tNorm === 'evaluacion' || tNorm === 'evaluaciones' ||
                     tNorm.indexOf('administra') !== -1 || tNorm.indexOf('mantenimiento') !== -1) {
                     if (parentModuleUrl && (parentModuleUrl.indexOf('9000') !== -1 || normalizar(parentModuleName).indexOf('mantenimiento') !== -1)) {
                         return parentModuleUrl;
@@ -1546,7 +1556,17 @@
 
                     if (!norm || norm === 'inicio') return;
 
-                    // Si el elemento es Seguridad, Roles, Evaluación, Administración o Mantenimientos, garantizar enlace al papá 9000
+                    // Manejo de Control de Accesos / Perfiles (Módulo 8000)
+                    if (norm === 'perfiles' || norm === 'usuarios' || norm.indexOf('control de acceso') !== -1) {
+                        var pUrl8 = (parentModuleUrl && parentModuleUrl.indexOf('8000') !== -1) ? parentModuleUrl : moduloPerfilesUrl;
+                        var pName8 = (parentModuleName && (normalizar(parentModuleName).indexOf('acceso') !== -1 || normalizar(parentModuleName).indexOf('perfil') !== -1)) ? parentModuleName : 'Control de Accesos';
+                        var pIcon8 = (parentModuleIcon && parentModuleIcon.indexOf('secret') !== -1) ? parentModuleIcon : 'fa fa-user-secret';
+                        $li.html('<a href="' + pUrl8 + '" class="breadcrumb-parent-pill" title="Volver al menú de ' + pName8 + '">' +
+                            '<i class="' + pIcon8 + '" style="margin-right: 4px;"></i> ' + pName8 + '</a>');
+                        return;
+                    }
+
+                    // Manejo de Mantenimientos (Módulo 9000)
                     if (norm === 'seguridad' || norm === 'evaluacion' || norm === 'evaluaciones' ||
                         norm.indexOf('administra') !== -1 || norm.indexOf('mantenimiento') !== -1) {
                         var pUrl = (parentModuleUrl && parentModuleUrl.indexOf('9000') !== -1) ? parentModuleUrl : moduloMantenimientosUrl;

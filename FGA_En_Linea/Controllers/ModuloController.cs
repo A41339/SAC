@@ -13,20 +13,64 @@ namespace FGA.Controllers
         {
             if (!string.IsNullOrWhiteSpace(IdEntidad))
             {
+                if (Session["IdEntidad"] != null && Session["IdEntidad"].ToString() != IdEntidad)
+                {
+                    // Si cambió la entidad explícitamente en la URL, resetear Periodo2 para recalcularlo al último cargado de la nueva entidad
+                    Session["Periodo2"] = null;
+                }
                 Session["IdEntidad"] = IdEntidad;
             }
 
             Load();
 
+            // Determinar la fecha de cierre y el último período cargado de la entidad activa
+            string currentEntidad = Session["IdEntidad"]?.ToString() ?? "2";
+            DateTime? ultimoPeriodoCargado = null;
+            DateTime? fechaCierreCalculada = null;
+
+            try
+            {
+                if (Session["Periodo"] != null)
+                {
+                    fechaCierreCalculada = Utilitarios.ConvertirAFecha(Session["Periodo"].ToString());
+                    ultimoPeriodoCargado = fechaCierreCalculada.Value.AddMonths(-1);
+                }
+                else
+                {
+                    using (var sp = new FGA_En_Linea.SPService.SPClient())
+                    {
+                        var fc = sp.FGA_Consultar_FechaCierre(currentEntidad);
+                        Session["Periodo"] = fc.ToShortDateString();
+                        fechaCierreCalculada = fc;
+                        ultimoPeriodoCargado = fc.AddMonths(-1);
+                    }
+                }
+            }
+            catch { }
+
+            // Si se envió un Período explícito por parámetro en la URL
             if (!string.IsNullOrWhiteSpace(Periodo))
             {
                 try
                 {
                     DateTime refDate = Utilitarios.ConvertirAFecha(Periodo);
-                    Session["Periodo"] = refDate.ToShortDateString();
                     Session["Periodo2"] = refDate.ToShortDateString();
                 }
                 catch { }
+            }
+            else
+            {
+                // Si no se especificó un período en la URL:
+                // Si Session["Periodo2"] es null, o si erróneamente coincidía con fecha de cierre (mes siguiente/actual),
+                // inicializar por default con el último período cargado de la entidad activa (AddMonths(-1))
+                if (Session["Periodo2"] == null ||
+                    (fechaCierreCalculada.HasValue && Session["Periodo2"].ToString() == fechaCierreCalculada.Value.ToShortDateString()))
+                {
+                    if (ultimoPeriodoCargado.HasValue)
+                    {
+                        Session["Periodo2"] = ultimoPeriodoCargado.Value.ToShortDateString();
+                    }
+                }
             }
 
             if (!string.IsNullOrWhiteSpace(TipoComparacion))
@@ -41,10 +85,16 @@ namespace FGA.Controllers
             // Sincronizar Periodo1 y Periodo2 según TipoComparacion
             try
             {
-                string periodoActualStr = Session["Periodo"]?.ToString() ?? Session["Periodo2"]?.ToString();
-                if (!string.IsNullOrEmpty(periodoActualStr))
+                string periodoReferenciaStr = Session["Periodo2"]?.ToString();
+                if (string.IsNullOrEmpty(periodoReferenciaStr) && ultimoPeriodoCargado.HasValue)
                 {
-                    DateTime refDate = Utilitarios.ConvertirAFecha(periodoActualStr);
+                    periodoReferenciaStr = ultimoPeriodoCargado.Value.ToShortDateString();
+                    Session["Periodo2"] = periodoReferenciaStr;
+                }
+
+                if (!string.IsNullOrEmpty(periodoReferenciaStr))
+                {
+                    DateTime refDate = Utilitarios.ConvertirAFecha(periodoReferenciaStr);
                     Session["Periodo2"] = refDate.ToShortDateString();
 
                     string tipo = Session["TipoComparacion"]?.ToString() ?? "Mensual";
@@ -203,14 +253,21 @@ namespace FGA.Controllers
                 string formattedPeriodo = "";
                 try
                 {
-                    if (Session["Periodo"] != null)
+                    if (Session["Periodo2"] != null)
                     {
-                        formattedPeriodo = Utilitarios.ConvertirAFecha(Session["Periodo"].ToString()).ToString("MM/yyyy");
+                        formattedPeriodo = Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MM/yyyy");
+                    }
+                    else if (ultimoPeriodoCargado.HasValue)
+                    {
+                        formattedPeriodo = ultimoPeriodoCargado.Value.ToString("MM/yyyy");
                     }
                 }
                 catch
                 {
-                    formattedPeriodo = DateTime.Now.ToString("MM/yyyy");
+                    if (ultimoPeriodoCargado.HasValue)
+                    {
+                        formattedPeriodo = ultimoPeriodoCargado.Value.ToString("MM/yyyy");
+                    }
                 }
 
                 // Si el módulo actual tiene un padre (es un sub-módulo), obtener info del padre
@@ -268,9 +325,11 @@ namespace FGA.Controllers
                         using (var sp = new FGA_En_Linea.SPService.SPClient())
                         {
                             var fechaCierre = sp.FGA_Consultar_FechaCierre(idEntidad);
+                            var ultimoPeriodoCargado = fechaCierre.AddMonths(-1);
                             Session["Periodo"] = fechaCierre.ToShortDateString();
-                            nuevaFechaPeriodo = fechaCierre.ToString("MM/yyyy");
-                            periodo = fechaCierre.ToShortDateString();
+                            Session["Periodo2"] = ultimoPeriodoCargado.ToShortDateString();
+                            nuevaFechaPeriodo = ultimoPeriodoCargado.ToString("MM/yyyy");
+                            periodo = ultimoPeriodoCargado.ToShortDateString();
                         }
                     }
                 }
@@ -278,7 +337,6 @@ namespace FGA.Controllers
                 if (!string.IsNullOrEmpty(periodo))
                 {
                     DateTime refDate = Utilitarios.ConvertirAFecha(periodo);
-                    Session["Periodo"] = refDate.ToShortDateString();
                     Session["Periodo2"] = refDate.ToShortDateString();
 
                     string tipo = tipoComparacion ?? Session["TipoComparacion"]?.ToString() ?? "Mensual";
