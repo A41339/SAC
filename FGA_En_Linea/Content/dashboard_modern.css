@@ -3,16 +3,16 @@
    ========================================================================== */
 
 :root {
-    --color-verde: #31859C;
+    --color-verde: #2F5597;
     --color-naranja: #ED7D31;
     --color-naranja-claro: #FABF8F;
-    --color-celeste: #93CDDD;
+    --color-celeste: #3d6cb9;
     --color-azul: #2F5597;
 
     --bg-main: #f0f4f8;
     --sidebar-bg: #2F5597;
-    --sidebar-active: #93CDDD;
-    --sidebar-active-text: #1b3866;
+    --sidebar-active: #3d6cb9;
+    --sidebar-active-text: #ffffff;
     --sidebar-text: #dbeafe;
     --sidebar-text-hover: #ffffff;
     --header-bg: #2F5597;
@@ -21,11 +21,11 @@
     --text-secondary: #64748b;
     --border-color: #e2e8f0;
     --primary-blue: #2F5597;
-    --accent-teal: #31859C;
-    --accent-teal-dark: #2F5597;
-    --accent-teal-light: #93CDDD;
-    --accent-teal-mint: #93CDDD;
-    --accent-teal-ice: #EAF5F8;
+    --accent-teal: #2F5597;
+    --accent-teal-dark: #204880;
+    --accent-teal-light: #3d6cb9;
+    --accent-teal-mint: #b9cde8;
+    --accent-teal-ice: #eaf0f8;
     --accent-orange: #ED7D31;
     --success-green: #10b981;
     --danger-red: #dc2626;
@@ -39,29 +39,50 @@
    ========================================================================== */
 
 /* Fuente Base */
-body, html, .wrapper, .content-wrapper, input, button, select, textarea, table {
+body,
+body.modern-dashboard-body,
+.wrapper,
+.skin-blue .wrapper,
+.content-wrapper,
+.right-side,
+.main-footer {
+    background-color: #f0f4f8 !important;
+    background: #f0f4f8 !important;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+    color: var(--text-primary) !important;
 }
 
-/* 1. Titulos Principales de Pantalla (H1) */
+/* ==========================================================================
+   Estandarizacion de Encabezados de Pagina (Titulo y Subtitulo en 2 Lineas)
+   ========================================================================== */
+.content-header {
+    position: relative !important;
+    padding: 20px 24px 16px 24px !important;
+    background: #ffffff !important;
+    border-bottom: 2px solid #2F5597 !important;
+    box-shadow: 0 2px 8px rgba(47, 85, 151, 0.08) !important;
+    margin-bottom: 0 !important;
+}
+
 .content-header > h1,
 .content-header h1.modern-page-title,
-.content-header h1,
-h1.page-header {
-    font-size: 20px !important;
+.content-header h1 {
+    margin: 0 !important;
+    font-size: 21px !important;
     font-weight: 700 !important;
-    color: var(--color-azul) !important;
+    color: #2F5597 !important;
     line-height: 1.25 !important;
-    letter-spacing: -0.2px !important;
+    display: block !important;
 }
 
 .content-header > h1 > i,
 .content-header h1.modern-page-title > i,
 .content-header h1 > i {
-    color: var(--color-verde) !important;
-    font-size: 20px !important;
-    margin-right: 8px !important;
+    color: #2F5597 !important;
+    margin-right: 10px !important;
+    font-size: 21px !important;
     vertical-align: -1px !important;
+    display: inline-block !important;
 }
 
 /* 2. Subtitulos de Pantalla */
@@ -158,10 +179,9 @@ select {
 }
 
 .form-control:focus,
-select:focus,
-input:focus {
+.modern-select:focus {
     border-color: var(--color-azul) !important;
-    box-shadow: 0 0 0 3px rgba(47, 85, 151, 0.15) !important;
+    box-shadow: 0 0 0 3px rgba(47, 85, 151, 0.18) !important;
     outline: none !important;
 }
 
@@ -174,67 +194,6 @@ input:focus {
     font-weight: 700 !important;
 }
 
-/* ==========================================================================
-   1. Global Body & Typography Overrides
-   ========================================================================== */
-html,
-body,
-body.modern-dashboard-body,
-.wrapper,
-.skin-blue .wrapper,
-.content-wrapper,
-.right-side,
-.main-footer {
-    background-color: #f0f4f8 !important;
-    background: #f0f4f8 !important;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
-    color: var(--text-primary) !important;
-    min-height: calc(100vh - 50px);
-}
-
-/* ==========================================================================
-   Estandarizacion de Encabezados de Pagina (Titulo y Subtitulo en 2 Lineas)
-   ========================================================================== */
-.content-header {
-    position: relative !important;
-    padding: 22px 20px 14px 20px !important;
-}
-
-.content-header > h1,
-.content-header h1.modern-page-title,
-.content-header h1 {
-    margin: 0 !important;
-    font-size: 21px !important;
-    font-weight: 700 !important;
-    color: #2F5597 !important;
-    line-height: 1.25 !important;
-    display: block !important;
-}
-
-.content-header > h1 > i,
-.content-header h1.modern-page-title > i,
-.content-header h1 > i {
-    color: #0284c7 !important;
-    margin-right: 10px !important;
-    font-size: 21px !important;
-    vertical-align: -1px !important;
-    display: inline-block !important;
-}
-
-.content-header > h1 > small,
-.content-header h1.modern-page-title small,
-.content-header h1 small,
-.content-header p.modern-page-subtitle,
-.content-header p {
-    display: block !important;
-    margin: 6px 0 0 0 !important;
-    padding-left: 0 !important;
-    font-size: 13px !important;
-    font-weight: 400 !important;
-    color: #64748b !important;
-    line-height: 1.4 !important;
-    letter-spacing: 0.1px !important;
-}
 
 .content-header > .breadcrumb {
     position: absolute !important;
@@ -291,7 +250,7 @@ body.dark-presentation-mode .content-header p {
     background: linear-gradient(-45deg, #2F5597, #244782, #1d3c70, #284c88, #2F5597) !important;
     background-size: 300% 300% !important;
     animation: gradientShift 16s ease infinite !important;
-    border-bottom: 2px solid #93CDDD !important;
+    border-bottom: 2px solid #204880 !important;
     box-shadow: 0 4px 16px rgba(47, 85, 151, 0.35) !important;
 }
 
@@ -378,7 +337,7 @@ body.dark-presentation-mode .content-header p {
     }
     75% {
         transform: translate(-14px, -8px) rotate(-22deg) scale(1.15);
-        color: #93CDDD;
+        color: #3d6cb9;
         opacity: 0.9;
         text-shadow: 0 0 10px rgba(134, 210, 221, 0.8);
     }
@@ -412,7 +371,7 @@ body.dark-presentation-mode .content-header p {
     }
     75% {
         transform: translate(14px, 7px) rotate(25deg) scale(1.15);
-        color: #93CDDD;
+        color: #3d6cb9;
         opacity: 0.9;
         text-shadow: 0 0 10px rgba(134, 210, 221, 0.8);
     }
@@ -435,7 +394,7 @@ body.dark-presentation-mode .content-header p {
 
 .main-header .logo:hover .ffc-f1 {
     transform: translate(-10px, -6px) rotate(-18deg) scale(1.1);
-    color: #93CDDD;
+    color: #3d6cb9;
 }
 
 .main-header .logo:hover .ffc-f2 {
@@ -445,7 +404,7 @@ body.dark-presentation-mode .content-header p {
 
 .main-header .logo:hover .ffc-c {
     transform: translate(10px, 6px) rotate(20deg) scale(1.1);
-    color: #93CDDD;
+    color: #3d6cb9;
 }
 
 .main-header .logo .logo-lg {
@@ -473,7 +432,7 @@ body.dark-presentation-mode .content-header p {
 }
 
 .main-header .navbar .sidebar-toggle:hover {
-    background-color: var(--accent-teal) !important;
+    background-color: #204880 !important;
 }
 
 .main-header .navbar .nav > li > a {
@@ -597,7 +556,7 @@ body.dark-presentation-mode .content-header p {
     height: 28px !important;
     border-radius: 50% !important;
     margin: 0 !important;
-    border: 1.5px solid #93CDDD !important;
+    border: 1.5px solid #3d6cb9 !important;
     float: none !important;
     object-fit: cover !important;
 }
@@ -632,8 +591,8 @@ body.dark-presentation-mode .content-header p {
 }
 
 .navbar-nav > .user-menu > .dropdown-menu > li.user-header > img {
-    border: 3px solid #387C93 !important;
-    box-shadow: 0 4px 14px rgba(13, 118, 130, 0.25) !important;
+    border: 3px solid #2F5597 !important;
+    box-shadow: 0 4px 14px rgba(47, 85, 151, 0.25) !important;
     width: 76px !important;
     height: 76px !important;
     border-radius: 50% !important;
@@ -691,8 +650,8 @@ body.dark-presentation-mode .content-header p {
 
 .navbar-nav > .user-menu > .dropdown-menu > li.user-footer .btn-default:hover {
     background: #f1f5f9 !important;
-    color: #31859C !important;
-    border-color: #31859C !important;
+    color: #2F5597 !important;
+    border-color: #2F5597 !important;
 }
 
 /* ==========================================================================
@@ -830,7 +789,7 @@ body.sidebar-collapse .sidebar-menu > li > a > span:not(.pull-right-container) {
     flex-shrink: 0 !important;
 }
 
-/* Hover State - Sutil deslizamiento e iluminación */
+/* Hover State - Sutil deslizamiento e iluminaciÃ³n */
 .sidebar-menu > li:not(.active):hover > a,
 .sidebar-menu > li:not(.active):focus > a {
     color: #ffffff !important;
@@ -843,15 +802,15 @@ body.sidebar-collapse .sidebar-menu > li > a > span:not(.pull-right-container) {
     transform: scale(1.1) !important;
 }
 
-/* /* Active State - Institutional Celeste Pill Container */
+/* Active State - Institutional Blue Pill Container */
 .sidebar-menu > li.active > a,
 .sidebar-menu > li.active > a:hover,
 .sidebar-menu > li.active > a:focus,
 .sidebar-menu > li.active > a:active {
-    color: #1b3866 !important;
-    background: linear-gradient(135deg, #e0f2fe 0%, #93CDDD 100%) !important;
+    color: #ffffff !important;
+    background: linear-gradient(135deg, #3d6cb9 0%, #2F5597 100%) !important;
     font-weight: 700 !important;
-    box-shadow: 0 4px 14px rgba(147, 205, 221, 0.45) !important;
+    box-shadow: 0 4px 14px rgba(47, 85, 151, 0.45) !important;
     border-left: none !important;
     position: relative;
     overflow: hidden;
@@ -896,7 +855,7 @@ body.sidebar-collapse .sidebar-menu > li > a > span:not(.pull-right-container) {
     transform: scale(1.08) !important;
 }
 
-/* Submenús Plegables con Línea Guía Conectora */
+/* SubmenÃºs Plegables con LÃ­nea GuÃ­a Conectora */
 .sidebar-menu .treeview-menu {
     background: rgba(8, 25, 46, 0.6) !important;
     border-radius: 8px !important;
@@ -1696,7 +1655,7 @@ table.dataTable.cell-border {
     background: linear-gradient(-45deg, #2F5597, #244782, #1d3c70, #284c88, #2F5597) !important;
     background-size: 300% 300% !important;
     animation: gradientShift 16s ease infinite !important;
-    border-bottom: 2px solid #93CDDD !important;
+    border-bottom: 2px solid #204880 !important;
     box-shadow: 0 4px 16px rgba(47, 85, 151, 0.35) !important;
     padding: 16px 24px !important;
     display: flex !important;
@@ -2093,11 +2052,11 @@ table.dataTable.cell-border {
     animation: arrowBounceDown 1.6s ease-in-out infinite !important;
 }
 
-/* 3. Light Shimmer Gliding Down Vertical Cyan Accent Bars */
+/* 3. Light Shimmer Gliding Down Vertical Blue Accent Bars */
 @keyframes verticalBarShimmer {
-    0% { border-left-color: #31859C; }
-    50% { border-left-color: #93CDDD; }
-    100% { border-left-color: #31859C; }
+    0% { border-left-color: #2F5597; }
+    50% { border-left-color: #5582c4; }
+    100% { border-left-color: #2F5597; }
 }
 
 .kpi-title,
@@ -2200,9 +2159,9 @@ table.dataTable.cell-border {
 .kpi-cards-wrapper > div:nth-child(3) { animation-delay: 0.19s; }
 
 .modern-kpi-card:hover {
-    box-shadow: 0 12px 30px -5px rgba(13, 118, 130, 0.14), 0 4px 12px rgba(0, 0, 0, 0.04) !important;
+    box-shadow: 0 12px 30px -5px rgba(47, 85, 151, 0.14), 0 4px 12px rgba(0, 0, 0, 0.04) !important;
     transform: translateY(-4px) scale(1.015) !important;
-    border-color: #93CDDD !important;
+    border-color: #2F5597 !important;
 }
 
 .kpi-title {
@@ -2402,7 +2361,7 @@ table.dataTable.cell-border {
     border: 1px solid #a7f3d0 !important;
 }
 
-/* ==================== ANIMACIÓN DE ALERTA PULSANTE / BRILLO DE BORDE ==================== */
+/* ==================== ANIMACIÃ“N DE ALERTA PULSANTE / BRILLO DE BORDE ==================== */
 @keyframes alertGlowPulse {
     0%, 100% {
         border-color: #fca5a5;
@@ -2485,13 +2444,13 @@ span.indicator-var-pill.negative {
     width: 44px;
     height: 44px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #387C93 0%, #09545d 100%);
+    background: linear-gradient(135deg, #4b7bb5 0%, #2F5597 100%);
     color: white;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 18px;
-    box-shadow: 0 4px 10px rgba(13, 118, 130, 0.25);
+    box-shadow: 0 4px 10px rgba(47, 85, 151, 0.25);
 }
 
 .icon-circle-blue {
@@ -2578,13 +2537,13 @@ span.indicator-var-pill.negative {
 
 .modern-table th {
     background-color: #2F5597 !important;
-    background: linear-gradient(135deg, #2F5597 0%, #31859C 100%) !important;
+    background: linear-gradient(135deg, #3d6cb9 0%, #2F5597 100%) !important;
     color: #ffffff !important;
     font-size: 12px;
     font-weight: 700;
     padding: 10px 14px;
     text-align: center !important;
-    border-bottom: 3px solid #6DB5CB !important;
+    border-bottom: 3px solid #2F5597 !important;
 }
 
 .modern-table td {
@@ -2668,9 +2627,9 @@ span.indicator-var-pill.negative {
 }
 
 .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
-    color: var(--accent-teal) !important;
+    color: #2F5597 !important;
     border: none !important;
-    border-bottom: 3px solid var(--accent-teal) !important;
+    border-bottom: 3px solid #2F5597 !important;
     background-color: transparent !important;
     font-weight: 700 !important;
 }
@@ -2940,7 +2899,7 @@ table th {
     text-transform: none !important;
     letter-spacing: normal !important;
     padding: 12px 16px !important;
-    border-bottom: 2px solid #93CDDD !important;
+    border-bottom: 2px solid #2F5597 !important;
     border-right: 1px solid #e2e8f0 !important;
     border-top: none !important;
     text-align: left !important;
@@ -2960,7 +2919,7 @@ table.table th span,
 .streaming-table table th i,
 .table th i,
 table.dataTable thead th i {
-    color: #93CDDD !important;
+    color: #2F5597 !important;
     margin-right: 6px;
 }
 
@@ -3019,7 +2978,7 @@ button.btn-xs,
     max-width: none !important;
 }
 
-/* Dropdown Toggle Action Buttons (Acción ▼) - Prevent Text Clipping */
+/* Dropdown Toggle Action Buttons (AcciÃ³n â–¼) - Prevent Text Clipping */
 .dropdown-toggle,
 .btn-group .dropdown-toggle,
 .btn-warning.dropdown-toggle,
@@ -3173,7 +3132,7 @@ div.dt-buttons .btn:hover {
 .dt-buttons .dt-button:hover::before,
 .dt-button:hover::before,
 div.dt-buttons .btn:hover::before {
-    color: #93CDDD !important;
+    color: #3d6cb9 !important;
 }
 
 .streaming-table table tr.total-row td,
@@ -3367,7 +3326,7 @@ label.btn-facebook:hover {
     color: #2F5597 !important;
     font-weight: 700 !important;
     background-color: #ffffff !important;
-    border-bottom: 3px solid #387C93 !important;
+    border-bottom: 3px solid #2F5597 !important;
 }
 
 /* Help Badge Icons */
@@ -3682,8 +3641,8 @@ div.subtable-col.badge-cell.positive span {
 
 .btn-presentation-mode:hover {
     background: rgba(134, 210, 221, 0.25) !important;
-    color: #93CDDD !important;
-    border-color: #93CDDD !important;
+    color: #3d6cb9 !important;
+    border-color: #3d6cb9 !important;
     box-shadow: 0 0 10px rgba(134, 210, 221, 0.3) !important;
     text-decoration: none !important;
 }
@@ -3754,9 +3713,9 @@ body.dark-presentation-mode .btn-quick-period:hover {
 }
 
 body.dark-presentation-mode .btn-quick-period.active {
-    background: #93CDDD;
+    background: #3d6cb9;
     color: #0b1929;
-    border-color: #93CDDD;
+    border-color: #3d6cb9;
     font-weight: 700;
 }
 
@@ -3832,7 +3791,7 @@ form table.modern-data-table,
 
 .modern-data-table thead tr {
     background: #f8fafc !important;
-    border-bottom: 2px solid #93CDDD !important;
+    border-bottom: 2px solid #2F5597 !important;
 }
 
 .modern-data-table thead th {
@@ -3850,7 +3809,7 @@ form table.modern-data-table,
 
 .modern-data-table thead th i {
     margin-right: 6px;
-    color: #93CDDD !important;
+    color: #2F5597 !important;
 }
 
 .modern-data-table tbody tr {
@@ -3888,7 +3847,7 @@ form table.modern-data-table,
 }
 
 .entity-cell-group:hover .entity-name-text {
-    color: #31859C !important;
+    color: #2F5597 !important;
     text-decoration: none !important;
 }
 
@@ -4046,7 +4005,7 @@ body.dark-presentation-mode .entity-name-text {
 }
 
 body.dark-presentation-mode .entity-cell-group:hover .entity-name-text {
-    color: #93CDDD !important;
+    color: #3d6cb9 !important;
 }
 
 /* ==========================================================================
@@ -4062,7 +4021,7 @@ body.dark-presentation-mode .entity-cell-group:hover .entity-name-text {
     margin-bottom: 20px !important;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02) !important;
     border: 1px solid #e2e8f0 !important;
-    border-left: 5px solid #6DB5CB !important;
+    border-left: 5px solid #2F5597 !important;
     position: relative !important;
     overflow: hidden !important;
 }
@@ -4082,7 +4041,7 @@ body.dark-presentation-mode .entity-cell-group:hover .entity-name-text {
 }
 
 .welcome-title i {
-    color: #93CDDD !important;
+    color: #2F5597 !important;
     text-shadow: none !important;
 }
 
@@ -4242,7 +4201,7 @@ body.dark-presentation-mode .entity-cell-group:hover .entity-name-text {
 }
 
 .target-bar-fill.success {
-    background: linear-gradient(90deg, #6DB5CB, #93CDDD);
+    background: linear-gradient(90deg, #3d6cb9, #2F5597);
 }
 
 .target-bar-fill.warning {
@@ -4379,7 +4338,7 @@ body.dark-presentation-mode .fga-chart-tooltip {
 }
 
 body.dark-presentation-mode .fga-chart-tooltip .tt-header {
-    color: #38bdf8;
+    color: #93c4f0;
     border-bottom-color: #334155;
 }
 
@@ -4452,7 +4411,7 @@ body.dark-presentation-mode .fga-chart-tooltip .tt-val {
     transition: background 0.2s ease;
 }
 ::-webkit-scrollbar-thumb:hover {
-    background: #387C93;
+    background: #2F5597;
 }
 
 /* Card Hover Elevation Micro-Interactions */
@@ -4525,15 +4484,15 @@ table.dataTable.display tbody tr:hover,
 .box-success,
 .box-warning,
 .box-danger {
-    border: 1.5px solid #93CDDD !important;
+    border: 1.5px solid #b9cde8 !important;
     border-radius: 8px !important;
-    box-shadow: 0 4px 12px rgba(20, 55, 80, 0.05) !important;
+    box-shadow: 0 4px 12px rgba(47, 85, 151, 0.06) !important;
 }
 
 .box > .box-header,
 .card-header,
 .panel-heading {
-    border-bottom: 1px solid rgba(136, 209, 226, 0.4) !important;
+    border-bottom: 1px solid rgba(47, 85, 151, 0.15) !important;
 }
 
 /* ==========================================================================
@@ -4615,14 +4574,14 @@ table#tbIRLR tbody tr td:nth-child(2) {
     padding-left: 14px !important;
 }
 
-/* Ocultar botón de guardar / exportar de Highcharts en sparklines de tarjetas KPI */
+/* Ocultar botÃ³n de guardar / exportar de Highcharts en sparklines de tarjetas KPI */
 .kpi-sparkline-container .highcharts-contextbutton,
 .kpi-sparkline-container .highcharts-exporting-group {
     display: none !important;
 }
 
 /* ==========================================================================
-   Interruptor Moderno de Animaciones de Gráficos (ON/OFF)
+   Interruptor Moderno de Animaciones de GrÃ¡ficos (ON/OFF)
    ========================================================================== */
 .anim-toggle-container {
     background: #ffffff !important;
@@ -4635,8 +4594,8 @@ table#tbIRLR tbody tr td:nth-child(2) {
 }
 
 .anim-toggle-container:hover {
-    border-color: #387c93 !important;
-    box-shadow: 0 2px 8px rgba(56, 124, 147, 0.15) !important;
+    border-color: #2F5597 !important;
+    box-shadow: 0 2px 8px rgba(47, 85, 151, 0.15) !important;
 }
 
 .anim-toggle-label {
@@ -4672,8 +4631,8 @@ table#tbIRLR tbody tr td:nth-child(2) {
 }
 
 .modern-switch.active {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
+    background: linear-gradient(135deg, #3d6cb9 0%, #2F5597 100%) !important;
+    box-shadow: 0 2px 8px rgba(47, 85, 151, 0.4) !important;
 }
 
 .modern-switch.active .switch-knob {
@@ -4717,7 +4676,7 @@ table.dataTable tbody tr.group-header-row td *,
     color: #ffffff !important;
 }
 
-/* Soporte para alertas pulsantes en Modo Presentación Oscuro */
+/* Soporte para alertas pulsantes en Modo PresentaciÃ³n Oscuro */
 body.dark-presentation-mode .indicator-var-pill.negative,
 body.dark-presentation-mode span.kpi-trend-pill.negative,
 body.dark-presentation-mode .kpi-trend-pill.negative,
@@ -4767,7 +4726,7 @@ body.dark-presentation-mode .subtable-col.badge-cell.negative {
     height: 40px !important;
     border-radius: 10px !important;
     background: linear-gradient(135deg, #2F5597 0%, #204880 100%) !important;
-    color: #93CDDD !important;
+    color: #3d6cb9 !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -4807,9 +4766,9 @@ body.dark-presentation-mode .subtable-col.badge-cell.negative {
 }
 
 .btn-help-circle:hover {
-    background: #0284c7 !important;
+    background: #2F5597 !important;
     color: #ffffff !important;
-    border-color: #0284c7 !important;
+    border-color: #2F5597 !important;
     transform: scale(1.06) !important;
     text-decoration: none !important;
 }
@@ -4846,7 +4805,7 @@ body.dark-presentation-mode .subtable-col.badge-cell.negative {
 
 .btn-modern-browse i {
     font-size: 15px !important;
-    color: #0284c7 !important;
+    color: #2F5597 !important;
 }
 
 .modern-file-pill {
@@ -4943,7 +4902,7 @@ body.dark-presentation-mode .subtable-col.badge-cell.negative {
 
 .modern-upload-progress .progress-bar.modern-progress-bar {
     height: 100% !important;
-    background: linear-gradient(90deg, #2F5597, #93CDDD, #31859C) !important;
+    background: linear-gradient(90deg, #204880, #2F5597, #3d6cb9) !important;
     border-radius: 8px !important;
     transition: width 0.3s ease !important;
 }
@@ -4955,7 +4914,7 @@ body.dark-presentation-mode .subtable-col.badge-cell.negative {
 }
 
 /* ==========================================================================
-   26. Píldoras de Estado en Tablas de Carga (.file-status-badge)
+   26. PÃ­ldoras de Estado en Tablas de Carga (.file-status-badge)
    ========================================================================== */
 .file-status-badge {
     display: inline-flex !important;
@@ -5119,7 +5078,7 @@ img.month-picker-open-button {
 }
 
 .modern-filter-toolbar .filter-item label i {
-    color: #0284c7 !important;
+    color: #2F5597 !important;
     font-size: 13px !important;
 }
 
@@ -5132,8 +5091,8 @@ img.month-picker-open-button {
     height: 26px !important;
     border-radius: 50% !important;
     background: #e0f2fe !important;
-    color: #0284c7 !important;
-    border: 1px solid #bae6fd !important;
+    color: #2F5597 !important;
+    border: 1px solid #b9cde8 !important;
     font-size: 11px !important;
     cursor: pointer !important;
     transition: all 0.2s ease !important;
@@ -5144,11 +5103,11 @@ img.month-picker-open-button {
 
 .modern-filter-toolbar .filter-item a[data-toggle="tooltip"]:hover i.fa-question,
 .modern-filter-toolbar .filter-item a[title="Ayuda"]:hover i.fa-question {
-    background: #0284c7 !important;
+    background: #2F5597 !important;
     color: #ffffff !important;
-    border-color: #0284c7 !important;
+    border-color: #2F5597 !important;
     transform: scale(1.1) !important;
-    box-shadow: 0 2px 6px rgba(2, 132, 199, 0.3) !important;
+    box-shadow: 0 2px 6px rgba(47, 85, 151, 0.3) !important;
 }
 
 .modern-filter-toolbar .modern-select,
@@ -5171,9 +5130,9 @@ img.month-picker-open-button {
 .modern-filter-toolbar .form-control:focus,
 .modern-input-wrapper input:focus,
 input.modern-date-input:focus {
-    border-color: #0284c7 !important;
+    border-color: #2F5597 !important;
     background-color: #ffffff !important;
-    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15) !important;
+    box-shadow: 0 0 0 3px rgba(47, 85, 151, 0.15) !important;
 }
 
 .btn-modern-filter {
@@ -5203,12 +5162,12 @@ input.modern-date-input:focus {
     transform: translateY(-1px) !important;
 }
 
-/* ── bootstrap-multiselect dentro del modern-filter-toolbar ─────────────────
+/* â”€â”€ bootstrap-multiselect dentro del modern-filter-toolbar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
    El plugin genera un <div class="btn-group"> con un <button.multiselect>
    y un <ul.dropdown-menu>. Necesitamos:
-   1. Igualar el botón al estilo .form-control del toolbar
+   1. Igualar el botÃ³n al estilo .form-control del toolbar
    2. Subir el z-index del dropdown para que no quede debajo de otros elementos
-   ─────────────────────────────────────────────────────────────────────────── */
+   â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 /* El filter-item que contiene #listaIndicadores debe permitir overflow */
 .modern-filter-toolbar .filter-item {
@@ -5227,7 +5186,7 @@ input.modern-date-input:focus {
     display: inline-block !important;
 }
 
-/* Botón principal del multiselect */
+/* BotÃ³n principal del multiselect */
 .modern-filter-toolbar .multiselect.dropdown-toggle,
 .modern-filter-toolbar button.multiselect {
     height: 38px !important;
@@ -5262,13 +5221,13 @@ input.modern-date-input:focus {
 
 .modern-filter-toolbar .multiselect.dropdown-toggle:focus,
 .modern-filter-toolbar button.multiselect:focus {
-    border-color: #0284c7 !important;
+    border-color: #2F5597 !important;
     background-color: #ffffff !important;
     box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15) !important;
     outline: none !important;
 }
 
-/* Caret / chevron del botón */
+/* Caret / chevron del botÃ³n */
 .modern-filter-toolbar .multiselect .caret {
     border-top-color: #64748b !important;
     margin-left: 4px !important;
@@ -5288,7 +5247,7 @@ input.modern-date-input:focus {
     margin-top: 4px !important;
 }
 
-/* Opción dentro del dropdown */
+/* OpciÃ³n dentro del dropdown */
 .modern-filter-toolbar .multiselect-container > li > a,
 .modern-filter-toolbar .multiselect-container > li > label {
     padding: 7px 14px !important;
@@ -5302,10 +5261,10 @@ input.modern-date-input:focus {
 .modern-filter-toolbar .multiselect-container > li > a:hover,
 .modern-filter-toolbar .multiselect-container > li.active > a {
     background: #f0f9ff !important;
-    color: #0284c7 !important;
+    color: #2F5597 !important;
 }
 
-/* Filtro de búsqueda dentro del panel */
+/* Filtro de bÃºsqueda dentro del panel */
 .modern-filter-toolbar .multiselect-search {
     border-radius: 6px !important;
     border: 1px solid #e2e8f0 !important;
@@ -5317,13 +5276,13 @@ input.modern-date-input:focus {
 }
 
 .modern-filter-toolbar .multiselect-search:focus {
-    border-color: #0284c7 !important;
+    border-color: #2F5597 !important;
     box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.15) !important;
     outline: none !important;
 }
 
 /* ==========================================================================
-   28. Modernización de Cajas Contenedoras (.box.box-solid.box-info)
+   28. ModernizaciÃ³n de Cajas Contenedoras (.box.box-solid.box-info)
    ========================================================================== */
 .box.box-solid.box-info {
     border-radius: 12px !important;
@@ -5353,7 +5312,7 @@ input.modern-date-input:focus {
     padding: 14px 20px !important;
 }
 
-/* Botón estilizado de retorno */
+/* BotÃ³n estilizado de retorno */
 .btn-modern-back {
     display: inline-flex !important;
     align-items: center !important;
@@ -5378,7 +5337,7 @@ input.modern-date-input:focus {
 }
 
 /* ==========================================================================
-   29. Modernización de Vista Cambiar Contraseña y Perfil (.modern-password-layout)
+   29. ModernizaciÃ³n de Vista Cambiar ContraseÃ±a y Perfil (.modern-password-layout)
    ========================================================================== */
 .modern-profile-card,
 .modern-password-card {
@@ -5410,7 +5369,7 @@ input.modern-date-input:focus {
 }
 
 .modern-card-header h3 i {
-    color: #0284c7 !important;
+    color: #2F5597 !important;
     font-size: 18px !important;
 }
 
@@ -5430,7 +5389,7 @@ input.modern-date-input:focus {
     width: 76px !important;
     height: 76px !important;
     border-radius: 50% !important;
-    background: linear-gradient(135deg, #2F5597 0%, #31859C 100%) !important;
+    background: linear-gradient(135deg, #3d6cb9 0%, #2F5597 100%) !important;
     color: #ffffff !important;
     display: inline-flex !important;
     align-items: center !important;
@@ -5490,7 +5449,7 @@ input.modern-date-input:focus {
 
 .profile-detail-label i {
     width: 16px !important;
-    color: #0284c7 !important;
+    color: #2F5597 !important;
     text-align: center !important;
 }
 
@@ -5518,7 +5477,7 @@ input.modern-date-input:focus {
 }
 
 .modern-field-group label i {
-    color: #0284c7 !important;
+    color: #2F5597 !important;
     font-size: 13px !important;
 }
 
@@ -5541,7 +5500,7 @@ input.modern-date-input:focus {
 }
 
 .modern-password-input-group .form-control:focus {
-    border-color: #0284c7 !important;
+    border-color: #2F5597 !important;
     background-color: #ffffff !important;
     box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15) !important;
 }
@@ -5565,7 +5524,7 @@ input.modern-date-input:focus {
 }
 
 .password-toggle-btn:hover {
-    color: #0284c7 !important;
+    color: #2F5597 !important;
 }
 
 /* Password Requirement Box */
@@ -5676,7 +5635,7 @@ input.modern-date-input:focus {
 }
 
 /* ==========================================================================
-   30. Estilos Modernos del Menú MonthPicker & DatePicker (Executive Theme)
+   30. Estilos Modernos del MenÃº MonthPicker & DatePicker (Executive Theme)
    ========================================================================== */
 .month-picker {
     background: #ffffff !important;
@@ -5757,7 +5716,7 @@ input.modern-date-input:focus {
     display: none !important;
 }
 
-/* Botones de navegación Anterior y Siguiente */
+/* Botones de navegaciÃ³n Anterior y Siguiente */
 .month-picker-previous a,
 .month-picker-next a,
 .month-picker-previous .ui-button,
@@ -5808,8 +5767,8 @@ input.modern-date-input:focus {
 .month-picker-next a:hover,
 .month-picker-previous .ui-button:hover,
 .month-picker-next .ui-button:hover {
-    background: #0284c7 !important;
-    border-color: #0284c7 !important;
+    background: #2F5597 !important;
+    border-color: #2F5597 !important;
     box-shadow: 0 2px 6px rgba(2, 132, 199, 0.3) !important;
     transform: scale(1.05) !important;
 }
@@ -5827,7 +5786,7 @@ input.modern-date-input:focus {
     display: none !important;
 }
 
-/* Botón central de Título / Año / Regresar */
+/* BotÃ³n central de TÃ­tulo / AÃ±o / Regresar */
 .month-picker-title a,
 .month-picker-title .ui-button {
     background: #f1f5f9 !important;
@@ -5865,10 +5824,10 @@ input.modern-date-input:focus {
 
 .month-picker-title a:hover .ui-button-text,
 .month-picker-title .ui-button:hover .ui-button-text {
-    color: #0284c7 !important;
+    color: #2F5597 !important;
 }
 
-/* Grilla de Meses y Años */
+/* Grilla de Meses y AÃ±os */
 .month-picker-month-table {
     width: 100% !important;
     border-collapse: separate !important;
@@ -5888,7 +5847,7 @@ input.modern-date-input:focus {
     background: transparent !important;
 }
 
-/* Botón individual de cada Mes / Año */
+/* BotÃ³n individual de cada Mes / AÃ±o */
 .month-picker-month-table .ui-button,
 .month-picker-month-table a {
     width: 100% !important;
@@ -5938,13 +5897,13 @@ input.modern-date-input:focus {
     font-weight: 600 !important;
 }
 
-/* Hover sobre Mes / Año */
+/* Hover sobre Mes / AÃ±o */
 .month-picker-month-table .ui-button:hover,
 .month-picker-month-table a:hover,
 .month-picker-month-table .ui-state-hover {
     background: #e0f2fe !important;
     border-color: #7dd3fc !important;
-    color: #0284c7 !important;
+    color: #2F5597 !important;
     box-shadow: 0 2px 6px rgba(2, 132, 199, 0.15) !important;
     transform: translateY(-1px) !important;
 }
@@ -5952,14 +5911,14 @@ input.modern-date-input:focus {
 .month-picker-month-table .ui-button:hover .ui-button-text,
 .month-picker-month-table a:hover .ui-button-text,
 .month-picker-month-table .ui-state-hover .ui-button-text {
-    color: #0284c7 !important;
+    color: #2F5597 !important;
 }
 
-/* Mes / Año Seleccionado y Activo únicamente */
+/* Mes / AÃ±o Seleccionado y Activo Ãºnicamente */
 .month-picker-month-table .ui-state-active,
 .month-picker-month-table a.ui-state-active {
-    background: linear-gradient(135deg, #2F5597 0%, #31859C 100%) !important;
-    border-color: #0284c7 !important;
+    background: linear-gradient(135deg, #3d6cb9 0%, #2F5597 100%) !important;
+    border-color: #2F5597 !important;
     color: #ffffff !important;
     font-weight: 700 !important;
     box-shadow: 0 2px 8px rgba(2, 132, 199, 0.3) !important;
@@ -5983,7 +5942,7 @@ input.modern-date-input:focus {
     color: #ffffff !important;
 }
 
-/* Meses / Años Deshabilitados */
+/* Meses / AÃ±os Deshabilitados */
 .month-picker-month-table .ui-state-disabled,
 .month-picker-disabled {
     opacity: 0.35 !important;
@@ -5997,7 +5956,7 @@ input.modern-date-input:focus {
 }
 
 /* ==========================================================================
-   31. Estilos Modernos para jQuery UI DatePicker estándar (.ui-datepicker)
+   31. Estilos Modernos para jQuery UI DatePicker estÃ¡ndar (.ui-datepicker)
    ========================================================================== */
 .ui-datepicker {
     background: #ffffff !important;
@@ -6049,8 +6008,8 @@ input.modern-date-input:focus {
 
 .ui-datepicker .ui-datepicker-prev:hover,
 .ui-datepicker .ui-datepicker-next:hover {
-    background: #0284c7 !important;
-    border-color: #0284c7 !important;
+    background: #2F5597 !important;
+    border-color: #2F5597 !important;
     color: #ffffff !important;
 }
 
@@ -6121,19 +6080,19 @@ input.modern-date-input:focus {
 .ui-datepicker td a:hover {
     background: #e0f2fe !important;
     border-color: #7dd3fc !important;
-    color: #0284c7 !important;
+    color: #2F5597 !important;
 }
 
 .ui-datepicker td .ui-state-active {
-    background: linear-gradient(135deg, #2F5597 0%, #31859C 100%) !important;
-    border-color: #0284c7 !important;
+    background: linear-gradient(135deg, #3d6cb9 0%, #2F5597 100%) !important;
+    border-color: #2F5597 !important;
     color: #ffffff !important;
     font-weight: 700 !important;
     box-shadow: 0 3px 8px rgba(2, 132, 199, 0.35) !important;
 }
 
 /* ==========================================================================
-   32. Estilos para Evaluación de Resultados (.eval-results-table)
+   32. Estilos para EvaluaciÃ³n de Resultados (.eval-results-table)
    ========================================================================== */
 .eval-results-table {
     border-collapse: separate !important;
@@ -6144,7 +6103,7 @@ input.modern-date-input:focus {
 
 .eval-results-table thead th {
     background: #f8fafc !important;
-    border-bottom: 2px solid #93CDDD !important;
+    border-bottom: 2px solid #3d6cb9 !important;
     color: #2F5597 !important;
     font-size: 13px !important;
     font-weight: 700 !important;
@@ -6170,7 +6129,7 @@ input.modern-date-input:focus {
     border: none !important;
 }
 
-/* Badges modernos para los niveles de evaluación */
+/* Badges modernos para los niveles de evaluaciÃ³n */
 .eval-badge {
     display: inline-flex !important;
     align-items: center !important;
@@ -6189,7 +6148,7 @@ input.modern-date-input:focus {
     transform: scale(1.08) !important;
 }
 
-/* Fuerte - Azul corporativo / Océano */
+/* Fuerte - Azul corporativo / OcÃ©ano */
 .eval-badge.badge-fuerte {
     background: linear-gradient(135deg, #2F5597 0%, #204880 100%) !important;
     color: #ffffff !important;
@@ -6203,21 +6162,21 @@ input.modern-date-input:focus {
     box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3) !important;
 }
 
-/* Mejorable - Ámbar / Dorado */
+/* Mejorable - Ãmbar / Dorado */
 .eval-badge.badge-mejorable {
     background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
     color: #ffffff !important;
     box-shadow: 0 2px 6px rgba(245, 158, 11, 0.3) !important;
 }
 
-/* Débil - Rojo suave */
+/* DÃ©bil - Rojo suave */
 .eval-badge.badge-debil {
     background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
     color: #ffffff !important;
     box-shadow: 0 2px 6px rgba(239, 68, 68, 0.3) !important;
 }
 
-/* Badge vacío */
+/* Badge vacÃ­o */
 .eval-badge.badge-empty {
     background: transparent !important;
     color: #cbd5e1 !important;
@@ -6240,7 +6199,7 @@ input.modern-date-input:focus {
 }
 
 /* ==========================================================================
-   31. Modernización de Avance de Evaluación (/Evaluacion/Avance)
+   31. ModernizaciÃ³n de Avance de EvaluaciÃ³n (/Evaluacion/Avance)
    ========================================================================== */
 
 .avance-badge {
@@ -6298,10 +6257,10 @@ input.modern-date-input:focus {
 }
 
 /* ==========================================================================
-   32. Modernización de Wizard de Evaluación (/Evaluacion/Evaluacion)
+   32. ModernizaciÃ³n de Wizard de EvaluaciÃ³n (/Evaluacion/Evaluacion)
    ========================================================================== */
 
-/* Hero Card - Paso 1: Introducción */
+/* Hero Card - Paso 1: IntroducciÃ³n */
 .eval-hero-card {
     background: #ffffff !important;
     border-radius: 16px !important;
@@ -6323,7 +6282,7 @@ input.modern-date-input:focus {
     padding: 6px 16px !important;
     border-radius: 20px !important;
     background: #e0f2fe !important;
-    color: #0284c7 !important;
+    color: #2F5597 !important;
     font-size: 13px !important;
     font-weight: 600 !important;
     text-transform: uppercase !important;
@@ -6378,7 +6337,7 @@ input.modern-date-input:focus {
 
 .eval-feature-icon.icon-blue {
     background: #e0f2fe !important;
-    color: #0284c7 !important;
+    color: #2F5597 !important;
 }
 
 .eval-feature-icon.icon-teal {
@@ -6428,7 +6387,7 @@ input.modern-date-input:focus {
     width: 52px !important;
     height: 52px !important;
     border-radius: 12px !important;
-    background: linear-gradient(135deg, #2F5597 0%, #31859C 100%) !important;
+    background: linear-gradient(135deg, #3d6cb9 0%, #2F5597 100%) !important;
     color: #ffffff !important;
     display: flex !important;
     align-items: center !important;
@@ -6444,7 +6403,7 @@ input.modern-date-input:focus {
     padding: 16px 20px !important;
     background: #f8fafc !important;
     border-radius: 10px !important;
-    border-left: 4px solid #0284c7 !important;
+    border-left: 4px solid #2F5597 !important;
 }
 
 .eval-disclaimer-point p {
@@ -6479,7 +6438,7 @@ input.modern-date-input:focus {
     border-radius: 14px !important;
 }
 
-/* Component Cards - Paso 5: Autoevaluación */
+/* Component Cards - Paso 5: AutoevaluaciÃ³n */
 .eval-component-card {
     background: #ffffff !important;
     border-radius: 14px !important;
@@ -6524,16 +6483,16 @@ input.modern-date-input:focus {
 .eval-progress-fill {
     height: 100% !important;
     border-radius: 8px !important;
-    background: linear-gradient(90deg, #0284c7 0%, #10b981 100%) !important;
+    background: linear-gradient(90deg, #3d6cb9 0%, #2F5597 100%) !important;
     transition: width 0.4s ease !important;
 }
 
-/* Botón Flotante de Menú - Paso 5 */
+/* BotÃ³n Flotante de MenÃº - Paso 5 */
 .eval-fab-btn {
     width: 48px !important;
     height: 48px !important;
     border-radius: 50% !important;
-    background: linear-gradient(135deg, #2F5597 0%, #31859C 100%) !important;
+    background: linear-gradient(135deg, #3d6cb9 0%, #2F5597 100%) !important;
     color: #ffffff !important;
     display: inline-flex !important;
     align-items: center !important;
@@ -6548,7 +6507,7 @@ input.modern-date-input:focus {
 .eval-fab-btn:hover {
     transform: scale(1.08) !important;
     box-shadow: 0 6px 20px rgba(20, 55, 80, 0.4) !important;
-    color: #93CDDD !important;
+    color: #3d6cb9 !important;
 }
 
 /* Cuestionario de Preguntas - _ViewEval */
@@ -6583,19 +6542,19 @@ input.modern-date-input:focus {
 
 .eval-option-item:hover {
     background: #f0f9ff !important;
-    border-color: #38bdf8 !important;
+    border-color: #93c4f0 !important;
     transform: translateX(3px) !important;
 }
 
 .eval-option-item input[type="radio"] {
     margin-top: 3px !important;
-    accent-color: #0284c7 !important;
+    accent-color: #2F5597 !important;
     width: 16px !important;
     height: 16px !important;
 }
 
 /* ==========================================================================
-   Wizard de Evaluación - Contenedor #jqb-wizard
+   Wizard de EvaluaciÃ³n - Contenedor #jqb-wizard
    ========================================================================== */
 
 /* Quitar el borde azul/celeste por defecto de .card.border */
@@ -6607,7 +6566,7 @@ input.modern-date-input:focus {
     overflow: hidden !important;
 }
 
-/* Header vacío – el wizard no usa header visible, colapsarlo */
+/* Header vacÃ­o â€“ el wizard no usa header visible, colapsarlo */
 #jqb-header {
     display: none !important;
 }
@@ -6618,7 +6577,7 @@ input.modern-date-input:focus {
     background: #f8fafc !important;
 }
 
-/* Footer con botones de navegación */
+/* Footer con botones de navegaciÃ³n */
 #jqb-footer {
     background: #ffffff !important;
     border-top: 1px solid #e2e8f0 !important;
@@ -6629,7 +6588,7 @@ input.modern-date-input:focus {
     gap: 10px !important;
 }
 
-/* Botón Atrás */
+/* BotÃ³n AtrÃ¡s */
 #jqb-btn-prev {
     display: inline-flex !important;
     align-items: center !important;
@@ -6653,7 +6612,7 @@ input.modern-date-input:focus {
     box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4) !important;
 }
 
-/* Botón Siguiente / Finalizar */
+/* BotÃ³n Siguiente / Finalizar */
 #jqb-btn-next {
     display: inline-flex !important;
     align-items: center !important;
@@ -6662,7 +6621,7 @@ input.modern-date-input:focus {
     border-radius: 8px !important;
     font-size: 14px !important;
     font-weight: 600 !important;
-    background: linear-gradient(135deg, #2F5597 0%, #31859C 100%) !important;
+    background: linear-gradient(135deg, #3d6cb9 0%, #2F5597 100%) !important;
     color: #ffffff !important;
     border: none !important;
     cursor: pointer !important;
@@ -6677,7 +6636,7 @@ input.modern-date-input:focus {
     box-shadow: 0 4px 14px rgba(13, 115, 119, 0.45) !important;
 }
 
-/* Fix: float-right de Bootstrap dentro del footer – anularlo para que funcione con flex */
+/* Fix: float-right de Bootstrap dentro del footer â€“ anularlo para que funcione con flex */
 #jqb-footer .float-right {
     float: none !important;
     display: flex !important;
@@ -6686,7 +6645,7 @@ input.modern-date-input:focus {
 }
 
 /* ==========================================================================
-   29. Módulo de Simulación de Capital (ISP - IMCA)
+   29. MÃ³dulo de SimulaciÃ³n de Capital (ISP - IMCA)
    ========================================================================== */
 .simula-kpi-card {
     background: #ffffff !important;
@@ -6815,7 +6774,7 @@ input.modern-date-input:focus {
 
 .simula-input-pct:focus {
     outline: none !important;
-    border-color: #0284c7 !important;
+    border-color: #2F5597 !important;
     box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15) !important;
     background-color: #f0f9ff !important;
 }
@@ -6885,7 +6844,7 @@ input.modern-date-input:focus {
     transform: translateY(-1px) !important;
 }
 
-/* Simulación Flip Card & Regulatory Ranges */
+/* SimulaciÃ³n Flip Card & Regulatory Ranges */
 .simula-flip-container {
     perspective: 1000px !important;
     width: 100% !important;
@@ -6995,7 +6954,7 @@ input.modern-date-input:focus {
 }
 
 /* ==========================================================================
-   33. Panel Lateral de Configuración y Preferencias (.control-sidebar)
+   33. Panel Lateral de ConfiguraciÃ³n y Preferencias (.control-sidebar)
    ========================================================================== */
 .control-sidebar-toggle-wrapper {
     display: flex !important;
@@ -7033,17 +6992,17 @@ input.modern-date-input:focus {
 
 .control-sidebar-toggle-btn:hover i {
     transform: rotate(60deg) !important;
-    color: #93CDDD !important;
+    color: #3d6cb9 !important;
 }
 
 body.control-sidebar-open .control-sidebar-toggle-btn {
-    color: #38bdf8 !important;
+    color: #93c4f0 !important;
     background-color: rgba(56, 189, 248, 0.15) !important;
 }
 
 body.control-sidebar-open .control-sidebar-toggle-btn i {
     transform: rotate(90deg) !important;
-    color: #38bdf8 !important;
+    color: #93c4f0 !important;
 }
 
 /* Telon de fondo desenfocado para cerrar al hacer clic afuera */
@@ -7108,7 +7067,7 @@ body.control-sidebar-open .control-sidebar-bg {
     align-items: center;
     justify-content: space-between;
     padding: 18px 20px;
-    background: linear-gradient(135deg, #2F5597 0%, #31859C 100%);
+    background: linear-gradient(135deg, #3d6cb9 0%, #2F5597 100%);
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -7180,7 +7139,7 @@ body.control-sidebar-open .control-sidebar-bg {
     border-radius: 4px;
 }
 
-/* Título de sección */
+/* TÃ­tulo de secciÃ³n */
 .pref-section-heading {
     display: flex;
     align-items: center;
@@ -7189,7 +7148,7 @@ body.control-sidebar-open .control-sidebar-bg {
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: #38bdf8;
+    color: #93c4f0;
     margin: 16px 0 10px 0;
     padding-bottom: 6px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
@@ -7199,7 +7158,7 @@ body.control-sidebar-open .control-sidebar-bg {
     margin-top: 4px;
 }
 
-/* Tarjeta de ítem de preferencia */
+/* Tarjeta de Ã­tem de preferencia */
 .pref-item {
     display: flex;
     align-items: center;
@@ -7235,7 +7194,7 @@ body.control-sidebar-open .control-sidebar-bg {
 }
 
 .pref-label i {
-    color: #38bdf8;
+    color: #93c4f0;
     font-size: 13px;
     width: 16px;
     text-align: center;
@@ -7293,9 +7252,9 @@ body.control-sidebar-open .control-sidebar-bg {
 }
 
 .modern-switch input:checked + .modern-switch-slider {
-    background: linear-gradient(135deg, #0284c7 0%, #0d7682 100%);
-    border-color: #38bdf8;
-    box-shadow: 0 0 10px rgba(2, 132, 199, 0.4);
+    background: linear-gradient(135deg, #3d6cb9 0%, #2F5597 100%);
+    border-color: #5582c4;
+    box-shadow: 0 0 10px rgba(47, 85, 151, 0.4);
 }
 
 .modern-switch input:checked + .modern-switch-slider:before {
@@ -7303,7 +7262,7 @@ body.control-sidebar-open .control-sidebar-bg {
 }
 
 .modern-switch input:focus + .modern-switch-slider {
-    box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.4);
+    box-shadow: 0 0 0 2px rgba(47, 85, 151, 0.4);
 }
 
 /* Footer con nota informativa */
@@ -7319,7 +7278,7 @@ body.control-sidebar-open .control-sidebar-bg {
 }
 
 .pref-footer-note i {
-    color: #38bdf8;
+    color: #93c4f0;
     font-size: 13px;
     margin-top: 2px;
 }
@@ -7331,7 +7290,7 @@ body.control-sidebar-open .control-sidebar-bg {
 }
 
 /* ==========================================================================
-   34. Botones de Acción Modernos en Tablas (DataTables / Mantenimientos)
+   34. Botones de AcciÃ³n Modernos en Tablas (DataTables / Mantenimientos)
    ========================================================================== */
 .table .btn-group > .btn.btn-warning.btn-xs.dropdown-toggle,
 .dataTables_wrapper .btn-group > .btn.btn-warning.btn-xs.dropdown-toggle,
@@ -7377,7 +7336,7 @@ body.control-sidebar-open .control-sidebar-bg {
     margin-left: 3px !important;
 }
 
-/* Icono fa-cog dentro del botón de acción */
+/* Icono fa-cog dentro del botÃ³n de acciÃ³n */
 .table .btn-group > .btn.btn-warning.btn-xs.dropdown-toggle i.fa,
 .dataTables_wrapper .btn-group > .btn.btn-warning.btn-xs.dropdown-toggle i.fa,
 .table .btn-group > .btn.btn-default.btn-xs.dropdown-toggle i.fa,
@@ -7421,10 +7380,10 @@ body.control-sidebar-open .control-sidebar-bg {
 .table .btn-group .dropdown-menu > li > a:hover,
 .dataTables_wrapper .btn-group .dropdown-menu > li > a:hover {
     background-color: #f1f5f9 !important;
-    color: #0284c7 !important;
+    color: #2F5597 !important;
 }
 
-/* Espaciado global para encabezados de página */
+/* Espaciado global para encabezados de pÃ¡gina */
 .content-header {
     padding: 22px 20px 14px 20px !important;
 }
@@ -7439,7 +7398,7 @@ body.control-sidebar-open .control-sidebar-bg {
     pointer-events: none !important;
 }
 
-/* Prevenir aparición de barras de desplazamiento parpadeantes en modales de gráficos */
+/* Prevenir apariciÃ³n de barras de desplazamiento parpadeantes en modales de grÃ¡ficos */
 .modal-body:has(.highcharts-container),
 #graphModal .modal-body {
     overflow: hidden !important;
@@ -7544,10 +7503,10 @@ body.control-sidebar-open .control-sidebar-bg {
    ========================================================================== */
 
 :root {
-    --color-verde: #31859C;
+    --color-verde: #2F5597;
     --color-naranja: #ED7D31;
     --color-naranja-claro: #FABF8F;
-    --color-celeste: #93CDDD;
+    --color-celeste: #3d6cb9;
     --color-azul: #2F5597;
 }
 
@@ -7665,8 +7624,8 @@ select.form-control {
 
 .form-control:focus,
 .modern-select:focus {
-    border-color: var(--color-verde) !important;
-    box-shadow: 0 0 0 3px rgba(49, 133, 156, 0.18) !important;
+    border-color: var(--color-azul) !important;
+    box-shadow: 0 0 0 3px rgba(47, 85, 151, 0.18) !important;
 }
 
 /* 9. Botones de Accion y Filtros */

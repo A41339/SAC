@@ -56,7 +56,7 @@ namespace FGA.Model
                 {
                     Enabled = true,
                     ItemStyle = "fontSize: '12px', color: '#334155', fontWeight: '600', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'",
-                    ItemHoverStyle = "color: '#0d7682'",
+                    ItemHoverStyle = "color: '#2F5597'",
                     ItemMarginTop = 6,
                     ItemMarginBottom = 4,
                     ItemDistance = 16,
@@ -584,7 +584,7 @@ namespace FGA.Model
                     {
                         Enabled = System.Web.HttpContext.Current.Session[FGA.Utility.Utilitarios.show_LineDetail] is null ? false : true,
                         Format = "{point.y:,.2f}%",
-                        Style = "fontSize: '11px', fontWeight: '600', color: '#0d7682', textShadow: 'none', textOutline: 'none', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'",
+                        Style = "fontSize: '11px', fontWeight: '600', color: '#2F5597', textShadow: 'none', textOutline: 'none', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'",
                         Inside = false,
                         Overflow = "allow",
                         Y = -10
@@ -729,7 +729,7 @@ namespace FGA.Model
                 case 1:
                     return ColorTranslator.FromHtml("#ea580c"); // Ámbar / Naranja Cálido
                 case 2:
-                    return ColorTranslator.FromHtml("#0d7682"); // Teal Institucional FGA
+                    return ColorTranslator.FromHtml("#2F5597"); // Azul Institucional FFC
                 case 3:
                     return ColorTranslator.FromHtml("#10b981"); // Esmeralda / Éxito
                 case 4:

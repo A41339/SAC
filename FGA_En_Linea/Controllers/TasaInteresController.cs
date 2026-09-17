@@ -439,7 +439,7 @@ namespace FGA.Controllers
                         new Series{
                             Name = "Margen Ponderado",
                             Data = new Data(Margen),
-                            Color = ColorTranslator.FromHtml("#0d7682"),
+                            Color = ColorTranslator.FromHtml("#2F5597"),
                             Type = ChartTypes.Areaspline,
                             PlotOptionsAreaspline = HighChart.getAreasplinePercent(0.18, 2)
                         },
