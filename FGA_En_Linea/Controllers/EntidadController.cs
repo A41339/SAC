@@ -25,8 +25,8 @@ namespace FGA.Controllers
                                                     Convert.ToString(c.Identificacion),
                                                     Convert.ToString(c.Nombre),
                                                     Convert.ToString(c.Activo == true ? "Activo" : "Inactivo"),
-                                                    Convert.ToString(c.Ind_Cargar == true ? "S�" : "No"),
-                                                    Convert.ToString(c.Ind_Validar == true ? "S�" : "No"),
+                                                    Convert.ToString(c.Ind_Cargar == true ? "S\u00ed" : "No"),
+                                                    Convert.ToString(c.Ind_Validar == true ? "S\u00ed" : "No"),
                                                     };
                 return Json(new { aaData = result }, JsonRequestBehavior.AllowGet);
             }

@@ -98,7 +98,46 @@
                     buttons += '</div></div>';
                     return buttons;
                 }
-                    }, {}, {}, {}, {}, {}, {}]
+                    },
+                    {},
+                    {},
+                    {},
+                    {
+                        "mRender": function (val, type, row) {
+                            if (!val) return "";
+                            if (type === 'display') {
+                                return (val === 'Activo')
+                                    ? '<span class="badge" style="background-color:#10b981; color:#fff; font-weight:600; padding:4px 9px; border-radius:4px; font-size:11px;">Activo</span>'
+                                    : '<span class="badge" style="background-color:#ef4444; color:#fff; font-weight:600; padding:4px 9px; border-radius:4px; font-size:11px;">Inactivo</span>';
+                            }
+                            return val;
+                        }
+                    },
+                    {
+                        "mRender": function (val, type, row) {
+                            if (!val) return "";
+                            var text = val.toString().replace(/S[\ufffd\?]/g, 'S\u00ed');
+                            if (type === 'display') {
+                                return (text === 'S\u00ed' || text === 'Si')
+                                    ? '<span class="badge" style="background-color:#0284c7; color:#fff; font-weight:600; padding:4px 9px; border-radius:4px; font-size:11px;">S\u00ed</span>'
+                                    : '<span class="badge" style="background-color:#94a3b8; color:#fff; font-weight:600; padding:4px 9px; border-radius:4px; font-size:11px;">No</span>';
+                            }
+                            return text;
+                        }
+                    },
+                    {
+                        "mRender": function (val, type, row) {
+                            if (!val) return "";
+                            var text = val.toString().replace(/S[\ufffd\?]/g, 'S\u00ed');
+                            if (type === 'display') {
+                                return (text === 'S\u00ed' || text === 'Si')
+                                    ? '<span class="badge" style="background-color:#0284c7; color:#fff; font-weight:600; padding:4px 9px; border-radius:4px; font-size:11px;">S\u00ed</span>'
+                                    : '<span class="badge" style="background-color:#94a3b8; color:#fff; font-weight:600; padding:4px 9px; border-radius:4px; font-size:11px;">No</span>';
+                            }
+                            return text;
+                        }
+                    }
+                ]
         });
      });
 </script>

@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -169,7 +169,7 @@ namespace FGA.Controllers
                              select new string[] { c.TIPO, c.NOMBRE,
                                                    Utility.Utilitarios.ConvertirAString(c.RESULTADO.Value) + (c.IND_PORCENTAJE != true ? string.Empty : "%"),
                                                    Utility.Utilitarios.ConvertirAString(c.RESULTADO_COMPARAR.Value) + (c.IND_PORCENTAJE != true ? string.Empty : "%"),
-                                                   "<a data-toggle=\"tooltip\" data-placement=\"top\" title=\"Gráfico\" href=\"javascript:getGraph('F" + c.ID + "', '" + (c.IND_PORCENTAJE == true ? "S" : "N")  + "')\"><i class=\"btn btn-xs btn-info icon fa fa-line-chart\"></i></a>"
+                                                   "<a data-toggle=\"tooltip\" data-placement=\"top\" title=\"Grï¿½fico\" href=\"javascript:getGraph('F" + c.ID + "', '" + (c.IND_PORCENTAJE == true ? "S" : "N")  + "')\"><i class=\"btn btn-xs btn-info icon fa fa-line-chart\"></i></a>"
                                                   };
 
                 return Json(new { aaData = result }, JsonRequestBehavior.AllowGet);
@@ -192,7 +192,7 @@ namespace FGA.Controllers
                                                    Utility.Utilitarios.ConvertirAString(c.monto_2) + (c.ind_porcentaje != true ? string.Empty : "%"),
                                                    Utility.Utilitarios.ConvertirAString(c.promedio_1) + (c.ind_porcentaje != true ? string.Empty : "%"),
                                                    Utility.Utilitarios.ConvertirAString(c.promedio_2) + (c.ind_porcentaje != true ? string.Empty : "%"),
-                                                   "<a data-toggle=\"tooltip\" data-placement=\"top\" title=\"Gráfico\" href=\"javascript:getGraph('I" + c.id + "', '" + (c.ind_porcentaje == true ? "S" : "N")  + "')\"><i class=\"btn btn-xs btn-info icon fa fa-line-chart\"></i></a>"
+                                                   "<a data-toggle=\"tooltip\" data-placement=\"top\" title=\"Grï¿½fico\" href=\"javascript:getGraph('I" + c.id + "', '" + (c.ind_porcentaje == true ? "S" : "N")  + "')\"><i class=\"btn btn-xs btn-info icon fa fa-line-chart\"></i></a>"
                                                   };
 
                 return Json(new { aaData = result }, JsonRequestBehavior.AllowGet);
@@ -215,7 +215,7 @@ namespace FGA.Controllers
                 var result = from c in tak
                              select new string[] { c.NOMBRE, Utility.Utilitarios.ConvertirAString(c.RESULTADO.Value) + (c.IND_PORCENTAJE != true ? string.Empty : "%"),
                                                    Utility.Utilitarios.ConvertirAString(c.RESULTADO_COMPARAR.Value) + (c.IND_PORCENTAJE != true ? string.Empty : "%"),
-                                                   "<a data-toggle=\"tooltip\" data-placement=\"top\" title=\"Gráfico\" href=\"javascript:getGraph('P" + c.ID + "', '" + (c.IND_PORCENTAJE == true ? "S" : "N") + "')\"><i class=\"btn btn-xs btn-info icon fa fa-line-chart\"></i></a>"
+                                                   "<a data-toggle=\"tooltip\" data-placement=\"top\" title=\"Grï¿½fico\" href=\"javascript:getGraph('P" + c.ID + "', '" + (c.IND_PORCENTAJE == true ? "S" : "N") + "')\"><i class=\"btn btn-xs btn-info icon fa fa-line-chart\"></i></a>"
                                                   };
 
                 return Json(new { aaData = result }, JsonRequestBehavior.AllowGet);
@@ -244,7 +244,7 @@ namespace FGA.Controllers
                                             Utility.Utilitarios.ConvertirAString(c.MONTO_2) + (c.IND_PORCENTAJE != "S" ? string.Empty : "%"),
                                             Utility.Utilitarios.ConvertirAString(c.PROMEDIO_1) + (c.IND_PORCENTAJE != "S" ? string.Empty : "%"),
                                             Utility.Utilitarios.ConvertirAString(c.PROMEDIO_2) + (c.IND_PORCENTAJE != "S" ? string.Empty : "%"),
-                                            "<a data-toggle=\"tooltip\" data-placement=\"top\" title=\"Gráfico\" href=\"javascript:getGraph('C" + c.IDRPT_CAMEL + "', '" + c.IND_PORCENTAJE + "')\"><i class=\"btn btn-xs btn-info icon fa fa-line-chart\"></i></a>"
+                                            "<a data-toggle=\"tooltip\" data-placement=\"top\" title=\"Grï¿½fico\" href=\"javascript:getGraph('C" + c.IDRPT_CAMEL + "', '" + c.IND_PORCENTAJE + "')\"><i class=\"btn btn-xs btn-info icon fa fa-line-chart\"></i></a>"
                                             };
 
 
@@ -262,7 +262,7 @@ namespace FGA.Controllers
                                   Utility.Utilitarios.ConvertirAString(c.MONTO_2.Value) + (c.IND_PORCENTAJE != true ? string.Empty : "%"),
                                   Utility.Utilitarios.ConvertirAString(c.PROMEDIO_1.Value) + (c.IND_PORCENTAJE != true ? string.Empty : "%"),
                                   Utility.Utilitarios.ConvertirAString(c.PROMEDIO_2.Value) + (c.IND_PORCENTAJE != true ? string.Empty : "%"),
-                                  "<a data-toggle=\"tooltip\" data-placement=\"top\" title=\"Gráfico\" href=\"javascript:getGraph('I" + c.ID + "', '" + (c.IND_PORCENTAJE == true ? "S" : "N") + "')\"><i class=\"btn btn-xs btn-info icon fa fa-line-chart\"></i></a>"
+                                  "<a data-toggle=\"tooltip\" data-placement=\"top\" title=\"Grï¿½fico\" href=\"javascript:getGraph('I" + c.ID + "', '" + (c.IND_PORCENTAJE == true ? "S" : "N") + "')\"><i class=\"btn btn-xs btn-info icon fa fa-line-chart\"></i></a>"
                               };
 
                 // Concatenar los resultados de CAMEL e Indicador
@@ -299,7 +299,7 @@ namespace FGA.Controllers
                                    Utility.Utilitarios.ConvertirAString(c.MONTO_2.Value) + (c.IND_PORCENTAJE != true ? string.Empty : "%"),
                                    Utility.Utilitarios.ConvertirAString(c.PROMEDIO_1.Value) + (c.IND_PORCENTAJE != true ? string.Empty : "%"),
                                    Utility.Utilitarios.ConvertirAString(c.PROMEDIO_2.Value) + (c.IND_PORCENTAJE != true ? string.Empty : "%"),
-                                   "<a data-toggle=\"tooltip\" data-placement=\"top\" title=\"Gráfico\" href=\"javascript:getGraph('I" + c.ID + "', '" + (c.IND_PORCENTAJE == true ? "S" : "N") + "')\"><i class=\"btn btn-xs btn-info icon fa fa-line-chart\"></i></a>"
+                                   "<a data-toggle=\"tooltip\" data-placement=\"top\" title=\"Grï¿½fico\" href=\"javascript:getGraph('I" + c.ID + "', '" + (c.IND_PORCENTAJE == true ? "S" : "N") + "')\"><i class=\"btn btn-xs btn-info icon fa fa-line-chart\"></i></a>"
                                };
 
                  // Concatenar los resultados de CAMEL e Indicador
@@ -334,7 +334,7 @@ namespace FGA.Controllers
                               Utility.Utilitarios.ConvertirAString(c.MONTO) + (c.IND_PORCENTAJE != "S" ? string.Empty : "%"),
                               Utility.Utilitarios.ConvertirAString(c.MONTO_COMPARAR) + (c.IND_PORCENTAJE != "S" ? string.Empty : "%"),
                               c.IDRPT_SUFICIENCIA > 45 && c.IDRPT_SUFICIENCIA < 1000 ? "" :
-                              "<a data-toggle=\"tooltip\" data-placement=\"top\" title=\"Gráfico\" href=\"javascript:getGraph('N" + c.IDRPT_SUFICIENCIA + "', '" + c.IND_PORCENTAJE + "')\"><i class=\"btn btn-xs btn-info icon fa fa-line-chart\"></i></a>"
+                              "<a data-toggle=\"tooltip\" data-placement=\"top\" title=\"Grï¿½fico\" href=\"javascript:getGraph('N" + c.IDRPT_SUFICIENCIA + "', '" + c.IND_PORCENTAJE + "')\"><i class=\"btn btn-xs btn-info icon fa fa-line-chart\"></i></a>"
                           };
                 return Json(new { aaData = resultCAMEL }, JsonRequestBehavior.AllowGet);
             }
@@ -349,11 +349,11 @@ namespace FGA.Controllers
         {
             try
             {
-                // Obtener las fechas desde la sesión
+                // Obtener las fechas desde la sesiï¿½n
                 var periodo1 = Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString());
                 var periodo2 = Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString());
 
-                // Si es así, establecer los montos en 0 para todas las filas
+                // Si es asï¿½, establecer los montos en 0 para todas las filas
                 var resumen = Session["TipoReporte"].ToString();
                 var takCAMEL = sp.FGA_Consultar_CAMEL(Session["IdEntidad"].ToString(),
                     periodo1,
@@ -361,7 +361,7 @@ namespace FGA.Controllers
                     DateTime.Now,
                     resumen).Where(o => o.IDRPT_CAMEL == -11);
 
-                // Verificar si ambos años son mayores o iguales a 2025
+                // Verificar si ambos aï¿½os son mayores o iguales a 2025
                 if (periodo1.Year >= 2025 && periodo2.Year >= 2025)
                 {
                 
@@ -373,7 +373,7 @@ namespace FGA.Controllers
                                   resumen == "N" ? c.NOMBRE.Replace(" ", "&nbsp;").TrimEnd() : c.NOMBRE,
                                   "0", // Monto 1 ajustado a 0
                                   "0", // Monto 2 ajustado a 0
-                                  "<a data-toggle=\"tooltip\" data-placement=\"top\" title=\"Gráfico\" href=\"javascript:getGraph('C" + c.IDRPT_CAMEL + "', '" + c.IND_PORCENTAJE + "')\"><i class=\"btn btn-xs btn-info icon fa fa-line-chart\"></i></a>"
+                                  "<a data-toggle=\"tooltip\" data-placement=\"top\" title=\"Grï¿½fico\" href=\"javascript:getGraph('C" + c.IDRPT_CAMEL + "', '" + c.IND_PORCENTAJE + "')\"><i class=\"btn btn-xs btn-info icon fa fa-line-chart\"></i></a>"
                                       };
 
                     return Json(new { aaData = resultCAMEL }, JsonRequestBehavior.AllowGet);
@@ -388,7 +388,7 @@ namespace FGA.Controllers
                                   resumen == "N" ? c.NOMBRE.Replace(" ", "&nbsp;").TrimEnd() : c.NOMBRE,
                                   Utility.Utilitarios.ConvertirAString(c.MONTO_1) + (c.IND_PORCENTAJE != "S" ? string.Empty : "%"),
                                   Utility.Utilitarios.ConvertirAString(c.MONTO_2) + (c.IND_PORCENTAJE != "S" ? string.Empty : "%"),
-                                  "<a data-toggle=\"tooltip\" data-placement=\"top\" title=\"Gráfico\" href=\"javascript:getGraph('C" + c.IDRPT_CAMEL + "', '" + c.IND_PORCENTAJE + "')\"><i class=\"btn btn-xs btn-info icon fa fa-line-chart\"></i></a>"
+                                  "<a data-toggle=\"tooltip\" data-placement=\"top\" title=\"Grï¿½fico\" href=\"javascript:getGraph('C" + c.IDRPT_CAMEL + "', '" + c.IND_PORCENTAJE + "')\"><i class=\"btn btn-xs btn-info icon fa fa-line-chart\"></i></a>"
                                       };
 
                     return Json(new { aaData = resultCAMEL }, JsonRequestBehavior.AllowGet);
@@ -419,7 +419,7 @@ namespace FGA.Controllers
                                             Utility.Utilitarios.ConvertirAString(c.OrganizacionesCooperativas) + "%",
                                             Utility.Utilitarios.ConvertirAString(c.EntidadesAutorizadasVivienda) + "%",
                                             Utility.Utilitarios.ConvertirAString(c.Total) + "%",
-                                            "<a data-toggle=\"tooltip\" data-placement=\"top\" title=\"Gráfico\" href=\"javascript:getGraph('" + c.Id + "', 'S')\"><i class=\"btn btn-xs btn-info icon fa fa-line-chart\"></i></a>"
+                                            "<a data-toggle=\"tooltip\" data-placement=\"top\" title=\"Grï¿½fico\" href=\"javascript:getGraph('" + c.Id + "', 'S')\"><i class=\"btn btn-xs btn-info icon fa fa-line-chart\"></i></a>"
             };
 
                 return Json(new { aaData = result }, JsonRequestBehavior.AllowGet);
@@ -496,7 +496,8 @@ namespace FGA.Controllers
             for (int j = 0; j < cmb_indicadores.Count(); j++)
                 listaSeries.Add(new Serie(numPeriodos, cmb_indicadores[j]));
 
-            if (listaSeries.Count() == 1)
+            bool isBalanceType = cmb_indicadores.All(ind => ind != null && (ind.StartsWith("B") || ind.StartsWith("b")));
+            if (listaSeries.Count() == 1 && !isBalanceType)
             {
                 listaSeries.Add(new Serie(numPeriodos, "Promedio"));
                 promedio = true;
@@ -702,7 +703,7 @@ namespace FGA.Controllers
                     PlotOptionsLine = HighChart.getLineDashPercent()
                 },
                 new Series{
-                    Name = "Organizaciones cooperativas de ahorro y crédito",
+                    Name = "Organizaciones cooperativas de ahorro y crï¿½dito",
                     Data = new Data(OrganizacionesCooperativas),
                     Color = HighChart.GetColor(3),
                     Type = ChartTypes.Line,
