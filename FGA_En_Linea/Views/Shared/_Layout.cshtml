@@ -138,7 +138,21 @@
                 try { localStorage.setItem('fga_charts_animation', 'true'); } catch (e) {}
             }
             if (typeof Highcharts !== 'undefined') {
-                Highcharts.setOptions({
+                    .on('mouseenter mouseover', '.highcharts-menu-item', function () {
+        if (.find('hr').length > 0) {
+            .css({ 'padding': '2px 0', 'margin': '2px 0', 'background': 'transparent', 'cursor': 'default', 'pointer-events': 'none', 'height': '1px', 'line-height': '1px' });
+            .find('hr').css({ 'margin': '0', 'border': 'none', 'border-top': '1px solid #e2e8f0', 'height': '1px' });
+        }
+    });
+
+    $(document).on('mouseover', '.highcharts-menu-item', function () {
+        if ($(this).find('hr').length > 0) {
+            $(this).css({ 'padding': '2px 0', 'margin': '2px 0', 'background': 'transparent', 'cursor': 'default', 'pointer-events': 'none', 'height': '1px', 'line-height': '1px' });
+            $(this).find('hr').css({ 'margin': '0', 'border': 'none', 'border-top': '1px solid #e2e8f0', 'height': '1px' });
+        }
+    });
+
+    Highcharts.setOptions({
                     chart: {
                         style: {
                             fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
@@ -217,7 +231,7 @@
 </head>
 
 <style>
-    /* Highcharts Export Hamburger Button Styling */
+    /* Highcharts Export Button Styling - Blue Button with Download Icon & Text */
     .highcharts-contextbutton,
     .highcharts-button,
     .highcharts-exporting-group {
@@ -231,19 +245,25 @@
         display: none !important;
     }
 
-    /* Hide glitched text inside Highcharts export button */
+    /* Keep button text and symbol clearly visible */
     .highcharts-button text,
     .highcharts-contextbutton text,
-    .highcharts-button-symbol text,
-    .highcharts-button tspan {
-        display: none !important;
+    .highcharts-button tspan,
+    .highcharts-contextbutton tspan {
+        display: inline-block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        fill: #ffffff !important;
+        color: #ffffff !important;
+        font-size: 12px !important;
+        font-weight: 600 !important;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
     }
 
-    /* Clean white rounded box background */
     .highcharts-button .highcharts-button-box,
     .highcharts-contextbutton .highcharts-button-box {
-        fill: #ffffff !important;
-        stroke: #cbd5e1 !important;
+        fill: #2F5597 !important;
+        stroke: #204880 !important;
         stroke-width: 1px !important;
         rx: 6px !important;
         ry: 6px !important;
@@ -251,23 +271,17 @@
 
     .highcharts-button:hover .highcharts-button-box,
     .highcharts-contextbutton:hover .highcharts-button-box {
-        fill: #f1f5f9 !important;
-        stroke: #94a3b8 !important;
+        fill: #204880 !important;
+        stroke: #172e56 !important;
     }
 
-    /* Draw 3 clean SVG lines (hamburger bars) for the symbol */
     .highcharts-button-symbol,
     .highcharts-contextbutton .highcharts-button-symbol {
         opacity: 1 !important;
         visibility: visible !important;
-        stroke: #475569 !important;
-        stroke-width: 2px !important;
+        stroke: #ffffff !important;
+        stroke-width: 1.8px !important;
         fill: none !important;
-    }
-
-    .highcharts-button:hover .highcharts-button-symbol,
-    .highcharts-contextbutton:hover .highcharts-button-symbol {
-        stroke: #143750 !important;
     }
 </style>
 
@@ -551,36 +565,26 @@
 
 
     if (window.Highcharts && Highcharts.SVGRenderer && Highcharts.SVGRenderer.prototype.symbols) {
-        var customPrinterSymbol = function (x, y, w, h) {
+        var customDownloadSymbol = function (x, y, w, h) {
             return [
-                'M', x + 3, y + 5,
-                'L', x + 3, y + 1,
-                'L', x + 13, y + 1,
-                'L', x + 13, y + 5,
-                'M', x + 1, y + 6,
-                'L', x + 15, y + 6,
-                'C', x + 15.6, y + 6, x + 16, y + 6.4, x + 16, y + 7,
-                'L', x + 16, y + 11,
-                'C', x + 16, y + 11.6, x + 15.6, y + 12, x + 15, y + 12,
-                'L', x + 13, y + 12,
-                'L', x + 13, y + 10,
-                'L', x + 3, y + 10,
-                'L', x + 3, y + 12,
+                // Tray
+                'M', x + 1, y + 8,
                 'L', x + 1, y + 12,
-                'C', x + 0.4, y + 12, x, y + 11.6, x, y + 11,
-                'L', x, y + 7,
-                'C', x, y + 6.4, x + 0.4, y + 6, x + 1, y + 6,
-                'Z',
-                'M', x + 4, y + 9,
-                'L', x + 12, y + 9,
-                'L', x + 12, y + 14,
-                'L', x + 4, y + 14,
-                'Z'
+                'L', x + 11, y + 12,
+                'L', x + 11, y + 8,
+                // Arrow shaft
+                'M', x + 6, y + 2,
+                'L', x + 6, y + 8,
+                // Arrow tip
+                'M', x + 3, y + 5,
+                'L', x + 6, y + 8,
+                'L', x + 9, y + 5
             ];
         };
-        Highcharts.SVGRenderer.prototype.symbols.printer = customPrinterSymbol;
-        Highcharts.SVGRenderer.prototype.symbols.menu = customPrinterSymbol;
-        Highcharts.SVGRenderer.prototype.symbols.menuball = customPrinterSymbol;
+        Highcharts.SVGRenderer.prototype.symbols.download = customDownloadSymbol;
+        Highcharts.SVGRenderer.prototype.symbols.menu = customDownloadSymbol;
+        Highcharts.SVGRenderer.prototype.symbols.printer = customDownloadSymbol;
+        Highcharts.SVGRenderer.prototype.symbols.menuball = customDownloadSymbol;
     }
 
     Highcharts.setOptions({
