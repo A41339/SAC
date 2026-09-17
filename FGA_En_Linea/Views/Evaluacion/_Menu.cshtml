@@ -515,7 +515,10 @@
                                 cardDesc = "Evalúa la suficiencia del capital en relación con los riesgos asumidos, la calidad de los fondos propios y la capacidad de la entidad para mantener niveles de capital acordes con su perfil de riesgos.";
                             }
 
-                            if (!string.IsNullOrEmpty(eval.Descripcion))
+                            string descTrim = (eval.Descripcion ?? "").Trim();
+                            if (descTrim.Length > 15 
+                                && !descTrim.Equals("Componente", StringComparison.OrdinalIgnoreCase)
+                                && !descTrim.Equals("Subcomponente", StringComparison.OrdinalIgnoreCase))
                             {
                                 cardDesc = eval.Descripcion;
                             }
