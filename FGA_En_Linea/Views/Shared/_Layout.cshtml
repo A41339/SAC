@@ -1460,23 +1460,39 @@
             initCanvas('sidebarCanvas', 28);
 
             // ==========================================================================
-            // Vinculación interactiva y auto-resolución del Menú Papá en Breadcrumbs
+            // Vinculación interactiva y auto-resolución DINÁMICA del Menú Papá en Breadcrumbs
             // ==========================================================================
             var moduloBaseUrl = '@Url.Action("Index", "Modulo")';
-            var moduloPerfilesUrl = '@Url.Action("Index", "Modulo", new { id = 8000 })';
-            var moduloMantenimientosUrl = '@Url.Action("Index", "Modulo", new { id = 9000 })';
 
-            // 1. Obtener el módulo padre raíz activo desde el menú lateral (calculado autoritativamente por el servidor)
-            var $activeSidebarLink = $('.sidebar-menu li.active > a').first();
+            // 1. Manejo inteligente de clic en el botón/píldora del menú papá:
+            // Si el usuario navegó desde la pantalla anterior (referrer interno válido), volver dinámicamente a la opción previa
+            $(document).on('click', '.breadcrumb-parent-pill, .breadcrumb-back-btn', function (e) {
+                if (document.referrer && document.referrer.indexOf(window.location.host) !== -1) {
+                    var refPath = document.referrer.toLowerCase();
+                    var currentPath = window.location.href.toLowerCase();
+                    if (refPath !== currentPath && refPath.indexOf('/account/') === -1 && refPath.indexOf('/login') === -1) {
+                        e.preventDefault();
+                        window.location.href = document.referrer;
+                        return false;
+                    }
+                }
+            });
+
+            // 2. Obtener el módulo padre raíz activo desde el menú lateral de la base de datos (dinámico sin URLs en duro)
             var parentModuleUrl = null;
             var parentModuleName = null;
             var parentModuleIcon = null;
 
+            var $activeSidebarLink = $('.sidebar-menu li.active > a').first();
             if ($activeSidebarLink.length > 0) {
-                parentModuleUrl = $activeSidebarLink.attr('href');
-                parentModuleName = $.trim($activeSidebarLink.find('span').first().text());
-                var $i = $activeSidebarLink.find('i').first();
-                parentModuleIcon = ($i.length && $i.attr('class')) ? $i.attr('class') : 'fa fa-wrench';
+                var $parentTree = $activeSidebarLink.parents('li.treeview').first();
+                var $parentA = $parentTree.length > 0 ? $parentTree.children('a').first() : $activeSidebarLink;
+                if ($parentA.length > 0) {
+                    parentModuleUrl = $parentA.attr('href');
+                    parentModuleName = $.trim($parentA.find('span').first().text());
+                    var $i = $parentA.find('i').first();
+                    parentModuleIcon = ($i.length && $i.attr('class')) ? $i.attr('class') : 'fa fa-folder-open-o';
+                }
             }
 
             function normalizar(texto) {
@@ -1487,27 +1503,10 @@
             }
 
             function resolverUrlModulo(texto) {
-                if (!texto) return null;
+                if (!texto) return parentModuleUrl || moduloBaseUrl;
                 var tNorm = normalizar(texto);
 
-                // Control de accesos / Perfiles (Módulo 8000)
-                if (tNorm === 'perfiles' || tNorm === 'usuarios' || tNorm === 'usuario' || tNorm === 'cambiar contrasena' ||
-                    tNorm.indexOf('control de acceso') !== -1 || tNorm.indexOf('seguridad') !== -1) {
-                    if (parentModuleUrl && (parentModuleUrl.indexOf('8000') !== -1 || normalizar(parentModuleName).indexOf('perfil') !== -1 || normalizar(parentModuleName).indexOf('acceso') !== -1)) {
-                        return parentModuleUrl;
-                    }
-                    return moduloPerfilesUrl;
-                }
-
-                // Mantenimientos / Administración (Módulo 9000)
-                if (tNorm === 'roles' || tNorm === 'evaluacion' || tNorm === 'evaluaciones' ||
-                    tNorm.indexOf('administra') !== -1 || tNorm.indexOf('mantenimiento') !== -1) {
-                    if (parentModuleUrl && (parentModuleUrl.indexOf('9000') !== -1 || normalizar(parentModuleName).indexOf('mantenimiento') !== -1)) {
-                        return parentModuleUrl;
-                    }
-                    return moduloMantenimientosUrl;
-                }
-
+                // Buscar coincidencias dinámicas en la estructura del menú lateral cargada desde BD
                 var found = null;
                 $('.sidebar-menu li a').each(function () {
                     var sText = normalizar($(this).find('span').first().text());
@@ -1516,7 +1515,8 @@
                         return false;
                     }
                 });
-                return found || moduloMantenimientosUrl;
+
+                return found || parentModuleUrl || moduloBaseUrl;
             }
 
             $('.breadcrumb').each(function () {
@@ -1536,18 +1536,18 @@
                 var $active = $bc.find('li.active');
                 var activeText = $active.length ? normalizar($active.text()) : '';
 
-                // Si solo hay 2 elementos (Inicio > PantallaActual) y conocemos el menú papá, insertar el botón del papá
+                // Si solo hay 2 elementos (Inicio > PantallaActual) y conocemos el menú papá, insertar la píldora dinámica del papá
                 if ($items.length === 2 && parentModuleName && parentModuleUrl) {
                     var pNorm = normalizar(parentModuleName);
                     if (pNorm !== 'inicio' && pNorm !== activeText && activeText.indexOf(pNorm) === -1) {
                         var parentLiHtml = '<li class="breadcrumb-parent-item">' +
-                            '<a href="' + parentModuleUrl + '" class="breadcrumb-parent-pill" title="Volver al menú principal de ' + parentModuleName + '">' +
+                            '<a href="' + parentModuleUrl + '" class="breadcrumb-parent-pill" title="Volver a la opción anterior: ' + parentModuleName + '">' +
                             '<i class="' + parentModuleIcon + '"></i> ' + parentModuleName + '</a></li>';
                         $(parentLiHtml).insertAfter($items.first());
                     }
                 }
 
-                // Revisar todos los enlaces intermedios
+                // Revisar los enlaces intermedios
                 $bc.find('li:not(:first-child):not(.active)').each(function () {
                     var $li = $(this);
                     var $a = $li.find('a');
@@ -1556,26 +1556,19 @@
 
                     if (!norm || norm === 'inicio') return;
 
-                    // Manejo de Control de Accesos / Perfiles (Módulo 8000)
-                    if (norm === 'perfiles' || norm === 'usuarios' || norm.indexOf('control de acceso') !== -1) {
-                        var pUrl8 = (parentModuleUrl && parentModuleUrl.indexOf('8000') !== -1) ? parentModuleUrl : moduloPerfilesUrl;
-                        var pName8 = (parentModuleName && (normalizar(parentModuleName).indexOf('acceso') !== -1 || normalizar(parentModuleName).indexOf('perfil') !== -1)) ? parentModuleName : 'Control de Accesos';
-                        var pIcon8 = (parentModuleIcon && parentModuleIcon.indexOf('secret') !== -1) ? parentModuleIcon : 'fa fa-user-secret';
-                        $li.html('<a href="' + pUrl8 + '" class="breadcrumb-parent-pill" title="Volver al menú de ' + pName8 + '">' +
-                            '<i class="' + pIcon8 + '" style="margin-right: 4px;"></i> ' + pName8 + '</a>');
-                        return;
-                    }
+                    var targetUrl = ($a.length && $a.attr('href') && $a.attr('href') !== '#' && $a.attr('href') !== '' && $a.attr('href').indexOf('javascript') !== 0) ? $a.attr('href') : resolverUrlModulo(rawText);
 
-                    // Manejo de Mantenimientos (Módulo 9000)
-                    if (norm === 'seguridad' || norm === 'evaluacion' || norm === 'evaluaciones' ||
-                        norm.indexOf('administra') !== -1 || norm.indexOf('mantenimiento') !== -1) {
-                        var pUrl = (parentModuleUrl && parentModuleUrl.indexOf('9000') !== -1) ? parentModuleUrl : moduloMantenimientosUrl;
-                        var pName = (parentModuleName && normalizar(parentModuleName).indexOf('mantenimiento') !== -1) ? parentModuleName : 'Mantenimientos';
-                        var pIcon = (parentModuleIcon && parentModuleIcon.indexOf('wrench') !== -1) ? parentModuleIcon : 'fa fa-wrench';
-                        $li.html('<a href="' + pUrl + '" class="breadcrumb-parent-pill" title="Volver al menú de ' + pName + '">' +
-                            '<i class="' + pIcon + '" style="margin-right: 4px;"></i> ' + pName + '</a>');
-                        return;
+                    if ($a.length === 0) {
+                        $li.html('<a href="' + targetUrl + '" class="breadcrumb-parent-pill" title="Volver a la opción anterior: ' + rawText + '">' + rawText + '</a>');
+                    } else {
+                        $a.attr('href', targetUrl);
+                        $a.addClass('breadcrumb-parent-pill');
+                        if (!$a.attr('title')) {
+                            $a.attr('title', 'Volver a la opción anterior: ' + rawText);
+                        }
                     }
+                });
+            });
 
                     if ($a.length === 0) {
                         var targetUrl = resolverUrlModulo(rawText);
