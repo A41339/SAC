@@ -472,56 +472,44 @@
                                 }
                             }
 
-                            // Obtener icono, colores y descripción según el componente
+                            // Obtener icono y colores según el componente
                             string tituloLower = (eval.Titulo ?? "").ToLowerInvariant();
                             string cardIcon = "fa fa-university";
                             string cardBg = "#e0f2fe";
                             string cardColor = "#0284c7";
-                            string cardDesc = "Evalúa la estructura, funcionamiento y prácticas de gobierno de la entidad, incluyendo la conformación y desempeño de los órganos de dirección, la gestión de conflictos de interés, la transparencia y la rendición de cuentas.";
 
                             if (tituloLower.Contains("gobierno"))
                             {
                                 cardIcon = "fa fa-university";
                                 cardBg = "#e0f2fe";
                                 cardColor = "#0284c7";
-                                cardDesc = "Evalúa la estructura, funcionamiento y prácticas de gobierno de la entidad, incluyendo la conformación y desempeño de los órganos de dirección, la gestión de conflictos de interés, la transparencia y la rendición de cuentas.";
                             }
                             else if (tituloLower.Contains("riesgo"))
                             {
                                 cardIcon = "fa fa-shield";
                                 cardBg = "#e0f2fe";
                                 cardColor = "#0284c7";
-                                cardDesc = "Analiza la estructura y efectividad del marco de gestión de riesgos, incluyendo la identificación, medición, monitoreo, control y mitigación de los riesgos, así como la suficiencia de políticas, procesos y recursos.";
                             }
                             else if (tituloLower.Contains("econ") || tituloLower.Contains("financier"))
                             {
                                 cardIcon = "fa fa-line-chart";
                                 cardBg = "#ffedd5";
                                 cardColor = "#ea580c";
-                                cardDesc = "Evalúa la sostenibilidad financiera de la entidad, considerando la calidad de los activos, la rentabilidad, la liquidez, la adecuación de capital y la capacidad para hacer frente a sus obligaciones.";
                             }
                             else if (tituloLower.Contains("legal") || tituloLower.Contains("regulator"))
                             {
                                 cardIcon = "fa fa-balance-scale";
                                 cardBg = "#ffedd5";
                                 cardColor = "#ea580c";
-                                cardDesc = "Analiza el grado de cumplimiento del marco normativo aplicable, incluyendo leyes, reglamentos, normas y disposiciones emitidas por el supervisor, así como la efectividad de los sistemas de control para garantizar su observancia.";
                             }
                             else if (tituloLower.Contains("capital") || tituloLower.Contains("suficiencia"))
                             {
                                 cardIcon = "fa fa-database";
                                 cardBg = "#e0f2fe";
                                 cardColor = "#0284c7";
-                                cardDesc = "Evalúa la suficiencia del capital en relación con los riesgos asumidos, la calidad de los fondos propios y la capacidad de la entidad para mantener niveles de capital acordes con su perfil de riesgos.";
                             }
 
-                            string descTrim = (eval.Descripcion ?? "").Trim();
-                            if (descTrim.Length > 15 
-                                && !descTrim.Equals("Componente", StringComparison.OrdinalIgnoreCase)
-                                && !descTrim.Equals("Subcomponente", StringComparison.OrdinalIgnoreCase))
-                            {
-                                cardDesc = eval.Descripcion;
-                            }
+                            string cardDesc = eval.Descripcion ?? "";
 
                             // Cálculo del porcentaje inicial promedio del componente
                             int subCatCount = eval.SubCategorias != null ? eval.SubCategorias.Count : 0;
