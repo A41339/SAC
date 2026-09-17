@@ -26,6 +26,25 @@
     <script src="https://code.highcharts.com/modules/export-data.js"></script>
     <script src="https://code.highcharts.com/modules/offline-exporting.js"></script>
     <script>
+        // Funcion universal para decodificar entidades HTML y corregir artefactos UTF-8 / tildes
+        window.sanitizeTextAccents = function (str) {
+            if (!str) return str;
+            var res = '' + str;
+            if (res.indexOf('&') !== -1) {
+                try {
+                    res = $('<textarea/>').html(res).text();
+                } catch (e) {}
+            }
+            res = res
+                .replace(/CategorÃa/g, 'Per\u00edodo')
+                .replace(/categorÃa/g, 'per\u00edodo')
+                .replace(/Ã¡/g, '\u00e1').replace(/Ã©/g, '\u00e9').replace(/Ã­/g, '\u00ed')
+                .replace(/Ã³/g, '\u00f3').replace(/Ãº/g, '\u00fa').replace(/Ã±/g, '\u00f1')
+                .replace(/Ã /g, '\u00c1').replace(/Ã‰/g, '\u00c9').replace(/Ã /g, '\u00cd')
+                .replace(/Ã“/g, '\u00d3').replace(/Ãš/g, '\u00da').replace(/Ã‘/g, '\u00d1');
+            return res;
+        };
+
         window.formatGlobalChartTooltip = function (ctx) {
             if (!ctx) return '';
             var p0 = (ctx.points && ctx.points.length > 0) ? ctx.points[0] : (ctx.point || ctx);
@@ -51,6 +70,7 @@
             if (headerText && /^\d+$/.test(headerText.trim())) {
                 headerText = '';
             }
+            headerText = window.sanitizeTextAccents(headerText);
 
             function formatTooltipVal(point) {
                 var val = point.y;
@@ -106,6 +126,7 @@
                     if (pt.series && pt.series.visible === false) continue;
                     var sColor = (pt.color || (pt.series && pt.series.color) || '#0284c7');
                     var sName = (pt.series && pt.series.name) ? pt.series.name : 'Valor';
+                    sName = window.sanitizeTextAccents(sName);
                     var sVal = formatTooltipVal(pt);
 
                     html += '<tr>';
@@ -118,6 +139,7 @@
                 var singlePt = ctx.point || ctx;
                 var sColor = (singlePt.color || (ctx.series && ctx.series.color) || '#0284c7');
                 var sName = (ctx.series && ctx.series.name) ? ctx.series.name : (singlePt.name || 'Valor');
+                sName = window.sanitizeTextAccents(sName);
                 var sVal = formatTooltipVal(singlePt);
 
                 html += '<tr>';
@@ -140,6 +162,8 @@
             if (typeof Highcharts !== 'undefined') {
                 Highcharts.setOptions({
                     lang: {
+                        categoryHeader: 'Per\u00edodo',
+                        categoryDatetimeHeader: 'Fecha',
                         viewData: '<i class="fa fa-table" style="color: #4338ca; margin-right: 10px; width: 16px; text-align: center;"></i> Ver datos',
                         hideData: '<i class="fa fa-table" style="color: #4338ca; margin-right: 10px; width: 16px; text-align: center;"></i> Ocultar datos',
                         exportData: {
@@ -148,7 +172,11 @@
                         }
                     },
                     exporting: {
-                        tableCaption: 'Detalle de Datos'
+                        tableCaption: 'Detalle de Datos',
+                        csv: {
+                            categoryHeader: 'Per\u00edodo',
+                            categoryDatetimeHeader: 'Fecha'
+                        }
                     },
                     chart: {
                         style: {
@@ -947,11 +975,31 @@
             formatHighchartsDataTable();
         }
 
+        // Funcion universal para decodificar entidades HTML y corregir artefactos UTF-8 / tildes
+        function sanitizeTextAccents(str) {
+            if (!str) return str;
+            var res = '' + str;
+            if (res.indexOf('&') !== -1) {
+                try {
+                    res = $('<textarea/>').html(res).text();
+                } catch (e) {}
+            }
+            res = res
+                .replace(/CategorÃa/g, 'Per\u00edodo')
+                .replace(/categorÃa/g, 'per\u00edodo')
+                .replace(/Ã¡/g, '\u00e1').replace(/Ã©/g, '\u00e9').replace(/Ã­/g, '\u00ed')
+                .replace(/Ã³/g, '\u00f3').replace(/Ãº/g, '\u00fa').replace(/Ã±/g, '\u00f1')
+                .replace(/Ã /g, '\u00c1').replace(/Ã‰/g, '\u00c9').replace(/Ã /g, '\u00cd')
+                .replace(/Ã“/g, '\u00d3').replace(/Ãš/g, '\u00da').replace(/Ã‘/g, '\u00d1');
+            return res;
+        }
+
         // Decorador y formateador de la tabla de datos de Highcharts al estilo de pantallas de mantenimiento
         function formatHighchartsDataTable() {
             $('.highcharts-data-table').each(function () {
                 var $dt = $(this);
                 var $tbl = $dt.find('table');
+                if (!$tbl.length) return;
 
                 // Caption con icono y estilo de cabecera ejecutiva
                 var $caption = $tbl.find('caption, .highcharts-table-caption');
@@ -960,29 +1008,39 @@
                     if (!capText || capText === 'Chart Title' || capText === 'T\u00edtulo de la gr\u00e1fica') {
                         capText = 'Detalle de Datos';
                     }
+                    capText = sanitizeTextAccents(capText);
                     if ($caption.find('i.fa-table').length === 0) {
                         $caption.html('<i class="fa fa-table" style="color: #2F5597; margin-right: 8px;"></i> ' + capText);
                     }
                 }
 
-                // Encabezados de columnas: primera columna a 'Período' y decodificación de caracteres especiales
-                $tbl.find('thead tr th').each(function (idx) {
-                    var $th = $(this);
-                    var $thBtn = $th.find('button');
-                    var targetEl = $thBtn.length ? $thBtn : $th;
-                    var thTxt = $.trim(targetEl.text());
-                    var lower = thTxt.toLowerCase();
+                // Encabezados thead: sustitución de categoría por Período y decodificación de tildes/HTML
+                $tbl.find('thead th, thead td').each(function (idx) {
+                    var $cell = $(this);
+                    var $btn = $cell.find('button');
+                    var targetEl = $btn.length ? $btn : $cell;
+                    var txt = $.trim(targetEl.text());
+                    var lower = txt.toLowerCase();
 
                     if (idx === 0 || lower.indexOf('categor') !== -1) {
                         targetEl.html('<i class="fa fa-calendar" style="color: #2F5597; margin-right: 6px;"></i> Per\u00edodo');
-                    } else if (thTxt.indexOf('&') !== -1 || thTxt.indexOf('Ã') !== -1 || thTxt.indexOf('&#') !== -1) {
-                        var decoded = $('<textarea/>').html(thTxt).text();
-                        decoded = decoded
-                            .replace(/Ã¡/g, '\u00e1').replace(/Ã©/g, '\u00e9').replace(/Ã­/g, '\u00ed')
-                            .replace(/Ã³/g, '\u00f3').replace(/Ãº/g, '\u00fa').replace(/Ã±/g, '\u00f1')
-                            .replace(/Ã/g, '\u00c1').replace(/Ã‰/g, '\u00c9').replace(/Ã/g, '\u00cd')
-                            .replace(/Ã“/g, '\u00d3').replace(/Ãš/g, '\u00da').replace(/Ã‘/g, '\u00d1');
-                        targetEl.text(decoded);
+                    } else {
+                        var cleaned = sanitizeTextAccents(txt);
+                        if (cleaned !== txt) {
+                            targetEl.text(cleaned);
+                        }
+                    }
+                });
+
+                // Celdas tbody: asegurar que las etiquetas de período y texto no tengan artefactos
+                $tbl.find('tbody tr').each(function () {
+                    var $firstCell = $(this).find('th:first-child, td:first-child');
+                    if ($firstCell.length) {
+                        var txt = $firstCell.text();
+                        var cleaned = sanitizeTextAccents(txt);
+                        if (cleaned !== txt) {
+                            $firstCell.text(cleaned);
+                        }
                     }
                 });
             });
@@ -990,45 +1048,47 @@
 
         $(document).on('click mousedown mouseenter', '.highcharts-contextbutton, .highcharts-button, .highcharts-exporting-group, svg g[class*="exporting"]', function () {
             cleanHighchartsSeparators();
-            setTimeout(cleanHighchartsSeparators, 10);
-            setTimeout(cleanHighchartsSeparators, 40);
-            setTimeout(cleanHighchartsSeparators, 100);
-            setTimeout(cleanHighchartsSeparators, 250);
+            [10, 40, 100, 250].forEach(function (t) { setTimeout(cleanHighchartsSeparators, t); });
         });
 
-        $(document).on('click', '.highcharts-menu-item, .highcharts-contextmenu li, .highcharts-data-table button', function () {
-            setTimeout(cleanHighchartsSeparators, 20);
-            setTimeout(cleanHighchartsSeparators, 80);
-            setTimeout(cleanHighchartsSeparators, 200);
-            setTimeout(formatHighchartsDataTable, 20);
-            setTimeout(formatHighchartsDataTable, 80);
-            setTimeout(formatHighchartsDataTable, 200);
+        $(document).on('click', '.highcharts-menu-item, .highcharts-contextmenu li, .highcharts-data-table button, .highcharts-data-table th', function () {
+            [20, 60, 120, 250, 500, 1000].forEach(function (t) {
+                setTimeout(cleanHighchartsSeparators, t);
+                setTimeout(formatHighchartsDataTable, t);
+            });
         });
 
-        $(document).on('mouseenter mouseover', '.highcharts-menu-item, .highcharts-contextmenu, .highcharts-menu', function () {
+        $(document).on('mouseenter mouseover', '.highcharts-menu-item, .highcharts-contextmenu, .highcharts-menu, .highcharts-data-table', function () {
             cleanHighchartsSeparators();
             formatHighchartsDataTable();
         });
 
         if (window.MutationObserver) {
             var chartMenuObserver = new MutationObserver(function (mutations) {
+                var needsFormat = false;
+                var needsClean = false;
                 for (var i = 0; i < mutations.length; i++) {
                     var mut = mutations[i];
                     if (mut.addedNodes && mut.addedNodes.length > 0) {
                         for (var j = 0; j < mut.addedNodes.length; j++) {
                             var node = mut.addedNodes[j];
                             if (node.nodeType === 1) {
-                                var cls = '' + node.className;
-                                if (cls.indexOf('highcharts-') !== -1) {
-                                    cleanHighchartsSeparators();
+                                var cls = '' + (node.className || '');
+                                if (cls.indexOf('highcharts-') !== -1 || $(node).find('[class*="highcharts-"]').length > 0) {
+                                    needsClean = true;
                                     if (cls.indexOf('highcharts-data-table') !== -1 || $(node).find('.highcharts-data-table').length > 0) {
-                                        formatHighchartsDataTable();
+                                        needsFormat = true;
                                     }
-                                    return;
                                 }
                             }
                         }
                     }
+                }
+                if (needsClean) cleanHighchartsSeparators();
+                if (needsFormat) {
+                    formatHighchartsDataTable();
+                    setTimeout(formatHighchartsDataTable, 50);
+                    setTimeout(formatHighchartsDataTable, 150);
                 }
             });
             chartMenuObserver.observe(document.body, { childList: true, subtree: true });
