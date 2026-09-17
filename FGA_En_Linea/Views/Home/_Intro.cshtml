@@ -349,11 +349,11 @@
             <div class="cuentas-cards-grid">
                 
                 <!-- Cuenta 1: Resultado del período acumulado -->
-                <div class="cuenta-card clickable-kpi-card" onclick="showCuentaModal('resultado')" title="Resultado del per&iacute;odo acumulado (Click para ampliar gr&aacute;fico)" role="button" tabindex="0">
+                <div class="cuenta-card clickable-kpi-card" onclick="getGraph('B400')" title="Resultado del per&iacute;odo acumulado (Click para ampliar gr&aacute;fico)" role="button" tabindex="0">
                     <div class="cuenta-card-header">
                         <div class="icon-circle-teal"><i class="fa fa-bar-chart"></i></div>
                         <div class="cuenta-title">Resultado del per&iacute;odo acumulado</div>
-                        <span class="kpi-expand-btn" onclick="event.stopPropagation(); showCuentaModal('resultado');" style="margin-left:auto; color:#94a3b8;" title="Ampliar gr&aacute;fico"><i class="fa fa-line-chart"></i></span>
+                        <span class="kpi-expand-btn" onclick="event.stopPropagation(); getGraph('B400');" style="margin-left:auto; color:#94a3b8;" title="Ampliar gr&aacute;fico"><i class="fa fa-line-chart"></i></span>
                     </div>
                     <div class="cuenta-value-row">
                         <div class="cuenta-big-value">@FormatVal(modelData.ResultadoPeriodo, 1, "N0", "")</div>
@@ -376,11 +376,11 @@
                 </div>
 
                 <!-- Cuenta 2: Cartera de crédito -->
-                <div class="cuenta-card clickable-kpi-card" onclick="showCuentaModal('cartera')" title="Cartera de cr&eacute;dito (Click para ampliar gr&aacute;fico)" role="button" tabindex="0">
+                <div class="cuenta-card clickable-kpi-card" onclick="getGraph('B130')" title="Cartera de cr&eacute;dito (Click para ampliar gr&aacute;fico)" role="button" tabindex="0">
                     <div class="cuenta-card-header">
                         <div class="icon-circle-blue"><i class="fa fa-credit-card"></i></div>
                         <div class="cuenta-title">Cartera de cr&eacute;dito</div>
-                        <span class="kpi-expand-btn" onclick="event.stopPropagation(); showCuentaModal('cartera');" style="margin-left:auto; color:#94a3b8;" title="Ampliar gr&aacute;fico"><i class="fa fa-line-chart"></i></span>
+                        <span class="kpi-expand-btn" onclick="event.stopPropagation(); getGraph('B130');" style="margin-left:auto; color:#94a3b8;" title="Ampliar gr&aacute;fico"><i class="fa fa-line-chart"></i></span>
                     </div>
                     <div class="cuenta-value-row">
                         <div class="cuenta-big-value">@FormatVal(modelData.CarteraCredito, 1, "N0", "")</div>
@@ -403,11 +403,11 @@
                 </div>
 
                 <!-- Cuenta 3: Obligaciones con el público -->
-                <div class="cuenta-card clickable-kpi-card" onclick="showCuentaModal('obligaciones')" title="Obligaciones con el p&uacute;blico (Click para ampliar gr&aacute;fico)" role="button" tabindex="0">
+                <div class="cuenta-card clickable-kpi-card" onclick="getGraph('B210')" title="Obligaciones con el p&uacute;blico (Click para ampliar gr&aacute;fico)" role="button" tabindex="0">
                     <div class="cuenta-card-header">
                         <div class="icon-circle-orange"><i class="fa fa-database"></i></div>
                         <div class="cuenta-title">Obligaciones con el p&uacute;blico</div>
-                        <span class="kpi-expand-btn" onclick="event.stopPropagation(); showCuentaModal('obligaciones');" style="margin-left:auto; color:#94a3b8;" title="Ampliar gr&aacute;fico"><i class="fa fa-line-chart"></i></span>
+                        <span class="kpi-expand-btn" onclick="event.stopPropagation(); getGraph('B210');" style="margin-left:auto; color:#94a3b8;" title="Ampliar gr&aacute;fico"><i class="fa fa-line-chart"></i></span>
                     </div>
                     <div class="cuenta-value-row">
                         <div class="cuenta-big-value">@FormatVal(modelData.ObligacionesPublico, 1, "N0", "")</div>
@@ -430,6 +430,7 @@
                 </div>
 
             </div>
+        </div>
 
     </div>
 
@@ -1000,165 +1001,4 @@
             }
         });
     });
-    function showCuentaModal(tipo) {
-        var p1 = '@(Session["Periodo1"] != null ? Session["Periodo1"].ToString() : "PerÃ­odo Inicial")';
-        var p2 = '@(Session["Periodo2"] != null ? Session["Periodo2"].ToString() : "PerÃ­odo Final")';
-        var logo = '@(Session["Logo"] != null ? Session["Logo"].ToString() : "")';
-        var titulo = '';
-        var sub = '';
-        var prev = 0;
-        var actual = 0;
-        var varMonto = 0;
-        var varPct = 0;
-        var color = '#2F5597';
-        var colorLight = '#60a5fa';
-        var icono = 'fa-bar-chart';
-
-        if (tipo === 'resultado') {
-            titulo = 'Resultado del per&iacute;odo acumulado';
-            sub = 'Cuentas Principales &mdash; Estado de Resultados (&#8353; Millones)';
-            prev = @resultadoPrev.ToString(inv);
-            actual = @resultadoVal.ToString(inv);
-            varMonto = @resultadoVar.ToString(inv);
-            varPct = @resultadoVarPct.ToString(inv);
-            color = '#0284c7';
-            colorLight = '#38bdf8';
-            icono = 'fa-bar-chart';
-        } else if (tipo === 'cartera') {
-            titulo = 'Cartera de cr&eacute;dito';
-            sub = 'Cuentas Principales &mdash; Balance General (&#8353; Millones)';
-            prev = @carteraPrev.ToString(inv);
-            actual = @carteraVal.ToString(inv);
-            varMonto = @carteraVar.ToString(inv);
-            varPct = @carteraVarPct.ToString(inv);
-            color = '#2563eb';
-            colorLight = '#60a5fa';
-            icono = 'fa-credit-card';
-        } else if (tipo === 'obligaciones') {
-            titulo = 'Obligaciones con el p&uacute;blico';
-            sub = 'Cuentas Principales &mdash; Pasivos y Captaciones (&#8353; Millones)';
-            prev = @obligPrev.ToString(inv);
-            actual = @obligVal.ToString(inv);
-            varMonto = @obligVar.ToString(inv);
-            varPct = @obligVarPct.ToString(inv);
-            color = '#ea580c';
-            colorLight = '#fb923c';
-            icono = 'fa-database';
-        }
-
-        var prevFmt = Highcharts.numberFormat(prev, 0, '.', ',');
-        var actualFmt = Highcharts.numberFormat(actual, 0, '.', ',');
-        var varFmt = (varMonto >= 0 ? '+' : '') + Highcharts.numberFormat(varMonto, 0, '.', ',');
-        var pctFmt = (varPct >= 0 ? '+' : '') + Highcharts.numberFormat(varPct, 2, '.', ',') + '%';
-        var isPositive = varMonto >= 0;
-
-        var headerHtml = '<div class="modal-header" style="background: linear-gradient(135deg, #3d6cb9 0%, #2F5597 100%); padding: 16px 22px; display: flex; align-items: center; justify-content: space-between; border: none;">' +
-            '<div style="display: flex; align-items: center; gap: 14px;">' +
-                (logo ? '<img width="38" height="38" src="' + logo + '" style="border-radius: 8px; background: #ffffff; padding: 2px; box-shadow: 0 2px 6px rgba(0,0,0,0.15); object-fit: contain;" />' : '') +
-                '<div>' +
-                    '<h4 class="modal-title" style="margin: 0; color: #ffffff !important; font-size: 16px; font-weight: 700; letter-spacing: -0.2px;">' + titulo + '</h4>' +
-                    '<span style="font-size: 12px; color: rgba(255,255,255,0.85); font-weight: 500;">' + sub + '</span>' +
-                '</div>' +
-            '</div>' +
-            '<button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: #ffffff; opacity: 0.85; font-size: 22px; text-shadow: none; margin: 0; padding: 0;">' +
-                '<span aria-hidden="true">&times;</span>' +
-            '</button>' +
-        '</div>';
-
-        var bodyHtml = '<div class="modal-body" style="padding: 22px 26px; background: #ffffff;">' +
-            '<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 22px; background: #f8fafc; padding: 16px 20px; border-radius: 12px; border: 1px solid #e2e8f0;">' +
-                '<div>' +
-                    '<span style="font-size: 11.5px; color: #64748b; font-weight: 600; display: block; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 4px;">Per&iacute;odo Anterior (' + p1 + ')</span>' +
-                    '<span style="font-size: 22px; font-weight: 800; color: #1e293b;">&#8353;' + prevFmt + ' <small style="font-size: 12px; font-weight: 600; color: #64748b;">M</small></span>' +
-                '</div>' +
-                '<div>' +
-                    '<span style="font-size: 11.5px; color: #64748b; font-weight: 600; display: block; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 4px;">Per&iacute;odo Actual (' + p2 + ')</span>' +
-                    '<span style="font-size: 22px; font-weight: 800; color: ' + color + ';">&#8353;' + actualFmt + ' <small style="font-size: 12px; font-weight: 600; color: #64748b;">M</small></span>' +
-                '</div>' +
-                '<div>' +
-                    '<span style="font-size: 11.5px; color: #64748b; font-weight: 600; display: block; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 4px;">Variaci&oacute;n Neta</span>' +
-                    '<div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">' +
-                        '<span style="font-size: 20px; font-weight: 800; color: ' + (isPositive ? '#16a34a' : '#dc2626') + ';">&#8353;' + varFmt + ' M</span>' +
-                        '<span style="padding: 3px 8px; border-radius: 6px; font-size: 12px; font-weight: 700; background: ' + (isPositive ? '#dcfce7' : '#fee2e2') + '; color: ' + (isPositive ? '#15803d' : '#b91c1c') + ';">' + pctFmt + '</span>' +
-                    '</div>' +
-                '</div>' +
-            '</div>' +
-            '<div id="cuentaModalChart" style="width: 100%; height: 420px;"></div>' +
-        '</div>';
-
-        $('#grafica').html(headerHtml + bodyHtml);
-        $('#graphModal').modal('show');
-
-        setTimeout(function () {
-            Highcharts.chart('cuentaModalChart', {
-                chart: {
-                    type: 'column',
-                    style: { fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif' }
-                },
-                title: { text: null },
-                credits: { enabled: false },
-                xAxis: {
-                    categories: ['Per\u00edodo Anterior (' + p1 + ')', 'Per\u00edodo Actual (' + p2 + ')'],
-                    crosshair: true,
-                    labels: {
-                        style: { fontSize: '13px', fontWeight: '700', color: '#1e293b' }
-                    }
-                },
-                yAxis: {
-                    min: 0,
-                    title: {
-                        text: 'Monto en Millones de Colones (\u20a1)',
-                        style: { color: '#64748b', fontSize: '12px', fontWeight: '600' }
-                    },
-                    labels: {
-                        formatter: function () {
-                            return '\u20a1' + Highcharts.numberFormat(this.value, 0, '.', ',');
-                        },
-                        style: { color: '#64748b', fontSize: '11px' }
-                    }
-                },
-                tooltip: {
-                    headerFormat: '<span style="font-size:12px; font-weight:700; color:#1e293b;">{point.key}</span><br/>',
-                    pointFormat: '<span style="color:{point.color}; font-size:16px;">\u25CF</span> <b>{series.name}:</b> \u20a1{point.y:,.0f} Millones<br/>',
-                    shared: true,
-                    useHTML: true,
-                    backgroundColor: '#ffffff',
-                    borderColor: '#e2e8f0',
-                    borderRadius: 8,
-                    shadow: true
-                },
-                plotOptions: {
-                    column: {
-                        borderRadius: 8,
-                        pointPadding: 0.25,
-                        borderWidth: 0,
-                        dataLabels: {
-                            enabled: true,
-                            formatter: function () {
-                                return '\u20a1' + Highcharts.numberFormat(this.y, 0, '.', ',') + ' M';
-                            },
-                            style: { fontSize: '12px', fontWeight: '700', color: '#0f172a' }
-                        }
-                    }
-                },
-                series: [{
-                    name: titulo,
-                    color: color,
-                    data: [
-                        { name: 'Per\u00edodo Anterior (' + p1 + ')', y: prev, color: colorLight },
-                        { name: 'Per\u00edodo Actual (' + p2 + ')', y: actual, color: color }
-                    ]
-                }],
-                exporting: {
-                    enabled: true,
-                    buttons: {
-                        contextButton: {
-                            text: '<i class="fa fa-download" style="color: #2F5597; margin-right: 6px;"></i> Descargar',
-                            className: 'btn-highcharts-export-custom'
-                        }
-                    }
-                }
-            });
-        }, 120);
-    }
 </script>

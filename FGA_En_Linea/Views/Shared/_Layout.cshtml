@@ -965,16 +965,26 @@
                     }
                 }
 
-                // Primera columna de encabezado: si vacia o "Category", asignar "Periodo"
-                var $firstTh = $tbl.find('thead tr th:first-child');
-                if ($firstTh.length) {
-                    var $thBtn = $firstTh.find('button');
-                    var targetEl = $thBtn.length ? $thBtn : $firstTh;
+                // Encabezados de columnas: primera columna a 'Período' y decodificación de caracteres especiales
+                $tbl.find('thead tr th').each(function (idx) {
+                    var $th = $(this);
+                    var $thBtn = $th.find('button');
+                    var targetEl = $thBtn.length ? $thBtn : $th;
                     var thTxt = $.trim(targetEl.text());
-                    if (!thTxt || thTxt.toLowerCase() === 'category' || thTxt.toLowerCase() === 'categor\u00eda') {
+                    var lower = thTxt.toLowerCase();
+
+                    if (idx === 0 || lower.indexOf('categor') !== -1) {
                         targetEl.html('<i class="fa fa-calendar" style="color: #2F5597; margin-right: 6px;"></i> Per\u00edodo');
+                    } else if (thTxt.indexOf('&') !== -1 || thTxt.indexOf('Ã') !== -1 || thTxt.indexOf('&#') !== -1) {
+                        var decoded = $('<textarea/>').html(thTxt).text();
+                        decoded = decoded
+                            .replace(/Ã¡/g, '\u00e1').replace(/Ã©/g, '\u00e9').replace(/Ã­/g, '\u00ed')
+                            .replace(/Ã³/g, '\u00f3').replace(/Ãº/g, '\u00fa').replace(/Ã±/g, '\u00f1')
+                            .replace(/Ã/g, '\u00c1').replace(/Ã‰/g, '\u00c9').replace(/Ã/g, '\u00cd')
+                            .replace(/Ã“/g, '\u00d3').replace(/Ãš/g, '\u00da').replace(/Ã‘/g, '\u00d1');
+                        targetEl.text(decoded);
                     }
-                }
+                });
             });
         }
 
