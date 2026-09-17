@@ -17,27 +17,22 @@
     <div class="login-wrapper">
         <!-- Columna Izquierda: Brand / Hero Panel con Curvas y Propuesta de Valor FFC -->
         <div class="login-hero">
-            <!-- Curved Wave Overlay -->
+            <!-- Curved Wave Overlay (2 soft bottom-right curves matching official design) -->
             <div class="hero-wave-bg">
-                <svg class="hero-wave-svg" viewBox="0 0 800 1000" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                <svg class="hero-wave-svg" viewBox="0 0 1000 1000" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
                     <defs>
-                        <linearGradient id="waveGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stop-color="#2F5597" stop-opacity="0.95" />
-                            <stop offset="100%" stop-color="#31859C" stop-opacity="0.95" />
-                        </linearGradient>
-                        <linearGradient id="waveGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stop-color="#1e447a" stop-opacity="0.6" />
-                            <stop offset="100%" stop-color="#1d556a" stop-opacity="0.7" />
+                        <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#004782" />
+                            <stop offset="100%" stop-color="#005c9e" />
                         </linearGradient>
                     </defs>
-                    <rect width="800" height="1000" fill="url(#waveGrad1)" />
-                    <path d="M-100 420 C 220 380, 480 620, 900 320 L 900 1100 L -100 1100 Z" fill="url(#waveGrad2)" />
-                    <path d="M-100 660 C 260 520, 420 780, 900 480 L 900 1100 L -100 1100 Z" fill="#143750" opacity="0.55" />
-                    <path d="M-100 840 C 300 700, 560 930, 900 720 L 900 1100 L -100 1100 Z" fill="#31859C" opacity="0.35" />
+                    <rect width="1000" height="1000" fill="url(#bgGrad)" />
+                    <!-- Curve 1: Wide smooth curve in bottom-right corner -->
+                    <path d="M 320 1000 C 480 880, 680 720, 1000 620 L 1000 1000 Z" fill="#1b73b5" opacity="0.45" />
+                    <!-- Curve 2: Nested soft curve in bottom-right corner -->
+                    <path d="M 600 1000 C 720 920, 840 820, 1000 750 L 1000 1000 Z" fill="#2889cb" opacity="0.38" />
                 </svg>
             </div>
-
-            <canvas id="heroParticles" class="hero-canvas"></canvas>
 
             <div class="hero-header">
                 <div class="hero-brand-logo-group">
@@ -119,69 +114,5 @@
 
     <script src="~/Content/theme/plugins/jQuery/jQuery-2.1.3.min.js"></script>
     <script src="~/Content/theme/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-    <script>
-        // Animacion de Red de Particulas Interactivas en el Hero Panel
-        (function () {
-            var canvas = document.getElementById('heroParticles');
-            if (!canvas) return;
-            var ctx = canvas.getContext('2d');
-            var particles = [];
-            var particleCount = 28;
-
-            function resize() {
-                if (!canvas.parentElement) return;
-                canvas.width = canvas.parentElement.offsetWidth;
-                canvas.height = canvas.parentElement.offsetHeight;
-            }
-            window.addEventListener('resize', resize);
-            resize();
-
-            for (var i = 0; i < particleCount; i++) {
-                particles.push({
-                    x: Math.random() * (canvas.width || 500),
-                    y: Math.random() * (canvas.height || 800),
-                    vx: (Math.random() - 0.5) * 0.5,
-                    vy: (Math.random() - 0.5) * 0.5,
-                    radius: Math.random() * 2 + 1,
-                    alpha: Math.random() * 0.4 + 0.2
-                });
-            }
-
-            function draw() {
-                if (!canvas.width || !canvas.height) resize();
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                for (var i = 0; i < particles.length; i++) {
-                    var p = particles[i];
-                    p.x += p.vx;
-                    p.y += p.vy;
-
-                    if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
-                    if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
-
-                    ctx.beginPath();
-                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-                    ctx.fillStyle = 'rgba(134, 210, 221, ' + p.alpha + ')';
-                    ctx.fill();
-
-                    for (var j = i + 1; j < particles.length; j++) {
-                        var p2 = particles[j];
-                        var dx = p.x - p2.x;
-                        var dy = p.y - p2.y;
-                        var dist = Math.sqrt(dx * dx + dy * dy);
-                        if (dist < 110) {
-                            ctx.beginPath();
-                            ctx.moveTo(p.x, p.y);
-                            ctx.lineTo(p2.x, p2.y);
-                            ctx.strokeStyle = 'rgba(37, 99, 235, ' + (0.18 * (1 - dist / 110)) + ')';
-                            ctx.lineWidth = 0.8;
-                            ctx.stroke();
-                        }
-                    }
-                }
-                requestAnimationFrame(draw);
-            }
-            draw();
-        })();
-    </script>
 </body>
 </html>
