@@ -130,17 +130,41 @@
         font-size: 13px;
         color: #334155;
     }
-    .perm-checkbox-cell {
-        text-align: center;
-        width: 90px;
+    .perm-switch-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        margin: 0;
+        user-select: none;
     }
     .custom-perm-chk {
-        width: 18px;
-        height: 18px;
+        width: 19px;
+        height: 19px;
         cursor: pointer;
         accent-color: #0284c7;
-        margin: 0 auto;
+        margin: 0;
         vertical-align: middle;
+    }
+    .status-perm-badge {
+        font-size: 11.5px;
+        font-weight: 600;
+        padding: 4px 12px;
+        border-radius: 9999px;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        transition: all 0.2s ease;
+    }
+    .status-perm-active {
+        background: #dcfce7;
+        color: #15803d;
+        border: 1px solid #bbf7d0;
+    }
+    .status-perm-inactive {
+        background: #f1f5f9;
+        color: #64748b;
+        border: 1px solid #e2e8f0;
     }
     .perm-sub-row td {
         background: #fafafa;
@@ -229,11 +253,11 @@
             <input type="text" id="txtBuscarOpcion" class="form-control" placeholder="Buscar m&oacute;dulo, sub-m&oacute;dulo o reporte..." style="border-radius: 8px; border: 1px solid #cbd5e1; height: 36px; font-size: 13px;" />
         </div>
         <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-            <button type="button" class="btn-action-pill" id="btnMarcarTodoLectura" title="Habilita lectura en todos los m&oacute;dulos y opciones">
-                <i class="fa fa-check-square-o" style="color:#0284c7; margin-right:4px;"></i> Marcar Todo Lectura
+            <button type="button" class="btn-action-pill" id="btnIncluirTodo" title="Habilita el acceso en todos los módulos y opciones">
+                <i class="fa fa-check-square-o" style="color:#0284c7; margin-right:4px;"></i> Incluir Todo
             </button>
-            <button type="button" class="btn-action-pill" id="btnDesmarcarTodo" title="Quita todos los permisos configurados">
-                <i class="fa fa-square-o" style="color:#dc2626; margin-right:4px;"></i> Desmarcar Todo
+            <button type="button" class="btn-action-pill" id="btnExcluirTodo" title="Quita el acceso de todas las opciones">
+                <i class="fa fa-square-o" style="color:#dc2626; margin-right:4px;"></i> Excluir Todo
             </button>
             <button type="button" class="btn-action-pill" id="btnExpandirTodo">
                 <i class="fa fa-expand" style="margin-right:4px;"></i> Expandir Todo
@@ -244,12 +268,12 @@
         </div>
     </div>
 
-    <!-- AcordeÃ³n de MÃ³dulos -->
+    <!-- Acordeón de Módulos -->
     <div id="contenedorModulos">
         @foreach (var modulo in Model.Modulos)
         {
             <div class="modulo-card" id="modulo-card-@modulo.MenuId" data-moduloid="@modulo.MenuId" data-searchtext="@modulo.MenuText">
-                <!-- Fila de Cabecera del MÃ³dulo RaÃ­z -->
+                <!-- Fila de Cabecera del Módulo Raíz -->
                 <div class="modulo-header" data-toggle="collapse" data-target="#collapse-@modulo.MenuId">
                     <div class="modulo-header-left">
                         <div class="modulo-icon-box" style="background-color: @modulo.ColorFondo; color: @modulo.ColorIcono;">
@@ -262,8 +286,8 @@
                     </div>
                     <div class="modulo-header-right" onclick="event.stopPropagation();">
                         <label style="display: flex; align-items: center; gap: 8px; margin: 0; cursor: pointer; font-size: 13px; font-weight: 600; color: #334155;">
-                            <input type="checkbox" class="chk-modulo-master custom-perm-chk" data-moduloid="@modulo.MenuId" data-menuid="@modulo.MenuId" @(modulo.IsRead ? "checked" : "") />
-                            <span>Habilitar M&oacute;dulo</span>
+                            <input type="checkbox" class="chk-modulo-master custom-perm-chk" data-moduloid="@modulo.MenuId" data-menuid="@modulo.MenuId" @(modulo.Asignado ? "checked" : "") />
+                            <span>Habilitar M&oacute;dulo Completo</span>
                         </label>
                         <button type="button" class="btn btn-xs btn-default btn-collapse-toggle" style="border-radius: 4px; border: 1px solid #cbd5e1; padding: 2px 8px;" onclick="$('#collapse-@modulo.MenuId').collapse('toggle');">
                             <i class="fa fa-chevron-down toggle-icon-@modulo.MenuId"></i>
@@ -278,10 +302,7 @@
                             <thead>
                                 <tr>
                                     <th>Opci&oacute;n de Men&uacute; / Reporte</th>
-                                    <th class="perm-checkbox-cell" title="Permiso de Visualizaci&oacute;n y Acceso">Lectura</th>
-                                    <th class="perm-checkbox-cell" title="Permiso para Registrar / Agregar Datos">Crear</th>
-                                    <th class="perm-checkbox-cell" title="Permiso para Modificar Datos Existentes">Modificar</th>
-                                    <th class="perm-checkbox-cell" title="Permiso para Eliminar Registros">Eliminar</th>
+                                    <th style="width: 180px; text-align: center;">Acceso al Men&uacute;</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -300,42 +321,18 @@
                                                 }
                                             </div>
                                         </td>
-                                        <td class="perm-checkbox-cell">
-                                            <input type="checkbox" class="chk-perm chk-perm-read custom-perm-chk" data-perm="read" @(item.IsRead ? "checked" : "") />
-                                        </td>
-                                        <td class="perm-checkbox-cell">
-                                            @if (!item.EsSubModulo)
-                                            {
-                                                <input type="checkbox" class="chk-perm chk-perm-create custom-perm-chk" data-perm="create" @(item.IsCreate ? "checked" : "") />
-                                            }
-                                            else
-                                            {
-                                                <span style="color:#cbd5e1;">-</span>
-                                            }
-                                        </td>
-                                        <td class="perm-checkbox-cell">
-                                            @if (!item.EsSubModulo)
-                                            {
-                                                <input type="checkbox" class="chk-perm chk-perm-update custom-perm-chk" data-perm="update" @(item.IsUpdate ? "checked" : "") />
-                                            }
-                                            else
-                                            {
-                                                <span style="color:#cbd5e1;">-</span>
-                                            }
-                                        </td>
-                                        <td class="perm-checkbox-cell">
-                                            @if (!item.EsSubModulo)
-                                            {
-                                                <input type="checkbox" class="chk-perm chk-perm-delete custom-perm-chk" data-perm="delete" @(item.IsDelete ? "checked" : "") />
-                                            }
-                                            else
-                                            {
-                                                <span style="color:#cbd5e1;">-</span>
-                                            }
+                                        <td style="text-align: center; vertical-align: middle;">
+                                            <label class="perm-switch-label">
+                                                <input type="checkbox" class="chk-perm custom-perm-chk" data-menuid="@item.MenuId" @(item.Asignado ? "checked" : "") />
+                                                <span class="status-perm-badge @(item.Asignado ? "status-perm-active" : "status-perm-inactive")">
+                                                    <i class="fa @(item.Asignado ? "fa-check" : "fa-times")"></i>
+                                                    @(item.Asignado ? "Incluido" : "Sin Acceso")
+                                                </span>
+                                            </label>
                                         </td>
                                     </tr>
 
-                                    <!-- Si el item es un sub-mÃ³dulo con opciones nietas -->
+                                    <!-- Si el item es un sub-módulo con opciones nietas -->
                                     if (item.EsSubModulo && item.Hijos != null && item.Hijos.Count > 0)
                                     {
                                         foreach (var hijo in item.Hijos)
@@ -348,17 +345,14 @@
                                                         <span>@hijo.MenuText</span>
                                                     </div>
                                                 </td>
-                                                <td class="perm-checkbox-cell">
-                                                    <input type="checkbox" class="chk-perm chk-perm-read custom-perm-chk" data-perm="read" @(hijo.IsRead ? "checked" : "") />
-                                                </td>
-                                                <td class="perm-checkbox-cell">
-                                                    <input type="checkbox" class="chk-perm chk-perm-create custom-perm-chk" data-perm="create" @(hijo.IsCreate ? "checked" : "") />
-                                                </td>
-                                                <td class="perm-checkbox-cell">
-                                                    <input type="checkbox" class="chk-perm chk-perm-update custom-perm-chk" data-perm="update" @(hijo.IsUpdate ? "checked" : "") />
-                                                </td>
-                                                <td class="perm-checkbox-cell">
-                                                    <input type="checkbox" class="chk-perm chk-perm-delete custom-perm-chk" data-perm="delete" @(hijo.IsDelete ? "checked" : "") />
+                                                <td style="text-align: center; vertical-align: middle;">
+                                                    <label class="perm-switch-label">
+                                                        <input type="checkbox" class="chk-perm custom-perm-chk" data-menuid="@hijo.MenuId" @(hijo.Asignado ? "checked" : "") />
+                                                        <span class="status-perm-badge @(hijo.Asignado ? "status-perm-active" : "status-perm-inactive")">
+                                                            <i class="fa @(hijo.Asignado ? "fa-check" : "fa-times")"></i>
+                                                            @(hijo.Asignado ? "Incluido" : "Sin Acceso")
+                                                        </span>
+                                                    </label>
                                                 </td>
                                             </tr>
                                         }
@@ -427,6 +421,18 @@
             }
         });
 
+        function actualizarBadgeFila($chk) {
+            var isChecked = $chk.is(':checked');
+            var $badge = $chk.siblings('.status-perm-badge');
+            if (isChecked) {
+                $badge.removeClass('status-perm-inactive').addClass('status-perm-active');
+                $badge.html('<i class="fa fa-check"></i> Incluido');
+            } else {
+                $badge.removeClass('status-perm-active').addClass('status-perm-inactive');
+                $badge.html('<i class="fa fa-times"></i> Sin Acceso');
+            }
+        }
+
         // Actualizar contadores de opciones activas
         function recalcularContadores() {
             var totalActivas = 0;
@@ -438,12 +444,7 @@
                 var totalEnModulo = $card.find('.perm-row').length;
 
                 $card.find('.perm-row').each(function () {
-                    var isRead = $(this).find('.chk-perm-read').is(':checked');
-                    var isCreate = $(this).find('.chk-perm-create').is(':checked');
-                    var isUpdate = $(this).find('.chk-perm-update').is(':checked');
-                    var isDelete = $(this).find('.chk-perm-delete').is(':checked');
-
-                    if (isRead || isCreate || isUpdate || isDelete) {
+                    if ($(this).find('.chk-perm').is(':checked')) {
                         activasEnModulo++;
                     }
                 });
@@ -458,7 +459,7 @@
                     $badge.removeClass('has-perms');
                 }
 
-                // Sincronizar master checkbox del mÃ³dulo
+                // Sincronizar master checkbox del módulo
                 var $master = $card.find('.chk-modulo-master');
                 if (activasEnModulo > 0) {
                     $master.prop('checked', true);
@@ -474,60 +475,59 @@
 
         // Al cambiar cualquier permiso en una fila
         $(document).on('change', '.chk-perm', function () {
-            var $row = $(this).closest('.perm-row');
-            var permType = $(this).data('perm');
-            var isChecked = $(this).is(':checked');
+            var $chk = $(this);
+            var isChecked = $chk.is(':checked');
+            var $row = $chk.closest('.perm-row');
 
-            // Regla: Si se marca Crear, Modificar o Eliminar, debe obligatoriamente marcarse Lectura
-            if ((permType === 'create' || permType === 'update' || permType === 'delete') && isChecked) {
-                $row.find('.chk-perm-read').prop('checked', true);
-            }
+            actualizarBadgeFila($chk);
 
-            // Regla: Si se desmarca Lectura, desmarcar automÃ¡ticamente Crear, Modificar y Eliminar
-            if (permType === 'read' && !isChecked) {
-                $row.find('.chk-perm-create, .chk-perm-update, .chk-perm-delete').prop('checked', false);
-            }
-
-            // Si se marcÃ³ un hijo, asegurar que el master del mÃ³dulo raÃ­z estÃ© marcado
+            // Si se marcó un hijo, asegurar que el master del módulo raíz esté marcado
             if (isChecked) {
                 var moduloId = $row.data('moduloid');
                 $('#modulo-card-' + moduloId).find('.chk-modulo-master').prop('checked', true);
 
-                // Si es sub-fila, marcar tambiÃ©n la lectura del sub-mÃ³dulo padre
+                // Si es sub-fila, marcar también el sub-módulo padre
                 if ($row.hasClass('perm-sub-row')) {
                     var parentId = $row.data('parentid');
-                    $('.perm-row[data-menuid="' + parentId + '"]').find('.chk-perm-read').prop('checked', true);
+                    var $parentChk = $('.perm-row[data-menuid="' + parentId + '"]').find('.chk-perm');
+                    $parentChk.prop('checked', true);
+                    actualizarBadgeFila($parentChk);
                 }
             }
 
             recalcularContadores();
         });
 
-        // Checkbox Maestro del MÃ³dulo: Marcar / Desmarcar todas las opciones del mÃ³dulo
+        // Checkbox Maestro del Módulo: Marcar / Desmarcar todas las opciones del módulo
         $(document).on('change', '.chk-modulo-master', function () {
             var moduloId = $(this).data('moduloid');
             var isChecked = $(this).is(':checked');
             var $card = $('#modulo-card-' + moduloId);
 
-            $card.find('.chk-perm-read').prop('checked', isChecked);
-            if (!isChecked) {
-                $card.find('.chk-perm-create, .chk-perm-update, .chk-perm-delete').prop('checked', false);
-            }
+            $card.find('.chk-perm').prop('checked', isChecked).each(function () {
+                actualizarBadgeFila($(this));
+            });
 
             recalcularContadores();
         });
 
-        // Marcar Todo Lectura
-        $('#btnMarcarTodoLectura').on('click', function () {
-            $('.chk-perm-read').prop('checked', true);
-            $('.chk-modulo-master').prop('checked', true);
+        // Incluir Todo
+        $('#btnIncluirTodo, #btnMarcarTodoLectura').on('click', function () {
+            $('.chk-perm, .chk-modulo-master').prop('checked', true).each(function () {
+                if ($(this).hasClass('chk-perm')) {
+                    actualizarBadgeFila($(this));
+                }
+            });
             recalcularContadores();
         });
 
-        // Desmarcar Todo
-        $('#btnDesmarcarTodo').on('click', function () {
-            $('.chk-perm').prop('checked', false);
-            $('.chk-modulo-master').prop('checked', false);
+        // Excluir Todo
+        $('#btnExcluirTodo, #btnDesmarcarTodo').on('click', function () {
+            $('.chk-perm, .chk-modulo-master').prop('checked', false).each(function () {
+                if ($(this).hasClass('chk-perm')) {
+                    actualizarBadgeFila($(this));
+                }
+            });
             recalcularContadores();
         });
 
@@ -541,7 +541,7 @@
             $('.modulo-card .collapse').collapse('hide');
         });
 
-        // BÃºsqueda en vivo de mÃ³dulos y opciones
+        // Búsqueda en vivo de módulos y opciones
         $('#txtBuscarOpcion').on('keyup', function () {
             var query = $.trim($(this).val()).toLowerCase();
 
@@ -581,36 +581,29 @@
 
             var listaPermisos = [];
 
-            // 1. MÃ³dulos raÃ­ces (master)
+            // 1. Módulos raíces (master)
             $('.chk-modulo-master').each(function () {
                 var mId = parseInt($(this).data('menuid'), 10);
                 var isChecked = $(this).is(':checked');
                 if (isChecked) {
                     listaPermisos.push({
                         MenuId: mId,
-                        IsRead: true,
-                        IsCreate: false,
-                        IsUpdate: false,
-                        IsDelete: false
+                        Asignado: true,
+                        IsRead: true
                     });
                 }
             });
 
-            // 2. Filas de opciones y sub-mÃ³dulos
+            // 2. Filas de opciones y sub-módulos
             $('.perm-row').each(function () {
                 var mId = parseInt($(this).data('menuid'), 10);
-                var isRead = $(this).find('.chk-perm-read').is(':checked');
-                var isCreate = $(this).find('.chk-perm-create').is(':checked');
-                var isUpdate = $(this).find('.chk-perm-update').is(':checked');
-                var isDelete = $(this).find('.chk-perm-delete').is(':checked');
+                var isChecked = $(this).find('.chk-perm').is(':checked');
 
-                if (isRead || isCreate || isUpdate || isDelete) {
+                if (isChecked) {
                     listaPermisos.push({
                         MenuId: mId,
-                        IsRead: isRead,
-                        IsCreate: isCreate,
-                        IsUpdate: isUpdate,
-                        IsDelete: isDelete
+                        Asignado: true,
+                        IsRead: true
                     });
                 }
             });
@@ -640,8 +633,8 @@
                 error: function () {
                     $btn.prop('disabled', false).html('<i class="fa fa-save"></i> Guardar Permisos');
                     $('#feedbackIconContainer').html('<i class="fa fa-exclamation-circle" style="font-size: 48px; color: #dc2626;"></i>');
-                    $('#feedbackModalTitle').text('Error de Conexi\u00f3n');
-                    $('#feedbackModalMessage').text('Ocurri\u00f3 un error de comunicaci\u00f3n con el servidor.');
+                    $('#feedbackModalTitle').text('Error de Conexión');
+                    $('#feedbackModalMessage').text('Ocurrió un error de comunicación con el servidor.');
                     $('#modalFeedbackPermisos').modal('show');
                 }
             });

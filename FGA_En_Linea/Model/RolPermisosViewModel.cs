@@ -31,6 +31,7 @@ namespace FGA.Models
 
         // Permiso del módulo raíz
         public int? PermissionId { get; set; }
+        public bool Asignado { get; set; }
         public bool IsRead { get; set; }
         public bool IsCreate { get; set; }
         public bool IsUpdate { get; set; }
@@ -50,6 +51,7 @@ namespace FGA.Models
         public bool EsSubModulo { get; set; }
 
         public int? PermissionId { get; set; }
+        public bool Asignado { get; set; }
         public bool IsRead { get; set; }
         public bool IsCreate { get; set; }
         public bool IsUpdate { get; set; }
@@ -61,6 +63,7 @@ namespace FGA.Models
     public class PermisoAsignadoDto
     {
         public int MenuId { get; set; }
+        public bool Asignado { get; set; }
         public bool IsRead { get; set; }
         public bool IsCreate { get; set; }
         public bool IsUpdate { get; set; }

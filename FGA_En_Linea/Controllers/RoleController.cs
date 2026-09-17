@@ -240,6 +240,7 @@ namespace FGA.Controllers
             {
                 var meta = MenuCatalogService.GetCardMeta(root.MenuText, root.MenuURL, root.MenuIcon, rootIndex++);
                 permDict.TryGetValue(root.Id, out var rootPerm);
+                bool rootAsignado = rootPerm != null;
 
                 var grupo = new ModuloPermisoGrupo
                 {
@@ -249,7 +250,8 @@ namespace FGA.Controllers
                     ColorFondo = meta.ColorFondoIcono,
                     ColorIcono = meta.ColorIcono,
                     PermissionId = rootPerm?.Id,
-                    IsRead = rootPerm?.IsRead ?? false,
+                    Asignado = rootAsignado,
+                    IsRead = rootAsignado,
                     IsCreate = rootPerm?.IsCreate ?? false,
                     IsUpdate = rootPerm?.IsUpdate ?? false,
                     IsDelete = rootPerm?.IsDelete ?? false
@@ -263,6 +265,7 @@ namespace FGA.Controllers
                 {
                     permDict.TryGetValue(child.Id, out var childPerm);
                     var childMeta = MenuCatalogService.GetCardMeta(child.MenuText, child.MenuURL, child.MenuIcon, childIndex++);
+                    bool childAsignado = childPerm != null;
 
                     bool esSubModulo = string.Equals(child.MenuURL, "root", StringComparison.OrdinalIgnoreCase);
 
@@ -275,7 +278,8 @@ namespace FGA.Controllers
                         ParentId = child.ParentId,
                         EsSubModulo = esSubModulo,
                         PermissionId = childPerm?.Id,
-                        IsRead = childPerm?.IsRead ?? false,
+                        Asignado = childAsignado,
+                        IsRead = childAsignado,
                         IsCreate = childPerm?.IsCreate ?? false,
                         IsUpdate = childPerm?.IsUpdate ?? false,
                         IsDelete = childPerm?.IsDelete ?? false
@@ -290,6 +294,7 @@ namespace FGA.Controllers
                         {
                             permDict.TryGetValue(gc.Id, out var gcPerm);
                             var gcMeta = MenuCatalogService.GetCardMeta(gc.MenuText, gc.MenuURL, gc.MenuIcon, gcIndex++);
+                            bool gcAsignado = gcPerm != null;
 
                             childItem.Hijos.Add(new ModuloPermisoItem
                             {
@@ -300,7 +305,8 @@ namespace FGA.Controllers
                                 ParentId = gc.ParentId,
                                 EsSubModulo = false,
                                 PermissionId = gcPerm?.Id,
-                                IsRead = gcPerm?.IsRead ?? false,
+                                Asignado = gcAsignado,
+                                IsRead = gcAsignado,
                                 IsCreate = gcPerm?.IsCreate ?? false,
                                 IsUpdate = gcPerm?.IsUpdate ?? false,
                                 IsDelete = gcPerm?.IsDelete ?? false
@@ -353,8 +359,8 @@ namespace FGA.Controllers
                     dictPermisos[p.MenuId] = p;
                 }
 
-                // AUTO-PROPAGACIÓN: Si cualquier hijo tiene permiso activo, su contenedor padre DEBE tener IsRead = true
-                var itemsConPermiso = dictPermisos.Values.Where(p => p.IsRead || p.IsCreate || p.IsUpdate || p.IsDelete).ToList();
+                // AUTO-PROPAGACIÓN: Si cualquier hijo está asignado, su contenedor padre DEBE estar incluido en MenuPermission
+                var itemsConPermiso = dictPermisos.Values.Where(p => p.Asignado || p.IsRead).ToList();
                 foreach (var item in itemsConPermiso)
                 {
                     if (menuMap.TryGetValue(item.MenuId, out var currentMenu))
@@ -367,12 +373,14 @@ namespace FGA.Controllers
                                 parentPerm = new PermisoAsignadoDto
                                 {
                                     MenuId = parentId.Value,
+                                    Asignado = true,
                                     IsRead = true
                                 };
                                 dictPermisos[parentId.Value] = parentPerm;
                             }
                             else
                             {
+                                parentPerm.Asignado = true;
                                 parentPerm.IsRead = true;
                             }
                             parentId = menuMap[parentId.Value].ParentId;
@@ -386,21 +394,21 @@ namespace FGA.Controllers
                     var existingPerms = (menPermClient.GetMenu(rolId) ?? new FGA.Models.MenuPermission[0]).ToList();
                     var existingDict = existingPerms.Where(e => e.MenuId.HasValue).ToDictionary(e => e.MenuId.Value);
 
-                    // Sincronizar cada menú del sistema
+                    // Sincronizar cada menú del sistema: lo que da acceso es la existencia del registro en MenuPermission
                     foreach (var m in allMenus)
                     {
                         bool hasDto = dictPermisos.TryGetValue(m.Id, out var dto);
-                        bool isAnyActive = hasDto && (dto.IsRead || dto.IsCreate || dto.IsUpdate || dto.IsDelete);
+                        bool isIncluded = hasDto && (dto.Asignado || dto.IsRead);
                         existingDict.TryGetValue(m.Id, out var existing);
 
-                        if (isAnyActive)
+                        if (isIncluded)
                         {
                             if (existing != null)
                             {
-                                existing.IsRead = dto.IsRead;
-                                existing.IsCreate = dto.IsCreate;
-                                existing.IsUpdate = dto.IsUpdate;
-                                existing.IsDelete = dto.IsDelete;
+                                existing.IsRead = true;
+                                existing.IsCreate = true;
+                                existing.IsUpdate = true;
+                                existing.IsDelete = true;
                                 menPermClient.Update(existing);
                             }
                             else
@@ -409,10 +417,10 @@ namespace FGA.Controllers
                                 {
                                     RoleId = rolId,
                                     MenuId = m.Id,
-                                    IsRead = dto.IsRead,
-                                    IsCreate = dto.IsCreate,
-                                    IsUpdate = dto.IsUpdate,
-                                    IsDelete = dto.IsDelete,
+                                    IsRead = true,
+                                    IsCreate = true,
+                                    IsUpdate = true,
+                                    IsDelete = true,
                                     SortOrder = m.SortOrder ?? 0
                                 };
                                 menPermClient.Add(ref newEntity);
@@ -420,7 +428,7 @@ namespace FGA.Controllers
                         }
                         else
                         {
-                            // Si no tiene permisos activos y existía en BD, eliminarlo
+                            // Si no está incluido y existía en BD, eliminarlo
                             if (existing != null)
                             {
                                 menPermClient.Delete(existing.Id.ToString());
