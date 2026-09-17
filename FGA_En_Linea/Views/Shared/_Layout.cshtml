@@ -141,7 +141,14 @@
                 Highcharts.setOptions({
                     lang: {
                         viewData: '<i class="fa fa-table" style="color: #4338ca; margin-right: 10px; width: 16px; text-align: center;"></i> Ver datos',
-                        hideData: '<i class="fa fa-table" style="color: #4338ca; margin-right: 10px; width: 16px; text-align: center;"></i> Ocultar datos'
+                        hideData: '<i class="fa fa-table" style="color: #4338ca; margin-right: 10px; width: 16px; text-align: center;"></i> Ocultar datos',
+                        exportData: {
+                            categoryHeader: 'Per\u00edodo',
+                            categoryDatetimeHeader: 'Fecha'
+                        }
+                    },
+                    exporting: {
+                        tableCaption: 'Detalle de Datos'
                     },
                     chart: {
                         style: {
@@ -926,14 +933,47 @@
                 }
             });
 
-            // Normalizar y traducir dinamicamente cualquier opcion o boton "Hide data table" / "View data table"
-            $('.highcharts-menu-item, .highcharts-contextmenu li, button, .highcharts-data-table button').each(function () {
+            // Normalizar y traducir dinamicamente cualquier opcion "Hide data table" / "View data table"
+            $('.highcharts-menu-item, .highcharts-contextmenu li').each(function () {
                 var $t = $(this);
                 var raw = $.trim($t.text()).toLowerCase();
                 if (raw === 'hide data table' || raw.indexOf('hide data') !== -1) {
                     $t.html('<i class="fa fa-table" style="color: #4338ca; margin-right: 10px; width: 16px; text-align: center;"></i> Ocultar datos');
                 } else if (raw === 'view data table' || raw.indexOf('view data') !== -1) {
                     $t.html('<i class="fa fa-table" style="color: #4338ca; margin-right: 10px; width: 16px; text-align: center;"></i> Ver datos');
+                }
+            });
+
+            formatHighchartsDataTable();
+        }
+
+        // Decorador y formateador de la tabla de datos de Highcharts al estilo de pantallas de mantenimiento
+        function formatHighchartsDataTable() {
+            $('.highcharts-data-table').each(function () {
+                var $dt = $(this);
+                var $tbl = $dt.find('table');
+
+                // Caption con icono y estilo de cabecera ejecutiva
+                var $caption = $tbl.find('caption, .highcharts-table-caption');
+                if ($caption.length) {
+                    var capText = $.trim($caption.text());
+                    if (!capText || capText === 'Chart Title' || capText === 'T\u00edtulo de la gr\u00e1fica') {
+                        capText = 'Detalle de Datos';
+                    }
+                    if ($caption.find('i.fa-table').length === 0) {
+                        $caption.html('<i class="fa fa-table" style="color: #2F5597; margin-right: 8px;"></i> ' + capText);
+                    }
+                }
+
+                // Primera columna de encabezado: si vacia o "Category", asignar "Periodo"
+                var $firstTh = $tbl.find('thead tr th:first-child');
+                if ($firstTh.length) {
+                    var $thBtn = $firstTh.find('button');
+                    var targetEl = $thBtn.length ? $thBtn : $firstTh;
+                    var thTxt = $.trim(targetEl.text());
+                    if (!thTxt || thTxt.toLowerCase() === 'category' || thTxt.toLowerCase() === 'categor\u00eda') {
+                        targetEl.html('<i class="fa fa-calendar" style="color: #2F5597; margin-right: 6px;"></i> Per\u00edodo');
+                    }
                 }
             });
         }
@@ -950,10 +990,14 @@
             setTimeout(cleanHighchartsSeparators, 20);
             setTimeout(cleanHighchartsSeparators, 80);
             setTimeout(cleanHighchartsSeparators, 200);
+            setTimeout(formatHighchartsDataTable, 20);
+            setTimeout(formatHighchartsDataTable, 80);
+            setTimeout(formatHighchartsDataTable, 200);
         });
 
         $(document).on('mouseenter mouseover', '.highcharts-menu-item, .highcharts-contextmenu, .highcharts-menu', function () {
             cleanHighchartsSeparators();
+            formatHighchartsDataTable();
         });
 
         if (window.MutationObserver) {
@@ -963,9 +1007,15 @@
                     if (mut.addedNodes && mut.addedNodes.length > 0) {
                         for (var j = 0; j < mut.addedNodes.length; j++) {
                             var node = mut.addedNodes[j];
-                            if (node.nodeType === 1 && (node.className && ('' + node.className).indexOf('highcharts-') !== -1)) {
-                                cleanHighchartsSeparators();
-                                return;
+                            if (node.nodeType === 1) {
+                                var cls = '' + node.className;
+                                if (cls.indexOf('highcharts-') !== -1) {
+                                    cleanHighchartsSeparators();
+                                    if (cls.indexOf('highcharts-data-table') !== -1 || $(node).find('.highcharts-data-table').length > 0) {
+                                        formatHighchartsDataTable();
+                                    }
+                                    return;
+                                }
                             }
                         }
                     }

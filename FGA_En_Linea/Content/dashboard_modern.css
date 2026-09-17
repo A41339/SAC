@@ -7928,16 +7928,260 @@ li[role="separator"]:hover,
     overflow-y: auto !important;
 }
 
-/* Tabla de datos exportada en Highcharts dentro del modal */
-.highcharts-data-table {
+/* ==========================================================================
+   TABLAS DE DATOS HIGHCHARTS (EXPORT-DATA) CON DISEÑO DE MANTENIMIENTO
+   ========================================================================== */
+.highcharts-data-table,
+div.highcharts-data-table {
     width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    margin: 22px 0 14px 0 !important;
+    background: #ffffff !important;
+    border-radius: 14px !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06), 0 1px 3px rgba(15, 23, 42, 0.03) !important;
     overflow-x: auto !important;
-    margin-top: 20px !important;
-    border-radius: 8px !important;
+    overflow-y: hidden !important;
+    clear: both !important;
+    animation: fadeInDataTable 0.25s ease-out !important;
 }
 
-.highcharts-data-table table {
+@keyframes fadeInDataTable {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.highcharts-data-table table,
+div.highcharts-data-table table {
     width: 100% !important;
+    min-width: 100% !important;
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    background: #ffffff !important;
+    margin: 0 !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+}
+
+/* Caption como Cabecera Ejecutiva */
+.highcharts-data-table caption,
+.highcharts-data-table .highcharts-table-caption {
+    caption-side: top !important;
+    padding: 16px 22px !important;
+    background: #ffffff !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    font-size: 14.5px !important;
+    font-weight: 700 !important;
+    color: #2F5597 !important;
+    text-align: left !important;
+    letter-spacing: -0.2px !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+}
+
+.highcharts-data-table thead tr {
+    background: #f8fafc !important;
+    border-bottom: 2px solid #2F5597 !important;
+}
+
+.highcharts-data-table thead th {
+    background: #f8fafc !important;
+    padding: 14px 18px !important;
+    font-size: 12.5px !important;
+    font-weight: 700 !important;
+    text-transform: none !important;
+    color: #2F5597 !important;
+    border: none !important;
+    border-bottom: 2px solid #2F5597 !important;
+    border-right: 1px solid #e2e8f0 !important;
+    vertical-align: middle !important;
+    text-align: center !important;
+    line-height: 1.4 !important;
+    text-shadow: none !important;
+    box-sizing: border-box !important;
+}
+
+.highcharts-data-table thead th:last-child {
+    border-right: none !important;
+}
+
+.highcharts-data-table thead th:first-child {
+    text-align: left !important;
+    padding-left: 20px !important;
+}
+
+/* Botones de ordenamiento dentro de los th */
+.highcharts-data-table thead th button {
+    color: #2F5597 !important;
+    font-size: 12.5px !important;
+    font-weight: 700 !important;
+    font-family: inherit !important;
+    border: none !important;
+    background: transparent !important;
+    cursor: pointer !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    outline: none !important;
+    box-shadow: none !important;
+    line-height: inherit !important;
+    text-align: inherit !important;
+    width: 100% !important;
+}
+
+.highcharts-data-table thead th:first-child button {
+    justify-content: flex-start !important;
+}
+
+/* Indicadores de ordenamiento en cabeceras */
+.highcharts-data-table thead th.highcharts-sort-ascending button::after,
+.highcharts-data-table thead th[aria-sort="ascending"] button::after {
+    content: " \f0de" !important;
+    font-family: FontAwesome !important;
+    color: #2F5597 !important;
+    margin-left: 4px !important;
+}
+
+.highcharts-data-table thead th.highcharts-sort-descending button::after,
+.highcharts-data-table thead th[aria-sort="descending"] button::after {
+    content: " \f0dd" !important;
+    font-family: FontAwesome !important;
+    color: #2F5597 !important;
+    margin-left: 4px !important;
+}
+
+/* Filas del cuerpo */
+.highcharts-data-table tbody tr {
+    transition: background-color 0.15s ease !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+}
+
+.highcharts-data-table tbody tr:last-child {
+    border-bottom: none !important;
+}
+
+.highcharts-data-table tbody tr:nth-child(even) {
+    background-color: #fafbfc !important;
+}
+
+.highcharts-data-table tbody tr:nth-child(odd) {
+    background-color: #ffffff !important;
+}
+
+.highcharts-data-table tbody tr:hover {
+    background-color: #EAF5F8 !important;
+}
+
+/* Celdas del cuerpo */
+.highcharts-data-table tbody td,
+.highcharts-data-table tbody th {
+    padding: 13px 18px !important;
+    vertical-align: middle !important;
+    border: none !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+    border-right: 1px solid #f1f5f9 !important;
+    font-size: 13px !important;
+    color: #334155 !important;
+    line-height: 1.4 !important;
+    box-sizing: border-box !important;
+}
+
+.highcharts-data-table tbody tr:last-child td,
+.highcharts-data-table tbody tr:last-child th {
+    border-bottom: none !important;
+}
+
+.highcharts-data-table tbody td:last-child,
+.highcharts-data-table tbody th:last-child {
+    border-right: none !important;
+}
+
+/* Primera columna: Concepto o Periodo */
+.highcharts-data-table tbody th[scope="row"],
+.highcharts-data-table tbody th.highcharts-text,
+.highcharts-data-table tbody td:first-child {
+    font-weight: 700 !important;
+    color: #1e293b !important;
+    text-align: left !important;
+    padding-left: 20px !important;
+    background: transparent !important;
+}
+
+/* Columnas de valores numericos centrados con formato tabular */
+.highcharts-data-table tbody td.highcharts-number,
+.highcharts-data-table tbody td {
+    text-align: center !important;
+    font-variant-numeric: tabular-nums !important;
+    font-weight: 600 !important;
+    color: #0f172a !important;
+}
+
+/* Modo Presentacion Oscuro */
+body.dark-presentation-mode .highcharts-data-table {
+    background: #0f172a !important;
+    border-color: #1e293b !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
+}
+
+body.dark-presentation-mode .highcharts-data-table caption,
+body.dark-presentation-mode .highcharts-data-table .highcharts-table-caption {
+    background: #0f172a !important;
+    color: #93c5fd !important;
+    border-color: #1e293b !important;
+}
+
+body.dark-presentation-mode .highcharts-data-table thead tr {
+    background: #1e293b !important;
+    border-bottom-color: #38bdf8 !important;
+}
+
+body.dark-presentation-mode .highcharts-data-table thead th {
+    background: #1e293b !important;
+    color: #93c5fd !important;
+    border-color: #334155 !important;
+}
+
+body.dark-presentation-mode .highcharts-data-table thead th button {
+    color: #93c5fd !important;
+}
+
+body.dark-presentation-mode .highcharts-data-table tbody tr {
+    border-color: #1e293b !important;
+}
+
+body.dark-presentation-mode .highcharts-data-table tbody tr:nth-child(even) {
+    background-color: #132035 !important;
+}
+
+body.dark-presentation-mode .highcharts-data-table tbody tr:nth-child(odd) {
+    background-color: #0f172a !important;
+}
+
+body.dark-presentation-mode .highcharts-data-table tbody tr:hover {
+    background-color: #1e3a5f !important;
+}
+
+body.dark-presentation-mode .highcharts-data-table tbody td,
+body.dark-presentation-mode .highcharts-data-table tbody th {
+    color: #cbd5e1 !important;
+    border-color: #1e293b !important;
+}
+
+body.dark-presentation-mode .highcharts-data-table tbody th[scope="row"] {
+    color: #f8fafc !important;
+}
+
+body.dark-presentation-mode .highcharts-data-table tbody td.highcharts-number {
+    color: #ffffff !important;
 }
 
 /* ==========================================================================
