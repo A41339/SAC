@@ -151,10 +151,10 @@ namespace FGA.Controllers
                                 DateTime anoAntFecha = regActual.PERIODO.AddYears(-1);
                                 var regAnoAnt = listPerdida.FirstOrDefault(o => o.PERIODO.Year == anoAntFecha.Year && o.PERIODO.Month == anoAntFecha.Month);
 
-                                decimal actualMonto = regActual?.ESTIMACION_MATRIZ ?? 0;
-                                decimal anteriorMonto = regAnterior?.ESTIMACION_MATRIZ ?? 0;
-                                decimal mesAntMonto = regMesAnt?.ESTIMACION_MATRIZ ?? 0;
-                                decimal anoAntMonto = regAnoAnt?.ESTIMACION_MATRIZ ?? 0;
+                                decimal actualMonto = regActual?.PERDIDA_ESTIMADA ?? 0;
+                                decimal anteriorMonto = regAnterior?.PERDIDA_ESTIMADA ?? 0;
+                                decimal mesAntMonto = regMesAnt?.PERDIDA_ESTIMADA ?? 0;
+                                decimal anoAntMonto = regAnoAnt?.PERDIDA_ESTIMADA ?? 0;
 
                                 decimal varMensualMonto = actualMonto - mesAntMonto;
                                 decimal varMensualPct = mesAntMonto != 0 ? (varMensualMonto / Math.Abs(mesAntMonto)) * 100 : 0;
