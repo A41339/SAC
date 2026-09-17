@@ -280,7 +280,7 @@
         <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
         @if (Model.ParentMenuId.HasValue && !string.IsNullOrEmpty(Model.ParentMenuTitulo))
         {
-            <li><a href="@Url.Action("Index", "Modulo", new { id = Model.ParentMenuId.Value })">@Model.ParentMenuTitulo</a></li>
+            <li><a href="@Url.Action("Index", "Modulo", new { id = Model.ParentMenuId.Value })" class="breadcrumb-parent-pill" title="Volver al menú de @Model.ParentMenuTitulo"><i class="fa fa-folder-open-o" style="margin-right: 4px;"></i> @Model.ParentMenuTitulo</a></li>
         }
         <li class="active">@Model.Titulo</li>
     </ol>

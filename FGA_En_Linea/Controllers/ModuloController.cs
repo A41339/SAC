@@ -92,6 +92,32 @@ namespace FGA.Controllers
                             (NormalizarTexto(p.Menu_MenuId.MenuText) == modNorm ||
                              NormalizarTexto(p.Menu_MenuId.MenuText).Contains(modNorm) ||
                              modNorm.Contains(NormalizarTexto(p.Menu_MenuId.MenuText))));
+
+                        // 3. Mapeo de alias comunes hacia su módulo contenedor (ej. Seguridad -> Administración)
+                        if (rootPerm == null)
+                        {
+                            if (modNorm == "seguridad" || modNorm == "roles" || modNorm == "usuarios" || modNorm == "evaluacion" || modNorm == "evaluaciones")
+                            {
+                                rootPerm = allPermitted.FirstOrDefault(p => p.Menu_MenuId != null && p.Menu_MenuId.MenuText != null &&
+                                    (NormalizarTexto(p.Menu_MenuId.MenuText) == "administracion" || NormalizarTexto(p.Menu_MenuId.MenuText).Contains("administra")));
+                            }
+                        }
+                    }
+                }
+
+                // Si rootPerm es una opción hoja (no tiene opciones hijas que mostrar en el Hub) pero tiene un ParentId,
+                // ascender recursivamente en el árbol de menús hasta encontrar su módulo papá contenedor (ej. Roles o Evaluación -> Administración)
+                while (rootPerm != null && rootPerm.Menu_MenuId != null && rootPerm.Menu_MenuId.ParentId.HasValue
+                       && !allPermitted.Any(c => c.Menu_MenuId != null && c.Menu_MenuId.ParentId == rootPerm.Menu_MenuId.Id))
+                {
+                    var parentPerm = allPermitted.FirstOrDefault(p => p.Menu_MenuId != null && p.Menu_MenuId.Id == rootPerm.Menu_MenuId.ParentId.Value);
+                    if (parentPerm != null)
+                    {
+                        rootPerm = parentPerm;
+                    }
+                    else
+                    {
+                        break;
                     }
                 }
 

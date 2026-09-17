@@ -177,8 +177,14 @@
     }
 </style>
 
-<section class="content-header">
-    <div class="permisos-banner">
+<section class="content-header" style="position: relative;">
+    <ol class="breadcrumb">
+        <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
+        <li><a href="@Url.Action("Index", "Modulo", new { modulo = "Administración" })" class="breadcrumb-parent-pill" title="Volver al menú de Administración"><i class="fa fa-cogs" style="margin-right: 4px;"></i> Administraci&oacute;n</a></li>
+        <li><a href="@Url.Action("Index", "Role")">Roles</a></li>
+        <li class="active">Permisos: @Model.RolNombre</li>
+    </ol>
+    <div class="permisos-banner" style="margin-top: 28px;">
         <div>
             <h1 class="permisos-title">
                 <i class="fa fa-key" style="color: #0284c7;"></i>
@@ -213,13 +219,6 @@
             </a>
         </div>
     </div>
-
-    <ol class="breadcrumb" style="position: static; float: none; background: transparent; padding: 0 0 10px 4px;">
-        <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
-        <li><a href="#">Seguridad</a></li>
-        <li><a href="@Url.Action("Index", "Role")">Roles</a></li>
-        <li class="active">Permisos: @Model.RolNombre</li>
-    </ol>
 </section>
 
 <section class="content" style="padding-top: 0; padding-bottom: 80px;">
