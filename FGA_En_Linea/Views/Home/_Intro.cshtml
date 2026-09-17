@@ -348,7 +348,7 @@
             
             <div class="cuentas-cards-grid">
                 
-                <!-- Cuenta 1: Resultado del período acumulado -->
+                <!-- Cuenta 1: Resultado del periodo acumulado -->
                 <div class="cuenta-card clickable-kpi-card" onclick="getGraph('B400')" title="Resultado del per&iacute;odo acumulado (Click para ampliar gr&aacute;fico)" role="button" tabindex="0">
                     <div class="cuenta-card-header">
                         <div class="icon-circle-teal"><i class="fa fa-bar-chart"></i></div>
@@ -429,6 +429,50 @@
                     </div>
                 </div>
 
+            </div>
+        </div>
+
+        <!-- ==================== TABLA PÉRDIDAS ESPERADAS ==================== -->
+        <div class="perdida-esperada-card" style="background: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0; padding: 16px 20px; box-shadow: var(--card-shadow, 0 4px 12px rgba(0,0,0,0.03));">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="display: inline-block; width: 6px; height: 18px; background: #0284c7; border-radius: 2px;"></span>
+                    <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: #1e3a8a;">P&eacute;rdidas esperadas de la cartera de cr&eacute;dito (&#8353; Millones)</h4>
+                </div>
+                <a href="@Url.Action("Index", "Matriz")" class="btn btn-xs btn-default" style="border-radius: 6px; border: 1px solid #cbd5e1; font-size: 11px; padding: 3px 10px; color: #0284c7; font-weight: 600; text-decoration: none;" title="Ver gr&aacute;ficos en matrices">
+                    <i class="fa fa-line-chart" style="margin-right: 4px;"></i> Ver en Matrices
+                </a>
+            </div>
+
+            <div class="table-responsive" style="margin-bottom: 0;">
+                <table class="table table-bordered text-center" style="margin-bottom: 0; border: 1px solid #bae6fd; font-size: 13px; background-color: #ffffff;">
+                    <thead>
+                        <tr style="background-color: #e0f2fe; color: #0369a1;">
+                            <th rowspan="2" style="vertical-align: middle; font-weight: 600; border: 1px solid #bae6fd; text-align: left; padding-left: 14px;">Concepto</th>
+                            <th rowspan="2" style="vertical-align: middle; font-weight: 600; border: 1px solid #bae6fd; min-width: 90px;">@(string.IsNullOrEmpty(modelData?.PerdidaEsperadaTabla?.PeriodoAnterior) ? "Anterior" : modelData.PerdidaEsperadaTabla.PeriodoAnterior)</th>
+                            <th rowspan="2" style="vertical-align: middle; font-weight: 600; border: 1px solid #bae6fd; min-width: 90px;">@(string.IsNullOrEmpty(modelData?.PerdidaEsperadaTabla?.PeriodoActual) ? "Actual" : modelData.PerdidaEsperadaTabla.PeriodoActual)</th>
+                            <th colspan="2" style="vertical-align: middle; font-weight: 600; border: 1px solid #bae6fd;">Variaci&oacute;n mensual</th>
+                            <th colspan="2" style="vertical-align: middle; font-weight: 600; border: 1px solid #bae6fd;">Variaci&oacute;n interanual</th>
+                        </tr>
+                        <tr style="background-color: #e0f2fe; color: #0369a1;">
+                            <th style="font-weight: 600; border: 1px solid #bae6fd; font-size: 12px; min-width: 80px;">Monto</th>
+                            <th style="font-weight: 600; border: 1px solid #bae6fd; font-size: 12px; min-width: 70px;">%</th>
+                            <th style="font-weight: 600; border: 1px solid #bae6fd; font-size: 12px; min-width: 80px;">Monto</th>
+                            <th style="font-weight: 600; border: 1px solid #bae6fd; font-size: 12px; min-width: 70px;">%</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="background-color: #ffffff; color: #1e40af; font-weight: 700;">
+                            <td style="text-align: left; padding-left: 14px; border: 1px solid #e0f2fe; font-weight: 700; color: #1e40af;">P&eacute;rdidas esperadas</td>
+                            <td style="border: 1px solid #e0f2fe; font-size: 14px; color: #1e40af;">@(modelData?.PerdidaEsperadaTabla != null ? modelData.PerdidaEsperadaTabla.MontoAnterior.ToString("N3") : "0.000")</td>
+                            <td style="border: 1px solid #e0f2fe; font-size: 14px; color: #1e40af;">@(modelData?.PerdidaEsperadaTabla != null ? modelData.PerdidaEsperadaTabla.MontoActual.ToString("N3") : "0.000")</td>
+                            <td style="border: 1px solid #e0f2fe; font-size: 14px; color: #1e40af;">@(modelData?.PerdidaEsperadaTabla != null ? modelData.PerdidaEsperadaTabla.VarMensualMonto.ToString("N3") : "0.000")</td>
+                            <td style="border: 1px solid #e0f2fe; font-size: 14px; color: #1e40af;">@(modelData?.PerdidaEsperadaTabla != null ? modelData.PerdidaEsperadaTabla.VarMensualPct.ToString("N1") + "%" : "0.0%")</td>
+                            <td style="border: 1px solid #e0f2fe; font-size: 14px; color: #1e40af;">@(modelData?.PerdidaEsperadaTabla != null ? modelData.PerdidaEsperadaTabla.VarInteranualMonto.ToString("N3") : "0.000")</td>
+                            <td style="border: 1px solid #e0f2fe; font-size: 14px; color: #1e40af;">@(modelData?.PerdidaEsperadaTabla != null ? modelData.PerdidaEsperadaTabla.VarInteranualPct.ToString("N1") + "%" : "0.0%")</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
 

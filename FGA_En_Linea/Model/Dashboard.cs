@@ -81,6 +81,20 @@ namespace FGA.Models
         public Highcharts pCapitalSocial;
         public Highcharts pVariacionCartera;
 
+        public TablaPerdidaEsperada PerdidaEsperadaTabla = new TablaPerdidaEsperada();
+    }
+
+    public class TablaPerdidaEsperada
+    {
+        public string PeriodoAnterior { get; set; } = "";
+        public string PeriodoActual { get; set; } = "";
+        public decimal MontoAnterior { get; set; }
+        public decimal MontoActual { get; set; }
+        public decimal VarMensualMonto { get; set; }
+        public decimal VarMensualPct { get; set; }
+        public decimal VarInteranualMonto { get; set; }
+        public decimal VarInteranualPct { get; set; }
+        public bool HasData { get; set; }
     }
 }
 

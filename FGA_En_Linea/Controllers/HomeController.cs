@@ -1,4 +1,4 @@
-﻿using DotNet.Highcharts.Enums;
+using DotNet.Highcharts.Enums;
 using DotNet.Highcharts.Helpers;
 using DotNet.Highcharts.Options;
 using Entities.Entities.Procedures;
@@ -128,6 +128,56 @@ namespace FGA.Controllers
                 },
                 () => {
                     try { takCS = sp.FGA_Consultar_Variacion_CS(IdEntidad, PeriodoI, PeriodoF)?.ToList() ?? new List<FGA_Consultar_Variacion_CS_Result>(); } catch { }
+                },
+                () => {
+                    try
+                    {
+                        if (!string.IsNullOrEmpty(IdEntidad))
+                        {
+                            DateTime fechaInicioHistoria = PeriodoI < PeriodoF.AddMonths(-14) ? PeriodoI : PeriodoF.AddMonths(-14);
+                            var listPerdida = sp.FGA_Consultar_Matrices_PerdidaEstimada(IdEntidad, fechaInicioHistoria, PeriodoF)?.ToList();
+
+                            if (listPerdida != null && listPerdida.Count > 0)
+                            {
+                                var regActual = listPerdida.OrderByDescending(o => o.PERIODO).FirstOrDefault(o => o.PERIODO <= PeriodoF) 
+                                                ?? listPerdida.LastOrDefault();
+
+                                var regAnterior = listPerdida.FirstOrDefault(o => o.PERIODO.Year == PeriodoI.Year && o.PERIODO.Month == PeriodoI.Month)
+                                                  ?? (listPerdida.Count > 1 ? listPerdida[listPerdida.Count - 2] : null);
+
+                                DateTime mesAntFecha = regActual.PERIODO.AddMonths(-1);
+                                var regMesAnt = listPerdida.FirstOrDefault(o => o.PERIODO.Year == mesAntFecha.Year && o.PERIODO.Month == mesAntFecha.Month);
+
+                                DateTime anoAntFecha = regActual.PERIODO.AddYears(-1);
+                                var regAnoAnt = listPerdida.FirstOrDefault(o => o.PERIODO.Year == anoAntFecha.Year && o.PERIODO.Month == anoAntFecha.Month);
+
+                                decimal actualMonto = regActual?.ESTIMACION_MATRIZ ?? 0;
+                                decimal anteriorMonto = regAnterior?.ESTIMACION_MATRIZ ?? 0;
+                                decimal mesAntMonto = regMesAnt?.ESTIMACION_MATRIZ ?? 0;
+                                decimal anoAntMonto = regAnoAnt?.ESTIMACION_MATRIZ ?? 0;
+
+                                decimal varMensualMonto = actualMonto - mesAntMonto;
+                                decimal varMensualPct = mesAntMonto != 0 ? (varMensualMonto / Math.Abs(mesAntMonto)) * 100 : 0;
+
+                                decimal varInteranualMonto = actualMonto - anoAntMonto;
+                                decimal varInteranualPct = anoAntMonto != 0 ? (varInteranualMonto / Math.Abs(anoAntMonto)) * 100 : 0;
+
+                                view.PerdidaEsperadaTabla = new TablaPerdidaEsperada
+                                {
+                                    PeriodoAnterior = regAnterior != null ? regAnterior.PERIODO.ToString("MM/yyyy") : PeriodoI.ToString("MM/yyyy"),
+                                    PeriodoActual = regActual != null ? regActual.PERIODO.ToString("MM/yyyy") : PeriodoF.ToString("MM/yyyy"),
+                                    MontoAnterior = anteriorMonto,
+                                    MontoActual = actualMonto,
+                                    VarMensualMonto = varMensualMonto,
+                                    VarMensualPct = varMensualPct,
+                                    VarInteranualMonto = varInteranualMonto,
+                                    VarInteranualPct = varInteranualPct,
+                                    HasData = true
+                                };
+                            }
+                        }
+                    }
+                    catch { }
                 },
                 () =>
                 {
