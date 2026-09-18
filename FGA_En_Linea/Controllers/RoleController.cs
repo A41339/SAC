@@ -405,11 +405,18 @@ namespace FGA.Controllers
                         {
                             if (existing != null)
                             {
-                                existing.IsRead = true;
-                                existing.IsCreate = true;
-                                existing.IsUpdate = true;
-                                existing.IsDelete = true;
-                                menPermClient.Update(existing);
+                                var updateEntity = new FGA.Models.MenuPermission
+                                {
+                                    Id = existing.Id,
+                                    RoleId = rolId,
+                                    MenuId = m.Id,
+                                    IsRead = true,
+                                    IsCreate = true,
+                                    IsUpdate = true,
+                                    IsDelete = true,
+                                    SortOrder = m.SortOrder ?? 0
+                                };
+                                menPermClient.Update(updateEntity);
                             }
                             else
                             {

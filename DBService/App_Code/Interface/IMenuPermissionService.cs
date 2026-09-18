@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -25,9 +25,11 @@ public interface IMenuPermissionService
     MenuPermission Get(string id);
 
     [OperationContract]
+    [ReferencePreservingDataContractFormat]
     void Add(ref MenuPermission entity);
 
     [OperationContract]
+    [ReferencePreservingDataContractFormat]
     void Update(MenuPermission entity);
 
     [OperationContract]
