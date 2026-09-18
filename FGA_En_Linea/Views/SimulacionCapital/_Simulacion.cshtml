@@ -1,199 +1,112 @@
-﻿@model FGA.Model.Modelo_Simulacion
+@model FGA.Model.Modelo_Simulacion
 
-<style>
-    @{
-        string colorSuficiencia = string.Empty;
-        string colorCN1 = string.Empty;
-        string colorCCN1 = string.Empty;
+@{
+    string colorSuficiencia = "#10b981";
+    string colorCN1 = "#10b981";
+    string colorCCN1 = "#0284c7";
 
-        if (Model.Perfil != 2)
+    double valSuf = Model.IndSuficiencia.HasValue ? (double)Model.IndSuficiencia.Value : 0;
+    double valCN1 = Model.CN1.HasValue ? (double)Model.CN1.Value : 0;
+    double valCCN1 = Model.CCN1.HasValue ? (double)Model.CCN1.Value : 0;
+
+    if (Model.Perfil != 2)
+    {
+        if (valSuf >= 14)
         {
-            if (Model.IndSuficiencia >= 14)
-            {
-                colorSuficiencia = "#dddddd";
-            }
-            else if (Model.IndSuficiencia < 14 || Model.IndSuficiencia >= 10)
-            {
-                colorSuficiencia = "#0f9747";
-            }
-            else
-            {
-                colorSuficiencia = "#ee1f25";
-            }
+            colorSuficiencia = "#10b981";
         }
-        else {
-            if (Model.IndSuficiencia >= 16)
-            {
-                colorSuficiencia = "#dddddd";
-            }
-            else if (Model.IndSuficiencia < 16 || Model.IndSuficiencia >= 12)
-            {
-                colorSuficiencia = "#0f9747";
-            }
-            else
-            {
-                colorSuficiencia = "#ee1f25";
-            }
-        }
-
-        if (Model.Perfil != 2)
+        else if (valSuf >= 10)
         {
-            if (Model.CN1 >= 8)
-            {
-                colorCN1 = "#0f9747";
-            }
-            else if (Model.CN1 < 8 || Model.CN1 >= 7)
-            {
-                colorCN1 = "yellow";
-            }
-            else
-            {
-                colorCN1 = "#ee1f25";
-            }
+            colorSuficiencia = "#10b981";
         }
-        else {
-            if (Model.CN1 >= 12.5M)
-            {
-                colorCN1 = "#0f9747";
-            }
-            else if (Model.CN1 < 12.5M || Model.CN1 >= 10)
-            {
-                colorCN1 = "yellow";
-            }
-            else
-            {
-                colorCN1 = "#ee1f25";
-            }
-        }
-
-        if (Model.Perfil != 2)
+        else
         {
-            if (Model.CCN1.Value >= 6.5M)
-            {
-                colorCCN1 = "#336699";
-            }
-            else if (Model.CCN1.Value < 6.5M || Model.CCN1.Value >= 5.5M)
-            {
-                colorCCN1 = "yellow";
-            }
-            else
-            {
-                colorCCN1 = "#ee1f25";
-            }
-        }
-        else {
-            if (Model.CCN1.Value >= 11M)
-            {
-                colorCCN1 = "#336699";
-            }
-            else if (Model.CCN1.Value < 11M || Model.CCN1.Value >= 8.5M)
-            {
-                colorCCN1 = "yellow";
-            }
-            else
-            {
-                colorCCN1 = "#ee1f25";
-            }
+            colorSuficiencia = "#ef4444";
         }
     }
-    .circular-suficiencia {
-        background: -webkit-gradient(linear, right top, left top, color-stop(100%, #308446), color-stop(100%, transparent), to(transparent)),
-                    -webkit-gradient(linear, right top, left top, color-stop(100%, #03A9F4), color-stop(100%, #03A9F4), to(#03A9F4));
-        background: linear-gradient(-90deg, @colorSuficiencia 100%, transparent 100%, transparent), linear-gradient(270deg, #308446 100%, #308446 100%, #308446);
-        border-radius: 50%;
-                box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
-        height: 150px;
-        margin: 0 auto;
-        position: relative;
-        width: 150px;
-        -webkit-transition: all .3s linear;
-        transition: all .3s linear;
-    }
-
-    .circular-suficiencia::before {
-        background-color: #FAFAFA;
-        border-radius: 50%;
-        box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
-        color: rgba(0, 0, 0, 0.54);
-        content: '@(Model.IndSuficiencia.Value.ToString("N2"))%';
-        font-size: 40px;
-        font-weight: bold;
-        height: 100%;
-        left: 0;
-        line-height: 150px;
-        position: absolute;
-        text-align: center;
-        top: 0;
-        -webkit-transform: scale(0.87);
-        transform: scale(0.87);
-        width: 100%;
-    }
-
-    .circular-cn1 {
-        background: -webkit-gradient(linear, right top, left top, color-stop(100%, #eb636b), color-stop(100%, transparent), to(transparent)),
-                    -webkit-gradient(linear, right top, left top, color-stop(100%, #eb636b), color-stop(100%, #eb636b), to(#eb636b));
-        background: linear-gradient(-90deg, @colorCN1 100%, transparent 100%, transparent), linear-gradient(270deg, #eb636b 100%, #eb636b 100%, #eb636b);
-        border-radius: 50%;
-        box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
-        height: 150px;
-        margin: 0 auto;
-        position: relative;
-        width: 150px;
-        -webkit-transition: all .3s linear;
-        transition: all .3s linear;
-    }
-
-    .circular-cn1::before {
-        background-color: #FAFAFA;
-        border-radius: 50%;
-        box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
-        color: rgba(0, 0, 0, 0.54);
-        content: '@(Model.CN1.Value.ToString("N2"))%';
-        font-size: 40px;
-        font-weight: bold;
-        height: 100%;
-        left: 0;
-        line-height: 150px;
-        position: absolute;
-        text-align: center;
-        top: 0;
-        -webkit-transform: scale(0.87);
-        transform: scale(0.87);
-        width: 100%;
-    }
-
-    .circular-ccn1 {
-        background: -webkit-gradient(linear, right top, left top, color-stop(100%, #03A9F4), color-stop(100%, transparent), to(transparent)), -webkit-gradient(linear, right top, left top, color-stop(100%, #03A9F4), color-stop(100%, #E0E0E0), to(#E0E0E0));
-        background: linear-gradient(-90deg, @colorCCN1 100%, transparent 100%, transparent), linear-gradient(270deg, #03A9F4 100%, #E0E0E0 100%, #E0E0E0);
-        border-radius: 50%;
-        box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
-        height: 150px;
-        margin: 0 auto;
-        position: relative;
-        width: 150px;
-        -webkit-transition: all .3s linear;
-        transition: all .3s linear;
-    }
-
-        .circular-ccn1::before {
-            background-color: #FAFAFA;
-            border-radius: 50%;
-            box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
-        color: rgba(0, 0, 0, 0.54);
-        content: '@(Model.CCN1.Value.ToString("N2"))%';
-            font-size: 40px;
-            font-weight: bold;
-        height: 100%;
-        left: 0;
-            line-height: 150px;
-        position: absolute;
-            text-align: center;
-        top: 0;
-            -webkit-transform: scale(0.87);
-        transform: scale(0.87);
-        width: 100%;
+    else {
+        if (valSuf >= 16)
+        {
+            colorSuficiencia = "#10b981";
         }
-</style>
+        else if (valSuf >= 12)
+        {
+            colorSuficiencia = "#10b981";
+        }
+        else
+        {
+            colorSuficiencia = "#ef4444";
+        }
+    }
+
+    if (Model.Perfil != 2)
+    {
+        if (valCN1 >= 8)
+        {
+            colorCN1 = "#10b981";
+        }
+        else if (valCN1 >= 7)
+        {
+            colorCN1 = "#f59e0b";
+        }
+        else
+        {
+            colorCN1 = "#ef4444";
+        }
+    }
+    else {
+        if (valCN1 >= 12.5)
+        {
+            colorCN1 = "#10b981";
+        }
+        else if (valCN1 >= 10)
+        {
+            colorCN1 = "#f59e0b";
+        }
+        else
+        {
+            colorCN1 = "#ef4444";
+        }
+    }
+
+    if (Model.Perfil != 2)
+    {
+        if (valCCN1 >= 6.5)
+        {
+            colorCCN1 = "#0284c7";
+        }
+        else if (valCCN1 >= 5.5)
+        {
+            colorCCN1 = "#f59e0b";
+        }
+        else
+        {
+            colorCCN1 = "#ef4444";
+        }
+    }
+    else {
+        if (valCCN1 >= 11)
+        {
+            colorCCN1 = "#0284c7";
+        }
+        else if (valCCN1 >= 8.5)
+        {
+            colorCCN1 = "#f59e0b";
+        }
+        else
+        {
+            colorCCN1 = "#ef4444";
+        }
+    }
+
+    double maxSuf = Model.Perfil != 2 ? 20.0 : 25.0;
+    double maxCN1 = Model.Perfil != 2 ? 15.0 : 20.0;
+    double maxCCN1 = Model.Perfil != 2 ? 12.0 : 16.0;
+
+    double sufPct = Math.Min(Math.Max(valSuf / maxSuf * 100.0, 5.0), 100.0);
+    double cn1Pct = Math.Min(Math.Max(valCN1 / maxCN1 * 100.0, 5.0), 100.0);
+    double ccn1Pct = Math.Min(Math.Max(valCCN1 / maxCCN1 * 100.0, 5.0), 100.0);
+}
 <div class="row">
     <div class="col-xs-12">
         <div class="modern-filter-card">
@@ -247,8 +160,13 @@
                             <div class="simula-flip-container">
                                 <div class="simula-flip-card">
                                     <div class="simula-flip-front">
-                                        <div class="circular-suficiencia"></div>
-                                        <span style="font-size: 11px; color: #94a3b8; margin-top: 6px; display: inline-flex; align-items: center; gap: 4px;">
+                                        <div class="circular-gauge" style="--gauge-color: @colorSuficiencia; --gauge-pct: @(sufPct.ToString("F1", System.Globalization.CultureInfo.InvariantCulture))%;">
+                                            <div class="circular-gauge-inner">
+                                                <span class="gauge-value">@(Model.IndSuficiencia.HasValue ? Model.IndSuficiencia.Value.ToString("N2") : "0.00")</span>
+                                                <span class="gauge-symbol">%</span>
+                                            </div>
+                                        </div>
+                                        <span class="simula-hint-text">
                                             <i class="fa fa-info-circle"></i> Pasa el cursor para ver rangos
                                         </span>
                                     </div>
@@ -303,8 +221,13 @@
                             <div class="simula-flip-container">
                                 <div class="simula-flip-card">
                                     <div class="simula-flip-front">
-                                        <div class="circular-cn1"></div>
-                                        <span style="font-size: 11px; color: #94a3b8; margin-top: 6px; display: inline-flex; align-items: center; gap: 4px;">
+                                        <div class="circular-gauge" style="--gauge-color: @colorCN1; --gauge-pct: @(cn1Pct.ToString("F1", System.Globalization.CultureInfo.InvariantCulture))%;">
+                                            <div class="circular-gauge-inner">
+                                                <span class="gauge-value">@(Model.CN1.HasValue ? Model.CN1.Value.ToString("N2") : "0.00")</span>
+                                                <span class="gauge-symbol">%</span>
+                                            </div>
+                                        </div>
+                                        <span class="simula-hint-text">
                                             <i class="fa fa-info-circle"></i> Pasa el cursor para ver rangos
                                         </span>
                                     </div>
@@ -355,8 +278,13 @@
                             <div class="simula-flip-container">
                                 <div class="simula-flip-card">
                                     <div class="simula-flip-front">
-                                        <div class="circular-ccn1"></div>
-                                        <span style="font-size: 11px; color: #94a3b8; margin-top: 6px; display: inline-flex; align-items: center; gap: 4px;">
+                                        <div class="circular-gauge" style="--gauge-color: @colorCCN1; --gauge-pct: @(ccn1Pct.ToString("F1", System.Globalization.CultureInfo.InvariantCulture))%;">
+                                            <div class="circular-gauge-inner">
+                                                <span class="gauge-value">@(Model.CCN1.HasValue ? Model.CCN1.Value.ToString("N2") : "0.00")</span>
+                                                <span class="gauge-symbol">%</span>
+                                            </div>
+                                        </div>
+                                        <span class="simula-hint-text">
                                             <i class="fa fa-info-circle"></i> Pasa el cursor para ver rangos
                                         </span>
                                     </div>
@@ -436,9 +364,9 @@
                 </div>
             </div>
 
-            <!-- Fila inferior: Tablas de Variables de Simulación y Suficiencia Objetivo -->
+            <!-- Fila inferior: Tablas de Variables de SimulaciÃÂ³n y Suficiencia Objetivo -->
             <div class="row">
-                <!-- Variables de Simulación: Riesgos Totales -->
+                <!-- Variables de SimulaciÃÂ³n: Riesgos Totales -->
                 <div class="col-xs-12 col-md-5">
                     <div class="simula-table-card">
                         <div style="display: flex; align-items: center; justify-content: space-between; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9; margin-bottom: 14px;">
@@ -530,7 +458,7 @@
                     </div>
                 </div>
 
-                <!-- Variables de Simulación: Capital Base -->
+                <!-- Variables de SimulaciÃÂ³n: Capital Base -->
                 <div class="col-xs-12 col-md-4">
                     <div class="simula-table-card">
                         <div style="display: flex; align-items: center; justify-content: space-between; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9; margin-bottom: 14px;">

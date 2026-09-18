@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="~/Content/theme/bower_components/font-awesome/css/font-awesome.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
     <link rel="stylesheet" href="~/Content/dashboard_modern.css?v=@DateTime.Now.Ticks" />
+    <link rel="stylesheet" href="~/Content/modulo_hub.css?v=@DateTime.Now.Ticks" />
     @Scripts.Render("~/bundles/javascript")
     @Html.Action("HeaderCssJs", "Layout")
     @RenderSection("ScriptsOrCss", required: false)
@@ -655,7 +656,115 @@
             display: flex !important;
             flex-wrap: wrap !important;
             border-radius: 12px !important;
-            padding: 8px 12px !important;
+        }
+    }
+
+    /* Buscador Global de Módulos y Pantallas */
+    .header-search-wrapper {
+        float: left !important;
+        position: relative !important;
+        margin: 8px 0 0 15px !important;
+        width: 320px !important;
+        max-width: 320px !important;
+        height: 34px !important;
+        z-index: 1000 !important;
+    }
+
+    .header-search-input-group {
+        position: relative !important;
+        width: 100% !important;
+        height: 34px !important;
+        display: block !important;
+    }
+
+    #globalMenuSearch {
+        background: rgba(255, 255, 255, 0.18) !important;
+        border: 1px solid rgba(255, 255, 255, 0.3) !important;
+        border-radius: 20px !important;
+        padding: 5px 36px 5px 34px !important;
+        color: #ffffff !important;
+        font-size: 12.5px !important;
+        font-weight: 500 !important;
+        height: 34px !important;
+        line-height: 22px !important;
+        transition: all 0.25s ease !important;
+        box-shadow: none !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    #globalMenuSearch::-webkit-input-placeholder { color: rgba(255, 255, 255, 0.8) !important; }
+    #globalMenuSearch::-moz-placeholder { color: rgba(255, 255, 255, 0.8) !important; }
+    #globalMenuSearch:-ms-input-placeholder { color: rgba(255, 255, 255, 0.8) !important; }
+
+    #globalMenuSearch:focus {
+        background: #ffffff !important;
+        color: #0f172a !important;
+        border-color: #0284c7 !important;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18) !important;
+    }
+
+    #globalMenuSearch:focus::-webkit-input-placeholder { color: #94a3b8 !important; }
+    #globalMenuSearch:focus + .header-search-icon { color: #0284c7 !important; }
+    #globalMenuSearch:focus ~ .header-search-shortcut { opacity: 0.5 !important; }
+
+    .header-search-dropdown {
+        background: #ffffff !important;
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 12px !important;
+        box-shadow: 0 16px 36px -4px rgba(0, 0, 0, 0.22), 0 6px 12px -2px rgba(0, 0, 0, 0.08) !important;
+        max-height: 400px;
+        overflow-y: auto;
+        padding: 6px 0;
+        z-index: 999999 !important;
+        top: 40px !important;
+        left: 0 !important;
+        width: 360px !important;
+    }
+
+    .search-result-item {
+        display: flex !important;
+        align-items: center !important;
+        gap: 12px !important;
+        padding: 10px 16px !important;
+        text-decoration: none !important;
+        border-bottom: 1px solid #f1f5f9 !important;
+        transition: background 0.15s ease !important;
+        cursor: pointer !important;
+    }
+
+    .search-result-item:last-child {
+        border-bottom: none !important;
+    }
+
+    .search-result-item:hover,
+    .search-result-item.selected {
+        background-color: #f0f9ff !important;
+        text-decoration: none !important;
+    }
+
+    .search-result-item .match-highlight {
+        background-color: #fef08a !important;
+        color: #0f172a !important;
+        border-radius: 2px !important;
+        padding: 0 2px !important;
+        font-weight: 700 !important;
+    }
+
+    @@media (max-width: 991px) {
+        .header-search-wrapper {
+            width: 200px !important;
+            max-width: 200px !important;
+            margin: 8px 0 0 8px !important;
+        }
+        .header-search-shortcut {
+            display: none !important;
+        }
+    }
+
+    @@media (max-width: 767px) {
+        .header-search-wrapper {
+            display: none !important;
         }
     }
 </style>
@@ -685,6 +794,14 @@
                 <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
                     <span class="sr-only">Toggle navigation</span>
                 </a>
+                <div class="header-search-wrapper">
+                    <div class="header-search-input-group">
+                        <i class="fa fa-search header-search-icon" style="position: absolute; left: 12px; top: 10px; color: rgba(255, 255, 255, 0.8); font-size: 13px; pointer-events: none; z-index: 2; transition: color 0.2s ease;"></i>
+                        <input type="text" id="globalMenuSearch" class="form-control" placeholder="Buscar módulo o pantalla... (Ctrl + K)" autocomplete="off" />
+                        <span class="header-search-shortcut" style="position: absolute; right: 10px; top: 7px; background: rgba(0, 0, 0, 0.25); color: rgba(255, 255, 255, 0.85); font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px; pointer-events: none; font-family: monospace;">Ctrl K</span>
+                    </div>
+                    <div id="globalSearchResults" class="header-search-dropdown" style="display: none; position: absolute;"></div>
+                </div>
                 <div class="navbar-custom-menu">
                     <ul class="nav navbar-nav">
                         <li class="dropdown user user-menu">
@@ -1474,7 +1591,7 @@
 
             // 1. Manejo inteligente de clic en el botón/píldora del menú papá:
             // Si el usuario navegó desde la pantalla anterior (referrer interno válido), volver dinámicamente a la opción previa
-            $(document).on('click', '.breadcrumb-parent-pill, .breadcrumb-back-btn', function (e) {
+            $(document).on('click', '.breadcrumb-parent-pill, .breadcrumb-back-btn, .header-back-link', function (e) {
                 if (document.referrer && document.referrer.indexOf(window.location.host) !== -1) {
                     var refPath = document.referrer.toLowerCase();
                     var currentPath = window.location.href.toLowerCase();
@@ -1564,36 +1681,271 @@
 
                     if (!norm || norm === 'inicio') return;
 
-                    var targetUrl = ($a.length && $a.attr('href') && $a.attr('href') !== '#' && $a.attr('href') !== '' && $a.attr('href').indexOf('javascript') !== 0) ? $a.attr('href') : resolverUrlModulo(rawText);
+                    var targetUrl = resolverUrlModulo(rawText);
 
                     if ($a.length === 0) {
-                        $li.html('<a href="' + targetUrl + '" class="breadcrumb-parent-pill" title="Volver a la opción anterior: ' + rawText + '">' + rawText + '</a>');
+                        $li.html('<a href="' + targetUrl + '" class="breadcrumb-parent-pill" title="Volver al menú de ' + rawText + '">' + rawText + '</a>');
                     } else {
                         $a.attr('href', targetUrl);
                         $a.addClass('breadcrumb-parent-pill');
-                        if (!$a.attr('title')) {
-                            $a.attr('title', 'Volver a la opción anterior: ' + rawText);
-                        }
+                        $a.attr('title', 'Volver al menú de ' + rawText);
                     }
                 });
             });
 
-                    if ($a.length === 0) {
-                        var targetUrl = resolverUrlModulo(rawText);
-                        $li.html('<a href="' + targetUrl + '" class="breadcrumb-parent-pill" title="Volver al menú principal de ' + rawText + '">' + rawText + '</a>');
-                    } else {
-                        var href = $a.attr('href');
-                        if (!href || href === '#' || href === '' || href.indexOf('javascript') === 0 || href.indexOf('modulo=') !== -1) {
-                            var targetUrl = resolverUrlModulo(rawText);
-                            $a.attr('href', targetUrl);
-                        }
-                        $a.addClass('breadcrumb-parent-pill');
-                        if (!$a.attr('title')) {
-                            $a.attr('title', 'Volver al menú principal de ' + rawText);
+            // 3. Auto-inyección del enlace de cabecera "← Volver a [Módulo Padre]" hacia /Modulo/Index/id en todas las páginas hijas
+            var $parentPill = $('.breadcrumb .breadcrumb-parent-pill').first();
+            var headerBackUrl = null;
+            var headerBackName = null;
+
+            if ($parentPill.length > 0) {
+                headerBackName = $.trim($parentPill.text());
+                headerBackUrl = resolverUrlModulo(headerBackName);
+            } else if (parentModuleName) {
+                headerBackName = parentModuleName;
+                headerBackUrl = resolverUrlModulo(parentModuleName);
+            }
+
+            if (headerBackName && headerBackUrl) {
+                var normBack = normalizar(headerBackName);
+                if (normBack && normBack !== 'inicio') {
+                    var $header = $('.content-header').first();
+                    if ($header.length > 0 && $header.find('.header-back-link').length === 0 && $header.find('.hub-header').length === 0) {
+                        var $titleEl = $header.find('h1, .modern-page-title').first();
+                        var backHtml = '<div class="header-back-container" style="margin-bottom: 6px;">' +
+                            '<a href="' + headerBackUrl + '" class="breadcrumb-back-btn header-back-link" style="display: inline-flex; align-items: center; gap: 6px; font-size: 13.5px; font-weight: 600; color: #0284c7; text-decoration: none; transition: all 0.2s ease;">' +
+                            '<i class="fa fa-arrow-left" style="font-size: 12px;"></i> Volver' +
+                            '</a></div>';
+
+                        if ($titleEl.length > 0) {
+                            $(backHtml).insertBefore($titleEl);
+                        } else {
+                            $header.prepend(backHtml);
                         }
                     }
+                }
+            }
+
+            // 4. Buscador Global de Módulos y Pantallas (Tiempo Real + Ctrl + K)
+            (function initGlobalSearch() {
+                var $searchInput = $('#globalMenuSearch');
+                var $searchResults = $('#globalSearchResults');
+                if ($searchInput.length === 0 || $searchResults.length === 0) return;
+
+                var indexedMenus = [];
+                var paletteColors = [
+                    { f: '#e0f2fe', c: '#0284c7' },
+                    { f: '#ffedd5', c: '#ea580c' },
+                    { f: '#dcfce7', c: '#16a34a' },
+                    { f: '#f3e8ff', c: '#7c3aed' },
+                    { f: '#ffe4e6', c: '#e11d48' },
+                    { f: '#ccfbf1', c: '#0d9488' },
+                    { f: '#e0e7ff', c: '#4338ca' },
+                    { f: '#fef3c7', c: '#d97706' },
+                    { f: '#dbeafe', c: '#2563eb' },
+                    { f: '#fae8ff', c: '#a21caf' }
+                ];
+
+                var searchCatalogUrl = '@Url.Action("GetSearchMenuCatalog", "Modulo")';
+
+                function buildMenuIndex() {
+                    indexedMenus = [];
+                    var colorIdx = 0;
+                    var addedUrls = {};
+
+                    $.getJSON(searchCatalogUrl, function (data) {
+                        if (data && data.length > 0) {
+                            $.each(data, function (idx, item) {
+                                if (!item.url || item.url === '#') return;
+                                if (addedUrls[item.url]) return;
+
+                                var color = paletteColors[colorIdx % paletteColors.length];
+                                colorIdx++;
+                                addedUrls[item.url] = true;
+
+                                indexedMenus.push({
+                                    title: item.title,
+                                    normTitle: normalizar(item.title),
+                                    url: item.url,
+                                    icon: item.icon || 'fa fa-file-text-o',
+                                    parent: item.parent || '',
+                                    normParent: normalizar(item.parent || ''),
+                                    color: color
+                                });
+                            });
+                        }
+
+                        // Complementar con elementos visibles en la pantalla actual
+                        $('.sidebar-menu li a, .hub-card').each(function () {
+                            var $a = $(this);
+                            var href = $a.attr('href');
+                            if (!href || href === '#' || href.indexOf('javascript:') === 0) return;
+                            if (addedUrls[href]) return;
+
+                            var title = $.trim($a.find('.hub-card-title, span').first().text());
+                            if (!title) return;
+
+                            var $i = $a.find('i').first();
+                            var icon = ($i.length && $i.attr('class')) ? $i.attr('class') : 'fa fa-folder-open-o';
+
+                            var parentName = '';
+                            var $parentTree = $a.parents('li.treeview').first();
+                            if ($parentTree.length > 0) {
+                                parentName = $.trim($parentTree.children('a').find('span').first().text());
+                            } else if ($a.hasClass('hub-card')) {
+                                parentName = $.trim($('.content-header h1').first().text());
+                            }
+
+                            var color = paletteColors[colorIdx % paletteColors.length];
+                            colorIdx++;
+                            addedUrls[href] = true;
+
+                            indexedMenus.push({
+                                title: title,
+                                normTitle: normalizar(title),
+                                url: href,
+                                icon: icon,
+                                parent: parentName,
+                                normParent: normalizar(parentName),
+                                color: color
+                            });
+                        });
+                    });
+                }
+
+                buildMenuIndex();
+                setTimeout(buildMenuIndex, 800);
+
+                // Atajo de teclado (Ctrl + K o /) con captura preventiva en fase capture para interceptar la barra de navegador
+                window.addEventListener('keydown', function (e) {
+                    var isK = e.keyCode === 75 || e.key === 'k' || e.key === 'K' || e.code === 'KeyK';
+                    if ((e.ctrlKey || e.metaKey) && isK) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        if (typeof e.stopImmediatePropagation === 'function') {
+                            e.stopImmediatePropagation();
+                        }
+                        $searchInput.focus().select();
+                    } else if (e.key === '/' && !$(e.target).is('input, textarea, select')) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        $searchInput.focus().select();
+                    }
+                }, true);
+
+                // Búsqueda en tiempo real
+                $searchInput.on('input focus', function () {
+                    var query = $.trim($(this).val());
+                    if (query.length === 0) {
+                        $searchResults.hide().empty();
+                        return;
+                    }
+
+                    var qNorm = normalizar(query);
+                    var matches = indexedMenus.filter(function (m) {
+                        return m.normTitle.indexOf(qNorm) !== -1 || (m.normParent && m.normParent.indexOf(qNorm) !== -1);
+                    });
+
+                    renderResults(matches, query);
                 });
-            });
+
+                function renderResults(matches, query) {
+                    $searchResults.empty();
+                    if (matches.length === 0) {
+                        $searchResults.html(
+                            '<div style="padding: 20px 16px; text-align: center; color: #64748b;">' +
+                            '<i class="fa fa-search" style="font-size: 22px; color: #cbd5e1; margin-bottom: 6px;"></i>' +
+                            '<div style="font-size: 13px; font-weight: 600;">Sin resultados</div>' +
+                            '<div style="font-size: 11.5px; color: #94a3b8;">No encontramos pantallas que coincidan con "' + escapeHtml(query) + '"</div>' +
+                            '</div>'
+                        ).show();
+                        return;
+                    }
+
+                    var html = '';
+                    var maxResults = Math.min(matches.length, 12);
+                    for (var i = 0; i < maxResults; i++) {
+                        var m = matches[i];
+                        var highlightedTitle = highlightMatch(m.title, query);
+                        var parentTag = m.parent ? '<div style="font-size: 11px; color: #64748b; font-weight: 500; margin-top: 1px;">Módulo: <span style="color: #0284c7; font-weight: 600;">' + escapeHtml(m.parent) + '</span></div>' : '';
+
+                        html += '<a href="' + m.url + '" class="search-result-item' + (i === 0 ? ' selected' : '') + '">' +
+                            '<div style="width: 32px; height: 32px; border-radius: 8px; background: ' + m.color.f + '; color: ' + m.color.c + '; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0;">' +
+                            '<i class="' + m.icon + '"></i>' +
+                            '</div>' +
+                            '<div style="flex: 1; min-width: 0;">' +
+                            '<div style="font-size: 13px; font-weight: 600; color: #1e293b; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">' + highlightedTitle + '</div>' +
+                            parentTag +
+                            '</div>' +
+                            '<i class="fa fa-chevron-right" style="font-size: 11px; color: #94a3b8; margin-left: 6px;"></i>' +
+                            '</a>';
+                    }
+
+                    $searchResults.html(html).show();
+                }
+
+                function highlightMatch(text, query) {
+                    if (!query) return escapeHtml(text);
+                    var idx = normalizar(text).indexOf(normalizar(query));
+                    if (idx === -1) return escapeHtml(text);
+                    var originalMatch = text.substr(idx, query.length);
+                    return escapeHtml(text.substr(0, idx)) + '<span class="match-highlight">' + escapeHtml(originalMatch) + '</span>' + escapeHtml(text.substr(idx + query.length));
+                }
+
+                function escapeHtml(str) {
+                    if (!str) return '';
+                    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+                }
+
+                // Navegación con teclado (Flecha Abajo, Flecha Arriba, Enter, Esc)
+                $searchInput.on('keydown', function (e) {
+                    var $items = $searchResults.find('.search-result-item');
+                    if ($items.length === 0 || !$searchResults.is(':visible')) return;
+
+                    var $selected = $items.filter('.selected');
+                    var currentIndex = $items.index($selected);
+
+                    if (e.keyCode === 40) { // Flecha Abajo
+                        e.preventDefault();
+                        var nextIndex = (currentIndex + 1) % $items.length;
+                        $items.removeClass('selected').eq(nextIndex).addClass('selected');
+                        scrollToItem($items.eq(nextIndex));
+                    } else if (e.keyCode === 38) { // Flecha Arriba
+                        e.preventDefault();
+                        var prevIndex = (currentIndex - 1 + $items.length) % $items.length;
+                        $items.removeClass('selected').eq(prevIndex).addClass('selected');
+                        scrollToItem($items.eq(prevIndex));
+                    } else if (e.keyCode === 13) { // Enter
+                        e.preventDefault();
+                        if ($selected.length > 0) {
+                            window.location.href = $selected.attr('href');
+                        }
+                    } else if (e.keyCode === 27) { // Escape
+                        $searchResults.hide();
+                        $searchInput.blur();
+                    }
+                });
+
+                function scrollToItem($item) {
+                    if ($item.length === 0) return;
+                    var dropdownTop = $searchResults.scrollTop();
+                    var dropdownHeight = $searchResults.height();
+                    var itemTop = $item.position().top;
+                    var itemHeight = $item.outerHeight();
+
+                    if (itemTop < 0) {
+                        $searchResults.scrollTop(dropdownTop + itemTop);
+                    } else if (itemTop + itemHeight > dropdownHeight) {
+                        $searchResults.scrollTop(dropdownTop + itemTop + itemHeight - dropdownHeight);
+                    }
+                }
+
+                $(document).on('click', function (e) {
+                    if (!$(e.target).closest('.header-search-wrapper').length) {
+                        $searchResults.hide();
+                    }
+                });
+            })();
         });
     })();
 </script>

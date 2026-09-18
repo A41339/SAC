@@ -1,4 +1,4 @@
-﻿using FGA.Model;
+using FGA.Model;
 using System;
 using System.Data;
 using System.Web.Mvc;

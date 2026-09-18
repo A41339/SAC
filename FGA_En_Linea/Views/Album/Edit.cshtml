@@ -1,7 +1,7 @@
-﻿@model FGA.Models.Album_Update
+@model FGA.Models.Album_Update
 
 @{
-    ViewBag.Title = "Editar un Álbum";
+    ViewBag.Title = "Editar un Ãlbum";
     if (Ajax.IsThisAjaxRequest())
     {
         Layout = null;
@@ -9,7 +9,7 @@
 }
 
 <script src="~/Scripts/jquery-form.js"></script>
-@Html.StarkAjaxFormSubmiter("frmID", "tbAlbum", true, "Acción ejecutada con éxito")
+@Html.StarkAjaxFormSubmiter("frmID", "tbAlbum", true, "AcciÃ³n ejecutada con Ã©xito")
 @{
     if (!Ajax.IsThisAjaxRequest())
     {
@@ -20,7 +20,7 @@
     </h1>
     <ol class="breadcrumb">
         <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
-        <li><a href="#">Administraci&oacute;n</a></li>
+        <li><a href="@Url.Action("Index", "Modulo", new { modulo = "Album/Edit" })" class="breadcrumb-parent-pill"><i class="fa fa-wrench" style="margin-right: 4px;"></i> Mantenimientos</a></li>
         <li class="active">Editar &Aacute;lbum</li>
     </ol>
 </section>
@@ -49,7 +49,7 @@
                             </div>
                             <div class="form-group">
                                 @Html.LabelFor(model => model.TipoAlbum_Id, new { @class = "" })
-                                @Html.DropDownList("TipoAlbum_Id", " -Selecciona una opción- ")
+                                @Html.DropDownList("TipoAlbum_Id", " -Selecciona una opciÃ³n- ")
                             </div>
                             <div class="form-group">
                                 @Html.LabelFor(model => model.Autor, new { @class = "" })
@@ -66,7 +66,7 @@
                                 </textarea>
                             </div>
                             <div class="form-group">
-                                <label>Agregue los archivos, <b>muy importante subir al menos una imagen que servirá de carátula para la nota</b></label>
+                                <label>Agregue los archivos, <b>muy importante subir al menos una imagen que servirÃ¡ de carÃ¡tula para la nota</b></label>
                                 <label class="btn btn-default">
                                     Buscar Archivos&hellip; <input type="file" id="fileToUpload" multiple name="files" style="display: none;">
                                 </label>

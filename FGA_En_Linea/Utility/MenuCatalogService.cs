@@ -428,6 +428,34 @@ namespace FGA.Utility
                 ColorFondoIcono = "#f3e8ff",
                 ColorIcono = "#7c3aed"
             },
+            ["Estatus"] = new CardMeta
+            {
+                Descripcion = "Monitoreo en tiempo real del estado de cierres contables y procesos de carga.",
+                Icono = "fa fa-tachometer",
+                ColorFondoIcono = "#f3e8ff", // Violeta suave
+                ColorIcono = "#7c3aed"
+            },
+            ["Cierre/Monitor"] = new CardMeta
+            {
+                Descripcion = "Monitoreo en tiempo real del estado de cierres contables y procesos de carga.",
+                Icono = "fa fa-tachometer",
+                ColorFondoIcono = "#f3e8ff",
+                ColorIcono = "#7c3aed"
+            },
+            ["Archivos Cargados"] = new CardMeta
+            {
+                Descripcion = "Consulta, descarga y auditor\u00eda de archivos y reportes procesados.",
+                Icono = "fa fa-folder-open-o",
+                ColorFondoIcono = "#dcfce7", // Verde suave
+                ColorIcono = "#16a34a"
+            },
+            ["Consultar Archivos"] = new CardMeta
+            {
+                Descripcion = "Consulta, descarga y auditor\u00eda de archivos y reportes procesados.",
+                Icono = "fa fa-folder-open-o",
+                ColorFondoIcono = "#dcfce7",
+                ColorIcono = "#16a34a"
+            },
             ["F\u00f3rmulas"] = new CardMeta
             {
                 Descripcion = "Definici\u00f3n y f\u00f3rmulas de c\u00e1lculo de indicadores financieros y normativos.",
@@ -715,6 +743,106 @@ namespace FGA.Utility
                 Icono = "fa fa-exchange",
                 ColorFondoIcono = "#fef3c7",
                 ColorIcono = "#d97706"
+            },
+
+            // === GRÁFICOS E INDICADORES (Opciones Hijas Específicas) ===
+            ["SUGEF"] = new CardMeta
+            {
+                Descripcion = "Consulte y analice los principales indicadores financieros normativos seg\u00fan regulaci\u00f3n SUGEF.",
+                Icono = "fa fa-line-chart",
+                ColorFondoIcono = "#ffe4e6",
+                ColorIcono = "#e11d48"
+            },
+            ["FFC"] = new CardMeta
+            {
+                Descripcion = "Analice los indicadores y estad\u00edsticas del Fondo de Financiamiento para la Competitividad.",
+                Icono = "fa fa-university",
+                ColorFondoIcono = "#ffedd5",
+                ColorIcono = "#ea580c"
+            },
+            ["Econ\u00f3micos"] = new CardMeta
+            {
+                Descripcion = "Seguimiento de tasas de inter\u00e9s, inflaci\u00f3n y variables macroecon\u00f3micas.",
+                Icono = "fa fa-globe",
+                ColorFondoIcono = "#ccfbf1",
+                ColorIcono = "#0d9488"
+            },
+            ["Economicos"] = new CardMeta
+            {
+                Descripcion = "Seguimiento de tasas de inter\u00e9s, inflaci\u00f3n y variables macroecon\u00f3micas.",
+                Icono = "fa fa-globe",
+                ColorFondoIcono = "#ccfbf1",
+                ColorIcono = "#0d9488"
+            },
+            ["Personalizados"] = new CardMeta
+            {
+                Descripcion = "Configure y consulte indicadores financieros personalizados seg\u00fan sus criterios de evaluaci\u00f3n.",
+                Icono = "fa fa-sliders",
+                ColorFondoIcono = "#f3e8ff",
+                ColorIcono = "#7c3aed"
+            },
+            ["Personalizado"] = new CardMeta
+            {
+                Descripcion = "Configure y consulte indicadores financieros personalizados seg\u00fan sus criterios de evaluaci\u00f3n.",
+                Icono = "fa fa-sliders",
+                ColorFondoIcono = "#f3e8ff",
+                ColorIcono = "#7c3aed"
+            },
+            ["Notificaciones"] = new CardMeta
+            {
+                Descripcion = "Monitoreo y consulta de alertas, boletines y notificaciones institucionales.",
+                Icono = "fa fa-bell-o",
+                ColorFondoIcono = "#fef3c7",
+                ColorIcono = "#d97706"
+            },
+            ["Notificacion"] = new CardMeta
+            {
+                Descripcion = "Monitoreo y consulta de alertas, boletines y notificaciones institucionales.",
+                Icono = "fa fa-bell-o",
+                ColorFondoIcono = "#fef3c7",
+                ColorIcono = "#d97706"
+            },
+            ["Requisitos"] = new CardMeta
+            {
+                Descripcion = "Verificaci\u00f3n y estado de cumplimiento de requisitos regulatorios.",
+                Icono = "fa fa-check-square-o",
+                ColorFondoIcono = "#dcfce7",
+                ColorIcono = "#16a34a"
+            },
+            ["Requisites"] = new CardMeta
+            {
+                Descripcion = "Verificaci\u00f3n y estado de cumplimiento de requisitos regulatorios.",
+                Icono = "fa fa-check-square-o",
+                ColorFondoIcono = "#dcfce7",
+                ColorIcono = "#16a34a"
+            },
+            ["Informes"] = new CardMeta
+            {
+                Descripcion = "Generaci\u00f3n y visualizaci\u00f3n de informes gerenciales y financieros.",
+                Icono = "fa fa-file-text-o",
+                ColorFondoIcono = "#dbeafe",
+                ColorIcono = "#2563eb"
+            },
+            ["Informe"] = new CardMeta
+            {
+                Descripcion = "Generaci\u00f3n y visualizaci\u00f3n de informes gerenciales y financieros.",
+                Icono = "fa fa-file-text-o",
+                ColorFondoIcono = "#dbeafe",
+                ColorIcono = "#2563eb"
+            },
+            ["Consultas"] = new CardMeta
+            {
+                Descripcion = "Consultas avanzadas y an\u00e1lisis din\u00e1mico de informaci\u00f3n consolidada.",
+                Icono = "fa fa-search",
+                ColorFondoIcono = "#fae8ff",
+                ColorIcono = "#a21caf"
+            },
+            ["Consulta"] = new CardMeta
+            {
+                Descripcion = "Consultas avanzadas y an\u00e1lisis din\u00e1mico de informaci\u00f3n consolidada.",
+                Icono = "fa fa-search",
+                ColorFondoIcono = "#fae8ff",
+                ColorIcono = "#a21caf"
             }
         };
 
@@ -736,60 +864,101 @@ namespace FGA.Utility
 
         public static CardMeta GetCardMeta(string menuText, string menuUrl, string dbIcon = null, int index = 0)
         {
-            // 1. Buscar por MenuText
-            if (!string.IsNullOrEmpty(menuText) && Tarjetas.TryGetValue(menuText.Trim(), out var metaText) && metaText != null)
-                return metaText;
+            string textTrim = (menuText ?? "").Trim();
+            string urlTrim = (menuUrl ?? "").Trim().Trim('/');
 
-            // 2. Buscar por Controller en la URL (ej: "InformeFinanciero/ER" -> "InformeFinanciero")
-            if (!string.IsNullOrEmpty(menuUrl))
+            // 1. Asignación estricta de color por índice secuencial en el grid (Garantiza 100% colores distintos en el mismo Hub)
+            var colorPair = Palette[Math.Abs(index) % Palette.Length];
+
+            // 2. Buscar si existe metadato de descripción e ícono en Tarjetas por MenuText o URL completa
+            string descFound = null;
+            string iconFound = null;
+
+            if (!string.IsNullOrEmpty(textTrim) && Tarjetas.TryGetValue(textTrim, out var metaText) && metaText != null)
             {
-                string cleanUrl = menuUrl.Trim().Trim('/');
-                int slashIdx = cleanUrl.IndexOf('/');
-                string controller = slashIdx > 0 ? cleanUrl.Substring(0, slashIdx) : cleanUrl;
-
-                if (Tarjetas.TryGetValue(controller, out var metaCtrl) && metaCtrl != null)
-                    return metaCtrl;
+                descFound = metaText.Descripcion;
+                iconFound = metaText.Icono;
+            }
+            else if (!string.IsNullOrEmpty(urlTrim) && Tarjetas.TryGetValue(urlTrim, out var metaFull) && metaFull != null)
+            {
+                descFound = metaFull.Descripcion;
+                iconFound = metaFull.Icono;
+            }
+            else if (!string.IsNullOrEmpty(urlTrim) && urlTrim.IndexOf('/') <= 0 && Tarjetas.TryGetValue(urlTrim, out var metaCtrl) && metaCtrl != null)
+            {
+                descFound = metaCtrl.Descripcion;
+                iconFound = metaCtrl.Icono;
             }
 
             // 3. Extracción de ícono si viene en formato HTML desde la BD
-            string fallbackIcon = "fa fa-file-text-o";
-            if (!string.IsNullOrEmpty(dbIcon))
+            if (string.IsNullOrEmpty(iconFound) && !string.IsNullOrEmpty(dbIcon))
             {
                 var match = System.Text.RegularExpressions.Regex.Match(dbIcon, @"fa-[a-zA-Z0-9_-]+");
                 if (match.Success)
                 {
-                    fallbackIcon = "fa " + match.Value;
+                    iconFound = "fa " + match.Value;
                 }
             }
 
-            // Si el ícono es genérico, intentar inferir por palabras clave
-            if (fallbackIcon == "fa fa-file-text-o" && !string.IsNullOrEmpty(menuText))
+            // 4. Inferencia inteligente de ícono por palabras clave en MenuText o URL
+            if (string.IsNullOrEmpty(iconFound) || iconFound == "fa fa-file-text-o")
             {
-                string lower = menuText.ToLower();
-                if (lower.Contains("perfil") || lower.Contains("rol")) fallbackIcon = "fa fa-id-badge";
-                else if (lower.Contains("catálogo") || lower.Contains("catalogo") || lower.Contains("cuenta")) fallbackIcon = "fa fa-book";
-                else if (lower.Contains("evalua")) fallbackIcon = "fa fa-check-square-o";
-                else if (lower.Contains("usuario")) fallbackIcon = "fa fa-users";
-                else if (lower.Contains("entidad")) fallbackIcon = "fa fa-building-o";
-                else if (lower.Contains("seguridad") || lower.Contains("auditoria")) fallbackIcon = "fa fa-lock";
-                else if (lower.Contains("parametro")) fallbackIcon = "fa fa-sliders";
-                else if (lower.Contains("cierre")) fallbackIcon = "fa fa-calendar-check-o";
-                else if (lower.Contains("formula")) fallbackIcon = "fa fa-calculator";
-                else if (lower.Contains("noticia")) fallbackIcon = "fa fa-newspaper-o";
-                else if (lower.Contains("calendario")) fallbackIcon = "fa fa-calendar";
-                else if (lower.Contains("archivo")) fallbackIcon = "fa fa-cloud-upload";
-                else if (lower.Contains("cartera") || lower.Contains("credito")) fallbackIcon = "fa fa-pie-chart";
-                else if (lower.Contains("mora") || lower.Contains("riesgo")) fallbackIcon = "fa fa-th";
-                else if (lower.Contains("tasa") || lower.Contains("indicador")) fallbackIcon = "fa fa-line-chart";
+                if (!string.IsNullOrEmpty(textTrim))
+                {
+                    string lower = textTrim.ToLower();
+                    if (lower.Contains("perfil") || lower.Contains("rol")) iconFound = "fa fa-id-badge";
+                    else if (lower.Contains("catálogo") || lower.Contains("catalogo") || lower.Contains("cuenta")) iconFound = "fa fa-book";
+                    else if (lower.Contains("evalua")) iconFound = "fa fa-check-square-o";
+                    else if (lower.Contains("usuario")) iconFound = "fa fa-users";
+                    else if (lower.Contains("entidad")) iconFound = "fa fa-building-o";
+                    else if (lower.Contains("seguridad") || lower.Contains("auditoria")) iconFound = "fa fa-lock";
+                    else if (lower.Contains("parametro")) iconFound = "fa fa-sliders";
+                    else if (lower.Contains("cierre")) iconFound = "fa fa-calendar-check-o";
+                    else if (lower.Contains("formula")) iconFound = "fa fa-calculator";
+                    else if (lower.Contains("noticia") || lower.Contains("notificac")) iconFound = "fa fa-bell-o";
+                    else if (lower.Contains("calendario")) iconFound = "fa fa-calendar";
+                    else if (lower.Contains("archivo")) iconFound = "fa fa-cloud-upload";
+                    else if (lower.Contains("cartera") || lower.Contains("credito")) iconFound = "fa fa-pie-chart";
+                    else if (lower.Contains("mora") || lower.Contains("riesgo")) iconFound = "fa fa-th";
+                    else if (lower.Contains("sugef")) iconFound = "fa fa-line-chart";
+                    else if (lower.Contains("ffc")) iconFound = "fa fa-university";
+                    else if (lower.Contains("personaliz")) iconFound = "fa fa-sliders";
+                    else if (lower.Contains("econom")) iconFound = "fa fa-globe";
+                    else if (lower.Contains("margen") || lower.Contains("márgen")) iconFound = "fa fa-percent";
+                    else if (lower.Contains("tasa") || lower.Contains("indicador")) iconFound = "fa fa-line-chart";
+                    else if (lower.Contains("informe") || lower.Contains("reporte")) iconFound = "fa fa-file-text-o";
+                    else if (lower.Contains("consult")) iconFound = "fa fa-search";
+                    else if (lower.Contains("requisito") || lower.Contains("requisit")) iconFound = "fa fa-check-square-o";
+                    else iconFound = "fa fa-folder-open-o";
+                }
+                else
+                {
+                    iconFound = "fa fa-folder-open-o";
+                }
             }
 
-            // 4. Color dinámico vibrante asignado por paleta (NUNCA gris aburrido)
-            var colorPair = GetPaletteColor(menuText ?? menuUrl, index);
+            // 5. Descripción adaptativa personalizada si no existe en el catálogo
+            if (string.IsNullOrEmpty(descFound))
+            {
+                descFound = "Acceda a la informaci\u00f3n y reportes detallados de " + (textTrim != "" ? textTrim : "este m\u00f3dulo") + ".";
+                if (!string.IsNullOrEmpty(textTrim))
+                {
+                    string lowerText = textTrim.ToLower();
+                    if (lowerText.Contains("sugef")) descFound = "Consulte y analice los principales indicadores financieros normativos seg\u00fan regulaci\u00f3n SUGEF.";
+                    else if (lowerText.Contains("ffc")) descFound = "Analice los indicadores y estad\u00edsticas del Fondo de Financiamiento para la Competitividad.";
+                    else if (lowerText.Contains("personaliz")) descFound = "Configure y consulte indicadores financieros personalizados seg\u00fan sus criterios de evaluaci\u00f3n.";
+                    else if (lowerText.Contains("econom")) descFound = "Seguimiento de tasas de inter\u00e9s, inflaci\u00f3n y variables macroecon\u00f3micas.";
+                    else if (lowerText.Contains("notificac")) descFound = "Monitoreo y consulta de alertas, boletines y notificaciones institucionales.";
+                    else if (lowerText.Contains("informe")) descFound = "Generaci\u00f3n y visualizaci\u00f3n de informes gerenciales y financieros.";
+                    else if (lowerText.Contains("consult")) descFound = "Consultas avanzadas y an\u00e1lisis din\u00e1mico de informaci\u00f3n consolidada.";
+                    else if (lowerText.Contains("requisito")) descFound = "Verificaci\u00f3n y estado de cumplimiento de requisitos regulatorios.";
+                }
+            }
 
             return new CardMeta
             {
-                Descripcion = "Acceda a la informaci\u00f3n y reportes detallados de " + (menuText ?? "este m\u00f3dulo") + ".",
-                Icono = fallbackIcon,
+                Descripcion = descFound,
+                Icono = iconFound,
                 ColorFondoIcono = colorPair.Fondo,
                 ColorIcono = colorPair.Icono
             };

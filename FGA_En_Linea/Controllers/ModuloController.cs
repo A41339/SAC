@@ -127,24 +127,35 @@ namespace FGA.Controllers
                 {
                     rootPerm = allPermitted.FirstOrDefault(p => p.Menu_MenuId != null && p.Menu_MenuId.Id == id.Value);
                 }
-                else if (!string.IsNullOrWhiteSpace(modulo))
+                
+                if (rootPerm == null && !string.IsNullOrWhiteSpace(modulo))
                 {
                     string modClean = modulo.Trim();
 
-                    // 0. Si se envió un ID numérico en el parámetro modulo (ej. ?modulo=9000)
+                    // 0. Coincidencia por ID numérico (ej. ?modulo=9000)
                     if (int.TryParse(modClean, out int parsedId))
                     {
                         rootPerm = allPermitted.FirstOrDefault(p => p.Menu_MenuId != null && p.Menu_MenuId.Id == parsedId);
                     }
 
-                    // 1. Coincidencia exacta por nombre
+                    // 1. Coincidencia exacta o parcial por MenuURL (ej. "Facturacion/Index", "Facturacion", "Role/Index", "Explorer/Notificacion", "Evaluacion/Historial")
+                    if (rootPerm == null)
+                    {
+                        string cleanPath = modClean.Trim().Trim('/');
+                        rootPerm = allPermitted.FirstOrDefault(p => p.Menu_MenuId != null && p.Menu_MenuId.MenuURL != null &&
+                            (string.Equals(p.Menu_MenuId.MenuURL.Trim().Trim('/'), cleanPath, StringComparison.OrdinalIgnoreCase) ||
+                             p.Menu_MenuId.MenuURL.Trim().Trim('/').StartsWith(cleanPath + "/", StringComparison.OrdinalIgnoreCase) ||
+                             cleanPath.StartsWith(p.Menu_MenuId.MenuURL.Trim().Trim('/') + "/", StringComparison.OrdinalIgnoreCase)));
+                    }
+
+                    // 2. Coincidencia exacta por nombre de menú (MenuText)
                     if (rootPerm == null)
                     {
                         rootPerm = allPermitted.FirstOrDefault(p => p.Menu_MenuId != null && p.Menu_MenuId.MenuText != null &&
                             string.Equals(p.Menu_MenuId.MenuText.Trim(), modClean, StringComparison.OrdinalIgnoreCase));
                     }
 
-                    // 2. Coincidencia normalizada sin tildes ni mayúsculas
+                    // 3. Coincidencia normalizada sin tildes ni mayúsculas
                     if (rootPerm == null)
                     {
                         string modNorm = NormalizarTexto(modClean);
@@ -152,25 +163,11 @@ namespace FGA.Controllers
                             (NormalizarTexto(p.Menu_MenuId.MenuText) == modNorm ||
                              NormalizarTexto(p.Menu_MenuId.MenuText).Contains(modNorm) ||
                              modNorm.Contains(NormalizarTexto(p.Menu_MenuId.MenuText))));
-
-                        // 3. Mapeo de alias comunes hacia su módulo contenedor (Mantenimientos 9000 / Administración)
-                        if (rootPerm == null)
-                        {
-                            if (modNorm == "seguridad" || modNorm == "roles" || modNorm == "usuarios" ||
-                                modNorm == "evaluacion" || modNorm == "evaluaciones" ||
-                                modNorm.Contains("administra") || modNorm.Contains("mantenimiento"))
-                            {
-                                // Prioridad 1: Módulo 9000 (Mantenimientos)
-                                rootPerm = allPermitted.FirstOrDefault(p => p.Menu_MenuId != null && p.Menu_MenuId.Id == 9000)
-                                           ?? allPermitted.FirstOrDefault(p => p.Menu_MenuId != null && p.Menu_MenuId.MenuText != null &&
-                                               (NormalizarTexto(p.Menu_MenuId.MenuText).Contains("mantenimiento") || NormalizarTexto(p.Menu_MenuId.MenuText).Contains("administra")));
-                            }
-                        }
                     }
                 }
 
                 // Si rootPerm es una opción hoja (no tiene opciones hijas que mostrar en el Hub) pero tiene un ParentId,
-                // ascender recursivamente en el árbol de menús hasta encontrar su módulo papá contenedor (ej. Roles o Evaluación -> Administración)
+                // ascender recursivamente en el árbol de menús hasta encontrar su módulo papá contenedor definido en la base de datos
                 while (rootPerm != null && rootPerm.Menu_MenuId != null && rootPerm.Menu_MenuId.ParentId.HasValue
                        && !allPermitted.Any(c => c.Menu_MenuId != null && c.Menu_MenuId.ParentId == rootPerm.Menu_MenuId.Id))
                 {
@@ -283,6 +280,9 @@ namespace FGA.Controllers
                     }
                 }
 
+                string rootMenuUrl = rootPerm.Menu_MenuId.MenuURL?.Trim() ?? "";
+                bool mostrarFiltros = string.Equals(rootMenuUrl, "filter", StringComparison.OrdinalIgnoreCase);
+
                 var model = new ModuloHubViewModel
                 {
                     MenuId = rootId,
@@ -291,6 +291,8 @@ namespace FGA.Controllers
                     NotaPie = moduloMeta.NotaPie,
                     ParentMenuId = parentMenuId,
                     ParentMenuTitulo = parentMenuTitulo,
+                    MenuURL = rootMenuUrl,
+                    MostrarFiltros = mostrarFiltros,
                     IdEntidad = Session["IdEntidad"]?.ToString() ?? "",
                     PeriodoReferencia = formattedPeriodo,
                     TipoComparacion = Session["TipoComparacion"]?.ToString() ?? "Mensual",
@@ -381,6 +383,79 @@ namespace FGA.Controllers
             catch (Exception ex)
             {
                 return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        public JsonResult GetSearchMenuCatalog()
+        {
+            try
+            {
+                int roleId = 0;
+                int.TryParse(Env.GetUserInfo("roleid"), out roleId);
+
+                using (var men = new FGA_En_Linea.MenuPermissionService.MenuPermissionServiceClient())
+                {
+                    var evaluacion = Env.GetUserInfo("evaluacion") == "S" ? -1 : Utilitarios.opcionEvaluacion;
+                    var allPermitted = men.GetMenu(roleId).Where(o => o.MenuId != evaluacion).ToArray();
+
+                    var list = new List<object>();
+
+                    foreach (var p in allPermitted)
+                    {
+                        var m = p.Menu_MenuId;
+                        if (m == null || string.IsNullOrWhiteSpace(m.MenuText)) continue;
+
+                        bool hasChildren = allPermitted.Any(c => c.Menu_MenuId != null && c.Menu_MenuId.ParentId == m.Id);
+                        bool isSubMenu = string.Equals(m.MenuURL?.Trim(), "root", StringComparison.OrdinalIgnoreCase)
+                                         || string.Equals(m.MenuURL?.Trim(), "filter", StringComparison.OrdinalIgnoreCase)
+                                         || string.IsNullOrWhiteSpace(m.MenuURL)
+                                         || m.MenuURL.Trim() == "#"
+                                         || hasChildren;
+
+                        string targetUrl = "";
+                        if (isSubMenu)
+                        {
+                            targetUrl = Url.Action("Index", "Modulo", new { id = m.Id });
+                        }
+                        else
+                        {
+                            string cleanUrl = m.MenuURL.Trim();
+                            if (!cleanUrl.StartsWith("~") && !cleanUrl.StartsWith("/"))
+                            {
+                                cleanUrl = "~/" + cleanUrl;
+                            }
+                            targetUrl = Url.Content(cleanUrl);
+                        }
+
+                        string parentName = "";
+                        if (m.ParentId.HasValue)
+                        {
+                            var parentPerm = allPermitted.FirstOrDefault(x => x.Menu_MenuId != null && x.Menu_MenuId.Id == m.ParentId.Value);
+                            if (parentPerm != null && parentPerm.Menu_MenuId != null)
+                            {
+                                parentName = parentPerm.Menu_MenuId.MenuText ?? "";
+                            }
+                        }
+
+                        var cardMeta = MenuCatalogService.GetCardMeta(m.MenuText, m.MenuURL, m.MenuIcon, m.Id);
+
+                        list.Add(new
+                        {
+                            id = m.Id,
+                            title = m.MenuText,
+                            url = targetUrl,
+                            parent = parentName,
+                            icon = cardMeta.Icono
+                        });
+                    }
+
+                    return Json(list, JsonRequestBehavior.AllowGet);
+                }
+            }
+            catch
+            {
+                return Json(new List<object>(), JsonRequestBehavior.AllowGet);
             }
         }
 

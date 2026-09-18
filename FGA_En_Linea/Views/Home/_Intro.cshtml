@@ -1,4 +1,4 @@
-﻿@model FGA.Models.Dashboard
+@model FGA.Models.Dashboard
 
 <script src="https://code.highcharts.com/highcharts.js"></script>
 
@@ -53,7 +53,7 @@
         pointer-events: none !important;
     }
 
-    /* Animación de alerta pulsante para valores e indicadores en rojo */
+    /* AnimaciÃÂ³n de alerta pulsante para valores e indicadores en rojo */
     @@keyframes alertGlowPulse {
         0%, 100% {
             border-color: #fca5a5;
@@ -375,7 +375,7 @@
                     </div>
                 </div>
 
-                <!-- Cuenta 2: Cartera de crédito -->
+                <!-- Cuenta 2: Cartera de crÃÂ©dito -->
                 <div class="cuenta-card clickable-kpi-card" onclick="getGraph('B130')" title="Cartera de cr&eacute;dito (Click para ampliar gr&aacute;fico)" role="button" tabindex="0">
                     <div class="cuenta-card-header">
                         <div class="icon-circle-blue"><i class="fa fa-credit-card"></i></div>
@@ -402,7 +402,7 @@
                     </div>
                 </div>
 
-                <!-- Cuenta 3: Obligaciones con el público -->
+                <!-- Cuenta 3: Obligaciones con el pÃÂºblico -->
                 <div class="cuenta-card clickable-kpi-card" onclick="getGraph('B210')" title="Obligaciones con el p&uacute;blico (Click para ampliar gr&aacute;fico)" role="button" tabindex="0">
                     <div class="cuenta-card-header">
                         <div class="icon-circle-orange"><i class="fa fa-database"></i></div>
@@ -432,7 +432,7 @@
             </div>
         </div>
 
-        <!-- ==================== TABLA PÉRDIDAS ESPERADAS ==================== -->
+        <!-- ==================== TABLA PÃÂRDIDAS ESPERADAS ==================== -->
         <div class="perdida-esperada-card" style="background: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0; padding: 16px 20px; box-shadow: var(--card-shadow, 0 4px 12px rgba(0,0,0,0.03));">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
                 <div style="display: flex; align-items: center; gap: 8px;">
@@ -493,7 +493,7 @@
                             <td style="text-align: center !important; vertical-align: middle !important; border: 1px solid #e0f2fe; font-size: 14px; color: #1e40af;">@(modelData?.PerdidaEsperadaTabla != null ? modelData.PerdidaEsperadaTabla.MontoAnterior.ToString("N3") : "0.000")</td>
                             <td style="text-align: center !important; vertical-align: middle !important; border: 1px solid #e0f2fe; font-size: 14px; color: #1e40af;">@(modelData?.PerdidaEsperadaTabla != null ? modelData.PerdidaEsperadaTabla.MontoActual.ToString("N3") : "0.000")</td>
                             
-                            <!-- Variación Mensual: Valor -->
+                            <!-- VariaciÃÂ³n Mensual: Valor -->
                             <td style="text-align: center !important; vertical-align: middle !important; border: 1px solid #e0f2fe; font-size: 13.5px;">
                                 @if (modelData?.PerdidaEsperadaTabla != null && modelData.PerdidaEsperadaTabla.HasMensual)
                                 {
@@ -523,7 +523,7 @@
                                 }
                             </td>
 
-                            <!-- Variación Mensual: % -->
+                            <!-- VariaciÃÂ³n Mensual: % -->
                             <td style="text-align: center !important; vertical-align: middle !important; border: 1px solid #e0f2fe; font-size: 12.5px;">
                                 @if (modelData?.PerdidaEsperadaTabla != null && modelData.PerdidaEsperadaTabla.HasMensual)
                                 {
@@ -553,7 +553,7 @@
                                 }
                             </td>
 
-                            <!-- Variación Anual: Valor -->
+                            <!-- VariaciÃÂ³n Anual: Valor -->
                             <td style="text-align: center !important; vertical-align: middle !important; border: 1px solid #e0f2fe; font-size: 13.5px;">
                                 @if (modelData?.PerdidaEsperadaTabla != null && modelData.PerdidaEsperadaTabla.HasInteranual)
                                 {
@@ -583,7 +583,7 @@
                                 }
                             </td>
 
-                            <!-- Variación Anual: % -->
+                            <!-- VariaciÃÂ³n Anual: % -->
                             <td style="text-align: center !important; vertical-align: middle !important; border: 1px solid #e0f2fe; font-size: 12.5px;">
                                 @if (modelData?.PerdidaEsperadaTabla != null && modelData.PerdidaEsperadaTabla.HasInteranual)
                                 {
@@ -735,7 +735,7 @@
     <div id="wrapper"></div>
 </div>
 
-<!-- ==================== FILA DE GRÁFICOS DINÁMICOS HIGHCHARTS ==================== -->
+<!-- ==================== FILA DE GRÃÂFICOS DINÃÂMICOS HIGHCHARTS ==================== -->
 @if (modelData != null && (modelData.VariacionCartera != null || modelData.Mora != null || modelData.DiferencialTasas != null || modelData.IndicadoresRentabilidad != null))
 {
     <div style="margin-bottom: 20px;">

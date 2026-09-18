@@ -185,9 +185,7 @@ namespace FGA.Controllers
                                                     c.NOMSUBCATEGORIA,
                                                     c.PREGUNTA,
                                                     c.OPCIONSELECCIONADA,
-                                                    c.DETALLERESPUESTA,
-                                                    c.ACEPTABLE,
-                                                    c.FUERTE
+                                                    c.DETALLERESPUESTA
                               };
 
                 return Json(new { aaData = result }, JsonRequestBehavior.AllowGet);

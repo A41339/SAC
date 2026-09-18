@@ -3109,6 +3109,10 @@ table th {
     border-top: none !important;
     text-align: left !important;
     text-shadow: none !important;
+    white-space: normal !important;
+    word-wrap: break-word !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
 }
 
 .streaming-table table th a,
@@ -3144,6 +3148,10 @@ table td {
     color: #1e293b !important;
     border-bottom: 1px solid #e2e8f0 !important;
     border-right: 1px solid #edf4fa !important;
+    white-space: normal !important;
+    word-wrap: break-word !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
 }
 
 .streaming-table table.table-striped tr:nth-child(even) td,
@@ -7872,6 +7880,10 @@ table.dataTable thead th,
     letter-spacing: normal !important;
     vertical-align: middle !important;
     background-color: #f8fafc !important;
+    white-space: normal !important;
+    word-wrap: break-word !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
 }
 
 /* 6. Contenido de Tablas y Celdas */
@@ -7885,6 +7897,10 @@ table.dataTable tbody td,
     color: #1e293b !important;
     line-height: 1.45 !important;
     vertical-align: middle !important;
+    white-space: normal !important;
+    word-wrap: break-word !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
 }
 
 /* 7. Etiquetas de Formularios y Filtros */
@@ -8429,4 +8445,166 @@ body.dark-presentation-mode .highcharts-data-table tbody td.highcharts-number {
     color: #2F5597 !important;
     background: #eff6ff !important;
     transform: scale(1.18);
+}
+
+/* ==========================================================================
+   SIMULACION CAPITAL & CIRCULAR GAUGE MODULE
+   ========================================================================== */
+.circular-gauge {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    margin: 0 auto;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.04), 0 8px 20px -4px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background: conic-gradient(var(--gauge-color, #0284c7) var(--gauge-pct, 0%), #e2e8f0 0);
+}
+
+.circular-gauge::before {
+    content: '';
+    position: absolute;
+    width: 108px;
+    height: 108px;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 10px rgba(0, 0, 0, 0.04);
+    z-index: 1;
+}
+
+.circular-gauge-inner {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    display: inline-flex;
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: center;
+    gap: 2px;
+    line-height: 1;
+}
+
+.gauge-value {
+    font-size: 26px;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.5px;
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+}
+
+.gauge-symbol {
+    font-size: 15px;
+    font-weight: 700;
+    color: #64748b;
+    margin-left: 1px;
+}
+
+.simula-hint-text {
+    font-size: 11px;
+    color: #94a3b8;
+    margin-top: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.simula-icon-primary {
+    color: #0284c7;
+}
+
+.simula-date-container {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.simula-select-entidad {
+    min-width: 200px;
+}
+
+.simula-date-input {
+    min-width: 140px;
+}
+
+.simula-select-escenario {
+    min-width: 220px;
+}
+
+.simula-filter-action {
+    margin-left: auto;
+}
+
+.simula-body-vertical-center {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.simula-export-btn-full {
+    width: 100%;
+}
+
+.legend-dot-normal1 { background: #10b981; }
+.legend-dot-normal2 { background: #22c55e; }
+.legend-dot-normal3 { background: #84cc16; }
+.legend-dot-alerta { background: #eab308; }
+.legend-dot-irregular2 { background: #f97316; }
+.legend-dot-critico { background: #ef4444; }
+.legend-dot-primary { background: #0284c7; }
+
+/* Cierre Progress Gauge */
+.circular-cierre-gauge {
+    width: 170px;
+    height: 170px;
+    border-radius: 50%;
+    margin: 10px auto;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.04), 0 8px 20px -4px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background: conic-gradient(#0284c7 var(--gauge-pct, 0%), #e2e8f0 0);
+}
+
+.circular-cierre-gauge::before {
+    content: '';
+    position: absolute;
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 10px rgba(0, 0, 0, 0.04);
+    z-index: 1;
+}
+
+.circular-cierre-inner {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    display: inline-flex;
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: center;
+    gap: 2px;
+    line-height: 1;
+}
+
+.cierre-gauge-value {
+    font-size: 32px;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.5px;
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+}
+
+.cierre-gauge-symbol {
+    font-size: 18px;
+    font-weight: 700;
+    color: #64748b;
+    margin-left: 1px;
 }

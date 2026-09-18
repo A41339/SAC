@@ -13,6 +13,8 @@ namespace FGA.Models
         public string ParentMenuTitulo { get; set; } = "";
 
         // Filtros globales
+        public bool MostrarFiltros { get; set; }
+        public string MenuURL { get; set; } = "";
         public string IdEntidad { get; set; } = "";
         public string PeriodoReferencia { get; set; } = "";
         public string TipoComparacion { get; set; } = "Mensual"; // Mensual, Trimestral, Interanual

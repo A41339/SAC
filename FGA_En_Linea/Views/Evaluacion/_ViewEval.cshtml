@@ -1,4 +1,4 @@
-﻿@model  FGA.Model.Modelo_Evaluacion
+@model  FGA.Model.Modelo_Evaluacion
 
 @if (Model == null || Model.evaluaciones == null || Model.evaluaciones.Count == 0)
 {
@@ -7,7 +7,7 @@
             <span aria-hidden="true">&times;</span>
         </button>
         <h4 class="modal-title" style="color: #fff; font-weight: 600; display: flex; align-items: center; gap: 8px;">
-            <i class="fa fa-info-circle" style="color: #86d2dd;"></i> Cuestionario de Autoevaluación
+            <i class="fa fa-info-circle" style="color: #86d2dd;"></i> Cuestionario de AutoevaluaciÃÂ³n
         </h4>
     </div>
     <div class="modal-body" style="padding: 36px 24px; text-align: center; background: #fff;">
@@ -32,7 +32,7 @@
         <span aria-hidden="true">&times;</span>
     </button>
     <h4 class="modal-title" style="color: #fff; font-weight: 600; display: flex; align-items: center; gap: 8px;">
-        <i class="fa fa-pencil-square-o" style="color: #86d2dd;"></i> Cuestionario de Autoevaluación
+        <i class="fa fa-pencil-square-o" style="color: #86d2dd;"></i> Cuestionario de AutoevaluaciÃÂ³n
     </h4>
 </div>
 
@@ -98,10 +98,10 @@
                                 {
                                     <div style="margin-top: 14px; padding: 14px 20px; border-radius: 10px; background: #fff1f2; border: 1px solid #fecdd3;">
                                         <p id="alert" style="color: #be123c; font-size: 13px; font-weight: 600; margin: 0;">
-                                            <i class="fa fa-exclamation-triangle"></i> Recuerde que al enviar este subcomponente no podrá ingresar nuevamente a la autoevaluación.
+                                            <i class="fa fa-exclamation-triangle"></i> Recuerde que al enviar este subcomponente no podrÃÂ¡ ingresar nuevamente a la autoevaluaciÃÂ³n.
                                         </p>
                                         <p id="success" class="hidden" style="color: #047857; font-size: 13px; font-weight: 600; margin: 0;">
-                                            <i class="fa fa-check-circle"></i> Evaluación enviada exitosamente.
+                                            <i class="fa fa-check-circle"></i> EvaluaciÃÂ³n enviada exitosamente.
                                         </p>
                                     </div>
                                     <br />
@@ -119,7 +119,7 @@
                         </div>
                         <h4 style="color: #143750; font-weight: 700; margin-bottom: 8px;">Subcomponente Completado</h4>
                         <p style="color: #64748b; font-size: 14px; max-width: 480px; margin: 0 auto 24px auto;">
-                            El usuario ha finalizado de completar el subcomponente. La evaluación fue enviada y no podrá volver a ingresar.
+                            El usuario ha finalizado de completar el subcomponente. La evaluaciÃÂ³n fue enviada y no podrÃÂ¡ volver a ingresar.
                         </p>
                         <button type="button" class="btn btn-default" data-dismiss="modal" data-bs-dismiss="modal" style="border-radius: 6px; font-weight: 600; padding: 8px 24px;">
                             <i class="fa fa-times"></i> Salir
@@ -132,7 +132,7 @@
                 @if (Model.evaluaciones[0].Confirmada.Contains(";" + Model.evaluaciones[0].IdSubCategoria.ToString() + ";") == false)
                 {
                     <button class="action back btn btn-default" style="display: none; border-radius: 6px; font-weight: 600;">
-                        <i class="fa fa-chevron-left"></i> Atrás
+                        <i class="fa fa-chevron-left"></i> AtrÃÂ¡s
                     </button>
                     <button class="action next btn btn-primary" style="border-radius: 6px; font-weight: 600; background: #0284c7; border-color: #0284c7;" @(Model.evaluaciones[0].OpcionSeleccionada == 0 ? "disabled" : "")>
                         Siguiente <i class="fa fa-chevron-right"></i>
@@ -162,7 +162,7 @@
     }
 
     $('.action.submit').click(function () {
-        if (confirm("¿Estás seguro de enviar la evaluación? No podrás ingresar nuevamente.")) {
+        if (confirm("ÃÂ¿EstÃÂ¡s seguro de enviar la evaluaciÃÂ³n? No podrÃÂ¡s ingresar nuevamente.")) {
             var evalIdCategoriaId = @Model.evaluaciones[0].IdCategoria;
             var evalIdSubCategoriaId = @Model.evaluaciones[0].IdSubCategoria;
             $.ajax({

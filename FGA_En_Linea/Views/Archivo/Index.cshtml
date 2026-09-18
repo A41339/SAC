@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Entities.Entities.Procedures.FGA_Consultar_ArchivosCargados_Result>
+@model IEnumerable<Entities.Entities.Procedures.FGA_Consultar_ArchivosCargados_Result>
 
 @{
     ViewBag.Title = "Carga de Archivos";
@@ -25,7 +25,7 @@
         </h1>
         <ol class="breadcrumb">
         <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
-        <li><a href="#">Carga de Datos</a></li>
+        <li><a href="@Url.Action("Index", "Modulo", new { modulo = "Archivo/Index" })" class="breadcrumb-parent-pill"><i class="fa fa-database" style="margin-right: 4px;"></i> Carga de Datos</a></li>
         <li class="active">XML del Mes</li>
     </ol>
 </section>
@@ -36,25 +36,8 @@
     {
         @Html.AntiForgeryToken()
         <div class="modern-upload-card">
-            <div class="modern-upload-header">
-                <div class="modern-upload-title-box">
-                    <div class="upload-icon-circle">
-                        <i class="fa fa-cloud-upload"></i>
-                    </div>
-                    <div>
-                        <h4 class="modern-upload-title">Carga de Archivos XML</h4>
-                        <p class="modern-upload-subtitle">Seleccione el archivo XML correspondiente al periodo activo</p>
-                    </div>
-                </div>
-                <div>
-                    <a href="javascript:void(0)" class="btn-help-circle" onclick="document.getElementById('light').style.display='block';document.getElementById('fade').style.display='block'" title="Ver lista de archivos XML requeridos">
-                        <i class="fa fa-question"></i>
-                    </a>
-                </div>
-            </div>
-
-            <div class="modern-upload-body">
-                <div class="modern-upload-controls">
+            <div class="modern-upload-body" style="padding: 16px 22px;">
+                <div class="modern-upload-controls" style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
                     <label class="btn-modern-browse" for="xmlFileInput">
                         <i class="fa fa-folder-open"></i>
                         <span>Examinar&hellip;</span>
@@ -70,6 +53,10 @@
                         <i class="fa fa-cloud-upload"></i>
                         <span>Cargar</span>
                     </button>
+
+                    <a href="javascript:void(0)" class="btn-help-circle" onclick="document.getElementById('light').style.display='block';document.getElementById('fade').style.display='block'" title="Ver lista de archivos XML requeridos" style="margin-left: auto;">
+                        <i class="fa fa-question"></i>
+                    </a>
                 </div>
 
                 <div class="modern-upload-progress" id="uploadProgressWrapper" style="display: none;">
@@ -139,9 +126,9 @@
                     <circle class="path circle" fill="none" stroke="#198754" stroke-width="6" stroke-miterlimit="10" cx="65.1" cy="65.1" r="62.1" />
                     <polyline class="path check" fill="none" stroke="#198754" stroke-width="6" stroke-linecap="round" stroke-miterlimit="10" points="100.2,40.2 51.5,88.8 29.8,67.5 " />
                 </svg>
-                <h4 style="margin-top:5px;">La carga ha sido aceptada, se iniciará con la carga de los archivos</h4>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-sm mt-3 btn-success" data-dismiss="modal">Cerrar</button>
+                <h4 style="margin-top:12px; font-weight: 600; color: #1e293b;">La carga ha sido aceptada, se iniciar&aacute; con la carga de los archivos</h4>
+                <div class="modal-footer" style="border-top: none; justify-content: center;">
+                    <button type="button" class="btn btn-sm btn-success" data-dismiss="modal" style="border-radius: 6px; padding: 6px 20px; font-weight: 600;">Cerrar</button>
                 </div>
             </div>
         </div>

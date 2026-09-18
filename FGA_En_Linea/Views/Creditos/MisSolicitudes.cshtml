@@ -1,4 +1,4 @@
-﻿@model FGA.Models.Creditos_Solicitudes[]
+@model FGA.Models.Creditos_Solicitudes[]
 
 @{
     ViewBag.Title = "Mis Solicitudes de Cr&eacute;dito";
@@ -15,7 +15,7 @@
     </h1>
     <ol class="breadcrumb">
         <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
-        <li><a href="#">Mercado de Cr&eacute;ditos</a></li>
+        <li><a href="@Url.Action("Index", "Modulo", new { modulo = "Mercado de CrÃ©ditos" })" class="breadcrumb-parent-pill"><i class="fa fa-university" style="margin-right: 4px;"></i> Mercado de CrÃ©ditos</a></li>
         <li class="active">Mis Solicitudes</li>
     </ol>
 </section>
@@ -68,13 +68,13 @@
                                         <span class="badge badge-premium @badgeClass">@sol.EstadoSolicitud.Descripcion</span>
                                     </td>
                                     <td class="text-center">
-                                        @if (sol.EstadoSolicitud_Id == 2) // Aprobada, lista para formalización
+                                        @if (sol.EstadoSolicitud_Id == 2) // Aprobada, lista para formalizaciÃ³n
                                         {
                                             <a href="@Url.Action("Formalizar", new { id = sol.Id })" class="btn btn-sm btn-premium" style="border-radius: 15px; padding: 5px 15px;">
                                                 <i class="fa fa-file-text"></i> Formalizar
                                             </a>
                                         }
-                                        else if (sol.EstadoSolicitud_Id == 4) // En formalización
+                                        else if (sol.EstadoSolicitud_Id == 4) // En formalizaciÃ³n
                                         {
                                             <a href="@Url.Action("VerDocumentos", new { id = sol.Id })" class="btn btn-sm btn-default" style="border-radius: 15px; padding: 5px 15px;">
                                                 <i class="fa fa-folder-open"></i> Ver Documentos

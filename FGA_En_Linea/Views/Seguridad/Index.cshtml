@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Entities.Entities.Procedures.FGA_Consultar_Sessiones_Result>
+@model IEnumerable<Entities.Entities.Procedures.FGA_Consultar_Sessiones_Result>
 
 @{
     ViewBag.Title = "Sesiones";
@@ -19,7 +19,7 @@
     </div>
     <ol class="breadcrumb">
         <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
-        <li><a href="#">Seguridad</a></li>
+        <li><a href="@Url.Action("Index", "Modulo", new { modulo = "Control de Accesos" })" class="breadcrumb-parent-pill"><i class="fa fa-user-secret" style="margin-right: 4px;"></i> Control de Accesos</a></li>
         <li class="active">Sesiones Activas</li>
     </ol>
 </section>
@@ -61,7 +61,7 @@
                             Actividad de sesiones por entidad
                         </h4>
                         <p style="margin: 3px 0 0 0; font-size: 12px; color: #64748b;">
-                            Actualización automática cada 10 segundos · Periodo consultado: <strong>@Session["Fecha"]</strong>
+                            ActualizaciÃ³n automÃ¡tica cada 10 segundos Â· Periodo consultado: <strong>@Session["Fecha"]</strong>
                         </p>
                     </div>
                     <div style="display: flex; align-items: center; gap: 8px;">

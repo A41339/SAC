@@ -1,7 +1,7 @@
-﻿@model IEnumerable<Entities.Entities.Procedures.FGA_Consultar_Avance_Result>
+@model IEnumerable<Entities.Entities.Procedures.FGA_Consultar_Avance_Result>
 
 @{
-    ViewBag.Title = "Avance de Evaluación";
+    ViewBag.Title = "Avance de Evaluaci&oacute;n";
     Layout = "~/Views/Shared/_Layout.cshtml";
     int totalEntidades = Model != null ? Model.Count(m => m.IDENTIDAD != "0") : 0;
 }
@@ -13,7 +13,7 @@
     </h1>
     <ol class="breadcrumb">
         <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
-        <li><a href="#">Evaluaci&oacute;n</a></li>
+        <li><a href="@Url.Action("Index", "Modulo", new { modulo = "Evaluacion/Avance" })" class="breadcrumb-parent-pill"><i class="fa fa-pencil-square-o" style="margin-right: 4px;"></i> Evaluaci&oacute;n</a></li>
         <li class="active">Avance de Evaluaci&oacute;n</li>
     </ol>
 </section>
@@ -27,7 +27,7 @@
                         <h3 class="modern-table-title">
                             <i class="fa fa-shield" style="color: #0284c7; margin-right: 6px;"></i> Avance por Entidad y Componente
                         </h3>
-                        <p class="modern-table-subtitle">Supervisión Basada en Riesgo (Reglamento SUGEF 24-22)</p>
+                        <p class="modern-table-subtitle">SupervisiÃ³n Basada en Riesgo (Reglamento SUGEF 24-22)</p>
                     </div>
                     <div>
                         <span class="badge" style="background: #e0f2fe; color: #0284c7; font-size: 13px; font-weight: 600; padding: 7px 16px; border-radius: 20px;">
@@ -120,7 +120,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
                 <h4 id="titulo" class="modal-title" style="color: #fff; font-weight: 600; display: flex; align-items: center; gap: 8px;">
-                    <i class="fa fa-list-alt" style="color: #86d2dd;"></i> Desglose de Avance por Categoría
+                    <i class="fa fa-list-alt" style="color: #86d2dd;"></i> Desglose de Avance por CategorÃ­a
                 </h4>
             </div>
             <div id="desglose" class="modal-body" style="padding: 24px; background: #fff;">

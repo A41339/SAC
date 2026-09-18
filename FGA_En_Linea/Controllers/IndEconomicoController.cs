@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
@@ -54,9 +54,10 @@ namespace FGA.Controllers
         }
 
         [AllowAnonymous]
-        public ActionResult Buscar(int Indicadores)
+        public ActionResult Buscar(int? Indicadores = null)
         {
-            LoadBuscar(Indicadores);
+            int val = Indicadores ?? -1;
+            LoadBuscar(val);
             return View("Index", GetList());
         }
 

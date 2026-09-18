@@ -1,7 +1,7 @@
-﻿@model FGA.Models.Album
+@model FGA.Models.Album
 
 @{
-    ViewBag.Title = "Consultar un Álbum";
+    ViewBag.Title = "Consultar un Ãlbum";
     if (Ajax.IsThisAjaxRequest())
     {
         Layout = null;
@@ -14,7 +14,7 @@
     </h1>
     <ol class="breadcrumb">
         <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
-        <li><a href="#">Administraci&oacute;n</a></li>
+        <li><a href="@Url.Action("Index", "Modulo", new { modulo = "Album/Details" })" class="breadcrumb-parent-pill"><i class="fa fa-wrench" style="margin-right: 4px;"></i> Mantenimientos</a></li>
         <li class="active">Consultar &Aacute;lbum</li>
     </ol>
 </section>
@@ -38,7 +38,7 @@
                                     <td>@Html.DisplayFor(model => model.Fecha)</td>
                                 </tr>
                                 <tr>
-                                    <td>Título</td>
+                                    <td>TÃ­tulo</td>
                                     <td>@Html.Raw(Model.Titulo)</td>
                                 </tr>
                                 <tr>

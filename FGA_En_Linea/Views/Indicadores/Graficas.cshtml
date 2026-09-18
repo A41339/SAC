@@ -1,4 +1,4 @@
-﻿@*@model IEnumerable<Entities.Entities.Procedures.FGA_Consultar_Tipos_Indicadores_Result>*@
+@*@model IEnumerable<Entities.Entities.Procedures.FGA_Consultar_Tipos_Indicadores_Result>*@
 @{
     ViewBag.Title = "Indicadores personalizados";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -19,7 +19,7 @@
     </h1>
     <ol class="breadcrumb">
         <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
-        <li><a href="#">Informaci&oacute;n Financiera</a></li>
+        <li><a href="@Url.Action("Index", "Modulo", new { modulo = "Indicadores/Graficas" })" class="breadcrumb-parent-pill"><i class="fa fa-file-text-o" style="margin-right: 4px;"></i> InformaciÃ³n Financiera</a></li>
         <li class="active">Gr&aacute;ficas Personalizadas</li>
     </ol>
 </section>
@@ -32,9 +32,9 @@
             <div class="col-xs-12">
                 <div class="row">
 
-                    <!-- ═══════════════════════════════════════
-                         COLUMNA IZQUIERDA: Creador de fórmula
-                    ═══════════════════════════════════════ -->
+                    <!-- ---------------------------------------
+                         COLUMNA IZQUIERDA: Creador de fÃ³rmula
+                    --------------------------------------- -->
                     <div class="col-md-8">
                         <div class="modern-table-card" style="margin-bottom: 24px;">
                             <div class="modern-table-header" style="padding: 18px 22px; border-bottom: 1px solid #e2e8f0;">
@@ -44,7 +44,7 @@
                                         Registrar nuevo indicador
                                     </h3>
                                     <p class="modern-table-subtitle" style="margin: 4px 0 0 0;">
-                                        Defina nombre, fórmula y tipo de resultado para su indicador personalizado
+                                        Defina nombre, fÃ³rmula y tipo de resultado para su indicador personalizado
                                     </p>
                                 </div>
                             </div>
@@ -62,15 +62,15 @@
                                            class="form-control modern-select"
                                            autocomplete="off"
                                            name="Nombre"
-                                           placeholder="Ej: Razón de Endeudamiento"
-                                           title="En esta opción se nombra el indicador, por ejemplo: Razón de Endeudamiento" />
+                                           placeholder="Ej: RazÃ³n de Endeudamiento"
+                                           title="En esta opciÃ³n se nombra el indicador, por ejemplo: RazÃ³n de Endeudamiento" />
                                 </div>
 
-                                <!-- Campo: Fórmula -->
+                                <!-- Campo: FÃ³rmula -->
                                 <div class="form-group" style="margin-bottom: 18px;">
                                     <label for="Formula" style="font-size: 13px; font-weight: 600; color: #374151; display: block; margin-bottom: 6px;">
                                         <i class="fa fa-calculator" style="color: #0284c7; margin-right: 5px;"></i>
-                                        Fórmula
+                                        FÃ³rmula
                                     </label>
                                     <div style="display: flex; gap: 8px; align-items: center;">
                                         <input id="Formula"
@@ -80,20 +80,20 @@
                                                name="Formula"
                                                placeholder="Ej: ME30000000/ME10000000"
                                                style="flex: 1;"
-                                               title="Aquí digita la fórmula, por ejemplo: ME30000000/ME10000000" />
+                                               title="AquÃ­ digita la fÃ³rmula, por ejemplo: ME30000000/ME10000000" />
                                         <button type="button"
                                                 onclick="javascript:help()"
                                                 class="btn-modern-filter"
                                                 style="padding: 8px 13px; border-radius: 8px; white-space: nowrap;"
-                                                title="Ver ejemplos de fórmulas">
+                                                title="Ver ejemplos de fÃ³rmulas">
                                             <i class="fa fa-question-circle"></i> Ejemplos
                                         </button>
                                         <button type="button"
                                                 onclick="javascript:catalogo()"
                                                 class="btn-modern-filter"
                                                 style="padding: 8px 13px; border-radius: 8px; background: linear-gradient(135deg,#059669 0%,#0d7377 100%); white-space: nowrap;"
-                                                title="Catálogo de cuentas disponibles">
-                                            <i class="fa fa-book"></i> Catálogo
+                                                title="CatÃ¡logo de cuentas disponibles">
+                                            <i class="fa fa-book"></i> CatÃ¡logo
                                         </button>
                                     </div>
                                 </div>
@@ -107,12 +107,12 @@
                                     <div style="display: flex; align-items: center; gap: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px 16px;">
                                         @Html.CheckBox("IndPorcentaje", new { htmlAttributes = new { @class = "js-switch", id = "IndPorcentaje" } })
                                         <span style="font-size: 13px; color: #64748b;">
-                                            Active esta opción si el resultado debe expresarse en porcentaje (%)
+                                            Active esta opciÃ³n si el resultado debe expresarse en porcentaje (%)
                                         </span>
                                     </div>
                                 </div>
 
-                                <!-- Botón Agregar -->
+                                <!-- BotÃ³n Agregar -->
                                 <div style="display: flex; justify-content: flex-end;">
                                     <button type="button"
                                             class="btn-modern-filter"
@@ -125,21 +125,21 @@
                         </div>
                     </div>
 
-                    <!-- ═══════════════════════════════════════
-                         COLUMNA DERECHA: Panel de ayuda acordeón
-                    ═══════════════════════════════════════ -->
+                    <!-- ---------------------------------------
+                         COLUMNA DERECHA: Panel de ayuda acordeÃ³n
+                    --------------------------------------- -->
                     <div class="col-md-4">
                         <div class="modern-table-card" style="margin-bottom: 24px;">
                             <div style="padding: 16px 20px; border-bottom: 1px solid #e2e8f0;">
                                 <h4 style="margin: 0; font-size: 14px; font-weight: 700; color: #143750;">
                                     <i class="fa fa-book" style="color: #0284c7; margin-right: 6px;"></i>
-                                    Guía de referencia rápida
+                                    GuÃ­a de referencia rÃ¡pida
                                 </h4>
                             </div>
 
                             <div id="accordian" style="padding: 8px 0;">
 
-                                <!-- Sección 1: Tipos de cuenta -->
+                                <!-- SecciÃ³n 1: Tipos de cuenta -->
                                 <div class="graficas-accordion-item">
                                     <div class="graficas-accordion-header" onclick="toggleAccordion(this)">
                                         <span>
@@ -150,7 +150,7 @@
                                     </div>
                                     <div class="graficas-accordion-body" style="display:none;">
                                         <p style="font-size: 12px; color: #64748b; margin-bottom: 10px; line-height: 1.5;">
-                                            Para utilizar una cuenta del catálogo, se debe anteponer dos letras que indican el tipo de cálculo:
+                                            Para utilizar una cuenta del catÃ¡logo, se debe anteponer dos letras que indican el tipo de cÃ¡lculo:
                                         </p>
                                         <table class="table table-sm" style="font-size: 12px; margin-bottom: 0;">
                                             <thead style="background: #f1f5f9;">
@@ -181,41 +181,41 @@
                                     </div>
                                 </div>
 
-                                <!-- Sección 2: Días de atraso -->
+                                <!-- SecciÃ³n 2: DÃ­as de atraso -->
                                 <div class="graficas-accordion-item">
                                     <div class="graficas-accordion-header" onclick="toggleAccordion(this)">
                                         <span>
                                             <i class="fa fa-clock-o" style="color: #d97706; margin-right: 7px;"></i>
-                                            Por días de atraso
+                                            Por dÃ­as de atraso
                                         </span>
                                         <i class="fa fa-chevron-down graficas-accordion-chevron"></i>
                                     </div>
                                     <div class="graficas-accordion-body" style="display:none;">
                                         <p style="font-size: 12px; color: #64748b; margin-bottom: 10px; line-height: 1.5;">
-                                            Para sumar el saldo de operaciones según sus días de atraso, utilice los siguientes códigos:
+                                            Para sumar el saldo de operaciones segÃºn sus dÃ­as de atraso, utilice los siguientes cÃ³digos:
                                         </p>
                                         <table class="table table-sm" style="font-size: 12px; margin-bottom: 0;">
                                             <thead style="background: #f1f5f9;">
                                                 <tr>
-                                                    <th style="padding: 6px 10px; font-weight: 700; color: #374151;">Código</th>
+                                                    <th style="padding: 6px 10px; font-weight: 700; color: #374151;">CÃ³digo</th>
                                                     <th style="padding: 6px 10px; font-weight: 700; color: #374151;">Rango</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <tr><td style="padding:5px 10px; font-family:monospace; color:#d97706;">V009</td><td style="padding:5px 10px; color:#374151;">Al día</td></tr>
-                                                <tr><td style="padding:5px 10px; font-family:monospace; color:#d97706;">V010</td><td style="padding:5px 10px; color:#374151;">1 – 30 días</td></tr>
-                                                <tr><td style="padding:5px 10px; font-family:monospace; color:#d97706;">V011</td><td style="padding:5px 10px; color:#374151;">31 – 60 días</td></tr>
-                                                <tr><td style="padding:5px 10px; font-family:monospace; color:#d97706;">V012</td><td style="padding:5px 10px; color:#374151;">61 – 90 días</td></tr>
-                                                <tr><td style="padding:5px 10px; font-family:monospace; color:#d97706;">V013</td><td style="padding:5px 10px; color:#374151;">91 – 180 días</td></tr>
-                                                <tr><td style="padding:5px 10px; font-family:monospace; color:#d97706;">V014</td><td style="padding:5px 10px; color:#374151;">181 – 360 días</td></tr>
-                                                <tr><td style="padding:5px 10px; font-family:monospace; color:#d97706;">V016</td><td style="padding:5px 10px; color:#374151;">Más de 360 días</td></tr>
+                                                <tr><td style="padding:5px 10px; font-family:monospace; color:#d97706;">V009</td><td style="padding:5px 10px; color:#374151;">Al dÃ­a</td></tr>
+                                                <tr><td style="padding:5px 10px; font-family:monospace; color:#d97706;">V010</td><td style="padding:5px 10px; color:#374151;">1 Â 30 dÃ­as</td></tr>
+                                                <tr><td style="padding:5px 10px; font-family:monospace; color:#d97706;">V011</td><td style="padding:5px 10px; color:#374151;">31 Â 60 dÃ­as</td></tr>
+                                                <tr><td style="padding:5px 10px; font-family:monospace; color:#d97706;">V012</td><td style="padding:5px 10px; color:#374151;">61 Â 90 dÃ­as</td></tr>
+                                                <tr><td style="padding:5px 10px; font-family:monospace; color:#d97706;">V013</td><td style="padding:5px 10px; color:#374151;">91 Â 180 dÃ­as</td></tr>
+                                                <tr><td style="padding:5px 10px; font-family:monospace; color:#d97706;">V014</td><td style="padding:5px 10px; color:#374151;">181 Â 360 dÃ­as</td></tr>
+                                                <tr><td style="padding:5px 10px; font-family:monospace; color:#d97706;">V016</td><td style="padding:5px 10px; color:#374151;">MÃ¡s de 360 dÃ­as</td></tr>
                                                 <tr><td style="padding:5px 10px; font-family:monospace; color:#d97706;">V015</td><td style="padding:5px 10px; color:#374151;">Cobro judicial</td></tr>
                                             </tbody>
                                         </table>
                                     </div>
                                 </div>
 
-                                <!-- Sección 3: Tipo de cartera -->
+                                <!-- SecciÃ³n 3: Tipo de cartera -->
                                 <div class="graficas-accordion-item">
                                     <div class="graficas-accordion-header" onclick="toggleAccordion(this)">
                                         <span>
@@ -226,26 +226,26 @@
                                     </div>
                                     <div class="graficas-accordion-body" style="display:none;">
                                         <p style="font-size: 12px; color: #64748b; margin-bottom: 10px; line-height: 1.5;">
-                                            Para sumar el saldo de operaciones por tipo de cartera, utilice los siguientes códigos:
+                                            Para sumar el saldo de operaciones por tipo de cartera, utilice los siguientes cÃ³digos:
                                         </p>
                                         <table class="table table-sm" style="font-size: 12px; margin-bottom: 0;">
                                             <thead style="background: #f1f5f9;">
                                                 <tr>
-                                                    <th style="padding: 6px 10px; font-weight: 700; color: #374151;">Código</th>
+                                                    <th style="padding: 6px 10px; font-weight: 700; color: #374151;">CÃ³digo</th>
                                                     <th style="padding: 6px 10px; font-weight: 700; color: #374151;">Cartera</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 <tr><td style="padding:5px 10px; font-family:monospace; color:#059669;">V017</td><td style="padding:5px 10px; color:#374151;">Cartera consumo</td></tr>
-                                                <tr><td style="padding:5px 10px; font-family:monospace; color:#059669;">V018</td><td style="padding:5px 10px; color:#374151;">Cartera vehículos</td></tr>
-                                                <tr><td style="padding:5px 10px; font-family:monospace; color:#059669;">V019</td><td style="padding:5px 10px; color:#374151;">Cartera tarjeta de crédito</td></tr>
+                                                <tr><td style="padding:5px 10px; font-family:monospace; color:#059669;">V018</td><td style="padding:5px 10px; color:#374151;">Cartera vehÃ­culos</td></tr>
+                                                <tr><td style="padding:5px 10px; font-family:monospace; color:#059669;">V019</td><td style="padding:5px 10px; color:#374151;">Cartera tarjeta de crÃ©dito</td></tr>
                                                 <tr><td style="padding:5px 10px; font-family:monospace; color:#059669;">V020</td><td style="padding:5px 10px; color:#374151;">Cartera vivienda residencial</td></tr>
-                                                <tr><td style="padding:5px 10px; font-family:monospace; color:#059669;">V021</td><td style="padding:5px 10px; color:#374151;">Cartera micro y pequeña empresa</td></tr>
+                                                <tr><td style="padding:5px 10px; font-family:monospace; color:#059669;">V021</td><td style="padding:5px 10px; color:#374151;">Cartera micro y pequeÃ±a empresa</td></tr>
                                                 <tr><td style="padding:5px 10px; font-family:monospace; color:#059669;">V022</td><td style="padding:5px 10px; color:#374151;">Cartera mediana empresa</td></tr>
                                                 <tr><td style="padding:5px 10px; font-family:monospace; color:#059669;">V023</td><td style="padding:5px 10px; color:#374151;">Cartera gran empresa</td></tr>
                                                 <tr><td style="padding:5px 10px; font-family:monospace; color:#059669;">V024</td><td style="padding:5px 10px; color:#374151;">Cartera gobierno central</td></tr>
-                                                <tr><td style="padding:5px 10px; font-family:monospace; color:#059669;">V025</td><td style="padding:5px 10px; color:#374151;">Cartera artículo 167 (Refinanciada)</td></tr>
-                                                <tr><td style="padding:5px 10px; font-family:monospace; color:#059669;">V026</td><td style="padding:5px 10px; color:#374151;">Cartera microcrédito SBD</td></tr>
+                                                <tr><td style="padding:5px 10px; font-family:monospace; color:#059669;">V025</td><td style="padding:5px 10px; color:#374151;">Cartera artÃ­culo 167 (Refinanciada)</td></tr>
+                                                <tr><td style="padding:5px 10px; font-family:monospace; color:#059669;">V026</td><td style="padding:5px 10px; color:#374151;">Cartera microcrÃ©dito SBD</td></tr>
                                                 <tr><td style="padding:5px 10px; font-family:monospace; color:#059669;">V027</td><td style="padding:5px 10px; color:#374151;">Cartera banca segundo piso SBD</td></tr>
                                                 <tr><td style="padding:5px 10px; font-family:monospace; color:#059669;">V028</td><td style="padding:5px 10px; color:#374151;">Cartera banca desarrollo SBD</td></tr>
                                             </tbody>
@@ -261,11 +261,11 @@
             </div>
         }
 
-        <!-- Lista de gráficas registradas -->
+        <!-- Lista de grÃ¡ficas registradas -->
         <div id="tblGraficas" class="col-xs-12">
         </div>
 
-        <!-- Barra de generación de gráfico -->
+        <!-- Barra de generaciÃ³n de grÃ¡fico -->
         <div class="col-xs-12">
             <div class="modern-filter-card">
                 <div class="modern-filter-toolbar">
@@ -280,9 +280,9 @@
                         </div>
                     </div>
                     <div class="filter-item">
-                        <label for="cmb_estilo"><i class="fa fa-bar-chart"></i> Tipo de gráfico:</label>
+                        <label for="cmb_estilo"><i class="fa fa-bar-chart"></i> Tipo de grÃ¡fico:</label>
                         <select id="cmb_estilo" name="cmb_estilo" class="form-control modern-select" style="min-width: 140px;">
-                            <option value="0" selected>LÍNEAS</option>
+                            <option value="0" selected>LÃNEAS</option>
                             <option value="1">COLUMNAS</option>
                         </select>
                     </div>
@@ -313,9 +313,9 @@
 </section>
 
 
-<!-- ═══════════════════════════════════════
-     MODAL: Catálogo de cuentas
-═══════════════════════════════════════ -->
+<!-- ---------------------------------------
+     MODAL: CatÃ¡logo de cuentas
+--------------------------------------- -->
 <div class="modal fade" id="modalCatalogo" tabindex="-1" role="dialog" aria-labelledby="modalCatalogoLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content" style="border-radius: 14px; overflow: hidden; border: none; box-shadow: 0 12px 36px rgba(0,0,0,0.2);">
@@ -326,7 +326,7 @@
                         <img width="36" height="36" src="@Session["Logo"]" style="border-radius: 6px; background: #fff; padding: 2px; object-fit: contain;" />
                     }
                     <h4 id="modalCatalogoLabel" class="modal-title" style="margin: 0; color: #ffffff; font-size: 16px; font-weight: 700;">
-                        <i class="fa fa-book" style="margin-right: 7px;"></i> Catálogo de cuentas
+                        <i class="fa fa-book" style="margin-right: 7px;"></i> CatÃ¡logo de cuentas
                     </h4>
                 </div>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"
@@ -357,9 +357,9 @@
     </div>
 </div>
 
-<!-- ═══════════════════════════════════════
-     MODAL: Ejemplos de fórmulas (Ayuda)
-═══════════════════════════════════════ -->
+<!-- ---------------------------------------
+     MODAL: Ejemplos de fÃ³rmulas (Ayuda)
+--------------------------------------- -->
 <div class="modal fade" id="helpModal" tabindex="-1" role="dialog" aria-labelledby="helpModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content" style="border-radius: 14px; overflow: hidden; border: none; box-shadow: 0 12px 36px rgba(0,0,0,0.2);">
@@ -370,7 +370,7 @@
                         <img width="36" height="36" src="@Session["Logo"]" style="border-radius: 6px; background: #fff; padding: 2px; object-fit: contain;" />
                     }
                     <h4 id="helpModalLabel" class="modal-title" style="margin: 0; color: #ffffff; font-size: 16px; font-weight: 700;">
-                        <i class="fa fa-question-circle" style="margin-right: 7px;"></i> Ejemplos de fórmulas
+                        <i class="fa fa-question-circle" style="margin-right: 7px;"></i> Ejemplos de fÃ³rmulas
                     </h4>
                 </div>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"
@@ -380,13 +380,13 @@
             </div>
             <div class="modal-body" style="padding: 22px 24px;">
                 <p style="font-size: 13px; color: #64748b; margin-bottom: 14px;">
-                    Los siguientes son ejemplos de indicadores financieros comunes y la fórmula correspondiente que puede copiar directamente:
+                    Los siguientes son ejemplos de indicadores financieros comunes y la fÃ³rmula correspondiente que puede copiar directamente:
                 </p>
                 <table class="table table-striped table-bordered" style="font-size: 13px;">
                     <thead style="background: #f1f5f9;">
                         <tr>
                             <th style="color: #374151; padding: 10px 14px;">Nombre del indicador</th>
-                            <th style="color: #374151; padding: 10px 14px;">Fórmula correspondiente</th>
+                            <th style="color: #374151; padding: 10px 14px;">FÃ³rmula correspondiente</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -399,7 +399,7 @@
                             <td style="padding: 10px 14px; font-family: monospace; color: #0284c7; font-size: 12px;">V017 / (V017 + V018 + V019 + V020 + V021 + V022 + V023 + V024 + V025 + V026 + V027 + V028)</td>
                         </tr>
                         <tr>
-                            <td style="padding: 10px 14px; vertical-align: middle;">Estimación cartera crédito / Cartera vencida</td>
+                            <td style="padding: 10px 14px; vertical-align: middle;">EstimaciÃ³n cartera crÃ©dito / Cartera vencida</td>
                             <td style="padding: 10px 14px; font-family: monospace; color: #0284c7;">ME13900000 / (V010 + V011 + V012 + V013 + V014 + V015 + V016)</td>
                         </tr>
                         <tr>
@@ -422,9 +422,9 @@
     </div>
 </div>
 
-<!-- ═══════════════════════════════════════
-     MODAL: Éxito al guardar
-═══════════════════════════════════════ -->
+<!-- ---------------------------------------
+     MODAL: Ãxito al guardar
+--------------------------------------- -->
 <div id="modalSuccess" class="modal fade">
     <div class="modal-dialog" style="max-width: 400px;">
         <div class="modal-content" style="border-radius: 14px; overflow: hidden; border: none; box-shadow: 0 12px 36px rgba(0,0,0,0.18);">
@@ -432,9 +432,9 @@
                 <div style="width: 60px; height: 60px; border-radius: 50%; background: #d1fae5; display: flex; align-items: center; justify-content: center; margin: 0 auto 18px;">
                     <i class="fa fa-check" style="color: #059669; font-size: 28px;"></i>
                 </div>
-                <h4 style="color: #1e293b; font-weight: 700; margin: 0 0 8px 0;">¡Indicador guardado!</h4>
+                <h4 style="color: #1e293b; font-weight: 700; margin: 0 0 8px 0;">Â¡Indicador guardado!</h4>
                 <p id="lbl_mensajeError" style="color: #64748b; font-size: 14px; margin: 0;">
-                    La fórmula se guardó con éxito.
+                    La fÃ³rmula se guardÃ³ con Ã©xito.
                 </p>
             </div>
             <div class="modal-footer" style="background: #f8fafc; border-top: 1px solid #e2e8f0; padding: 14px 22px; display: flex; justify-content: center;">
@@ -447,7 +447,7 @@
 </div>
 
 <style>
-    /* Acordeón de ayuda en Indicadores/Graficas */
+    /* AcordeÃ³n de ayuda en Indicadores/Graficas */
     .graficas-accordion-item {
         border-bottom: 1px solid #e2e8f0;
     }
@@ -496,7 +496,7 @@
 
 <script type="text/javascript">
 
-    /* ---- Acordeón propio (reemplaza el jQuery accordion antiguo) ---- */
+    /* ---- AcordeÃ³n propio (reemplaza el jQuery accordion antiguo) ---- */
     function toggleAccordion(header) {
         var body = header.nextElementSibling;
         var isOpen = header.classList.contains('open');
@@ -514,7 +514,7 @@
         }
     }
 
-    /* ---- Guardar fórmula ---- */
+    /* ---- Guardar fÃ³rmula ---- */
     function guardarFormula() {
         var nombre = $('#Nombre').val();
         var formula = $('#Formula').val();

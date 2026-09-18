@@ -1,4 +1,4 @@
-﻿/*
+/*
  Highcharts JS v8.1.2 (2020-06-16)
 
  Exporting module

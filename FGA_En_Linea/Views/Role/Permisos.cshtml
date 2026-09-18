@@ -1,6 +1,6 @@
-﻿@model FGA.Models.RolPermisosViewModel
+@model FGA.Models.RolPermisosViewModel
 @{
-    ViewBag.Title = "Permisos de Menú - " + Model.RolNombre;
+    ViewBag.Title = "Permisos de MenÃÂº - " + Model.RolNombre;
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -204,7 +204,7 @@
 <section class="content-header" style="position: relative;">
     <ol class="breadcrumb">
         <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
-        <li><a href="@Url.Action("Index", "Modulo", new { id = 9000 })" class="breadcrumb-parent-pill" title="Volver al men&uacute; de Mantenimientos"><i class="fa fa-wrench" style="margin-right: 4px;"></i> Mantenimientos</a></li>
+        <li><a href="@Url.Action("Index", "Modulo", new { modulo = "Role/Permisos" })" class="breadcrumb-parent-pill" title="Volver a Control de Accesos"><i class="fa fa-user-secret" style="margin-right: 4px;"></i> Control de Accesos</a></li>
         <li><a href="@Url.Action("Index", "Role")">Roles</a></li>
         <li class="active">Permisos: @Model.RolNombre</li>
     </ol>
@@ -246,14 +246,14 @@
 </section>
 
 <section class="content" style="padding-top: 0; padding-bottom: 80px;">
-    <!-- Barra de BÃºsqueda y Acciones RÃ¡pidas -->
+    <!-- Barra de BÃÂÃÂºsqueda y Acciones RÃÂÃÂ¡pidas -->
     <div class="permisos-toolbar">
         <div style="display: flex; align-items: center; gap: 10px; flex-grow: 1; max-width: 380px;">
             <i class="fa fa-search" style="color: #94a3b8; font-size: 15px;"></i>
             <input type="text" id="txtBuscarOpcion" class="form-control" placeholder="Buscar m&oacute;dulo, sub-m&oacute;dulo o reporte..." style="border-radius: 8px; border: 1px solid #cbd5e1; height: 36px; font-size: 13px;" />
         </div>
         <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-            <button type="button" class="btn-action-pill" id="btnIncluirTodo" title="Habilita el acceso en todos los módulos y opciones">
+            <button type="button" class="btn-action-pill" id="btnIncluirTodo" title="Habilita el acceso en todos los mÃÂ³dulos y opciones">
                 <i class="fa fa-check-square-o" style="color:#0284c7; margin-right:4px;"></i> Incluir Todo
             </button>
             <button type="button" class="btn-action-pill" id="btnExcluirTodo" title="Quita el acceso de todas las opciones">
@@ -268,12 +268,12 @@
         </div>
     </div>
 
-    <!-- Acordeón de Módulos -->
+    <!-- AcordeÃÂ³n de MÃÂ³dulos -->
     <div id="contenedorModulos">
         @foreach (var modulo in Model.Modulos)
         {
             <div class="modulo-card" id="modulo-card-@modulo.MenuId" data-moduloid="@modulo.MenuId" data-searchtext="@modulo.MenuText">
-                <!-- Fila de Cabecera del Módulo Raíz -->
+                <!-- Fila de Cabecera del MÃÂ³dulo RaÃÂ­z -->
                 <div class="modulo-header" data-toggle="collapse" data-target="#collapse-@modulo.MenuId">
                     <div class="modulo-header-left">
                         <div class="modulo-icon-box" style="background-color: @modulo.ColorFondo; color: @modulo.ColorIcono;">
@@ -286,7 +286,7 @@
                     </div>
                     <div class="modulo-header-right" onclick="event.stopPropagation();">
                         <label style="display: flex; align-items: center; gap: 8px; margin: 0; cursor: pointer; font-size: 13px; font-weight: 600; color: #334155;">
-                            <input type="checkbox" class="chk-modulo-master custom-perm-chk" data-moduloid="@modulo.MenuId" data-menuid="@modulo.MenuId" @(modulo.Asignado ? "checked" : "") />
+                            <input type="checkbox" class="chk-modulo-master custom-perm-chk" data-moduloid="@modulo.MenuId" data-men&uacute;id="@modulo.MenuId" @(modulo.Asignado ? "checked" : "") />
                             <span>Habilitar M&oacute;dulo Completo</span>
                         </label>
                         <button type="button" class="btn btn-xs btn-default btn-collapse-toggle" style="border-radius: 4px; border: 1px solid #cbd5e1; padding: 2px 8px;" onclick="$('#collapse-@modulo.MenuId').collapse('toggle');">
@@ -308,7 +308,7 @@
                             <tbody>
                                 @foreach (var item in modulo.SubOpciones)
                                 {
-                                    <tr class="perm-row" data-menuid="@item.MenuId" data-parentid="@modulo.MenuId" data-moduloid="@modulo.MenuId" data-searchtext="@(modulo.MenuText + " " + item.MenuText)">
+                                    <tr class="perm-row" data-men&uacute;id="@item.MenuId" data-parentid="@modulo.MenuId" data-moduloid="@modulo.MenuId" data-searchtext="@(modulo.MenuText + " " + item.MenuText)">
                                         <td>
                                             <div style="display: flex; align-items: center; gap: 8px; font-weight: 600; color: #1e293b;">
                                                 <i class="@item.MenuIcon" style="color: #64748b; font-size: 14px; width: 18px; text-align: center;"></i>
@@ -323,7 +323,7 @@
                                         </td>
                                         <td style="text-align: center; vertical-align: middle;">
                                             <label class="perm-switch-label">
-                                                <input type="checkbox" class="chk-perm custom-perm-chk" data-menuid="@item.MenuId" @(item.Asignado ? "checked" : "") />
+                                                <input type="checkbox" class="chk-perm custom-perm-chk" data-men&uacute;id="@item.MenuId" @(item.Asignado ? "checked" : "") />
                                                 <span class="status-perm-badge @(item.Asignado ? "status-perm-active" : "status-perm-inactive")">
                                                     <i class="fa @(item.Asignado ? "fa-check" : "fa-times")"></i>
                                                     @(item.Asignado ? "Incluido" : "Sin Acceso")
@@ -332,12 +332,12 @@
                                         </td>
                                     </tr>
 
-                                    <!-- Si el item es un sub-módulo con opciones nietas -->
+                                    <!-- Si el item es un sub-mÃÂ³dulo con opciones nietas -->
                                     if (item.EsSubModulo && item.Hijos != null && item.Hijos.Count > 0)
                                     {
                                         foreach (var hijo in item.Hijos)
                                         {
-                                            <tr class="perm-row perm-sub-row" data-menuid="@hijo.MenuId" data-parentid="@item.MenuId" data-moduloid="@modulo.MenuId" data-searchtext="@(modulo.MenuText + " " + item.MenuText + " " + hijo.MenuText)">
+                                            <tr class="perm-row perm-sub-row" data-men&uacute;id="@hijo.MenuId" data-parentid="@item.MenuId" data-moduloid="@modulo.MenuId" data-searchtext="@(modulo.MenuText + " " + item.MenuText + " " + hijo.MenuText)">
                                                 <td style="padding-left: 42px;">
                                                     <div style="display: flex; align-items: center; gap: 8px; color: #334155; font-weight: 500;">
                                                         <i class="fa fa-level-up fa-rotate-90" style="color: #94a3b8; font-size: 12px;"></i>
@@ -347,7 +347,7 @@
                                                 </td>
                                                 <td style="text-align: center; vertical-align: middle;">
                                                     <label class="perm-switch-label">
-                                                        <input type="checkbox" class="chk-perm custom-perm-chk" data-menuid="@hijo.MenuId" @(hijo.Asignado ? "checked" : "") />
+                                                        <input type="checkbox" class="chk-perm custom-perm-chk" data-men&uacute;id="@hijo.MenuId" @(hijo.Asignado ? "checked" : "") />
                                                         <span class="status-perm-badge @(hijo.Asignado ? "status-perm-active" : "status-perm-inactive")">
                                                             <i class="fa @(hijo.Asignado ? "fa-check" : "fa-times")"></i>
                                                             @(hijo.Asignado ? "Incluido" : "Sin Acceso")
@@ -386,7 +386,7 @@
     </div>
 </section>
 
-<!-- Modal NotificaciÃ³n Ã‰xito / Error -->
+<!-- Modal NotificaciÃÂÃÂ³n ÃÂÃ¢ÂÂ°xito / Error -->
 <div class="modal fade" id="modalFeedbackPermisos" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-sm" style="max-width: 400px; margin: 100px auto;">
         <div class="modal-content" style="border-radius: 14px; border: none; overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.15);">
@@ -413,7 +413,7 @@
         var guardarPermisosUrl = "@Url.Action("GuardarPermisos", "Role")";
         var permisosUrlBase = "@Url.Action("Permisos", "Role")";
 
-        // Cambio rÃ¡pido de rol desde el select
+        // Cambio rÃÂÃÂ¡pido de rol desde el select
         $('#cboCambiarRol').on('change', function () {
             var nuevoRolId = $(this).val();
             if (nuevoRolId) {
@@ -459,7 +459,7 @@
                     $badge.removeClass('has-perms');
                 }
 
-                // Sincronizar master checkbox del módulo
+                // Sincronizar master checkbox del mÃÂ³dulo
                 var $master = $card.find('.chk-modulo-master');
                 if (activasEnModulo > 0) {
                     $master.prop('checked', true);
@@ -481,15 +481,15 @@
 
             actualizarBadgeFila($chk);
 
-            // Si se marcó un hijo, asegurar que el master del módulo raíz esté marcado
+            // Si se marcÃÂ³ un hijo, asegurar que el master del mÃÂ³dulo raÃÂ­z estÃÂ© marcado
             if (isChecked) {
                 var moduloId = $row.data('moduloid');
                 $('#modulo-card-' + moduloId).find('.chk-modulo-master').prop('checked', true);
 
-                // Si es sub-fila, marcar también el sub-módulo padre
+                // Si es sub-fila, marcar tambiÃÂ©n el sub-mÃÂ³dulo padre
                 if ($row.hasClass('perm-sub-row')) {
                     var parentId = $row.data('parentid');
-                    var $parentChk = $('.perm-row[data-menuid="' + parentId + '"]').find('.chk-perm');
+                    var $parentChk = $('.perm-row[data-men&uacute;id="' + parentId + '"]').find('.chk-perm');
                     $parentChk.prop('checked', true);
                     actualizarBadgeFila($parentChk);
                 }
@@ -498,7 +498,7 @@
             recalcularContadores();
         });
 
-        // Checkbox Maestro del Módulo: Marcar / Desmarcar todas las opciones del módulo
+        // Checkbox Maestro del MÃÂ³dulo: Marcar / Desmarcar todas las opciones del mÃÂ³dulo
         $(document).on('change', '.chk-modulo-master', function () {
             var moduloId = $(this).data('moduloid');
             var isChecked = $(this).is(':checked');
@@ -541,7 +541,7 @@
             $('.modulo-card .collapse').collapse('hide');
         });
 
-        // Búsqueda en vivo de módulos y opciones
+        // BÃÂºsqueda en vivo de mÃÂ³dulos y opciones
         $('#txtBuscarOpcion').on('keyup', function () {
             var query = $.trim($(this).val()).toLowerCase();
 
@@ -581,9 +581,9 @@
 
             var listaPermisos = [];
 
-            // 1. Módulos raíces (master)
+            // 1. MÃÂ³dulos raÃÂ­ces (master)
             $('.chk-modulo-master').each(function () {
-                var mId = parseInt($(this).data('menuid'), 10);
+                var mId = parseInt($(this).data('men&uacute;id'), 10);
                 var isChecked = $(this).is(':checked');
                 if (isChecked) {
                     listaPermisos.push({
@@ -594,9 +594,9 @@
                 }
             });
 
-            // 2. Filas de opciones y sub-módulos
+            // 2. Filas de opciones y sub-mÃÂ³dulos
             $('.perm-row').each(function () {
-                var mId = parseInt($(this).data('menuid'), 10);
+                var mId = parseInt($(this).data('men&uacute;id'), 10);
                 var isChecked = $(this).find('.chk-perm').is(':checked');
 
                 if (isChecked) {
@@ -633,8 +633,8 @@
                 error: function () {
                     $btn.prop('disabled', false).html('<i class="fa fa-save"></i> Guardar Permisos');
                     $('#feedbackIconContainer').html('<i class="fa fa-exclamation-circle" style="font-size: 48px; color: #dc2626;"></i>');
-                    $('#feedbackModalTitle').text('Error de Conexión');
-                    $('#feedbackModalMessage').text('Ocurrió un error de comunicación con el servidor.');
+                    $('#feedbackModalTitle').text('Error de ConexiÃÂ³n');
+                    $('#feedbackModalMessage').text('OcurriÃÂ³ un error de comunicaciÃÂ³n con el servidor.');
                     $('#modalFeedbackPermisos').modal('show');
                 }
             });
