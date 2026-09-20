@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Data;
 using System.Linq;
 using System.Net;
@@ -10,7 +10,6 @@ namespace FGA.Controllers
 {
     public class CatalogoCuentaController : BaseController
     {
-
         public ActionResult Index()
         {
             return View();
@@ -25,26 +24,131 @@ namespace FGA.Controllers
                 var length = Request.Form.GetValues("length").FirstOrDefault();
                 int totalRecords = 0;
                 int pageSize = length != null ? Convert.ToInt32(length) : 0;
-                int skip = start != null ? Convert.ToInt32(start)/pageSize : 0;
+                int skip = start != null ? Convert.ToInt32(start) / pageSize : 0;
                 var tak = cat.GetPage(skip, pageSize, search, ref totalRecords);
-              
-                var result = from c in tak
-                             select new string[] { c.Cuenta.ToString(),
-                                                    Convert.ToString(c.Cuenta),
-                                                    Convert.ToString(c.Nombre),
-                                                    Convert.ToString(c.Ind_Proyectar == true ?  "S�" : "No")
-                                                    };
 
-                return Json(new {
+                var result = from c in tak
+                             select new string[] {
+                                 c.Cuenta.ToString(),
+                                 Convert.ToString(c.Cuenta),
+                                 Convert.ToString(c.Nombre),
+                                 Convert.ToString(c.Ind_Proyectar == true ? "Sí" : "No")
+                             };
+
+                return Json(new
+                {
                     iTotalRecords = totalRecords,
                     iTotalDisplayRecords = totalRecords,
-                    aaData = result }, JsonRequestBehavior.AllowGet);
+                    aaData = result
+                }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception)
             {
             }
 
             return null;
+        }
+
+        [HttpGet]
+        public ActionResult GetCuenta(string id)
+        {
+            try
+            {
+                CatalogoCuenta c = cat.Get(id);
+                if (c == null)
+                    return Json(new { success = false, message = "Cuenta contable no encontrada." }, JsonRequestBehavior.AllowGet);
+
+                return Json(new
+                {
+                    success = true,
+                    data = new
+                    {
+                        cuenta = c.Cuenta ?? "",
+                        nombre = c.Nombre ?? "",
+                        indProyectar = c.Ind_Proyectar
+                    }
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error al consultar cuenta: " + ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult GuardarCuenta(bool esNuevo, string cuenta, string nombre, bool indProyectar)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(cuenta))
+                    return Json(new { success = false, message = "El número de cuenta contable es obligatorio." });
+                if (string.IsNullOrWhiteSpace(nombre))
+                    return Json(new { success = false, message = "El nombre de la cuenta es obligatorio." });
+
+                cuenta = cuenta.Trim();
+                nombre = nombre.Trim();
+
+                if (esNuevo)
+                {
+                    CatalogoCuenta repetido = cat.Get(cuenta);
+                    if (repetido != null)
+                        return Json(new { success = false, message = "Ya existe una cuenta contable con el número '" + cuenta + "'." });
+
+                    CatalogoCuenta nueva = new CatalogoCuenta
+                    {
+                        Cuenta = cuenta,
+                        Nombre = nombre,
+                        Ind_Proyectar = indProyectar,
+                        Ind_CapitalSocial = false,
+                        Ind_CarteraTotal = false,
+                        Ind_CuentasLiquidadas = false,
+                        Ind_Financiero = false,
+                        Ind_OtrosActivos = false,
+                        Ind_OtrosPasivos = false,
+                        Ind_Recuperacion = false
+                    };
+
+                    cat.Add(ref nueva);
+                    return Json(new { success = true, message = "Cuenta contable registrada exitosamente." });
+                }
+                else
+                {
+                    CatalogoCuenta existing = cat.Get(cuenta);
+                    if (existing == null)
+                        return Json(new { success = false, message = "La cuenta contable a modificar no existe." });
+
+                    existing.Nombre = nombre;
+                    existing.Ind_Proyectar = indProyectar;
+
+                    cat.Update(existing);
+                    return Json(new { success = true, message = "Cuenta contable actualizada exitosamente." });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error al procesar la cuenta: " + ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public ActionResult EliminarCuenta(string id)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(id))
+                    return Json(new { success = false, message = "Número de cuenta inválido." });
+
+                CatalogoCuenta existing = cat.Get(id);
+                if (existing == null)
+                    return Json(new { success = false, message = "La cuenta contable que intenta eliminar no existe." });
+
+                cat.Delete(id);
+                return Json(new { success = true, message = "Cuenta contable eliminada exitosamente." });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error al eliminar la cuenta contable: " + ex.Message });
+            }
         }
 
         public ActionResult Details(string id)
@@ -184,9 +288,8 @@ namespace FGA.Controllers
         protected override void Dispose(bool disposing)
         {
             if (disposing)
-            {
                 cat.Close();
-            }
+
             base.Dispose(disposing);
         }
     }
