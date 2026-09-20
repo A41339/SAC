@@ -120,23 +120,82 @@ namespace FGA.Controllers
 
         // GET: Menu/GetParents
         [HttpGet]
-        public ActionResult GetParents()
+        public ActionResult GetParents(int? excludeId = null)
         {
             try
             {
                 using (var menuClient = new FGA_En_Linea.MenuService.ServiceOf_MenuClient())
                 {
                     var allMenus = menuClient.GetAll() ?? new FGA.Models.Menu[0];
-                    var parents = allMenus
-                        .Where(m => m.ParentId == null || string.Equals(m.MenuURL, "root", StringComparison.OrdinalIgnoreCase) || m.MenuURL == "#")
-                        .OrderBy(m => m.MenuText)
-                        .Select(m => new
-                        {
-                            id = m.Id,
-                            nombre = m.MenuText
-                        }).ToList();
 
-                    return Json(new { success = true, parents = parents }, JsonRequestBehavior.AllowGet);
+                    // Si viene excludeId, calculamos todos sus descendientes para evitar ciclos o que sea su propio padre
+                    var excludedIds = new HashSet<int>();
+                    if (excludeId.HasValue && excludeId.Value > 0)
+                    {
+                        excludedIds.Add(excludeId.Value);
+                        Action<int> collectDescendants = null;
+                        collectDescendants = (parent) =>
+                        {
+                            foreach (var child in allMenus.Where(c => c.ParentId == parent))
+                            {
+                                if (excludedIds.Add(child.Id))
+                                {
+                                    collectDescendants(child.Id);
+                                }
+                            }
+                        };
+                        collectDescendants(excludeId.Value);
+                    }
+
+                    // Candidatos a padre: raíces o módulos/submódulos que sean contenedores
+                    var parentCandidates = allMenus
+                        .Where(m => !excludedIds.Contains(m.Id))
+                        .Where(m => m.ParentId == null
+                                 || allMenus.Any(c => c.ParentId == m.Id)
+                                 || string.Equals(m.MenuURL, "root", StringComparison.OrdinalIgnoreCase)
+                                 || string.Equals(m.MenuURL, "filter", StringComparison.OrdinalIgnoreCase)
+                                 || m.MenuURL == "#")
+                        .ToList();
+
+                    var lookupByParent = parentCandidates.ToLookup(m => m.ParentId);
+                    var result = new List<object>();
+
+                    Action<int?, int> agregarConNivel = null;
+                    agregarConNivel = (parentId, nivel) =>
+                    {
+                        var items = lookupByParent[parentId]
+                            .OrderBy(m => m.SortOrder ?? 0)
+                            .ThenBy(m => m.MenuText);
+
+                        foreach (var item in items)
+                        {
+                            string prefijo = nivel == 0 ? "" : (new string(' ', (nivel - 1) * 4) + "└── ");
+                            string sufijo = nivel == 0 ? " (Raíz)" : "";
+                            result.Add(new
+                            {
+                                id = item.Id,
+                                nombre = prefijo + (item.MenuText ?? "") + sufijo,
+                                nivel = nivel
+                            });
+                            agregarConNivel(item.Id, nivel + 1);
+                        }
+                    };
+
+                    agregarConNivel(null, 0);
+
+                    // Candidatos restantes (huérfanos contenedores)
+                    var agregadosIds = new HashSet<int>(result.Select(r => (int)((dynamic)r).id));
+                    foreach (var rest in parentCandidates.Where(p => !agregadosIds.Contains(p.Id)))
+                    {
+                        result.Add(new
+                        {
+                            id = rest.Id,
+                            nombre = rest.MenuText ?? "",
+                            nivel = 1
+                        });
+                    }
+
+                    return Json(new { success = true, parents = result }, JsonRequestBehavior.AllowGet);
                 }
             }
             catch (Exception ex)
@@ -162,12 +221,38 @@ namespace FGA.Controllers
                     return Json(new { success = false, message = "El nombre de la opción es requerido." });
                 }
 
+                // Normalizar ParentId: si viene 0 o negativo, es null (módulo raíz)
+                if (model.ParentId.HasValue && model.ParentId.Value <= 0)
+                {
+                    model.ParentId = null;
+                }
+
                 using (var menuClient = new FGA_En_Linea.MenuService.ServiceOf_MenuClient())
                 {
                     var existing = menuClient.Get(model.Id.ToString());
                     if (existing == null)
                     {
                         return Json(new { success = false, message = "La opción seleccionada no existe en la base de datos." });
+                    }
+
+                    // Validación anti-ciclos: una opción no puede ser su propio padre ni tener como padre a un descendiente suyo
+                    if (model.ParentId.HasValue)
+                    {
+                        if (model.ParentId.Value == model.Id)
+                        {
+                            return Json(new { success = false, message = "Una opción no puede ser su propio módulo padre." });
+                        }
+
+                        var allMenus = menuClient.GetAll() ?? new FGA.Models.Menu[0];
+                        var currentCheck = allMenus.FirstOrDefault(m => m.Id == model.ParentId.Value);
+                        while (currentCheck != null && currentCheck.ParentId.HasValue)
+                        {
+                            if (currentCheck.ParentId.Value == model.Id)
+                            {
+                                return Json(new { success = false, message = "No es posible asignar como padre a una opción que depende de este módulo (referencia circular)." });
+                            }
+                            currentCheck = allMenus.FirstOrDefault(m => m.Id == currentCheck.ParentId.Value);
+                        }
                     }
 
                     existing.MenuText = model.MenuText.Trim();
@@ -186,16 +271,21 @@ namespace FGA.Controllers
                     // Si la descripción viene vacía, guardamos null para que tome el valor por defecto
                     existing.Description = string.IsNullOrWhiteSpace(model.Description) ? null : model.Description.Trim();
 
-                    // Módulo Padre
-                    existing.ParentId = model.ParentId;
+                    // Si cambió de módulo padre, asignar al final del nuevo contenedor
+                    if (existing.ParentId != model.ParentId)
+                    {
+                        var allMenus = menuClient.GetAll() ?? new FGA.Models.Menu[0];
+                        var newSiblings = allMenus.Where(m => m.ParentId == model.ParentId && m.Id != existing.Id).ToList();
+                        int maxSort = newSiblings.Count > 0 ? (newSiblings.Max(s => s.SortOrder ?? 0)) : 0;
+                        existing.SortOrder = maxSort + 1;
+                        existing.ParentId = model.ParentId;
+                    }
 
                     // Desvincular propiedades de navegación para evitar ciclos en la serialización WCF
                     existing.Menu2 = null;
                     existing.Menu_ParentIds = null;
                     existing.MenuPermission_MenuIds = null;
                     existing.Solicitudes = null;
-
-                    // NOTA: Orden (SortOrder) y URL/Ruta (MenuURL) están protegidos y no se permite su modificación por el usuario
 
                     menuClient.Update(existing);
 

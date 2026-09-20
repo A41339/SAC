@@ -731,9 +731,9 @@
                                     M&oacute;dulo Padre:
                                 </label>
                                 <select id="menuParentId" name="ParentId" class="form-control-custom">
-                                    <option value="">(Ninguno - M&oacute;dulo Principal)</option>
+                                    <option value="">(Ninguno - M&oacute;dulo Principal / Ra&iacute;z)</option>
                                 </select>
-                                <div class="helper-text">Agrupaci&oacute;n superior a la que pertenece esta opci&oacute;n.</div>
+                                <div class="helper-text">Asigne un padre para volverlo subm&oacute;dulo, o elija &quot;(Ninguno)&quot; para m&oacute;dulo ra&iacute;z.</div>
                             </div>
                         </div>
                     </div>
@@ -1587,34 +1587,59 @@
     function abrirModalEditar(id) {
         $('#alertModal').hide().text('');
         var urlGetMenu = '@Url.Action("Get", "Menu")/' + id;
+        var urlGetParents = '@Url.Action("GetParents", "Menu")?excludeId=' + id;
 
+        var selectModal = $('#menuParentId');
+        selectModal.prop('disabled', true).empty().append($('<option>', { value: '', text: 'Cargando módulos padres...' }));
+
+        // 1. Cargar combo de módulos padres válidos (excluyendo a sí mismo y a sus descendientes)
         $.ajax({
-            url: urlGetMenu,
+            url: urlGetParents,
             type: 'GET',
-            success: function (res) {
-                if (res && res.success && res.menu) {
-                    var m = res.menu;
-                    $('#menuId').val(m.id);
-                    $('#menuText').val(m.menuText);
-                    $('#menuParentId').val(m.parentId || '');
-                    $('#menuIcon').val(limpiarClaseIcono(m.menuIcon));
-                    $('#menuDescription').val(m.description);
-
-                    defaultIconActual = m.defaultIcon || 'fa fa-folder-open-o';
-                    defaultDescActual = m.defaultDescription || '';
-
-                    $('#lblDefaultIcon').text(defaultIconActual);
-                    $('#lblDefaultDesc').text(defaultDescActual || '(No tiene descripción por defecto)');
-
-                    actualizarPreviewIcono(m.menuIcon);
-
-                    $('#modalEditarMenu').modal('show');
-                } else {
-                    alert(res.message || 'No fue posible consultar la opción de menú.');
+            success: function (pRes) {
+                selectModal.empty();
+                selectModal.append($('<option>', { value: '', text: '(Ninguno - Módulo Principal / Raíz)' }));
+                if (pRes && pRes.success && pRes.parents) {
+                    $.each(pRes.parents, function (i, item) {
+                        selectModal.append($('<option>', { value: item.id, text: item.nombre }));
+                    });
                 }
+                selectModal.prop('disabled', false);
+
+                // 2. Cargar datos de la opción a editar
+                $.ajax({
+                    url: urlGetMenu,
+                    type: 'GET',
+                    success: function (res) {
+                        if (res && res.success && res.menu) {
+                            var m = res.menu;
+                            $('#menuId').val(m.id);
+                            $('#menuText').val(m.menuText);
+                            $('#menuParentId').val(m.parentId || '');
+                            $('#menuIcon').val(limpiarClaseIcono(m.menuIcon));
+                            $('#menuDescription').val(m.description);
+
+                            defaultIconActual = m.defaultIcon || 'fa fa-folder-open-o';
+                            defaultDescActual = m.defaultDescription || '';
+
+                            $('#lblDefaultIcon').text(defaultIconActual);
+                            $('#lblDefaultDesc').text(defaultDescActual || '(No tiene descripción por defecto)');
+
+                            actualizarPreviewIcono(m.menuIcon);
+
+                            $('#modalEditarMenu').modal('show');
+                        } else {
+                            alert(res.message || 'No fue posible consultar la opción de menú.');
+                        }
+                    },
+                    error: function () {
+                        alert('Error al consultar datos de la opción.');
+                    }
+                });
             },
             error: function () {
-                alert('Error al consultar datos de la opción.');
+                selectModal.prop('disabled', false);
+                alert('Error al consultar lista de módulos padres.');
             }
         });
     }
