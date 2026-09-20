@@ -112,27 +112,22 @@
                             <div class="hub-card-icon-badge">
                                 <i class="@tarjeta.Icono"></i>
                             </div>
-                            <div style="display: flex; align-items: center; gap: 8px; margin-left: auto;">
+                            <div class="hub-card-title-area">
+                                <div class="hub-card-title">@tarjeta.Titulo</div>
                                 @if (tarjeta.EsSubModulo)
                                 {
                                     <span class="hub-card-subbadge">
                                         <i class="fa fa-folder-open-o"></i> Subm&oacute;dulo@(tarjeta.CantidadOpciones > 0 ? " (" + tarjeta.CantidadOpciones + ")" : "")
                                     </span>
                                 }
-                                <div class="hub-card-action-btn">
-                                    <i class="fa fa-chevron-right"></i>
-                                </div>
+                            </div>
+                            <div class="hub-card-action-btn">
+                                <i class="fa fa-chevron-right"></i>
                             </div>
                         </div>
 
                         <div class="hub-card-body">
-                            <div class="hub-card-title">@tarjeta.Titulo</div>
                             <p class="hub-card-desc">@tarjeta.Descripcion</p>
-                        </div>
-
-                        <div class="hub-card-footer">
-                            <span>@(tarjeta.EsSubModulo ? "Ver opciones del módulo" : "Ingresar a la consulta")</span>
-                            <i class="fa fa-arrow-right hub-card-footer-icon"></i>
                         </div>
                     </a>
                 }

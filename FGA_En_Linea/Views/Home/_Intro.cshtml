@@ -735,52 +735,11 @@
     <div id="wrapper"></div>
 </div>
 
-<!-- ==================== FILA DE GRÃÂFICOS DINÃÂMICOS HIGHCHARTS ==================== -->
-@if (modelData != null && (modelData.VariacionCartera != null || modelData.Mora != null || modelData.DiferencialTasas != null || modelData.IndicadoresRentabilidad != null))
+<!-- ==================== FILA DE GRÁFICOS DINÁMICOS HIGHCHARTS ==================== -->
+@if (modelData != null && (modelData.VariacionCartera != null || modelData.Mora != null))
 {
     <div style="margin-bottom: 20px;">
         <div class="row">
-            @if (modelData.DiferencialTasas != null)
-            {
-                <div class="col-md-6">
-                    <div class="box">
-                        <div class="box-header with-border" style="display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; border-radius: 12px 12px 0 0;">
-                            <div style="display: flex; align-items: center; gap: 12px;">
-                                <img width="38" height="38" src="@Session["Logo"]" style="border-radius: 8px; background: #ffffff; padding: 2px; box-shadow: 0 2px 4px rgba(0,0,0,0.08);" />
-                                <h4 class="box-title" style="margin: 0; font-size: 15px; font-weight: 700; color: #2F5597;">Diferencial de tasas (porcentaje)</h4>
-                            </div>
-                            <a class="btn-ampliar" data-toggle="tooltip" data-placement="top" title="Ampliar gr&aacute;fico" href="javascript:mDiferencialTasas()">
-                                <i class="fa fa-line-chart"></i> Ampliar
-                            </a>
-                        </div>
-                        <div class="box-body">
-                            @modelData.DiferencialTasas
-                        </div>
-                    </div>
-                </div>
-            }
-            @if (modelData.IndicadoresRentabilidad != null)
-            {
-                <div class="col-md-6">
-                    <div class="box">
-                        <div class="box-header with-border" style="display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; border-radius: 12px 12px 0 0;">
-                            <div style="display: flex; align-items: center; gap: 12px;">
-                                <img width="38" height="38" src="@Session["Logo"]" style="border-radius: 8px; background: #ffffff; padding: 2px; box-shadow: 0 2px 4px rgba(0,0,0,0.08);" />
-                                <h4 class="box-title" style="margin: 0; font-size: 15px; font-weight: 700; color: #2F5597;">Cobertura de m&aacute;rgenes</h4>
-                            </div>
-                            <a class="btn-ampliar" data-toggle="tooltip" data-placement="top" title="Ampliar gr&aacute;fico" href="javascript:mRentabilidad()">
-                                <i class="fa fa-line-chart"></i> Ampliar
-                            </a>
-                        </div>
-                        <div class="box-body">
-                            @modelData.IndicadoresRentabilidad
-                        </div>
-                    </div>
-                </div>
-            }
-        </div>
-
-        <div class="row" style="margin-top: 15px;">
             @if (modelData.VariacionCartera != null)
             {
                 <div class="col-md-6">
@@ -820,47 +779,6 @@
                 </div>
             }
         </div>
-        
-        <div class="row" style="margin-top: 15px;">
-            @if (modelData.CapitalSocial != null)
-            {
-                <div class="col-md-6">
-                    <div class="box">
-                        <div class="box-header with-border" style="display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; border-radius: 12px 12px 0 0;">
-                            <div style="display: flex; align-items: center; gap: 12px;">
-                                <img width="38" height="38" src="@Session["Logo"]" style="border-radius: 8px; background: #ffffff; padding: 2px; box-shadow: 0 2px 4px rgba(0,0,0,0.08);" />
-                                <h4 class="box-title" style="margin: 0; font-size: 15px; font-weight: 700; color: #2F5597;">Variaci&oacute;n Capital Social</h4>
-                            </div>
-                            <a class="btn-ampliar" data-toggle="tooltip" data-placement="top" title="Ampliar gr&aacute;fico" href="javascript:mCapitalSocial()">
-                                <i class="fa fa-line-chart"></i> Ampliar
-                            </a>
-                        </div>
-                        <div class="box-body">
-                            @modelData.CapitalSocial
-                        </div>
-                    </div>
-                </div>
-            }
-            @if (modelData.BrechaLiquidez != null)
-            {
-                <div class="col-md-6">
-                    <div class="box">
-                        <div class="box-header with-border" style="display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; border-radius: 12px 12px 0 0;">
-                            <div style="display: flex; align-items: center; gap: 12px;">
-                                <img width="38" height="38" src="@Session["Logo"]" style="border-radius: 8px; background: #ffffff; padding: 2px; box-shadow: 0 2px 4px rgba(0,0,0,0.08);" />
-                                <h4 class="box-title" style="margin: 0; font-size: 15px; font-weight: 700; color: #2F5597;">Brecha de liquidez</h4>
-                            </div>
-                            <a class="btn-ampliar" data-toggle="tooltip" data-placement="top" title="Ampliar gr&aacute;fico" href="javascript:mBrechaLiquidez()">
-                                <i class="fa fa-line-chart"></i> Ampliar
-                            </a>
-                        </div>
-                        <div class="box-body">
-                            @modelData.BrechaLiquidez
-                        </div>
-                    </div>
-                </div>
-            }
-        </div>
     </div>
 }
 
@@ -885,45 +803,6 @@
     </div>
 </div>
 
-<div class="modal fade" id="mDiferencialTasas" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div style="display: flex; align-items: center; gap: 12px; background: transparent;">
-                    <img width="40" height="40" src="@Session["Logo"]" style="border-radius: 6px; background: #ffffff; padding: 2px;" />
-                    <h3 class="modal-title" style="margin: 0; color: #ffffff !important; font-size: 16px; font-weight: 600;">Diferencial de Tasas</h3>
-                </div>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: #ffffff !important; opacity: 0.9;"><span aria-hidden="true">&times;</span></button>
-            </div>
-            <div class="modal-body">
-                @modelData.pDiferencialTasas
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="mCapitalSocial" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div style="display: flex; align-items: center; gap: 12px; background: transparent;">
-                    <img width="40" height="40" src="@Session["Logo"]" style="border-radius: 6px; background: #ffffff; padding: 2px;" />
-                    <h3 class="modal-title" style="margin: 0; color: #ffffff !important; font-size: 16px; font-weight: 600;">Variaci&oacute;n del Capital Social</h3>
-                </div>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: #ffffff !important; opacity: 0.9;"><span aria-hidden="true">&times;</span></button>
-            </div>
-            <div class="modal-body">
-                @modelData.pCapitalSocial
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
-            </div>
-        </div>
-    </div>
-</div>
 
 <div class="modal fade" id="mVariacionCartera" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-lg">
@@ -965,46 +844,6 @@
     </div>
 </div>
 
-<div class="modal fade" id="mBrechaLiquidez" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div style="display: flex; align-items: center; gap: 12px; background: transparent;">
-                    <img width="40" height="40" src="@Session["Logo"]" style="border-radius: 6px; background: #ffffff; padding: 2px;" />
-                    <h3 class="modal-title" style="margin: 0; color: #ffffff !important; font-size: 16px; font-weight: 600;">Brecha de Liquidez</h3>
-                </div>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: #ffffff !important; opacity: 0.9;"><span aria-hidden="true">&times;</span></button>
-            </div>
-            <div class="modal-body">
-                @modelData.pBrechaLiquidez
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="mRentabilidad" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div style="display: flex; align-items: center; gap: 12px; background: transparent;">
-                    <img width="40" height="40" src="@Session["Logo"]" style="border-radius: 6px; background: #ffffff; padding: 2px;" />
-                    <h3 class="modal-title" style="margin: 0; color: #ffffff !important; font-size: 16px; font-weight: 600;">Cobertura de m&aacute;rgenes</h3>
-                </div>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: #ffffff !important; opacity: 0.9;"><span aria-hidden="true">&times;</span></button>
-            </div>
-            <div class="modal-body">
-                @modelData.pIndicadoresRentabilidad
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 <div class="modal fade" id="mSuficiencia" tabindex="-1" role="dialog" aria-labelledby="mSuficienciaLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-chart-xl" style="max-width: 1300px; width: 95%; margin: 25px auto;">
         <div class="modal-content" style="border-radius: 14px; overflow: hidden; border: none; box-shadow: 0 16px 40px rgba(0,0,0,0.25);">
@@ -1029,12 +868,8 @@
 
 <!-- Highcharts Sparkline & Funciones de Modal JavaScript -->
 <script>
-    function mCapitalSocial() { $('#mCapitalSocial').modal('show'); }
     function mVariacionCartera() { $('#mVariacionCartera').modal('show'); }
-    function mDiferencialTasas() { $('#mDiferencialTasas').modal('show'); }
     function mMora() { $('#mMora').modal('show'); }
-    function mBrechaLiquidez() { $('#mBrechaLiquidez').modal('show'); }
-    function mRentabilidad() { $('#mRentabilidad').modal('show'); }
     function mSuficiencia() { $('#mSuficiencia').modal('show'); }
 
     $(document).ready(function () {

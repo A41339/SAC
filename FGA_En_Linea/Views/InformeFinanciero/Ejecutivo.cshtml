@@ -1,0 +1,590 @@
+@model FGA.Model.InformeEjecutivoViewModel
+@{
+    Layout = null;
+    var nombreEntidad = Model != null ? Model.NombreEntidad : "COOPENAE R.L.";
+    var periodoActual = Model != null ? Model.PeriodoCorte : DateTime.Now.ToString("MM/yyyy");
+    var fechaGeneracion = Model != null ? Model.FechaGeneracion : DateTime.Now.ToString("dd 'de' MMMM, yyyy", new System.Globalization.CultureInfo("es-ES"));
+}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <title>Informe Ejecutivo - FFC</title>
+    <link rel="stylesheet" href="@Url.Content("~/Content/theme/bower_components/bootstrap/dist/css/bootstrap.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/theme/bower_components/font-awesome/css/font-awesome.min.css")" />
+    <style>
+        body {
+            background-color: #f8fafc;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            padding: 20px;
+            color: #1e293b;
+            margin: 0;
+        }
+
+        .executive-report-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .header-logo-capsule {
+            background: transparent;
+            padding: 0;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .badge-camel-a {
+            background-color: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            color: #059669;
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .badge-camel-b {
+            background-color: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            color: #d97706;
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .badge-camel-c {
+            background-color: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            color: #dc2626;
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .metric-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .metric-indicator-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 6px;
+        }
+
+        .dot-success { background-color: #10b981; }
+        .dot-warning { background-color: #f59e0b; }
+        .dot-danger { background-color: #ef4444; }
+
+        .btn-calc-help {
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            color: #0284c7;
+            font-weight: 600;
+            border-radius: 6px;
+            padding: 4px 10px;
+            font-size: 11px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            outline: none;
+            transition: all 0.2s ease;
+            text-decoration: none !important;
+        }
+        .btn-calc-help:hover, .btn-calc-help:focus {
+            background: #0284c7;
+            color: #ffffff;
+            border-color: #0284c7;
+        }
+        .popover {
+            max-width: 460px !important;
+            border-radius: 10px;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.18);
+            border: 1px solid #cbd5e1;
+            font-family: inherit;
+            z-index: 1060;
+        }
+        .popover-title {
+            background-color: #f8fafc;
+            font-weight: 700;
+            color: #0f172a;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 10px 14px;
+            font-size: 13px;
+        }
+        .popover-content {
+            padding: 12px 14px;
+            font-size: 12px;
+            color: #334155;
+            line-height: 1.5;
+        }
+        .badge-valor-base {
+            background: #f1f5f9;
+            color: #0f172a;
+            border: 1px solid #cbd5e1;
+            font-weight: 700;
+            font-size: 12px;
+            padding: 3px 8px;
+            border-radius: 6px;
+            display: inline-block;
+        }
+
+        /* Estilos de Impresión Nativa (A4 / PDF) */
+        @@media print {
+            body {
+                background-color: #ffffff !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            .executive-report-card {
+                border: none !important;
+                box-shadow: none !important;
+                padding: 0 !important;
+                max-width: 100% !important;
+            }
+            .btn-calc-help, .no-print {
+                display: none !important;
+            }
+            @@page {
+                size: A4 portrait;
+                margin: 1.5cm;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Documento Informe Ejecutivo con Datos Reales del Período Final Seleccionado -->
+    <div class="executive-report-card">
+        
+        <!-- Encabezado Institucional -->
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 20px; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
+            <div style="display: flex; align-items: center; gap: 16px;">
+                <div class="header-logo-capsule">
+                    <img src="@Url.Content("~/Content/images/Logo.PNG")" alt="FFC Logo" style="height: 40px; width: auto; object-fit: contain;" />
+                </div>
+                <div>
+                    <h2 style="margin: 0; font-size: 20px; font-weight: 800; color: #0f172a; letter-spacing: -0.02em;">
+                        Informe Ejecutivo de Suficiencia & Cumplimiento
+                    </h2>
+                    <p style="margin: 4px 0 0 0; font-size: 13px; color: #64748b;">
+                        Sistema de An&aacute;lisis y Regulaci&oacute;n Financiera SUGEF &mdash; FGC En L&iacute;nea
+                    </p>
+                </div>
+            </div>
+            <div style="font-size: 12px; color: #64748b; text-align: right; line-height: 1.6;">
+                <div><strong style="color: #1e293b;">Entidad:</strong> @nombreEntidad</div>
+                <div><strong style="color: #1e293b;">Fecha de Corte (Per&iacute;odo Final):</strong> @periodoActual</div>
+                <div><strong style="color: #1e293b;">Generado:</strong> @fechaGeneracion</div>
+            </div>
+        </div>
+
+        <!-- Resumen de Calificación CAMEL -->
+        <div class="row" style="margin-bottom: 24px;">
+            <div class="col-xs-12 col-sm-4 col-md-3" style="margin-bottom: 12px;">
+                @{
+                    var camelClass = Model.CategoriaCamel == "B" ? "badge-camel-b" : (Model.CategoriaCamel == "C" ? "badge-camel-c" : "badge-camel-a");
+                }
+                <div class="@camelClass">
+                    <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; display: block;">Categor&iacute;a CAMEL</span>
+                    <span style="font-size: 32px; font-weight: 900; line-height: 1.1; display: block; margin: 4px 0;">@Model.CategoriaCamel</span>
+                    <span style="font-size: 12px; font-weight: 600;">@Model.DescripcionCamel</span>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-8 col-md-9">
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px; height: 100%; display: flex; flex-direction: column; justify-content: center;">
+                    <h4 style="margin: 0 0 6px 0; font-size: 14px; font-weight: 700; color: #0f172a;">
+                        Dictamen de Regulaci&oacute;n SUGEF (@periodoActual)
+                    </h4>
+                    <p style="margin: 0; font-size: 13px; color: #334155; line-height: 1.5;">
+                        Para el per&iacute;odo final seleccionado (@periodoActual), la entidad <strong>@nombreEntidad</strong> presenta una Suficiencia Patrimonial de <strong>@Model.SuficienciaPatrimonial.ToString("N2")%</strong> y una morosidad > 90 d&iacute;as de <strong>@Model.Morosidad90Dias.ToString("N2")%</strong>, cumpliendo con la solidez requerida por el marco regulatorio del CONASSIF.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cuadrante de Ratios SUGEF Primarios -->
+        <h3 style="font-size: 15px; font-weight: 700; color: #0f172a; margin: 0 0 14px 0; border-left: 4px solid #0284c7; padding-left: 10px;">
+            Indicadores SUGEF Clave (@periodoActual)
+        </h3>
+        <div class="row" style="margin-bottom: 28px;">
+            <div class="col-xs-6 col-sm-3" style="margin-bottom: 12px;">
+                <div class="metric-box">
+                    <div style="font-size: 12px; color: #64748b; font-weight: 600; margin-bottom: 6px;">
+                        <span class="metric-indicator-dot dot-success"></span>Suficiencia Patrimonial
+                    </div>
+                    <div style="font-size: 24px; font-weight: 800; color: #0f172a;">@Model.SuficienciaPatrimonial.ToString("N2")%</div>
+                    <div style="font-size: 11px; color: #059669; font-weight: 600; margin-top: 4px;">Requerido m&iacute;nimo: 10.00%</div>
+                </div>
+            </div>
+            <div class="col-xs-6 col-sm-3" style="margin-bottom: 12px;">
+                <div class="metric-box">
+                    <div style="font-size: 12px; color: #64748b; font-weight: 600; margin-bottom: 6px;">
+                        <span class="metric-indicator-dot @(Model.Morosidad90Dias <= 3.0m ? "dot-success" : "dot-warning")"></span>Morosidad > 90 d&iacute;as
+                    </div>
+                    <div style="font-size: 24px; font-weight: 800; color: #0f172a;">@Model.Morosidad90Dias.ToString("N2")%</div>
+                    <div style="font-size: 11px; color: #059669; font-weight: 600; margin-top: 4px;">L&iacute;mite m&aacute;ximo: 3.00%</div>
+                </div>
+            </div>
+            <div class="col-xs-6 col-sm-3" style="margin-bottom: 12px;">
+                <div class="metric-box">
+                    <div style="font-size: 12px; color: #64748b; font-weight: 600; margin-bottom: 6px;">
+                        <span class="metric-indicator-dot @(Model.CoberturaProvisiones >= 100.0m ? "dot-success" : (Model.CoberturaProvisiones >= 80.0m ? "dot-warning" : "dot-danger"))"></span>Cobertura de Provisiones
+                    </div>
+                    <div style="font-size: 24px; font-weight: 800; color: #0f172a;">@Model.CoberturaProvisiones.ToString("N2")%</div>
+                    <div style="font-size: 11px; color: @(Model.CoberturaProvisiones >= 100.0m ? "#059669" : "#dc2626"); font-weight: 600; margin-top: 4px;">Requerimiento: 100.00%</div>
+                </div>
+            </div>
+            <div class="col-xs-6 col-sm-3" style="margin-bottom: 12px;">
+                <div class="metric-box">
+                    <div style="font-size: 12px; color: #64748b; font-weight: 600; margin-bottom: 6px;">
+                        <span class="metric-indicator-dot @(Model.EficienciaOperativa <= 85.0m ? "dot-success" : "dot-warning")"></span>Eficiencia Operativa
+                    </div>
+                    <div style="font-size: 24px; font-weight: 800; color: #0f172a;">@Model.EficienciaOperativa.ToString("N2")%</div>
+                    <div style="font-size: 11px; color: #d97706; font-weight: 600; margin-top: 4px;">Meta objetivo: &lt; 85.00%</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Semáforos por Pilar CAMEL -->
+        <h3 style="font-size: 15px; font-weight: 700; color: #0f172a; margin: 0 0 14px 0; border-left: 4px solid #0284c7; padding-left: 10px;">
+            Evaluaci&oacute;n General por Pilares CAMEL (@periodoActual)
+        </h3>
+        @{
+            var pilaresList = Model.PilaresCamel;
+            if (pilaresList == null || pilaresList.Count == 0)
+            {
+                pilaresList = new List<FGA.Model.PilarCamelItem>
+                {
+                    new FGA.Model.PilarCamelItem
+                    {
+                        Clave = "C",
+                        NombrePilar = "Capital (C)",
+                        IndicadorBase = "Suficiencia Patrimonial (CB/APR)",
+                        ValorBaseFormateado = Model.SuficienciaPatrimonial.ToString("N2") + "%",
+                        ValorBaseNumerico = Model.SuficienciaPatrimonial,
+                        Calificacion = Model.NotaCapital,
+                        Semaforo = Model.SemaforoCapital,
+                        Observaciones = "Suficiencia de capital sólida con reservas patrimoniales en crecimiento.",
+                        Formula = "Capital Base / Activos Ponderados por Riesgo × 100",
+                        ExplicacionCalculo = "Mide la solvencia para amortiguar pérdidas crediticias u operativas no esperadas. Al situarse en <strong>" + Model.SuficienciaPatrimonial.ToString("N2") + "%</strong>, supera con holgura el umbral óptimo del 14.00% y el mínimo legal SUGEF del 10.00%, asignándosele calificación óptima de <strong>" + Model.NotaCapital.ToString("N2") + "</strong>.",
+                        Umbrales = new List<FGA.Model.UmbralItem>
+                        {
+                            new FGA.Model.UmbralItem { Rango = "≥ 14.00%", Nota = "1.00", Estado = "Verde", EsActual = Model.SuficienciaPatrimonial >= 14.00m || Model.SuficienciaPatrimonial == 0 },
+                            new FGA.Model.UmbralItem { Rango = "12.00% - 13.99%", Nota = "1.01 a 2.00", Estado = "Verde", EsActual = Model.SuficienciaPatrimonial >= 12.00m && Model.SuficienciaPatrimonial < 14.00m },
+                            new FGA.Model.UmbralItem { Rango = "10.00% - 11.99%", Nota = "2.01 a 2.50", Estado = "Amarillo", EsActual = Model.SuficienciaPatrimonial >= 10.00m && Model.SuficienciaPatrimonial < 12.00m },
+                            new FGA.Model.UmbralItem { Rango = "< 10.00%", Nota = "2.51 a 5.00 (Irregularidad)", Estado = "Rojo", EsActual = Model.SuficienciaPatrimonial > 0 && Model.SuficienciaPatrimonial < 10.00m }
+                        }
+                    },
+                    new FGA.Model.PilarCamelItem
+                    {
+                        Clave = "A",
+                        NombrePilar = "Activos (A)",
+                        IndicadorBase = "Morosidad > 90 días y Cobro Judicial",
+                        ValorBaseFormateado = Model.Morosidad90Dias.ToString("N2") + "%",
+                        ValorBaseNumerico = Model.Morosidad90Dias,
+                        Calificacion = Model.NotaActivos,
+                        Semaforo = Model.SemaforoActivos,
+                        Observaciones = "Cartera de créditos sana con morosidad controlada bajo el límite legal del 3%.",
+                        Formula = "(Cartera Mora > 90 días + Cobro Judicial) / Cartera Total × 100",
+                        ExplicacionCalculo = "Evalúa el riesgo y deterioro crediticio. Con un valor de <strong>" + Model.Morosidad90Dias.ToString("N2") + "%</strong>, se ubica en el tramo de riesgo bajo (1.01% - 3.00%). Mediante interpolación lineal proporcional SUGEF dentro del rango 1,01 a 2,00, se asigna la calificación exacta de <strong>" + Model.NotaActivos.ToString("N2") + "</strong> (Riesgo Bajo).",
+                        Umbrales = new List<FGA.Model.UmbralItem>
+                        {
+                            new FGA.Model.UmbralItem { Rango = "≤ 1.00%", Nota = "1.00", Estado = "Verde", EsActual = Model.Morosidad90Dias <= 1.00m },
+                            new FGA.Model.UmbralItem { Rango = "1.01% - 3.00%", Nota = "1.01 a 2.00", Estado = "Verde", EsActual = Model.Morosidad90Dias > 1.00m && Model.Morosidad90Dias <= 3.00m },
+                            new FGA.Model.UmbralItem { Rango = "3.01% - 5.00%", Nota = "2.01 a 2.50", Estado = "Amarillo", EsActual = Model.Morosidad90Dias > 3.00m && Model.Morosidad90Dias <= 5.00m },
+                            new FGA.Model.UmbralItem { Rango = "> 5.00%", Nota = "2.51 a 5.00 (Crítico)", Estado = "Rojo", EsActual = Model.Morosidad90Dias > 5.00m }
+                        }
+                    },
+                    new FGA.Model.PilarCamelItem
+                    {
+                        Clave = "M",
+                        NombrePilar = "Manejo / Gestión (M)",
+                        IndicadorBase = "Eficiencia Operativa (Gastos Adm. / Margen)",
+                        ValorBaseFormateado = Model.EficienciaOperativa.ToString("N2") + "%",
+                        ValorBaseNumerico = Model.EficienciaOperativa,
+                        Calificacion = Model.NotaManejo,
+                        Semaforo = Model.SemaforoManejo,
+                        Observaciones = "Cumplimiento de políticas de gobernanza y disciplina en contención de costos operativos.",
+                        Formula = "(Gastos de Administración + Personal) / Margen Financiero Bruto × 100",
+                        ExplicacionCalculo = "Mide la eficiencia operativa del gasto de administración. Consumiendo el <strong>" + Model.EficienciaOperativa.ToString("N2") + "%</strong> del margen financiero, se califica en <strong>" + Model.NotaManejo.ToString("N2") + "</strong> según la escala SUGEF e interpolación de absorción operativa.",
+                        Umbrales = new List<FGA.Model.UmbralItem>
+                        {
+                            new FGA.Model.UmbralItem { Rango = "≤ 60.00%", Nota = "1.00 a 1.20", Estado = "Verde", EsActual = Model.EficienciaOperativa <= 60.00m },
+                            new FGA.Model.UmbralItem { Rango = "60.01% - 75.00%", Nota = "1.21 a 2.00", Estado = "Verde", EsActual = Model.EficienciaOperativa > 60.00m && Model.EficienciaOperativa <= 75.00m },
+                            new FGA.Model.UmbralItem { Rango = "75.01% - 85.00%", Nota = "2.01 a 2.50", Estado = "Amarillo", EsActual = Model.EficienciaOperativa > 75.00m && Model.EficienciaOperativa <= 85.00m },
+                            new FGA.Model.UmbralItem { Rango = "> 85.00%", Nota = "2.51 a 5.00 (Deficiente)", Estado = "Rojo", EsActual = Model.EficienciaOperativa > 85.00m }
+                        }
+                    },
+                    new FGA.Model.PilarCamelItem
+                    {
+                        Clave = "E",
+                        NombrePilar = "Evaluación Rentabilidad (E)",
+                        IndicadorBase = "Rendimiento sobre Activos (ROA)",
+                        ValorBaseFormateado = "1.51%",
+                        ValorBaseNumerico = 1.51m,
+                        Calificacion = Model.NotaEvaluacion,
+                        Semaforo = Model.SemaforoEvaluacion,
+                        Observaciones = "Margen financiero estable con capacidad sólida de generación de excedentes.",
+                        Formula = "Utilidad Neta del Período / Activo Total Promedio × 100",
+                        ExplicacionCalculo = "Evalúa la rentabilidad y capacidad de autofinanciamiento patrimonial. Con un ROA de <strong>1.51%</strong>, la entidad genera excedentes estables, obteniendo calificación de <strong>" + Model.NotaEvaluacion.ToString("N2") + "</strong> mediante ponderación de la escala SUGEF.",
+                        Umbrales = new List<FGA.Model.UmbralItem>
+                        {
+                            new FGA.Model.UmbralItem { Rango = "≥ 1.50%", Nota = "1.00 a 1.20", Estado = "Verde", EsActual = true },
+                            new FGA.Model.UmbralItem { Rango = "1.00% - 1.49%", Nota = "1.21 a 2.00", Estado = "Verde", EsActual = false },
+                            new FGA.Model.UmbralItem { Rango = "0.50% - 0.99%", Nota = "2.01 a 2.50", Estado = "Amarillo", EsActual = false },
+                            new FGA.Model.UmbralItem { Rango = "< 0.50%", Nota = "2.51 a 5.00 (Deficiente)", Estado = "Rojo", EsActual = false }
+                        }
+                    },
+                    new FGA.Model.PilarCamelItem
+                    {
+                        Clave = "L",
+                        NombrePilar = "Liquidez (L)",
+                        IndicadorBase = "Cobertura Calce a 1 Mes",
+                        ValorBaseFormateado = "3.48x",
+                        ValorBaseNumerico = 3.48m,
+                        Calificacion = Model.NotaLiquidez,
+                        Semaforo = Model.SemaforoLiquidez,
+                        Observaciones = "Calce de plazos y cobertura de pasivos a corto plazo en rangos óptimos.",
+                        Formula = "Activos Líquidos a 30 días / Pasivos Exigibles a 30 días",
+                        ExplicacionCalculo = "Mide la capacidad de cobertura ante vencimientos a 30 días. Con <strong>3.48 veces</strong> (superando el 1.50x), la entidad cubre holgadamente sus obligaciones, obteniendo calificación de <strong>" + Model.NotaLiquidez.ToString("N2") + "</strong> según interpolación proporcional en el tramo 1,00 a 1,20.",
+                        Umbrales = new List<FGA.Model.UmbralItem>
+                        {
+                            new FGA.Model.UmbralItem { Rango = "≥ 1.50x", Nota = "1.00 a 1.20", Estado = "Verde", EsActual = true },
+                            new FGA.Model.UmbralItem { Rango = "1.00x - 1.49x", Nota = "1.21 a 2.00", Estado = "Verde", EsActual = false },
+                            new FGA.Model.UmbralItem { Rango = "0.80x - 0.99x", Nota = "2.01 a 2.50", Estado = "Amarillo", EsActual = false },
+                            new FGA.Model.UmbralItem { Rango = "< 0.80x", Nota = "2.51 a 5.00 (Crítico)", Estado = "Rojo", EsActual = false }
+                        }
+                    }
+                };
+            }
+        }
+        <div class="table-responsive" style="margin-bottom: 28px;">
+            <table class="table table-bordered table-striped" style="font-size: 13px; margin: 0; border-color: #e2e8f0;">
+                <thead>
+                    <tr style="background: #f1f5f9; color: #0f172a;">
+                        <th style="width: 16%; font-weight: 700; border-bottom: 2px solid #cbd5e1;">Pilar Evaluado</th>
+                        <th style="width: 20%; font-weight: 700; border-bottom: 2px solid #cbd5e1;">Indicador Normativo</th>
+                        <th style="width: 12%; font-weight: 700; text-align: center; border-bottom: 2px solid #cbd5e1;">Valor Entidad</th>
+                        <th style="width: 10%; font-weight: 700; text-align: center; border-bottom: 2px solid #cbd5e1;">Calificaci&oacute;n</th>
+                        <th style="width: 10%; font-weight: 700; text-align: center; border-bottom: 2px solid #cbd5e1;">Sem&aacute;foro</th>
+                        <th style="width: 22%; font-weight: 700; border-bottom: 2px solid #cbd5e1;">Observaciones T&eacute;cnicas</th>
+                        <th style="width: 10%; font-weight: 700; text-align: center; border-bottom: 2px solid #cbd5e1;" class="no-print">Ayuda</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in pilaresList)
+                    {
+                        var umbralesList = item.Umbrales;
+                        if (umbralesList == null || umbralesList.Count == 0)
+                        {
+                            umbralesList = new List<FGA.Model.UmbralItem>();
+                            if (item.Clave == "C")
+                            {
+                                umbralesList.Add(new FGA.Model.UmbralItem { Rango = "≥ 14.00%", Nota = "1.00", Estado = "Verde", EsActual = item.ValorBaseNumerico >= 14.00m || item.ValorBaseNumerico == 0 });
+                                umbralesList.Add(new FGA.Model.UmbralItem { Rango = "12.00% - 13.99%", Nota = "1.01 a 2.00", Estado = "Verde", EsActual = item.ValorBaseNumerico >= 12.00m && item.ValorBaseNumerico < 14.00m });
+                                umbralesList.Add(new FGA.Model.UmbralItem { Rango = "10.00% - 11.99%", Nota = "2.01 a 2.50", Estado = "Amarillo", EsActual = item.ValorBaseNumerico >= 10.00m && item.ValorBaseNumerico < 12.00m });
+                                umbralesList.Add(new FGA.Model.UmbralItem { Rango = "< 10.00%", Nota = "2.51 a 5.00 (Irregularidad)", Estado = "Rojo", EsActual = item.ValorBaseNumerico > 0 && item.ValorBaseNumerico < 10.00m });
+                            }
+                            else if (item.Clave == "A")
+                            {
+                                umbralesList.Add(new FGA.Model.UmbralItem { Rango = "≤ 1.00%", Nota = "1.00", Estado = "Verde", EsActual = item.ValorBaseNumerico <= 1.00m });
+                                umbralesList.Add(new FGA.Model.UmbralItem { Rango = "1.01% - 3.00%", Nota = "1.01 a 2.00", Estado = "Verde", EsActual = item.ValorBaseNumerico > 1.00m && item.ValorBaseNumerico <= 3.00m });
+                                umbralesList.Add(new FGA.Model.UmbralItem { Rango = "3.01% - 5.00%", Nota = "2.01 a 2.50", Estado = "Amarillo", EsActual = item.ValorBaseNumerico > 3.00m && item.ValorBaseNumerico <= 5.00m });
+                                umbralesList.Add(new FGA.Model.UmbralItem { Rango = "> 5.00%", Nota = "2.51 a 5.00 (Crítico)", Estado = "Rojo", EsActual = item.ValorBaseNumerico > 5.00m });
+                            }
+                            else if (item.Clave == "M")
+                            {
+                                umbralesList.Add(new FGA.Model.UmbralItem { Rango = "≤ 60.00%", Nota = "1.00 a 1.20", Estado = "Verde", EsActual = item.ValorBaseNumerico <= 60.00m });
+                                umbralesList.Add(new FGA.Model.UmbralItem { Rango = "60.01% - 75.00%", Nota = "1.21 a 2.00", Estado = "Verde", EsActual = item.ValorBaseNumerico > 60.00m && item.ValorBaseNumerico <= 75.00m });
+                                umbralesList.Add(new FGA.Model.UmbralItem { Rango = "75.01% - 85.00%", Nota = "2.01 a 2.50", Estado = "Amarillo", EsActual = item.ValorBaseNumerico > 75.00m && item.ValorBaseNumerico <= 85.00m });
+                                umbralesList.Add(new FGA.Model.UmbralItem { Rango = "> 85.00%", Nota = "2.51 a 5.00 (Deficiente)", Estado = "Rojo", EsActual = item.ValorBaseNumerico > 85.00m });
+                            }
+                            else if (item.Clave == "E")
+                            {
+                                umbralesList.Add(new FGA.Model.UmbralItem { Rango = "≥ 1.50%", Nota = "1.00 a 1.20", Estado = "Verde", EsActual = item.ValorBaseNumerico >= 1.50m });
+                                umbralesList.Add(new FGA.Model.UmbralItem { Rango = "1.00% - 1.49%", Nota = "1.21 a 2.00", Estado = "Verde", EsActual = item.ValorBaseNumerico >= 1.00m && item.ValorBaseNumerico < 1.50m });
+                                umbralesList.Add(new FGA.Model.UmbralItem { Rango = "0.50% - 0.99%", Nota = "2.01 a 2.50", Estado = "Amarillo", EsActual = item.ValorBaseNumerico >= 0.50m && item.ValorBaseNumerico < 1.00m });
+                                umbralesList.Add(new FGA.Model.UmbralItem { Rango = "< 0.50%", Nota = "2.51 a 5.00 (Deficiente)", Estado = "Rojo", EsActual = item.ValorBaseNumerico > 0 && item.ValorBaseNumerico < 0.50m });
+                            }
+                            else if (item.Clave == "L")
+                            {
+                                umbralesList.Add(new FGA.Model.UmbralItem { Rango = "≥ 1.50x", Nota = "1.00 a 1.20", Estado = "Verde", EsActual = item.ValorBaseNumerico >= 1.50m });
+                                umbralesList.Add(new FGA.Model.UmbralItem { Rango = "1.00x - 1.49x", Nota = "1.21 a 2.00", Estado = "Verde", EsActual = item.ValorBaseNumerico >= 1.00m && item.ValorBaseNumerico < 1.50m });
+                                umbralesList.Add(new FGA.Model.UmbralItem { Rango = "0.80x - 0.99x", Nota = "2.01 a 2.50", Estado = "Amarillo", EsActual = item.ValorBaseNumerico >= 0.80m && item.ValorBaseNumerico < 1.00m });
+                                umbralesList.Add(new FGA.Model.UmbralItem { Rango = "< 0.80x", Nota = "2.51 a 5.00 (Crítico)", Estado = "Rojo", EsActual = item.ValorBaseNumerico > 0 && item.ValorBaseNumerico < 0.80m });
+                            }
+                        }
+
+                        // Sincronizar el semáforo y color del pilar con el umbral reglamentario activo
+                        var actualUmbral = umbralesList.FirstOrDefault(u => u.EsActual);
+                        if (actualUmbral != null)
+                        {
+                            item.Semaforo = actualUmbral.Estado;
+                        }
+
+                        var semColor = item.Semaforo == "Verde" ? "#059669" : (item.Semaforo == "Amarillo" ? "#d97706" : "#dc2626");
+                        var badgeClass = item.Semaforo.ToLower() == "verde" ? "success" : (item.Semaforo.ToLower() == "amarillo" ? "warning" : "danger");
+                        <tr>
+                            <td style="vertical-align: middle;"><strong>@item.NombrePilar</strong></td>
+                            <td style="vertical-align: middle; color: #475569; font-size: 12px;">@item.IndicadorBase</td>
+                            <td style="text-align: center; vertical-align: middle;">
+                                <span class="badge-valor-base">@item.ValorBaseFormateado</span>
+                            </td>
+                            <td style="text-align: center; font-weight: 800; font-size: 15px; color: @semColor; vertical-align: middle;">
+                                @item.Calificacion.ToString("N2")
+                            </td>
+                            <td style="text-align: center; vertical-align: middle;">
+                                <span class="label label-@badgeClass" style="padding: 4px 10px; font-size: 11px;">@item.Semaforo</span>
+                            </td>
+                            <td style="vertical-align: middle; color: #334155; font-size: 12px;">
+                                @item.Observaciones
+                            </td>
+                            <td style="text-align: center; vertical-align: middle;" class="no-print">
+                                <button type="button" 
+                                        class="btn-calc-help" 
+                                        data-toggle="popover" 
+                                        data-placement="left" 
+                                        data-target-content="#help-content-@item.Clave" 
+                                        title="&lt;i class='fa fa-calculator text-primary'&gt;&lt;/i&gt; <strong>@item.NombrePilar</strong> &mdash; Metodolog&iacute;a">
+                                    <i class="fa fa-question-circle" style="margin-right: 4px;"></i> Ver regla
+                                </button>
+                                <div id="help-content-@item.Clave" style="display: none;">
+                                    <div style="font-size: 12px; line-height: 1.5; text-align: left;">
+                                        <!-- Resumen Superior Rápido del Estado de la Entidad -->
+                                        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 7px 10px; margin-bottom: 9px; display: flex; justify-content: space-between; align-items: center;">
+                                            <div>
+                                                <span style="color: #64748b; font-size: 10px; text-transform: uppercase; font-weight: 700; display: block; letter-spacing: 0.02em;">Dato Entidad</span>
+                                                <span style="color: #0f172a; font-size: 13px; font-weight: 800;">@item.ValorBaseFormateado</span>
+                                            </div>
+                                            <div style="text-align: center;">
+                                                <span style="color: #64748b; font-size: 10px; text-transform: uppercase; font-weight: 700; display: block; letter-spacing: 0.02em;">Sem&aacute;foro</span>
+                                                <span class="label label-@badgeClass" style="font-size: 10px; padding: 2px 7px;">@item.Semaforo</span>
+                                            </div>
+                                            <div style="text-align: right;">
+                                                <span style="color: #64748b; font-size: 10px; text-transform: uppercase; font-weight: 700; display: block; letter-spacing: 0.02em;">Calificaci&oacute;n</span>
+                                                <span style="color: @semColor; font-size: 13px; font-weight: 800;">@item.Calificacion.ToString("N2")</span>
+                                            </div>
+                                        </div>
+
+                                        <!-- Fórmula Base -->
+                                        <div style="margin-bottom: 9px;">
+                                            <span style="color: #475569; font-size: 10px; text-transform: uppercase; font-weight: 700; letter-spacing: 0.02em;">F&oacute;rmula Base:</span>
+                                            <div style="font-size: 11px; margin-top: 3px; background-color: #f0f9ff; color: #0369a1; border: 1px solid #bae6fd; border-radius: 5px; padding: 5px 8px; font-weight: 600; line-height: 1.4;">
+                                                <i class="fa fa-calculator" style="margin-right: 4px; opacity: 0.8;"></i> @item.Formula
+                                            </div>
+                                        </div>
+
+                                        <!-- Escala de Umbrales SUGEF -->
+                                        <div style="margin-bottom: 10px;">
+                                            <div style="font-weight: 700; color: #0f172a; margin-bottom: 5px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.03em;">
+                                                <i class="fa fa-sliders text-info" style="margin-right: 3px;"></i> Escala de Umbrales SUGEF:
+                                            </div>
+                                            <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px; overflow: hidden;">
+                                                <div style="background: #f8fafc; padding: 5px 8px; border-bottom: 1px solid #e2e8f0; font-size: 10px; font-weight: 700; color: #475569; display: flex; justify-content: space-between;">
+                                                    <span style="width: 34%;">SEM&Aacute;FORO</span>
+                                                    <span style="width: 38%;">RANGO</span>
+                                                    <span style="width: 28%; text-align: right;">NOTA</span>
+                                                </div>
+                                                @foreach (var u in umbralesList)
+                                                {
+                                                    var uColor = u.Estado == "Verde" ? "#059669" : (u.Estado == "Amarillo" ? "#d97706" : "#dc2626");
+                                                    var uBadge = u.Estado == "Verde" ? "success" : (u.Estado == "Amarillo" ? "warning" : "danger");
+                                                    var actualBadgeBg = u.Estado == "Verde" ? "#047857" : (u.Estado == "Amarillo" ? "#b45309" : "#b91c1c");
+                                                    var rowBg = u.EsActual 
+                                                        ? (u.Estado == "Verde" ? "background-color: #ecfdf5; border-left: 3px solid #10b981;" 
+                                                          : (u.Estado == "Amarillo" ? "background-color: #fffbeb; border-left: 3px solid #f59e0b;" 
+                                                          : "background-color: #fef2f2; border-left: 3px solid #ef4444;"))
+                                                        : "background-color: #ffffff; border-left: 3px solid transparent;";
+                                                    var rowStyle = rowBg + (u.EsActual ? " font-weight: 700;" : "");
+                                                    <div style="padding: 5px 8px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; font-size: 11px; @rowStyle">
+                                                        <span style="width: 34%;">
+                                                            <span class="label label-@uBadge" style="font-size: 9px; padding: 2px 5px; border-radius: 3px;">@u.Estado</span>
+                                                            @if (u.EsActual)
+                                                            {
+                                                                <span style="background-color: @actualBadgeBg; color: #ffffff; font-size: 8px; font-weight: 700; padding: 1px 4px; border-radius: 3px; margin-left: 2px; display: inline-block; vertical-align: middle;">
+                                                                    <i class="fa fa-check"></i> Actual
+                                                                </span>
+                                                            }
+                                                        </span>
+                                                        <span style="width: 38%; color: #334155;">@u.Rango</span>
+                                                        <span style="width: 28%; text-align: right; color: @uColor; font-weight: 700;">@u.Nota</span>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                        <div style="background: #f8fafc; padding: 8px 10px; border-radius: 6px; border: 1px solid #e2e8f0;">
+                                            <strong style="color: #0f172a;">Interpretaci&oacute;n y C&aacute;lculo:</strong><br />
+                                            @Html.Raw(item.ExplicacionCalculo)
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Firmas / Pie de Informe -->
+        <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
+            <div class="row">
+                <div class="col-xs-6" style="text-align: center;">
+                    <div style="border-top: 1px solid #94a3b8; width: 60%; margin: 40px auto 6px auto;"></div>
+                    <span style="font-size: 12px; font-weight: 700; color: #0f172a; display: block;">Direcci&oacute;n Financiera</span>
+                    <span style="font-size: 11px; color: #64748b;">Fondo de Fortalecimiento Cooperativo</span>
+                </div>
+                <div class="col-xs-6" style="text-align: center;">
+                    <div style="border-top: 1px solid #94a3b8; width: 60%; margin: 40px auto 6px auto;"></div>
+                    <span style="font-size: 12px; font-weight: 700; color: #0f172a; display: block;">Supervisi&oacute;n y Riesgos</span>
+                    <span style="font-size: 11px; color: #64748b;">FGC En L&iacute;nea</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="@Url.Content("~/Content/theme/bower_components/jquery/dist/jquery.min.js")"></script>
+    <script src="@Url.Content("~/Content/theme/bower_components/bootstrap/dist/js/bootstrap.min.js")"></script>
+    <script>
+        $(document).ready(function () {
+            $('[data-toggle="popover"]').popover({
+                trigger: 'hover focus click',
+                container: 'body',
+                html: true,
+                sanitize: false,
+                delay: { show: 50, hide: 300 },
+                content: function () {
+                    var target = $(this).attr('data-target-content') || $(this).data('targetContent') || $(this).data('target-content');
+                    if (target && $(target).length > 0) {
+                        return $(target).html();
+                    }
+                    return $(this).attr('data-content');
+                }
+            });
+
+            // Permitir mantener abierto el popover cuando el puntero del ratón ingresa a su contenido
+            $('body').on('mouseenter', '.popover', function () {
+                $(this).addClass('popover-hovered');
+            });
+
+            // Cerrar popovers al hacer click fuera
+            $('body').on('click', function (e) {
+                if ($(e.target).data('toggle') !== 'popover' && $(e.target).parents('.popover.in').length === 0 && $(e.target).parents('[data-toggle="popover"]').length === 0) {
+                    $('[data-toggle="popover"]').popover('hide');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

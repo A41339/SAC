@@ -862,7 +862,7 @@ namespace FGA.Utility
             };
         }
 
-        public static CardMeta GetCardMeta(string menuText, string menuUrl, string dbIcon = null, int index = 0)
+        public static CardMeta GetCardMeta(string menuText, string menuUrl, string dbIcon = null, int index = 0, string dbDesc = null)
         {
             string textTrim = (menuText ?? "").Trim();
             string urlTrim = (menuUrl ?? "").Trim().Trim('/');
@@ -870,37 +870,42 @@ namespace FGA.Utility
             // 1. Asignación estricta de color por índice secuencial en el grid (Garantiza 100% colores distintos en el mismo Hub)
             var colorPair = Palette[Math.Abs(index) % Palette.Length];
 
-            // 2. Buscar si existe metadato de descripción e ícono en Tarjetas por MenuText o URL completa
             string descFound = null;
             string iconFound = null;
 
-            if (!string.IsNullOrEmpty(textTrim) && Tarjetas.TryGetValue(textTrim, out var metaText) && metaText != null)
+            // 2. Si viene descripción personalizada desde la BD (columna Description), tiene máxima prioridad
+            if (!string.IsNullOrWhiteSpace(dbDesc))
             {
-                descFound = metaText.Descripcion;
-                iconFound = metaText.Icono;
-            }
-            else if (!string.IsNullOrEmpty(urlTrim) && Tarjetas.TryGetValue(urlTrim, out var metaFull) && metaFull != null)
-            {
-                descFound = metaFull.Descripcion;
-                iconFound = metaFull.Icono;
-            }
-            else if (!string.IsNullOrEmpty(urlTrim) && urlTrim.IndexOf('/') <= 0 && Tarjetas.TryGetValue(urlTrim, out var metaCtrl) && metaCtrl != null)
-            {
-                descFound = metaCtrl.Descripcion;
-                iconFound = metaCtrl.Icono;
+                descFound = dbDesc.Trim();
             }
 
-            // 3. Extracción de ícono si viene en formato HTML desde la BD
-            if (string.IsNullOrEmpty(iconFound) && !string.IsNullOrEmpty(dbIcon))
+            // 3. Si viene ícono personalizado desde la BD (columna MenuIcon), formatearlo y usarlo con máxima prioridad
+            if (!string.IsNullOrWhiteSpace(dbIcon))
             {
-                var match = System.Text.RegularExpressions.Regex.Match(dbIcon, @"fa-[a-zA-Z0-9_-]+");
-                if (match.Success)
+                iconFound = NormalizarClaseIcono(dbIcon, null);
+            }
+
+            // 4. Buscar si existe metadato de descripción e ícono en Tarjetas por MenuText o URL completa
+            if (string.IsNullOrEmpty(descFound) || string.IsNullOrEmpty(iconFound))
+            {
+                if (!string.IsNullOrEmpty(textTrim) && Tarjetas.TryGetValue(textTrim, out var metaText) && metaText != null)
                 {
-                    iconFound = "fa " + match.Value;
+                    if (string.IsNullOrEmpty(descFound)) descFound = metaText.Descripcion;
+                    if (string.IsNullOrEmpty(iconFound)) iconFound = metaText.Icono;
+                }
+                else if (!string.IsNullOrEmpty(urlTrim) && Tarjetas.TryGetValue(urlTrim, out var metaFull) && metaFull != null)
+                {
+                    if (string.IsNullOrEmpty(descFound)) descFound = metaFull.Descripcion;
+                    if (string.IsNullOrEmpty(iconFound)) iconFound = metaFull.Icono;
+                }
+                else if (!string.IsNullOrEmpty(urlTrim) && urlTrim.IndexOf('/') <= 0 && Tarjetas.TryGetValue(urlTrim, out var metaCtrl) && metaCtrl != null)
+                {
+                    if (string.IsNullOrEmpty(descFound)) descFound = metaCtrl.Descripcion;
+                    if (string.IsNullOrEmpty(iconFound)) iconFound = metaCtrl.Icono;
                 }
             }
 
-            // 4. Inferencia inteligente de ícono por palabras clave en MenuText o URL
+            // 5. Inferencia inteligente de ícono por palabras clave en MenuText o URL
             if (string.IsNullOrEmpty(iconFound) || iconFound == "fa fa-file-text-o")
             {
                 if (!string.IsNullOrEmpty(textTrim))
@@ -937,7 +942,7 @@ namespace FGA.Utility
                 }
             }
 
-            // 5. Descripción adaptativa personalizada si no existe en el catálogo
+            // 6. Descripción adaptativa personalizada si no existe en el catálogo
             if (string.IsNullOrEmpty(descFound))
             {
                 descFound = "Acceda a la informaci\u00f3n y reportes detallados de " + (textTrim != "" ? textTrim : "este m\u00f3dulo") + ".";
@@ -963,5 +968,76 @@ namespace FGA.Utility
                 ColorIcono = colorPair.Icono
             };
         }
+
+        public static string GetDefaultDescripcion(string menuText, string menuUrl)
+        {
+            var meta = GetCardMeta(menuText, menuUrl, null, 0, null);
+            return meta.Descripcion;
+        }
+
+        public static string GetDefaultIcono(string menuText, string menuUrl)
+        {
+            var meta = GetCardMeta(menuText, menuUrl, null, 0, null);
+            return meta.Icono;
+        }
+
+        public static string NormalizarClaseIcono(string rawIcon, string defaultIcon = "fa fa-folder-open-o")
+        {
+            if (string.IsNullOrWhiteSpace(rawIcon))
+            {
+                return defaultIcon;
+            }
+
+            string icon = rawIcon.Trim();
+
+            // Si viene como etiqueta HTML tipo <i class="..."></i> o <span class="...">
+            var match = System.Text.RegularExpressions.Regex.Match(icon, @"class\s*=\s*[""']([^""']+)[""']", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+            if (match.Success && match.Groups.Count > 1)
+            {
+                icon = match.Groups[1].Value.Trim();
+            }
+            else
+            {
+                // Remover cualquier etiqueta HTML si quedaron
+                icon = System.Text.RegularExpressions.Regex.Replace(icon, @"<[^>]*>", "").Trim();
+            }
+
+            if (string.IsNullOrWhiteSpace(icon))
+            {
+                return defaultIcon;
+            }
+
+            // Si no tiene prefijo 'fa ' ni 'glyphicon ', asegurar prefijo
+            if (!icon.StartsWith("fa ") && !icon.StartsWith("glyphicon "))
+            {
+                if (icon.StartsWith("fa-"))
+                {
+                    icon = "fa " + icon;
+                }
+                else
+                {
+                    icon = "fa fa-" + icon;
+                }
+            }
+
+            return icon;
+        }
+
+        public static string FormatearHtmlIcono(string rawIcon, string defaultIcon = null)
+        {
+            if (string.IsNullOrWhiteSpace(rawIcon))
+            {
+                return !string.IsNullOrWhiteSpace(defaultIcon) ? string.Format("<i class=\"{0}\"></i>", NormalizarClaseIcono(defaultIcon, "fa fa-file-text-o")) : null;
+            }
+
+            string clase = NormalizarClaseIcono(rawIcon, null);
+            if (string.IsNullOrWhiteSpace(clase))
+            {
+                return null;
+            }
+
+            return string.Format("<i class=\"{0}\"></i>", clase);
+        }
     }
 }
+

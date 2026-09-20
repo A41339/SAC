@@ -112,10 +112,10 @@ namespace FGA.Controllers
                     try { info = sp.FGA_Consultar_Estado_Proyeccion(IdEntidad, PeriodoF)?.ToList() ?? new List<FGA_Consultar_Estado_Proyeccion_Result>(); } catch { }
                 },
                 () => {
-                    try { takTasas = sp.FGA_Consultar_Modelo_Tasas(IdEntidad, PeriodoI, PeriodoF, 0)?.ToList() ?? new List<FGA_Consultar_Modelo_Tasas_Result>(); } catch { }
+                    // Gráficos de Tasas y Rentabilidad omitidos del Dashboard
                 },
                 () => {
-                    try { takRenta = sp.FGA_Consultar_Modelo_Margen(IdEntidad, PeriodoI, PeriodoF)?.ToList() ?? new List<FGA_Consultar_Modelo_Margen_Result>(); } catch { }
+                    // Gráficos de Tasas y Rentabilidad omitidos del Dashboard
                 },
                 () => {
                     try { takCartera = sp.FGA_Consultar_CarteraTotal(IdEntidad, PeriodoI, PeriodoF, 12)?.ToList() ?? new List<FGA_Consultar_CarteraTotal_Result>(); } catch { }
@@ -127,7 +127,7 @@ namespace FGA.Controllers
                     try { takSuficiencia = sp.FGA_Consultar_Grafico_Suficiencia(IdEntidad, PeriodoI, PeriodoF)?.ToList() ?? new List<FGA_Consultar_Grafico_Suficiencia_Result>(); } catch { }
                 },
                 () => {
-                    try { takCS = sp.FGA_Consultar_Variacion_CS(IdEntidad, PeriodoI, PeriodoF)?.ToList() ?? new List<FGA_Consultar_Variacion_CS_Result>(); } catch { }
+                    // Gráfico de Variación Capital Social omitido del Dashboard
                 },
                 () => {
                     try
@@ -234,12 +234,10 @@ namespace FGA.Controllers
             try { setIRL(info); } catch { }
 
             try { GetVariacionCartera(ref view, takCartera); } catch { }
-            try { GetCapitalizacion(ref view, takCS); } catch { }
-            try { GetTasas(ref view, takTasas); } catch { }
-            try { GetRentabilidad(ref view, takRenta); } catch { }
+            // try { GetCapitalizacion(ref view, takCS); } catch { }
             try { GetMora(PeriodoI, PeriodoF, ref view, takMora); } catch { }
             try { GetSuficiencia(PeriodoI, PeriodoF, ref view, takSuficiencia); } catch { }
-            try { GetBrechas(ref view, info); } catch { }
+            // try { GetBrechas(ref view, info); } catch { }
 
             return view;
         }

@@ -182,8 +182,8 @@
 .hub-card {
     background: #ffffff;
     border: 1px solid #e2e8f0;
-    border-radius: 20px;
-    padding: 26px 28px 22px 28px;
+    border-radius: 16px;
+    padding: 22px 24px;
     display: flex;
     flex-direction: column;
     text-decoration: none !important;
@@ -191,7 +191,7 @@
     transition: all 0.32s cubic-bezier(0.16, 1, 0.3, 1);
     position: relative;
     cursor: pointer;
-    min-height: 195px;
+    min-height: 150px;
     overflow: hidden;
 }
 
@@ -225,9 +225,9 @@
 }
 
 .hub-card:hover {
-    transform: translateY(-7px) scale(1.01);
+    transform: translateY(-5px) scale(1.008);
     border-color: rgba(2, 132, 199, 0.3);
-    box-shadow: 0 24px 45px -12px rgba(15, 23, 42, 0.12), 0 10px 20px -6px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 20px 38px -10px rgba(15, 23, 42, 0.1), 0 8px 16px -4px rgba(0, 0, 0, 0.03);
 }
 
 .hub-card:hover::before {
@@ -247,7 +247,7 @@
     bottom: 0;
     width: 4px;
     background: var(--card-color, #0284c7);
-    border-radius: 20px 0 0 20px;
+    border-radius: 16px 0 0 16px;
     opacity: 0.85;
     transition: width 0.25s ease, opacity 0.25s ease;
 }
@@ -262,7 +262,7 @@
     position: absolute;
     right: -10px;
     bottom: -18px;
-    font-size: 110px;
+    font-size: 100px;
     color: var(--card-color, #0284c7);
     opacity: 0.045;
     pointer-events: none;
@@ -271,7 +271,7 @@
 }
 
 .hub-card:hover .hub-card-watermark {
-    transform: scale(1.22) rotate(-8deg) translateY(-6px);
+    transform: scale(1.2) rotate(-8deg) translateY(-6px);
     opacity: 0.095;
 }
 
@@ -279,135 +279,108 @@
 .hub-card-top {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    margin-bottom: 18px;
+    gap: 16px;
     position: relative;
     z-index: 2;
 }
 
-/* Badge de Ícono Principal */
+/* Badge de Ícono Principal Circular y Más Grande */
 .hub-card-icon-badge {
-    width: 52px;
-    height: 52px;
-    border-radius: 16px;
+    width: 62px;
+    height: 62px;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 22px;
-    background: linear-gradient(135deg, var(--card-bg, #e0f2fe) 0%, #ffffff 130%);
+    font-size: 28px;
+    background: var(--card-bg, #e0f2fe);
     color: var(--card-color, #0284c7);
-    border: 1px solid rgba(255, 255, 255, 0.8);
-    box-shadow: 0 6px 14px -3px rgba(15, 23, 42, 0.08), 0 2px 4px rgba(0, 0, 0, 0.02);
-    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
-}
-
-.hub-card:hover .hub-card-icon-badge {
-    transform: translateY(-3px) rotate(4deg) scale(1.08);
-    box-shadow: 0 10px 22px -4px rgba(15, 23, 42, 0.14);
-}
-
-/* Botón Circular de Acción */
-.hub-card-action-btn {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    color: #64748b;
-    font-size: 13px;
-    transition: all 0.28s ease;
+    border: 1px solid rgba(2, 132, 199, 0.15);
+    box-shadow: 0 4px 12px -2px rgba(15, 23, 42, 0.06);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
     flex-shrink: 0;
 }
 
-.hub-card:hover .hub-card-action-btn {
-    background: var(--card-color, #0284c7);
-    color: #ffffff;
-    border-color: var(--card-color, #0284c7);
-    transform: translateX(4px);
-    box-shadow: 0 6px 16px rgba(2, 132, 199, 0.35);
+.hub-card:hover .hub-card-icon-badge {
+    transform: scale(1.06) rotate(2deg);
+    box-shadow: 0 8px 18px -3px rgba(15, 23, 42, 0.12);
 }
 
-/* Insignia de Submódulo */
-.hub-card-subbadge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--card-color, #0284c7);
-    background: var(--card-bg, #e0f2fe);
-    border: 1px solid rgba(2, 132, 199, 0.15);
-    padding: 5px 12px;
-    border-radius: 20px;
-    backdrop-filter: blur(4px);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
-}
-
-/* Cuerpo de la Tarjeta */
-.hub-card-body {
-    position: relative;
-    z-index: 2;
+/* Contenedor del Título a la Par */
+.hub-card-title-area {
     display: flex;
     flex-direction: column;
-    flex-grow: 1;
+    justify-content: center;
+    gap: 4px;
+    flex: 1 1 auto;
+    min-width: 0;
 }
 
 .hub-card-title {
-    font-size: 17px;
+    font-size: 16.5px;
     font-weight: 700;
-    color: #0f172a;
-    margin: 0 0 8px 0;
-    line-height: 1.35;
+    color: #0f2d4a;
+    margin: 0;
+    line-height: 1.28;
     letter-spacing: -0.015em;
     transition: color 0.22s ease;
+    word-break: break-word;
 }
 
 .hub-card:hover .hub-card-title {
     color: var(--card-color, #0284c7);
 }
 
+/* Flecha de Navegación a la Derecha */
+.hub-card-action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--card-color, #0284c7);
+    font-size: 18px;
+    font-weight: 700;
+    transition: transform 0.28s ease, color 0.28s ease;
+    flex-shrink: 0;
+    margin-left: auto;
+    padding-left: 6px;
+}
+
+.hub-card:hover .hub-card-action-btn {
+    transform: translateX(4px);
+}
+
+/* Insignia de Submódulo */
+.hub-card-subbadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--card-color, #0284c7);
+    background: var(--card-bg, #e0f2fe);
+    border: 1px solid rgba(2, 132, 199, 0.15);
+    padding: 2px 8px;
+    border-radius: 12px;
+    line-height: 1.2;
+    align-self: flex-start;
+}
+
+/* Cuerpo de la Tarjeta */
+.hub-card-body {
+    position: relative;
+    z-index: 2;
+    margin-top: 14px;
+}
+
 .hub-card-desc {
-    font-size: 13px;
-    line-height: 1.55;
-    color: #64748b;
-    margin: 0 0 18px 0;
-    flex-grow: 1;
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: #475569;
+    margin: 0;
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
-}
-
-/* Pie de la Tarjeta */
-.hub-card-footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: auto;
-    padding-top: 14px;
-    border-top: 1px solid #f1f5f9;
-    font-size: 12px;
-    font-weight: 600;
-    color: #94a3b8;
-    position: relative;
-    z-index: 2;
-    transition: color 0.22s ease, border-color 0.22s ease;
-}
-
-.hub-card:hover .hub-card-footer {
-    color: var(--card-color, #0284c7);
-    border-top-color: #e2e8f0;
-}
-
-.hub-card-footer-icon {
-    transition: transform 0.25s ease;
-}
-
-.hub-card:hover .hub-card-footer-icon {
-    transform: translateX(5px);
 }
 
 /* Banner de pie de nota */

@@ -27,6 +27,9 @@ namespace FGA.Models
         [StringLength(100)] 
         [DisplayName("Menu Icon")] 
         public string MenuIcon { get; set; }
+        [StringLength(2000)]
+        [DisplayName("Descripción")]
+        public string Description { get; set; }
         public virtual ICollection<MenuPermission> MenuPermission_MenuIds { get; set; }
         public virtual ICollection<Menu> Menu_ParentIds { get; set; }
 

@@ -207,7 +207,7 @@ namespace FGA.Controllers
                 foreach (var child in childPerms)
                 {
                     var m = child.Menu_MenuId;
-                    var cardMeta = MenuCatalogService.GetCardMeta(m.MenuText, m.MenuURL, m.MenuIcon, cardIndex++);
+                    var cardMeta = MenuCatalogService.GetCardMeta(m.MenuText, m.MenuURL, m.MenuIcon, cardIndex++, m.Description);
 
                     bool isSubMenu = string.Equals(m.MenuURL?.Trim(), "root", StringComparison.OrdinalIgnoreCase)
                                      || string.IsNullOrWhiteSpace(m.MenuURL)
@@ -438,7 +438,7 @@ namespace FGA.Controllers
                             }
                         }
 
-                        var cardMeta = MenuCatalogService.GetCardMeta(m.MenuText, m.MenuURL, m.MenuIcon, m.Id);
+                        var cardMeta = MenuCatalogService.GetCardMeta(m.MenuText, m.MenuURL, m.MenuIcon, m.Id, m.Description);
 
                         list.Add(new
                         {

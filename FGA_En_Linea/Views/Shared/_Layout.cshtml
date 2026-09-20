@@ -7,7 +7,25 @@
     <meta property="og:title" content="FGA Conf&iacute;a" />
     <meta property="og:description" content="Somos un sistema de protecci&oacute;n que brinda Garant&iacute;a a los ahorrantes y tambi&eacute;n otorga respaldo institucional a las Cooperativas socias." />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>@Html.Raw(ViewBag.Title) - FFC</title>
+@{
+    string rawPageTitle = (ViewBag.Title ?? "").ToString();
+    string cleanPageTitle = System.Web.HttpUtility.HtmlDecode(rawPageTitle);
+    if (!string.IsNullOrEmpty(cleanPageTitle))
+    {
+        cleanPageTitle = cleanPageTitle
+            .Replace("CategorÃa", "Período")
+            .Replace("categorÃa", "período")
+            .Replace("MenÃƒÂº", "Menú")
+            .Replace("MenÃÂº", "Menú")
+            .Replace("MenÃº", "Menú")
+            .Replace("ÃƒÂ¡", "á").Replace("ÃƒÂ©", "é").Replace("ÃƒÂ­", "í").Replace("ÃƒÂ³", "ó").Replace("ÃƒÂº", "ú").Replace("ÃƒÂ±", "ñ")
+            .Replace("ÃÂ¡", "á").Replace("ÃÂ©", "é").Replace("ÃÂ­", "í").Replace("ÃÂ³", "ó").Replace("ÃÂº", "ú").Replace("ÃÂ±", "ñ")
+            .Replace("Ã¡", "á").Replace("Ã©", "é").Replace("Ã­", "í").Replace("Ã³", "ó").Replace("Ãº", "ú").Replace("Ã±", "ñ")
+            .Replace("Ã‰", "É").Replace("Ã“", "Ó").Replace("Ãš", "Ú").Replace("Ã‘", "Ñ")
+            .Replace("Ã", "Á").Replace("Ã ", "Á");
+    }
+}
+    <title>@(string.IsNullOrWhiteSpace(cleanPageTitle) ? "FFC" : cleanPageTitle + " - FFC")</title>
     <meta content="width=device-width, initial-scale=0.8, maximum-scale=1, user-scalable=no" name="viewport">
     <link rel="icon" href="~/favicon.ico">
     @Styles.Render("~/Content/css")
@@ -40,6 +58,13 @@
             res = res
                 .replace(/CategorÃa/g, 'Per\u00edodo')
                 .replace(/categorÃa/g, 'per\u00edodo')
+                .replace(/MenÃƒÂº/g, 'Men\u00fa')
+                .replace(/MenÃÂº/g, 'Men\u00fa')
+                .replace(/MenÃº/g, 'Men\u00fa')
+                .replace(/ÃƒÂ¡/g, '\u00e1').replace(/ÃƒÂ©/g, '\u00e9').replace(/ÃƒÂ­/g, '\u00ed')
+                .replace(/ÃƒÂ³/g, '\u00f3').replace(/ÃƒÂº/g, '\u00fa').replace(/ÃƒÂ±/g, '\u00f1')
+                .replace(/ÃÂ¡/g, '\u00e1').replace(/ÃÂ©/g, '\u00e9').replace(/ÃÂ­/g, '\u00ed')
+                .replace(/ÃÂ³/g, '\u00f3').replace(/ÃÂº/g, '\u00fa').replace(/ÃÂ±/g, '\u00f1')
                 .replace(/Ã¡/g, '\u00e1').replace(/Ã©/g, '\u00e9').replace(/Ã­/g, '\u00ed')
                 .replace(/Ã³/g, '\u00f3').replace(/Ãº/g, '\u00fa').replace(/Ã±/g, '\u00f1')
                 .replace(/Ã /g, '\u00c1').replace(/Ã‰/g, '\u00c9').replace(/Ã /g, '\u00cd')
@@ -49,6 +74,9 @@
 
         window.fixDomEncoding = function (root) {
             try {
+                if (document.title && (document.title.indexOf('Ã') !== -1 || document.title.indexOf('&') !== -1)) {
+                    document.title = window.sanitizeTextAccents(document.title);
+                }
                 var target = root || document.body;
                 if (!target) return;
                 var walker = document.createTreeWalker(target, NodeFilter.SHOW_TEXT, null, false);
@@ -61,6 +89,7 @@
             } catch (e) {}
         };
         $(document).ready(function () { 
+            document.title = window.sanitizeTextAccents(document.title);
             window.fixDomEncoding(); 
             if (window.MutationObserver && document.body) {
                 var fixTimer = null;
@@ -828,7 +857,7 @@
                                 </li>
                             </ul>
                         </li>
-                        <li class="control-sidebar-toggle-wrapper">
+                        <li class="control-sidebar-toggle-wrapper" style="display: none !important;">
                             <a href="javascript:void(0);" data-toggle="control-sidebar" class="control-sidebar-toggle-btn needsclick" title="Preferencias del Sistema">
                                 <i class="fa fa-gears"></i>
                             </a>

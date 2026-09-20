@@ -1,0 +1,1632 @@
+@{
+    ViewBag.Title = "Mantenimiento del Menú";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .menu-header-banner {
+        background: #ffffff;
+        border-radius: 14px;
+        padding: 20px 24px;
+        margin-bottom: 22px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        border: 1px solid #e2e8f0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+
+    .menu-header-title {
+        margin: 0;
+        font-size: 22px;
+        font-weight: 700;
+        color: #0f172a;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .menu-header-subtitle {
+        margin: 4px 0 0 0;
+        font-size: 13.5px;
+        color: #64748b;
+    }
+
+    .modern-table-card {
+        background: #ffffff;
+        border-radius: 16px;
+        padding: 24px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
+    }
+
+    .badge-custom {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 10.5px;
+        font-weight: 600;
+        padding: 2px 7px;
+        border-radius: 6px;
+        background: #e0f2fe;
+        color: #0284c7;
+        border: 1px solid #bae6fd;
+    }
+
+    .badge-default {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 10.5px;
+        font-weight: 500;
+        padding: 2px 7px;
+        border-radius: 6px;
+        background: #f1f5f9;
+        color: #64748b;
+        border: 1px solid #e2e8f0;
+    }
+    .badge-modulo-principal {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #f0f9ff;
+        color: #0369a1;
+        border: 1px solid #bae6fd;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 11.5px;
+        font-weight: 700;
+        letter-spacing: 0.2px;
+        box-shadow: 0 1px 2px rgba(2, 132, 199, 0.06);
+    }
+    .badge-modulo-principal i {
+        color: #0284c7;
+        font-size: 11px;
+    }
+
+    .item-modulo-hijo {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-weight: 600;
+        color: #334155;
+        font-size: 12.5px;
+    }
+    .item-modulo-hijo i {
+        color: #64748b;
+        font-size: 12px;
+    }
+
+    div.dataTables_length {
+        display: none !important;
+    }
+
+    .icon-preview-box {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        background: #e0f2fe;
+        color: #0284c7;
+        border: 1px solid #bae6fd;
+        flex-shrink: 0;
+    }
+
+    .icon-preview-lg {
+        width: 54px;
+        height: 54px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        background: #e0f2fe;
+        color: #0284c7;
+        border: 1px solid #bae6fd;
+        box-shadow: 0 4px 10px rgba(2, 132, 199, 0.15);
+        flex-shrink: 0;
+    }
+
+    .icon-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 10px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 12px;
+        color: #334155;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .icon-chip:hover {
+        background: #e0f2fe;
+        border-color: #7dd3fc;
+        color: #0284c7;
+        transform: translateY(-1px);
+    }
+
+    .modal-menu-custom .modal-content {
+        border-radius: 16px;
+        border: none;
+        box-shadow: 0 20px 30px -5px rgba(0, 0, 0, 0.15);
+        overflow: hidden;
+    }
+
+    .modal-menu-custom .modal-header {
+        background: #0f172a;
+        color: #ffffff;
+        padding: 18px 24px;
+        border-bottom: none;
+    }
+
+    .modal-menu-custom .modal-title {
+        font-weight: 700;
+        font-size: 17px;
+        color: #ffffff;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .modal-menu-custom .modal-body {
+        padding: 24px 28px;
+        background: #ffffff;
+    }
+
+    .modal-menu-custom .modal-footer {
+        background: #f8fafc;
+        border-top: 1px solid #e2e8f0;
+        padding: 16px 24px;
+    }
+
+    .form-label-custom {
+        font-weight: 600;
+        color: #334155;
+        font-size: 13px;
+        margin-bottom: 6px;
+        display: block;
+    }
+
+    .form-control-custom {
+        border-radius: 8px;
+        border: 1px solid #cbd5e1;
+        padding: 8px 12px;
+        font-size: 13.5px;
+        width: 100%;
+        box-shadow: none;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .form-control-custom:focus {
+        border-color: #0284c7;
+        box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+        outline: none;
+    }
+
+    .helper-text {
+        font-size: 11.5px;
+        color: #64748b;
+        margin-top: 4px;
+    }
+
+    /* Pestañas de Navegación */
+    .menu-tabs-wrapper {
+        border-bottom: 2px solid #e2e8f0;
+        margin-bottom: 22px;
+    }
+    .custom-nav-tabs {
+        border-bottom: none;
+        display: flex;
+        gap: 10px;
+        margin-bottom: -2px;
+    }
+    .custom-nav-tabs > li > a {
+        border: none !important;
+        border-bottom: 3px solid transparent !important;
+        border-radius: 0 !important;
+        color: #64748b;
+        font-weight: 600;
+        font-size: 14px;
+        padding: 12px 22px;
+        background: transparent !important;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .custom-nav-tabs > li > a:hover {
+        color: #0284c7;
+        border-bottom-color: #bae6fd !important;
+    }
+    .custom-nav-tabs > li.active > a,
+    .custom-nav-tabs > li.active > a:focus,
+    .custom-nav-tabs > li.active > a:hover {
+        color: #0284c7 !important;
+        border-bottom-color: #0284c7 !important;
+        font-weight: 700;
+    }
+    .badge-cambios-header {
+        background: #ef4444;
+        color: #ffffff;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 2px 7px;
+        border-radius: 10px;
+        margin-left: 6px;
+    }
+
+    /* Estilos del Árbol Visual con Drag & Drop */
+    .tree-actions-bar {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 14px 18px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+    .module-card {
+        background: #ffffff;
+        border: 1px solid #cbd5e1;
+        border-radius: 12px;
+        margin-bottom: 16px;
+        box-shadow: 0 2px 6px rgba(15, 23, 42, 0.03);
+        transition: box-shadow 0.2s, border-color 0.2s;
+    }
+    .module-card:hover {
+        border-color: #94a3b8;
+        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+    }
+    .module-header {
+        padding: 12px 18px;
+        background: #f8fafc;
+        border-top-left-radius: 11px;
+        border-top-right-radius: 11px;
+        border-bottom: 1px solid #e2e8f0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: default;
+    }
+    .module-header-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+    .module-header-right {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .module-drag-handle {
+        cursor: grab;
+        color: #94a3b8;
+        padding: 6px 8px;
+        border-radius: 6px;
+        font-size: 14px;
+        transition: color 0.15s, background 0.15s;
+    }
+    .module-drag-handle:hover {
+        color: #0284c7;
+        background: #e0f2fe;
+    }
+    .module-title {
+        font-size: 15px;
+        font-weight: 700;
+        color: #0f172a;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 0;
+    }
+    .module-count-badge {
+        font-size: 11.5px;
+        background: #e2e8f0;
+        color: #475569;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-weight: 600;
+    }
+    .module-order-badge {
+        font-size: 11px;
+        background: #f0fdf4;
+        color: #166534;
+        border: 1px solid #bbf7d0;
+        padding: 3px 8px;
+        border-radius: 6px;
+        font-weight: 700;
+        font-family: monospace;
+    }
+    .module-collapse-btn {
+        background: none;
+        border: none;
+        color: #64748b;
+        cursor: pointer;
+        padding: 4px 6px;
+        font-size: 13px;
+        border-radius: 4px;
+        transition: transform 0.2s;
+    }
+    .module-collapse-btn.collapsed {
+        transform: rotate(-90deg);
+    }
+
+    /* Lista de ítems arrastrables */
+    .menu-items-sortable {
+        list-style: none;
+        margin: 0;
+        padding: 12px 16px;
+        min-height: 52px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+    .menu-item-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 10px 14px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        transition: all 0.15s ease;
+    }
+    .menu-item-card:hover {
+        border-color: #7dd3fc;
+        background: #fdfdfd;
+        box-shadow: 0 2px 6px rgba(2, 132, 199, 0.08);
+    }
+    .item-drag-handle {
+        cursor: grab;
+        color: #94a3b8;
+        padding: 4px 6px;
+        border-radius: 4px;
+        font-size: 13px;
+        margin-right: 6px;
+        transition: color 0.15s, background 0.15s;
+    }
+    .item-drag-handle:hover {
+        color: #0284c7;
+        background: #e0f2fe;
+    }
+    .item-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex: 1;
+        min-width: 0;
+    }
+    .item-icon-box {
+        width: 32px;
+        height: 32px;
+        border-radius: 6px;
+        background: #f1f5f9;
+        color: #0284c7;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 15px;
+        flex-shrink: 0;
+    }
+    .item-title-text {
+        font-size: 13.5px;
+        font-weight: 600;
+        color: #1e293b;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .item-url-pill {
+        font-size: 11px;
+        color: #64748b;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        padding: 1px 6px;
+        border-radius: 4px;
+        font-family: monospace;
+        max-width: 200px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .item-order-badge {
+        font-size: 11px;
+        color: #0369a1;
+        background: #e0f2fe;
+        border: 1px solid #bae6fd;
+        padding: 2px 7px;
+        border-radius: 4px;
+        font-weight: 700;
+        font-family: monospace;
+    }
+    .item-empty-notice {
+        text-align: center;
+        padding: 18px;
+        color: #94a3b8;
+        font-size: 12.5px;
+        border: 2px dashed #e2e8f0;
+        border-radius: 8px;
+        margin: 4px 0;
+    }
+
+    /* Placeholders y Helpers de jQuery UI */
+    .module-sortable-placeholder {
+        border: 2px dashed #0284c7 !important;
+        background: #f0f9ff !important;
+        border-radius: 12px !important;
+        height: 70px !important;
+        margin-bottom: 16px !important;
+        visibility: visible !important;
+    }
+    .item-sortable-placeholder {
+        border: 2px dashed #38bdf8 !important;
+        background: #f0f9ff !important;
+        border-radius: 8px !important;
+        height: 52px !important;
+        margin-bottom: 8px !important;
+        visibility: visible !important;
+    }
+    .ui-sortable-helper {
+        box-shadow: 0 10px 25px rgba(15, 23, 42, 0.2) !important;
+        opacity: 0.95 !important;
+        border-color: #0284c7 !important;
+    }
+
+    /* Submódulos (Nivel 2) */
+    .submodule-card-item {
+        background: #f8fafc;
+        border: 1px solid #cbd5e1;
+        border-radius: 10px;
+        margin-bottom: 8px;
+        list-style: none;
+        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+        transition: border-color 0.2s;
+    }
+    .submodule-card-item:hover {
+        border-color: #94a3b8;
+    }
+    .submodule-header {
+        padding: 10px 14px;
+        background: #f1f5f9;
+        border-top-left-radius: 9px;
+        border-top-right-radius: 9px;
+        border-bottom: 1px solid #e2e8f0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: default;
+    }
+    .badge-submodulo {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        background: #fef3c7;
+        color: #92400e;
+        border: 1px solid #fde68a;
+        padding: 2px 7px;
+        border-radius: 6px;
+        font-size: 11px;
+        font-weight: 700;
+    }
+    .badge-direct-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        background: #e2e8f0;
+        color: #475569;
+        padding: 2px 7px;
+        border-radius: 6px;
+        font-size: 11px;
+        font-weight: 600;
+    }
+</style>
+
+<section class="content-header">
+    <div class="menu-header-banner">
+        <div>
+            <h1 class="menu-header-title">
+                <i class="fa fa-sitemap" style="color: #0284c7;"></i>
+                Mantenimiento del Men&uacute; del Sistema
+            </h1>
+            <p class="menu-header-subtitle">
+                Administre nombres, &iacute;conos y descripciones personalizadas para las fichas de consultas y navegaci&oacute;n.
+            </p>
+        </div>
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <a href="@Url.Action("Index", "Modulo", new { modulo = "Mantenimientos" })" class="btn btn-default" style="border-radius: 8px; font-weight: 600; font-size: 13px; border: 1px solid #cbd5e1; padding: 8px 16px;">
+                <i class="fa fa-arrow-left"></i> Volver a Mantenimientos
+            </a>
+        </div>
+    </div>
+
+    <ol class="breadcrumb">
+        <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
+        <li><a href="@Url.Action("Index", "Modulo", new { modulo = "Mantenimientos" })" class="breadcrumb-parent-pill"><i class="fa fa-wrench" style="margin-right: 4px;"></i> Mantenimientos</a></li>
+        <li class="active">Men&uacute; del Sistema</li>
+    </ol>
+</section>
+
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="modern-table-card">
+                
+                <!-- Encabezado con Pestañas -->
+                <div class="menu-tabs-wrapper">
+                    <ul class="nav nav-tabs custom-nav-tabs" role="tablist">
+                        <li role="presentation" class="active">
+                            <a href="#tabTabla" aria-controls="tabTabla" role="tab" data-toggle="tab">
+                                <i class="fa fa-table"></i> Vista Tabla
+                            </a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#tabOrganizador" id="tabBtnOrganizador" aria-controls="tabOrganizador" role="tab" data-toggle="tab">
+                                <i class="fa fa-arrows"></i> Organizador Visual (Drag & Drop)
+                                <span id="badgeCambiosHeader" class="badge-cambios-header" style="display: none;">0</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="tab-content">
+                    <!-- PESTAÑA 1: VISTA TABLA -->
+                    <div role="tabpanel" class="tab-pane active" id="tabTabla">
+                        <!-- Barra de Filtro por Módulo Padre -->
+                        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid #e2e8f0;">
+                            <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                                <label for="filtroPadre" style="margin: 0; font-size: 13.5px; font-weight: 600; color: #334155;">
+                                    <i class="fa fa-filter" style="color: #0284c7;"></i> Filtrar por M&oacute;dulo Padre:
+                                </label>
+                                <select id="filtroPadre" class="form-control" style="width: 260px; height: 38px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 13px;">
+                                    <option value="">-- Todos los M&oacute;dulos --</option>
+                                    <option value="Módulo Principal">🌟 M&oacute;dulo Principal (Sin Padre)</option>
+                                </select>
+                            </div>
+
+                            <div style="font-size: 12.5px; color: #64748b;">
+                                <i class="fa fa-info-circle" style="color: #0284c7;"></i> Las opciones sin descripci&oacute;n o &iacute;cono personalizado utilizan autom&aacute;ticamente los valores por defecto del sistema.
+                            </div>
+                        </div>
+
+                        <!-- Tabla de Mantenimiento de Menús -->
+                        <table id="tbMenus" class="table table-striped table-bordered modern-data-table" style="width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th style="width: 6%; text-align: center;">ID</th>
+                                    <th style="width: 18%;">M&oacute;dulo Padre</th>
+                                    <th style="width: 22%;">Nombre de la Opci&oacute;n</th>
+                                    <th style="width: 10%; text-align: center;">&Iacute;cono</th>
+                                    <th style="width: 36%;">Descripci&oacute;n de la Ficha</th>
+                                    <th style="width: 8%; text-align: center;">Acci&oacute;n</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+
+                    <!-- PESTAÑA 2: ORGANIZADOR VISUAL (DRAG & DROP) -->
+                    <div role="tabpanel" class="tab-pane" id="tabOrganizador">
+                        <!-- Barra Superior de Acciones -->
+                        <div class="tree-actions-bar">
+                            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                                <div style="position: relative; width: 260px;">
+                                    <i class="fa fa-search" style="position: absolute; left: 12px; top: 11px; color: #94a3b8;"></i>
+                                    <input type="text" id="treeSearchInput" class="form-control" placeholder="Buscar en el &aacute;rbol..." style="padding-left: 34px; border-radius: 8px; height: 36px; font-size: 13px; border: 1px solid #cbd5e1;" />
+                                </div>
+                                <button type="button" id="btnToggleCollapseAll" class="btn btn-default" style="border-radius: 8px; font-size: 13px; border: 1px solid #cbd5e1; height: 36px;">
+                                    <i class="fa fa-compress"></i> Colapsar Todo
+                                </button>
+                                <button type="button" id="btnRecargarArbol" class="btn btn-default" style="border-radius: 8px; font-size: 13px; border: 1px solid #cbd5e1; height: 36px;" title="Restablecer cambios no guardados">
+                                    <i class="fa fa-refresh"></i> Restablecer
+                                </button>
+                            </div>
+
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <span id="lblCambiosContador" style="font-size: 12.5px; color: #64748b; font-weight: 500; display: none;">
+                                    <i class="fa fa-pencil text-warning"></i> <strong id="cntCambios">0</strong> cambios pendientes
+                                </span>
+                                <button type="button" id="btnGuardarJerarquia" class="btn btn-default" disabled style="border-radius: 8px; font-weight: 700; font-size: 13.5px; height: 38px; padding: 0 18px; transition: all 0.2s;">
+                                    <i class="fa fa-check"></i> Sin cambios pendientes
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Banner explicativo / ayuda rápida -->
+                        <div class="alert alert-info" style="background: #f0f9ff; border: 1px solid #bae6fd; color: #0369a1; border-radius: 10px; padding: 12px 16px; margin-bottom: 20px; font-size: 12.5px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <i class="fa fa-info-circle" style="font-size: 18px; color: #0284c7;"></i>
+                                <span>
+                                    <strong>Instrucciones:</strong> Arrastre los m&oacute;dulos usando <i class="fa fa-bars text-muted"></i> para cambiar su posici&oacute;n general en el men&uacute; lateral. Arrastre las opciones dentro del mismo m&oacute;dulo para ordenar su posici&oacute;n, o su&eacute;ltelas dentro de otro m&oacute;dulo para transferirlas. Haga clic en <strong>Guardar Cambios</strong> al finalizar.
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Contenedor Loading Spinner -->
+                        <div id="treeLoading" style="text-align: center; padding: 50px 20px; color: #64748b;">
+                            <i class="fa fa-circle-o-notch fa-spin fa-2x" style="color: #0284c7;"></i>
+                            <div style="margin-top: 12px; font-size: 14px; font-weight: 500;">Cargando estructura del men&uacute;...</div>
+                        </div>
+
+                        <!-- Lista de Módulos Principales (Sortable) -->
+                        <div id="modulesSortableList" style="display: none;">
+                            <!-- Generado dinámicamente -->
+                        </div>
+
+                        <!-- Contenedor de Opciones Sin Módulo Asignado (si existen) -->
+                        <div id="unassignedContainer" style="display: none; margin-top: 24px;">
+                            <div class="module-card" style="border-style: dashed; border-color: #f59e0b; background: #fffbeb;">
+                                <div class="module-header" style="background: #fef3c7; border-bottom: 1px dashed #fde68a;">
+                                    <div class="module-header-left">
+                                        <h4 class="module-title" style="color: #92400e;">
+                                            <i class="fa fa-exclamation-triangle" style="color: #d97706;"></i>
+                                            Opciones Sin M&oacute;dulo Asignado (Hu&eacute;rfanas)
+                                        </h4>
+                                        <span class="module-count-badge" id="unassignedCountBadge" style="background: #fde68a; color: #92400e;">0 opciones</span>
+                                    </div>
+                                    <div class="module-header-right">
+                                        <span style="font-size: 11.5px; color: #b45309;">Arrastre estas opciones hacia un m&oacute;dulo arriba</span>
+                                    </div>
+                                </div>
+                                <ul class="menu-items-sortable" id="unassignedList" data-module-id="" style="background: #fffdf5;">
+                                    <!-- Generado dinámicamente -->
+                                </ul>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Modal de Edición de Opción de Menú -->
+<div class="modal fade modal-menu-custom" id="modalEditarMenu" tabindex="-1" role="dialog" aria-labelledby="modalMenuLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: #ffffff; opacity: 0.8; font-size: 22px;">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="modalMenuLabel">
+                    <i class="fa fa-edit" style="color: #38bdf8;"></i>
+                    Modificar Opci&oacute;n de Men&uacute;
+                </h4>
+            </div>
+            
+            <form id="frmEditarMenu">
+                @Html.AntiForgeryToken()
+                <input type="hidden" id="menuId" name="Id" />
+                
+                <div class="modal-body">
+                    <div class="row">
+                        <!-- Nombre de la opción -->
+                        <div class="col-md-7 col-xs-12">
+                            <div class="form-group" style="margin-bottom: 18px;">
+                                <label class="form-label-custom" for="menuText">
+                                    Nombre de la Opci&oacute;n <span style="color: #ef4444;">*</span>:
+                                </label>
+                                <input type="text" id="menuText" name="MenuText" class="form-control-custom" required maxlength="100" />
+                                <div class="helper-text">T&iacute;tulo visible en el men&uacute; lateral y en la cabecera de la ficha.</div>
+                            </div>
+                        </div>
+
+                        <!-- Módulo Padre -->
+                        <div class="col-md-5 col-xs-12">
+                            <div class="form-group" style="margin-bottom: 18px;">
+                                <label class="form-label-custom" for="menuParentId">
+                                    M&oacute;dulo Padre:
+                                </label>
+                                <select id="menuParentId" name="ParentId" class="form-control-custom">
+                                    <option value="">(Ninguno - M&oacute;dulo Principal)</option>
+                                </select>
+                                <div class="helper-text">Agrupaci&oacute;n superior a la que pertenece esta opci&oacute;n.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr style="border-color: #f1f5f9; margin: 4px 0 18px 0;" />
+
+                    <!-- Ícono de la Opción -->
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label class="form-label-custom">
+                            &Iacute;cono de la Ficha (FontAwesome):
+                        </label>
+                        <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 10px;">
+                            <div class="icon-preview-lg" id="modalIconPreview">
+                                <i class="fa fa-folder-open-o"></i>
+                            </div>
+                            <div style="flex: 1;">
+                                <input type="text" id="menuIcon" name="MenuIcon" class="form-control-custom" placeholder="Ej: fa fa-file-text-o" />
+                                <div class="helper-text" id="defaultIconNotice">
+                                    Valor por defecto del sistema: <strong id="lblDefaultIcon" style="color: #0284c7;">fa fa-folder-open-o</strong>.
+                                </div>
+                            </div>
+                            <button type="button" id="btnRestaurarIcono" class="btn btn-default btn-sm" style="border-radius: 8px; border: 1px solid #cbd5e1; white-space: nowrap;" title="Usar ícono por defecto">
+                                <i class="fa fa-undo"></i> Usar por defecto
+                            </button>
+                        </div>
+
+                        <!-- Chips de Íconos Comunes -->
+                        <div style="margin-top: 8px;">
+                            <span style="font-size: 11.5px; font-weight: 600; color: #64748b; margin-right: 6px;">Sugeridos:</span>
+                            <div style="display: inline-flex; flex-wrap: wrap; gap: 6px; margin-top: 4px;">
+                                <span class="icon-chip" onclick="seleccionarIcono('fa fa-file-text-o')"><i class="fa fa-file-text-o"></i> Ficha</span>
+                                <span class="icon-chip" onclick="seleccionarIcono('fa fa-line-chart')"><i class="fa fa-line-chart"></i> Gr&aacute;fica</span>
+                                <span class="icon-chip" onclick="seleccionarIcono('fa fa-database')"><i class="fa fa-database"></i> Datos</span>
+                                <span class="icon-chip" onclick="seleccionarIcono('fa fa-percent')"><i class="fa fa-percent"></i> M&aacute;rgenes</span>
+                                <span class="icon-chip" onclick="seleccionarIcono('fa fa-calculator')"><i class="fa fa-calculator"></i> C&aacute;lculo</span>
+                                <span class="icon-chip" onclick="seleccionarIcono('fa fa-pie-chart')"><i class="fa fa-pie-chart"></i> Cartera</span>
+                                <span class="icon-chip" onclick="seleccionarIcono('fa fa-shield')"><i class="fa fa-shield"></i> Seguridad</span>
+                                <span class="icon-chip" onclick="seleccionarIcono('fa fa-users')"><i class="fa fa-users"></i> Usuarios</span>
+                                <span class="icon-chip" onclick="seleccionarIcono('fa fa-building-o')"><i class="fa fa-building-o"></i> Entidad</span>
+                                <span class="icon-chip" onclick="seleccionarIcono('fa fa-calendar')"><i class="fa fa-calendar"></i> Calendario</span>
+                                <span class="icon-chip" onclick="seleccionarIcono('fa fa-sliders')"><i class="fa fa-sliders"></i> Ajustes</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Descripción de la Ficha (Columna Description) -->
+                    <div class="form-group" style="margin-bottom: 10px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                            <label class="form-label-custom" for="menuDescription" style="margin-bottom: 0;">
+                                Descripci&oacute;n de la Ficha:
+                            </label>
+                            <button type="button" id="btnRestaurarDesc" class="btn btn-xs btn-default" style="border-radius: 6px; border: 1px solid #cbd5e1;" title="Borrar para usar texto por defecto">
+                                <i class="fa fa-undo"></i> Usar por defecto
+                            </button>
+                        </div>
+                        <textarea id="menuDescription" name="Description" class="form-control-custom" rows="3" maxlength="2000" placeholder="Ingrese el texto explicativo que se mostrará dentro de la tarjeta de la ficha..."></textarea>
+                        
+                        <div style="background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 8px; padding: 10px 14px; margin-top: 8px;">
+                            <div style="font-size: 11.5px; font-weight: 600; color: #475569; margin-bottom: 2px;">
+                                <i class="fa fa-info-circle" style="color: #0284c7;"></i> Descripci&oacute;n por defecto del cat&aacute;logo:
+                            </div>
+                            <div id="lblDefaultDesc" style="font-size: 12.5px; color: #64748b; font-style: italic;">
+                                (Cargando...)
+                            </div>
+                            <div style="font-size: 11px; color: #94a3b8; margin-top: 4px;">
+                                Si deja el campo de arriba vac&iacute;o, la ficha mostrar&aacute; autom&aacute;ticamente este texto por defecto.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="alertModal" class="alert alert-danger" style="display: none; margin-top: 16px; border-radius: 8px;"></div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" style="border-radius: 8px; font-weight: 600; padding: 8px 18px;">
+                        Cancelar
+                    </button>
+                    <button type="submit" id="btnGuardarMenu" class="btn btn-primary" style="background: #0284c7; border-color: #0284c7; border-radius: 8px; font-weight: 600; padding: 8px 22px;">
+                        <i class="fa fa-save"></i> Guardar Cambios
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var tablaMenus = null;
+    var defaultIconActual = "fa fa-folder-open-o";
+    var defaultDescActual = "";
+
+    function limpiarClaseIcono(raw) {
+        if (!raw) return '';
+        var str = String(raw).trim();
+        // Si viene etiqueta HTML tipo <i class="..."></i> o <span class="...">
+        var match = str.match(/class\s*=\s*["']([^"']+)["']/i);
+        if (match && match[1]) {
+            str = match[1].trim();
+        } else {
+            // Remover cualquier etiqueta HTML remanente
+            str = str.replace(/<[^>]*>/g, '').trim();
+        }
+        if (!str) return '';
+        if (!str.startsWith('fa ') && !str.startsWith('glyphicon ')) {
+            if (str.startsWith('fa-')) {
+                str = 'fa ' + str;
+            } else {
+                str = 'fa fa-' + str;
+            }
+        }
+        return str;
+    }
+
+    function actualizarPreviewIcono(claseIcono) {
+        var clean = limpiarClaseIcono(claseIcono);
+        if (!clean) {
+            clean = defaultIconActual;
+        }
+        $('#modalIconPreview').html('<i class="' + clean + '"></i>');
+    }
+
+    function seleccionarIcono(icono) {
+        var clean = limpiarClaseIcono(icono);
+        $('#menuIcon').val(clean);
+        actualizarPreviewIcono(clean);
+    }
+
+    $(document).ready(function () {
+        var urlGetGrid = '@Url.Action("GetGrid", "Menu")';
+        var urlGetMenu = '@Url.Action("Get", "Menu")';
+        var urlGetParents = '@Url.Action("GetParents", "Menu")';
+        var urlSave = '@Url.Action("Save", "Menu")';
+
+        // Cargar combo de Módulos Padres para filtro y modal
+        $.ajax({
+            url: urlGetParents,
+            type: 'GET',
+            success: function (res) {
+                if (res && res.success && res.parents) {
+                    var selectFiltro = $('#filtroPadre');
+                    var selectModal = $('#menuParentId');
+                    
+                    $.each(res.parents, function (i, item) {
+                        selectFiltro.append($('<option>', { value: item.nombre, text: item.nombre }));
+                        selectModal.append($('<option>', { value: item.id, text: item.nombre }));
+                    });
+                }
+            }
+        });
+
+        // Inicializar DataTable
+        tablaMenus = $("#tbMenus").DataTable({
+            "processing": true,
+            "filter": true,
+            "dom": 'Bfrtip',
+            "lengthChange": false,
+            "pageLength": 10,
+            "ajax": {
+                "url": urlGetGrid,
+                "type": "POST",
+                "datatype": "json"
+            },
+            "buttons": [
+                { extend: 'copyHtml5', exportOptions: { columns: ':visible' } },
+                { extend: 'excelHtml5', exportOptions: { columns: ':visible' } },
+                { extend: 'pdfHtml5', exportOptions: { columns: ':visible' } },
+                { extend: 'print', exportOptions: { columns: ':visible' } },
+                'colvis'
+            ],
+            "columns": [
+                { 
+                    "data": "id", 
+                    "className": "text-center",
+                    "render": function (data) {
+                        return '<strong style="color: #64748b;">#' + data + '</strong>';
+                    }
+                },
+                { 
+                    "data": "parentName",
+                    "render": function (data, type, row) {
+                        if (type === 'filter' || type === 'sort') {
+                            return row.parentId ? (data || '') : 'Módulo Principal';
+                        }
+                        if (!row.parentId) {
+                            return '<span class="badge-modulo-principal"><i class="fa fa-sitemap"></i> M&oacute;dulo Principal</span>';
+                        }
+                        return '<span class="item-modulo-hijo"><i class="fa fa-folder-open-o"></i> ' + (data || '') + '</span>';
+                    }
+                },
+                { 
+                    "data": "menuText",
+                    "render": function (data) {
+                        return '<strong style="color: #0f2d4a; font-size: 13.5px;">' + (data || '') + '</strong>';
+                    }
+                },
+                { 
+                    "data": "menuIcon",
+                    "className": "text-center",
+                    "render": function (data, type, row) {
+                        var iconClass = limpiarClaseIcono(data) || 'fa fa-folder-open-o';
+                        if (type === 'filter' || type === 'sort') {
+                            return iconClass;
+                        }
+                        var cleanLabel = iconClass.replace(/^fa\s+/, '').replace(/^fa-/, '');
+
+                        return '<div style="display: flex; flex-direction: column; align-items: center; gap: 3px;">' +
+                               '<div class="icon-preview-box" title="' + iconClass + '"><i class="' + iconClass + '"></i></div>' +
+                               '<span style="font-size: 11px; color: #64748b; font-family: monospace;">' + cleanLabel + '</span>' +
+                               '</div>';
+                    }
+                },
+                { 
+                    "data": "description",
+                    "render": function (data, type, row) {
+                        var badgeHtml = row.isCustomDesc 
+                            ? '<span class="badge-custom" style="margin-bottom: 4px;"><i class="fa fa-star"></i> Personalizada</span>'
+                            : '<span class="badge-default" style="margin-bottom: 4px;">Por defecto</span>';
+
+                        var descText = data ? data : '<span style="color: #94a3b8; font-style: italic;">(Sin descripción)</span>';
+
+                        return '<div>' + badgeHtml + '<div style="font-size: 12px; line-height: 1.4; color: #334155; margin-top: 2px;">' + descText + '</div></div>';
+                    }
+                },
+                {
+                    "data": "id",
+                    "className": "text-center",
+                    "orderable": false,
+                    "render": function (data) {
+                        return '<button type="button" class="btn btn-sm btn-primary" onclick="abrirModalEditar(' + data + ')" style="background: #0284c7; border-color: #0284c7; border-radius: 6px; font-weight: 600; padding: 4px 10px;">' +
+                               '<i class="fa fa-edit"></i> Modificar' +
+                               '</button>';
+                    }
+                }
+            ],
+            "language": {
+                "processing": "Cargando opciones de menú...",
+                "search": "Buscar:",
+                "info": "Mostrando _START_ a _END_ de _TOTAL_ opciones",
+                "infoEmpty": "Mostrando 0 a 0 de 0 opciones",
+                "infoFiltered": "(filtrado de _MAX_ totales)",
+                "zeroRecords": "No se encontraron opciones coincidentes",
+                "paginate": {
+                    "first": "Primero",
+                    "previous": "Anterior",
+                    "next": "Siguiente",
+                    "last": "Último"
+                }
+            }
+        });
+
+        // Filtrado por Módulo Padre
+        $('#filtroPadre').on('change', function () {
+            var val = $(this).val();
+            tablaMenus.column(1).search(val ? '^' + val + '$' : '', true, false).draw();
+        });
+
+        // Preview en vivo del ícono al escribir en el input
+        $('#menuIcon').on('input', function () {
+            actualizarPreviewIcono($(this).val());
+        });
+
+        // Botón restaurar ícono por defecto
+        $('#btnRestaurarIcono').on('click', function () {
+            $('#menuIcon').val('');
+            actualizarPreviewIcono('');
+        });
+
+        // Botón restaurar descripción por defecto
+        $('#btnRestaurarDesc').on('click', function () {
+            $('#menuDescription').val('');
+        });
+
+        // Envío AJAX del formulario de edición
+        $('#frmEditarMenu').on('submit', function (e) {
+            e.preventDefault();
+            $('#alertModal').hide().text('');
+            
+            var btn = $('#btnGuardarMenu');
+            btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Guardando...');
+
+            $.ajax({
+                url: urlSave,
+                type: 'POST',
+                data: $(this).serialize(),
+                success: function (res) {
+                    btn.prop('disabled', false).html('<i class="fa fa-save"></i> Guardar Cambios');
+                    if (res && res.success) {
+                        $('#modalEditarMenu').modal('hide');
+                        tablaMenus.ajax.reload(null, false);
+                        if (jerarquiaCargada) {
+                            cargarJerarquia(false);
+                        }
+                        
+                        // Notificación flotante de éxito
+                        mostrarToastExito(res.message || 'Opción actualizada exitosamente.');
+                    } else {
+                        $('#alertModal').text(res.message || 'Ocurrió un error al guardar los cambios.').show();
+                    }
+                },
+                error: function (xhr, status, err) {
+                    btn.prop('disabled', false).html('<i class="fa fa-save"></i> Guardar Cambios');
+                    $('#alertModal').text('Error de comunicación con el servidor: ' + err).show();
+                }
+            });
+        });
+
+        // Eventos del Organizador Visual (Drag & Drop)
+        $('#tabBtnOrganizador').on('shown.bs.tab', function () {
+            if (!jerarquiaCargada) {
+                cargarJerarquia(false);
+            }
+        });
+
+        $('#btnRecargarArbol').on('click', function () {
+            if (hayCambiosPendientes()) {
+                if (!confirm("Tiene cambios sin guardar en el orden del menú. ¿Desea descartarlos y recargar la estructura original?")) {
+                    return;
+                }
+            }
+            cargarJerarquia(true);
+        });
+
+        $('#btnToggleCollapseAll').on('click', function () {
+            toggleCollapseAll();
+        });
+
+        $('#btnGuardarJerarquia').on('click', function () {
+            guardarJerarquia();
+        });
+
+        $('#treeSearchInput').on('input', function () {
+            filtrarArbol($(this).val());
+        });
+    });
+
+    // ==========================================
+    // Lógica del Organizador Visual (Drag & Drop)
+    // ==========================================
+    var urlGetHierarchy = '@Url.Action("GetHierarchy", "Menu")';
+    var urlUpdateHierarchy = '@Url.Action("UpdateHierarchy", "Menu")';
+    var initialSnapshot = null;
+    var jerarquiaCargada = false;
+    var todosColapsados = false;
+
+    function cargarJerarquia(forzar) {
+        if (!forzar && jerarquiaCargada) return;
+
+        $('#treeLoading').show();
+        $('#modulesSortableList').hide().empty();
+        $('#unassignedContainer').hide();
+        $('#unassignedList').empty();
+        $('#lblCambiosContador').hide();
+        $('#badgeCambiosHeader').hide();
+        $('#btnGuardarJerarquia').prop('disabled', true)
+            .removeClass('btn-success')
+            .addClass('btn-default')
+            .html('<i class="fa fa-check"></i> Sin cambios pendientes');
+
+        window.onbeforeunload = null;
+
+        $.ajax({
+            url: urlGetHierarchy,
+            type: 'GET',
+            success: function (res) {
+                $('#treeLoading').hide();
+                if (res && res.success) {
+                    var modulesList = $('#modulesSortableList');
+
+                    if (res.modules && res.modules.length > 0) {
+                        $.each(res.modules, function (idx, rootItem) {
+                            var rootNode = renderizarNodo(rootItem, 0);
+                            modulesList.append(rootNode);
+                        });
+                        modulesList.show();
+                    }
+
+                    // Elementos huérfanos reales (ParentId que no existe en BD)
+                    if (res.unassigned && res.unassigned.length > 0) {
+                        var unassignedUl = $('#unassignedList');
+                        $.each(res.unassigned, function (uIdx, uItem) {
+                            var uCard = renderizarNodo(uItem, 1);
+                            unassignedUl.append(uCard);
+                        });
+                        $('#unassignedCountBadge').text(res.unassigned.length + ' opciones');
+                        $('#unassignedContainer').show();
+                    } else {
+                        $('#unassignedContainer').hide();
+                    }
+
+                    iniciarSortables();
+
+                    // Capturar snapshot inicial EXACTO del estado cargado
+                    initialSnapshot = capturarSnapshot();
+                    actualizarBadgesYEstado(false);
+                    jerarquiaCargada = true;
+
+                    // Si hay filtro activo en el buscador del árbol, reaplicarlo
+                    var q = $('#treeSearchInput').val();
+                    if (q) {
+                        filtrarArbol(q);
+                    }
+                } else {
+                    alert(res.message || 'Error al cargar la jerarquía de menús.');
+                }
+            },
+            error: function (xhr, status, err) {
+                $('#treeLoading').hide();
+                alert('Error al consultar el servidor: ' + err);
+            }
+        });
+    }
+
+    function renderizarNodo(item, nivel) {
+        var hasChildren = item.children && item.children.length > 0;
+        var isContainer = item.isContainer || hasChildren;
+
+        // Caso A: Módulo Raíz (Nivel 0)
+        if (nivel === 0) {
+            var modCard = $('<div class="module-card" data-id="' + item.id + '" data-parent-id=""></div>');
+            var modHeader = $(
+                '<div class="module-header">' +
+                    '<div class="module-header-left">' +
+                        '<span class="module-drag-handle" title="Arrastre para reordenar este módulo principal"><i class="fa fa-bars"></i></span>' +
+                        (isContainer
+                            ? '<button type="button" class="module-collapse-btn" onclick="toggleModulo(' + item.id + ', this)" title="Colapsar / Expandir"><i class="fa fa-chevron-down"></i></button>'
+                            : '<span class="badge-direct-link" title="Enlace Directo"><i class="fa fa-link"></i> Directo</span>') +
+                        '<div class="item-icon-box" style="width: 28px; height: 28px; font-size: 13px;"><i class="' + (item.menuIcon || 'fa fa-folder') + '"></i></div>' +
+                        '<h4 class="module-title">' + $('<div>').text(item.menuText).html() + '</h4>' +
+                        (isContainer ? '<span class="module-count-badge" id="modCount_' + item.id + '">0 opciones</span>' : '') +
+                    '</div>' +
+                    '<div class="module-header-right">' +
+                        '<span class="module-order-badge" id="modOrder_' + item.id + '">#0</span>' +
+                        '<button type="button" class="btn btn-default btn-xs" onclick="abrirModalEditar(' + item.id + ')" title="Modificar módulo" style="border-radius: 6px; padding: 3px 8px;">' +
+                            '<i class="fa fa-edit text-primary"></i>' +
+                        '</button>' +
+                    '</div>' +
+                '</div>'
+            );
+
+            modCard.append(modHeader);
+
+            if (isContainer) {
+                var childrenUl = $('<ul class="menu-items-sortable" id="modList_' + item.id + '" data-module-id="' + item.id + '"></ul>');
+                if (hasChildren) {
+                    $.each(item.children, function (cIdx, child) {
+                        childrenUl.append(renderizarNodo(child, nivel + 1));
+                    });
+                }
+                modCard.append(childrenUl);
+            }
+            return modCard;
+        }
+
+        // Caso B: Submódulo (Nivel > 0 pero tiene hijos o es contenedor)
+        if (isContainer) {
+            var subCard = $(
+                '<li class="submodule-card-item" data-id="' + item.id + '" data-text="' + $('<div>').text(item.menuText || '').html() + '">' +
+                    '<div class="submodule-header">' +
+                        '<div class="module-header-left">' +
+                            '<span class="item-drag-handle" title="Arrastre para reordenar este submódulo"><i class="fa fa-arrows"></i></span>' +
+                            '<button type="button" class="module-collapse-btn" onclick="toggleModulo(' + item.id + ', this)" title="Colapsar / Expandir"><i class="fa fa-chevron-down"></i></button>' +
+                            '<div class="item-icon-box" style="width: 26px; height: 26px; font-size: 12px;"><i class="' + (item.menuIcon || 'fa fa-folder-open') + '"></i></div>' +
+                            '<strong style="font-size: 13px; color: #0f172a;">' + $('<div>').text(item.menuText).html() + '</strong>' +
+                            '<span class="badge-submodulo"><i class="fa fa-folder-open"></i> Subm&oacute;dulo</span>' +
+                            '<span class="module-count-badge" id="modCount_' + item.id + '">0 opciones</span>' +
+                        '</div>' +
+                        '<div class="module-header-right">' +
+                            '<span class="item-order-badge" id="modOrder_' + item.id + '">#0</span>' +
+                            '<button type="button" class="btn btn-default btn-xs" onclick="abrirModalEditar(' + item.id + ')" title="Modificar submódulo" style="border-radius: 6px; padding: 3px 8px;">' +
+                                '<i class="fa fa-edit text-primary"></i>' +
+                            '</button>' +
+                        '</div>' +
+                    '</div>' +
+                    '<ul class="menu-items-sortable" id="modList_' + item.id + '" data-module-id="' + item.id + '" style="padding-left: 20px;"></ul>' +
+                '</li>'
+            );
+
+            var subChildrenUl = subCard.find('.menu-items-sortable');
+            if (hasChildren) {
+                $.each(item.children, function (cIdx, child) {
+                    subChildrenUl.append(renderizarNodo(child, nivel + 1));
+                });
+            }
+            return subCard;
+        }
+
+        // Caso C: Opción Hoja (Ficha / Pantalla directa)
+        var iconCls = limpiarClaseIcono(item.menuIcon) || 'fa fa-file-text-o';
+        var urlLabel = item.menuUrl ? item.menuUrl : '#';
+
+        var itemLi = $(
+            '<li class="menu-item-card" data-id="' + item.id + '" data-text="' + $('<div>').text(item.menuText || '').html() + '" data-url="' + $('<div>').text(urlLabel).html() + '">' +
+                '<div class="item-info">' +
+                    '<span class="item-drag-handle" title="Arrastre para mover esta opción"><i class="fa fa-arrows"></i></span>' +
+                    '<div class="item-icon-box"><i class="' + iconCls + '"></i></div>' +
+                    '<div style="min-width: 0; flex: 1;">' +
+                        '<div class="item-title-text">' + $('<div>').text(item.menuText).html() + '</div>' +
+                    '</div>' +
+                    '<span class="item-url-pill" title="' + $('<div>').text(urlLabel).html() + '"><i class="fa fa-link" style="font-size: 9.5px;"></i> ' + $('<div>').text(urlLabel).html() + '</span>' +
+                '</div>' +
+                '<div style="display: flex; align-items: center; gap: 8px; margin-left: 10px;">' +
+                    '<span class="item-order-badge" id="itemOrder_' + item.id + '">#0</span>' +
+                    '<button type="button" class="btn btn-default btn-xs" onclick="abrirModalEditar(' + item.id + ')" title="Modificar opción" style="border-radius: 6px; padding: 3px 8px;">' +
+                        '<i class="fa fa-edit text-primary"></i>' +
+                    '</button>' +
+                '</div>' +
+            '</li>'
+        );
+        return itemLi;
+    }
+
+    function capturarSnapshot() {
+        var snap = {
+            contenedores: {},
+            padres: {}
+        };
+
+        // Módulos raíz
+        var rootIds = [];
+        $('#modulesSortableList > .module-card').each(function () {
+            var id = parseInt($(this).data('id'));
+            if (!isNaN(id)) {
+                rootIds.push(id);
+                snap.padres[id] = null;
+            }
+        });
+        snap.contenedores['root'] = rootIds;
+
+        // Listas hijas (.menu-items-sortable)
+        $('.menu-items-sortable').each(function () {
+            var parentModId = parseInt($(this).data('module-id'));
+            var listIds = [];
+            $(this).children('li').each(function () {
+                var childId = parseInt($(this).data('id'));
+                if (!isNaN(childId)) {
+                    listIds.push(childId);
+                    snap.padres[childId] = isNaN(parentModId) ? null : parentModId;
+                }
+            });
+            snap.contenedores['mod_' + parentModId] = listIds;
+        });
+
+        return snap;
+    }
+
+    var itemsModificadosUsuario = {};
+
+    function iniciarSortables() {
+        // Reordenar módulos principales entre sí
+        $('#modulesSortableList').sortable({
+            handle: '.module-drag-handle',
+            placeholder: 'module-sortable-placeholder',
+            cursor: 'move',
+            opacity: 0.92,
+            tolerance: 'pointer',
+            start: function (event, ui) {
+                ui.item.data('prev-container', 'root');
+                ui.item.data('prev-index', ui.item.index());
+            },
+            stop: function (event, ui) {
+                var currIndex = ui.item.index();
+                var prevIndex = ui.item.data('prev-index');
+                var id = parseInt(ui.item.data('id'));
+                if (!isNaN(id) && currIndex !== prevIndex) {
+                    itemsModificadosUsuario[id] = true;
+                }
+                actualizarBadgesYEstado(true);
+            }
+        });
+
+        // Reordenar y transferir opciones hijas y submódulos entre contenedores
+        $('.menu-items-sortable').sortable({
+            connectWith: '.menu-items-sortable',
+            handle: '.item-drag-handle',
+            placeholder: 'item-sortable-placeholder',
+            cursor: 'move',
+            opacity: 0.92,
+            tolerance: 'pointer',
+            start: function (event, ui) {
+                var cont = ui.item.closest('.menu-items-sortable').data('module-id');
+                ui.item.data('prev-container', cont);
+                ui.item.data('prev-index', ui.item.index());
+            },
+            receive: function (event, ui) {
+                var id = parseInt(ui.item.data('id'));
+                if (!isNaN(id)) {
+                    itemsModificadosUsuario[id] = true;
+                }
+                actualizarBadgesYEstado(true);
+            },
+            stop: function (event, ui) {
+                var currCont = ui.item.closest('.menu-items-sortable').data('module-id');
+                var prevCont = ui.item.data('prev-container');
+                var currIndex = ui.item.index();
+                var prevIndex = ui.item.data('prev-index');
+                var id = parseInt(ui.item.data('id'));
+
+                if (!isNaN(id)) {
+                    if (currCont !== prevCont || currIndex !== prevIndex) {
+                        itemsModificadosUsuario[id] = true;
+                    }
+                }
+                actualizarBadgesYEstado(true);
+            }
+        });
+    }
+
+    function actualizarBadgesYEstado(evaluarCambios) {
+        // 1. Actualizar números de orden secuenciales en la UI
+        // Módulos raíz
+        $('#modulesSortableList > .module-card').each(function (idx) {
+            var modId = parseInt($(this).data('id'));
+            $('#modOrder_' + modId).text('Orden #' + (idx + 1));
+        });
+
+        // Listas hijas
+        $('.menu-items-sortable').each(function () {
+            var parentModId = parseInt($(this).data('module-id'));
+            var children = $(this).children('li');
+            $('#modCount_' + parentModId).text(children.length + ' opciones');
+
+            children.each(function (idx) {
+                var childId = parseInt($(this).data('id'));
+                $('#itemOrder_' + childId).text('#' + (idx + 1));
+                $('#modOrder_' + childId).text('#' + (idx + 1));
+            });
+        });
+
+        // 2. Evaluar cambios respecto a initialSnapshot
+        if (!evaluarCambios || !initialSnapshot) {
+            itemsModificadosUsuario = {};
+            $('#btnGuardarJerarquia').prop('disabled', true)
+                .removeClass('btn-success')
+                .addClass('btn-default')
+                .html('<i class="fa fa-check"></i> Sin cambios pendientes');
+            $('#lblCambiosContador').hide();
+            $('#badgeCambiosHeader').hide();
+            window.onbeforeunload = null;
+            return;
+        }
+
+        var currentSnap = capturarSnapshot();
+        var hayDiferencias = false;
+
+        for (var idStr in currentSnap.padres) {
+            var id = parseInt(idStr);
+            var currParent = currentSnap.padres[id];
+            var origParent = initialSnapshot.padres[id];
+
+            if (currParent !== origParent) {
+                hayDiferencias = true;
+                break;
+            } else {
+                var contKey = (currParent === null || isNaN(currParent)) ? 'root' : ('mod_' + currParent);
+                var currList = currentSnap.contenedores[contKey] || [];
+                var origList = initialSnapshot.contenedores[contKey] || [];
+
+                if (currList.indexOf(id) !== origList.indexOf(id)) {
+                    hayDiferencias = true;
+                    break;
+                }
+            }
+        }
+
+        var btnGuardar = $('#btnGuardarJerarquia');
+        if (hayDiferencias) {
+            var cantMovimientos = Object.keys(itemsModificadosUsuario).length;
+            if (cantMovimientos === 0) {
+                cantMovimientos = 1;
+            }
+
+            btnGuardar.prop('disabled', false)
+                .removeClass('btn-default')
+                .addClass('btn-success')
+                .html('<i class="fa fa-save"></i> Guardar Cambios (' + cantMovimientos + ')');
+
+            $('#lblCambiosContador').show();
+            $('#cntCambios').text(cantMovimientos);
+            $('#badgeCambiosHeader').text(cantMovimientos).show();
+
+            window.onbeforeunload = function () {
+                return "Tiene cambios sin guardar en la jerarquía del menú.";
+            };
+        } else {
+            itemsModificadosUsuario = {};
+            btnGuardar.prop('disabled', true)
+                .removeClass('btn-success')
+                .addClass('btn-default')
+                .html('<i class="fa fa-check"></i> Sin cambios pendientes');
+
+            $('#lblCambiosContador').hide();
+            $('#badgeCambiosHeader').hide();
+            window.onbeforeunload = null;
+        }
+    }
+
+    function hayCambiosPendientes() {
+        return !$('#btnGuardarJerarquia').prop('disabled');
+    }
+
+    function guardarJerarquia() {
+        var listaFinal = [];
+
+        // 1. Módulos raíz
+        $('#modulesSortableList > .module-card').each(function (modIndex) {
+            var modId = parseInt($(this).data('id'));
+            if (!isNaN(modId)) {
+                listaFinal.push({
+                    Id: modId,
+                    ParentId: null,
+                    SortOrder: modIndex + 1
+                });
+            }
+        });
+
+        // 2. Todos los hijos y submódulos en cualquier .menu-items-sortable
+        $('.menu-items-sortable').each(function () {
+            var parentModId = parseInt($(this).data('module-id'));
+            if (!isNaN(parentModId)) {
+                $(this).children('li').each(function (childIndex) {
+                    var childId = parseInt($(this).data('id'));
+                    if (!isNaN(childId)) {
+                        listaFinal.push({
+                            Id: childId,
+                            ParentId: parentModId,
+                            SortOrder: childIndex + 1
+                        });
+                    }
+                });
+            }
+        });
+
+        if (listaFinal.length === 0) {
+            alert('No se encontraron elementos de menú para guardar.');
+            return;
+        }
+
+        var btn = $('#btnGuardarJerarquia');
+        btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Guardando...');
+
+        $.ajax({
+            url: urlUpdateHierarchy,
+            type: 'POST',
+            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify(listaFinal),
+            success: function (res) {
+                if (res && res.success) {
+                    window.onbeforeunload = null;
+                    mostrarToastExito(res.message || 'Jerarquía actualizada exitosamente.');
+                    tablaMenus.ajax.reload(null, false);
+                    cargarJerarquia(true);
+                } else {
+                    btn.prop('disabled', false).html('<i class="fa fa-save"></i> Guardar Cambios');
+                    alert(res.message || 'Ocurrió un error al guardar la jerarquía.');
+                }
+            },
+            error: function (xhr, status, err) {
+                btn.prop('disabled', false).html('<i class="fa fa-save"></i> Guardar Cambios');
+                alert('Error de comunicación con el servidor: ' + err);
+            }
+        });
+    }
+
+    function toggleModulo(modId, btn) {
+        var list = $('#modList_' + modId);
+        list.slideToggle(200);
+        $(btn).toggleClass('collapsed');
+    }
+
+    function toggleCollapseAll() {
+        todosColapsados = !todosColapsados;
+        if (todosColapsados) {
+            $('.menu-items-sortable').slideUp(200);
+            $('.module-collapse-btn').addClass('collapsed');
+            $('#btnToggleCollapseAll').html('<i class="fa fa-expand"></i> Expandir Todo');
+        } else {
+            $('.menu-items-sortable').slideDown(200);
+            $('.module-collapse-btn').removeClass('collapsed');
+            $('#btnToggleCollapseAll').html('<i class="fa fa-compress"></i> Colapsar Todo');
+        }
+    }
+
+    function filtrarArbol(texto) {
+        var q = (texto || '').toLowerCase().trim();
+        if (!q) {
+            $('.module-card').show();
+            $('.submodule-card-item').show();
+            $('.menu-item-card').show();
+            return;
+        }
+
+        $('#modulesSortableList > .module-card').each(function () {
+            var modCard = $(this);
+            var modTitle = modCard.find('.module-title').text().toLowerCase();
+            var modMatches = modTitle.indexOf(q) !== -1;
+            var anyChildMatches = false;
+
+            modCard.find('.submodule-card-item').each(function () {
+                var subCard = $(this);
+                var subText = (subCard.data('text') || '').toLowerCase();
+                var subMatches = modMatches || (subText.indexOf(q) !== -1);
+                var anySubChildMatches = false;
+
+                subCard.find('.menu-item-card').each(function () {
+                    var itemCard = $(this);
+                    var itemText = (itemCard.data('text') || '').toLowerCase();
+                    var itemUrl = (itemCard.data('url') || '').toLowerCase();
+
+                    if (subMatches || itemText.indexOf(q) !== -1 || itemUrl.indexOf(q) !== -1) {
+                        itemCard.show();
+                        anySubChildMatches = true;
+                    } else {
+                        itemCard.hide();
+                    }
+                });
+
+                if (subMatches || anySubChildMatches) {
+                    subCard.show();
+                    subCard.find('.menu-items-sortable').slideDown(150);
+                    subCard.find('.module-collapse-btn').removeClass('collapsed');
+                    anyChildMatches = true;
+                } else {
+                    subCard.hide();
+                }
+            });
+
+            modCard.find('> .menu-items-sortable > .menu-item-card').each(function () {
+                var itemCard = $(this);
+                var itemText = (itemCard.data('text') || '').toLowerCase();
+                var itemUrl = (itemCard.data('url') || '').toLowerCase();
+
+                if (modMatches || itemText.indexOf(q) !== -1 || itemUrl.indexOf(q) !== -1) {
+                    itemCard.show();
+                    anyChildMatches = true;
+                } else {
+                    itemCard.hide();
+                }
+            });
+
+            if (modMatches || anyChildMatches) {
+                modCard.show();
+                modCard.find('> .menu-items-sortable').slideDown(150);
+                modCard.find('> .module-header .module-collapse-btn').removeClass('collapsed');
+            } else {
+                modCard.hide();
+            }
+        });
+    }
+
+    // Abrir Modal de Edición
+    function abrirModalEditar(id) {
+        $('#alertModal').hide().text('');
+        var urlGetMenu = '@Url.Action("Get", "Menu")/' + id;
+
+        $.ajax({
+            url: urlGetMenu,
+            type: 'GET',
+            success: function (res) {
+                if (res && res.success && res.menu) {
+                    var m = res.menu;
+                    $('#menuId').val(m.id);
+                    $('#menuText').val(m.menuText);
+                    $('#menuParentId').val(m.parentId || '');
+                    $('#menuIcon').val(limpiarClaseIcono(m.menuIcon));
+                    $('#menuDescription').val(m.description);
+
+                    defaultIconActual = m.defaultIcon || 'fa fa-folder-open-o';
+                    defaultDescActual = m.defaultDescription || '';
+
+                    $('#lblDefaultIcon').text(defaultIconActual);
+                    $('#lblDefaultDesc').text(defaultDescActual || '(No tiene descripción por defecto)');
+
+                    actualizarPreviewIcono(m.menuIcon);
+
+                    $('#modalEditarMenu').modal('show');
+                } else {
+                    alert(res.message || 'No fue posible consultar la opción de menú.');
+                }
+            },
+            error: function () {
+                alert('Error al consultar datos de la opción.');
+            }
+        });
+    }
+
+    function mostrarToastExito(mensaje) {
+        var toast = $('<div style="position: fixed; bottom: 24px; right: 24px; background: #0f172a; color: #ffffff; padding: 14px 22px; border-radius: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); z-index: 9999; display: flex; align-items: center; gap: 10px; font-size: 13.5px; font-weight: 500;">' +
+                      '<i class="fa fa-check-circle" style="color: #10b981; font-size: 18px;"></i>' +
+                      '<span>' + mensaje + '</span>' +
+                      '</div>');
+        $('body').append(toast);
+        setTimeout(function () {
+            toast.fadeOut(400, function () { $(this).remove(); });
+        }, 3000);
+    }
+</script>

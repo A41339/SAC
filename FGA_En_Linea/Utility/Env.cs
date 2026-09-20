@@ -10,6 +10,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using FGA.Models;
+using FGA.Utility;
 using Microsoft.Owin.Security;
 
 namespace FGA
@@ -320,7 +321,20 @@ namespace FGA
                     bool isTreeActive = (activeMenuId.HasValue && HasActiveDescendant(q, item.Menu_MenuId.Id, activeMenuId.Value)) || isSelfActive;
                     string itemStyle = isTreeActive ? "active" : string.Empty;
 
-                    string menuIcon = string.IsNullOrWhiteSpace(item.Menu_MenuId.MenuIcon) ? "<i class=\"fa fa-folder-o\"></i>" : item.Menu_MenuId.MenuIcon;
+                    string rawDbIcon = item.Menu_MenuId.MenuIcon;
+                    string menuIcon;
+                    if (string.IsNullOrWhiteSpace(rawDbIcon))
+                    {
+                        menuIcon = "<i class=\"fa fa-folder-o\"></i>";
+                    }
+                    else if (!rawDbIcon.Trim().StartsWith("<"))
+                    {
+                        menuIcon = MenuCatalogService.FormatearHtmlIcono(rawDbIcon, "fa fa-folder-o");
+                    }
+                    else
+                    {
+                        menuIcon = rawDbIcon;
+                    }
 
                     if (hasChildren)
                     {

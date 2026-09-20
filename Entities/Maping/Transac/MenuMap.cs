@@ -18,6 +18,7 @@ namespace FGA.Maping
              Property(o => o.MenuURL).HasMaxLength(400);
              HasOptional(c => c.Menu2).WithMany(o => o.Menu_ParentIds).HasForeignKey(o => o.ParentId);
              Property(o => o.MenuIcon).HasMaxLength(100);
+             Property(o => o.Description).HasMaxLength(2000);
              ToTable("Menu");
  
 
