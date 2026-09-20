@@ -12,7 +12,194 @@ namespace FGA.Controllers
     {
         public ActionResult Index()
         {
+            try
+            {
+                ViewBag.Perfil_Entidad_Id = new SelectList(per.GetAll(), "Id", "Nombre").OrderBy(o => o.Text).ToList();
+            }
+            catch (Exception) { }
             return View();
+        }
+
+        [HttpGet]
+        public ActionResult GetEntidad(string id)
+        {
+            try
+            {
+                Entidad e = ent.Get(id);
+                if (e == null)
+                    return Json(new { success = false, message = "Entidad no encontrada." }, JsonRequestBehavior.AllowGet);
+
+                return Json(new
+                {
+                    success = true,
+                    data = new
+                    {
+                        id = e.Id,
+                        identificacion = e.Identificacion ?? "",
+                        nombre = e.Nombre ?? "",
+                        contacto = e.Contacto ?? "",
+                        correoInforme = e.CorreoInforme ?? "",
+                        perfilId = e.Perfil_Entidad_Id,
+                        activo = e.Activo,
+                        indCargar = e.Ind_Cargar,
+                        indValidar = e.Ind_Validar,
+                        indEvaluacion = e.Ind_Evaluacion,
+                        logoUrl = "https://www.ffc.co.cr/img/secciones/afiliados/" + (e.Nombre ?? "").Trim() + ".jpg"
+                    }
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error al consultar entidad: " + ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpGet]
+        public ActionResult GetDetalleEntidad(string id)
+        {
+            try
+            {
+                Entidad e = ent.Get(id);
+                if (e == null)
+                    return Json(new { success = false, message = "Entidad no encontrada." }, JsonRequestBehavior.AllowGet);
+
+                return Json(new
+                {
+                    success = true,
+                    data = new
+                    {
+                        id = e.Id,
+                        identificacion = e.Identificacion ?? "-",
+                        nombre = e.Nombre ?? "-",
+                        contacto = string.IsNullOrWhiteSpace(e.Contacto) ? "-" : e.Contacto,
+                        correoInforme = string.IsNullOrWhiteSpace(e.CorreoInforme) ? "-" : e.CorreoInforme,
+                        perfil = (e.Perfil_Entidad != null ? e.Perfil_Entidad.Nombre : "-"),
+                        estado = e.Activo ? "Activo" : "Inactivo",
+                        indCargar = (e.Ind_Cargar == true ? "Sí" : "No"),
+                        indValidar = (e.Ind_Validar == true ? "Sí" : "No"),
+                        indEvaluacion = (e.Ind_Evaluacion == true ? "Sí" : "No"),
+                        logoUrl = "https://www.ffc.co.cr/img/secciones/afiliados/" + (e.Nombre ?? "").Trim() + ".jpg"
+                    }
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error al consultar detalle: " + ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult GuardarEntidad(bool esNuevo, string id, string identificacion, string nombre, string contacto, string correoInforme, long? perfilId, bool activo, bool indCargar, bool indValidar, bool indEvaluacion, HttpPostedFileBase file)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(id))
+                    return Json(new { success = false, message = "El código de la entidad es obligatorio." });
+                if (string.IsNullOrWhiteSpace(identificacion))
+                    return Json(new { success = false, message = "La identificación es obligatoria." });
+                if (string.IsNullOrWhiteSpace(nombre))
+                    return Json(new { success = false, message = "El nombre de la entidad es obligatorio." });
+
+                id = id.Trim();
+                identificacion = identificacion.Trim();
+                nombre = nombre.Trim().ToUpper();
+
+                if (file != null && file.ContentLength > 0)
+                {
+                    if (file.ContentType.Equals("image/jpeg") || file.ContentType.Equals("image/png") || file.ContentType.Equals("image/jpg"))
+                    {
+                        try
+                        {
+                            var rutaBase = System.Configuration.ConfigurationManager.AppSettings["RutaImg"];
+                            if (!string.IsNullOrEmpty(rutaBase))
+                            {
+                                var path = rutaBase + "afiliados\\" + nombre + ".jpg";
+                                file.SaveAs(path);
+                            }
+                        }
+                        catch (Exception) { }
+                    }
+                    else
+                    {
+                        return Json(new { success = false, message = "La imagen del logo debe estar en formato .jpg o .png." });
+                    }
+                }
+
+                if (esNuevo)
+                {
+                    Entidad repetido = ent.GetByIden(identificacion);
+                    if (repetido != null)
+                        return Json(new { success = false, message = "Ya existe una entidad con la identificación '" + identificacion + "'." });
+
+                    Entidad repetidoId = ent.Get(id);
+                    if (repetidoId != null)
+                        return Json(new { success = false, message = "Ya existe una entidad con el código '" + id + "'." });
+
+                    Entidad nueva = new Entidad
+                    {
+                        Id = id,
+                        Identificacion = identificacion,
+                        Nombre = nombre,
+                        Contacto = contacto ?? "",
+                        CorreoInforme = correoInforme ?? "",
+                        Perfil_Entidad_Id = perfilId.GetValueOrDefault(),
+                        Activo = activo,
+                        Ind_Cargar = indCargar,
+                        Ind_Validar = indValidar,
+                        Ind_Evaluacion = indEvaluacion,
+                        Logo = nombre + ".jpg"
+                    };
+
+                    ent.Add(ref nueva);
+                    return Json(new { success = true, message = "Entidad creada exitosamente." });
+                }
+                else
+                {
+                    Entidad existing = ent.Get(id);
+                    if (existing == null)
+                        return Json(new { success = false, message = "La entidad que intenta modificar no existe." });
+
+                    existing.Identificacion = identificacion;
+                    existing.Nombre = nombre;
+                    existing.Contacto = contacto ?? "";
+                    existing.CorreoInforme = correoInforme ?? "";
+                    existing.Perfil_Entidad_Id = perfilId.GetValueOrDefault();
+                    existing.Activo = activo;
+                    existing.Ind_Cargar = indCargar;
+                    existing.Ind_Validar = indValidar;
+                    existing.Ind_Evaluacion = indEvaluacion;
+                    if (file != null && file.ContentLength > 0)
+                        existing.Logo = nombre + ".jpg";
+
+                    ent.Update(existing);
+                    return Json(new { success = true, message = "Entidad actualizada exitosamente." });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error al procesar la entidad: " + ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public ActionResult EliminarEntidad(string id)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(id))
+                    return Json(new { success = false, message = "Código de entidad inválido." });
+
+                Entidad existing = ent.Get(id);
+                if (existing == null)
+                    return Json(new { success = false, message = "La entidad que intenta eliminar no existe." });
+
+                ent.Delete(id);
+                return Json(new { success = true, message = "Entidad eliminada exitosamente." });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error al eliminar entidad: " + ex.Message });
+            }
         }
         public ActionResult GetGrid()
         {

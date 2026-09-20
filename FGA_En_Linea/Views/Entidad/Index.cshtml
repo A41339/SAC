@@ -3,11 +3,176 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<style>
+    .entidad-header-banner {
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 20px 24px;
+        margin-bottom: 20px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        border: 1px solid #e2e8f0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+    .entidad-header-title {
+        margin: 0;
+        font-size: 22px;
+        font-weight: 700;
+        color: #0f172a;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    .entidad-header-subtitle {
+        margin: 4px 0 0 0;
+        font-size: 13px;
+        color: #64748b;
+    }
+    .btn-create-entidad {
+        background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+        color: #ffffff !important;
+        font-weight: 600;
+        font-size: 14px;
+        padding: 10px 20px;
+        border-radius: 8px;
+        border: none;
+        box-shadow: 0 4px 6px -1px rgba(2, 132, 199, 0.25);
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+    }
+    .btn-create-entidad:hover {
+        background: linear-gradient(135deg, #0369a1 0%, #075985 100%);
+        box-shadow: 0 6px 10px -1px rgba(2, 132, 199, 0.35);
+        transform: translateY(-1px);
+    }
+    .modern-table-card {
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 24px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+    .modal-entidad-custom .modal-content {
+        border-radius: 14px;
+        border: none;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        overflow: hidden;
+    }
+    .modal-entidad-custom .modal-header {
+        background: #f8fafc;
+        border-bottom: 1px solid #e2e8f0;
+        padding: 18px 24px;
+    }
+    .modal-entidad-custom .modal-title {
+        font-weight: 700;
+        font-size: 18px;
+        color: #0f172a;
+        margin: 0;
+    }
+    .modal-entidad-custom .modal-body {
+        padding: 24px;
+    }
+    .modal-entidad-custom .modal-footer {
+        background: #f8fafc;
+        border-top: 1px solid #e2e8f0;
+        padding: 16px 24px;
+    }
+    .form-group-custom label {
+        font-weight: 600;
+        color: #334155;
+        font-size: 13px;
+        margin-bottom: 6px;
+    }
+    .form-group-custom .form-control {
+        border-radius: 8px;
+        border: 1px solid #cbd5e1;
+        padding: 9px 12px;
+        height: auto;
+        font-size: 13.5px;
+        box-shadow: none;
+        transition: border-color 0.2s;
+    }
+    .form-group-custom .form-control:focus {
+        border-color: #0284c7;
+        box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+    }
+    .custom-switch-label {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+        font-weight: 500;
+        color: #334155;
+        margin: 6px 0;
+        font-size: 13px;
+    }
+    .custom-switch-label input[type="checkbox"] {
+        width: 17px;
+        height: 17px;
+        cursor: pointer;
+        accent-color: #0284c7;
+    }
+    .detail-item-label {
+        font-size: 12px;
+        font-weight: 600;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 3px;
+    }
+    .detail-item-value {
+        font-size: 14.5px;
+        font-weight: 600;
+        color: #0f172a;
+        background: #f8fafc;
+        padding: 8px 12px;
+        border-radius: 6px;
+        border: 1px solid #e2e8f0;
+        margin-bottom: 14px;
+    }
+    .badge-status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 3px 9px;
+        border-radius: 9999px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+    .badge-status-pill.active {
+        background: #dcfce7;
+        color: #166534;
+    }
+    .badge-status-pill.inactive {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+</style>
+
 <section class="content-header">
-    <h1>
-        <i class="fa fa-university"></i> Entidades Afiliadas
-        <small>Administraci&oacute;n, registro y par&aacute;metros de cooperativas asociadas al FFC.</small>
-    </h1>
+    <div class="entidad-header-banner">
+        <div>
+            <h1 class="entidad-header-title">
+                <i class="fa fa-university" style="color: #0284c7;"></i>
+                Entidades Afiliadas
+            </h1>
+            <p class="entidad-header-subtitle">
+                Administraci&oacute;n, registro y par&aacute;metros de cooperativas asociadas al FFC.
+            </p>
+        </div>
+        <div>
+            <button type="button" id="btnNuevaEntidad" class="btn-create-entidad">
+                <i class="fa fa-plus-circle"></i> Crear Nueva Entidad
+            </button>
+        </div>
+    </div>
+
     <ol class="breadcrumb">
         <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
         <li><a href="@Url.Action("Index", "Modulo", new { modulo = "Entidad/Index" })" class="breadcrumb-parent-pill" title="Volver al men&uacute; de Mantenimientos"><i class="fa fa-wrench" style="margin-right: 4px;"></i> Mantenimientos</a></li>
@@ -16,129 +181,515 @@
 </section>
 
 <section class="content">
-    <!-- Small boxes (Stat box) -->
     <div class="row">
         <div class="col-xs-12">
-            <div class="box box-solid box-info">
-
-                <div class="box-body">
-                    <!-- Split button -->
-                    <div class="margin">
-                        <div class="btn-group">
-                            <a href="~/Entidad/Create" class="btn btn-dropbox">Crear una Entidad</a>
-                        </div>
-                    </div>
-                    <!-- flat split buttons -->
-                </div><!-- /.box-body -->
-            </div>
-            <div class="box box-solid box-info">
-                <div class="box-body table-responsive">
-                    <div class="margin">
-                        <div class="streaming-table">
-                            <span id="found" class="label label-info"></span>
-                            <table id="tbCompany" class="table table-striped table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>Acci&oacute;n</th>
-                                        <th> C&oacute;digo  </th>
-                                        <th> Identificaci&oacute;n  </th>
-                                        <th> Nombre  </th>
-                                        <th> Estado  </th>
-                                        <th> Carga habilitada  </th>
-                                        <th> Validar archivos  </th>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
-
-                            <div id="summary">
-                                <div>
-                                </div>
-                            </div>
-                            <br />
-                        </div>
-                    </div>
-                </div>
+            <div class="modern-table-card">
+                <table id="tbCompany" class="table table-striped table-bordered modern-data-table" style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th style="width: 80px; text-align: center;">Acci&oacute;n</th>
+                            <th>C&oacute;digo</th>
+                            <th>Identificaci&oacute;n</th>
+                            <th>Nombre</th>
+                            <th>Estado</th>
+                            <th>Carga Habilitada</th>
+                            <th>Validar Archivos</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
             </div>
         </div>
     </div>
 </section>
 
-<script type="text/javascript">
+<!-- ========================================================================= -->
+<!-- MODAL DINÁMICO: CREAR / EDITAR ENTIDAD -->
+<!-- ========================================================================= -->
+<div class="modal fade modal-entidad-custom" id="modalEntidad" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar" style="font-size: 24px;">&times;</button>
+                <h4 class="modal-title" id="lblModalEntidadTitulo">
+                    <i class="fa fa-plus-circle" style="color: #0284c7; margin-right: 8px;"></i>
+                    <span id="lblTituloEntidadTexto">Nueva Entidad</span>
+                </h4>
+            </div>
+            <form id="frmEntidadModal" enctype="multipart/form-data">
+                <input type="hidden" id="entEsNuevo" value="true" />
+                <div class="modal-body">
+                    <div id="modalEntidadError" class="alert alert-danger" style="display: none; border-radius: 8px; font-size: 13px;"></div>
 
-        $(document).ready(function () {
-            var oTableCompany = "";
-            var ControlerNameCompany = "@Url.Content("~/Entidad")";
-            // debugger;
-            oTableCompany = $("#tbCompany").dataTable({
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group form-group-custom">
+                                <label for="entId">C&oacute;digo de Entidad <span style="color: #ef4444;">*</span></label>
+                                <input type="text" class="form-control" id="entId" placeholder="Ej: 01, 105" required autocomplete="off" />
+                                <small class="text-muted" style="font-size: 11px;">Identificador único en el sistema.</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group form-group-custom">
+                                <label for="entIdentificacion">C&eacute;dula Jur&iacute;dica <span style="color: #ef4444;">*</span></label>
+                                <input type="text" class="form-control" id="entIdentificacion" placeholder="Ej: 3002123456" required autocomplete="off" />
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group form-group-custom">
+                                <label for="entPerfil">Perfil de Entidad</label>
+                                @Html.DropDownList("Perfil_Entidad_Id", (IEnumerable<SelectListItem>)ViewBag.Perfil_Entidad_Id, " -Seleccione un perfil- ", new { @class = "form-control", id = "entPerfil" })
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group form-group-custom">
+                                <label for="entNombre">Nombre de la Entidad / Cooperativa <span style="color: #ef4444;">*</span></label>
+                                <input type="text" class="form-control" id="entNombre" placeholder="Nombre oficial" required autocomplete="off" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group form-group-custom">
+                                <label for="entContacto">Persona de Contacto</label>
+                                <input type="text" class="form-control" id="entContacto" placeholder="Nombre del contacto principal" autocomplete="off" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group form-group-custom">
+                                <label for="entCorreoInforme">Correo para Notificaciones / Informes</label>
+                                <input type="email" class="form-control" id="entCorreoInforme" placeholder="informes@entidad.fi.cr" autocomplete="off" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row" style="margin-top: 10px; padding: 14px 10px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0;">
+                        <div class="col-md-3 col-sm-6">
+                            <label class="custom-switch-label">
+                                <input type="checkbox" id="entActivo" checked />
+                                <span>Entidad Activa</span>
+                            </label>
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <label class="custom-switch-label">
+                                <input type="checkbox" id="entIndCargar" checked />
+                                <span>Carga Habilitada</span>
+                            </label>
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <label class="custom-switch-label">
+                                <input type="checkbox" id="entIndValidar" checked />
+                                <span>Validar Archivos</span>
+                            </label>
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <label class="custom-switch-label">
+                                <input type="checkbox" id="entIndEvaluacion" checked />
+                                <span>Evaluaci&oacute;n</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="row" style="margin-top: 16px;">
+                        <div class="col-md-8">
+                            <div class="form-group form-group-custom">
+                                <label>Logo Institucional (.jpg o .png)</label>
+                                <input type="file" id="entLogoFile" name="file" class="form-control" accept="image/jpeg,image/png,image/jpg" />
+                                <small class="text-muted" style="font-size: 11.5px;">Recomendado formato JPG horizontal sobre fondo blanco o transparente.</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4" style="text-align: center;">
+                            <label style="font-size: 12px; font-weight: 600; color: #64748b; display: block; margin-bottom: 6px;">Vista Previa del Logo</label>
+                            <img id="imgLogoPreview" src="https://www.ffc.co.cr/img/secciones/Logo/Logo.jpg"
+                                 style="max-width: 140px; max-height: 80px; object-fit: contain; border: 1px solid #cbd5e1; border-radius: 8px; padding: 4px; background: #ffffff;"
+                                 onerror="this.onerror=null; this.src='https://www.ffc.co.cr/img/secciones/Logo/Logo.jpg';" alt="Logo" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" style="border-radius: 6px; font-weight: 500;">Cancelar</button>
+                    <button type="submit" id="btnGuardarEntidad" class="btn btn-primary" style="background: #0284c7; border-color: #0284c7; border-radius: 6px; font-weight: 600; padding: 8px 20px;">
+                        <i class="fa fa-check" style="margin-right: 4px;"></i> Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- MODAL DINÁMICO: CONSULTAR DETALLE DE ENTIDAD -->
+<!-- ========================================================================= -->
+<div class="modal fade modal-entidad-custom" id="modalDetalleEntidad" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar" style="font-size: 24px;">&times;</button>
+                <h4 class="modal-title">
+                    <i class="fa fa-university" style="color: #0284c7; margin-right: 8px;"></i>
+                    Detalle de la Entidad
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div id="modalDetalleEntidadSpinner" style="text-align: center; padding: 30px 0;">
+                    <i class="fa fa-spinner fa-spin fa-2x" style="color: #0284c7;"></i>
+                    <p style="margin-top: 10px; color: #64748b; font-size: 13px;">Cargando información...</p>
+                </div>
+                <div id="modalDetalleEntidadContenido" style="display: none;">
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <img id="detEntLogo" src="" style="max-height: 90px; max-width: 200px; object-fit: contain; border: 1px solid #e2e8f0; border-radius: 8px; padding: 6px; background: #ffffff;"
+                             onerror="this.onerror=null; this.src='https://www.ffc.co.cr/img/secciones/Logo/Logo.jpg';" alt="Logo" />
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <div class="detail-item-label">Código</div>
+                            <div class="detail-item-value" id="detEntId">-</div>
+                        </div>
+                        <div class="col-xs-6">
+                            <div class="detail-item-label">Estado</div>
+                            <div class="detail-item-value" id="detEntEstado">-</div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <div class="detail-item-label">Identificación</div>
+                            <div class="detail-item-value" id="detEntIdentificacion">-</div>
+                        </div>
+                        <div class="col-xs-6">
+                            <div class="detail-item-label">Perfil de Entidad</div>
+                            <div class="detail-item-value" id="detEntPerfil">-</div>
+                        </div>
+                    </div>
+
+                    <div class="detail-item-label">Nombre Oficial</div>
+                    <div class="detail-item-value" id="detEntNombre">-</div>
+
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <div class="detail-item-label">Contacto</div>
+                            <div class="detail-item-value" id="detEntContacto">-</div>
+                        </div>
+                        <div class="col-xs-6">
+                            <div class="detail-item-label">Correo para Informes</div>
+                            <div class="detail-item-value" id="detEntCorreoInforme" style="word-break: break-all;">-</div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-4">
+                            <div class="detail-item-label">Carga Habilitada</div>
+                            <div class="detail-item-value" id="detEntCarga">-</div>
+                        </div>
+                        <div class="col-xs-4">
+                            <div class="detail-item-label">Validar Archivos</div>
+                            <div class="detail-item-value" id="detEntValidar">-</div>
+                        </div>
+                        <div class="col-xs-4">
+                            <div class="detail-item-label">Evaluación</div>
+                            <div class="detail-item-value" id="detEntEvaluacion">-</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" style="border-radius: 6px; font-weight: 500;">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- MODAL DINÁMICO: CONFIRMAR ELIMINACIÓN DE ENTIDAD -->
+<!-- ========================================================================= -->
+<div class="modal fade modal-entidad-custom" id="modalDeleteEntidad" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background: #fef2f2; border-bottom: 1px solid #fee2e2;">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">&times;</button>
+                <h4 class="modal-title" style="color: #dc2626;">
+                    <i class="fa fa-exclamation-triangle" style="margin-right: 6px;"></i> Eliminar Entidad
+                </h4>
+            </div>
+            <div class="modal-body" style="text-align: center; padding: 24px 16px;">
+                <p style="font-size: 14px; color: #334155; margin-bottom: 8px;">
+                    ¿Est&aacute; seguro que desea eliminar la entidad?
+                </p>
+                <p style="font-size: 15px; font-weight: 700; color: #0f172a; word-break: break-word;" id="lblDeleteEntidadName"></p>
+                <p style="font-size: 12px; color: #94a3b8; margin-top: 12px;">
+                    Esta acci&oacute;n remover&aacute; la entidad del sistema.
+                </p>
+                <input type="hidden" id="deleteEntidadId" value="" />
+            </div>
+            <div class="modal-footer" style="justify-content: center; display: flex; gap: 10px;">
+                <button type="button" class="btn btn-default" data-dismiss="modal" style="border-radius: 6px;">Cancelar</button>
+                <button type="button" id="btnConfirmDeleteEntidad" class="btn btn-danger" style="background: #dc2626; border-color: #dc2626; border-radius: 6px; font-weight: 600;">
+                    <i class="fa fa-trash" style="margin-right: 4px;"></i> S&iacute;, Eliminar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var oTableCompany = $("#tbCompany").DataTable({
             "bRetrieve": true,
             "bProcessing": true,
             "dom": 'lBfrtip',
             "sAjaxSource": "@Url.Content("~/Entidad/GetGrid")",
             "buttons": [
-                 { extend: 'copyHtml5', exportOptions: { columns: ':visible' } }
-                ,{ extend: 'excelHtml5', exportOptions: { columns: ':visible' } }
-                ,{ extend: 'pdfHtml5', exportOptions: { columns: ':visible' } }
-                ,{ extend: 'print', exportOptions: { columns: ':visible' } }
-                ,'colvis'
-            ], columnDefs: [{   visible: false }],
+                { extend: 'copyHtml5', exportOptions: { columns: ':visible' } },
+                { extend: 'excelHtml5', exportOptions: { columns: ':visible' } },
+                { extend: 'pdfHtml5', exportOptions: { columns: ':visible' } },
+                { extend: 'print', exportOptions: { columns: ':visible' } },
+                'colvis'
+            ],
             "pageLength": 10,
-            "lengthMenu": [[5,10, 25, 50, -1], [5,10, 25, 50, "Todos"]],
-                "aoColumns": [
-
+            "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "Todos"]],
+            "aoColumns": [
                 {
-                                 "mRender": function (oObj, type, row) {
-
-                    var buttons = '<div class="text-center"> <div class="btn-group text-left"> <button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" style="border-radius:6px; border:1px solid #cbd5e1; font-size:12px; padding:4px 10px; color:#374151;"><i class="fa fa-cog" style="margin-right:4px;"></i> Acci&oacute;n <span class="caret"></span></button>';
-                    buttons += '<ul class="dropdown-menu pull-left" role="menu">';
-                                     buttons += '<li><a href="' + ControlerNameCompany + "/Edit/" + row[0] + '"><i class="fa fa-edit"></i>Modificar</a></li>';
-                                     buttons += '<li><a href="' + ControlerNameCompany + "/Details/" + row[0] + '"><i class="fa fa-edit"></i>Consultar</a></li>';
-                                     buttons += '<li><a href="' + ControlerNameCompany + "/Delete/" + row[0] + '"><i class="fa fa-edit"></i>Borrar</a></li>';
-                    buttons += '</ul>';
-                    buttons += '</div></div>';
-                    return buttons;
-                }
-                    },
-                    {},
-                    {},
-                    {},
-                    {
-                        "mRender": function (val, type, row) {
-                            if (!val) return "";
-                            if (type === 'display') {
-                                return (val === 'Activo')
-                                    ? '<span class="badge" style="background-color:#10b981; color:#fff; font-weight:600; padding:4px 9px; border-radius:4px; font-size:11px;">Activo</span>'
-                                    : '<span class="badge" style="background-color:#ef4444; color:#fff; font-weight:600; padding:4px 9px; border-radius:4px; font-size:11px;">Inactivo</span>';
-                            }
-                            return val;
-                        }
-                    },
-                    {
-                        "mRender": function (val, type, row) {
-                            if (!val) return "";
-                            var text = val.toString().replace(/S[\ufffd\?]/g, 'S\u00ed');
-                            if (type === 'display') {
-                                return (text === 'S\u00ed' || text === 'Si')
-                                    ? '<span class="badge" style="background-color:#0284c7; color:#fff; font-weight:600; padding:4px 9px; border-radius:4px; font-size:11px;">S\u00ed</span>'
-                                    : '<span class="badge" style="background-color:#94a3b8; color:#fff; font-weight:600; padding:4px 9px; border-radius:4px; font-size:11px;">No</span>';
-                            }
-                            return text;
-                        }
-                    },
-                    {
-                        "mRender": function (val, type, row) {
-                            if (!val) return "";
-                            var text = val.toString().replace(/S[\ufffd\?]/g, 'S\u00ed');
-                            if (type === 'display') {
-                                return (text === 'S\u00ed' || text === 'Si')
-                                    ? '<span class="badge" style="background-color:#0284c7; color:#fff; font-weight:600; padding:4px 9px; border-radius:4px; font-size:11px;">S\u00ed</span>'
-                                    : '<span class="badge" style="background-color:#94a3b8; color:#fff; font-weight:600; padding:4px 9px; border-radius:4px; font-size:11px;">No</span>';
-                            }
-                            return text;
-                        }
+                    "mRender": function (oObj, type, row) {
+                        var id = row[0];
+                        var nombreEscaped = escape(row[3]);
+                        var buttons = '<div class="text-center"> <div class="btn-group text-left">' +
+                            '<button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" style="border-radius:6px; border:1px solid #cbd5e1; font-size:12px; padding:4px 10px; color:#374151;">' +
+                            '<i class="fa fa-cog" style="margin-right:4px;"></i> Acci&oacute;n <span class="caret"></span></button>' +
+                            '<ul class="dropdown-menu pull-left" role="menu">' +
+                            '<li><a href="javascript:void(0);" class="btn-edit-entidad" data-id="' + id + '"><i class="fa fa-pencil" style="color:#0284c7; margin-right:6px;"></i> Modificar</a></li>' +
+                            '<li><a href="javascript:void(0);" class="btn-view-entidad" data-id="' + id + '"><i class="fa fa-id-card-o" style="color:#10b981; margin-right:6px;"></i> Consultar</a></li>' +
+                            '<li><a href="javascript:void(0);" class="btn-delete-entidad" data-id="' + id + '" data-nombre="' + nombreEscaped + '"><i class="fa fa-trash" style="color:#ef4444; margin-right:6px;"></i> Borrar</a></li>' +
+                            '</ul>' +
+                            '</div></div>';
+                        return buttons;
                     }
-                ]
+                },
+                {}, {}, {},
+                {
+                    "mRender": function (data, type, row) {
+                        var isAct = ('' + data).toLowerCase().indexOf('activo') !== -1 && ('' + data).toLowerCase().indexOf('inactivo') === -1;
+                        return '<span class="badge-status-pill ' + (isAct ? 'active' : 'inactive') + '">' +
+                            '<i class="fa ' + (isAct ? 'fa-check' : 'fa-times') + '"></i> ' + data + '</span>';
+                    }
+                },
+                {}, {}
+            ]
         });
-     });
-</script>
 
+        // ---------------------------------------------------------------------
+        // PREVIEW DE LOGO AL SELECCIONAR ARCHIVO
+        // ---------------------------------------------------------------------
+        $('#entLogoFile').on('change', function (e) {
+            if (e.target.files && e.target.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (evt) {
+                    $('#imgLogoPreview').attr('src', evt.target.result);
+                };
+                reader.readAsDataURL(e.target.files[0]);
+            }
+        });
+
+        // ---------------------------------------------------------------------
+        // ABRIR MODAL CREAR NUEVA ENTIDAD
+        // ---------------------------------------------------------------------
+        $('#btnNuevaEntidad').on('click', function () {
+            $('#lblTituloEntidadTexto').text('Nueva Entidad');
+            $('#lblModalEntidadTitulo i').attr('class', 'fa fa-plus-circle');
+            $('#entEsNuevo').val('true');
+            $('#entId').val('').prop('disabled', false);
+            $('#entIdentificacion').val('');
+            $('#entNombre').val('');
+            $('#entContacto').val('');
+            $('#entCorreoInforme').val('');
+            $('#entPerfil').val('');
+            $('#entActivo').prop('checked', true);
+            $('#entIndCargar').prop('checked', true);
+            $('#entIndValidar').prop('checked', true);
+            $('#entIndEvaluacion').prop('checked', true);
+            $('#entLogoFile').val('');
+            $('#imgLogoPreview').attr('src', 'https://www.ffc.co.cr/img/secciones/Logo/Logo.jpg');
+            $('#modalEntidadError').hide();
+            $('#modalEntidad').modal('show');
+            setTimeout(function () { $('#entId').focus(); }, 400);
+        });
+
+        // ---------------------------------------------------------------------
+        // ABRIR MODAL EDITAR ENTIDAD
+        // ---------------------------------------------------------------------
+        $(document).on('click', '.btn-edit-entidad', function () {
+            var entidadId = $(this).data('id');
+            $('#lblTituloEntidadTexto').text('Modificar Entidad');
+            $('#lblModalEntidadTitulo i').attr('class', 'fa fa-pencil');
+            $('#entEsNuevo').val('false');
+            $('#entId').val(entidadId).prop('disabled', true);
+            $('#modalEntidadError').hide();
+            $('#entLogoFile').val('');
+
+            $.ajax({
+                url: '@Url.Action("GetEntidad", "Entidad")',
+                type: 'GET',
+                data: { id: entidadId },
+                success: function (res) {
+                    if (res.success) {
+                        var d = res.data;
+                        $('#entIdentificacion').val(d.identificacion);
+                        $('#entNombre').val(d.nombre);
+                        $('#entContacto').val(d.contacto);
+                        $('#entCorreoInforme').val(d.correoInforme);
+                        $('#entPerfil').val(d.perfilId);
+                        $('#entActivo').prop('checked', d.activo);
+                        $('#entIndCargar').prop('checked', d.indCargar);
+                        $('#entIndValidar').prop('checked', d.indValidar);
+                        $('#entIndEvaluacion').prop('checked', d.indEvaluacion);
+                        $('#imgLogoPreview').attr('src', d.logoUrl);
+                        $('#modalEntidad').modal('show');
+                        setTimeout(function () { $('#entNombre').focus(); }, 400);
+                    } else {
+                        window.mostrarToastError(res.message);
+                    }
+                },
+                error: function () {
+                    window.mostrarToastError('Error de comunicación al consultar la entidad.');
+                }
+            });
+        });
+
+        // ---------------------------------------------------------------------
+        // GUARDAR ENTIDAD (CREAR O EDITAR CON FORMDATA)
+        // ---------------------------------------------------------------------
+        $('#frmEntidadModal').on('submit', function (e) {
+            e.preventDefault();
+            var $btn = $('#btnGuardarEntidad');
+            $btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Guardando...');
+            $('#modalEntidadError').hide();
+
+            var formData = new FormData();
+            formData.append('esNuevo', $('#entEsNuevo').val());
+            formData.append('id', $('#entId').val());
+            formData.append('identificacion', $('#entIdentificacion').val());
+            formData.append('nombre', $('#entNombre').val());
+            formData.append('contacto', $('#entContacto').val());
+            formData.append('correoInforme', $('#entCorreoInforme').val());
+            formData.append('perfilId', $('#entPerfil').val() || '');
+            formData.append('activo', $('#entActivo').is(':checked'));
+            formData.append('indCargar', $('#entIndCargar').is(':checked'));
+            formData.append('indValidar', $('#entIndValidar').is(':checked'));
+            formData.append('indEvaluacion', $('#entIndEvaluacion').is(':checked'));
+
+            var fileInput = document.getElementById('entLogoFile');
+            if (fileInput.files.length > 0) {
+                formData.append('file', fileInput.files[0]);
+            }
+
+            $.ajax({
+                url: '@Url.Action("GuardarEntidad", "Entidad")',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                cache: false,
+                success: function (res) {
+                    $btn.prop('disabled', false).html('<i class="fa fa-check" style="margin-right: 4px;"></i> Guardar');
+                    if (res.success) {
+                        $('#modalEntidad').modal('hide');
+                        oTableCompany.ajax.reload(null, false);
+                        window.mostrarToastExito(res.message);
+                    } else {
+                        $('#modalEntidadError').text(res.message).fadeIn();
+                    }
+                },
+                error: function () {
+                    $btn.prop('disabled', false).html('<i class="fa fa-check" style="margin-right: 4px;"></i> Guardar');
+                    $('#modalEntidadError').text('Error de comunicación al procesar la entidad.').fadeIn();
+                }
+            });
+        });
+
+        // ---------------------------------------------------------------------
+        // ABRIR MODAL CONSULTAR DETALLE DE ENTIDAD
+        // ---------------------------------------------------------------------
+        $(document).on('click', '.btn-view-entidad', function () {
+            var entidadId = $(this).data('id');
+            $('#modalDetalleEntidadSpinner').show();
+            $('#modalDetalleEntidadContenido').hide();
+            $('#modalDetalleEntidad').modal('show');
+
+            $.ajax({
+                url: '@Url.Action("GetDetalleEntidad", "Entidad")',
+                type: 'GET',
+                data: { id: entidadId },
+                success: function (res) {
+                    $('#modalDetalleEntidadSpinner').hide();
+                    if (res.success) {
+                        var d = res.data;
+                        $('#detEntId').text(d.id);
+                        $('#detEntIdentificacion').text(d.identificacion);
+                        $('#detEntNombre').text(d.nombre);
+                        $('#detEntContacto').text(d.contacto);
+                        $('#detEntCorreoInforme').text(d.correoInforme);
+                        $('#detEntPerfil').text(d.perfil);
+                        $('#detEntEstado').text(d.estado);
+                        $('#detEntCarga').text(d.indCargar);
+                        $('#detEntValidar').text(d.indValidar);
+                        $('#detEntEvaluacion').text(d.indEvaluacion);
+                        $('#detEntLogo').attr('src', d.logoUrl);
+                        $('#modalDetalleEntidadContenido').fadeIn();
+                    } else {
+                        $('#modalDetalleEntidad').modal('hide');
+                        window.mostrarToastError(res.message);
+                    }
+                },
+                error: function () {
+                    $('#modalDetalleEntidad').modal('hide');
+                    window.mostrarToastError('Error de comunicación al consultar la entidad.');
+                }
+            });
+        });
+
+        // ---------------------------------------------------------------------
+        // ABRIR MODAL ELIMINAR ENTIDAD
+        // ---------------------------------------------------------------------
+        $(document).on('click', '.btn-delete-entidad', function () {
+            var entidadId = $(this).data('id');
+            var entidadNombre = unescape($(this).data('nombre'));
+            $('#deleteEntidadId').val(entidadId);
+            $('#lblDeleteEntidadName').text(entidadNombre + ' (' + entidadId + ')');
+            $('#modalDeleteEntidad').modal('show');
+        });
+
+        // ---------------------------------------------------------------------
+        // CONFIRMAR ELIMINACIÓN DE ENTIDAD
+        // ---------------------------------------------------------------------
+        $('#btnConfirmDeleteEntidad').on('click', function () {
+            var entidadId = $('#deleteEntidadId').val();
+            var $btn = $(this);
+            $btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Eliminando...');
+
+            $.ajax({
+                url: '@Url.Action("EliminarEntidad", "Entidad")',
+                type: 'POST',
+                data: { id: entidadId },
+                success: function (res) {
+                    $btn.prop('disabled', false).html('<i class="fa fa-trash" style="margin-right: 4px;"></i> Sí, Eliminar');
+                    $('#modalDeleteEntidad').modal('hide');
+                    if (res.success) {
+                        oTableCompany.ajax.reload(null, false);
+                        window.mostrarToastExito(res.message);
+                    } else {
+                        window.mostrarToastError(res.message);
+                    }
+                },
+                error: function () {
+                    $btn.prop('disabled', false).html('<i class="fa fa-trash" style="margin-right: 4px;"></i> Sí, Eliminar');
+                    $('#modalDeleteEntidad').modal('hide');
+                    window.mostrarToastError('Error de comunicación al intentar eliminar la entidad.');
+                }
+            });
+        });
+    });
+</script>
