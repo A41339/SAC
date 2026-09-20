@@ -230,7 +230,14 @@ namespace FGA.Controllers
                 rolePerms = menPermClient.GetMenu(currentRole.Id) ?? new FGA.Models.MenuPermission[0];
             }
 
-            var permDict = rolePerms.Where(p => p.MenuId.HasValue).ToDictionary(p => p.MenuId.Value, p => p);
+            var permDict = new Dictionary<int, FGA.Models.MenuPermission>();
+            foreach (var p in rolePerms.Where(p => p.MenuId.HasValue))
+            {
+                if (!permDict.ContainsKey(p.MenuId.Value))
+                {
+                    permDict[p.MenuId.Value] = p;
+                }
+            }
 
             // Obtener raíces
             var rootMenus = allMenus.Where(m => m.ParentId == null).OrderBy(m => m.SortOrder ?? 0).ThenBy(m => m.MenuText).ToList();
@@ -350,7 +357,7 @@ namespace FGA.Controllers
                 {
                     allMenus = menuClient.GetAll();
                 }
-                var menuMap = allMenus.ToDictionary(m => m.Id);
+                var menuMap = allMenus.GroupBy(m => m.Id).ToDictionary(g => g.Key, g => g.First());
 
                 // Mapear permisos recibidos
                 var dictPermisos = new Dictionary<int, PermisoAsignadoDto>();
@@ -392,7 +399,17 @@ namespace FGA.Controllers
                 using (var menPermClient = new FGA_En_Linea.MenuPermissionService.MenuPermissionServiceClient())
                 {
                     var existingPerms = (menPermClient.GetMenu(rolId) ?? new FGA.Models.MenuPermission[0]).ToList();
-                    var existingDict = existingPerms.Where(e => e.MenuId.HasValue).ToDictionary(e => e.MenuId.Value);
+                    var existingGroups = existingPerms.Where(e => e.MenuId.HasValue).GroupBy(e => e.MenuId.Value).ToList();
+                    var existingDict = existingGroups.ToDictionary(g => g.Key, g => g.First());
+
+                    // Limpiar duplicados históricos en BD si existían
+                    foreach (var g in existingGroups)
+                    {
+                        foreach (var dup in g.Skip(1))
+                        {
+                            try { menPermClient.Delete(dup.Id.ToString()); } catch { }
+                        }
+                    }
 
                     // Sincronizar cada menú del sistema: lo que da acceso es la existencia del registro en MenuPermission
                     foreach (var m in allMenus)
