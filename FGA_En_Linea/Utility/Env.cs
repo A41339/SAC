@@ -314,7 +314,7 @@ namespace FGA
 
             if (q != null)
             {
-                foreach (var item in q.Where(i => i.Menu_MenuId.ParentId == ParentId).OrderBy(i => i.SortOrder))
+                foreach (var item in q.Where(i => i.Menu_MenuId != null && i.Menu_MenuId.ParentId == ParentId).OrderBy(i => i.Menu_MenuId.SortOrder ?? 0).ThenBy(i => i.Menu_MenuId.MenuText))
                 {
                     bool isSelfActive = activeMenuId.HasValue && item.Menu_MenuId.Id == activeMenuId.Value;
                     bool hasChildren = q.Any(j => j.Menu_MenuId.ParentId == item.Menu_MenuId.Id);

@@ -199,7 +199,8 @@ namespace FGA.Controllers
 
                 var childPerms = allPermitted
                     .Where(p => p.Menu_MenuId != null && p.Menu_MenuId.ParentId == rootId)
-                    .OrderBy(p => p.SortOrder ?? p.Menu_MenuId.SortOrder ?? 0)
+                    .OrderBy(p => p.Menu_MenuId.SortOrder ?? 0)
+                    .ThenBy(p => p.Menu_MenuId.MenuText)
                     .ToList();
 
                 var tarjetas = new List<ModuloTarjetaItem>();
@@ -241,7 +242,7 @@ namespace FGA.Controllers
                         Icono = cardMeta.Icono,
                         ColorFondoIcono = cardMeta.ColorFondoIcono,
                         ColorIcono = cardMeta.ColorIcono,
-                        SortOrder = child.SortOrder ?? m.SortOrder ?? 0,
+                        SortOrder = m.SortOrder ?? 0,
                         EsSubModulo = isSubMenu,
                         CantidadOpciones = subOptionsCount
                     });
