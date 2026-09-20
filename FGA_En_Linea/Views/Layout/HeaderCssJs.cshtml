@@ -4,7 +4,11 @@
             @{
                 if (TempData["success"]!=null)
                 {
-                     @:$.sticky("<br/> @TempData["success"]", { stickyClass: 'success' });
+                     @:if (window.mostrarToastExito) { window.mostrarToastExito("@Html.Raw(HttpUtility.JavaScriptStringEncode(TempData["success"].ToString()))"); } else { $.sticky("<br/> @TempData["success"]", { stickyClass: 'success' }); }
+                }
+                if (TempData["error"]!=null)
+                {
+                     @:if (window.mostrarToastError) { window.mostrarToastError("@Html.Raw(HttpUtility.JavaScriptStringEncode(TempData["error"].ToString()))"); } else { $.sticky("<br/> @TempData["error"]", { stickyClass: 'error' }); }
                 }
             }
             function StarkL() {  $("#starkloader").show(); }

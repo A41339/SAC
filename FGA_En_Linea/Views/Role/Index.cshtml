@@ -332,6 +332,10 @@
         });
 
         function showAlert(type, message) {
+            if (window.mostrarToast) {
+                window.mostrarToast(message, type === 'success' ? 'success' : 'error');
+                return;
+            }
             var alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
             var iconClass = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle';
             var html = '<div class="alert ' + alertClass + ' alert-dismissible" style="border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">' +

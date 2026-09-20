@@ -34,6 +34,125 @@
     <link rel="stylesheet" href="~/Content/dashboard_modern.css?v=@DateTime.Now.Ticks" />
     <link rel="stylesheet" href="~/Content/modulo_hub.css?v=@DateTime.Now.Ticks" />
     @Scripts.Render("~/bundles/javascript")
+    <script type="text/javascript">
+        // ==========================================================================
+        // SISTEMA UNIVERSAL DE NOTIFICACIONES TOAST FLOTANTES (FFC Modern UI)
+        // ==========================================================================
+        (function () {
+            var shownMessages = {};
+
+            window.mostrarToast = function (mensaje, tipo, titulo, duracion) {
+                if (!mensaje) return;
+                tipo = tipo || 'success';
+                duracion = duracion || (tipo === 'error' || tipo === 'danger' ? 5000 : 3500);
+
+                var iconClass = 'fa-check-circle';
+                if (tipo === 'error' || tipo === 'danger') {
+                    tipo = 'error';
+                    iconClass = 'fa-times-circle';
+                } else if (tipo === 'warning' || tipo === 'advertencia') {
+                    tipo = 'warning';
+                    iconClass = 'fa-exclamation-triangle';
+                } else if (tipo === 'info') {
+                    iconClass = 'fa-info-circle';
+                } else {
+                    tipo = 'success';
+                }
+
+                var cleanMsg = mensaje;
+                if (window.sanitizeTextAccents) {
+                    cleanMsg = window.sanitizeTextAccents(cleanMsg);
+                }
+                if (typeof cleanMsg === 'string') {
+                    cleanMsg = cleanMsg.replace(/^(\s*<br\s*\/?>)+/gi, '').trim();
+                }
+
+                // Prevenir mensajes idénticos duplicados en rápida sucesión (<1.5s)
+                var dedupeKey = tipo + ':' + cleanMsg;
+                if (shownMessages[dedupeKey]) return;
+                shownMessages[dedupeKey] = true;
+                setTimeout(function () { delete shownMessages[dedupeKey]; }, 1500);
+
+                var $container = $('#fgaToastContainer');
+                if ($container.length === 0) {
+                    $container = $('<div id="fgaToastContainer" class="fga-toast-container"></div>').appendTo('body');
+                }
+
+                var cleanTitle = titulo ? (window.sanitizeTextAccents ? window.sanitizeTextAccents(titulo) : titulo) : '';
+                var titleHtml = cleanTitle ? '<div class="toast-title">' + cleanTitle + '</div>' : '';
+
+                var $toast = $(
+                    '<div class="fga-toast-item toast-' + tipo + '">' +
+                        '<i class="fa ' + iconClass + ' toast-icon"></i>' +
+                        '<div class="toast-body">' +
+                            titleHtml +
+                            '<div class="toast-message">' + cleanMsg + '</div>' +
+                        '</div>' +
+                        '<button type="button" class="toast-close" title="Cerrar">&times;</button>' +
+                    '</div>'
+                );
+
+                $container.append($toast);
+
+                var removeTimer = setTimeout(function () {
+                    cerrarToast();
+                }, duracion);
+
+                function cerrarToast() {
+                    clearTimeout(removeTimer);
+                    $toast.css('animation', 'fgaToastFadeOut 0.3s forwards');
+                    setTimeout(function () {
+                        $toast.remove();
+                    }, 300);
+                }
+
+                $toast.find('.toast-close').on('click', function () {
+                    cerrarToast();
+                });
+            };
+
+            window.mostrarToastExito = function (mensaje, titulo) {
+                window.mostrarToast(mensaje, 'success', titulo);
+            };
+
+            window.mostrarToastError = function (mensaje, titulo) {
+                window.mostrarToast(mensaje, 'error', titulo || 'Atención');
+            };
+
+            window.mostrarToastInfo = function (mensaje, titulo) {
+                window.mostrarToast(mensaje, 'info', titulo);
+            };
+
+            window.mostrarToastAdvertencia = function (mensaje, titulo) {
+                window.mostrarToast(mensaje, 'warning', titulo || 'Advertencia');
+            };
+
+            // Interceptor de compatibilidad para jquery-stickynotif ($.sticky)
+            // Utilizado históricamente por StarkAjaxFormSubmiter y notij.js
+            if (window.jQuery) {
+                jQuery.sticky = function (msg, opts) {
+                    var tipo = 'success';
+                    if (opts && opts.stickyClass) {
+                        var sc = ('' + opts.stickyClass).toLowerCase();
+                        if (sc.indexOf('error') !== -1 || sc.indexOf('danger') !== -1 || sc.indexOf('fail') !== -1) {
+                            tipo = 'error';
+                        } else if (sc.indexOf('warn') !== -1) {
+                            tipo = 'warning';
+                        } else if (sc.indexOf('info') !== -1) {
+                            tipo = 'info';
+                        }
+                    }
+                    window.mostrarToast(msg, tipo);
+                    return { id: Math.floor(Math.random() * 99999), duplicate: 'no', displayed: true, position: 'top-right' };
+                };
+                if (jQuery.fn) {
+                    jQuery.fn.sticky = function (msg, opts) {
+                        return jQuery.sticky(msg || $(this).html(), opts);
+                    };
+                }
+            }
+        })();
+    </script>
     @Html.Action("HeaderCssJs", "Layout")
     @RenderSection("ScriptsOrCss", required: false)
     @RenderSection("Scripts", required: false)
@@ -796,6 +915,137 @@
             display: none !important;
         }
     }
+
+    /* ==========================================================================
+       UNIVERSAL FLOATING TOAST NOTIFICATIONS (FFC Modern UI)
+       ========================================================================== */
+    .fga-toast-container {
+        position: fixed !important;
+        bottom: 24px !important;
+        right: 24px !important;
+        z-index: 999999 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 10px !important;
+        pointer-events: none !important;
+        max-width: 440px !important;
+        width: calc(100% - 48px) !important;
+    }
+
+    .fga-toast-item {
+        pointer-events: auto !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 12px !important;
+        padding: 13px 18px !important;
+        background: #0f172a !important;
+        color: #ffffff !important;
+        border-radius: 10px !important;
+        box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.35), 0 4px 6px -2px rgba(0, 0, 0, 0.1) !important;
+        font-size: 13.5px !important;
+        font-weight: 500 !important;
+        line-height: 1.4 !important;
+        border-left: 4px solid #10b981 !important;
+        animation: fgaToastSlideIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+        transition: opacity 0.25s ease, transform 0.25s ease !important;
+        border-top: none !important;
+        border-right: none !important;
+        border-bottom: none !important;
+    }
+
+    .fga-toast-item.toast-success {
+        border-left-color: #10b981 !important;
+    }
+    .fga-toast-item.toast-success .toast-icon {
+        color: #10b981 !important;
+    }
+
+    .fga-toast-item.toast-error {
+        border-left-color: #ef4444 !important;
+    }
+    .fga-toast-item.toast-error .toast-icon {
+        color: #ef4444 !important;
+    }
+
+    .fga-toast-item.toast-warning {
+        border-left-color: #f59e0b !important;
+    }
+    .fga-toast-item.toast-warning .toast-icon {
+        color: #f59e0b !important;
+    }
+
+    .fga-toast-item.toast-info {
+        border-left-color: #0284c7 !important;
+    }
+    .fga-toast-item.toast-info .toast-icon {
+        color: #38bdf8 !important;
+    }
+
+    .fga-toast-item .toast-icon {
+        font-size: 20px !important;
+        flex-shrink: 0 !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+    .fga-toast-item .toast-body {
+        flex: 1 !important;
+        min-width: 0 !important;
+        word-break: break-word !important;
+    }
+
+    .fga-toast-item .toast-title {
+        font-weight: 700 !important;
+        font-size: 13.5px !important;
+        margin-bottom: 2px !important;
+        color: #ffffff !important;
+    }
+
+    .fga-toast-item .toast-message {
+        color: #f1f5f9 !important;
+        font-size: 13px !important;
+    }
+
+    .fga-toast-item .toast-close {
+        background: transparent !important;
+        border: none !important;
+        color: #94a3b8 !important;
+        cursor: pointer !important;
+        padding: 4px !important;
+        margin-left: 6px !important;
+        font-size: 16px !important;
+        line-height: 1 !important;
+        opacity: 0.7 !important;
+        transition: opacity 0.2s, color 0.2s !important;
+        flex-shrink: 0 !important;
+    }
+    .fga-toast-item .toast-close:hover {
+        opacity: 1 !important;
+        color: #ffffff !important;
+    }
+
+    @@keyframes fgaToastSlideIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px) scale(0.96);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    @@keyframes fgaToastFadeOut {
+        from {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+        to {
+            opacity: 0;
+            transform: translateY(10px) scale(0.96);
+        }
+    }
 </style>
 
 @{
@@ -927,9 +1177,54 @@
         <input type="hidden" id="myid" />
         <input type="hidden" id="myname" />
         <input type="hidden" id="companyname" />
+        <!-- Contenedor Universal de Notificaciones Toast Flotantes -->
+        <div id="fgaToastContainer" class="fga-toast-container"></div>
 
         @Html.Action("Index", "ParameterPartial")
     </div>
+
+    <!-- Integración Automática de Mensajes del Servidor (TempData / Alerts) -->
+    @{
+        var toastSuccess = TempData["Success"] ?? TempData["success"] ?? TempData["Exito"] ?? TempData["exito"] ?? TempData["Mensaje"];
+        var toastError = TempData["Error"] ?? TempData["error"] ?? TempData["danger"] ?? TempData["Danger"];
+        var toastWarn = TempData["Warning"] ?? TempData["warning"] ?? TempData["Advertencia"] ?? TempData["advertencia"];
+        var toastInfo = TempData["Info"] ?? TempData["info"];
+    }
+    <script type="text/javascript">
+        $(document).ready(function () {
+            @if (toastSuccess != null)
+            {
+                <text>if (window.mostrarToastExito) { window.mostrarToastExito('@Html.Raw(HttpUtility.JavaScriptStringEncode(toastSuccess.ToString()))'); }</text>
+            }
+            @if (toastError != null)
+            {
+                <text>if (window.mostrarToastError) { window.mostrarToastError('@Html.Raw(HttpUtility.JavaScriptStringEncode(toastError.ToString()))'); }</text>
+            }
+            @if (toastWarn != null)
+            {
+                <text>if (window.mostrarToastAdvertencia) { window.mostrarToastAdvertencia('@Html.Raw(HttpUtility.JavaScriptStringEncode(toastWarn.ToString()))'); }</text>
+            }
+            @if (toastInfo != null)
+            {
+                <text>if (window.mostrarToastInfo) { window.mostrarToastInfo('@Html.Raw(HttpUtility.JavaScriptStringEncode(toastInfo.ToString()))'); }</text>
+            }
+
+            // Auto-captura y ocultamiento de alertas estáticas heredadas (alert-success / alert-danger)
+            // que se encuentren visibles en el cuerpo de la página en la carga inicial
+            setTimeout(function () {
+                $('.alert.alert-success:visible, .alert.alert-danger:visible').each(function () {
+                    var $el = $(this);
+                    if ($el.hasClass('no-toast') || $el.closest('.modal').length) return;
+                    var msg = $el.clone().children('button, .close, i.fa').remove().end().text().trim();
+                    if (msg && msg.length > 2) {
+                        var isErr = $el.hasClass('alert-danger');
+                        window.mostrarToast(msg, isErr ? 'error' : 'success');
+                        $el.slideUp(200);
+                    }
+                });
+            }, 100);
+        });
+    </script>
 </body>
 
 <script type="text/javascript">

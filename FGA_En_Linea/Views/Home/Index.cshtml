@@ -5,10 +5,13 @@
 @section ScriptsOrCss
 {
  
+    <!-- Scripts amCharts v4 y pdfmake comentados: obsoletos tras la migración completa del Centro de Mando a Highcharts -->
+    @*
     <script src="https://cdn.amcharts.com/lib/4/core.js"></script>
     <script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
     <script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.62/pdfmake.js"></script>
+    *@
     <link href="~/Content/box.css" rel="stylesheet" />
 }
 
@@ -223,6 +226,9 @@
 
     var meses = new Array("Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre");
 
+    // Obsoleto: getPDF() hacía referencia al antiguo contenedor estático #dashboard.
+    // La exportación e impresión oficial se realiza vía openInformeEjecutivo().
+    /*
     function getPDF() {
         var divContent1 = $("#dashboard").html();
         divContent1 = divContent1.replace("hidden", "");
@@ -239,8 +245,8 @@
         printWindow.document.write('</body></html>');
         printWindow.print();
         printWindow.close();
-
     }
+    */
 
         function getGraph(id) {
         if (id === 'S1') {
