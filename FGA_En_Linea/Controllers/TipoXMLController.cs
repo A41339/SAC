@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -21,10 +21,11 @@ namespace FGA.Controllers
             {
                 var tak = db.GetAll();
                 var result = from c in tak
-                             select new string[] { c.Id.ToString(),
-            Convert.ToString(c.Id),
-            Convert.ToString(c.Nombre)
-            };
+                             select new string[] {
+                                 c.Id.ToString(),
+                                 Convert.ToString(c.Id),
+                                 Convert.ToString(c.Nombre)
+                             };
                 return Json(new { aaData = result }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception)
@@ -32,6 +33,162 @@ namespace FGA.Controllers
             }
 
             return null;
+        }
+
+        [HttpGet]
+        public ActionResult GetTipoXML(string id)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(id))
+                    return Json(new { success = false, message = "Identificador no proporcionado." }, JsonRequestBehavior.AllowGet);
+
+                TipoXML obj = db.Get(id);
+                if (obj == null)
+                    return Json(new { success = false, message = "Tipo de XML no encontrado." }, JsonRequestBehavior.AllowGet);
+
+                List<XML_Excepcion> desligados = exc.GetByFile(obj.Id).ToList();
+                List<Entidad> listEntidad = ent.GetAll().Where(o => o.Activo && o.Id != FGA.Utility.Utilitarios.entidadAdministradora).ToList();
+
+                var ligadas = listEntidad.Where(p => !desligados.Any(p2 => p2.IdEntidad_Id == p.Id))
+                                         .Select(e => new { Id = e.Id, Nombre = e.Nombre }).ToList();
+                var desLigadas = listEntidad.Where(p => desligados.Any(p2 => p2.IdEntidad_Id == p.Id))
+                                            .Select(e => new { Id = e.Id, Nombre = e.Nombre }).ToList();
+
+                return Json(new
+                {
+                    success = true,
+                    data = new
+                    {
+                        Id = obj.Id,
+                        Nombre = obj.Nombre,
+                        Ligadas = ligadas,
+                        DesLigadas = desLigadas
+                    }
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error al obtener tipo de XML: " + ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpGet]
+        public ActionResult GetDetalleTipoXML(string id)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(id))
+                    return Json(new { success = false, message = "Identificador no proporcionado." }, JsonRequestBehavior.AllowGet);
+
+                TipoXML obj = db.Get(id);
+                if (obj == null)
+                    return Json(new { success = false, message = "Tipo de XML no encontrado." }, JsonRequestBehavior.AllowGet);
+
+                List<XML_Excepcion> desligados = exc.GetByFile(obj.Id).ToList();
+                List<Entidad> listEntidad = ent.GetAll().Where(o => o.Activo && o.Id != FGA.Utility.Utilitarios.entidadAdministradora).ToList();
+
+                int totalLigadas = listEntidad.Count(p => !desligados.Any(p2 => p2.IdEntidad_Id == p.Id));
+                int totalExcluidas = listEntidad.Count(p => desligados.Any(p2 => p2.IdEntidad_Id == p.Id));
+
+                return Json(new
+                {
+                    success = true,
+                    data = new
+                    {
+                        Id = obj.Id,
+                        Nombre = obj.Nombre ?? "-",
+                        TotalLigadas = totalLigadas,
+                        TotalExcluidas = totalExcluidas
+                    }
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error al obtener detalle: " + ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult GuardarTipoXML(bool esNuevo, string id, string nombre)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(id))
+                    return Json(new { success = false, message = "El código identificador es obligatorio." });
+
+                if (string.IsNullOrWhiteSpace(nombre))
+                    return Json(new { success = false, message = "El nombre del tipo de XML es obligatorio." });
+
+                if (esNuevo)
+                {
+                    TipoXML newObj = new TipoXML
+                    {
+                        Id = id.Trim(),
+                        Nombre = nombre.Trim()
+                    };
+                    db.Add(ref newObj);
+                    return Json(new { success = true, message = "Tipo de XML registrado exitosamente." });
+                }
+                else
+                {
+                    TipoXML editObj = db.Get(id);
+                    if (editObj == null)
+                        return Json(new { success = false, message = "El tipo de XML no existe." });
+
+                    editObj.Nombre = nombre.Trim();
+                    db.Update(editObj);
+                    return Json(new { success = true, message = "Tipo de XML actualizado exitosamente." });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error al guardar: " + ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ActualizarExcepcion(string idEntidad, string idArchivo, bool excluir)
+        {
+            try
+            {
+                XML_Excepcion entity = new XML_Excepcion
+                {
+                    IdArchivo_Id = idArchivo,
+                    IdEntidad_Id = idEntidad
+                };
+
+                if (excluir)
+                    exc.Add(ref entity);
+                else
+                    exc.Delete(entity);
+
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult EliminarTipoXML(string id)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(id))
+                    return Json(new { success = false, message = "Identificador no proporcionado." });
+
+                db.Delete(id);
+                return Json(new { success = true, message = "Tipo de XML eliminado exitosamente." });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error al eliminar: " + ex.Message });
+            }
         }
 
         public ActionResult Details(string id)
@@ -50,7 +207,6 @@ namespace FGA.Controllers
 
         public ActionResult Create()
         {
-
             return View();
         }
 
@@ -95,7 +251,6 @@ namespace FGA.Controllers
             }
 
             TipoXML ObjTipoXML = db.Get(id);
-
             if (ObjTipoXML == null)
             {
                 return HttpNotFound();
@@ -154,7 +309,6 @@ namespace FGA.Controllers
             }
 
             TipoXML ObjTipoXML = db.Get(id);
-
             if (ObjTipoXML == null)
             {
                 return HttpNotFound();
@@ -172,7 +326,6 @@ namespace FGA.Controllers
                 db.Delete(id);
                 sb.Append("Sumitted");
                 return Content(sb.ToString());
-
             }
             catch (Exception ex)
             {
@@ -181,7 +334,6 @@ namespace FGA.Controllers
 
             return Content(sb.ToString());
         }
-
 
         public ActionResult Excepcion(string idEntidad, string idArchivo, string idAction)
         {
