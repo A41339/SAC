@@ -81,7 +81,18 @@
     .modal-informe-custom .modal-footer {
         background: #f8fafc;
         border-top: 1px solid #e2e8f0;
-        padding: 16px 24px;
+        padding: 14px 24px;
+        display: flex !important;
+        justify-content: flex-end !important;
+        align-items: center !important;
+        gap: 8px !important;
+    }
+    .modal-informe-custom .modal-footer:before,
+    .modal-informe-custom .modal-footer:after {
+        display: none !important;
+    }
+    .modal-informe-custom .modal-footer .btn {
+        margin: 0 !important;
     }
     .form-group-custom label {
         font-weight: 600;
@@ -97,6 +108,15 @@
         font-size: 13.5px;
         box-shadow: none;
         transition: border-color 0.2s;
+    }
+    .form-group-custom textarea.form-control,
+    #informeTexto {
+        min-height: 220px !important;
+        height: 220px !important;
+        resize: vertical !important;
+        line-height: 1.6 !important;
+        font-family: inherit;
+        font-size: 13.5px !important;
     }
     .form-group-custom .form-control:focus {
         border-color: #0284c7;
@@ -208,8 +228,11 @@
                     </div>
 
                     <div class="form-group form-group-custom" style="margin-top: 16px;">
-                        <label for="informeTexto">Plantilla / Contenido Base del Informe</label>
-                        <textarea class="form-control" id="informeTexto" rows="6" placeholder="Escriba la plantilla o descripción de secciones del informe..."></textarea>
+                        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px;">
+                            <label for="informeTexto" style="margin-bottom: 0;">Plantilla / Contenido Base del Informe</label>
+                            <span class="text-muted" style="font-size: 11.5px;">Permite HTML y formato estructurado</span>
+                        </div>
+                        <textarea class="form-control" id="informeTexto" rows="10" placeholder="Escriba la plantilla o descripción de secciones del informe..." style="min-height: 220px !important; height: 220px; resize: vertical !important; line-height: 1.6; font-size: 13.5px;"></textarea>
                     </div>
 
                     <div class="form-group form-group-custom" id="grpInformeEstado" style="margin-top: 16px; display: none;">
@@ -266,7 +289,7 @@
 
                 <div>
                     <label style="font-weight: 600; color: #334155; font-size: 13px; margin-bottom: 6px;">Contenido de la Plantilla:</label>
-                    <div id="detInformeTexto" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px; min-height: 80px; max-height: 260px; overflow-y: auto;"></div>
+                    <div id="detInformeTexto" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px; min-height: 140px; max-height: 400px; overflow-y: auto; line-height: 1.6; font-size: 13.5px; word-break: break-word;"></div>
                 </div>
             </div>
             <div class="modal-footer">
