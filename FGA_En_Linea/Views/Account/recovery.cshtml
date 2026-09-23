@@ -93,9 +93,32 @@
                     
                     @if (ViewBag.Msg != null)
                     {
-                        <div style="margin-bottom: 22px; padding: 14px 18px; background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; color: #166534; font-size: 13px; font-weight: 600; text-align: center;">
-                            <i class="fa fa-check-circle"></i> @ViewBag.Msg
-                        </div>
+                        var tipo = (ViewBag.TipoMsg as string) ?? "";
+                        var msgText = (ViewBag.Msg as string) ?? "";
+                        var isWarning = tipo == "warning" || msgText.IndexOf("inválido", StringComparison.OrdinalIgnoreCase) >= 0 || msgText.IndexOf("invalido", StringComparison.OrdinalIgnoreCase) >= 0;
+                        var isError = tipo == "error" || msgText.IndexOf("error", StringComparison.OrdinalIgnoreCase) >= 0 || msgText.IndexOf("falló", StringComparison.OrdinalIgnoreCase) >= 0;
+
+                        if (isWarning)
+                        {
+                            <!-- Advertencia en Naranja Institucional (#ED7D31) -->
+                            <div style="margin-bottom: 22px; padding: 14px 18px; background-color: #fff7ed; border: 1px solid #fed7aa; border-left: 4px solid #ED7D31; border-radius: 12px; color: #9a3412; font-size: 13px; font-weight: 600; text-align: center; box-shadow: 0 2px 6px rgba(237, 125, 49, 0.1);">
+                                <i class="fa fa-exclamation-triangle" style="margin-right: 6px; color: #ED7D31;"></i> @ViewBag.Msg
+                            </div>
+                        }
+                        else if (isError)
+                        {
+                            <!-- Error Crítico en Rojo Institucional (#dc2626) -->
+                            <div style="margin-bottom: 22px; padding: 14px 18px; background-color: #fef2f2; border: 1px solid #fecaca; border-left: 4px solid #dc2626; border-radius: 12px; color: #991b1b; font-size: 13px; font-weight: 600; text-align: center; box-shadow: 0 2px 6px rgba(220, 38, 38, 0.1);">
+                                <i class="fa fa-times-circle" style="margin-right: 6px; color: #dc2626;"></i> @ViewBag.Msg
+                            </div>
+                        }
+                        else
+                        {
+                            <!-- Éxito en Verde (#166534) -->
+                            <div style="margin-bottom: 22px; padding: 14px 18px; background-color: #f0fdf4; border: 1px solid #bbf7d0; border-left: 4px solid #16a34a; border-radius: 12px; color: #166534; font-size: 13px; font-weight: 600; text-align: center; box-shadow: 0 2px 6px rgba(22, 101, 52, 0.08);">
+                                <i class="fa fa-check-circle" style="margin-right: 6px; color: #16a34a;"></i> @ViewBag.Msg
+                            </div>
+                        }
                     }
 
                     <button type="submit" class="btn btn-modern-login">

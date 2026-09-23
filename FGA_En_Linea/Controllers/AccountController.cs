@@ -76,14 +76,19 @@ namespace FGA.Controllers
                         </div>";
 
                     MailSend.Email.EnviarCorreoImagenes("Recuperación de contraseña", mensaje, correo, ServidorCorreo, CuentaCorreo, CuentaCorreo, PasswordCorreo);                  
-                    ViewBag.Msg = "Se ha generado una nueva contraseña.";
+                    ViewBag.Msg = "Se ha generado una nueva contraseña y se ha enviado a su correo.";
+                    ViewBag.TipoMsg = "success";
                 }
                 catch (Exception e) {
-                    ViewBag.Msg = e.Message;
+                    ViewBag.Msg = "Error al procesar la solicitud: " + e.Message;
+                    ViewBag.TipoMsg = "error";
                 }
             }
             else
-                ViewBag.Msg = "Usuario inválido";
+            {
+                ViewBag.Msg = "Usuario inválido o inactivo. Verifique el correo electrónico registrado.";
+                ViewBag.TipoMsg = "warning";
+            }
             return View();
         }
 
