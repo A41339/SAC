@@ -120,17 +120,17 @@ namespace MailSend
                     color: #ffffff !important;
                 }
                 .no-reply-box {
-                    margin-top: 30px;
-                    padding: 16px 20px;
+                    margin-top: 32px;
+                    padding: 18px 24px;
                     background-color: #f8fafc;
                     border: 1px solid #e2e8f0;
                     border-left: 4px solid #ED7D31;
                     border-radius: 8px;
                     text-align: center;
                     color: #475569;
-                    font-size: 13.5px;
+                    font-size: 15px;
                     font-weight: 500;
-                    line-height: 1.55;
+                    line-height: 1.65;
                 }
                 .email-footer {
                     background-color: #1e293b;
@@ -176,7 +176,7 @@ namespace MailSend
                         <div class='button-container'>
                             <a href='https://www.ffc.co.cr/FFC/Account/Login' class='btn-c2a'>Ingrese Aqu&iacute;</a>
                         </div>
-                        <div class='no-reply-box'>
+                        <div class='no-reply-box' style='font-size: 15px; line-height: 1.65;'>
                             &#9888;&#65039; <strong style='color: #c2410c;'>Aviso Importante:</strong> Mensaje autom&aacute;tico del sistema. Por favor <u>no responda directamente a este correo</u>.
                         </div>
                     </div>
