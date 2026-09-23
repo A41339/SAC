@@ -300,9 +300,16 @@
            type: 'POST',
            cache: false,
            async: true,
-           data: { 'id': id }
+           data: { 'id': id },
+           success: function (res) {
+               if (res.success) {
+                   window.mostrarToastExito(res.message);
+               } else {
+                   window.mostrarToastError(res.message);
+               }
+               refreshGridPreguntas();
+           }
         });
-        refreshGridPreguntas();
     }
 
     function borrarSubCategoria(id) {
@@ -311,9 +318,16 @@
            type: 'POST',
            cache: false,
            async: true,
-           data: { 'id': id }
+           data: { 'id': id },
+           success: function (res) {
+               if (res.success) {
+                   window.mostrarToastExito(res.message);
+               } else {
+                   window.mostrarToastError(res.message);
+               }
+               refreshGridSubCategorias();
+           }
         });
-        refreshGridSubCategorias();
     }
 
     $(document).on('click', '#btn_modificarPregunta', function () {
@@ -330,6 +344,13 @@
                 'OpcionB': $('#MOpcionB').val(),
                 'OpcionC': $('#MOpcionC').val(),
                 'OpcionD': $('#MOpcionD').val()
+            },
+            success: function (res) {
+                if (res.success) {
+                    window.mostrarToastExito(res.message);
+                } else {
+                    window.mostrarToastError(res.message);
+                }
             }
         });
         $('#MPreguntaId, #MPreguntaEnunciado, #MOpcionA, #MOpcionB, #MOpcionC, #MOpcionD').val('');
@@ -347,6 +368,13 @@
             data: {
                 'IdSubCategoria': $('#MSubCategoriaId').val(),
                 'Enunciado': $('#MSubCategoriaEnunciado').val()
+            },
+            success: function (res) {
+                if (res.success) {
+                    window.mostrarToastExito(res.message);
+                } else {
+                    window.mostrarToastError(res.message);
+                }
             }
         });
         $('#MSubCategoriaId, #MSubCategoriaEnunciado').val('');
@@ -368,6 +396,13 @@
                 'OpcionB': $('#OpcionB').val(),
                 'OpcionC': $('#OpcionC').val(),
                 'OpcionD': $('#OpcionD').val()
+            },
+            success: function (res) {
+                if (res.success) {
+                    window.mostrarToastExito(res.message);
+                } else {
+                    window.mostrarToastError(res.message);
+                }
             }
         });
         $('#EnunciadoPregunta, #OpcionA, #OpcionB, #OpcionC, #OpcionD').val('');
@@ -384,6 +419,13 @@
             data: {
                 'IdCategoria': $('#idCategoria').val(),
                 'Enunciado': $('#EnunciadoSubCategoria').val()
+            },
+            success: function (res) {
+                if (res.success) {
+                    window.mostrarToastExito(res.message);
+                } else {
+                    window.mostrarToastError(res.message);
+                }
             }
         });
         $('#EnunciadoSubCategoria').val('');

@@ -426,16 +426,20 @@ namespace FGA.Controllers
             return Content(sb.ToString());
         }
 
-        public void DeletePregunta(string id)
+        public ActionResult DeletePregunta(string id)
         {
             try
             {
                 preguntaService.Delete(id);
+                return Json(new { success = true, message = "Pregunta eliminada correctamente." }, JsonRequestBehavior.AllowGet);
             }
-            catch (Exception) { }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error al eliminar la pregunta: " + ex.Message }, JsonRequestBehavior.AllowGet);
+            }
         }
 
-        public void ModificarPregunta(int IdPregunta, string Enunciado, string OpcionA, string OpcionB, string OpcionC, string OpcionD)
+        public ActionResult ModificarPregunta(int IdPregunta, string Enunciado, string OpcionA, string OpcionB, string OpcionC, string OpcionD)
         {
             try
             {
@@ -446,11 +450,15 @@ namespace FGA.Controllers
                 pregunta.OpcionC = OpcionC;
                 pregunta.OpcionD = OpcionD;
                 preguntaService.Update(pregunta);
+                return Json(new { success = true, message = "Pregunta modificada correctamente." }, JsonRequestBehavior.AllowGet);
             }
-            catch (Exception) { }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error al modificar la pregunta: " + ex.Message }, JsonRequestBehavior.AllowGet);
+            }
         }
 
-        public void AgregarPregunta(int IdSubCategoria, string Enunciado, string OpcionA, string OpcionB, string OpcionC, string OpcionD)
+        public ActionResult AgregarPregunta(int IdSubCategoria, string Enunciado, string OpcionA, string OpcionB, string OpcionC, string OpcionD)
         {
             try
             {
@@ -462,31 +470,43 @@ namespace FGA.Controllers
                 pregunta.OpcionC = OpcionC;
                 pregunta.OpcionD = OpcionD;
                 preguntaService.Add(ref pregunta);
+                return Json(new { success = true, message = "Pregunta agregada correctamente." }, JsonRequestBehavior.AllowGet);
             }
-            catch (Exception) { }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error al agregar la pregunta: " + ex.Message }, JsonRequestBehavior.AllowGet);
+            }
         }
 
-        public void DeleteSubCategoria(string id)
+        public ActionResult DeleteSubCategoria(string id)
         {
             try
             {
                 subCategoriaService.Delete(id);
+                return Json(new { success = true, message = "Componente eliminado correctamente." }, JsonRequestBehavior.AllowGet);
             }
-            catch (Exception) { }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error al eliminar el componente: " + ex.Message }, JsonRequestBehavior.AllowGet);
+            }
         }
 
-        public void ModificarSubCategoria(int IdSubCategoria, string Enunciado)
+        public ActionResult ModificarSubCategoria(int IdSubCategoria, string Enunciado)
         {
             try
             {
                 EvalSubCategoria subCategoria = subCategoriaService.Get(IdSubCategoria.ToString());
                 subCategoria.Enunciado = Enunciado;
                 subCategoriaService.Update(subCategoria);
+                return Json(new { success = true, message = "Componente modificado correctamente." }, JsonRequestBehavior.AllowGet);
             }
-            catch (Exception) { }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error al modificar el componente: " + ex.Message }, JsonRequestBehavior.AllowGet);
+            }
         }
 
-        public void AgregarSubCategoria(int IdCategoria, string Enunciado)
+        public ActionResult AgregarSubCategoria(int IdCategoria, string Enunciado)
         {
             try
             {
@@ -494,8 +514,12 @@ namespace FGA.Controllers
                 subCategoria.IdCategoria = IdCategoria;
                 subCategoria.Enunciado = Enunciado;
                 subCategoriaService.Add(ref subCategoria);
+                return Json(new { success = true, message = "Componente agregado correctamente." }, JsonRequestBehavior.AllowGet);
             }
-            catch (Exception) { }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error al agregar el componente: " + ex.Message }, JsonRequestBehavior.AllowGet);
+            }
         }
 
         public int AsignarResponsable(int idUsuario1, int idUsuario2, int idCategoria)
