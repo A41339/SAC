@@ -222,7 +222,6 @@
                 ,{ extend: 'print', exportOptions: { columns: ':visible' } }
                 ,'colvis'
             ],
-            columnDefs: [{ visible: false }],
             "pageLength": 10,
             "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "Todos"]],
             "aoColumns": [
@@ -230,8 +229,8 @@
                     "mRender": function (oObj, type, row) {
                         return '<div class="text-center">'
                             + '<div style="display:inline-flex;gap:6px;align-items:center;">'
-                            + '<button type="button" class="btn btn-xs btn-default btn-edit-tipo" data-id="' + row[0] + '" style="border-radius:6px; border:1px solid #cbd5e1; padding:4px 10px; color:#374151;" title="Modificar"><i class="fa fa-edit" style="color:#0284c7;"></i></button>'
-                            + '<button type="button" class="btn btn-xs btn-default btn-delete-tipo" data-id="' + row[0] + '" data-nombre="' + escape(row[1]) + '" style="border-radius:6px; border:1px solid #fecaca; padding:4px 10px; color:#dc2626;" title="Eliminar"><i class="fa fa-trash"></i></button>'
+                            + '<button type="button" class="btn btn-xs btn-default btn-edit-tipo" data-id="' + row[0] + '" style="border-radius:6px; border:1px solid #cbd5e1; padding:4px 10px; color:#374151;" title="Modificar"><i class="fa fa-edit" style="color:#0284c7; pointer-events: none;"></i></button>'
+                            + '<button type="button" class="btn btn-xs btn-default btn-delete-tipo" data-id="' + row[0] + '" data-nombre="' + escape(row[1]) + '" style="border-radius:6px; border:1px solid #fecaca; padding:4px 10px; color:#dc2626;" title="Eliminar"><i class="fa fa-trash" style="pointer-events: none;"></i></button>'
                             + '</div></div>';
                     }
                 },
@@ -264,8 +263,9 @@
         });
 
         // ── Abrir modal Editar ───────────────────────────────────
-        $(document).on('click', '.btn-edit-tipo', function () {
-            var id = $(this).data('id');
+        $(document).on('click', '.btn-edit-tipo', function (e) {
+            e.preventDefault();
+            var id = $(this).closest('.btn-edit-tipo').data('id');
             $('#modalTipoInformeError').hide();
 
             $.getJSON(getTipoInformeUrl, { id: id }, function (res) {
@@ -327,9 +327,11 @@
         });
 
         // ── Abrir modal Confirmar Eliminación ────────────────────
-        $(document).on('click', '.btn-delete-tipo', function () {
-            tipoToDeleteId = $(this).data('id');
-            var rawNombre = $(this).data('nombre');
+        $(document).on('click', '.btn-delete-tipo', function (e) {
+            e.preventDefault();
+            var $btn = $(this).closest('.btn-delete-tipo');
+            tipoToDeleteId = $btn.data('id');
+            var rawNombre = $btn.data('nombre');
             var nombre = unescape(rawNombre || "");
             $('#lblEliminarNombre').text('"' + nombre + '"');
             $('#modalEliminarTipoInforme').modal('show');

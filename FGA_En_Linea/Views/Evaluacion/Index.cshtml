@@ -678,8 +678,8 @@
                     "mRender": function (oObj, type, row) {
                         return '<div class="text-center">'
                             + '<div style="display:inline-flex;gap:6px;align-items:center;">'
-                            + '<button type="button" class="btn btn-xs btn-default btn-edit-categoria" data-id="' + row[0] + '" style="border-radius:6px; border:1px solid #cbd5e1; padding:4px 10px; color:#374151;" title="Modificar"><i class="fa fa-edit" style="color:#0284c7;"></i></button>'
-                            + '<button type="button" class="btn btn-xs btn-default btn-delete-categoria" data-id="' + row[0] + '" data-nombre="' + escape(row[2]) + '" style="border-radius:6px; border:1px solid #fecaca; padding:4px 10px; color:#dc2626;" title="Eliminar"><i class="fa fa-trash"></i></button>'
+                            + '<button type="button" class="btn btn-xs btn-default btn-edit-categoria" data-id="' + row[0] + '" style="border-radius:6px; border:1px solid #cbd5e1; padding:4px 10px; color:#374151;" title="Modificar"><i class="fa fa-edit" style="color:#0284c7; pointer-events: none;"></i></button>'
+                            + '<button type="button" class="btn btn-xs btn-default btn-delete-categoria" data-id="' + row[0] + '" data-nombre="' + escape(row[2]) + '" style="border-radius:6px; border:1px solid #fecaca; padding:4px 10px; color:#dc2626;" title="Eliminar"><i class="fa fa-trash" style="pointer-events: none;"></i></button>'
                             + '</div></div>';
                     }
                 },
@@ -708,8 +708,9 @@
         });
 
         // ── Abrir modal Editar Categoría ────────────────────────────
-        $(document).on('click', '.btn-edit-categoria', function () {
-            var id = $(this).data('id');
+        $(document).on('click', '.btn-edit-categoria', function (e) {
+            e.preventDefault();
+            var id = $(this).closest('.btn-edit-categoria').data('id');
             $('#modalCategoriaError').hide();
 
             $.getJSON('@Url.Action("GetCategoria", "Evaluacion")', { id: id }, function (res) {
@@ -784,9 +785,11 @@
 
         // ── Abrir modal Confirmar Eliminación ───────────────────────
         var categoriaToDeleteId = 0;
-        $(document).on('click', '.btn-delete-categoria', function () {
-            categoriaToDeleteId = $(this).data('id');
-            var rawNombre = $(this).data('nombre');
+        $(document).on('click', '.btn-delete-categoria', function (e) {
+            e.preventDefault();
+            var $btn = $(this).closest('.btn-delete-categoria');
+            categoriaToDeleteId = $btn.data('id');
+            var rawNombre = $btn.data('nombre');
             var nombre = unescape(rawNombre || "");
             $('#lblEliminarCategoriaNombre').text('"' + nombre + '"');
             $('#modalEliminarCategoria').modal('show');
