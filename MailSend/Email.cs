@@ -40,39 +40,47 @@ namespace MailSend
                     border: 1px solid #e2e8f0;
                 }
                 .email-header-banner {
-                    background-color: #143750;
-                    padding: 40px 28px;
-                    text-align: center;
-                    border-bottom: 5px solid #2563eb;
+                    background-color: #2F5597;
+                    background: linear-gradient(135deg, #2F5597 0%, #204880 50%, #31859C 100%);
+                    padding: 30px 36px;
+                    border-bottom: 4px solid #ED7D31;
+                    text-align: left;
                 }
                 .email-header-banner img {
-                    max-width: 640px;
-                    width: 95%;
+                    width: 165px;
+                    max-width: 165px;
                     height: auto;
-                    max-height: 175px;
-                    display: inline-block;
-                    vertical-align: middle;
-                    object-fit: contain;
+                    display: block;
+                    border: 0;
                 }
                 .email-body {
                     padding: 40px 48px;
                     color: #334155;
-                    font-size: 16px;
+                    font-size: 15px;
                     line-height: 1.65;
                 }
+                .email-body a {
+                    color: #31859C;
+                    font-weight: 600;
+                    text-decoration: none;
+                }
+                .email-body a:hover {
+                    color: #2F5597;
+                    text-decoration: underline;
+                }
                 .subject-title {
-                    font-size: 22px;
+                    font-size: 21px;
                     font-weight: 700;
-                    color: #0f172a;
+                    color: #2F5597;
                     margin-top: 0;
                     margin-bottom: 22px;
                     padding-left: 14px;
-                    border-left: 5px solid #2563eb;
+                    border-left: 4px solid #31859C;
                     line-height: 1.35;
                 }
                 .message-content {
                     color: #334155;
-                    font-size: 16px;
+                    font-size: 15px;
                     line-height: 1.65;
                     margin-bottom: 28px;
                 }
@@ -85,7 +93,7 @@ namespace MailSend
                 .message-content li {
                     margin-bottom: 10px;
                     color: #1e293b;
-                    font-size: 16px;
+                    font-size: 15px;
                 }
                 .button-container {
                     text-align: center;
@@ -93,41 +101,45 @@ namespace MailSend
                 }
                 .btn-c2a {
                     display: inline-block;
-                    padding: 12px 36px;
+                    padding: 12px 38px;
                     font-family: inherit;
-                    font-size: 15px;
+                    font-size: 14.5px;
                     font-weight: 600;
-                    letter-spacing: 0.5px;
+                    letter-spacing: 0.4px;
                     color: #ffffff !important;
-                    background-color: #2563eb;
-                    background: linear-gradient(180deg, #2563eb 0%, #1d4ed8 100%);
+                    background-color: #2F5597;
+                    background: linear-gradient(135deg, #2F5597 0%, #31859C 100%);
                     text-decoration: none !important;
                     border-radius: 8px;
-                    border: 1px solid #1d4ed8;
-                    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.22);
+                    border: 1px solid #24447a;
+                    box-shadow: 0 4px 14px rgba(47, 85, 151, 0.28);
                     transition: all 0.2s ease;
                 }
+                .btn-c2a:hover {
+                    background: linear-gradient(135deg, #24447a 0%, #276e8a 100%) !important;
+                    color: #ffffff !important;
+                }
                 .no-reply-box {
-                    margin-top: 32px;
-                    padding: 18px 22px;
-                    background-color: #fff1f2;
-                    border: 1px solid #fecdd3;
-                    border-left: 5px solid #e11d48;
-                    border-radius: 10px;
+                    margin-top: 30px;
+                    padding: 16px 20px;
+                    background-color: #f8fafc;
+                    border: 1px solid #e2e8f0;
+                    border-left: 4px solid #ED7D31;
+                    border-radius: 8px;
                     text-align: center;
-                    color: #9f1239;
-                    font-size: 15px;
-                    font-weight: 600;
-                    line-height: 1.6;
+                    color: #475569;
+                    font-size: 13.5px;
+                    font-weight: 500;
+                    line-height: 1.55;
                 }
                 .email-footer {
-                    background-color: #143750;
+                    background-color: #1e293b;
                     padding: 24px 30px;
                     text-align: center;
                     color: #94a3b8;
                     font-size: 12px;
-                    line-height: 1.5;
-                    border-top: 1px solid rgba(255, 255, 255, 0.1);
+                    line-height: 1.6;
+                    border-top: 1px solid #334155;
                 }
                 .email-footer p {
                     margin: 4px 0;
@@ -138,7 +150,21 @@ namespace MailSend
             <div class='email-wrapper'>
                 <div class='email-card'>
                     <div class='email-header-banner'>
-                        <img src='cid:Pic1' alt='FFC Sistema Empresarial' />
+                        <table width='100%' cellpadding='0' cellspacing='0' border='0'>
+                            <tr>
+                                <td valign='middle' style='width: 175px; text-align: left;'>
+                                    <img src='cid:Pic1' alt='FFC - Fondo de Fortalecimiento Cooperativo' width='165' style='display: block; width: 165px; max-width: 165px; height: auto; border: 0;' />
+                                </td>
+                                <td valign='middle' style='border-left: 1px solid rgba(255, 255, 255, 0.35); padding-left: 22px; text-align: left;'>
+                                    <div style='color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 1.8px; text-transform: uppercase; line-height: 1.25;'>
+                                        Sistema de Notificaci&oacute;n
+                                    </div>
+                                    <div style='color: #93CDDD; font-family: -apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, Helvetica, Arial, sans-serif; font-size: 11.5px; font-weight: 600; letter-spacing: 0.6px; margin-top: 4px;'>
+                                        Sistema de An&aacute;lisis Cooperativo &bull; SAC
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
                     </div>
                     <div class='email-body'>
                         <div class='subject-title'>
@@ -151,17 +177,66 @@ namespace MailSend
                             <a href='https://www.ffc.co.cr/FFC/Account/Login' class='btn-c2a'>Ingrese Aqu&iacute;</a>
                         </div>
                         <div class='no-reply-box'>
-                            &#9888;&#65039; <strong>Aviso Importante:</strong> Mensaje automático del sistema. Por favor <u>no responda directamente a este correo</u>.
+                            &#9888;&#65039; <strong style='color: #c2410c;'>Aviso Importante:</strong> Mensaje autom&aacute;tico del sistema. Por favor <u>no responda directamente a este correo</u>.
                         </div>
                     </div>
                     <div class='email-footer'>
-                        <p style='font-size: 14px;'><strong>FFC - Fondo de Fortalecimiento Cooperativo</strong></p>
-                        <p style='color: #cbd5e1; font-size: 13px;'>Sistema de Análisis Cooperativo (SAC)</p>
+                        <p style='font-size: 13.5px; font-weight: 700; color: #ffffff;'>FFC - Fondo de Fortalecimiento Cooperativo</p>
+                        <p style='color: #93CDDD; font-size: 12px; font-weight: 600;'>Sistema de An&aacute;lisis Cooperativo (SAC)</p>
+                        <p style='color: #64748b; font-size: 11.5px;'>San Jos&eacute;, Costa Rica &bull; <a href='https://www.ffc.co.cr/' style='color: #93CDDD; text-decoration: none;'>www.ffc.co.cr</a> &bull; Tel: (506) 2257-1111</p>
                     </div>
                 </div>
             </div>
         </body>
         </html>";
+
+        private static string ResolveLogoPath()
+        {
+            string baseDir = AppDomain.CurrentDomain.BaseDirectory ?? string.Empty;
+            string[] candidatePaths = new string[]
+            {
+                Path.Combine(baseDir, "Content", "images", "FFC_Logo_Blanco.png"),
+                Path.Combine(baseDir, "..", "Content", "images", "FFC_Logo_Blanco.png"),
+                Path.Combine(baseDir, "..", "FGA_En_Linea", "Content", "images", "FFC_Logo_Blanco.png"),
+                Path.Combine(baseDir, "..", "..", "FGA_En_Linea", "Content", "images", "FFC_Logo_Blanco.png"),
+                Path.Combine(baseDir, "bin", "Content", "images", "FFC_Logo_Blanco.png"),
+                @"C:\Users\jcastro\Desktop\Solution\FGA_En_Linea\Content\images\FFC_Logo_Blanco.png",
+                @"C:\FFC_Logo_Blanco.png",
+                @"C:\Logo.png",
+                @"C:\Logo.jpg"
+            };
+
+            foreach (string path in candidatePaths)
+            {
+                try
+                {
+                    if (!string.IsNullOrEmpty(path) && File.Exists(path))
+                    {
+                        return Path.GetFullPath(path);
+                    }
+                }
+                catch { }
+            }
+            return null;
+        }
+
+        private static void AttachLogoResource(AlternateView avHtml)
+        {
+            try
+            {
+                string logoPath = ResolveLogoPath();
+                if (!string.IsNullOrEmpty(logoPath) && File.Exists(logoPath))
+                {
+                    string mediaType = logoPath.EndsWith(".png", StringComparison.OrdinalIgnoreCase)
+                        ? "image/png"
+                        : MediaTypeNames.Image.Jpeg;
+                    LinkedResource pic1 = new LinkedResource(logoPath, mediaType);
+                    pic1.ContentId = "Pic1";
+                    avHtml.LinkedResources.Add(pic1);
+                }
+            }
+            catch { }
+        }
 
         public static void EnviarCorreoImagenes(string asunto, string mensaje, string correoDestino, string nombreServerCorreo,
             string correoServer, string usuarioCorreo, string password)
@@ -171,17 +246,7 @@ namespace MailSend
                 string htmlBody = htmlTemplate.Replace("Tmensaje", mensaje).Replace("Tasunto", asunto);
                 AlternateView avHtml = AlternateView.CreateAlternateViewFromString(htmlBody, null, MediaTypeNames.Text.Html);
                 
-                string absolutePath = "C:\\Logo.jpg";
-                if (File.Exists(absolutePath))
-                {
-                    try
-                    {
-                        LinkedResource pic1 = new LinkedResource(absolutePath, MediaTypeNames.Image.Jpeg);
-                        pic1.ContentId = "Pic1";
-                        avHtml.LinkedResources.Add(pic1);
-                    }
-                    catch { }
-                }
+                AttachLogoResource(avHtml);
 
                 MailMessage correo = new MailMessage();
                 correo.AlternateViews.Add(avHtml);
@@ -233,17 +298,7 @@ namespace MailSend
                 string htmlBody = htmlTemplate.Replace("Tmensaje", mensaje).Replace("Tasunto", asunto);
                 AlternateView avHtml = AlternateView.CreateAlternateViewFromString(htmlBody, null, MediaTypeNames.Text.Html);
 
-                string absolutePath = "C:\\Logo.jpg";
-                if (File.Exists(absolutePath))
-                {
-                    try
-                    {
-                        LinkedResource pic1 = new LinkedResource(absolutePath, MediaTypeNames.Image.Jpeg);
-                        pic1.ContentId = "Pic1";
-                        avHtml.LinkedResources.Add(pic1);
-                    }
-                    catch { }
-                }
+                AttachLogoResource(avHtml);
 
                 MailMessage correo = new MailMessage();
                 correo.AlternateViews.Add(avHtml);

@@ -177,11 +177,21 @@ namespace FGA.Controllers
                         string mensaje = @"
                             Estimad@ Usuario,<br/><br/>
                             Bienvenid@ al Sistema de Análisis Cooperativo SAC del Fondo de Fortalecimiento Cooperativo.<br/><br/>
-                            Su cuenta de usuario ha sido creada satisfactoriamente.<br/><br/>
-                            <b>Identificación:</b> " + nuevo.Identificacion + @"<br/>
-                            <b>Nombre:</b> " + nuevo.Nombre + @"<br/>
-                            <b>Contraseña temporal:</b> " + nuevo.Contrasena + @"<br/><br/>
-                            Por motivos de seguridad se le solicitará cambiar su contraseña al iniciar sesión.<br/>";
+                            Su cuenta de usuario ha sido creada satisfactoriamente.<br/>
+                            <div style='background-color: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #31859C; border-radius: 8px; padding: 18px 22px; margin: 20px 0;'>
+                                <div style='font-size: 14.5px; margin-bottom: 8px; color: #475569;'>
+                                    <strong style='color: #1e293b;'>Identificación:</strong> <span style='font-family: monospace; font-size: 15px; font-weight: 700; color: #2F5597;'>" + nuevo.Identificacion + @"</span>
+                                </div>
+                                <div style='font-size: 14.5px; margin-bottom: 8px; color: #475569;'>
+                                    <strong style='color: #1e293b;'>Nombre:</strong> <span style='font-size: 14.5px; font-weight: 600; color: #1e293b;'>" + nuevo.Nombre + @"</span>
+                                </div>
+                                <div style='font-size: 14.5px; margin-bottom: 10px; color: #475569;'>
+                                    <strong style='color: #1e293b;'>Contraseña Temporal:</strong> <span style='display: inline-block; background-color: #e2e8f0; color: #2F5597; font-family: Consolas, Monaco, monospace; font-size: 15px; font-weight: 700; padding: 3px 10px; border-radius: 6px; letter-spacing: 1px;'>" + nuevo.Contrasena + @"</span>
+                                </div>
+                                <div style='font-size: 12.5px; color: #64748b; line-height: 1.5;'>
+                                    &#9432; <em>Por motivos de seguridad, se le solicitará cambiar su contraseña al iniciar sesión.</em>
+                                </div>
+                            </div>";
 
                         MailSend.Email.EnviarCorreoImagenes("Notificación de creación de usuario", mensaje, nuevo.Correo, ServidorCorreo, CuentaCorreo, CuentaCorreo, PasswordCorreo);
                     }

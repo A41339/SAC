@@ -55,24 +55,25 @@ namespace FGA.Controllers
                 {
                     string mensaje = @"
                         Estimad@ Usuario,
-                        <br/>
-                        <br/>
+                        <br/><br/>
                         Bienvenid@ al Sistema de Análisis Cooperativo SAC del Fondo de Fortalecimiento Cooperativo, nuestra entidad brinda soluciones financieras ágiles a las cooperativas de ahorro y crédito que contribuyan a mantener la solidez y estabilidad de nuestras afiliadas.
+                        <br/><br/>
+                        Para conocer más de nosotros le invitamos a visitar nuestro sitio web <a href='https://www.ffc.co.cr/' style='color: #31859C; font-weight: 600; text-decoration: none;'>ffc.co.cr</a>, llamar al 2257-1111 o puede contactar a las analistas de riesgo:
+                        <br/><br/>
+                        &bull; Cinthya Salazar <a href='mailto:csalazar@ffc.co.cr' style='color: #31859C; font-weight: 600; text-decoration: none;'>csalazar@ffc.co.cr</a><br/>
+                        &bull; Viviana Zumbado <a href='mailto:vzumbado@ffc.co.cr' style='color: #31859C; font-weight: 600; text-decoration: none;'>vzumbado@ffc.co.cr</a>
                         <br/>
-                        <br/>
-                        Para conocer más de nosotros le invitamos a visitar nuestro sitio web <a href='https://www.ffc.co.cr/'>ffc.co.cr</a>, llamar al 2257-1111 o puede contactar a las analistas de riesgo:
-                        <br/>
-                        <br/>
-                        Cinthya Salazar <a href='mailto:csalazar@ffc.co.cr'>csalazar@ffc.co.cr</a>
-                        <br/>
-                        Viviana Zumbado <a href='mailto:vzumbado@ffc.co.cr'>vzumbado@ffc.co.cr</a>
-                        <br/>
-                        <br/>
-                        <b>Usuario:</b> " + login.Identificacion +
-                       "<br/>" +
-                       "<b>Contraseña Temporal:</b> " + contrasenaPlana +
-                       "<br/>" +
-                       "La contraseña deberá de digitarse en la herramienta, no permite la opción copiar - pegar";
+                        <div style='background-color: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #31859C; border-radius: 8px; padding: 18px 22px; margin: 22px 0;'>
+                            <div style='font-size: 14.5px; margin-bottom: 9px; color: #475569;'>
+                                <strong style='color: #1e293b;'>Usuario:</strong> <span style='font-family: monospace; font-size: 15px; font-weight: 700; color: #2F5597;'>" + login.Identificacion + @"</span>
+                            </div>
+                            <div style='font-size: 14.5px; margin-bottom: 10px; color: #475569;'>
+                                <strong style='color: #1e293b;'>Contraseña Temporal:</strong> <span style='display: inline-block; background-color: #e2e8f0; color: #2F5597; font-family: Consolas, Monaco, monospace; font-size: 15px; font-weight: 700; padding: 3px 10px; border-radius: 6px; letter-spacing: 1px;'>" + contrasenaPlana + @"</span>
+                            </div>
+                            <div style='font-size: 12.5px; color: #64748b; line-height: 1.5;'>
+                                &#9432; <em>La contraseña deberá digitarse directamente en la herramienta (no permite la opción de copiar y pegar).</em>
+                            </div>
+                        </div>";
 
                     MailSend.Email.EnviarCorreoImagenes("Recuperación de contraseña", mensaje, correo, ServidorCorreo, CuentaCorreo, CuentaCorreo, PasswordCorreo);                  
                     ViewBag.Msg = "Se ha generado una nueva contraseña.";
