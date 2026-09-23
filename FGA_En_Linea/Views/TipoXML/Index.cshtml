@@ -1,7 +1,83 @@
 @{
-      ViewBag.Title = "Tipos de XML";
-      Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Tipos de XML";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
+<style>
+    .modal-xml-custom .modal-content {
+        border-radius: 14px;
+        border: none;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        overflow: hidden;
+    }
+    .modal-xml-custom .modal-header {
+        background: linear-gradient(135deg, #1e40af 0%, #143750 100%);
+        padding: 18px 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .modal-xml-custom .modal-title {
+        font-weight: 700;
+        font-size: 16px;
+        color: #ffffff;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .modal-xml-custom .modal-body {
+        padding: 24px;
+        background: #f8fafc;
+    }
+    .modal-xml-custom .modal-footer {
+        background: #ffffff;
+        border-top: 1px solid #e2e8f0;
+        padding: 14px 24px;
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+    .form-group-xml label {
+        font-weight: 600;
+        color: #334155;
+        font-size: 13px;
+        margin-bottom: 6px;
+        display: block;
+    }
+    .form-group-xml .form-control {
+        border-radius: 8px;
+        border: 1px solid #cbd5e1;
+        padding: 9px 13px;
+        height: auto;
+        font-size: 13px;
+        box-shadow: none;
+        transition: border-color 0.2s;
+    }
+    .form-group-xml .form-control:focus {
+        border-color: #0284c7;
+        box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+    }
+    .dual-listbox-box {
+        width: 100%;
+        min-height: 220px;
+        border-radius: 8px;
+        border: 1px solid #cbd5e1;
+        padding: 8px;
+        background: #ffffff;
+        font-size: 13px;
+        color: #334155;
+    }
+    .dual-listbox-box option {
+        padding: 5px 8px;
+        border-radius: 4px;
+        margin-bottom: 2px;
+    }
+    .dual-listbox-box option:hover {
+        background-color: #f1f5f9;
+    }
+</style>
+
 <section class="content-header">
     <h1 class="modern-page-title">
         <i class="fa fa-code" style="color: #0284c7;"></i>
@@ -19,9 +95,9 @@
     <div class="row">
         <div class="col-xs-12">
             <div style="margin-bottom: 16px;">
-                <a href="@Url.Action("Create", "TipoXML")" class="btn-modern-filter" style="display: inline-flex; align-items: center; gap: 8px; text-decoration: none; padding: 9px 20px;">
-                    <i class="fa fa-plus"></i> Crear un Tipo de XML
-                </a>
+                <button type="button" class="btn-modern-filter" id="btnNuevoTipoXML" style="display: inline-flex; align-items: center; gap: 8px; text-decoration: none; padding: 9px 20px;">
+                    <i class="fa fa-plus"></i> Crear Tipo de XML
+                </button>
             </div>
             <div class="modern-table-card">
                 <span id="found" class="label label-info"></span>
@@ -35,51 +111,359 @@
                     </thead>
                     <tbody></tbody>
                 </table>
-
-                <div id="summary">
-                    <div></div>
-                </div>
+                <div id="summary"><div></div></div>
             </div>
         </div>
     </div>
 </section>
 
-     <script type="text/javascript">
+<!-- ═══════ Modal Crear / Editar Tipo de XML ═══════ -->
+<div class="modal fade modal-xml-custom" id="modalTipoXML" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" style="max-width: 540px; margin: 50px auto;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">
+                    <i class="fa fa-code"></i>
+                    <span id="lblModalTipoXMLTitulo">Nuevo Tipo de XML</span>
+                </h4>
+                <button type="button" class="close" data-dismiss="modal" style="color: #fff; opacity: 0.85; font-size: 22px; text-shadow: none; margin: 0; padding: 0;">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="modalTipoXMLError" class="alert alert-danger" style="display:none; border-radius: 8px; font-size: 13px;"></div>
+                <form id="formTipoXML">
+                    <input type="hidden" id="tipoXMLEsNuevo" value="true" />
 
-        $(document).ready(function () {
-            var oTableTipoXML = "";
-            var ControlerNameTipoXML = "@Url.Content("~/TipoXML")";
-            // debugger;
-            oTableCompany = $("#tbTipoXML").dataTable({  
+                    <div class="form-group-xml" style="margin-bottom: 16px;">
+                        <label for="tipoXMLId">
+                            <i class="fa fa-barcode" style="color: #0284c7; margin-right: 5px;"></i>
+                            C&oacute;digo / ID *
+                        </label>
+                        <input type="text" class="form-control" id="tipoXMLId" maxlength="50" placeholder="Ej. XML01" required />
+                    </div>
+
+                    <div class="form-group-xml" style="margin-bottom: 0;">
+                        <label for="tipoXMLNombre">
+                            <i class="fa fa-tag" style="color: #0284c7; margin-right: 5px;"></i>
+                            Nombre *
+                        </label>
+                        <input type="text" class="form-control" id="tipoXMLNombre" maxlength="150" placeholder="Ej. Balanza de Comprobación" required />
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-modern-filter" id="btnGuardarTipoXML" style="padding: 9px 22px; border-radius: 8px;">
+                    <i class="fa fa-save"></i> Guardar
+                </button>
+                <button type="button" class="btn-modern-filter" data-dismiss="modal" style="padding: 9px 22px; border-radius: 8px; background: #64748b;">
+                    <i class="fa fa-times"></i> Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════ Modal Excepciones (Entidades Ligadas / Excluidas) ═══════ -->
+<div class="modal fade modal-xml-custom" id="modalExcepcionesXML" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" style="max-width: 820px; margin: 40px auto;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">
+                    <i class="fa fa-shield"></i>
+                    <span id="lblModalExcepcionesTitulo">Excepciones de XML</span>
+                </h4>
+                <button type="button" class="close" data-dismiss="modal" style="color: #fff; opacity: 0.85; font-size: 22px; text-shadow: none; margin: 0; padding: 0;">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="excepcionArchivoId" value="" />
+                <div class="row">
+                    <div class="col-md-5">
+                        <div class="form-group-xml">
+                            <label style="color: #059669;">
+                                <i class="fa fa-check-circle" style="color: #10b981; margin-right: 5px;"></i>
+                                Entidades Ligadas
+                            </label>
+                            <select id="lstLigado" class="dual-listbox-box" multiple="multiple"></select>
+                        </div>
+                    </div>
+                    <div class="col-md-2 text-center" style="padding-top: 50px;">
+                        <button type="button" class="btn btn-default btn-block" id="btnMoverADesligado" style="border-radius: 8px; margin-bottom: 10px; border: 1px solid #cbd5e1; font-weight: 700; color: #1e293b;" title="Excluir seleccionadas">
+                            <i class="fa fa-arrow-right"></i>
+                        </button>
+                        <button type="button" class="btn btn-default btn-block" id="btnMoverALigado" style="border-radius: 8px; border: 1px solid #cbd5e1; font-weight: 700; color: #1e293b;" title="Ligar seleccionadas">
+                            <i class="fa fa-arrow-left"></i>
+                        </button>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="form-group-xml">
+                            <label style="color: #dc2626;">
+                                <i class="fa fa-minus-circle" style="color: #ef4444; margin-right: 5px;"></i>
+                                Entidades Excluidas
+                            </label>
+                            <select id="lstDesligado" class="dual-listbox-box" multiple="multiple"></select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-modern-filter" data-dismiss="modal" style="padding: 9px 22px; border-radius: 8px;">
+                    <i class="fa fa-check"></i> Listo
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════ Modal Confirmar Eliminación ═══════ -->
+<div class="modal fade modal-xml-custom" id="modalEliminarTipoXML" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" style="max-width: 440px; margin: 80px auto;">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);">
+                <h4 class="modal-title">
+                    <i class="fa fa-exclamation-triangle"></i>
+                    Confirmar Eliminaci&oacute;n
+                </h4>
+                <button type="button" class="close" data-dismiss="modal" style="color: #fff; opacity: 0.85; font-size: 22px; text-shadow: none; margin: 0; padding: 0;">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="background: #ffffff; font-size: 14px; color: #334155; line-height: 1.5;">
+                <p>&iquest;Est&aacute; seguro de que desea eliminar el tipo de XML <strong id="lblEliminarXMLNombre"></strong>?</p>
+                <p style="margin-bottom: 0; color: #64748b; font-size: 13px;">
+                    Esta acci&oacute;n no se puede deshacer.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-modern-filter" id="btnConfirmarEliminarXML" style="padding: 9px 22px; border-radius: 8px; background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);">
+                    <i class="fa fa-trash"></i> S&iacute;, Eliminar
+                </button>
+                <button type="button" class="btn-modern-filter" data-dismiss="modal" style="padding: 9px 22px; border-radius: 8px; background: #64748b;">
+                    <i class="fa fa-times"></i> Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var getTipoXMLUrl = '@Url.Action("GetTipoXML", "TipoXML")';
+        var guardarTipoXMLUrl = '@Url.Action("GuardarTipoXML", "TipoXML")';
+        var eliminarTipoXMLUrl = '@Url.Action("EliminarTipoXML", "TipoXML")';
+        var getExcepcionesUrl = '@Url.Action("GetExcepciones", "TipoXML")';
+        var excepcionUrl = '@Url.Action("Excepcion", "TipoXML")';
+        var xmlToDeleteId = '';
+
+        var oTableTipoXML = $("#tbTipoXML").dataTable({
             "bRetrieve": true,
             "bProcessing": true,
             "dom": 'lBfrtip',
             "sAjaxSource": "@Url.Content("~/TipoXML/GetGrid")",
             "buttons": [
-                 { extend: 'copyHtml5', exportOptions: { columns: ':visible' } }
-                ,{ extend: 'excelHtml5', exportOptions: { columns: ':visible' } }
-                ,{ extend: 'pdfHtml5', exportOptions: { columns: ':visible' } }
-                ,{ extend: 'print', exportOptions: { columns: ':visible' } } 
-                ,'colvis'
-            ], columnDefs: [{   visible: false }],
+                { extend: 'copyHtml5', exportOptions: { columns: ':visible' } },
+                { extend: 'excelHtml5', exportOptions: { columns: ':visible' } },
+                { extend: 'pdfHtml5', exportOptions: { columns: ':visible' } },
+                { extend: 'print', exportOptions: { columns: ':visible' } },
+                'colvis'
+            ],
             "pageLength": 10,
-            "lengthMenu": [[5,10, 25, 50, -1], [5,10, 25, 50, "Todos"]],
-                "aoColumns": [
-                             
+            "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "Todos"]],
+            "aoColumns": [
                 {
-                                 "mRender": function (oObj, type, row) {
-                                     
-                    var buttons = '<div class="text-center"> <div class="btn-group text-left"> <button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" style="border-radius:6px; border:1px solid #cbd5e1; font-size:12px; padding:4px 10px; color:#374151;"><i class="fa fa-cog" style="margin-right:4px;"></i> Acci&oacute;n <span class="caret"></span></button>';
-                    buttons += '<ul class="dropdown-menu pull-left" role="menu">';
-                                     buttons += '<li><a href="' + ControlerNameTipoXML + "/Edit/" + row[0] + '"><i class="fa fa-edit"></i>Excepciones</a></li>';
-                                     buttons += '<li><a href="' + ControlerNameTipoXML + "/Details/" + row[0] + '"><i class="fa fa-edit"></i>Consultar</a></li>';
-                                     buttons += '<li><a href="' + ControlerNameTipoXML + "/Delete/" + row[0] + '"><i class="fa fa-edit"></i>Borrar</a></li>';
-                    buttons += '</ul>';
-                    buttons += '</div></div>';
-                    return buttons;
-                }
-                    }, {}, {}]
+                    "mRender": function (oObj, type, row) {
+                        var buttons = '<div class="text-center"><div class="btn-group text-left">';
+                        buttons += '<button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" style="border-radius:6px; border:1px solid #cbd5e1; font-size:12px; padding:4px 10px; color:#374151;">';
+                        buttons += '<i class="fa fa-cog" style="margin-right:4px;"></i> Acci&oacute;n <span class="caret"></span></button>';
+                        buttons += '<ul class="dropdown-menu pull-left" role="menu" style="border-radius:8px; box-shadow:0 8px 24px rgba(0,0,0,0.12); border:1px solid #e2e8f0; min-width:145px; padding:4px 0;">';
+                        buttons += '<li><a href="javascript:void(0);" class="btn-edit-xml" data-id="' + row[0] + '" style="padding:7px 14px; font-size:13px; color:#1e293b; display:flex; align-items:center; gap:8px;"><i class="fa fa-edit" style="color:#0284c7; width:16px;"></i> Modificar</a></li>';
+                        buttons += '<li><a href="javascript:void(0);" class="btn-excepciones-xml" data-id="' + row[0] + '" style="padding:7px 14px; font-size:13px; color:#1e293b; display:flex; align-items:center; gap:8px;"><i class="fa fa-shield" style="color:#10b981; width:16px;"></i> Excepciones</a></li>';
+                        buttons += '<li><a href="javascript:void(0);" class="btn-delete-xml" data-id="' + row[0] + '" data-nombre="' + escape(row[2]) + '" style="padding:7px 14px; font-size:13px; color:#ef4444; display:flex; align-items:center; gap:8px;"><i class="fa fa-trash" style="color:#ef4444; width:16px;"></i> Borrar</a></li>';
+                        buttons += '</ul></div></div>';
+                        return buttons;
+                    }
+                },
+                { "sClass": "text-center" },
+                {}
+            ]
         });
-     });
-</script>
 
+        // ── Abrir modal Nuevo ────────────────────────────────────
+        $('#btnNuevoTipoXML').on('click', function () {
+            $('#lblModalTipoXMLTitulo').text('Nuevo Tipo de XML');
+            $('#tipoXMLEsNuevo').val('true');
+            $('#tipoXMLId').val('').prop('disabled', false);
+            $('#tipoXMLNombre').val('');
+            $('#modalTipoXMLError').hide();
+            $('#modalTipoXML').modal('show');
+            setTimeout(function () { $('#tipoXMLId').focus(); }, 400);
+        });
+
+        // ── Abrir modal Editar ───────────────────────────────────
+        $(document).on('click', '.btn-edit-xml', function (e) {
+            e.preventDefault();
+            var id = $(this).closest('.btn-edit-xml').data('id');
+            $('#modalTipoXMLError').hide();
+
+            $.getJSON(getTipoXMLUrl, { id: id }, function (res) {
+                if (res && res.success && res.tipoXML) {
+                    $('#lblModalTipoXMLTitulo').text('Editar Tipo de XML: ' + res.tipoXML.nombre);
+                    $('#tipoXMLEsNuevo').val('false');
+                    $('#tipoXMLId').val(res.tipoXML.id).prop('disabled', true);
+                    $('#tipoXMLNombre').val(res.tipoXML.nombre);
+                    $('#modalTipoXML').modal('show');
+                    setTimeout(function () { $('#tipoXMLNombre').focus(); }, 400);
+                } else {
+                    window.mostrarToastError(res.message || 'No fue posible cargar el tipo de XML.');
+                }
+            }).fail(function () {
+                window.mostrarToastError('Error al consultar el tipo de XML en el servidor.');
+            });
+        });
+
+        // ── Guardar Tipo de XML ──────────────────────────────────
+        $('#btnGuardarTipoXML').on('click', function () {
+            var esNuevo = $('#tipoXMLEsNuevo').val() === 'true';
+            var id = $.trim($('#tipoXMLId').val());
+            var nombre = $.trim($('#tipoXMLNombre').val());
+
+            if (!id) {
+                $('#modalTipoXMLError').text('El código / ID es requerido.').show();
+                return;
+            }
+            if (!nombre) {
+                $('#modalTipoXMLError').text('El nombre es requerido.').show();
+                return;
+            }
+
+            var $btn = $(this);
+            $btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Guardando...');
+
+            $.ajax({
+                url: guardarTipoXMLUrl,
+                type: 'POST',
+                data: {
+                    id: id,
+                    nombre: nombre,
+                    esNuevo: esNuevo
+                },
+                success: function (res) {
+                    $btn.prop('disabled', false).html('<i class="fa fa-save"></i> Guardar');
+                    if (res && res.success) {
+                        $('#modalTipoXML').modal('hide');
+                        window.mostrarToastExito(res.message);
+                        oTableTipoXML.fnReloadAjax();
+                    } else {
+                        $('#modalTipoXMLError').text(res.message || 'Error al guardar.').show();
+                    }
+                },
+                error: function () {
+                    $btn.prop('disabled', false).html('<i class="fa fa-save"></i> Guardar');
+                    $('#modalTipoXMLError').text('Error de conexión con el servidor.').show();
+                }
+            });
+        });
+
+        // ── Abrir modal Excepciones ──────────────────────────────
+        $(document).on('click', '.btn-excepciones-xml', function (e) {
+            e.preventDefault();
+            var id = $(this).closest('.btn-excepciones-xml').data('id');
+            $('#excepcionArchivoId').val(id);
+            $('#lstLigado, #lstDesligado').empty();
+
+            $.getJSON(getExcepcionesUrl, { id: id }, function (res) {
+                if (res && res.success) {
+                    $('#lblModalExcepcionesTitulo').text('Excepciones: ' + res.tipoXML.nombre);
+
+                    if (res.ligadas) {
+                        $.each(res.ligadas, function (i, item) {
+                            $('#lstLigado').append($('<option>', { value: item.id, text: item.nombre }));
+                        });
+                    }
+                    if (res.desLigadas) {
+                        $.each(res.desLigadas, function (i, item) {
+                            $('#lstDesligado').append($('<option>', { value: item.id, text: item.nombre }));
+                        });
+                    }
+
+                    $('#modalExcepcionesXML').modal('show');
+                } else {
+                    window.mostrarToastError(res.message || 'Error al cargar las excepciones.');
+                }
+            }).fail(function () {
+                window.mostrarToastError('Error de comunicación al consultar excepciones.');
+            });
+        });
+
+        // ── Mover elementos entre listas de excepciones ──────────
+        function moveItemsExcepcion(origin, dest, actionName) {
+            var idArchivo = $('#excepcionArchivoId').val();
+            $(origin).find(':selected').each(function () {
+                var $opt = $(this);
+                $.ajax({
+                    async: true,
+                    type: "GET",
+                    dataType: "json",
+                    contentType: "application/json",
+                    url: excepcionUrl,
+                    data: {
+                        'idEntidad': $opt.val(),
+                        'idArchivo': idArchivo,
+                        'idAction': actionName
+                    }
+                });
+            });
+            $(origin).find(':selected').appendTo(dest);
+        }
+
+        $('#btnMoverADesligado').on('click', function () {
+            moveItemsExcepcion('#lstLigado', '#lstDesligado', '#ligado');
+        });
+
+        $('#btnMoverALigado').on('click', function () {
+            moveItemsExcepcion('#lstDesligado', '#lstLigado', '#desligado');
+        });
+
+        // ── Abrir modal Confirmar Eliminación ────────────────────
+        $(document).on('click', '.btn-delete-xml', function (e) {
+            e.preventDefault();
+            var $btn = $(this).closest('.btn-delete-xml');
+            xmlToDeleteId = $btn.data('id');
+            var rawNombre = $btn.data('nombre');
+            var nombre = unescape(rawNombre || "");
+            $('#lblEliminarXMLNombre').text('"' + nombre + '"');
+            $('#modalEliminarTipoXML').modal('show');
+        });
+
+        // ── Confirmar Eliminación ────────────────────────────────
+        $('#btnConfirmarEliminarXML').on('click', function () {
+            if (!xmlToDeleteId) return;
+
+            var $btn = $(this);
+            $btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Eliminando...');
+
+            $.ajax({
+                url: eliminarTipoXMLUrl,
+                type: 'POST',
+                data: { id: xmlToDeleteId },
+                success: function (res) {
+                    $btn.prop('disabled', false).html('<i class="fa fa-trash"></i> Sí, Eliminar');
+                    $('#modalEliminarTipoXML').modal('hide');
+                    if (res && res.success) {
+                        window.mostrarToastExito(res.message);
+                        oTableTipoXML.fnReloadAjax();
+                    } else {
+                        window.mostrarToastError(res.message || 'No fue posible eliminar el tipo de XML.');
+                    }
+                },
+                error: function () {
+                    $btn.prop('disabled', false).html('<i class="fa fa-trash"></i> Sí, Eliminar');
+                    $('#modalEliminarTipoXML').modal('hide');
+                    window.mostrarToastError('Error de comunicación al intentar eliminar el tipo de XML.');
+                }
+            });
+        });
+    });
+</script>

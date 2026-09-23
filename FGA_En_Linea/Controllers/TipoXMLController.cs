@@ -198,7 +198,111 @@ namespace FGA.Controllers
             }
             catch (Exception) { }
 
-            return Json(true);
+        // ── Acciones JSON para modal CRUD de TipoXML ───────────────────────────
+
+        public ActionResult GetTipoXML(string id)
+        {
+            try
+            {
+                var obj = db.Get(id);
+                if (obj == null)
+                    return Json(new { success = false, message = "Tipo de XML no encontrado." }, JsonRequestBehavior.AllowGet);
+
+                return Json(new
+                {
+                    success = true,
+                    tipoXML = new
+                    {
+                        id = obj.Id,
+                        nombre = obj.Nombre
+                    }
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error al consultar: " + ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult GuardarTipoXML(string id, string nombre, bool esNuevo)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(id))
+                    return Json(new { success = false, message = "El código/ID es requerido." });
+
+                if (string.IsNullOrWhiteSpace(nombre))
+                    return Json(new { success = false, message = "El nombre es requerido." });
+
+                if (esNuevo)
+                {
+                    TipoXML obj = new TipoXML();
+                    obj.Id = id;
+                    obj.Nombre = nombre;
+                    db.Add(ref obj);
+                    return Json(new { success = true, message = "Tipo de XML creado correctamente." });
+                }
+                else
+                {
+                    var obj = db.Get(id);
+                    if (obj == null)
+                        return Json(new { success = false, message = "Tipo de XML no encontrado." });
+
+                    obj.Nombre = nombre;
+                    db.Update(obj);
+                    return Json(new { success = true, message = "Tipo de XML modificado correctamente." });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error al guardar el tipo de XML: " + ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public ActionResult EliminarTipoXML(string id)
+        {
+            try
+            {
+                db.Delete(id);
+                return Json(new { success = true, message = "Tipo de XML eliminado correctamente." });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error al eliminar el tipo de XML: " + ex.Message });
+            }
+        }
+
+        public ActionResult GetExcepciones(string id)
+        {
+            try
+            {
+                var ObjTipoXML = db.Get(id);
+                if (ObjTipoXML == null)
+                    return Json(new { success = false, message = "Tipo de XML no encontrado." }, JsonRequestBehavior.AllowGet);
+
+                List<XML_Excepcion> desligados = exc.GetByFile(ObjTipoXML.Id).ToList();
+                List<Entidad> listEntidad = ent.GetAll().Where(o => o.Activo && o.Id != FGA.Utility.Utilitarios.entidadAdministradora).ToList();
+
+                var ligadas = listEntidad.Where(p => !desligados.Any(p2 => p2.IdEntidad_Id == p.Id))
+                    .Select(e => new { id = e.Id, nombre = e.Nombre }).ToList();
+
+                var desLigadas = listEntidad.Where(p => desligados.Any(p2 => p2.IdEntidad_Id == p.Id))
+                    .Select(e => new { id = e.Id, nombre = e.Nombre }).ToList();
+
+                return Json(new
+                {
+                    success = true,
+                    tipoXML = new { id = ObjTipoXML.Id, nombre = ObjTipoXML.Nombre },
+                    ligadas = ligadas,
+                    desLigadas = desLigadas
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error al cargar excepciones: " + ex.Message }, JsonRequestBehavior.AllowGet);
+            }
         }
 
         private readonly FGA_En_Linea.TipoXMLService.ServiceOf_TipoXMLClient db = new FGA_En_Linea.TipoXMLService.ServiceOf_TipoXMLClient();
