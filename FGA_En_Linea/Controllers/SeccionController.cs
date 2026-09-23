@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Data;
 using System.IO;
 using System.Linq;
@@ -22,9 +22,10 @@ namespace FGA.Controllers
             {
                 var tak = sec.GetAll();
                 var result = from c in tak
-                             select new string[] { Convert.ToString(c.Id),
-            Convert.ToString(c.Nombre)
-            };
+                             select new string[] {
+                                 Convert.ToString(c.Id),
+                                 Convert.ToString(c.Nombre)
+                             };
                 return Json(new { aaData = result }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception)
@@ -32,6 +33,127 @@ namespace FGA.Controllers
             }
 
             return null;
+        }
+
+        [HttpGet]
+        public ActionResult GetSeccion(string id)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(id))
+                    return Json(new { success = false, message = "Identificador no proporcionado." }, JsonRequestBehavior.AllowGet);
+
+                Seccion obj = sec.Get(id);
+                if (obj == null)
+                    return Json(new { success = false, message = "Sección no encontrada." }, JsonRequestBehavior.AllowGet);
+
+                return Json(new
+                {
+                    success = true,
+                    data = new
+                    {
+                        Id = obj.Id,
+                        Nombre = obj.Nombre,
+                        Detalle1 = obj.Detalle1 ?? "",
+                        Detalle2 = obj.Detalle2 ?? "",
+                        Detalle3 = obj.Detalle3 ?? "",
+                        Detalle4 = obj.Detalle4 ?? ""
+                    }
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error al obtener la sección: " + ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpGet]
+        public ActionResult GetDetalleSeccion(string id)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(id))
+                    return Json(new { success = false, message = "Identificador no proporcionado." }, JsonRequestBehavior.AllowGet);
+
+                Seccion obj = sec.Get(id);
+                if (obj == null)
+                    return Json(new { success = false, message = "Sección no encontrada." }, JsonRequestBehavior.AllowGet);
+
+                return Json(new
+                {
+                    success = true,
+                    data = new
+                    {
+                        Id = obj.Id,
+                        Nombre = obj.Nombre ?? "-",
+                        Detalle1 = obj.Detalle1 ?? "-",
+                        Detalle2 = obj.Detalle2 ?? "-",
+                        Detalle3 = obj.Detalle3 ?? "-",
+                        Detalle4 = obj.Detalle4 ?? "-"
+                    }
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error al obtener detalle: " + ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [ValidateInput(false)]
+        public ActionResult GuardarSeccion(int id, string nombre, string detalle1, string detalle2, string detalle3, string detalle4, HttpPostedFileBase file)
+        {
+            try
+            {
+                Seccion editSec = sec.Get(id.ToString());
+                if (editSec == null)
+                    return Json(new { success = false, message = "La sección no existe." });
+
+                editSec.Nombre = (nombre ?? editSec.Nombre).Trim();
+                editSec.Detalle1 = detalle1;
+                editSec.Detalle2 = detalle2;
+                editSec.Detalle3 = detalle3;
+                editSec.Detalle4 = detalle4;
+
+                if (file != null && file.ContentLength > 0)
+                {
+                    if (file.ContentType.Equals("image/jpeg") || file.ContentType.Equals("image/png"))
+                    {
+                        var path = System.Configuration.ConfigurationManager.AppSettings["RutaImg"];
+
+                        if (id == (int)Utility.Utilitarios.enum_secciones.afiliados)
+                            path = path + "afiliados\\img.jpg";
+                        else if (id == (int)Utility.Utilitarios.enum_secciones.quienes_somos)
+                            path = path + "quienes_somos\\img.jpg";
+                        else if (id == (int)Utility.Utilitarios.enum_secciones.conozca)
+                            path = path + "contactenos\\img.jpg";
+                        else if (id == (int)Utility.Utilitarios.enum_secciones.parametros)
+                            path = path + "logo\\Logo.jpg";
+                        else if (id == (int)Utility.Utilitarios.enum_secciones.unase)
+                            path = path + "unase\\img.jpg";
+                        else if (id == (int)Utility.Utilitarios.enum_secciones.popUp)
+                            path = path + "popup\\img.jpg";
+
+                        var dir = Path.GetDirectoryName(path);
+                        if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
+                            Directory.CreateDirectory(dir);
+
+                        file.SaveAs(path);
+                    }
+                    else
+                    {
+                        return Json(new { success = false, message = "La imagen debe estar en formato .jpg o .png." });
+                    }
+                }
+
+                sec.Update(editSec);
+                return Json(new { success = true, message = "Sección actualizada exitosamente." });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error al actualizar la sección: " + ex.Message });
+            }
         }
 
         public ActionResult Details(string id)
@@ -50,7 +172,6 @@ namespace FGA.Controllers
 
         public ActionResult Create()
         {
-
             return View();
         }
 
@@ -130,12 +251,12 @@ namespace FGA.Controllers
                                 path = path + "unase\\img.jpg";
                             else if (ObjSeccion.Id == (int)Utility.Utilitarios.enum_secciones.popUp)
                                 path = path + "popup\\img.jpg";
-                         
+
                             file.SaveAs(path);
                         }
                         else
                         {
-                            sb.Append("Error: La imagen debe estar en formato .jpg o .png" + "<br/>");
+                            sb.Append("Error: La imagen debe estar en formato .jpg o .png<br/>");
                             return Content(sb.ToString());
                         }
                     }

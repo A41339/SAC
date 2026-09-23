@@ -17,9 +17,237 @@ namespace FGA.Controllers
 {
     public class UsuarioController : BaseController
     {
+        private void CargarCatalogosUsuario()
+        {
+            try
+            {
+                Load();
+                var id = Env.GetUserInfo("userid");
+                Usuario ObjUser = usr.Get(id);
+                var roleMaestro = int.Parse(Utility.Utilitarios.roleMaestroEntidad);
+
+                if (ObjUser.Entidad_Usuario.Id == Utility.Utilitarios.entidadAdministradora)
+                {
+                    ViewBag.Roles = new SelectList(rs.GetAll(), "Id", "Nombre", ObjUser.Role_Usuario.Id).OrderBy(o => o.Text).ToList();
+                    ViewBag.Entidades = new SelectList(ent.GetAll(), "Id", "Nombre", Session["IdEntidad"]).OrderBy(o => o.Text).ToList();
+                }
+                else
+                {
+                    ViewBag.Roles = new SelectList(rs.GetAll().Where(o => o.EsEntidad == true && o.Id != roleMaestro), "Id", "Nombre", ObjUser.Role_Usuario.Id).OrderBy(o => o.Text).ToList();
+                    ViewBag.Entidades = new SelectList(ent.GetAll().Where(o => o.Id == ObjUser.Entidad_Usuario_Id), "Id", "Nombre", ObjUser.Entidad_Usuario_Id).OrderBy(o => o.Text).ToList();
+                }
+
+                ViewBag.Sexos = new SelectList(sx.GetAll(), "Id", "Nombre").OrderBy(o => o.Text).ToList();
+                ViewBag.Estados = new SelectList(usre.GetAll(), "Id", "Nombre").OrderBy(o => o.Text).ToList();
+            }
+            catch (Exception)
+            {
+            }
+        }
+
         public ActionResult Index()
         {
+            CargarCatalogosUsuario();
             return View();
+        }
+
+        [HttpGet]
+        public ActionResult GetUsuario(int id)
+        {
+            try
+            {
+                Usuario usuario = usr.Get(id.ToString());
+                if (usuario == null)
+                    return Json(new { success = false, message = "Usuario no encontrado." }, JsonRequestBehavior.AllowGet);
+
+                return Json(new
+                {
+                    success = true,
+                    data = new
+                    {
+                        id = usuario.Id,
+                        identificacion = usuario.Identificacion ?? "",
+                        nombre = usuario.Nombre ?? "",
+                        telefono = usuario.Telefono ?? "",
+                        puesto = usuario.Puesto ?? "",
+                        correo = usuario.Correo ?? "",
+                        entidadId = usuario.Entidad_Usuario_Id ?? "",
+                        roleId = usuario.Role_Usuario_Id,
+                        sexoId = usuario.Sexo_Usuario_Id,
+                        estadoId = usuario.Estado_Usuario_Id ?? ""
+                    }
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error al consultar usuario: " + ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpGet]
+        public ActionResult GetDetalleUsuario(int id)
+        {
+            try
+            {
+                Usuario usuario = usr.Get(id.ToString());
+                if (usuario == null)
+                    return Json(new { success = false, message = "Usuario no encontrado." }, JsonRequestBehavior.AllowGet);
+
+                return Json(new
+                {
+                    success = true,
+                    data = new
+                    {
+                        id = usuario.Id,
+                        identificacion = usuario.Identificacion ?? "",
+                        nombre = usuario.Nombre ?? "",
+                        telefono = string.IsNullOrWhiteSpace(usuario.Telefono) ? "-" : usuario.Telefono,
+                        puesto = string.IsNullOrWhiteSpace(usuario.Puesto) ? "-" : usuario.Puesto,
+                        correo = string.IsNullOrWhiteSpace(usuario.Correo) ? "-" : usuario.Correo,
+                        entidad = (usuario.Entidad_Usuario != null ? usuario.Entidad_Usuario.Nombre : "-"),
+                        role = (usuario.Role_Usuario != null ? usuario.Role_Usuario.Nombre : "-"),
+                        sexo = (usuario.Sexo_Usuario != null ? usuario.Sexo_Usuario.Nombre : "-"),
+                        estado = (usuario.Estado_Usuario != null ? usuario.Estado_Usuario.Nombre : "-")
+                    }
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error al consultar detalle del usuario: " + ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult GuardarUsuario(int? id, string identificacion, string nombre, string telefono, string puesto, string correo, string entidadId, int roleId, int sexoId, string estadoId)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(identificacion))
+                    return Json(new { success = false, message = "La identificación es obligatoria." });
+                if (string.IsNullOrWhiteSpace(nombre))
+                    return Json(new { success = false, message = "El nombre es obligatorio." });
+                if (string.IsNullOrWhiteSpace(correo))
+                    return Json(new { success = false, message = "El correo electrónico es obligatorio." });
+                if (string.IsNullOrWhiteSpace(entidadId))
+                    return Json(new { success = false, message = "Debe seleccionar una entidad." });
+
+                identificacion = identificacion.Trim();
+                nombre = nombre.Trim();
+                correo = correo.Trim();
+
+                if (!id.HasValue || id.Value == 0)
+                {
+                    // Crear nuevo usuario
+                    Usuario repetido = usr.GetByIden(identificacion);
+                    if (repetido != null && repetido.Estado_Usuario_Id != Utility.Utilitarios.estadoBorrado)
+                    {
+                        return Json(new { success = false, message = "Ya existe un usuario con la identificación '" + identificacion + "'." });
+                    }
+
+                    Utility.PasswordGenerator generator = new Utility.PasswordGenerator();
+                    Usuario nuevo = new Usuario
+                    {
+                        Identificacion = identificacion,
+                        Nombre = nombre,
+                        Telefono = telefono ?? "",
+                        Puesto = puesto ?? "",
+                        Correo = correo,
+                        Entidad_Usuario_Id = entidadId,
+                        Role_Usuario_Id = roleId,
+                        Sexo_Usuario_Id = sexoId,
+                        Estado_Usuario_Id = Utility.Utilitarios.estadoActivo,
+                        Contrasena = generator.Generate(),
+                        CambiarClave = Utility.Utilitarios.Si,
+                        Entidad_Usuario = null,
+                        Estado_Usuario = null,
+                        Role_Usuario = null,
+                        Sexo_Usuario = null
+                    };
+
+                    usr.Add(ref nuevo);
+
+                    try
+                    {
+                        var listParam = param.GetAll().ToList();
+                        var ServidorCorreo = listParam.Where(o => o.Llave == Utility.Utilitarios.Servidor_Correo).Select(o => o.Valor).FirstOrDefault();
+                        var CuentaCorreo = listParam.Where(o => o.Llave == Utility.Utilitarios.Direccion_Correo).Select(o => o.Valor).FirstOrDefault();
+                        var PasswordCorreo = listParam.Where(o => o.Llave == Utility.Utilitarios.Contrasena_Correo).Select(o => o.Valor).FirstOrDefault();
+                        var CorreoNotificacion = listParam.Where(o => o.Llave == Utility.Utilitarios.Notificacion_Creacion_Usuarios).Select(o => o.Valor).FirstOrDefault();
+
+                        string mensaje = @"
+                            Estimad@ Usuario,<br/><br/>
+                            Bienvenid@ al Sistema de Análisis Cooperativo SAC del Fondo de Fortalecimiento Cooperativo.<br/><br/>
+                            Su cuenta de usuario ha sido creada satisfactoriamente.<br/><br/>
+                            <b>Identificación:</b> " + nuevo.Identificacion + @"<br/>
+                            <b>Nombre:</b> " + nuevo.Nombre + @"<br/>
+                            <b>Contraseña temporal:</b> " + nuevo.Contrasena + @"<br/><br/>
+                            Por motivos de seguridad se le solicitará cambiar su contraseña al iniciar sesión.<br/>";
+
+                        MailSend.Email.EnviarCorreoImagenes("Notificación de creación de usuario", mensaje, nuevo.Correo, ServidorCorreo, CuentaCorreo, CuentaCorreo, PasswordCorreo);
+                    }
+                    catch (Exception) { }
+
+                    return Json(new { success = true, message = "Usuario creado exitosamente. Se ha enviado una contraseña temporal a su correo." });
+                }
+                else
+                {
+                    // Modificar usuario existente
+                    Usuario usuario = usr.Get(id.Value.ToString());
+                    if (usuario == null)
+                        return Json(new { success = false, message = "El usuario a modificar no existe." });
+
+                    usuario.Identificacion = identificacion;
+                    usuario.Nombre = nombre;
+                    usuario.Telefono = telefono ?? "";
+                    usuario.Puesto = puesto ?? "";
+                    usuario.Correo = correo;
+                    usuario.Entidad_Usuario_Id = entidadId;
+                    usuario.Role_Usuario_Id = roleId;
+                    usuario.Sexo_Usuario_Id = sexoId;
+                    if (!string.IsNullOrEmpty(estadoId))
+                        usuario.Estado_Usuario_Id = estadoId;
+
+                    usuario.Entidad_Usuario = null;
+                    usuario.Estado_Usuario = null;
+                    usuario.Role_Usuario = null;
+                    usuario.Sexo_Usuario = null;
+
+                    usr.Update(usuario);
+                    return Json(new { success = true, message = "Usuario actualizado exitosamente." });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error al procesar el usuario: " + ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public ActionResult EliminarUsuario(int id)
+        {
+            try
+            {
+                var idLogueado = int.Parse(Env.GetUserInfo("userid"));
+                if (id == idLogueado)
+                    return Json(new { success = false, message = "No puede eliminar su propio usuario mientras tiene la sesión activa." });
+
+                Usuario usuario = usr.Get(id.ToString());
+                if (usuario == null)
+                    return Json(new { success = false, message = "El usuario que intenta eliminar no existe." });
+
+                usuario.Estado_Usuario_Id = Utility.Utilitarios.estadoBorrado;
+                usuario.Entidad_Usuario = null;
+                usuario.Estado_Usuario = null;
+                usuario.Role_Usuario = null;
+                usuario.Sexo_Usuario = null;
+                usr.Update(usuario);
+
+                return Json(new { success = true, message = "Usuario eliminado exitosamente." });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error al eliminar usuario: " + ex.Message });
+            }
         }
 
         public ActionResult GetGrid()
