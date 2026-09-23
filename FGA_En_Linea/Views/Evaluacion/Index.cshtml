@@ -58,30 +58,79 @@
         border-color: #0284c7;
         box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
     }
+    .eval-header-banner {
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 20px 24px;
+        margin-bottom: 20px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        border: 1px solid #e2e8f0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+    .eval-header-title {
+        margin: 0;
+        font-size: 22px;
+        font-weight: 700;
+        color: #0f172a;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    .eval-header-subtitle {
+        margin: 4px 0 0 0;
+        font-size: 13px;
+        color: #64748b;
+    }
+    .btn-create-cat {
+        background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+        color: #ffffff !important;
+        font-weight: 600;
+        font-size: 14px;
+        padding: 10px 20px;
+        border-radius: 8px;
+        border: none;
+        box-shadow: 0 4px 6px -1px rgba(2, 132, 199, 0.25);
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+    }
+    .btn-create-cat:hover {
+        background: linear-gradient(135deg, #0369a1 0%, #075985 100%);
+        box-shadow: 0 6px 10px -1px rgba(2, 132, 199, 0.35);
+        transform: translateY(-1px);
+    }
 </style>
 
 <section class="content-header">
-    <h1>
-        <i class="fa fa-clipboard"></i> Mantenimiento de Evaluaciones
-        <small>Gesti&oacute;n de categor&iacute;as, formularios y par&aacute;metros de evaluaci&oacute;n institucional.</small>
-    </h1>
-    <ol class="breadcrumb">
-        <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
-        <li><a href="@Url.Action("Index", "Modulo", new { modulo = "Evaluacion/Index" })" class="breadcrumb-parent-pill" title="Volver al men&uacute; de Mantenimientos"><i class="fa fa-wrench" style="margin-right: 4px;"></i> Mantenimientos</a></li>
-        <li class="active">Categor&iacute;as</li>
-    </ol>
+    <div class="eval-header-banner">
+        <div>
+            <h1 class="eval-header-title">
+                <i class="fa fa-clipboard" style="color: #0284c7;"></i>
+                Mantenimiento de Evaluaciones
+            </h1>
+            <p class="eval-header-subtitle">
+                Gesti&oacute;n de categor&iacute;as, formularios y par&aacute;metros de evaluaci&oacute;n institucional
+            </p>
+        </div>
+        <div>
+            <button type="button" id="btnNuevaCategoria" class="btn-create-cat">
+                <i class="fa fa-plus-circle"></i> Crear Categor&iacute;a
+            </button>
+        </div>
+    </div>
 </section>
 
-<section class="content" style="padding-top: 0;">
+<section class="content">
     <!-- Contenedor general a ancho completo (100%) -->
     <div class="row">
         <!-- Listado de Categorías al 100% de la pantalla -->
         <div class="col-xs-12">
-            <div style="margin-bottom: 16px;">
-                <button type="button" class="btn-modern-filter" id="btnNuevaCategoria" style="display: inline-flex; align-items: center; gap: 8px; text-decoration: none; padding: 9px 20px;">
-                    <i class="fa fa-plus"></i> Crear Categor&iacute;a
-                </button>
-            </div>
             <div class="modern-table-card" style="padding: 0; overflow: hidden; margin-bottom: 20px;">
                 <div style="padding: 16px 20px; border-bottom: 1px solid #e2e8f0; background: #ffffff; display: flex; align-items: center; justify-content: space-between;">
                     <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: #143750; display: flex; align-items: center; gap: 8px;">
@@ -644,7 +693,7 @@
     }
 
     $(document).ready(function () {
-        var oTableEvaluacion = $("#tbEvaluacion").dataTable({
+        var oTableEvaluacion = $("#tbEvaluacion").DataTable({
             "bRetrieve": true,
             "bProcessing": true,
             "dom": 'lBfrtip',
@@ -748,23 +797,32 @@
                 contentType: false,
                 processData: false,
                 success: function (res) {
+                    $('#starkloader').hide();
                     $btn.prop('disabled', false).html('<i class="fa fa-save"></i> Guardar');
                     if (res && res.success) {
                         $('#modalCategoria').modal('hide');
                         window.mostrarToastExito(res.message);
-                        oTableEvaluacion.fnReloadAjax();
+                        if (oTableEvaluacion && oTableEvaluacion.ajax) {
+                            oTableEvaluacion.ajax.reload(null, false);
+                        } else {
+                            $('#tbEvaluacion').DataTable().ajax.reload(null, false);
+                        }
                     } else {
-                        $('#modalCategoriaError').text(res.message || 'Error al guardar la categoría.').show();
+                        $('#modalCategoriaError').text(res.message || 'Error al guardar la categor\u00eda.').show();
                     }
                 },
                 error: function () {
+                    $('#starkloader').hide();
                     $btn.prop('disabled', false).html('<i class="fa fa-save"></i> Guardar');
-                    $('#modalCategoriaError').text('Error de conexión con el servidor.').show();
+                    $('#modalCategoriaError').text('Error de conexi\u00f3n con el servidor.').show();
+                },
+                complete: function () {
+                    $('#starkloader').hide();
                 }
             });
         });
 
-        // ── Abrir modal Confirmar Eliminación ───────────────────────
+        // ── Abrir modal Confirmar Eliminación ────────────────────────
         var categoriaToDeleteId = 0;
         $(document).on('click', '.btn-delete-categoria', function (e) {
             e.preventDefault();
@@ -776,7 +834,7 @@
             $('#modalEliminarCategoria').modal('show');
         });
 
-        // ── Confirmar Eliminación ───────────────────────────────────
+        // ── Confirmar Eliminación ────────────────────────────────────
         $('#btnConfirmarEliminarCategoria').on('click', function () {
             if (!categoriaToDeleteId) return;
 
@@ -788,25 +846,34 @@
                 type: 'POST',
                 data: { id: categoriaToDeleteId },
                 success: function (res) {
-                    $btn.prop('disabled', false).html('<i class="fa fa-trash"></i> Sí, Eliminar');
+                    $('#starkloader').hide();
+                    $btn.prop('disabled', false).html('<i class="fa fa-trash"></i> S\u00ed, Eliminar');
                     $('#modalEliminarCategoria').modal('hide');
                     if (res && res.success) {
                         window.mostrarToastExito(res.message);
-                        oTableEvaluacion.fnReloadAjax();
+                        if (oTableEvaluacion && oTableEvaluacion.ajax) {
+                            oTableEvaluacion.ajax.reload(null, false);
+                        } else {
+                            $('#tbEvaluacion').DataTable().ajax.reload(null, false);
+                        }
                     } else {
-                        window.mostrarToastError(res.message || 'No fue posible eliminar la categoría.');
+                        window.mostrarToastError(res.message || 'No fue posible eliminar la categor\u00eda.');
                     }
                 },
                 error: function () {
-                    $btn.prop('disabled', false).html('<i class="fa fa-trash"></i> Sí, Eliminar');
+                    $('#starkloader').hide();
+                    $btn.prop('disabled', false).html('<i class="fa fa-trash"></i> S\u00ed, Eliminar');
                     $('#modalEliminarCategoria').modal('hide');
-                    window.mostrarToastError('Error de comunicación al intentar eliminar la categoría.');
+                    window.mostrarToastError('Error de comunicaci\u00f3n al intentar eliminar la categor\u00eda.');
+                },
+                complete: function () {
+                    $('#starkloader').hide();
                 }
             });
         });
     });
 
-    /* Ã¢ÂÂÃ¢ÂÂ Multi-modal z-index handler Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ */
+    /* Ã¢Â”Â€Ã¢Â”Â€ Multi-modal z-index handler Ã¢Â”Â€Ã¢Â”Â€Ã¢Â”Â€Ã¢Â”Â€Ã¢Â”Â€Ã¢Â”Â€Ã¢Â”Â€Ã¢Â”Â€Ã¢Â”Â€Ã¢Â”Â€Ã¢Â”Â€Ã¢Â”Â€Ã¢Â”Â€Ã¢Â”Â€Ã¢Â”Â€Ã¢Â”Â€Ã¢Â”Â€Ã¢Â”Â€Ã¢Â”Â€Ã¢Â”Â€Ã¢Â”Â€Ã¢Â”Â€Ã¢Â”Â€Ã¢Â”Â€Ã¢Â”Â€Ã¢Â”Â€Ã¢Â”Â€Ã¢Â”Â€Ã¢Â”Â€Ã¢Â”Â€Ã¢Â”Â€ */
     (function ($, window) {
         'use strict';
         var MultiModal = function (element) { this.$element = $(element); this.modalCount = 0; };
