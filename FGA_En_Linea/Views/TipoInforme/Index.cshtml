@@ -227,11 +227,14 @@
             "aoColumns": [
                 {
                     "mRender": function (oObj, type, row) {
-                        return '<div class="text-center">'
-                            + '<div style="display:inline-flex;gap:6px;align-items:center;">'
-                            + '<button type="button" class="btn btn-xs btn-default btn-edit-tipo" data-id="' + row[0] + '" style="border-radius:6px; border:1px solid #cbd5e1; padding:4px 10px; color:#374151;" title="Modificar"><i class="fa fa-edit" style="color:#0284c7; pointer-events: none;"></i></button>'
-                            + '<button type="button" class="btn btn-xs btn-default btn-delete-tipo" data-id="' + row[0] + '" data-nombre="' + escape(row[1]) + '" style="border-radius:6px; border:1px solid #fecaca; padding:4px 10px; color:#dc2626;" title="Eliminar"><i class="fa fa-trash" style="pointer-events: none;"></i></button>'
-                            + '</div></div>';
+                        var buttons = '<div class="text-center"><div class="btn-group text-left">';
+                        buttons += '<button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" style="border-radius:6px; border:1px solid #cbd5e1; font-size:12px; padding:4px 10px; color:#374151;">';
+                        buttons += '<i class="fa fa-cog" style="margin-right:4px;"></i> Acci&oacute;n <span class="caret"></span></button>';
+                        buttons += '<ul class="dropdown-menu pull-left" role="menu" style="border-radius:8px; box-shadow:0 8px 24px rgba(0,0,0,0.12); border:1px solid #e2e8f0; min-width:140px; padding:4px 0;">';
+                        buttons += '<li><a href="javascript:void(0);" class="btn-edit-tipo" data-id="' + row[0] + '" style="padding:7px 14px; font-size:13px; color:#1e293b; display:flex; align-items:center; gap:8px;"><i class="fa fa-edit" style="color:#0284c7; width:16px;"></i> Modificar</a></li>';
+                        buttons += '<li><a href="javascript:void(0);" class="btn-delete-tipo" data-id="' + row[0] + '" data-nombre="' + escape(row[1]) + '" style="padding:7px 14px; font-size:13px; color:#ef4444; display:flex; align-items:center; gap:8px;"><i class="fa fa-trash" style="color:#ef4444; width:16px;"></i> Borrar</a></li>';
+                        buttons += '</ul></div></div>';
+                        return buttons;
                     }
                 },
                 {},
