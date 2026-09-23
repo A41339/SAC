@@ -3,6 +3,78 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<style>
+    .modal-informe-custom .modal-content {
+        border-radius: 14px;
+        border: none;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        overflow: hidden;
+    }
+    .modal-informe-custom .modal-header {
+        background: linear-gradient(135deg, #1e40af 0%, #143750 100%);
+        padding: 18px 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .modal-informe-custom .modal-title {
+        font-weight: 700;
+        font-size: 16px;
+        color: #ffffff;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .modal-informe-custom .modal-body {
+        padding: 24px;
+        background: #f8fafc;
+    }
+    .modal-informe-custom .modal-footer {
+        background: #ffffff;
+        border-top: 1px solid #e2e8f0;
+        padding: 14px 24px;
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+    .form-group-informe label {
+        font-weight: 600;
+        color: #334155;
+        font-size: 13px;
+        margin-bottom: 6px;
+        display: block;
+    }
+    .form-group-informe .form-control {
+        border-radius: 8px;
+        border: 1px solid #cbd5e1;
+        padding: 10px 14px;
+        height: auto;
+        font-size: 14px;
+        box-shadow: none;
+        transition: border-color 0.2s;
+    }
+    .form-group-informe .form-control:focus {
+        border-color: #0284c7;
+        box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+    }
+    .custom-switch-label-informe {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+        font-weight: 500;
+        color: #334155;
+        margin: 0;
+    }
+    .custom-switch-label-informe input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+        accent-color: #0284c7;
+    }
+</style>
+
 <section class="content-header">
     <h1 class="modern-page-title">
         <i class="fa fa-file-text-o" style="color: #0284c7;"></i>
@@ -20,9 +92,9 @@
     <div class="row">
         <div class="col-xs-12">
             <div style="margin-bottom: 16px;">
-                <a href="@Url.Action("Create", "TipoInforme")" class="btn-modern-filter" style="display: inline-flex; align-items: center; gap: 8px; text-decoration: none; padding: 9px 20px;">
+                <button type="button" class="btn-modern-filter" id="btnNuevoTipoInforme" style="display: inline-flex; align-items: center; gap: 8px; text-decoration: none; padding: 9px 20px;">
                     <i class="fa fa-plus"></i> Crear Tipo de Informe
-                </a>
+                </button>
             </div>
             <div class="modern-table-card">
                 <span id="found" class="label label-info"></span>
@@ -44,11 +116,101 @@
     </div>
 </section>
 
+<!-- ═══════ Modal Crear / Editar Tipo de Informe ═══════ -->
+<div class="modal fade modal-informe-custom" id="modalTipoInforme" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" style="max-width: 620px; margin: 40px auto;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">
+                    <i class="fa fa-file-text-o"></i>
+                    <span id="lblModalTipoInformeTitulo">Nuevo Tipo de Informe</span>
+                </h4>
+                <button type="button" class="close" data-dismiss="modal" style="color: #fff; opacity: 0.85; font-size: 22px; text-shadow: none; margin: 0; padding: 0;">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="modalTipoInformeError" class="alert alert-danger" style="display:none; border-radius: 8px; font-size: 13px;"></div>
+                <form id="formTipoInforme">
+                    <input type="hidden" id="tipoInformeId" value="0" />
+
+                    <div class="form-group-informe" style="margin-bottom: 18px;">
+                        <label for="tipoInformeNombre">
+                            <i class="fa fa-tag" style="color: #0284c7; margin-right: 5px;"></i>
+                            Nombre del Tipo de Informe *
+                        </label>
+                        <input type="text" class="form-control" id="tipoInformeNombre" maxlength="200" placeholder="Ej. Diagnóstico, Informe de Gestión, etc." required />
+                    </div>
+
+                    <div class="form-group-informe" style="margin-bottom: 18px;">
+                        <label for="tipoInformeTexto">
+                            <i class="fa fa-file-code-o" style="color: #0284c7; margin-right: 5px;"></i>
+                            Plantilla / Contenido Base del Informe
+                        </label>
+                        <textarea class="form-control" id="tipoInformeTexto" rows="8" placeholder="Escriba aquí el contenido base o plantilla del informe..." style="min-height: 200px; resize: vertical;"></textarea>
+                    </div>
+
+                    <div style="background: #f1f5f9; border-radius: 8px; padding: 14px 16px; border: 1px solid #e2e8f0;">
+                        <label class="custom-switch-label-informe">
+                            <input type="checkbox" id="tipoInformeActivo" checked />
+                            <span>Tipo de Informe Activo</span>
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-modern-filter" id="btnGuardarTipoInforme" style="padding: 9px 22px; border-radius: 8px;">
+                    <i class="fa fa-save"></i> Guardar
+                </button>
+                <button type="button" class="btn-modern-filter" data-dismiss="modal" style="padding: 9px 22px; border-radius: 8px; background: #64748b;">
+                    <i class="fa fa-times"></i> Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════ Modal Confirmar Eliminación ═══════ -->
+<div class="modal fade modal-informe-custom" id="modalEliminarTipoInforme" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" style="max-width: 440px; margin: 80px auto;">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);">
+                <h4 class="modal-title">
+                    <i class="fa fa-exclamation-triangle"></i>
+                    Confirmar Eliminaci&oacute;n
+                </h4>
+                <button type="button" class="close" data-dismiss="modal" style="color: #fff; opacity: 0.85; font-size: 22px; text-shadow: none; margin: 0; padding: 0;">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="background: #ffffff; font-size: 14px; color: #334155; line-height: 1.5;">
+                <p>&iquest;Est&aacute; seguro de que desea eliminar el tipo de informe <strong id="lblEliminarNombre"></strong>?</p>
+                <p style="margin-bottom: 0; color: #64748b; font-size: 13px;">
+                    Esta acci&oacute;n no se puede deshacer.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-modern-filter" id="btnConfirmarEliminar" style="padding: 9px 22px; border-radius: 8px; background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);">
+                    <i class="fa fa-trash"></i> S&iacute;, Eliminar
+                </button>
+                <button type="button" class="btn-modern-filter" data-dismiss="modal" style="padding: 9px 22px; border-radius: 8px; background: #64748b;">
+                    <i class="fa fa-times"></i> Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script type="text/javascript">
 
-        $(document).ready(function () {
-            var ControlerNameUser = "@Url.Content("~/TipoInforme")";
-            oTableUser = $("#tbTipoInforme").dataTable({
+    $(document).ready(function () {
+        var ControlerNameUser = "@Url.Content("~/TipoInforme")";
+        var getTipoInformeUrl = '@Url.Action("GetTipoInforme", "TipoInforme")';
+        var guardarUrl = '@Url.Action("GuardarTipoInforme", "TipoInforme")';
+        var eliminarUrl = '@Url.Action("EliminarTipoInforme", "TipoInforme")';
+        var tipoToDeleteId = 0;
+
+        var oTable = $("#tbTipoInforme").dataTable({
             "bRetrieve": true,
             "bProcessing": true,
             "dom": 'lBfrtip',
@@ -59,24 +221,147 @@
                 ,{ extend: 'pdfHtml5', exportOptions: { columns: ':visible' } }
                 ,{ extend: 'print', exportOptions: { columns: ':visible' } }
                 ,'colvis'
-            ], columnDefs: [{   visible: false }],
+            ],
+            columnDefs: [{ visible: false }],
             "pageLength": 10,
-            "lengthMenu": [[5,10, 25, 50, -1], [5,10, 25, 50, "Todos"]],
-                "aoColumns": [
+            "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "Todos"]],
+            "aoColumns": [
                 {
-                "mRender": function (oObj, type, row) {
-                    var buttons = '<div class="text-center"> <div class="btn-group text-left"> <button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" style="border-radius:6px; border:1px solid #cbd5e1; font-size:12px; padding:4px 10px; color:#374151;"><i class="fa fa-cog" style="margin-right:4px;"></i> Acci&oacute;n <span class="caret"></span></button>';
-                    buttons += '<ul class="dropdown-menu pull-left" role="menu">';
-                    buttons += '<li><a href="' + ControlerNameUser + "/Edit/" + row[0] + '"><i class="fa fa-edit"></i>Modificar</a></li>';
-                    buttons += '<li><a href="' + ControlerNameUser + "/Details/" + row[0] + '"><i class="fa fa-edit"></i>Consultar</a></li>';
-                    buttons += '</ul>';
-                    buttons += '</div></div>';
-                    return buttons;
-                                 }
+                    "mRender": function (oObj, type, row) {
+                        return '<div class="text-center">'
+                            + '<div style="display:inline-flex;gap:6px;align-items:center;">'
+                            + '<button type="button" class="btn btn-xs btn-default btn-edit-tipo" data-id="' + row[0] + '" style="border-radius:6px; border:1px solid #cbd5e1; padding:4px 10px; color:#374151;" title="Modificar"><i class="fa fa-edit" style="color:#0284c7;"></i></button>'
+                            + '<button type="button" class="btn btn-xs btn-default btn-delete-tipo" data-id="' + row[0] + '" data-nombre="' + escape(row[1]) + '" style="border-radius:6px; border:1px solid #fecaca; padding:4px 10px; color:#dc2626;" title="Eliminar"><i class="fa fa-trash"></i></button>'
+                            + '</div></div>';
+                    }
+                },
+                {},
+                {
+                    "sClass": "text-center",
+                    "mRender": function (val, type, row) {
+                        if (!val) return "";
+                        if (type === 'display') {
+                            return (val === 'Activo')
+                                ? '<span class="badge" style="background-color:#10b981; color:#fff; font-weight:600; padding:4px 9px; border-radius:4px; font-size:11px;">Activo</span>'
+                                : '<span class="badge" style="background-color:#ef4444; color:#fff; font-weight:600; padding:4px 9px; border-radius:4px; font-size:11px;">Inactivo</span>';
+                        }
+                        return val;
+                    }
+                }
+            ]
+        });
 
-                } ,{},{}
-                ]
+        // ── Abrir modal Nuevo ────────────────────────────────────
+        $('#btnNuevoTipoInforme').on('click', function () {
+            $('#lblModalTipoInformeTitulo').text('Nuevo Tipo de Informe');
+            $('#tipoInformeId').val('0');
+            $('#tipoInformeNombre').val('');
+            $('#tipoInformeTexto').val('');
+            $('#tipoInformeActivo').prop('checked', true);
+            $('#modalTipoInformeError').hide();
+            $('#modalTipoInforme').modal('show');
+            setTimeout(function () { $('#tipoInformeNombre').focus(); }, 400);
+        });
+
+        // ── Abrir modal Editar ───────────────────────────────────
+        $(document).on('click', '.btn-edit-tipo', function () {
+            var id = $(this).data('id');
+            $('#modalTipoInformeError').hide();
+
+            $.getJSON(getTipoInformeUrl, { id: id }, function (res) {
+                if (res && res.success && res.tipoInforme) {
+                    $('#lblModalTipoInformeTitulo').text('Editar: ' + res.tipoInforme.nombre);
+                    $('#tipoInformeId').val(res.tipoInforme.id);
+                    $('#tipoInformeNombre').val(res.tipoInforme.nombre);
+                    $('#tipoInformeTexto').val(res.tipoInforme.texto || '');
+                    $('#tipoInformeActivo').prop('checked', res.tipoInforme.estado === true);
+                    $('#modalTipoInforme').modal('show');
+                    setTimeout(function () { $('#tipoInformeNombre').focus(); }, 400);
+                } else {
+                    window.mostrarToastError(res.message || 'No se pudo cargar la información.');
+                }
+            }).fail(function () {
+                window.mostrarToastError('Error al consultar el tipo de informe.');
             });
         });
-</script>
 
+        // ── Guardar (Crear / Editar) ─────────────────────────────
+        $('#btnGuardarTipoInforme').on('click', function () {
+            var id = parseInt($('#tipoInformeId').val(), 10) || 0;
+            var nombre = $.trim($('#tipoInformeNombre').val());
+            var texto = $('#tipoInformeTexto').val();
+            var activo = $('#tipoInformeActivo').is(':checked');
+
+            if (!nombre || nombre.length < 2) {
+                $('#modalTipoInformeError').text('El nombre debe tener al menos 2 caracteres.').show();
+                return;
+            }
+
+            var $btn = $(this);
+            $btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Guardando...');
+
+            $.ajax({
+                url: guardarUrl,
+                type: 'POST',
+                data: {
+                    id: id > 0 ? id : null,
+                    nombre: nombre,
+                    texto: texto,
+                    estado: activo
+                },
+                success: function (res) {
+                    $btn.prop('disabled', false).html('<i class="fa fa-save"></i> Guardar');
+                    if (res && res.success) {
+                        $('#modalTipoInforme').modal('hide');
+                        window.mostrarToastExito(res.message);
+                        oTable.fnReloadAjax();
+                    } else {
+                        $('#modalTipoInformeError').text(res.message || 'Error al guardar.').show();
+                    }
+                },
+                error: function () {
+                    $btn.prop('disabled', false).html('<i class="fa fa-save"></i> Guardar');
+                    $('#modalTipoInformeError').text('Error de conexión con el servidor.').show();
+                }
+            });
+        });
+
+        // ── Abrir modal Confirmar Eliminación ────────────────────
+        $(document).on('click', '.btn-delete-tipo', function () {
+            tipoToDeleteId = $(this).data('id');
+            var rawNombre = $(this).data('nombre');
+            var nombre = unescape(rawNombre || "");
+            $('#lblEliminarNombre').text('"' + nombre + '"');
+            $('#modalEliminarTipoInforme').modal('show');
+        });
+
+        // ── Confirmar Eliminación ────────────────────────────────
+        $('#btnConfirmarEliminar').on('click', function () {
+            if (!tipoToDeleteId) return;
+
+            var $btn = $(this);
+            $btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Eliminando...');
+
+            $.ajax({
+                url: eliminarUrl,
+                type: 'POST',
+                data: { id: tipoToDeleteId },
+                success: function (res) {
+                    $btn.prop('disabled', false).html('<i class="fa fa-trash"></i> Sí, Eliminar');
+                    $('#modalEliminarTipoInforme').modal('hide');
+                    if (res && res.success) {
+                        window.mostrarToastExito(res.message);
+                        oTable.fnReloadAjax();
+                    } else {
+                        window.mostrarToastError(res.message || 'No fue posible eliminar.');
+                    }
+                },
+                error: function () {
+                    $btn.prop('disabled', false).html('<i class="fa fa-trash"></i> Sí, Eliminar');
+                    $('#modalEliminarTipoInforme').modal('hide');
+                    window.mostrarToastError('Error de comunicación al intentar eliminar.');
+                }
+            });
+        });
+    });
+</script>
