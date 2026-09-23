@@ -369,7 +369,7 @@
                         <textarea class="form-control" id="categoriaDescripcion" name="Descripcion" rows="4" placeholder="Descripción detallada de la categoría..." style="resize: vertical;"></textarea>
                     </div>
 
-                    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px 16px; margin-bottom: 14px;">
+                    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px 16px; margin-bottom: 0;">
                         <span style="font-size: 12px; font-weight: 700; color: #1e293b; display: block; margin-bottom: 10px;">
                             <i class="fa fa-sliders" style="color: #0284c7; margin-right: 5px;"></i>
                             Puntos por Opci&oacute;n
@@ -399,17 +399,6 @@
                                     <input type="number" class="form-control" id="categoriaPuntosD" name="PuntosOpcionD" value="0" />
                                 </div>
                             </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group-cat" style="margin-bottom: 0;">
-                        <label for="categoriaFile">
-                            <i class="fa fa-image" style="color: #0284c7; margin-right: 5px;"></i>
-                            Imagen / Logo (.jpg, .png)
-                        </label>
-                        <input type="file" id="categoriaFile" name="file" accept="image/jpeg,image/png" class="form-control" style="padding: 4px;" />
-                        <div id="previewImagenContainer" style="margin-top: 8px; display: none;">
-                            <img id="previewImagen" src="" alt="Vista previa" style="max-height: 80px; border-radius: 6px; border: 1px solid #cbd5e1;" />
                         </div>
                     </div>
                 </form>
@@ -702,9 +691,6 @@
             $('#categoriaPuntosB').val('0');
             $('#categoriaPuntosC').val('0');
             $('#categoriaPuntosD').val('0');
-            $('#categoriaFile').val('');
-            $('#previewImagenContainer').hide();
-            $('#previewImagen').attr('src', '');
             $('#modalCategoriaError').hide();
             $('#modalCategoria').modal('show');
             setTimeout(function () { $('#categoriaTitulo').focus(); }, 400);
@@ -729,14 +715,6 @@
                     $('#categoriaPuntosB').val(c.puntosOpcionB != null ? c.puntosOpcionB : '0');
                     $('#categoriaPuntosC').val(c.puntosOpcionC != null ? c.puntosOpcionC : '0');
                     $('#categoriaPuntosD').val(c.puntosOpcionD != null ? c.puntosOpcionD : '0');
-                    $('#categoriaFile').val('');
-
-                    if (c.imagen) {
-                        $('#previewImagen').attr('src', 'https://www.ffc.co.cr/img/secciones/categoria/' + c.imagen + '.jpg');
-                        $('#previewImagenContainer').show();
-                    } else {
-                        $('#previewImagenContainer').hide();
-                    }
 
                     $('#modalCategoria').modal('show');
                     setTimeout(function () { $('#categoriaTitulo').focus(); }, 400);
