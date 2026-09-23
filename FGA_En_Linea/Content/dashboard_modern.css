@@ -61,7 +61,7 @@ body.modern-dashboard-body,
     background: #ffffff !important;
     border-bottom: 2px solid #2F5597 !important;
     box-shadow: 0 2px 8px rgba(47, 85, 151, 0.08) !important;
-    margin-bottom: 0 !important;
+    margin-bottom: 22px !important;
 }
 
 /* ==========================================================================
@@ -7676,6 +7676,32 @@ body.control-sidebar-open .control-sidebar-bg {
 /* Espaciado global para encabezados de pÃ¡gina */
 .content-header {
     padding: 22px 20px 14px 20px !important;
+    margin-bottom: 22px !important;
+}
+
+/* Cuando content-header contiene un banner de mantenimiento unificado */
+.content-header:has(> [class*="-header-banner"]) {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 16px 20px 0 20px !important;
+    margin-bottom: 14px !important;
+}
+
+.content-header > [class*="-header-banner"] {
+    margin-bottom: 0 !important;
+}
+
+/* Espaciado para botones de creación / acción en todos los mantenimientos */
+.content > .row > .col-xs-12 > div:first-child:has(> .btn-modern-filter, > [class*="btn-create"], > a.btn-modern-filter, > button.btn-modern-filter),
+.content > .row > .col-xs-12 > div:first-child:has(> a[href*="Create"], > button[id*="btnNuevo"], > button[id*="btnNueva"]),
+.mantenimiento-actions-bar,
+.btn-action-wrapper,
+.content-action-bar {
+    margin-top: 14px !important;
+    margin-bottom: 22px !important;
+    display: flex !important;
+    align-items: center !important;
 }
 
 /* Prevenir parpadeo infinito en tooltips de Highcharts con useHTML */
