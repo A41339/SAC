@@ -250,7 +250,7 @@ namespace MailSend
 
                 MailMessage correo = new MailMessage();
                 correo.AlternateViews.Add(avHtml);
-                correo.From = new MailAddress(correoServer, "FFC Sistema Empresarial");
+                correo.From = new MailAddress(correoServer, "FFC Fondo de Fortalecimiento Cooperativo");
                 correo.Subject = asunto;
                 correo.Priority = MailPriority.Normal;
 
@@ -302,7 +302,7 @@ namespace MailSend
 
                 MailMessage correo = new MailMessage();
                 correo.AlternateViews.Add(avHtml);
-                correo.From = new MailAddress(correoServer, "FFC Sistema Empresarial");
+                correo.From = new MailAddress(correoServer, "FFC Fondo de Fortalecimiento Cooperativo");
                 correo.Subject = asunto;
                 correo.Priority = MailPriority.Normal;
 
