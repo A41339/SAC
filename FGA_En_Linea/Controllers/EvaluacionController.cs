@@ -566,5 +566,128 @@ namespace FGA.Controllers
             }
             catch (Exception) { }
         }
+
+        // ── Acciones JSON para modal CRUD de Categorías ─────────────────────────
+
+        public ActionResult GetCategoria(int id)
+        {
+            try
+            {
+                var obj = categoriaService.Get(id.ToString());
+                if (obj == null)
+                    return Json(new { success = false, message = "Categoría no encontrada." }, JsonRequestBehavior.AllowGet);
+
+                return Json(new
+                {
+                    success = true,
+                    categoria = new
+                    {
+                        id = obj.Id,
+                        titulo = obj.Titulo,
+                        responsableSugerido = obj.ResponsableSugerido,
+                        descripcion = obj.Descripcion,
+                        puntosOpcionA = obj.PuntosOpcionA,
+                        puntosOpcionB = obj.PuntosOpcionB,
+                        puntosOpcionC = obj.PuntosOpcionC,
+                        puntosOpcionD = obj.PuntosOpcionD,
+                        imagen = obj.Imagen,
+                        ind_Estado = obj.Ind_Estado
+                    }
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error al consultar: " + ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpPost]
+        [ValidateInput(false)]
+        public ActionResult GuardarCategoria(EvalCategoria ObjCategoria, HttpPostedFileBase file)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(ObjCategoria.Titulo))
+                    return Json(new { success = false, message = "El título de la categoría es requerido." });
+
+                var imagen = Guid.NewGuid().ToString();
+                var path = System.Configuration.ConfigurationManager.AppSettings["RutaImg"] + "categoria\\" + imagen + ".jpg";
+
+                if (ObjCategoria.Id > 0)
+                {
+                    // Editar
+                    var original = categoriaService.Get(ObjCategoria.Id.ToString());
+                    if (original == null)
+                        return Json(new { success = false, message = "Categoría no encontrada." });
+
+                    ObjCategoria.Imagen = original.Imagen;
+                    ObjCategoria.Ind_Estado = string.IsNullOrEmpty(ObjCategoria.Ind_Estado) ? original.Ind_Estado : ObjCategoria.Ind_Estado;
+
+                    if (file != null && file.ContentLength > 0)
+                    {
+                        if (file.ContentType.Equals("image/jpeg") || file.ContentType.Equals("image/png"))
+                        {
+                            file.SaveAs(path);
+                            ObjCategoria.Imagen = imagen;
+                        }
+                        else
+                        {
+                            return Json(new { success = false, message = "La imagen debe estar en formato .jpg o .png." });
+                        }
+                    }
+
+                    categoriaService.Update(ObjCategoria);
+                    return Json(new { success = true, message = "Categoría modificada correctamente." });
+                }
+                else
+                {
+                    // Crear
+                    ObjCategoria.Ind_Estado = "A";
+
+                    if (file != null && file.ContentLength > 0)
+                    {
+                        if (file.ContentType.Equals("image/jpeg") || file.ContentType.Equals("image/png"))
+                        {
+                            file.SaveAs(path);
+                            ObjCategoria.Imagen = imagen;
+                        }
+                        else
+                        {
+                            return Json(new { success = false, message = "La imagen debe estar en formato .jpg o .png." });
+                        }
+                    }
+                    else
+                    {
+                        ObjCategoria.Imagen = "Logo";
+                    }
+
+                    categoriaService.Add(ref ObjCategoria);
+                    return Json(new { success = true, message = "Categoría creada correctamente." });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error al guardar la categoría: " + ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public ActionResult EliminarCategoria(int id)
+        {
+            try
+            {
+                var obj = categoriaService.Get(id.ToString());
+                if (obj == null)
+                    return Json(new { success = false, message = "Categoría no encontrada." });
+
+                obj.Ind_Estado = "I";
+                categoriaService.Update(obj);
+                return Json(new { success = true, message = "Categoría eliminada correctamente." });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error al eliminar la categoría: " + ex.Message });
+            }
+        }
     }
 }

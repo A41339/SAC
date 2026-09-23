@@ -3,6 +3,63 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<style>
+    .modal-categoria-custom .modal-content {
+        border-radius: 14px;
+        border: none;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        overflow: hidden;
+    }
+    .modal-categoria-custom .modal-header {
+        background: linear-gradient(135deg, #1e40af 0%, #143750 100%);
+        padding: 18px 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .modal-categoria-custom .modal-title {
+        font-weight: 700;
+        font-size: 16px;
+        color: #ffffff;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .modal-categoria-custom .modal-body {
+        padding: 24px;
+        background: #f8fafc;
+    }
+    .modal-categoria-custom .modal-footer {
+        background: #ffffff;
+        border-top: 1px solid #e2e8f0;
+        padding: 14px 24px;
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+    .form-group-cat label {
+        font-weight: 600;
+        color: #334155;
+        font-size: 13px;
+        margin-bottom: 6px;
+        display: block;
+    }
+    .form-group-cat .form-control {
+        border-radius: 8px;
+        border: 1px solid #cbd5e1;
+        padding: 8px 12px;
+        height: auto;
+        font-size: 13px;
+        box-shadow: none;
+        transition: border-color 0.2s;
+    }
+    .form-group-cat .form-control:focus {
+        border-color: #0284c7;
+        box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+    }
+</style>
+
 <section class="content-header">
     <h1>
         <i class="fa fa-clipboard"></i> Mantenimiento de Evaluaciones
@@ -20,6 +77,11 @@
     <div class="row">
         <!-- Listado de Categorías al 100% de la pantalla -->
         <div class="col-xs-12">
+            <div style="margin-bottom: 16px;">
+                <button type="button" class="btn-modern-filter" id="btnNuevaCategoria" style="display: inline-flex; align-items: center; gap: 8px; text-decoration: none; padding: 9px 20px;">
+                    <i class="fa fa-plus"></i> Crear Categor&iacute;a
+                </button>
+            </div>
             <div class="modern-table-card" style="padding: 0; overflow: hidden; margin-bottom: 20px;">
                 <div style="padding: 16px 20px; border-bottom: 1px solid #e2e8f0; background: #ffffff; display: flex; align-items: center; justify-content: space-between;">
                     <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: #143750; display: flex; align-items: center; gap: 8px;">
@@ -257,6 +319,146 @@
     </div>
 </div>
 
+<!-- ═════════════════════════════════════════════════════════════════════
+     MODAL: Crear / Editar Categoría
+═════════════════════════════════════════════════════════════════════ -->
+<div class="modal fade modal-categoria-custom" id="modalCategoria" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" style="max-width: 780px; margin: 30px auto;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">
+                    <i class="fa fa-clipboard"></i>
+                    <span id="lblModalCategoriaTitulo">Nueva Categor&iacute;a</span>
+                </h4>
+                <button type="button" class="close" data-dismiss="modal" style="color: #fff; opacity: 0.85; font-size: 22px; text-shadow: none; margin: 0; padding: 0;">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="modalCategoriaError" class="alert alert-danger" style="display:none; border-radius: 8px; font-size: 13px;"></div>
+                <form id="formCategoria" enctype="multipart/form-data">
+                    <input type="hidden" id="categoriaId" name="Id" value="0" />
+                    <input type="hidden" id="categoriaIndEstado" name="Ind_Estado" value="A" />
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group-cat" style="margin-bottom: 14px;">
+                                <label for="categoriaTitulo">
+                                    <i class="fa fa-tag" style="color: #0284c7; margin-right: 5px;"></i>
+                                    T&iacute;tulo *
+                                </label>
+                                <input type="text" class="form-control" id="categoriaTitulo" name="Titulo" maxlength="200" placeholder="Ej. Gobierno Corporativo" required />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group-cat" style="margin-bottom: 14px;">
+                                <label for="categoriaResponsableSugerido">
+                                    <i class="fa fa-user" style="color: #0284c7; margin-right: 5px;"></i>
+                                    Responsable Sugerido
+                                </label>
+                                <input type="text" class="form-control" id="categoriaResponsableSugerido" name="ResponsableSugerido" maxlength="200" placeholder="Ej. Junta Directiva / Auditoría" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group-cat" style="margin-bottom: 14px;">
+                        <label for="categoriaDescripcion">
+                            <i class="fa fa-align-left" style="color: #0284c7; margin-right: 5px;"></i>
+                            Descripci&oacute;n
+                        </label>
+                        <textarea class="form-control" id="categoriaDescripcion" name="Descripcion" rows="4" placeholder="Descripción detallada de la categoría..." style="resize: vertical;"></textarea>
+                    </div>
+
+                    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px 16px; margin-bottom: 14px;">
+                        <span style="font-size: 12px; font-weight: 700; color: #1e293b; display: block; margin-bottom: 10px;">
+                            <i class="fa fa-sliders" style="color: #0284c7; margin-right: 5px;"></i>
+                            Puntos por Opci&oacute;n
+                        </span>
+                        <div class="row">
+                            <div class="col-xs-6 col-md-3">
+                                <div class="form-group-cat" style="margin-bottom: 0;">
+                                    <label for="categoriaPuntosA">Opci&oacute;n A</label>
+                                    <input type="number" class="form-control" id="categoriaPuntosA" name="PuntosOpcionA" value="0" />
+                                </div>
+                            </div>
+                            <div class="col-xs-6 col-md-3">
+                                <div class="form-group-cat" style="margin-bottom: 0;">
+                                    <label for="categoriaPuntosB">Opci&oacute;n B</label>
+                                    <input type="number" class="form-control" id="categoriaPuntosB" name="PuntosOpcionB" value="0" />
+                                </div>
+                            </div>
+                            <div class="col-xs-6 col-md-3">
+                                <div class="form-group-cat" style="margin-bottom: 0;">
+                                    <label for="categoriaPuntosC">Opci&oacute;n C</label>
+                                    <input type="number" class="form-control" id="categoriaPuntosC" name="PuntosOpcionC" value="0" />
+                                </div>
+                            </div>
+                            <div class="col-xs-6 col-md-3">
+                                <div class="form-group-cat" style="margin-bottom: 0;">
+                                    <label for="categoriaPuntosD">Opci&oacute;n D</label>
+                                    <input type="number" class="form-control" id="categoriaPuntosD" name="PuntosOpcionD" value="0" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group-cat" style="margin-bottom: 0;">
+                        <label for="categoriaFile">
+                            <i class="fa fa-image" style="color: #0284c7; margin-right: 5px;"></i>
+                            Imagen / Logo (.jpg, .png)
+                        </label>
+                        <input type="file" id="categoriaFile" name="file" accept="image/jpeg,image/png" class="form-control" style="padding: 4px;" />
+                        <div id="previewImagenContainer" style="margin-top: 8px; display: none;">
+                            <img id="previewImagen" src="" alt="Vista previa" style="max-height: 80px; border-radius: 6px; border: 1px solid #cbd5e1;" />
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-modern-filter" id="btnGuardarCategoria" style="padding: 9px 22px; border-radius: 8px;">
+                    <i class="fa fa-save"></i> Guardar
+                </button>
+                <button type="button" class="btn-modern-filter" data-dismiss="modal" style="padding: 9px 22px; border-radius: 8px; background: #64748b;">
+                    <i class="fa fa-times"></i> Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ═════════════════════════════════════════════════════════════════════
+     MODAL: Confirmar Eliminación de Categoría
+═════════════════════════════════════════════════════════════════════ -->
+<div class="modal fade modal-categoria-custom" id="modalEliminarCategoria" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" style="max-width: 440px; margin: 80px auto;">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);">
+                <h4 class="modal-title">
+                    <i class="fa fa-exclamation-triangle"></i>
+                    Confirmar Eliminaci&oacute;n
+                </h4>
+                <button type="button" class="close" data-dismiss="modal" style="color: #fff; opacity: 0.85; font-size: 22px; text-shadow: none; margin: 0; padding: 0;">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="background: #ffffff; font-size: 14px; color: #334155; line-height: 1.5;">
+                <p>&iquest;Est&aacute; seguro de que desea eliminar la categor&iacute;a <strong id="lblEliminarCategoriaNombre"></strong>?</p>
+                <p style="margin-bottom: 0; color: #64748b; font-size: 13px;">
+                    Esta acci&oacute;n cambiar&aacute; el estado de la categor&iacute;a a inactivo.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-modern-filter" id="btnConfirmarEliminarCategoria" style="padding: 9px 22px; border-radius: 8px; background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);">
+                    <i class="fa fa-trash"></i> S&iacute;, Eliminar
+                </button>
+                <button type="button" class="btn-modern-filter" data-dismiss="modal" style="padding: 9px 22px; border-radius: 8px; background: #64748b;">
+                    <i class="fa fa-times"></i> Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <input id="idCategoria" runat="server" type="hidden" />
 <input id="idSubCategoria" runat="server" type="hidden" />
 
@@ -453,7 +655,7 @@
     }
 
     $(document).ready(function () {
-        $("#tbEvaluacion").dataTable({
+        var oTableEvaluacion = $("#tbEvaluacion").dataTable({
             "bRetrieve": true,
             "bProcessing": true,
             "dom": 'lBfrtip',
@@ -475,18 +677,148 @@
                 {
                     "mRender": function (oObj, type, row) {
                         return '<div class="text-center">'
-                            + '<div class="btn-group">'
-                            + '<button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" style="border-radius:6px; border:1px solid #cbd5e1; font-size:12px; padding:4px 10px; color:#374151;">'
-                            + '<i class="fa fa-cog" style="margin-right:4px;"></i> Acci&oacute;n <span class="caret"></span>'
-                            + '</button>'
-                            + '<ul class="dropdown-menu pull-left" role="menu" style="border-radius:10px; box-shadow:0 8px 24px rgba(0,0,0,0.12); border:1px solid #e2e8f0; min-width:160px; padding:6px 0;">'
-                            + '<li><a href="' + ControlerNameCompany + '/Edit/' + row[0] + '" style="padding:8px 16px; font-size:13px; color:#1e293b; display:flex; align-items:center; gap:8px;"><i class="fa fa-edit" style="color:#0284c7;"></i> Modificar</a></li>'
-                            + '<li><a href="' + ControlerNameCompany + '/Delete/' + row[0] + '" style="padding:8px 16px; font-size:13px; color:#ef4444; display:flex; align-items:center; gap:8px;"><i class="fa fa-trash"></i> Eliminar</a></li>'
-                            + '</ul></div></div>';
+                            + '<div style="display:inline-flex;gap:6px;align-items:center;">'
+                            + '<button type="button" class="btn btn-xs btn-default btn-edit-categoria" data-id="' + row[0] + '" style="border-radius:6px; border:1px solid #cbd5e1; padding:4px 10px; color:#374151;" title="Modificar"><i class="fa fa-edit" style="color:#0284c7;"></i></button>'
+                            + '<button type="button" class="btn btn-xs btn-default btn-delete-categoria" data-id="' + row[0] + '" data-nombre="' + escape(row[2]) + '" style="border-radius:6px; border:1px solid #fecaca; padding:4px 10px; color:#dc2626;" title="Eliminar"><i class="fa fa-trash"></i></button>'
+                            + '</div></div>';
                     }
                 },
                 {}, {}, {}
             ]
+        });
+
+        // ── Abrir modal Nueva Categoría ─────────────────────────────
+        $('#btnNuevaCategoria').on('click', function () {
+            $('#lblModalCategoriaTitulo').text('Nueva Categoría');
+            $('#categoriaId').val('0');
+            $('#categoriaIndEstado').val('A');
+            $('#categoriaTitulo').val('');
+            $('#categoriaResponsableSugerido').val('');
+            $('#categoriaDescripcion').val('');
+            $('#categoriaPuntosA').val('0');
+            $('#categoriaPuntosB').val('0');
+            $('#categoriaPuntosC').val('0');
+            $('#categoriaPuntosD').val('0');
+            $('#categoriaFile').val('');
+            $('#previewImagenContainer').hide();
+            $('#previewImagen').attr('src', '');
+            $('#modalCategoriaError').hide();
+            $('#modalCategoria').modal('show');
+            setTimeout(function () { $('#categoriaTitulo').focus(); }, 400);
+        });
+
+        // ── Abrir modal Editar Categoría ────────────────────────────
+        $(document).on('click', '.btn-edit-categoria', function () {
+            var id = $(this).data('id');
+            $('#modalCategoriaError').hide();
+
+            $.getJSON('@Url.Action("GetCategoria", "Evaluacion")', { id: id }, function (res) {
+                if (res && res.success && res.categoria) {
+                    var c = res.categoria;
+                    $('#lblModalCategoriaTitulo').text('Editar Categoría: ' + c.titulo);
+                    $('#categoriaId').val(c.id);
+                    $('#categoriaIndEstado').val(c.ind_Estado || 'A');
+                    $('#categoriaTitulo').val(c.titulo || '');
+                    $('#categoriaResponsableSugerido').val(c.responsableSugerido || '');
+                    $('#categoriaDescripcion').val(c.descripcion || '');
+                    $('#categoriaPuntosA').val(c.puntosOpcionA != null ? c.puntosOpcionA : '0');
+                    $('#categoriaPuntosB').val(c.puntosOpcionB != null ? c.puntosOpcionB : '0');
+                    $('#categoriaPuntosC').val(c.puntosOpcionC != null ? c.puntosOpcionC : '0');
+                    $('#categoriaPuntosD').val(c.puntosOpcionD != null ? c.puntosOpcionD : '0');
+                    $('#categoriaFile').val('');
+
+                    if (c.imagen) {
+                        $('#previewImagen').attr('src', 'https://www.ffc.co.cr/img/secciones/categoria/' + c.imagen + '.jpg');
+                        $('#previewImagenContainer').show();
+                    } else {
+                        $('#previewImagenContainer').hide();
+                    }
+
+                    $('#modalCategoria').modal('show');
+                    setTimeout(function () { $('#categoriaTitulo').focus(); }, 400);
+                } else {
+                    window.mostrarToastError(res.message || 'No se pudo cargar la información de la categoría.');
+                }
+            }).fail(function () {
+                window.mostrarToastError('Error al consultar la categoría en el servidor.');
+            });
+        });
+
+        // ── Guardar Categoría (Crear / Editar) ─────────────────────
+        $('#btnGuardarCategoria').on('click', function () {
+            var titulo = $.trim($('#categoriaTitulo').val());
+
+            if (!titulo) {
+                $('#modalCategoriaError').text('El título de la categoría es requerido.').show();
+                return;
+            }
+
+            var $btn = $(this);
+            $btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Guardando...');
+
+            var formElement = document.getElementById('formCategoria');
+            var formData = new FormData(formElement);
+
+            $.ajax({
+                url: '@Url.Action("GuardarCategoria", "Evaluacion")',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (res) {
+                    $btn.prop('disabled', false).html('<i class="fa fa-save"></i> Guardar');
+                    if (res && res.success) {
+                        $('#modalCategoria').modal('hide');
+                        window.mostrarToastExito(res.message);
+                        oTableEvaluacion.fnReloadAjax();
+                    } else {
+                        $('#modalCategoriaError').text(res.message || 'Error al guardar la categoría.').show();
+                    }
+                },
+                error: function () {
+                    $btn.prop('disabled', false).html('<i class="fa fa-save"></i> Guardar');
+                    $('#modalCategoriaError').text('Error de conexión con el servidor.').show();
+                }
+            });
+        });
+
+        // ── Abrir modal Confirmar Eliminación ───────────────────────
+        var categoriaToDeleteId = 0;
+        $(document).on('click', '.btn-delete-categoria', function () {
+            categoriaToDeleteId = $(this).data('id');
+            var rawNombre = $(this).data('nombre');
+            var nombre = unescape(rawNombre || "");
+            $('#lblEliminarCategoriaNombre').text('"' + nombre + '"');
+            $('#modalEliminarCategoria').modal('show');
+        });
+
+        // ── Confirmar Eliminación ───────────────────────────────────
+        $('#btnConfirmarEliminarCategoria').on('click', function () {
+            if (!categoriaToDeleteId) return;
+
+            var $btn = $(this);
+            $btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Eliminando...');
+
+            $.ajax({
+                url: '@Url.Action("EliminarCategoria", "Evaluacion")',
+                type: 'POST',
+                data: { id: categoriaToDeleteId },
+                success: function (res) {
+                    $btn.prop('disabled', false).html('<i class="fa fa-trash"></i> Sí, Eliminar');
+                    $('#modalEliminarCategoria').modal('hide');
+                    if (res && res.success) {
+                        window.mostrarToastExito(res.message);
+                        oTableEvaluacion.fnReloadAjax();
+                    } else {
+                        window.mostrarToastError(res.message || 'No fue posible eliminar la categoría.');
+                    }
+                },
+                error: function () {
+                    $btn.prop('disabled', false).html('<i class="fa fa-trash"></i> Sí, Eliminar');
+                    $('#modalEliminarCategoria').modal('hide');
+                    window.mostrarToastError('Error de comunicación al intentar eliminar la categoría.');
+                }
+            });
         });
     });
 
