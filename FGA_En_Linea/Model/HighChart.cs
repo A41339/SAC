@@ -723,29 +723,29 @@ namespace FGA.Model
             switch (i)
             {
                 case 0:
-                    return ColorTranslator.FromHtml("#0284c7"); // Azul Zafiro Primario
+                    return ColorTranslator.FromHtml("#2F5597"); // Azul Institucional (ancla)
                 case 1:
-                    return ColorTranslator.FromHtml("#ea580c"); // Ámbar / Naranja Cálido
+                    return ColorTranslator.FromHtml("#F4A261"); // Naranja Durazno Suave
                 case 2:
-                    return ColorTranslator.FromHtml("#2F5597"); // Azul Institucional FFC
+                    return ColorTranslator.FromHtml("#6B9FD4"); // Azul Cielo Pastel
                 case 3:
-                    return ColorTranslator.FromHtml("#10b981"); // Esmeralda / Éxito
+                    return ColorTranslator.FromHtml("#52B788"); // Verde Salvia Suave
                 case 4:
-                    return ColorTranslator.FromHtml("#6366f1"); // Índigo / Violeta
+                    return ColorTranslator.FromHtml("#A78BFA"); // Lavanda / Violeta Pastel
                 case 5:
-                    return ColorTranslator.FromHtml("#f59e0b"); // Ámbar Dorado
+                    return ColorTranslator.FromHtml("#FCD34D"); // Ámbar Dorado Suave
                 case 6:
-                    return ColorTranslator.FromHtml("#06b6d4"); // Cyan Moderno
+                    return ColorTranslator.FromHtml("#5DADE2"); // Azul Claro / Cielo
                 case 7:
-                    return ColorTranslator.FromHtml("#ef4444"); // Rojo Coral / Alerta Mora
+                    return ColorTranslator.FromHtml("#F08080"); // Coral Rosado Suave
                 case 8:
-                    return ColorTranslator.FromHtml("#8b5cf6"); // Púrpura Elegante
+                    return ColorTranslator.FromHtml("#81B3A8"); // Teal Grisáceo Suave
                 case 9:
-                    return ColorTranslator.FromHtml("#64748b"); // Slate Neutro
+                    return ColorTranslator.FromHtml("#94A3B8"); // Slate Neutro
                 case 10:
-                    return ColorTranslator.FromHtml("#e11d48"); // Rojo Alerta Crítica / Mora >180 días
+                    return ColorTranslator.FromHtml("#E11D48"); // Rojo Alerta (mora >180 días)
                 case 11:
-                    return ColorTranslator.FromHtml("#991b1b"); // Borgoña / Cobro Judicial
+                    return ColorTranslator.FromHtml("#7B5EA7"); // Púrpura Institucional Suave
                 case 12:
                     return ColorTranslator.FromHtml("#0f766e"); // Teal Profundo
                 default:
