@@ -486,21 +486,11 @@
         z-index: 9999 !important;
     }
 
-    /* Allow export button to render above the chart container without clipping */
+    /* Allow export button SVG to overflow the chart container without clipping */
     .highcharts-container,
     .highcharts-container svg,
     .highcharts-root {
         overflow: visible !important;
-    }
-
-    /* Reserve space above the chart for the Descargar button */
-    .highcharts-container {
-        margin-top: 38px !important;
-    }
-
-    /* Pull the exporting button group up into the reserved space */
-    .highcharts-exporting-group {
-        transform: translateY(-38px) !important;
     }
 
     .highcharts-credits {
@@ -1490,8 +1480,8 @@
         colors: ['#2F5597', '#F4A261', '#6B9FD4', '#52B788', '#A78BFA', '#FCD34D', '#5DADE2', '#F08080', '#81B3A8', '#94A3B8', '#E11D48', '#7B5EA7'],
         chart: {
             backgroundColor: '#FFF',
-            spacingTop: 15,
-            spacingRight: 10,
+            spacingTop: 50,
+            spacingRight: 15,
             events: {
                 render: function () {
                     if (this.exportSVGElements && this.exportSVGElements[0]) {
@@ -1559,8 +1549,8 @@
 	        contextButton: {
                 align: 'right',
                 verticalAlign: 'top',
-                y: -5,
-                x: -5,
+                y: 10,
+                x: -10,
                 text: 'Descargar ▾',
                 symbol: null,
                 theme: {
