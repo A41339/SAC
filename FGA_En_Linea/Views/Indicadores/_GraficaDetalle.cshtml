@@ -13,6 +13,9 @@
     </button>
 </div>
 <div class="modal-body" style="padding: 20px 24px; background: #ffffff; overflow-y: auto;">
+    <!-- Strip resumen con métricas clave del indicador -->
+    <div id="indicadorPopupKpiStrip" style="margin-bottom: 20px;"></div>
+
     <script type="text/javascript">
         if (typeof Highcharts !== 'undefined') {
             Highcharts.setOptions({
@@ -26,6 +29,81 @@
                 Highcharts.defaultOptions.lang.decimalPoint = '.';
             }
         }
+
+        // Generar dinámicamente el strip de métricas una vez renderizado el gráfico
+        setTimeout(function () {
+            try {
+                if (typeof Highcharts === 'undefined' || !Highcharts.charts) return;
+                var charts = Highcharts.charts.filter(function (c) { return c && c.series && c.series.length > 0; });
+                if (charts.length === 0) return;
+                var chart = charts[charts.length - 1];
+                var s = chart.series[0];
+                if (!s || !s.data || s.data.length === 0) return;
+
+                var cats = (chart.xAxis && chart.xAxis[0]) ? chart.xAxis[0].categories : [];
+                var rawData = s.data.map(function (pt) {
+                    if (typeof pt.y === 'number') return pt.y;
+                    if (Array.isArray(pt) && typeof pt[1] === 'number') return pt[1];
+                    return parseFloat(pt.y) || 0;
+                });
+
+                if (rawData.length === 0) return;
+
+                var p1Label = cats && cats.length > 0 ? cats[0] : 'Inicial';
+                var p2Label = cats && cats.length > 0 ? cats[cats.length - 1] : 'Final';
+                var v1 = rawData[0];
+                var v2 = rawData[rawData.length - 1];
+                var diff = v2 - v1;
+                var sum = rawData.reduce(function (a, b) { return a + b; }, 0);
+                var avg = sum / rawData.length;
+                var minVal = Math.min.apply(null, rawData);
+                var maxVal = Math.max.apply(null, rawData);
+
+                var isPct = (s.name && s.name.indexOf('%') > -1) ||
+                            (s.yAxis && s.yAxis.options && s.yAxis.options.title && s.yAxis.options.title.text && s.yAxis.options.title.text.indexOf('Porcent') > -1);
+                var suf = isPct ? '%' : '';
+
+                var isPos = diff >= 0;
+                var badgeBg = isPos ? 'background-color: #dcfce7; color: #15803d;' : 'background-color: #fee2e2; color: #b91c1c;';
+                var sign = isPos ? '+' : '';
+
+                var formatNum = function (n) {
+                    return (typeof n === 'number') ? n.toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : n;
+                };
+
+                var stripHtml =
+                    '<div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px 18px;">' +
+                    '    <div>' +
+                    '        <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block;">Período Inicial (' + p1Label + ')</span>' +
+                    '        <span style="font-size: 16px; font-weight: 700; color: #1e3a8a;">' + formatNum(v1) + suf + '</span>' +
+                    '    </div>' +
+                    '    <div style="border-left: 1px solid #cbd5e1; padding-left: 16px;">' +
+                    '        <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block;">Período Final (' + p2Label + ')</span>' +
+                    '        <span style="font-size: 16px; font-weight: 700; color: #0f172a;">' + formatNum(v2) + suf + '</span>' +
+                    '    </div>' +
+                    '    <div style="border-left: 1px solid #cbd5e1; padding-left: 16px;">' +
+                    '        <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block;">Variación</span>' +
+                    '        <span class="badge" style="' + badgeBg + ' font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 6px;">' +
+                    '            ' + sign + formatNum(diff) + suf +
+                    '        </span>' +
+                    '    </div>' +
+                    '    <div style="border-left: 1px solid #cbd5e1; padding-left: 16px;">' +
+                    '        <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block;">Promedio</span>' +
+                    '        <span style="font-size: 16px; font-weight: 700; color: #334155;">' + formatNum(avg) + suf + '</span>' +
+                    '    </div>' +
+                    '    <div style="border-left: 1px solid #cbd5e1; padding-left: 16px;">' +
+                    '        <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block;">Mín / Máx</span>' +
+                    '        <span style="font-size: 13px; font-weight: 600; color: #475569;">' +
+                    '            ' + formatNum(minVal) + suf + ' / ' + formatNum(maxVal) + suf +
+                    '        </span>' +
+                    '    </div>' +
+                    '</div>';
+
+                $('#indicadorPopupKpiStrip').html(stripHtml);
+            } catch (err) {
+                console.error(err);
+            }
+        }, 220);
     </script>
     <div style="width: 100%; min-height: 400px; overflow: visible;">
         @(Model)

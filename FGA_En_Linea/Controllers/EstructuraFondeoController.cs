@@ -902,8 +902,8 @@ namespace FGA.Controllers
                     data.Series.Add(serieVarCap);
                     data.Series.Add(serieVarEnt);
 
-                    data.TablaData.Titulo = "Variaciones por tipo de Fondeo";
-                    data.TablaData.Columnas = new List<string> { "Tipo de Fondeo" };
+                    data.TablaData.Titulo = "Variaciones por tipo de fondeo";
+                    data.TablaData.Columnas = new List<string> { "Tipo de fondeo" };
                     data.TablaData.Columnas.AddRange(categorias);
 
                     data.TablaData.Filas.Add(new GraficoTablaFila { Nombre = "Obligaciones con el público (%)", Valores = serieVarPub.Data.Select(d => string.Format("{0:N2}%", d)).ToList() });

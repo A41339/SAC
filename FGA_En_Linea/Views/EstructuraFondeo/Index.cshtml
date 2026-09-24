@@ -358,6 +358,7 @@
             // Modal Ampliar Gráfico
             $('#mPopUp').on('shown.bs.modal', function () {
                 if (currentGraficoData) {
+                    actualizarKpiStripModal(currentGraficoData);
                     renderizarHighchart(currentGraficoData, 'fondeoModalChartContainer');
                     if (currentModalChart) {
                         currentModalChart.reflow();
@@ -511,6 +512,76 @@
             });
         }
 
+        function actualizarKpiStripModal(d) {
+            if (!d || !d.Series || d.Series.length === 0 || !d.Categorias || d.Categorias.length === 0) {
+                $('#fondeoModalKpiStrip').empty();
+                return;
+            }
+
+            var s = d.Series[0];
+            for (var k = 0; k < d.Series.length; k++) {
+                if (d.Series[k].Type === 'spline' || d.Series[k].Type === 'line' || d.Series[k].YAxis === 1) {
+                    s = d.Series[k];
+                    break;
+                }
+            }
+
+            var numData = (s.Data || []).map(function (v) { return typeof v === 'number' ? v : parseFloat(v) || 0; });
+            if (numData.length === 0) {
+                $('#fondeoModalKpiStrip').empty();
+                return;
+            }
+
+            var cats = d.Categorias;
+            var p1Label = cats[0];
+            var p2Label = cats[cats.length - 1];
+            var v1 = numData[0];
+            var v2 = numData[numData.length - 1];
+            var diff = v2 - v1;
+            var sum = numData.reduce(function (a, b) { return a + b; }, 0);
+            var avg = sum / numData.length;
+            var minVal = Math.min.apply(null, numData);
+            var maxVal = Math.max.apply(null, numData);
+            var suf = s.TooltipSuffix || (s.Name && s.Name.indexOf('%') > -1 ? '%' : '');
+
+            var isPos = diff >= 0;
+            var badgeBg = isPos ? 'background-color: #dcfce7; color: #15803d;' : 'background-color: #fee2e2; color: #b91c1c;';
+            var sign = isPos ? '+' : '';
+
+            var formatNum = function (n) {
+                return (typeof n === 'number') ? n.toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : n;
+            };
+
+            var html =
+                '<div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px 18px;">' +
+                '    <div>' +
+                '        <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block;">Período Inicial (' + p1Label + ')</span>' +
+                '        <span style="font-size: 16px; font-weight: 700; color: #1e3a8a;">' + formatNum(v1) + suf + '</span>' +
+                '    </div>' +
+                '    <div style="border-left: 1px solid #cbd5e1; padding-left: 16px;">' +
+                '        <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block;">Período Final (' + p2Label + ')</span>' +
+                '        <span style="font-size: 16px; font-weight: 700; color: #0f172a;">' + formatNum(v2) + suf + '</span>' +
+                '    </div>' +
+                '    <div style="border-left: 1px solid #cbd5e1; padding-left: 16px;">' +
+                '        <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block;">Variación</span>' +
+                '        <span class="badge" style="' + badgeBg + ' font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 6px;">' +
+                '            ' + sign + formatNum(diff) + suf +
+                '        </span>' +
+                '    </div>' +
+                '    <div style="border-left: 1px solid #cbd5e1; padding-left: 16px;">' +
+                '        <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block;">Promedio</span>' +
+                '        <span style="font-size: 16px; font-weight: 700; color: #334155;">' + formatNum(avg) + suf + '</span>' +
+                '    </div>' +
+                '    <div style="border-left: 1px solid #cbd5e1; padding-left: 16px;">' +
+                '        <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block;">Mín / Máx</span>' +
+                '        <span style="font-size: 13px; font-weight: 600; color: #475569;">' +
+                '            ' + formatNum(minVal) + suf + ' / ' + formatNum(maxVal) + suf +
+                '        </span>' +
+                '    </div>' +
+                '</div>';
+
+            $('#fondeoModalKpiStrip').html(html);
+        }
 
         function cargarGrafico() {
             var ent = $('#ddlEntidad').val();
