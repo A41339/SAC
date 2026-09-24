@@ -83,4 +83,23 @@ namespace FGA.Model
         public string Nombre { get; set; }
         public List<string> Valores { get; set; } = new List<string>();
     }
+
+    public class IndicadorHistoricoViewModel
+    {
+        public int Orden { get; set; }
+        public string Nombre { get; set; }
+        public string Formula { get; set; }
+        public bool EsPorcentaje { get; set; } = true;
+        public string PeriodoI { get; set; }
+        public string PeriodoF { get; set; }
+        public List<string> Categorias { get; set; } = new List<string>();
+        public List<decimal> Valores { get; set; } = new List<decimal>();
+        public decimal Minimo { get; set; }
+        public decimal Maximo { get; set; }
+        public decimal Promedio { get; set; }
+        public decimal PrimerValor { get; set; }
+        public decimal UltimoValor { get; set; }
+        public decimal VariacionPeriodo { get; set; }
+    }
 }
+
