@@ -750,6 +750,7 @@
                         },
                         style: { color: '#475569' }
                     },
+                    reversedStacks: data.TipoGraficoHighcharts === 'bar' ? false : true,
                     gridLineWidth: 0,
                     minorGridLineWidth: 0,
                     gridLineColor: 'transparent',
@@ -759,7 +760,8 @@
 
             var plotOptionsConfig = {
                 series: {
-                    animation: { duration: 600 }
+                    animation: { duration: 600 },
+                    reversedStacks: data.TipoGraficoHighcharts === 'bar' ? false : true
                 }
             };
 
@@ -768,6 +770,7 @@
                 if (data.TipoGraficoHighcharts === 'bar') {
                     plotOptionsConfig.bar = {
                         stacking: stackingType,
+                        reversedStacks: false,
                         dataLabels: {
                             enabled: true,
                             format: '{point.y:.1f}%',
