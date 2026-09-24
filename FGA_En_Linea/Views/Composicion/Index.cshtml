@@ -129,14 +129,19 @@
 
     $("#Grafico").change(function () {
         toggleCategoryTypes();
+        refreshGraph();
+    });
+
+    $("#IdEntidad").change(function () {
+        refreshGraph();
     });
 
     function refreshGraph() {
+         $('#grafica').html('<div style="text-align: center; padding: 40px 0; color: #64748b;"><i class="fa fa-spinner fa-spin fa-2x"></i><p style="margin-top: 10px; font-size: 13px;">Cargando gráfico...</p></div>');
          $.ajax({
             url: '@Url.Action("GraficaDetalle", "Composicion")',
             type: 'POST',
             cache: false,
-            async: false,
             data: {
                  'Entidades': $('#IdEntidad').val(),
                  'Grafico': $('#Grafico').val(),
@@ -149,6 +154,9 @@
                  $('#grafica').html(result);
                  $("#entidad").text($("#Grafico :selected").text());
                  $("#pEntidad").text($("#Grafico :selected").text());
+            },
+            error: function () {
+                $('#grafica').html('<div class="alert alert-danger" style="margin: 20px;">Ocurrió un error al cargar el gráfico.</div>');
             }
          });
     }

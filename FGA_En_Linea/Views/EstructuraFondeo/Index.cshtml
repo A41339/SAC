@@ -85,6 +85,16 @@
         .highcharts-credits {
             display: none !important;
         }
+
+        /* Quitar líneas horizontales que atraviesan los gráficos */
+        #fondeoChartContainer .highcharts-grid-line,
+        #fondeoChartContainer .highcharts-grid path,
+        #fondeoChartContainer .highcharts-yaxis-grid path,
+        #fondeoChartContainer .highcharts-plot-line {
+            display: none !important;
+            stroke: transparent !important;
+            stroke-width: 0 !important;
+        }
     </style>
 }
 
@@ -445,7 +455,11 @@
                     labels: {
                         format: '{value}%',
                         style: { color: '#475569' }
-                    }
+                    },
+                    gridLineWidth: 0,
+                    minorGridLineWidth: 0,
+                    gridLineColor: 'transparent',
+                    lineWidth: 0
                 });
                 yAxisConfig.push({
                     title: {
@@ -456,7 +470,11 @@
                         format: data.TipoGrafico === 1 ? '₡{value:,.0f}M' : '{value}%',
                         style: { color: '#475569' }
                     },
-                    opposite: true
+                    opposite: true,
+                    gridLineWidth: 0,
+                    minorGridLineWidth: 0,
+                    gridLineColor: 'transparent',
+                    lineWidth: 0
                 });
             } else {
                 yAxisConfig.push({
@@ -472,7 +490,11 @@
                             return this.value + '%';
                         },
                         style: { color: '#475569' }
-                    }
+                    },
+                    gridLineWidth: 0,
+                    minorGridLineWidth: 0,
+                    gridLineColor: 'transparent',
+                    lineWidth: 0
                 });
             }
 
@@ -554,7 +576,9 @@
                 credits: { enabled: false },
                 xAxis: {
                     categories: data.Categorias,
-                    crosshair: true,
+                    crosshair: false,
+                    gridLineWidth: 0,
+                    minorGridLineWidth: 0,
                     labels: {
                         style: { color: '#475569', fontSize: '11px' }
                     },
