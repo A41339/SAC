@@ -257,11 +257,25 @@
                 var yAxisOpts = (point.series && point.series.yAxis && point.series.yAxis.options) ? point.series.yAxis.options : {};
                 var yTitle = (yAxisOpts.title && yAxisOpts.title.text) ? yAxisOpts.title.text.toLowerCase() : '';
                 var yLabels = yAxisOpts.labels || {};
-                var sSuffix = (point.series && point.series.tooltipOptions && point.series.tooltipOptions.valueSuffix) || '';
+                var sSuffix = (point.series && point.series.tooltipOptions && point.series.tooltipOptions.valueSuffix) ||
+                              (point.series && point.series.userOptions && point.series.userOptions.tooltip && point.series.userOptions.tooltip.valueSuffix) ||
+                              (point.series && point.series.options && point.series.options.tooltip && point.series.options.tooltip.valueSuffix) || '';
+
+                // Detección estricta de no-porcentajes (montos monetarios, conteos, etc.)
+                var isExplicitNonPercent = sName.indexOf('monto') !== -1 ||
+                                           sName.indexOf('saldo') !== -1 ||
+                                           sName.indexOf('financiamiento') !== -1 ||
+                                           sName.indexOf('cantidad') !== -1 ||
+                                           sName.indexOf('personas') !== -1 ||
+                                           sName.indexOf('asociados') !== -1 ||
+                                           sName.indexOf('ahorrantes') !== -1 ||
+                                           (sSuffix.indexOf('M') !== -1) ||
+                                           (sSuffix.indexOf('personas') !== -1);
 
                 if (point.percentage !== undefined && point.series && point.series.type === 'column' &&
                     point.series.chart && point.series.chart.options && point.series.chart.options.plotOptions &&
-                    point.series.chart.options.plotOptions.column && point.series.chart.options.plotOptions.column.stacking === 'percent') {
+                    point.series.chart.options.plotOptions.column && point.series.chart.options.plotOptions.column.stacking === 'percent' &&
+                    !isExplicitNonPercent) {
                     return Highcharts.numberFormat(point.percentage, 2, '.', ',') + '%';
                 }
 
@@ -269,7 +283,8 @@
                                      yTitle.indexOf('porcent') !== -1 ||
                                      (yLabels.formatter && ('' + yLabels.formatter).indexOf('Percent') !== -1);
 
-                var isPct = sSuffix.indexOf('%') !== -1 ||
+                var isPct = !isExplicitNonPercent && (
+                            sSuffix.indexOf('%') !== -1 ||
                             sName.indexOf('%') !== -1 ||
                             sName.indexOf('tasa') !== -1 ||
                             sName.indexOf('porcent') !== -1 ||
@@ -278,10 +293,21 @@
                             sName.indexOf('cobertura') !== -1 ||
                             sName.indexOf('mora') !== -1 ||
                             sName.indexOf('al d') !== -1 ||
-                            isYAxisPercent;
+                            isYAxisPercent);
 
                 if (isPct) {
                     return Highcharts.numberFormat(val, 2, '.', ',') + '%';
+                }
+
+                if (sSuffix && sSuffix.trim() !== '') {
+                    if (sSuffix.trim() === 'M' || sName.indexOf('monto') !== -1 || sName.indexOf('financiamiento') !== -1) {
+                        return '₡' + Highcharts.numberFormat(val, 2, '.', ',') + ' M';
+                    }
+                    return Highcharts.numberFormat(val, 2, '.', ',') + ' ' + sSuffix.trim();
+                }
+
+                if (sName.indexOf('monto') !== -1 || sName.indexOf('financiamiento') !== -1) {
+                    return '₡' + Highcharts.numberFormat(val, 2, '.', ',') + ' M';
                 }
 
                 if (val % 1 !== 0) {

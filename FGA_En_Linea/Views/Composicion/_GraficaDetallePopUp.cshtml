@@ -71,76 +71,116 @@
                         return c && c.renderTo && $(c.renderTo).closest('#mPopUp').length && c.series && c.series.length > 0;
                     });
                     if (modalCharts.length === 0) return;
-                    var chart = modalCharts[0];
-                    var s = chart.series[0];
-                    for (var k = 0; k < chart.series.length; k++) {
-                        if (chart.series[k].type === 'spline' || chart.series[k].type === 'line') {
-                            s = chart.series[k];
-                            break;
+                    function renderComposicionKpi(selectedIdx) {
+                        var seriesIdx = 0;
+                        if (typeof selectedIdx === 'number' && selectedIdx >= 0 && selectedIdx < chart.series.length) {
+                            seriesIdx = selectedIdx;
+                        } else {
+                            for (var k = 0; k < chart.series.length; k++) {
+                                if (chart.series[k].type === 'spline' || chart.series[k].type === 'line') {
+                                    seriesIdx = k;
+                                    break;
+                                }
+                            }
                         }
+
+                        var s = chart.series[seriesIdx];
+                        if (!s || !s.data || s.data.length === 0) return;
+
+                        var cats = (chart.xAxis && chart.xAxis[0]) ? chart.xAxis[0].categories : [];
+                        var rawData = s.data.map(function (pt) {
+                            if (typeof pt.y === 'number') return pt.y;
+                            if (Array.isArray(pt) && typeof pt[1] === 'number') return pt[1];
+                            return parseFloat(pt.y) || 0;
+                        });
+
+                        if (rawData.length === 0) return;
+
+                        var p1Label = cats && cats.length > 0 ? cats[0] : 'Inicial';
+                        var p2Label = cats && cats.length > 0 ? cats[cats.length - 1] : 'Final';
+                        var v1 = rawData[0];
+                        var v2 = rawData[rawData.length - 1];
+                        var diff = v2 - v1;
+                        var sum = rawData.reduce(function (a, b) { return a + b; }, 0);
+                        var avg = sum / rawData.length;
+                        var minVal = Math.min.apply(null, rawData);
+                        var maxVal = Math.max.apply(null, rawData);
+
+                        var sName = s.name || '';
+                        var isPct = (sName.indexOf('%') > -1) ||
+                                    (s.yAxis && s.yAxis.options && s.yAxis.options.title && s.yAxis.options.title.text && s.yAxis.options.title.text.indexOf('Porcent') > -1) ||
+                                    (s.yAxis && s.yAxis.options && s.yAxis.options.title && s.yAxis.options.title.text && s.yAxis.options.title.text.indexOf('Concentrac') > -1);
+                        var suf = isPct ? '%' : '';
+
+                        var isPos = diff >= 0;
+                        var badgeBg = isPos ? 'background-color: #dcfce7; color: #15803d;' : 'background-color: #fee2e2; color: #b91c1c;';
+                        var sign = isPos ? '+' : '';
+
+                        var formatNum = function (n) {
+                            return (typeof n === 'number') ? n.toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : n;
+                        };
+
+                        var diffFormatted = sign + formatNum(diff) + (isPct ? ' p.p.' : suf);
+
+                        var selectorHtml = '';
+                        if (chart.series.length > 1) {
+                            selectorHtml =
+                                '<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; flex-wrap: wrap; gap: 8px;">' +
+                                '    <div style="font-size: 13px; font-weight: 700; color: #1e3a8a; display: flex; align-items: center; gap: 6px;">' +
+                                '        <i class="fa fa-sliders" style="color: #2F5597;"></i> Indicadores de la serie:' +
+                                '    </div>' +
+                                '    <div>' +
+                                '        <select id="composicionModalSeriesSelect" class="form-control" style="height: 32px; font-size: 12.5px; font-weight: 600; padding: 2px 10px; border-radius: 6px; border: 1px solid #cbd5e1; color: #1e3a8a; background: #ffffff; min-width: 260px;">';
+
+                            for (var idx = 0; idx < chart.series.length; idx++) {
+                                var ser = chart.series[idx];
+                                var isSelected = (idx === seriesIdx) ? ' selected' : '';
+                                selectorHtml += '<option value="' + idx + '"' + isSelected + '>● ' + ser.name + '</option>';
+                            }
+
+                            selectorHtml +=
+                                '        </select>' +
+                                '    </div>' +
+                                '</div>';
+                        }
+
+                        var stripHtml = selectorHtml +
+                            '<div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px 18px;">' +
+                            '    <div>' +
+                            '        <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block;">Período Inicial (' + p1Label + ')</span>' +
+                            '        <span style="font-size: 16px; font-weight: 700; color: #1e3a8a;">' + formatNum(v1) + suf + '</span>' +
+                            '    </div>' +
+                            '    <div style="border-left: 1px solid #cbd5e1; padding-left: 16px;">' +
+                            '        <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block;">Período Final (' + p2Label + ')</span>' +
+                            '        <span style="font-size: 16px; font-weight: 700; color: #0f172a;">' + formatNum(v2) + suf + '</span>' +
+                            '    </div>' +
+                            '    <div style="border-left: 1px solid #cbd5e1; padding-left: 16px;">' +
+                            '        <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block;">Variación</span>' +
+                            '        <span class="badge" style="' + badgeBg + ' font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 6px;">' +
+                            '            ' + diffFormatted +
+                            '        </span>' +
+                            '    </div>' +
+                            '    <div style="border-left: 1px solid #cbd5e1; padding-left: 16px;">' +
+                            '        <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block;">Promedio</span>' +
+                            '        <span style="font-size: 16px; font-weight: 700; color: #334155;">' + formatNum(avg) + suf + '</span>' +
+                            '    </div>' +
+                            '    <div style="border-left: 1px solid #cbd5e1; padding-left: 16px;">' +
+                            '        <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block;">Mín / Máx</span>' +
+                            '        <span style="font-size: 13px; font-weight: 600; color: #475569;">' +
+                            '            ' + formatNum(minVal) + suf + ' / ' + formatNum(maxVal) + suf +
+                            '        </span>' +
+                            '    </div>' +
+                            '</div>';
+
+                        $('#composicionModalKpiStrip').html(stripHtml);
+
+                        $('#composicionModalSeriesSelect').off('change').on('change', function () {
+                            var newIdx = parseInt($(this).val(), 10);
+                            renderComposicionKpi(newIdx);
+                        });
                     }
-                    if (!s || !s.data || s.data.length === 0) return;
 
-                    var cats = (chart.xAxis && chart.xAxis[0]) ? chart.xAxis[0].categories : [];
-                    var rawData = s.data.map(function (pt) {
-                        if (typeof pt.y === 'number') return pt.y;
-                        if (Array.isArray(pt) && typeof pt[1] === 'number') return pt[1];
-                        return parseFloat(pt.y) || 0;
-                    });
-
-                    if (rawData.length === 0) return;
-
-                    var p1Label = cats && cats.length > 0 ? cats[0] : 'Inicial';
-                    var p2Label = cats && cats.length > 0 ? cats[cats.length - 1] : 'Final';
-                    var v1 = rawData[0];
-                    var v2 = rawData[rawData.length - 1];
-                    var diff = v2 - v1;
-                    var sum = rawData.reduce(function (a, b) { return a + b; }, 0);
-                    var avg = sum / rawData.length;
-                    var minVal = Math.min.apply(null, rawData);
-                    var maxVal = Math.max.apply(null, rawData);
-
-                    var isPct = (s.name && s.name.indexOf('%') > -1) ||
-                                (s.yAxis && s.yAxis.options && s.yAxis.options.title && s.yAxis.options.title.text && s.yAxis.options.title.text.indexOf('Porcent') > -1);
-                    var suf = isPct ? '%' : '';
-
-                    var isPos = diff >= 0;
-                    var badgeBg = isPos ? 'background-color: #dcfce7; color: #15803d;' : 'background-color: #fee2e2; color: #b91c1c;';
-                    var sign = isPos ? '+' : '';
-
-                    var formatNum = function (n) {
-                        return (typeof n === 'number') ? n.toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : n;
-                    };
-
-                    var stripHtml =
-                        '<div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px 18px;">' +
-                        '    <div>' +
-                        '        <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block;">Período Inicial (' + p1Label + ')</span>' +
-                        '        <span style="font-size: 16px; font-weight: 700; color: #1e3a8a;">' + formatNum(v1) + suf + '</span>' +
-                        '    </div>' +
-                        '    <div style="border-left: 1px solid #cbd5e1; padding-left: 16px;">' +
-                        '        <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block;">Período Final (' + p2Label + ')</span>' +
-                        '        <span style="font-size: 16px; font-weight: 700; color: #0f172a;">' + formatNum(v2) + suf + '</span>' +
-                        '    </div>' +
-                        '    <div style="border-left: 1px solid #cbd5e1; padding-left: 16px;">' +
-                        '        <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block;">Variación</span>' +
-                        '        <span class="badge" style="' + badgeBg + ' font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 6px;">' +
-                        '            ' + sign + formatNum(diff) + suf +
-                        '        </span>' +
-                        '    </div>' +
-                        '    <div style="border-left: 1px solid #cbd5e1; padding-left: 16px;">' +
-                        '        <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block;">Promedio</span>' +
-                        '        <span style="font-size: 16px; font-weight: 700; color: #334155;">' + formatNum(avg) + suf + '</span>' +
-                        '    </div>' +
-                        '    <div style="border-left: 1px solid #cbd5e1; padding-left: 16px;">' +
-                        '        <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block;">Mín / Máx</span>' +
-                        '        <span style="font-size: 13px; font-weight: 600; color: #475569;">' +
-                        '            ' + formatNum(minVal) + suf + ' / ' + formatNum(maxVal) + suf +
-                        '        </span>' +
-                        '    </div>' +
-                        '</div>';
-
-                    $('#composicionModalKpiStrip').html(stripHtml);
+                    renderComposicionKpi();
                 } catch (e) {
                     console.error(e);
                 }

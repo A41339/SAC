@@ -552,20 +552,25 @@
             });
         }
 
-        function actualizarKpiStripModal(d) {
+        function actualizarKpiStripModal(d, selectedIndex) {
             if (!d || !d.Series || d.Series.length === 0 || !d.Categorias || d.Categorias.length === 0) {
                 $('#fondeoModalKpiStrip').empty();
                 return;
             }
 
-            var s = d.Series[0];
-            for (var k = 0; k < d.Series.length; k++) {
-                if (d.Series[k].Type === 'spline' || d.Series[k].Type === 'line' || d.Series[k].YAxis === 1) {
-                    s = d.Series[k];
-                    break;
+            var seriesIdx = 0;
+            if (typeof selectedIndex === 'number' && selectedIndex >= 0 && selectedIndex < d.Series.length) {
+                seriesIdx = selectedIndex;
+            } else {
+                for (var k = 0; k < d.Series.length; k++) {
+                    if (d.Series[k].Type === 'spline' || d.Series[k].Type === 'line' || d.Series[k].YAxis === 1) {
+                        seriesIdx = k;
+                        break;
+                    }
                 }
             }
 
+            var s = d.Series[seriesIdx];
             var numData = (s.Data || []).map(function (v) { return typeof v === 'number' ? v : parseFloat(v) || 0; });
             if (numData.length === 0) {
                 $('#fondeoModalKpiStrip').empty();
@@ -582,45 +587,83 @@
             var avg = sum / numData.length;
             var minVal = Math.min.apply(null, numData);
             var maxVal = Math.max.apply(null, numData);
-            var suf = s.TooltipSuffix || (s.Name && s.Name.indexOf('%') > -1 ? '%' : '');
+
+            var sName = s.Name || '';
+            var sSuffix = (s.TooltipSuffix || '').trim();
+            var isMonto = sSuffix === 'M' || sName.toLowerCase().indexOf('monto') !== -1 || sName.toLowerCase().indexOf('financiamiento') !== -1;
+            var isPersonas = sSuffix.indexOf('personas') !== -1 || sName.toLowerCase().indexOf('asociados') !== -1 || sName.toLowerCase().indexOf('ahorrantes') !== -1;
+            var isPct = !isMonto && !isPersonas && (sSuffix === '%' || sName.indexOf('%') !== -1 || s.Type === 'column');
+
+            var prefix = isMonto ? '₡' : '';
+            var suffix = isMonto ? ' M' : (isPersonas ? ' personas' : (isPct ? '%' : (sSuffix ? ' ' + sSuffix : '')));
+            var decimals = isPersonas ? 0 : 2;
 
             var isPos = diff >= 0;
             var badgeBg = isPos ? 'background-color: #dcfce7; color: #15803d;' : 'background-color: #fee2e2; color: #b91c1c;';
             var sign = isPos ? '+' : '';
 
             var formatNum = function (n) {
-                return (typeof n === 'number') ? n.toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : n;
+                return (typeof n === 'number') ? n.toLocaleString('es-CR', { minimumFractionDigits: decimals, maximumFractionDigits: decimals }) : n;
             };
 
-            var html =
+            var diffFormatted = prefix + sign + formatNum(diff) + (isPct ? ' p.p.' : suffix);
+
+            var selectorHtml = '';
+            if (d.Series.length > 1) {
+                selectorHtml =
+                    '<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; flex-wrap: wrap; gap: 8px;">' +
+                    '    <div style="font-size: 13px; font-weight: 700; color: #1e3a8a; display: flex; align-items: center; gap: 6px;">' +
+                    '        <i class="fa fa-sliders" style="color: #2F5597;"></i> Indicadores de la serie:' +
+                    '    </div>' +
+                    '    <div>' +
+                    '        <select id="fondeoModalSeriesSelector" class="form-control" style="height: 32px; font-size: 12.5px; font-weight: 600; padding: 2px 10px; border-radius: 6px; border: 1px solid #cbd5e1; color: #1e3a8a; background: #ffffff; min-width: 260px;">';
+
+                for (var idx = 0; idx < d.Series.length; idx++) {
+                    var ser = d.Series[idx];
+                    var isSelected = (idx === seriesIdx) ? ' selected' : '';
+                    selectorHtml += '<option value="' + idx + '"' + isSelected + '>● ' + ser.Name + '</option>';
+                }
+
+                selectorHtml +=
+                    '        </select>' +
+                    '    </div>' +
+                    '</div>';
+            }
+
+            var html = selectorHtml +
                 '<div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px 18px;">' +
                 '    <div>' +
                 '        <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block;">Período Inicial (' + p1Label + ')</span>' +
-                '        <span style="font-size: 16px; font-weight: 700; color: #1e3a8a;">' + formatNum(v1) + suf + '</span>' +
+                '        <span style="font-size: 16px; font-weight: 700; color: #1e3a8a;">' + prefix + formatNum(v1) + suffix + '</span>' +
                 '    </div>' +
                 '    <div style="border-left: 1px solid #cbd5e1; padding-left: 16px;">' +
                 '        <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block;">Período Final (' + p2Label + ')</span>' +
-                '        <span style="font-size: 16px; font-weight: 700; color: #0f172a;">' + formatNum(v2) + suf + '</span>' +
+                '        <span style="font-size: 16px; font-weight: 700; color: #0f172a;">' + prefix + formatNum(v2) + suffix + '</span>' +
                 '    </div>' +
                 '    <div style="border-left: 1px solid #cbd5e1; padding-left: 16px;">' +
                 '        <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block;">Variación</span>' +
                 '        <span class="badge" style="' + badgeBg + ' font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 6px;">' +
-                '            ' + sign + formatNum(diff) + suf +
+                '            ' + diffFormatted +
                 '        </span>' +
                 '    </div>' +
                 '    <div style="border-left: 1px solid #cbd5e1; padding-left: 16px;">' +
                 '        <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block;">Promedio</span>' +
-                '        <span style="font-size: 16px; font-weight: 700; color: #334155;">' + formatNum(avg) + suf + '</span>' +
+                '        <span style="font-size: 16px; font-weight: 700; color: #334155;">' + prefix + formatNum(avg) + suffix + '</span>' +
                 '    </div>' +
                 '    <div style="border-left: 1px solid #cbd5e1; padding-left: 16px;">' +
                 '        <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block;">Mín / Máx</span>' +
                 '        <span style="font-size: 13px; font-weight: 600; color: #475569;">' +
-                '            ' + formatNum(minVal) + suf + ' / ' + formatNum(maxVal) + suf +
+                '            ' + prefix + formatNum(minVal) + suffix + ' / ' + prefix + formatNum(maxVal) + suffix +
                 '        </span>' +
                 '    </div>' +
                 '</div>';
 
             $('#fondeoModalKpiStrip').html(html);
+
+            $('#fondeoModalSeriesSelector').off('change').on('change', function () {
+                var newIdx = parseInt($(this).val(), 10);
+                actualizarKpiStripModal(d, newIdx);
+            });
         }
 
         function cargarGrafico() {
@@ -805,10 +848,36 @@
                 tooltip: {
                     shared: true,
                     useHTML: true,
-                    headerFormat: '<span style="font-size:12px; font-weight:700; color:#1e3a8a;">{point.key}</span><table>',
-                    pointFormat: '<tr><td style="color:{series.color};padding:2px 8px 2px 0;">{series.name}: </td>' +
-                        '<td style="text-align:right;padding:2px 0;font-weight:600;"><b>{point.y}</b></td></tr>',
-                    footerFormat: '</table>',
+                    formatter: function () {
+                        var header = '<span style="font-size:12px; font-weight:700; color:#1e3a8a;">' + (this.x || '') + '</span><table style="margin-top:4px;">';
+                        var body = '';
+                        var pts = this.points || [this.point];
+                        pts.forEach(function (pt) {
+                            if (!pt || !pt.series || pt.series.visible === false) return;
+                            var sName = pt.series.name;
+                            var sColor = pt.color || pt.series.color || '#2F5597';
+                            var val = pt.y;
+                            var sfx = (pt.series.userOptions && pt.series.userOptions.tooltip && pt.series.userOptions.tooltip.valueSuffix) ||
+                                      (pt.series.options && pt.series.options.tooltip && pt.series.options.tooltip.valueSuffix) || '';
+
+                            var formattedVal = '';
+                            if (sfx.indexOf('%') !== -1) {
+                                formattedVal = Highcharts.numberFormat(val, 2, '.', ',') + '%';
+                            } else if (sfx.trim() === 'M' || sName.toLowerCase().indexOf('monto') !== -1 || sName.toLowerCase().indexOf('financiamiento') !== -1) {
+                                formattedVal = '₡' + Highcharts.numberFormat(val, 2, '.', ',') + ' M';
+                            } else if (sfx.indexOf('personas') !== -1 || sName.toLowerCase().indexOf('asociados') !== -1 || sName.toLowerCase().indexOf('ahorrantes') !== -1) {
+                                formattedVal = Highcharts.numberFormat(val, 0, '.', ',') + ' personas';
+                            } else if (sfx && sfx.trim() !== '') {
+                                formattedVal = Highcharts.numberFormat(val, 2, '.', ',') + ' ' + sfx.trim();
+                            } else {
+                                formattedVal = Highcharts.numberFormat(val, 2, '.', ',');
+                            }
+
+                            body += '<tr><td style="color:' + sColor + ';padding:2px 8px 2px 0;">● ' + sName + ': </td>' +
+                                    '<td style="text-align:right;padding:2px 0;font-weight:600;color:#0f172a;">' + formattedVal + '</td></tr>';
+                        });
+                        return header + body + '</table>';
+                    },
                     backgroundColor: '#ffffff',
                     borderColor: '#cbd5e1',
                     borderRadius: 8,
