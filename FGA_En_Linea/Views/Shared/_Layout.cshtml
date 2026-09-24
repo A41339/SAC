@@ -591,8 +591,20 @@
         color: inherit !important;
         font-family: inherit !important;
         font-size: 13px !important;
-        display: inline-flex !important;
-        align-items: center !important;
+    }
+
+    /* FontAwesome icons inside btn-ampliar: inline-block preserves ::before glyph rendering */
+    a.btn-ampliar i, a.btn-ampliar i[class*="fa-"],
+    .btn-ampliar i, .btn-ampliar i[class*="fa-"],
+    .modern-table-card a.btn-ampliar i,
+    .modern-table-card a[href*="javascript:m"] i,
+    .box-header a.btn-ampliar i,
+    .box-header a[href*="javascript:m"] i,
+    .box-header a.text-right i {
+        display: inline-block !important;
+        font-family: FontAwesome !important;
+        line-height: 1 !important;
+        width: auto !important;
     }
 
     /* Highcharts Export Context Menu & Separators */
