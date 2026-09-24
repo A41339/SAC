@@ -116,7 +116,7 @@ namespace FGA.Controllers
             view.listaArchivos = entities;
             var aceptados = entities.Where(o => o.XML_ID == FGA.Utility.Utilitarios.archivoAceptado).Count();
             view.porcentajeCarga = Math.Round(aceptados == 0 ? 0 : 100.00 / entities.Count() * aceptados, 0);
-            view.pendientes = sp.FGA_Consultar_ArchivosPendientes(Entidades).Count(); 
+            view.pendientes = entities.Count() - aceptados;
 
             return View("Index", view);
         }
