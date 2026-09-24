@@ -1,42 +1,6 @@
 @model FGA.Model.EstructuraFondeoIndexViewModel
 
 <div class="row" style="margin-top: 15px;">
-    <!-- Barra superior de filtros de Indicadores -->
-    <div class="col-xs-12">
-        <div class="modern-filter-card" style="margin-bottom: 20px; padding: 16px 20px; background: #ffffff; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); border: 1px solid #e2e8f0;">
-            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;">
-                <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <label for="Periodo1" style="margin: 0; font-size: 13px; font-weight: 600; color: #475569;">
-                            <i class="fa fa-calendar" style="color: #2F5597; margin-right: 4px;"></i> Primer Período:
-                        </label>
-                        <div class="modern-input-wrapper">
-                            <input name="Periodo1" id="Periodo1" class="datecontrol form-control modern-date-input" value="@Model.Periodo1" style="min-width: 125px; height: 38px; font-size: 13px;" />
-                        </div>
-                    </div>
-
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <label for="Periodo2" style="margin: 0; font-size: 13px; font-weight: 600; color: #475569;">
-                            <i class="fa fa-calendar-check-o" style="color: #2F5597; margin-right: 4px;"></i> Segundo Período:
-                        </label>
-                        <div class="modern-input-wrapper">
-                            <input name="Periodo2" id="Periodo2" class="datecontrol form-control modern-date-input" value="@Model.Periodo2" style="min-width: 125px; height: 38px; font-size: 13px;" />
-                        </div>
-                    </div>
-                </div>
-
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <button type="button" id="btnGenerarIndicadores" class="btn-modern-filter" style="height: 38px; padding: 0 20px; background: linear-gradient(135deg, #1b3866 0%, #2F5597 100%); color: #ffffff; font-weight: 600; font-size: 13px; border: none; border-radius: 8px; box-shadow: 0 2px 4px rgba(47, 85, 151, 0.25); display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                        <i class="fa fa-refresh" id="iconRefreshIndicadores"></i> Generar Reporte
-                    </button>
-                    <button type="button" id="btnExportarIndicadores" class="btn-modern-filter" style="height: 38px; padding: 0 18px; background: #ffffff; color: #15803d; border: 1px solid #bbf7d0; font-weight: 600; font-size: 13px; border-radius: 8px; display: flex; align-items: center; gap: 7px; cursor: pointer;">
-                        <i class="fa fa-file-excel-o" style="color: #16a34a;"></i> Exportar Excel
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Tabla Principal de Indicadores -->
     <div class="col-xs-12">
         <div class="modern-table-card" style="background: #ffffff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; overflow: hidden; margin-bottom: 22px;">
@@ -63,14 +27,14 @@
 
             <!-- Tabla -->
             <div class="table-responsive" style="margin: 0;">
-                <table class="table table-hover" id="tblIndicadores" style="margin-bottom: 0; width: 100%;">
+                <table class="table table-hover" id="tblIndicadores" style="margin-bottom: 0; width: 100%; table-layout: fixed;">
                     <thead>
                         <tr style="background: #f1f5f9; color: #334155; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">
-                            <th style="padding: 14px 20px; font-weight: 700; border-bottom: 2px solid #cbd5e1; width: 45%;">Cuenta / Indicador</th>
-                            <th id="thPeriodo1" style="padding: 14px 18px; font-weight: 700; text-align: right; border-bottom: 2px solid #cbd5e1; width: 18%;">@(Model.Periodo1Header ?? Model.Periodo1)</th>
-                            <th id="thPeriodo2" style="padding: 14px 18px; font-weight: 700; text-align: right; border-bottom: 2px solid #cbd5e1; width: 18%;">@(Model.Periodo2Header ?? Model.Periodo2)</th>
-                            <th style="padding: 14px 18px; font-weight: 700; text-align: right; border-bottom: 2px solid #cbd5e1; width: 12%;">Variación</th>
-                            <th style="padding: 14px 16px; font-weight: 700; text-align: center; border-bottom: 2px solid #cbd5e1; width: 7%;">Gráfico</th>
+                            <th class="col-th-cuenta" style="padding: 14px 20px; font-weight: 700; border-bottom: 2px solid #cbd5e1; width: 44%; text-align: left;">Cuenta / Indicador</th>
+                            <th id="thPeriodo1" class="col-th-p1" style="padding: 14px 10px; font-weight: 700; text-align: center; border-bottom: 2px solid #cbd5e1; width: 17%;">@(Model.Periodo1Header ?? Model.Periodo1)</th>
+                            <th id="thPeriodo2" class="col-th-p2" style="padding: 14px 10px; font-weight: 700; text-align: center; border-bottom: 2px solid #cbd5e1; width: 17%;">@(Model.Periodo2Header ?? Model.Periodo2)</th>
+                            <th class="col-th-var" style="padding: 14px 10px; font-weight: 700; text-align: center; border-bottom: 2px solid #cbd5e1; width: 13%;">Variación</th>
+                            <th class="col-th-graf" style="padding: 14px 10px; font-weight: 700; text-align: center; border-bottom: 2px solid #cbd5e1; width: 9%;">Gráfico</th>
                         </tr>
                     </thead>
                     <tbody id="tbodyIndicadores" style="font-size: 13px; color: #1e293b;">
@@ -79,7 +43,7 @@
                             foreach (var ind in Model.Indicadores)
                             {
                                 <tr class="fila-indicador" data-nombre="@ind.Nombre.ToLower()">
-                                    <td style="padding: 12px 20px; vertical-align: middle; font-weight: 600; color: #1e3a8a;">
+                                    <td class="col-td-cuenta" style="padding: 12px 20px; vertical-align: middle; text-align: left; font-weight: 600; color: #1e3a8a;">
                                         @ind.Nombre
                                         @if (!string.IsNullOrEmpty(ind.Formula))
                                         {
@@ -88,33 +52,33 @@
                                             </span>
                                         }
                                     </td>
-                                    <td class="col-val-p1" style="padding: 12px 18px; vertical-align: middle; text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; color: #334155;">
+                                    <td class="col-val-p1" style="padding: 12px 10px; vertical-align: middle; text-align: center; font-variant-numeric: tabular-nums; font-weight: 600; color: #334155;">
                                         @ind.ValorP1Formateado
                                     </td>
-                                    <td class="col-val-p2" style="padding: 12px 18px; vertical-align: middle; text-align: right; font-variant-numeric: tabular-nums; font-weight: 700; color: #0f172a;">
+                                    <td class="col-val-p2" style="padding: 12px 10px; vertical-align: middle; text-align: center; font-variant-numeric: tabular-nums; font-weight: 700; color: #0f172a;">
                                         @ind.ValorP2Formateado
                                     </td>
-                                    <td class="col-val-var" style="padding: 12px 18px; vertical-align: middle; text-align: right; font-variant-numeric: tabular-nums;">
+                                    <td class="col-val-var" style="padding: 12px 10px; vertical-align: middle; text-align: center; font-variant-numeric: tabular-nums;">
                                         @if (ind.Variacion > 0)
                                         {
-                                            <span class="badge" style="background-color: #dcfce7; color: #15803d; font-size: 11px; font-weight: 600; padding: 4px 8px; border-radius: 6px;">
+                                            <span class="badge" style="background-color: #dcfce7; color: #15803d; font-size: 11px; font-weight: 600; padding: 4px 8px; border-radius: 6px; display: inline-block; min-width: 75px; text-align: center;">
                                                 @ind.VariacionFormateada
                                             </span>
                                         }
                                         else if (ind.Variacion < 0)
                                         {
-                                            <span class="badge" style="background-color: #fee2e2; color: #b91c1c; font-size: 11px; font-weight: 600; padding: 4px 8px; border-radius: 6px;">
+                                            <span class="badge" style="background-color: #fee2e2; color: #b91c1c; font-size: 11px; font-weight: 600; padding: 4px 8px; border-radius: 6px; display: inline-block; min-width: 75px; text-align: center;">
                                                 @ind.VariacionFormateada
                                             </span>
                                         }
                                         else
                                         {
-                                            <span class="badge" style="background-color: #f1f5f9; color: #475569; font-size: 11px; font-weight: 600; padding: 4px 8px; border-radius: 6px;">
+                                            <span class="badge" style="background-color: #f1f5f9; color: #475569; font-size: 11px; font-weight: 600; padding: 4px 8px; border-radius: 6px; display: inline-block; min-width: 75px; text-align: center;">
                                                 0.00
                                             </span>
                                         }
                                     </td>
-                                    <td style="padding: 12px 16px; vertical-align: middle; text-align: center;">
+                                    <td class="col-td-graf" style="padding: 12px 10px; vertical-align: middle; text-align: center;">
                                         <button type="button" class="btn btn-xs btn-grafico-asociado" data-grafico="@ind.TipoGraficoAsociado" title="Ver gráfico correspondiente" style="background: #e0f2fe; color: #0284c7; border: 1px solid #bae6fd; border-radius: 6px; padding: 5px 9px;">
                                             <i class="fa fa-bar-chart" style="font-size: 12px;"></i>
                                         </button>

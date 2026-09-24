@@ -59,6 +59,29 @@
             background-color: #f8fafc;
         }
 
+        /* Alineación exacta de tabla con encabezados */
+        #tblIndicadores {
+            table-layout: fixed !important;
+            width: 100% !important;
+        }
+
+        #tblIndicadores th.col-th-cuenta,
+        #tblIndicadores td.col-td-cuenta {
+            text-align: left !important;
+        }
+
+        #tblIndicadores th.col-th-p1,
+        #tblIndicadores td.col-val-p1,
+        #tblIndicadores th.col-th-p2,
+        #tblIndicadores td.col-val-p2,
+        #tblIndicadores th.col-th-var,
+        #tblIndicadores td.col-val-var,
+        #tblIndicadores th.col-th-graf,
+        #tblIndicadores td.col-td-graf {
+            text-align: center !important;
+            vertical-align: middle !important;
+        }
+
         .highcharts-credits {
             display: none !important;
         }
@@ -85,16 +108,52 @@
 </section>
 
 <section class="content" style="padding: 0 20px 24px 20px;">
-    <!-- Selector General de Entidad -->
+    <!-- Selector General: Entidad y Períodos al mismo nivel -->
     <div class="row">
         <div class="col-xs-12">
             <div class="modern-filter-card" style="margin-bottom: 16px; padding: 14px 20px; background: #ffffff; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); border: 1px solid #e2e8f0;">
-                <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
-                    <label for="ddlEntidad" style="margin: 0; font-size: 13px; font-weight: 700; color: #1e3a8a; display: flex; align-items: center; gap: 6px;">
-                        <i class="fa fa-university" style="color: #2F5597;"></i> Entidad:
-                    </label>
-                    <div style="min-width: 280px;">
-                        @Html.DropDownList("Entidades", null, new { @id = "ddlEntidad", @class = "form-control modern-select", style = "width: 100%; height: 38px; font-size: 13px; font-weight: 500; border-radius: 6px; border: 1px solid #cbd5e1;" })
+                <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;">
+                    <div style="display: flex; align-items: center; gap: 18px; flex-wrap: wrap;">
+                        <!-- Entidad -->
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <label for="ddlEntidad" style="margin: 0; font-size: 13px; font-weight: 700; color: #1e3a8a; display: flex; align-items: center; gap: 6px; white-space: nowrap;">
+                                <i class="fa fa-university" style="color: #2F5597;"></i> Entidad:
+                            </label>
+                            <div style="min-width: 250px;">
+                                @Html.DropDownList("Entidades", null, new { @id = "ddlEntidad", @class = "form-control modern-select", style = "width: 100%; height: 38px; font-size: 13px; font-weight: 500; border-radius: 6px; border: 1px solid #cbd5e1;" })
+                            </div>
+                        </div>
+
+                        <!-- Período inicial y final al mismo nivel que Entidad -->
+                        <div id="secFiltrosIndicadores" style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <label for="Periodo1" style="margin: 0; font-size: 13px; font-weight: 600; color: #475569; white-space: nowrap;">
+                                    <i class="fa fa-calendar" style="color: #2F5597; margin-right: 4px;"></i> Per&iacute;odo inicial:
+                                </label>
+                                <div class="modern-input-wrapper">
+                                    <input name="Periodo1" id="Periodo1" class="datecontrol form-control modern-date-input" value="@Model.Periodo1" style="min-width: 120px; height: 38px; font-size: 13px;" />
+                                </div>
+                            </div>
+
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <label for="Periodo2" style="margin: 0; font-size: 13px; font-weight: 600; color: #475569; white-space: nowrap;">
+                                    <i class="fa fa-calendar-check-o" style="color: #2F5597; margin-right: 4px;"></i> Per&iacute;odo final:
+                                </label>
+                                <div class="modern-input-wrapper">
+                                    <input name="Periodo2" id="Periodo2" class="datecontrol form-control modern-date-input" value="@Model.Periodo2" style="min-width: 120px; height: 38px; font-size: 13px;" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Botones de Acción para Indicadores -->
+                    <div id="secBotonesIndicadores" style="display: flex; align-items: center; gap: 10px;">
+                        <button type="button" id="btnGenerarIndicadores" class="btn-modern-filter" style="height: 38px; padding: 0 20px; background: linear-gradient(135deg, #1b3866 0%, #2F5597 100%); color: #ffffff; font-weight: 600; font-size: 13px; border: none; border-radius: 8px; box-shadow: 0 2px 4px rgba(47, 85, 151, 0.25); display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                            <i class="fa fa-refresh" id="iconRefreshIndicadores"></i> Generar Reporte
+                        </button>
+                        <button type="button" id="btnExportarIndicadores" class="btn-modern-filter" style="height: 38px; padding: 0 18px; background: #ffffff; color: #15803d; border: 1px solid #bbf7d0; font-weight: 600; font-size: 13px; border-radius: 8px; display: flex; align-items: center; gap: 7px; cursor: pointer;">
+                            <i class="fa fa-file-excel-o" style="color: #16a34a;"></i> Exportar Excel
+                        </button>
                     </div>
                 </div>
             </div>
@@ -265,14 +324,17 @@
             // Cargar gráfico inicial
             cargarGrafico();
 
-            // Redibujar gráfico al cambiar de tab para ajuste de dimensiones
+            // Redibujar gráfico al cambiar de tab y alternar barra de filtros
             $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
                 if ($(e.target).attr('href') === '#tab-graficos') {
+                    $('#secFiltrosIndicadores, #secBotonesIndicadores').hide();
                     if (currentChart) {
                         currentChart.reflow();
                     } else {
                         cargarGrafico();
                     }
+                } else {
+                    $('#secFiltrosIndicadores, #secBotonesIndicadores').show();
                 }
             });
 
@@ -308,13 +370,13 @@
                             var formulaHtml = item.Formula ? '<span style="display: block; font-size: 11px; font-weight: 400; color: #64748b; margin-top: 2px;"><i class="fa fa-calculator" style="margin-right: 3px; color: #94a3b8;"></i> ' + item.Formula + '</span>' : '';
 
                             html += '<tr class="fila-indicador" data-nombre="' + item.Nombre.toLowerCase() + '">';
-                            html += '<td style="padding: 12px 20px; vertical-align: middle; font-weight: 600; color: #1e3a8a;">' + item.Nombre + formulaHtml + '</td>';
-                            html += '<td style="padding: 12px 18px; vertical-align: middle; text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; color: #334155;">' + item.ValorP1Str + '</td>';
-                            html += '<td style="padding: 12px 18px; vertical-align: middle; text-align: right; font-variant-numeric: tabular-nums; font-weight: 700; color: #0f172a;">' + item.ValorP2Str + '</td>';
-                            html += '<td style="padding: 12px 18px; vertical-align: middle; text-align: right; font-variant-numeric: tabular-nums;">';
-                            html += '<span class="badge" style="' + badgeClass + ' font-size: 11px; font-weight: 600; padding: 4px 8px; border-radius: 6px;">' + item.VariacionStr + '</span>';
+                            html += '<td class="col-td-cuenta" style="padding: 12px 20px; vertical-align: middle; text-align: left; font-weight: 600; color: #1e3a8a;">' + item.Nombre + formulaHtml + '</td>';
+                            html += '<td class="col-val-p1" style="padding: 12px 10px; vertical-align: middle; text-align: center; font-variant-numeric: tabular-nums; font-weight: 600; color: #334155;">' + item.ValorP1Str + '</td>';
+                            html += '<td class="col-val-p2" style="padding: 12px 10px; vertical-align: middle; text-align: center; font-variant-numeric: tabular-nums; font-weight: 700; color: #0f172a;">' + item.ValorP2Str + '</td>';
+                            html += '<td class="col-val-var" style="padding: 12px 10px; vertical-align: middle; text-align: center; font-variant-numeric: tabular-nums;">';
+                            html += '<span class="badge" style="' + badgeClass + ' font-size: 11px; font-weight: 600; padding: 4px 8px; border-radius: 6px; display: inline-block; min-width: 75px; text-align: center;">' + item.VariacionStr + '</span>';
                             html += '</td>';
-                            html += '<td style="padding: 12px 16px; vertical-align: middle; text-align: center;">';
+                            html += '<td class="col-td-graf" style="padding: 12px 10px; vertical-align: middle; text-align: center;">';
                             html += '<button type="button" class="btn btn-xs btn-grafico-asociado" data-grafico="' + item.TipoGraficoAsociado + '" title="Ver gráfico correspondiente" style="background: #e0f2fe; color: #0284c7; border: 1px solid #bae6fd; border-radius: 6px; padding: 5px 9px;">';
                             html += '<i class="fa fa-bar-chart" style="font-size: 12px;"></i>';
                             html += '</button>';
