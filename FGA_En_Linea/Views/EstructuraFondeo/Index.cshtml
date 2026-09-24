@@ -828,8 +828,15 @@
                 chart: {
                     type: data.TipoGraficoHighcharts,
                     backgroundColor: '#ffffff',
-                    spacingTop: 15,
-                    spacingBottom: 15
+                    spacingTop: 35,
+                    spacingBottom: 15,
+                    events: {
+                        render: function () {
+                            if (this.exportSVGElements && this.exportSVGElements[0]) {
+                                this.exportSVGElements[0].toFront();
+                            }
+                        }
+                    }
                 },
                 colors: ['#2F5597', '#ED7D31', '#3d6cb9', '#10b981', '#f59e0b', '#204880', '#6366f1', '#0284c7', '#8b5cf6', '#64748b'],
                 title: { text: null },

@@ -1149,18 +1149,29 @@ body.sidebar-collapse .sidebar-menu > li > a > span:not(.pull-right-container) {
 /* ==========================================================================
    5. Buttons Styling Global Override
    ========================================================================== */
+button,
+.btn,
+a.btn,
+input[type="button"],
+input[type="submit"],
+input[type="reset"] {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+}
+
 .btn {
     border-radius: 8px !important;
     font-weight: 600 !important;
     font-size: 13px !important;
-    padding: 8px 18px !important;
+    height: 38px !important;
+    padding: 0 18px !important;
     transition: all 0.2s ease-in-out !important;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
-    gap: 6px !important;
+    gap: 7px !important;
     cursor: pointer !important;
+    letter-spacing: 0.15px !important;
 }
 
 label.btn {
@@ -2113,7 +2124,7 @@ div.dataTables_filter label {
     color: #0f172a !important;
 }
 
-/* Highcharts Export Hamburger Button Styling */
+/* Highcharts Export Button Styling - Blue Button with Consistent Typography & Radius */
 .highcharts-contextbutton,
 .highcharts-button,
 .highcharts-exporting-group {
@@ -2121,49 +2132,50 @@ div.dataTables_filter label {
     opacity: 1 !important;
     visibility: visible !important;
     cursor: pointer !important;
+    z-index: 9999 !important;
 }
 
 .highcharts-credits {
     display: none !important;
 }
 
-/* Hide glitched text inside Highcharts export button */
+/* Button text and symbol clearly visible */
 .highcharts-button text,
 .highcharts-contextbutton text,
-.highcharts-button-symbol text,
-.highcharts-button tspan {
-    display: none !important;
+.highcharts-button tspan,
+.highcharts-contextbutton tspan {
+    display: inline-block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    fill: #ffffff !important;
+    color: #ffffff !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
 }
 
-/* Clean white rounded box background */
 .highcharts-button .highcharts-button-box,
 .highcharts-contextbutton .highcharts-button-box {
-    fill: #ffffff !important;
-    stroke: #cbd5e1 !important;
+    fill: #2F5597 !important;
+    stroke: #204880 !important;
     stroke-width: 1px !important;
-    rx: 6px !important;
-    ry: 6px !important;
+    rx: 8px !important;
+    ry: 8px !important;
 }
 
 .highcharts-button:hover .highcharts-button-box,
 .highcharts-contextbutton:hover .highcharts-button-box {
-    fill: #f1f5f9 !important;
-    stroke: #94a3b8 !important;
+    fill: #204880 !important;
+    stroke: #172e56 !important;
 }
 
-/* SVG Printer Symbol Styling */
 .highcharts-button-symbol,
 .highcharts-contextbutton .highcharts-button-symbol {
     opacity: 1 !important;
     visibility: visible !important;
-    stroke: #2F5597 !important;
-    stroke-width: 1.5px !important;
+    stroke: #ffffff !important;
+    stroke-width: 1.8px !important;
     fill: none !important;
-}
-
-.highcharts-button:hover .highcharts-button-symbol,
-.highcharts-contextbutton:hover .highcharts-button-symbol {
-    stroke: #2563eb !important;
 }
 
 /* ==========================================================================
@@ -2972,19 +2984,24 @@ a.btn-ampliar,
     background-color: #ebf5ff !important;
     color: #2F5597 !important;
     border: 1px solid #bfdbfe !important;
-    border-radius: 6px !important;
-    padding: 6px 14px !important;
+    border-radius: 8px !important;
+    height: 36px !important;
+    padding: 0 16px !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
     font-size: 13px !important;
     font-weight: 600 !important;
+    line-height: 1 !important;
     transition: all 0.2s ease !important;
     display: inline-flex !important;
     align-items: center !important;
-    gap: 6px !important;
+    justify-content: center !important;
+    gap: 7px !important;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
     text-decoration: none !important;
     margin-left: auto !important;
     flex-shrink: 0 !important;
     cursor: pointer !important;
+    letter-spacing: 0.15px !important;
 }
 
 a.btn-ampliar:hover,
@@ -3019,8 +3036,10 @@ a.btn-ampliar *,
     margin: 0 !important;
     box-shadow: none !important;
     color: inherit !important;
+    font-family: inherit !important;
     font-size: 13px !important;
-    display: inline-block !important;
+    display: inline-flex !important;
+    align-items: center !important;
 }
 
 a.btn-ampliar i::after,
@@ -3357,14 +3376,15 @@ button.dt-button,
     background-color: #ffffff !important;
     border: 1px solid #cbd5e1 !important;
     color: #2F5597 !important;
-    padding: 4px 9px !important;
+    padding: 4px 10px !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
     font-size: 11.5px !important;
     font-weight: 600 !important;
-    border-radius: 6px !important;
+    border-radius: 8px !important;
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
-    gap: 4px !important;
+    gap: 5px !important;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02) !important;
     transition: all 0.2s ease-in-out !important;
     cursor: pointer !important;
@@ -5534,14 +5554,16 @@ input.modern-date-input:focus {
 
 .btn-modern-filter {
     height: 38px !important;
-    padding: 0 22px !important;
+    padding: 0 20px !important;
     background-color: #2F5597 !important;
     background: linear-gradient(135deg, #3d6cb9 0%, #2F5597 50%, #204880 100%) !important;
     color: #ffffff !important;
     border: 1px solid rgba(32, 72, 128, 0.5) !important;
     border-radius: 8px !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
     font-size: 13px !important;
     font-weight: 600 !important;
+    letter-spacing: 0.15px !important;
     cursor: pointer !important;
     display: inline-flex !important;
     align-items: center !important;
@@ -8145,15 +8167,17 @@ select.form-control {
 /* 9. Botones de Accion y Filtros */
 .btn-modern-filter,
 .btn-primary {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
     font-size: 13px !important;
     font-weight: 600 !important;
+    letter-spacing: 0.15px !important;
     border-radius: 8px !important;
     height: 38px !important;
-    padding: 0 18px !important;
+    padding: 0 20px !important;
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
-    gap: 6px !important;
+    gap: 7px !important;
     background: linear-gradient(135deg, var(--color-azul) 0%, #1e447a 100%) !important;
     border: none !important;
     color: #ffffff !important;
