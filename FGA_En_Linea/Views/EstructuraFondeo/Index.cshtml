@@ -90,7 +90,11 @@
         #fondeoChartContainer .highcharts-grid-line,
         #fondeoChartContainer .highcharts-grid path,
         #fondeoChartContainer .highcharts-yaxis-grid path,
-        #fondeoChartContainer .highcharts-plot-line {
+        #fondeoChartContainer .highcharts-plot-line,
+        #fondeoModalChartContainer .highcharts-grid-line,
+        #fondeoModalChartContainer .highcharts-grid path,
+        #fondeoModalChartContainer .highcharts-yaxis-grid path,
+        #fondeoModalChartContainer .highcharts-plot-line {
             display: none !important;
             stroke: transparent !important;
             stroke-width: 0 !important;
@@ -158,7 +162,7 @@
 
                     <!-- Botones de Acción para Indicadores -->
                     <div id="secBotonesIndicadores" style="display: flex; align-items: center; gap: 10px;">
-                        <button type="button" id="btnGenerarIndicadores" class="btn-modern-filter">
+                        <button type="button" id="btnGenerarIndicadores" class="btn-modern-filter" style="background: linear-gradient(135deg, #3d6cb9 0%, #2F5597 50%, #204880 100%) !important; color: #ffffff !important; border: 1px solid #204880 !important; box-shadow: 0 4px 14px rgba(47, 85, 151, 0.35) !important;">
                             <i class="fa fa-search"></i> Generar
                         </button>
                         <button type="button" id="btnExportarIndicadores" class="btn-modern-filter" style="height: 38px; padding: 0 18px; background: #ffffff; color: #15803d; border: 1px solid #bbf7d0; font-weight: 600; font-size: 13px; border-radius: 8px; display: flex; align-items: center; gap: 7px; cursor: pointer;">
@@ -248,6 +252,8 @@
 {
     <script type="text/javascript">
         var currentChart = null;
+        var currentModalChart = null;
+        var currentGraficoData = null;
         var currentTablaData = null;
 
         $(document).ready(function () {
@@ -306,6 +312,16 @@
             // Ver tabla modal
             $('#btnVerTablaModal').on('click', function () {
                 abrirModalTabla();
+            });
+
+            // Modal Ampliar Gráfico
+            $('#mPopUp').on('shown.bs.modal', function () {
+                if (currentGraficoData) {
+                    renderizarHighchart(currentGraficoData, 'fondeoModalChartContainer');
+                    if (currentModalChart) {
+                        currentModalChart.reflow();
+                    }
+                }
             });
 
             // Descargar Excel del gráfico
@@ -414,6 +430,7 @@
                 success: function (res) {
                     if (res && res.success && res.data) {
                         var d = res.data;
+                        currentGraficoData = d;
                         currentTablaData = d.TablaData;
 
                         $('#chartTitle').text(d.Titulo);
@@ -422,7 +439,7 @@
                             $('#chartFooterNote').text(d.NotaPie);
                         }
 
-                        renderizarHighchart(d);
+                        renderizarHighchart(d, 'fondeoChartContainer');
                     } else {
                         $('#fondeoChartContainer').html('<div class="alert alert-warning" style="margin: 20px;">No se obtuvieron datos para el gráfico seleccionado.</div>');
                     }
@@ -433,7 +450,8 @@
             });
         }
 
-        function renderizarHighchart(data) {
+        function renderizarHighchart(data, containerId) {
+            containerId = containerId || 'fondeoChartContainer';
             var yAxisConfig = [];
 
             if (data.TieneDobleEje) {
@@ -555,7 +573,7 @@
                 seriesFormatted.push(sObj);
             });
 
-            currentChart = Highcharts.chart('fondeoChartContainer', {
+            var chartInstance = Highcharts.chart(containerId, {
                 chart: {
                     type: data.TipoGraficoHighcharts,
                     backgroundColor: '#ffffff',
@@ -599,9 +617,22 @@
                 plotOptions: plotOptionsConfig,
                 series: seriesFormatted,
                 exporting: {
-                    enabled: false // Usamos nuestro menú desplegable personalizado que coincide con el diseño
+                    enabled: true
                 }
             });
+
+            if (containerId === 'fondeoChartContainer') {
+                currentChart = chartInstance;
+            } else {
+                currentModalChart = chartInstance;
+            }
+            return chartInstance;
+        }
+
+        function mPopUp() {
+            if (!currentGraficoData) return;
+            $('#pEntidad').text($('#chartTitle').text());
+            $('#mPopUp').modal('show');
         }
 
         function abrirModalTabla() {
