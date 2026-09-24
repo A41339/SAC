@@ -1,0 +1,574 @@
+@model FGA.Model.EstructuraFondeoIndexViewModel
+@{
+    ViewBag.Title = "Estructura de Fondeo";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section ScriptsOrCss
+{
+    <style>
+        .modern-tabs {
+            border-bottom: 2px solid #e2e8f0;
+            margin-bottom: 0;
+            display: flex;
+            gap: 8px;
+        }
+
+        .modern-tabs > li > a {
+            font-size: 14px;
+            font-weight: 600;
+            color: #64748b;
+            border: none;
+            border-radius: 8px 8px 0 0;
+            padding: 12px 22px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+            background: transparent;
+        }
+
+        .modern-tabs > li > a:hover {
+            color: #1e3a8a;
+            background: #f1f5f9;
+            border: none;
+        }
+
+        .modern-tabs > li.active > a,
+        .modern-tabs > li.active > a:hover,
+        .modern-tabs > li.active > a:focus {
+            color: #1e3a8a;
+            background: #ffffff;
+            border: none;
+            border-bottom: 3px solid #2F5597;
+            font-weight: 700;
+        }
+
+        .badge-pill-positive {
+            background-color: #dcfce7 !important;
+            color: #15803d !important;
+        }
+
+        .badge-pill-negative {
+            background-color: #fee2e2 !important;
+            color: #b91c1c !important;
+        }
+
+        /* Hover de filas */
+        #tblIndicadores tbody tr:hover {
+            background-color: #f8fafc;
+        }
+
+        .highcharts-credits {
+            display: none !important;
+        }
+    </style>
+}
+
+<section class="content-header" style="padding: 24px 20px 14px 20px;">
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+        <div>
+            <h1 style="margin: 0; font-size: 22px; font-weight: 700; color: #143750; display: flex; align-items: center; gap: 10px;">
+                <i class="fa fa-database" style="color: #ea580c;"></i>
+                Estructura de Fondeo
+            </h1>
+            <p style="margin: 6px 0 0 0; font-size: 13px; color: #64748b;">
+                Consulta y análisis de la estructura de fondeo de la entidad.
+            </p>
+        </div>
+    </div>
+    <ol class="breadcrumb">
+        <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
+        <li><a href="@Url.Action("Index", "Modulo", new { modulo = "Estructura Financiera" })" class="breadcrumb-parent-pill" title="Volver al menú de Estructura Financiera"><i class="fa fa-file-text-o" style="margin-right: 4px;"></i> Estructura Financiera</a></li>
+        <li class="active">Estructura de Fondeo</li>
+    </ol>
+</section>
+
+<section class="content" style="padding: 0 20px 24px 20px;">
+    <!-- Selector General de Entidad -->
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="modern-filter-card" style="margin-bottom: 16px; padding: 14px 20px; background: #ffffff; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); border: 1px solid #e2e8f0;">
+                <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
+                    <label for="ddlEntidad" style="margin: 0; font-size: 13px; font-weight: 700; color: #1e3a8a; display: flex; align-items: center; gap: 6px;">
+                        <i class="fa fa-university" style="color: #2F5597;"></i> Entidad:
+                    </label>
+                    <div style="min-width: 280px;">
+                        @Html.DropDownList("Entidades", null, new { @id = "ddlEntidad", @class = "form-control modern-select", style = "width: 100%; height: 38px; font-size: 13px; font-weight: 500; border-radius: 6px; border: 1px solid #cbd5e1;" })
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pestañas de Navegación -->
+    <div class="row">
+        <div class="col-xs-12">
+            <ul class="nav nav-tabs modern-tabs" id="fondeoTabs" role="tablist">
+                <li class="active" role="presentation">
+                    <a href="#tab-indicadores" aria-controls="tab-indicadores" role="tab" data-toggle="tab">
+                        <i class="fa fa-th-large"></i> Indicadores
+                    </a>
+                </li>
+                <li role="presentation">
+                    <a href="#tab-graficos" aria-controls="tab-graficos" role="tab" data-toggle="tab">
+                        <i class="fa fa-line-chart"></i> Gráficos
+                    </a>
+                </li>
+            </ul>
+
+            <div class="tab-content">
+                <!-- Pestaña 1: Indicadores -->
+                <div role="tabpanel" class="tab-pane active" id="tab-indicadores">
+                    @Html.Partial("_Indicadores", Model)
+                </div>
+
+                <!-- Pestaña 2: Gráficos -->
+                <div role="tabpanel" class="tab-pane" id="tab-graficos">
+                    @Html.Partial("_Graficos", Model)
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Nota Informativa al pie de página -->
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="modern-info-card" style="margin-top: 10px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 14px 18px; display: flex; align-items: center; gap: 12px;">
+                <div style="width: 32px; height: 32px; border-radius: 50%; background: #2563eb; color: #ffffff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-weight: 700; font-size: 14px;">
+                    i
+                </div>
+                <div style="font-size: 13px; color: #1e3a8a;">
+                    <strong>Nota:</strong> Toda la información se presenta en millones de colones y corresponde al período de referencia seleccionado.
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Modal: Ver Tabla de Datos del Gráfico -->
+<div class="modal fade" id="modalTablaDatos" tabindex="-1" role="dialog" aria-labelledby="modalTablaTitulo" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document" style="width: 90%; max-width: 1050px;">
+        <div class="modal-content" style="border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border: none;">
+            <div class="modal-header" style="background: linear-gradient(135deg, #1b3866 0%, #2F5597 100%); color: #ffffff; padding: 16px 22px;">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar" style="color: #ffffff; opacity: 0.8; text-shadow: none; font-size: 22px;">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="modalTablaTitulo" style="font-size: 17px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+                    <i class="fa fa-table"></i> Datos del Gráfico
+                </h4>
+            </div>
+            <div class="modal-body" style="padding: 22px; max-height: 520px; overflow-y: auto;">
+                <div id="modalTablaContenido">
+                    <!-- Se carga dinámicamente -->
+                </div>
+            </div>
+            <div class="modal-footer" style="padding: 14px 22px; background: #f8fafc; border-top: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
+                <button type="button" id="btnDescargarExcelDesdeModal" class="btn" style="background: #16a34a; color: #ffffff; font-weight: 600; font-size: 13px; border-radius: 6px; padding: 7px 16px; display: flex; align-items: center; gap: 6px;">
+                    <i class="fa fa-file-excel-o"></i> Descargar Excel
+                </button>
+                <button type="button" class="btn btn-default" data-dismiss="modal" style="font-weight: 600; font-size: 13px; border-radius: 6px; padding: 7px 18px;">
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script type="text/javascript">
+        var currentChart = null;
+        var currentTablaData = null;
+
+        $(document).ready(function () {
+            // Inicialización de datepickers si la librería global está disponible
+            if ($.fn.datepicker) {
+                $('.modern-date-input').datepicker({
+                    format: "mm/yyyy",
+                    viewMode: "months",
+                    minViewMode: "months",
+                    autoclose: true,
+                    language: 'es'
+                });
+            }
+
+            // Filtro de búsqueda instantánea en la tabla de Indicadores
+            $('#txtBuscarIndicador').on('keyup', function () {
+                var value = $(this).val().toLowerCase().trim();
+                $('#tbodyIndicadores tr.fila-indicador').each(function () {
+                    var nombre = $(this).attr('data-nombre') || $(this).text().toLowerCase();
+                    $(this).toggle(nombre.indexOf(value) > -1);
+                });
+            });
+
+            // Botón Generar Reporte de Indicadores
+            $('#btnGenerarIndicadores').on('click', function () {
+                cargarIndicadores();
+            });
+
+            // Cambio de entidad actualiza ambos tabs
+            $('#ddlEntidad').on('change', function () {
+                cargarIndicadores();
+                cargarGrafico();
+            });
+
+            // Exportar Indicadores a Excel
+            $('#btnExportarIndicadores').on('click', function () {
+                var ent = $('#ddlEntidad').val();
+                var p1 = $('#Periodo1').val();
+                var p2 = $('#Periodo2').val();
+                window.location.href = '@Url.Action("ExportarIndicadoresExcel", "EstructuraFondeo")' +
+                    '?entidad=' + encodeURIComponent(ent) +
+                    '&periodo1=' + encodeURIComponent(p1) +
+                    '&periodo2=' + encodeURIComponent(p2);
+            });
+
+            // Botón GENERAR del Tab Gráficos
+            $('#btnGenerarGrafico').on('click', function () {
+                cargarGrafico();
+            });
+
+            // Cambio en dropdown de Tipo de Gráfico
+            $('#ddlTipoGrafico').on('change', function () {
+                cargarGrafico();
+            });
+
+            // Botón de gráfico asociado en la fila de la tabla de indicadores
+            $(document).on('click', '.btn-grafico-asociado', function () {
+                var tipoGrafico = $(this).data('grafico');
+                if (tipoGrafico) {
+                    $('#ddlTipoGrafico').val(tipoGrafico);
+                    $('#fondeoTabs a[href="#tab-graficos"]').tab('show');
+                    cargarGrafico();
+                }
+            });
+
+            // Ver tabla modal
+            $('#btnVerTablaModal').on('click', function () {
+                abrirModalTabla();
+            });
+
+            // Descargar Excel del gráfico
+            $('#btnDescargarExcelGrafico, #btnDescargarExcelDesdeModal').on('click', function () {
+                var ent = $('#ddlEntidad').val();
+                var tipo = $('#ddlTipoGrafico').val();
+                var pIni = $('#PeriodoInicialGrafico').val();
+                var pFin = $('#PeriodoFinalGrafico').val();
+                window.location.href = '@Url.Action("ExportarGraficoExcel", "EstructuraFondeo")' +
+                    '?entidad=' + encodeURIComponent(ent) +
+                    '&tipoGrafico=' + encodeURIComponent(tipo) +
+                    '&periodoI=' + encodeURIComponent(pIni) +
+                    '&periodoF=' + encodeURIComponent(pFin);
+            });
+
+            // Cargar gráfico inicial
+            cargarGrafico();
+
+            // Redibujar gráfico al cambiar de tab para ajuste de dimensiones
+            $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                if ($(e.target).attr('href') === '#tab-graficos') {
+                    if (currentChart) {
+                        currentChart.reflow();
+                    } else {
+                        cargarGrafico();
+                    }
+                }
+            });
+        });
+
+        function cargarIndicadores() {
+            var ent = $('#ddlEntidad').val();
+            var p1 = $('#Periodo1').val();
+            var p2 = $('#Periodo2').val();
+
+            var $icon = $('#iconRefreshIndicadores');
+            $icon.addClass('fa-spin');
+
+            $.ajax({
+                url: '@Url.Action("GetIndicadoresData", "EstructuraFondeo")',
+                type: 'GET',
+                data: { entidad: ent, periodo1: p1, periodo2: p2 },
+                success: function (res) {
+                    $icon.removeClass('fa-spin');
+                    if (res && res.success) {
+                        $('#thPeriodo1').text(res.periodo1Header);
+                        $('#thPeriodo2').text(res.periodo2Header);
+
+                        var html = '';
+                        $.each(res.indicadores, function (idx, item) {
+                            var badgeClass = item.EsPositiva ? 'background-color: #dcfce7; color: #15803d;' : 'background-color: #fee2e2; color: #b91c1c;';
+                            var formulaHtml = item.Formula ? '<span style="display: block; font-size: 11px; font-weight: 400; color: #64748b; margin-top: 2px;"><i class="fa fa-calculator" style="margin-right: 3px; color: #94a3b8;"></i> ' + item.Formula + '</span>' : '';
+
+                            html += '<tr class="fila-indicador" data-nombre="' + item.Nombre.toLowerCase() + '">';
+                            html += '<td style="padding: 12px 20px; vertical-align: middle; font-weight: 600; color: #1e3a8a;">' + item.Nombre + formulaHtml + '</td>';
+                            html += '<td style="padding: 12px 18px; vertical-align: middle; text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; color: #334155;">' + item.ValorP1Str + '</td>';
+                            html += '<td style="padding: 12px 18px; vertical-align: middle; text-align: right; font-variant-numeric: tabular-nums; font-weight: 700; color: #0f172a;">' + item.ValorP2Str + '</td>';
+                            html += '<td style="padding: 12px 18px; vertical-align: middle; text-align: right; font-variant-numeric: tabular-nums;">';
+                            html += '<span class="badge" style="' + badgeClass + ' font-size: 11px; font-weight: 600; padding: 4px 8px; border-radius: 6px;">' + item.VariacionStr + '</span>';
+                            html += '</td>';
+                            html += '<td style="padding: 12px 16px; vertical-align: middle; text-align: center;">';
+                            html += '<button type="button" class="btn btn-xs btn-grafico-asociado" data-grafico="' + item.TipoGraficoAsociado + '" title="Ver gráfico correspondiente" style="background: #e0f2fe; color: #0284c7; border: 1px solid #bae6fd; border-radius: 6px; padding: 5px 9px;">';
+                            html += '<i class="fa fa-bar-chart" style="font-size: 12px;"></i>';
+                            html += '</button>';
+                            html += '</td>';
+                            html += '</tr>';
+                        });
+
+                        $('#tbodyIndicadores').html(html);
+
+                        // Reaplicar filtro de búsqueda si había texto
+                        var currentSearch = $('#txtBuscarIndicador').val();
+                        if (currentSearch) {
+                            $('#txtBuscarIndicador').trigger('keyup');
+                        }
+                    }
+                },
+                error: function () {
+                    $icon.removeClass('fa-spin');
+                }
+            });
+        }
+
+        function cargarGrafico() {
+            var ent = $('#ddlEntidad').val();
+            var tipo = $('#ddlTipoGrafico').val();
+            var pIni = $('#PeriodoInicialGrafico').val();
+            var pFin = $('#PeriodoFinalGrafico').val();
+
+            $('#fondeoChartContainer').html('<div style="text-align: center; padding: 60px 0; color: #64748b;"><i class="fa fa-spinner fa-spin fa-2x"></i><p style="margin-top: 10px; font-size: 13px;">Cargando gráfico...</p></div>');
+
+            $.ajax({
+                url: '@Url.Action("GetGraficoData", "EstructuraFondeo")',
+                type: 'GET',
+                data: { entidad: ent, tipoGrafico: tipo, periodoI: pIni, periodoF: pFin },
+                success: function (res) {
+                    if (res && res.success && res.data) {
+                        var d = res.data;
+                        currentTablaData = d.TablaData;
+
+                        $('#chartTitle').text(d.Titulo);
+                        $('#chartSubtitle').text(d.Subtitulo);
+                        if (d.NotaPie) {
+                            $('#chartFooterNote').text(d.NotaPie);
+                        }
+
+                        renderizarHighchart(d);
+                    } else {
+                        $('#fondeoChartContainer').html('<div class="alert alert-warning" style="margin: 20px;">No se obtuvieron datos para el gráfico seleccionado.</div>');
+                    }
+                },
+                error: function () {
+                    $('#fondeoChartContainer').html('<div class="alert alert-danger" style="margin: 20px;">Ocurrió un error al cargar el gráfico.</div>');
+                }
+            });
+        }
+
+        function renderizarHighchart(data) {
+            var yAxisConfig = [];
+
+            if (data.TieneDobleEje) {
+                yAxisConfig.push({
+                    title: {
+                        text: data.EjeYIzquierdoTitulo,
+                        style: { color: '#2F5597', fontWeight: '600' }
+                    },
+                    labels: {
+                        format: '{value}%',
+                        style: { color: '#475569' }
+                    }
+                });
+                yAxisConfig.push({
+                    title: {
+                        text: data.EjeYDerechoTitulo,
+                        style: { color: '#ED7D31', fontWeight: '600' }
+                    },
+                    labels: {
+                        format: data.TipoGrafico === 1 ? '₡{value:,.0f}M' : '{value}%',
+                        style: { color: '#475569' }
+                    },
+                    opposite: true
+                });
+            } else {
+                yAxisConfig.push({
+                    title: {
+                        text: data.EjeYIzquierdoTitulo || '',
+                        style: { color: '#2F5597', fontWeight: '600' }
+                    },
+                    labels: {
+                        formatter: function () {
+                            if (data.TipoGrafico === 6) {
+                                return Highcharts.numberFormat(this.value, 0, ',', ' ');
+                            }
+                            return this.value + '%';
+                        },
+                        style: { color: '#475569' }
+                    }
+                });
+            }
+
+            var plotOptionsConfig = {
+                series: {
+                    animation: { duration: 600 }
+                }
+            };
+
+            if (data.Apilado) {
+                var stackingType = data.ApiladoTipo || 'normal';
+                if (data.TipoGraficoHighcharts === 'bar') {
+                    plotOptionsConfig.bar = {
+                        stacking: stackingType,
+                        dataLabels: {
+                            enabled: true,
+                            format: '{point.y:.1f}%',
+                            style: { fontSize: '10px', fontWeight: '600', textOutline: 'none' }
+                        }
+                    };
+                } else {
+                    plotOptionsConfig.column = {
+                        stacking: stackingType,
+                        dataLabels: {
+                            enabled: data.TipoGrafico === 6,
+                            formatter: function () {
+                                return Highcharts.numberFormat(this.y, 0, ',', ' ');
+                            },
+                            style: { fontSize: '11px', fontWeight: '600', textOutline: 'none' }
+                        }
+                    };
+                }
+            } else if (data.TipoGraficoHighcharts === 'column') {
+                plotOptionsConfig.column = {
+                    dataLabels: {
+                        enabled: true,
+                        format: '{point.y:.1f}%',
+                        style: { fontSize: '11px', fontWeight: '600', textOutline: 'none' }
+                    }
+                };
+            }
+
+            var seriesFormatted = [];
+            $.each(data.Series, function (idx, s) {
+                var sObj = {
+                    name: s.Name,
+                    type: s.Type,
+                    data: s.Data,
+                    color: s.Color,
+                    yAxis: s.YAxis,
+                    stack: s.Stack
+                };
+
+                if (s.EnableDataLabels) {
+                    sObj.dataLabels = {
+                        enabled: true,
+                        format: s.DataLabelFormat || '{point.y:.2f}%',
+                        style: { fontSize: '10px', fontWeight: '600', textOutline: 'none' }
+                    };
+                }
+
+                if (s.TooltipSuffix) {
+                    sObj.tooltip = {
+                        valueSuffix: s.TooltipSuffix
+                    };
+                }
+
+                seriesFormatted.push(sObj);
+            });
+
+            currentChart = Highcharts.chart('fondeoChartContainer', {
+                chart: {
+                    type: data.TipoGraficoHighcharts,
+                    backgroundColor: '#ffffff',
+                    spacingTop: 15,
+                    spacingBottom: 15
+                },
+                title: { text: null },
+                credits: { enabled: false },
+                xAxis: {
+                    categories: data.Categorias,
+                    crosshair: true,
+                    labels: {
+                        style: { color: '#475569', fontSize: '11px' }
+                    },
+                    lineColor: '#cbd5e1',
+                    tickColor: '#cbd5e1'
+                },
+                yAxis: yAxisConfig,
+                tooltip: {
+                    shared: true,
+                    useHTML: true,
+                    headerFormat: '<span style="font-size:12px; font-weight:700; color:#1e3a8a;">{point.key}</span><table>',
+                    pointFormat: '<tr><td style="color:{series.color};padding:2px 8px 2px 0;">{series.name}: </td>' +
+                        '<td style="text-align:right;padding:2px 0;font-weight:600;"><b>{point.y}</b></td></tr>',
+                    footerFormat: '</table>',
+                    backgroundColor: '#ffffff',
+                    borderColor: '#cbd5e1',
+                    borderRadius: 8,
+                    shadow: true
+                },
+                legend: {
+                    align: 'center',
+                    verticalAlign: 'bottom',
+                    layout: 'horizontal',
+                    itemStyle: { color: '#334155', fontWeight: '600', fontSize: '12px' },
+                    itemHoverStyle: { color: '#1e3a8a' },
+                    margin: 20
+                },
+                plotOptions: plotOptionsConfig,
+                series: seriesFormatted,
+                exporting: {
+                    enabled: false // Usamos nuestro menú desplegable personalizado que coincide con el diseño
+                }
+            });
+        }
+
+        function abrirModalTabla() {
+            if (!currentTablaData) return;
+
+            $('#modalTablaTitulo').html('<i class="fa fa-table"></i> ' + (currentTablaData.Titulo || 'Datos del Gráfico'));
+
+            var html = '<div class="table-responsive">';
+            html += '<table class="table table-bordered table-striped" style="margin-bottom: 0; font-size: 12px;">';
+            html += '<thead><tr style="background: #2F5597; color: #ffffff;">';
+
+            $.each(currentTablaData.Columnas, function (idx, col) {
+                var align = idx === 0 ? 'left' : 'center';
+                html += '<th style="text-align: ' + align + '; padding: 10px 12px; white-space: nowrap;">' + col + '</th>';
+            });
+            html += '</tr></thead><tbody>';
+
+            $.each(currentTablaData.Filas, function (idx, fila) {
+                html += '<tr>';
+                html += '<td style="font-weight: 700; color: #1e3a8a; padding: 8px 12px; white-space: nowrap;">' + fila.Nombre + '</td>';
+                $.each(fila.Valores, function (vIdx, val) {
+                    html += '<td style="text-align: right; padding: 8px 12px; font-variant-numeric: tabular-nums;">' + val + '</td>';
+                });
+                html += '</tr>';
+            });
+
+            html += '</tbody></table></div>';
+
+            $('#modalTablaContenido').html(html);
+            $('#modalTablaDatos').modal('show');
+        }
+
+        function exportarGrafico(mimeType) {
+            if (!currentChart) return;
+
+            if (mimeType === 'image/png') {
+                currentChart.exportChart({ type: 'image/png' });
+            } else if (mimeType === 'image/jpeg') {
+                currentChart.exportChart({ type: 'image/jpeg' });
+            } else if (mimeType === 'image/svg+xml') {
+                currentChart.exportChart({ type: 'image/svg+xml' });
+            } else if (mimeType === 'application/pdf') {
+                currentChart.exportChart({ type: 'application/pdf' });
+            } else if (mimeType === 'text/csv') {
+                if (currentChart.downloadCSV) {
+                    currentChart.downloadCSV();
+                } else {
+                    $('#btnDescargarExcelGrafico').trigger('click');
+                }
+            }
+        }
+    </script>
+}

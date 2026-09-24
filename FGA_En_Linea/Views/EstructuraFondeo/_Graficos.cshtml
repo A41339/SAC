@@ -1,0 +1,123 @@
+@model FGA.Model.EstructuraFondeoIndexViewModel
+
+<div class="row" style="margin-top: 15px;">
+    <!-- Barra superior de filtros de Gráficos -->
+    <div class="col-xs-12">
+        <div class="modern-filter-card" style="margin-bottom: 20px; padding: 16px 20px; background: #ffffff; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); border: 1px solid #e2e8f0;">
+            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;">
+                <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <label for="ddlTipoGrafico" style="margin: 0; font-size: 13px; font-weight: 700; color: #1e3a8a; white-space: nowrap;">
+                            <i class="fa fa-line-chart" style="color: #2F5597; margin-right: 4px;"></i> Tipo de Gráfico:
+                        </label>
+                        <select id="ddlTipoGrafico" class="form-control modern-select" style="min-width: 330px; height: 38px; font-size: 13px; font-weight: 500; border-radius: 6px; border: 1px solid #cbd5e1;">
+                            <option value="1">Estructura de financiamiento</option>
+                            <option value="2">Variaciones interanuales por tipo de Fondeo</option>
+                            <option value="3">Variación y composición por tipo de captaciones</option>
+                            <option value="4">Concentración de los 10 y  20 mayores ahorrantes</option>
+                            <option value="5">Concentración de saldos por vencimiento</option>
+                            <option value="6">Cantidad de ahorrantes y asociados</option>
+                        </select>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <label for="PeriodoInicialGrafico" style="margin: 0; font-size: 13px; font-weight: 600; color: #475569;">
+                            <i class="fa fa-calendar" style="color: #2F5597; margin-right: 4px;"></i> Período inicial:
+                        </label>
+                        <div class="modern-input-wrapper">
+                            <input name="PeriodoInicialGrafico" id="PeriodoInicialGrafico" class="datecontrol form-control modern-date-input" value="@Model.PeriodoInicialGrafico" style="min-width: 120px; height: 38px; font-size: 13px;" />
+                        </div>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <label for="PeriodoFinalGrafico" style="margin: 0; font-size: 13px; font-weight: 600; color: #475569;">
+                            <i class="fa fa-calendar-check-o" style="color: #2F5597; margin-right: 4px;"></i> Período final:
+                        </label>
+                        <div class="modern-input-wrapper">
+                            <input name="PeriodoFinalGrafico" id="PeriodoFinalGrafico" class="datecontrol form-control modern-date-input" value="@Model.PeriodoFinalGrafico" style="min-width: 120px; height: 38px; font-size: 13px;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <button type="button" id="btnGenerarGrafico" class="btn-modern-filter" style="height: 38px; padding: 0 26px; background: #164e63; color: #ffffff; font-weight: 700; font-size: 13px; letter-spacing: 0.5px; border: none; border-radius: 6px; box-shadow: 0 2px 4px rgba(22, 78, 99, 0.25); cursor: pointer;">
+                        GENERAR
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenedor del Gráfico -->
+    <div class="col-xs-12">
+        <div class="modern-table-card" style="background: #ffffff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; padding: 22px 24px; margin-bottom: 22px;">
+            <!-- Header del gráfico con título y menú de descargas institucional -->
+            <div style="display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 14px; margin-bottom: 20px;">
+                <div>
+                    <h3 id="chartTitle" style="margin: 0; font-size: 19px; font-weight: 700; color: #1e3a8a; line-height: 1.3;">
+                        Estructura de Financiamiento
+                    </h3>
+                    <p id="chartSubtitle" style="margin: 4px 0 0 0; font-size: 13px; color: #64748b;">
+                        Composición de obligaciones con el público, obligaciones con entidades y capital social
+                    </p>
+                </div>
+
+                <!-- Botón Descargar con menú desplegable idéntico al requerimiento -->
+                <div class="btn-group" style="position: relative;">
+                    <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="background: #164e63; color: #ffffff; font-weight: 600; font-size: 13px; padding: 8px 16px; border-radius: 6px; border: none; display: flex; align-items: center; gap: 8px; box-shadow: 0 2px 4px rgba(22, 78, 99, 0.2);">
+                        <i class="fa fa-download"></i> Descargar <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-right" style="border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.12); border: 1px solid #e2e8f0; padding: 6px 0; min-width: 190px;">
+                        <li>
+                            <a href="javascript:void(0);" id="btnVerTablaModal" style="padding: 8px 16px; font-size: 13px; color: #1e293b; display: flex; align-items: center; gap: 10px;">
+                                <i class="fa fa-table" style="color: #2F5597; width: 16px;"></i> Ver tabla
+                            </a>
+                        </li>
+                        <li role="separator" class="divider" style="margin: 4px 0;"></li>
+                        <li>
+                            <a href="javascript:void(0);" onclick="exportarGrafico('image/png')" style="padding: 8px 16px; font-size: 13px; color: #1e293b; display: flex; align-items: center; gap: 10px;">
+                                <i class="fa fa-file-image-o" style="color: #0284c7; width: 16px;"></i> Descargar PNG
+                            </a>
+                        </li>
+                        <li>
+                            <a href="javascript:void(0);" onclick="exportarGrafico('image/jpeg')" style="padding: 8px 16px; font-size: 13px; color: #1e293b; display: flex; align-items: center; gap: 10px;">
+                                <i class="fa fa-file-image-o" style="color: #0284c7; width: 16px;"></i> Descargar JPEG
+                            </a>
+                        </li>
+                        <li>
+                            <a href="javascript:void(0);" onclick="exportarGrafico('image/svg+xml')" style="padding: 8px 16px; font-size: 13px; color: #1e293b; display: flex; align-items: center; gap: 10px;">
+                                <i class="fa fa-file-code-o" style="color: #0ea5e9; width: 16px;"></i> Descargar SVG
+                            </a>
+                        </li>
+                        <li role="separator" class="divider" style="margin: 4px 0;"></li>
+                        <li>
+                            <a href="javascript:void(0);" onclick="exportarGrafico('text/csv')" style="padding: 8px 16px; font-size: 13px; color: #1e293b; display: flex; align-items: center; gap: 10px;">
+                                <i class="fa fa-file-text-o" style="color: #10b981; width: 16px;"></i> Descargar CSV
+                            </a>
+                        </li>
+                        <li>
+                            <a href="javascript:void(0);" id="btnDescargarExcelGrafico" style="padding: 8px 16px; font-size: 13px; color: #1e293b; display: flex; align-items: center; gap: 10px;">
+                                <i class="fa fa-file-excel-o" style="color: #16a34a; width: 16px;"></i> Descargar Excel (XLSX)
+                            </a>
+                        </li>
+                        <li>
+                            <a href="javascript:void(0);" onclick="exportarGrafico('application/pdf')" style="padding: 8px 16px; font-size: 13px; color: #1e293b; display: flex; align-items: center; gap: 10px;">
+                                <i class="fa fa-file-pdf-o" style="color: #ef4444; width: 16px;"></i> Descargar PDF
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Contenedor del Highcharts -->
+            <div id="fondeoChartContainer" style="width: 100%; min-height: 480px;"></div>
+
+            <!-- Nota al pie del gráfico -->
+            <div style="margin-top: 14px; padding-top: 12px; border-top: 1px solid #f1f5f9;">
+                <p id="chartFooterNote" style="margin: 0; font-size: 12px; color: #64748b; font-style: italic;">
+                    Nota: Toda la información se presenta en millones de colones y corresponde al período seleccionado.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

@@ -248,6 +248,32 @@ namespace FGA.Controllers
                     });
                 }
 
+                // Asegurar que la ficha de Estructura de Fondeo esté visible en el módulo Estructura Financiera
+                if ((titulo.IndexOf("Estructura Financiera", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                     titulo.IndexOf("Información Financiera", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                     titulo.IndexOf("Informacion Financiera", StringComparison.OrdinalIgnoreCase) >= 0) &&
+                    tarjetas.All(t => t.Titulo.IndexOf("Fondeo", StringComparison.OrdinalIgnoreCase) < 0 &&
+                                      t.Url.IndexOf("EstructuraFondeo", StringComparison.OrdinalIgnoreCase) < 0))
+                {
+                    var fondeoMeta = MenuCatalogService.GetCardMeta("Estructura de Fondeo", "EstructuraFondeo/Index", "fa fa-database", 1, "Analice la composición de las fuentes de fondeo de la entidad.");
+                    var fondeoCard = new ModuloTarjetaItem
+                    {
+                        Id = 99210,
+                        Titulo = "Estructura de Fondeo",
+                        Descripcion = fondeoMeta.Descripcion,
+                        Url = Url.Content("~/EstructuraFondeo/Index"),
+                        Icono = fondeoMeta.Icono,
+                        ColorFondoIcono = fondeoMeta.ColorFondoIcono,
+                        ColorIcono = fondeoMeta.ColorIcono,
+                        SortOrder = 2,
+                        EsSubModulo = false,
+                        CantidadOpciones = 0
+                    };
+
+                    int insertPos = Math.Min(1, tarjetas.Count);
+                    tarjetas.Insert(insertPos, fondeoCard);
+                }
+
                 string formattedPeriodo = "";
                 try
                 {
