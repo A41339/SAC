@@ -86,6 +86,8 @@ namespace FGA.Controllers
                 NombreEntidad = Session["NomEntidad"]?.ToString() ?? "Entidad",
                 Periodo1 = p1Date.ToString("MM/yyyy"),
                 Periodo2 = p2Date.ToString("MM/yyyy"),
+                Periodo1Header = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(p1Date.ToString("MMMM yyyy", new CultureInfo("es-ES"))),
+                Periodo2Header = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(p2Date.ToString("MMMM yyyy", new CultureInfo("es-ES"))),
                 PeriodoInicialGrafico = p2Date.AddMonths(-11).ToString("MM/yyyy"),
                 PeriodoFinalGrafico = p2Date.ToString("MM/yyyy"),
                 TipoGraficoSeleccionado = 1,
@@ -814,8 +816,13 @@ namespace FGA.Controllers
                                 if (dicTop.ContainsKey(key))
                                 {
                                     var item = dicTop[key];
-                                    serieTop10.Data.Add(Math.Round(item.PorcTop10 ?? 0, 1));
-                                    serieTop20.Data.Add(Math.Round(item.PorcTop20 ?? 0, 1));
+                                    decimal p10 = item.PorcTop10 ?? 0;
+                                    if (p10 > 0 && p10 <= 1.0m) p10 *= 100m;
+                                    decimal p20 = item.PorcTop20 ?? 0;
+                                    if (p20 > 0 && p20 <= 1.0m) p20 *= 100m;
+
+                                    serieTop10.Data.Add(Math.Round(p10, 1));
+                                    serieTop20.Data.Add(Math.Round(p20, 1));
                                 }
                                 else
                                 {
@@ -906,13 +913,20 @@ namespace FGA.Controllers
                                 if (dicVenc.ContainsKey(key))
                                 {
                                     var v = dicVenc[key];
-                                    s.Data.Add(Math.Round(v.PorcDe3AnosEnAdelante ?? 0, 2));
-                                    s.Data.Add(Math.Round(v.PorcDe1A3Anos ?? 0, 2));
-                                    s.Data.Add(Math.Round(v.PorcDe271A360Dias ?? 0, 2));
-                                    s.Data.Add(Math.Round(v.PorcDe181A270Dias ?? 0, 2));
-                                    s.Data.Add(Math.Round(v.PorcDe91A180Dias ?? 0, 2));
-                                    s.Data.Add(Math.Round(v.PorcDe1A90Dias ?? 0, 2));
-                                    s.Data.Add(Math.Round(v.PorcALaVista ?? 0, 2));
+                                    Func<decimal?, decimal> normalizarPorc = val =>
+                                    {
+                                        decimal prc = val ?? 0;
+                                        if (prc > 0 && prc <= 1.0m) prc *= 100m;
+                                        return Math.Round(prc, 2);
+                                    };
+
+                                    s.Data.Add(normalizarPorc(v.PorcDe3AnosEnAdelante));
+                                    s.Data.Add(normalizarPorc(v.PorcDe1A3Anos));
+                                    s.Data.Add(normalizarPorc(v.PorcDe271A360Dias));
+                                    s.Data.Add(normalizarPorc(v.PorcDe181A270Dias));
+                                    s.Data.Add(normalizarPorc(v.PorcDe91A180Dias));
+                                    s.Data.Add(normalizarPorc(v.PorcDe1A90Dias));
+                                    s.Data.Add(normalizarPorc(v.PorcALaVista));
                                 }
                                 else
                                 {

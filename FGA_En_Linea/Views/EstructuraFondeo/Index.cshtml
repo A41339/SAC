@@ -275,6 +275,13 @@
                     }
                 }
             });
+
+            // Ajuste automático al redimensionar ventana
+            $(window).on('resize', function () {
+                if (currentChart) {
+                    currentChart.reflow();
+                }
+            });
         });
 
         function cargarIndicadores() {

@@ -137,8 +137,8 @@ BEGIN
     SELECT @MontoTop20 = ISNULL(SUM(MontoTotal), 0)
     FROM (SELECT TOP 20 MontoTotal FROM #SaldosPorAcreedor ORDER BY MontoTotal DESC) T20;
 
-    DECLARE @PorcTop10 DECIMAL(18, 6) = CASE WHEN @MontoTotalAhorrantes > 0 THEN @MontoTop10 / @MontoTotalAhorrantes ELSE 0 END;
-    DECLARE @PorcTop20 DECIMAL(18, 6) = CASE WHEN @MontoTotalAhorrantes > 0 THEN @MontoTop20 / @MontoTotalAhorrantes ELSE 0 END;
+    DECLARE @PorcTop10 DECIMAL(18, 6) = CASE WHEN @MontoTotalAhorrantes > 0 THEN (@MontoTop10 / @MontoTotalAhorrantes) * 100.0 ELSE 0 END;
+    DECLARE @PorcTop20 DECIMAL(18, 6) = CASE WHEN @MontoTotalAhorrantes > 0 THEN (@MontoTop20 / @MontoTotalAhorrantes) * 100.0 ELSE 0 END;
 
     IF @MontoTotalAhorrantes > 0 OR @TotalAhorrantes > 0
     BEGIN
@@ -158,13 +158,13 @@ BEGIN
     DECLARE @Tramo7 DECIMAL(25, 2) = 0;
 
     SELECT
-        @Tramo1 = ISNULL(SUM(CASE WHEN CuentaContablePrincipal LIKE '211%' OR FechaVencimiento <= @PERIODO THEN SaldoPrincipal ELSE 0 END), 0),
-        @Tramo2 = ISNULL(SUM(CASE WHEN NOT (CuentaContablePrincipal LIKE '211%' OR FechaVencimiento <= @PERIODO) AND DATEDIFF(DAY, @PERIODO, FechaVencimiento) BETWEEN 1 AND 90 THEN SaldoPrincipal ELSE 0 END), 0),
-        @Tramo3 = ISNULL(SUM(CASE WHEN NOT (CuentaContablePrincipal LIKE '211%' OR FechaVencimiento <= @PERIODO) AND DATEDIFF(DAY, @PERIODO, FechaVencimiento) BETWEEN 91 AND 180 THEN SaldoPrincipal ELSE 0 END), 0),
-        @Tramo4 = ISNULL(SUM(CASE WHEN NOT (CuentaContablePrincipal LIKE '211%' OR FechaVencimiento <= @PERIODO) AND DATEDIFF(DAY, @PERIODO, FechaVencimiento) BETWEEN 181 AND 270 THEN SaldoPrincipal ELSE 0 END), 0),
-        @Tramo5 = ISNULL(SUM(CASE WHEN NOT (CuentaContablePrincipal LIKE '211%' OR FechaVencimiento <= @PERIODO) AND DATEDIFF(DAY, @PERIODO, FechaVencimiento) BETWEEN 271 AND 360 THEN SaldoPrincipal ELSE 0 END), 0),
-        @Tramo6 = ISNULL(SUM(CASE WHEN NOT (CuentaContablePrincipal LIKE '211%' OR FechaVencimiento <= @PERIODO) AND DATEDIFF(DAY, @PERIODO, FechaVencimiento) BETWEEN 361 AND 1080 THEN SaldoPrincipal ELSE 0 END), 0),
-        @Tramo7 = ISNULL(SUM(CASE WHEN NOT (CuentaContablePrincipal LIKE '211%' OR FechaVencimiento <= @PERIODO) AND DATEDIFF(DAY, @PERIODO, FechaVencimiento) > 1080 THEN SaldoPrincipal ELSE 0 END), 0)
+        @Tramo1 = ISNULL(SUM(CASE WHEN CuentaContablePrincipal LIKE '211%' OR FechaVencimiento IS NULL OR FechaVencimiento <= @PERIODO THEN SaldoPrincipal ELSE 0 END), 0),
+        @Tramo2 = ISNULL(SUM(CASE WHEN CuentaContablePrincipal NOT LIKE '211%' AND FechaVencimiento > @PERIODO AND DATEDIFF(DAY, @PERIODO, FechaVencimiento) BETWEEN 1 AND 90 THEN SaldoPrincipal ELSE 0 END), 0),
+        @Tramo3 = ISNULL(SUM(CASE WHEN CuentaContablePrincipal NOT LIKE '211%' AND FechaVencimiento > @PERIODO AND DATEDIFF(DAY, @PERIODO, FechaVencimiento) BETWEEN 91 AND 180 THEN SaldoPrincipal ELSE 0 END), 0),
+        @Tramo4 = ISNULL(SUM(CASE WHEN CuentaContablePrincipal NOT LIKE '211%' AND FechaVencimiento > @PERIODO AND DATEDIFF(DAY, @PERIODO, FechaVencimiento) BETWEEN 181 AND 270 THEN SaldoPrincipal ELSE 0 END), 0),
+        @Tramo5 = ISNULL(SUM(CASE WHEN CuentaContablePrincipal NOT LIKE '211%' AND FechaVencimiento > @PERIODO AND DATEDIFF(DAY, @PERIODO, FechaVencimiento) BETWEEN 271 AND 360 THEN SaldoPrincipal ELSE 0 END), 0),
+        @Tramo6 = ISNULL(SUM(CASE WHEN CuentaContablePrincipal NOT LIKE '211%' AND FechaVencimiento > @PERIODO AND DATEDIFF(DAY, @PERIODO, FechaVencimiento) BETWEEN 361 AND 1080 THEN SaldoPrincipal ELSE 0 END), 0),
+        @Tramo7 = ISNULL(SUM(CASE WHEN CuentaContablePrincipal NOT LIKE '211%' AND FechaVencimiento > @PERIODO AND DATEDIFF(DAY, @PERIODO, FechaVencimiento) > 1080 THEN SaldoPrincipal ELSE 0 END), 0)
     FROM #Pasivos210;
 
     DECLARE @TotalVenc DECIMAL(25, 2) = @Tramo1 + @Tramo2 + @Tramo3 + @Tramo4 + @Tramo5 + @Tramo6 + @Tramo7;
@@ -191,15 +191,20 @@ GO
 
 CREATE PROCEDURE [dbo].[FGA_Consultar_Concentracion_Ahorrantes]
     @IDENTIDAD NVARCHAR(5),
-    @PERIODOINICIAL DATE,
-    @PERIODOFINAL DATE
+    @PERIODOI DATE = NULL,
+    @PERIODOF DATE = NULL,
+    @PERIODOINICIAL DATE = NULL,
+    @PERIODOFINAL DATE = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
 
+    SET @PERIODOI = ISNULL(@PERIODOI, @PERIODOINICIAL);
+    SET @PERIODOF = ISNULL(@PERIODOF, @PERIODOFINAL);
+
     -- Validar si para algún período del rango falta el cálculo en la tabla de salida
-    DECLARE @PeriodoCursor DATE = @PERIODOINICIAL;
-    WHILE @PeriodoCursor <= @PERIODOFINAL
+    DECLARE @PeriodoCursor DATE = @PERIODOI;
+    WHILE @PeriodoCursor <= @PERIODOF
     BEGIN
         IF NOT EXISTS (SELECT 1 FROM [dbo].[Salida_Concentracion_Ahorrantes] WITH(NOLOCK) WHERE IdEntidad = @IDENTIDAD AND Periodo = @PeriodoCursor)
         BEGIN
@@ -209,7 +214,6 @@ BEGIN
     END
 
     SELECT 
-        IdEntidad,
         Periodo,
         MontoTop10,
         MontoTop20,
@@ -219,7 +223,7 @@ BEGIN
         CantidadAhorrantes
     FROM [dbo].[Salida_Concentracion_Ahorrantes] WITH(NOLOCK)
     WHERE IdEntidad = @IDENTIDAD 
-      AND Periodo BETWEEN @PERIODOINICIAL AND @PERIODOFINAL
+      AND Periodo BETWEEN @PERIODOI AND @PERIODOF
     ORDER BY Periodo ASC;
 END
 GO
@@ -233,14 +237,19 @@ GO
 
 CREATE PROCEDURE [dbo].[FGA_Consultar_Concentracion_Vencimiento]
     @IDENTIDAD NVARCHAR(5),
-    @PERIODOINICIAL DATE,
-    @PERIODOFINAL DATE
+    @PERIODOI DATE = NULL,
+    @PERIODOF DATE = NULL,
+    @PERIODOINICIAL DATE = NULL,
+    @PERIODOFINAL DATE = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
 
-    DECLARE @PeriodoCursor DATE = @PERIODOINICIAL;
-    WHILE @PeriodoCursor <= @PERIODOFINAL
+    SET @PERIODOI = ISNULL(@PERIODOI, @PERIODOINICIAL);
+    SET @PERIODOF = ISNULL(@PERIODOF, @PERIODOFINAL);
+
+    DECLARE @PeriodoCursor DATE = @PERIODOI;
+    WHILE @PeriodoCursor <= @PERIODOF
     BEGIN
         IF NOT EXISTS (SELECT 1 FROM [dbo].[Salida_Concentracion_Vencimiento] WITH(NOLOCK) WHERE IdEntidad = @IDENTIDAD AND Periodo = @PeriodoCursor)
         BEGIN
@@ -250,26 +259,25 @@ BEGIN
     END
 
     SELECT 
-        IdEntidad,
         Periodo,
-        Tramo1_Vista,
-        Tramo2_1a90Dias,
-        Tramo3_91a180Dias,
-        Tramo4_181a270Dias,
-        Tramo5_271a360Dias,
-        Tramo6_1a3Anios,
-        Tramo7_Mas3Anios,
-        TotalPrincipal,
-        CASE WHEN TotalPrincipal > 0 THEN Tramo1_Vista / TotalPrincipal ELSE 0 END AS PorcTramo1,
-        CASE WHEN TotalPrincipal > 0 THEN Tramo2_1a90Dias / TotalPrincipal ELSE 0 END AS PorcTramo2,
-        CASE WHEN TotalPrincipal > 0 THEN Tramo3_91a180Dias / TotalPrincipal ELSE 0 END AS PorcTramo3,
-        CASE WHEN TotalPrincipal > 0 THEN Tramo4_181a270Dias / TotalPrincipal ELSE 0 END AS PorcTramo4,
-        CASE WHEN TotalPrincipal > 0 THEN Tramo5_271a360Dias / TotalPrincipal ELSE 0 END AS PorcTramo5,
-        CASE WHEN TotalPrincipal > 0 THEN Tramo6_1a3Anios / TotalPrincipal ELSE 0 END AS PorcTramo6,
-        CASE WHEN TotalPrincipal > 0 THEN Tramo7_Mas3Anios / TotalPrincipal ELSE 0 END AS PorcTramo7
+        Tramo1_Vista AS ALaVista,
+        Tramo2_1a90Dias AS De1A90Dias,
+        Tramo3_91a180Dias AS De91A180Dias,
+        Tramo4_181a270Dias AS De181A270Dias,
+        Tramo5_271a360Dias AS De271A360Dias,
+        Tramo6_1a3Anios AS De1A3Anos,
+        Tramo7_Mas3Anios AS De3AnosEnAdelante,
+        TotalPrincipal AS Total,
+        CASE WHEN TotalPrincipal > 0 THEN (Tramo1_Vista / TotalPrincipal) * 100.0 ELSE 0 END AS PorcALaVista,
+        CASE WHEN TotalPrincipal > 0 THEN (Tramo2_1a90Dias / TotalPrincipal) * 100.0 ELSE 0 END AS PorcDe1A90Dias,
+        CASE WHEN TotalPrincipal > 0 THEN (Tramo3_91a180Dias / TotalPrincipal) * 100.0 ELSE 0 END AS PorcDe91A180Dias,
+        CASE WHEN TotalPrincipal > 0 THEN (Tramo4_181a270Dias / TotalPrincipal) * 100.0 ELSE 0 END AS PorcDe181A270Dias,
+        CASE WHEN TotalPrincipal > 0 THEN (Tramo5_271a360Dias / TotalPrincipal) * 100.0 ELSE 0 END AS PorcDe271A360Dias,
+        CASE WHEN TotalPrincipal > 0 THEN (Tramo6_1a3Anios / TotalPrincipal) * 100.0 ELSE 0 END AS PorcDe1A3Anos,
+        CASE WHEN TotalPrincipal > 0 THEN (Tramo7_Mas3Anios / TotalPrincipal) * 100.0 ELSE 0 END AS PorcDe3AnosEnAdelante
     FROM [dbo].[Salida_Concentracion_Vencimiento] WITH(NOLOCK)
     WHERE IdEntidad = @IDENTIDAD 
-      AND Periodo BETWEEN @PERIODOINICIAL AND @PERIODOFINAL
+      AND Periodo BETWEEN @PERIODOI AND @PERIODOF
     ORDER BY Periodo ASC;
 END
 GO
@@ -283,11 +291,16 @@ GO
 
 CREATE PROCEDURE [dbo].[FGA_Consultar_Cantidad_Asociados_Ahorrantes]
     @IDENTIDAD NVARCHAR(5),
-    @PERIODOINICIAL DATE,
-    @PERIODOFINAL DATE
+    @PERIODOI DATE = NULL,
+    @PERIODOF DATE = NULL,
+    @PERIODOINICIAL DATE = NULL,
+    @PERIODOFINAL DATE = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
+
+    SET @PERIODOI = ISNULL(@PERIODOI, @PERIODOINICIAL);
+    SET @PERIODOF = ISNULL(@PERIODOF, @PERIODOFINAL);
 
     CREATE TABLE #Resultado (
         Periodo DATE,
@@ -296,8 +309,8 @@ BEGIN
         CantidadAhorrantes INT DEFAULT 0
     );
 
-    DECLARE @PeriodoCursor DATE = @PERIODOINICIAL;
-    WHILE @PeriodoCursor <= @PERIODOFINAL
+    DECLARE @PeriodoCursor DATE = @PERIODOI;
+    WHILE @PeriodoCursor <= @PERIODOF
     BEGIN
         INSERT INTO #Resultado (Periodo) VALUES (@PeriodoCursor);
         SET @PeriodoCursor = DATEADD(MONTH, 1, @PeriodoCursor);

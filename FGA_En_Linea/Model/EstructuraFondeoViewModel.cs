@@ -9,6 +9,8 @@ namespace FGA.Model
         public string NombreEntidad { get; set; }
         public string Periodo1 { get; set; }
         public string Periodo2 { get; set; }
+        public string Periodo1Header { get; set; }
+        public string Periodo2Header { get; set; }
         public string PeriodoInicialGrafico { get; set; }
         public string PeriodoFinalGrafico { get; set; }
         public int TipoGraficoSeleccionado { get; set; } = 1;
