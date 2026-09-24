@@ -861,8 +861,37 @@
                     shadow: false,
                     padding: 0,
                     formatter: function () {
+                        var p0 = (this.points && this.points.length > 0) ? this.points[0] : (this.point || this);
+                        var xAxis = (p0 && p0.series && p0.series.xAxis) ? p0.series.xAxis : null;
+                        var headerText = '';
+
+                        if (this.category !== undefined && this.category !== null && ('' + this.category).trim() !== '') {
+                            headerText = '' + this.category;
+                        } else if (p0 && p0.category !== undefined && p0.category !== null && ('' + p0.category).trim() !== '') {
+                            headerText = '' + p0.category;
+                        } else if (xAxis && xAxis.categories && p0 && p0.x !== undefined && xAxis.categories[p0.x]) {
+                            headerText = '' + xAxis.categories[p0.x];
+                        } else if (p0 && p0.key !== undefined && p0.key !== null) {
+                            var kStr = '' + p0.key;
+                            if (isNaN(Number(kStr)) || kStr.indexOf('-') !== -1 || kStr.indexOf('/') !== -1) {
+                                headerText = kStr;
+                            }
+                        } else if (p0 && p0.name) {
+                            headerText = '' + p0.name;
+                        }
+
+                        // Suprimir índices numéricos crudos (0, 1, 2, 3, 4...)
+                        if (headerText && /^\d+$/.test(headerText.trim())) {
+                            headerText = '';
+                        }
+
+                        var headerHtml = '';
+                        if (headerText && headerText.trim() !== '') {
+                            headerHtml = '<div class="tt-header" style="font-size: 13px; font-weight: 700; color: #2F5597; padding-bottom: 6px; margin-bottom: 8px; border-bottom: 1px solid #e2e8f0;">' + headerText + '</div>';
+                        }
+
                         var header = '<div class="fga-chart-tooltip" style="min-width: 270px; padding: 12px 16px; background: #ffffff; border-radius: 10px; border: 1px solid #e2e8f0; box-shadow: 0 10px 25px rgba(15, 23, 42, 0.16);">' +
-                                     '<div class="tt-header" style="font-size: 13px; font-weight: 700; color: #2F5597; padding-bottom: 6px; margin-bottom: 8px; border-bottom: 1px solid #e2e8f0;">' + (this.x || '') + '</div>' +
+                                     headerHtml +
                                      '<table class="tt-table" style="width: 100%; border-collapse: collapse;">';
                         var body = '';
                         var pts = this.points || [this.point];
