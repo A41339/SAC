@@ -158,8 +158,8 @@
 
                     <!-- Botones de Acción para Indicadores -->
                     <div id="secBotonesIndicadores" style="display: flex; align-items: center; gap: 10px;">
-                        <button type="button" id="btnGenerarIndicadores" class="btn-modern-filter" style="height: 38px; padding: 0 20px; background: linear-gradient(135deg, #1b3866 0%, #2F5597 100%); color: #ffffff; font-weight: 600; font-size: 13px; border: none; border-radius: 8px; box-shadow: 0 2px 4px rgba(47, 85, 151, 0.25); display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                            <i class="fa fa-refresh" id="iconRefreshIndicadores"></i> Generar Reporte
+                        <button type="button" id="btnGenerarIndicadores" class="btn-modern-filter">
+                            <i class="fa fa-search"></i> Generar
                         </button>
                         <button type="button" id="btnExportarIndicadores" class="btn-modern-filter" style="height: 38px; padding: 0 18px; background: #ffffff; color: #15803d; border: 1px solid #bbf7d0; font-weight: 600; font-size: 13px; border-radius: 8px; display: flex; align-items: center; gap: 7px; cursor: pointer;">
                             <i class="fa fa-file-excel-o" style="color: #16a34a;"></i> Exportar Excel
@@ -251,16 +251,6 @@
         var currentTablaData = null;
 
         $(document).ready(function () {
-            // Inicialización de datepickers si la librería global está disponible
-            if ($.fn.datepicker) {
-                $('.modern-date-input').datepicker({
-                    format: "mm/yyyy",
-                    viewMode: "months",
-                    minViewMode: "months",
-                    autoclose: true,
-                    language: 'es'
-                });
-            }
 
             // Filtro de búsqueda instantánea en la tabla de Indicadores
             $('#txtBuscarIndicador').on('keyup', function () {
