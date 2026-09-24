@@ -126,8 +126,8 @@ namespace FGA.Controllers
                     gp.SetYAxis(HighChart.GetYAxis(null, null, "formatPercent"));
                     pGp.SetYAxis(HighChart.GetYAxis(null, null, "formatPercent"));
 
-                    gp.SetPlotOptions(HighChart.getLabelAmmount());
-                    pGp.SetPlotOptions(HighChart.getLabelAmmount());
+                    gp.SetPlotOptions(HighChart.getLabelPercent());
+                    pGp.SetPlotOptions(HighChart.getLabelPercent());
 
                     var series =
                     new Series[]
@@ -136,13 +136,13 @@ namespace FGA.Controllers
                             Name = meses == 1 ? "Variación mensual neta" : "Variación interanual neta",
                             Data = new Data(CarteraTotalNeta),
                             Color = HighChart.GetColor(0),
-                            PlotOptionsLine = HighChart.getLine()
+                            PlotOptionsLine = HighChart.getLinePercent()
                         },
                          new Series{
                             Name = meses == 1 ? "Variación mensual bruta" : "Variación interanual bruta",
                             Data = new Data(CarteraTotalBruta),
                             Color = HighChart.GetColor(1),
-                            PlotOptionsLine = HighChart.getLine()
+                            PlotOptionsLine = HighChart.getLinePercent()
                         }
                     };
 
@@ -308,7 +308,8 @@ namespace FGA.Controllers
                         Data = new Data(Porcentaje),
                         Color = HighChart.GetColor(1),
                         YAxis = "Variacion",
-                        PlotOptionsLine = HighChart.getLine()
+                        PlotOptionsLine = HighChart.getLinePercent(),
+                        PlotOptionsSpline = HighChart.getSplinePercent()
                     },
                     new Series{
                         Type = ChartTypes.Column,
@@ -569,7 +570,7 @@ namespace FGA.Controllers
                             Name = "Variación mensual",
                             Data = new Data(VariacionLiq),
                             Color = HighChart.GetColor(1),
-                            PlotOptionsLine = HighChart.getLine(),
+                            PlotOptionsLine = HighChart.getLinePercent(),
                             YAxis = "Crecimiento",
                             ZIndex = 2      
                         },
@@ -618,7 +619,7 @@ namespace FGA.Controllers
                             Name = "Variación anual del capital social",
                             Data = new Data(Variacion),
                             Color = HighChart.GetColor(0),
-                            PlotOptionsLine = HighChart.getLine()
+                            PlotOptionsLine = HighChart.getLinePercent()
                         }
                     };
 
@@ -657,7 +658,7 @@ namespace FGA.Controllers
                             Name = "Tasa Ponderada",
                             Data = new Data(Variacion),
                             Color = HighChart.GetColor(0),
-                            PlotOptionsLine = HighChart.getLine()
+                            PlotOptionsLine = HighChart.getLinePercent()
                         }
                     };
 
