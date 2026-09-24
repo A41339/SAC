@@ -656,15 +656,8 @@ namespace FGA.Controllers
                 PeriodoF = pFin.ToString("MM/yyyy")
             };
 
-            int numMeses = ((pFin.Year - pIni.Year) * 12 + pFin.Month - pIni.Month) + 1;
-            DateTime inicioCalculo = pIni;
-            if (numMeses <= 2)
-            {
-                inicioCalculo = pFin.AddMonths(-11);
-            }
-
             List<DateTime> meses = new List<DateTime>();
-            for (DateTime dt = new DateTime(inicioCalculo.Year, inicioCalculo.Month, 1); dt <= pFin; dt = dt.AddMonths(1))
+            for (DateTime dt = new DateTime(pIni.Year, pIni.Month, 1); dt <= pFin; dt = dt.AddMonths(1))
             {
                 meses.Add(dt);
             }
