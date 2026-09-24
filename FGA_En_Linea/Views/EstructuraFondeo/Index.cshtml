@@ -54,9 +54,47 @@
             color: #b91c1c !important;
         }
 
+        /* Estilos de tabla e indicadores idénticos a la oficial */
+        #tblIndicadores {
+            border-collapse: separate;
+            border-spacing: 0;
+            width: 100% !important;
+        }
+
+        #tblIndicadores thead th {
+            font-size: 13px !important;
+            font-weight: 600 !important;
+            color: #2F5597 !important;
+            border-bottom: 2px solid #88D1E2 !important;
+            padding: 10px 14px !important;
+            background-color: #ffffff !important;
+        }
+
+        #tblIndicadores tbody td {
+            font-size: 13px !important;
+            font-weight: 400 !important;
+            color: #334155 !important;
+            line-height: 1.4 !important;
+            vertical-align: middle !important;
+            border-top: 1px solid #f1f5f9 !important;
+        }
+
+        /* Zebra striping idéntica a la oficial */
+        #tblIndicadores.table-striped > tbody > tr:nth-of-type(odd),
+        #tblIndicadores tbody tr.odd {
+            background-color: #f8fafc !important;
+        }
+
+        #tblIndicadores.table-striped > tbody > tr:nth-of-type(even),
+        #tblIndicadores tbody tr.even {
+            background-color: #ffffff !important;
+        }
+
         /* Hover de filas */
-        #tblIndicadores tbody tr:hover {
-            background-color: #f8fafc;
+        #tblIndicadores tbody tr:hover,
+        #tblIndicadores tbody tr.odd:hover,
+        #tblIndicadores tbody tr.even:hover {
+            background-color: #eef2f6 !important;
         }
 
         .highcharts-credits {
@@ -293,7 +331,7 @@
                     ,{ extend: 'colvis', text: 'Visibilidad' }
                 ],
                 "columnDefs": [
-                    { "targets": 0, "className": 'text-left font-weight-bold' },
+                    { "targets": 0, "className": 'text-left' },
                     { "targets": [1, 2], "className": 'text-right', "width": '160px' },
                     { "targets": 3, "className": 'text-center', "width": '130px' },
                     { "targets": 4, "className": 'text-center', "width": '50px', "orderable": false, "searchable": false }
@@ -490,14 +528,16 @@
                             $.each(res.indicadores, function (idx, item) {
                                 var badgeStyle = item.EsPositiva ? 'background-color: #dcfce7; color: #15803d;' : 'background-color: #fee2e2; color: #b91c1c;';
                                 var formulaHtml = item.Formula ? '<span style="display: block; font-size: 11px; font-weight: 400; color: #64748b; margin-top: 2px;"><i class="fa fa-calculator" style="margin-right: 3px; color: #94a3b8;"></i> ' + item.Formula + '</span>' : '';
-                                var colCuenta = '<span style="font-weight:600; color:#1e3a8a;">' + item.Nombre + '</span>' + formulaHtml;
+                                var colCuenta = '<span style="font-weight: 400; color: #334155; font-size: 13px;">' + item.Nombre + '</span>' + formulaHtml;
+                                var colP1 = '<span style="font-weight: 400; color: #334155; font-size: 13px;">' + item.ValorP1Str + '</span>';
+                                var colP2 = '<span style="font-weight: 400; color: #334155; font-size: 13px;">' + item.ValorP2Str + '</span>';
                                 var colBadge = '<span class="badge" style="' + badgeStyle + ' font-size: 11px; font-weight: 600; padding: 4px 8px; border-radius: 6px; display: inline-block; min-width: 75px; text-align: center;">' + item.VariacionStr + '</span>';
                                 var colBtn = '<a data-toggle="tooltip" data-placement="top" title="Diagramar comportamiento" href="javascript:getGraphIndicador(' + item.Orden + ')"><i class="btn btn-xs btn-info icon fa fa-line-chart"></i></a>';
 
                                 dtIndicadores.row.add([
                                     colCuenta,
-                                    item.ValorP1Str,
-                                    item.ValorP2Str,
+                                    colP1,
+                                    colP2,
                                     colBadge,
                                     colBtn
                                 ]);
