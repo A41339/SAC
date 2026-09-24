@@ -79,7 +79,7 @@ namespace FGA.Controllers
             }
             else if (Session["TipoComparacion"] == null)
             {
-                Session["TipoComparacion"] = "Mensual";
+                Session["TipoComparacion"] = "Interanual";
             }
 
             // Sincronizar Periodo1 y Periodo2 según TipoComparacion
@@ -97,18 +97,18 @@ namespace FGA.Controllers
                     DateTime refDate = Utilitarios.ConvertirAFecha(periodoReferenciaStr);
                     Session["Periodo2"] = refDate.ToShortDateString();
 
-                    string tipo = Session["TipoComparacion"]?.ToString() ?? "Mensual";
+                    string tipo = Session["TipoComparacion"]?.ToString() ?? "Interanual";
                     if (tipo.Equals("Trimestral", StringComparison.OrdinalIgnoreCase))
                     {
                         Session["Periodo1"] = refDate.AddMonths(-3).ToShortDateString();
                     }
-                    else if (tipo.Equals("Interanual", StringComparison.OrdinalIgnoreCase))
+                    else if (tipo.Equals("Mensual", StringComparison.OrdinalIgnoreCase))
                     {
-                        Session["Periodo1"] = refDate.AddYears(-1).ToShortDateString();
+                        Session["Periodo1"] = refDate.AddMonths(-1).ToShortDateString();
                     }
                     else
                     {
-                        Session["Periodo1"] = refDate.AddMonths(-1).ToShortDateString();
+                        Session["Periodo1"] = refDate.AddYears(-1).ToShortDateString();
                     }
                 }
             }
@@ -368,7 +368,7 @@ namespace FGA.Controllers
                     DateTime refDate = Utilitarios.ConvertirAFecha(periodo);
                     Session["Periodo2"] = refDate.ToShortDateString();
 
-                    string tipo = tipoComparacion ?? Session["TipoComparacion"]?.ToString() ?? "Mensual";
+                    string tipo = tipoComparacion ?? Session["TipoComparacion"]?.ToString() ?? "Interanual";
                     Session["TipoComparacion"] = tipo;
 
                     if (tipo.Equals("Trimestral", StringComparison.OrdinalIgnoreCase))

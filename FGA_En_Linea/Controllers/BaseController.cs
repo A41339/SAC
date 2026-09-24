@@ -37,6 +37,16 @@ namespace FGA.Controllers
                 if (Session["Periodo"] is null)
                     Session["Periodo"] = sp.FGA_Consultar_FechaCierre(Session["IdEntidad"].ToString()).ToShortDateString();
 
+                DateTime fechaCierre = Utility.Utilitarios.ConvertirAFecha(Session["Periodo"].ToString());
+                if (Session["Periodo2"] is null)
+                    Session["Periodo2"] = fechaCierre.AddMonths(-1).ToShortDateString();
+
+                if (Session["Periodo1"] is null)
+                {
+                    DateTime p2 = Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString());
+                    Session["Periodo1"] = p2.AddYears(-1).ToShortDateString();
+                }
+
                 Session["Logo"] = ruta;
                 Session["NomEntidad"] = ent.Get(Session["IdEntidad"].ToString()).Nombre;
                 Session["RutaLogo"] = Server.MapPath("~/Content/images/" + Session["NomEntidad"] + ".jpg");

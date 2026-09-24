@@ -26,11 +26,11 @@ namespace FGA.Controllers
         {
             Load();
             DateTime fechaEntidad = sp.FGA_Consultar_FechaCierre(Session["IdEntidad"].ToString());
-            if (Session["Periodo1"] is null)
-                Session["Periodo1"] = fechaEntidad.AddMonths(-6).ToShortDateString();
-
             if (Session["Periodo2"] is null)
                 Session["Periodo2"] = fechaEntidad.AddMonths(-1).ToShortDateString();
+
+            if (Session["Periodo1"] is null)
+                Session["Periodo1"] = ConvertirAFecha(Session["Periodo2"].ToString()).AddYears(-1).ToShortDateString();
 
             Session["TipoReporte"] = enum_tipoGrafico.variacionCarteraMensual;
             ViewBag.Grafico = new SelectList(gr.GetAll().Where(o=>o.Ind_FGA == true).OrderByDescending(o => o.Nombre), "Id", "Nombre", Session["TipoReporte"].ToString());

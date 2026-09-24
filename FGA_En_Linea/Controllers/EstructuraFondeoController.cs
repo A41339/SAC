@@ -68,6 +68,10 @@ namespace FGA.Controllers
             {
                 p1Date = Utilitarios.ConvertirAFecha(periodo1);
             }
+            else if (Session["Periodo1"] != null)
+            {
+                p1Date = Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString());
+            }
             else
             {
                 p1Date = p2Date.AddYears(-1);

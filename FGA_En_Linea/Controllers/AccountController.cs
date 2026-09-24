@@ -126,12 +126,25 @@ namespace FGA.Controllers
                             new Claim("Evaluacion", login.Entidad_Usuario.Ind_Evaluacion ? "S" : "N")
                         };
 
-                    //BORRAR
                     Session["Usuario"] = login;
                     Session["Ind_Carga"] = login.Entidad_Usuario.Ind_Cargar;
-                    Session["IdEntidad"] = Utility.Utilitarios.entidadDefault;
+                    string defaultEnt = login.Role_Usuario.EsEntidad ? login.Entidad_Usuario_Id : Utility.Utilitarios.entidadDefault;
+                    Session["IdEntidad"] = defaultEnt;
                     Session["IsFGA"] = login.Role_Usuario.EsEntidad ? 0 : 1;
                     HttpRuntime.Cache.Insert("Login_" + login.Id.ToString(), login.Id.ToString(), null, DateTime.Now.AddMinutes(10), System.Web.Caching.Cache.NoSlidingExpiration);
+
+                    try
+                    {
+                        var spClient = new FGA_En_Linea.SPService.SPClient();
+                        DateTime fechaCierre = spClient.FGA_Consultar_FechaCierre(defaultEnt);
+                        DateTime p2 = fechaCierre.AddMonths(-1);
+                        DateTime p1 = p2.AddYears(-1);
+                        Session["Periodo"] = fechaCierre.ToShortDateString();
+                        Session["Periodo2"] = p2.ToShortDateString();
+                        Session["Periodo1"] = p1.ToShortDateString();
+                        Session["TipoComparacion"] = "Interanual";
+                    }
+                    catch { }
 
                     try
                     {

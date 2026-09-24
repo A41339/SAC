@@ -37,11 +37,14 @@ namespace FGA.Controllers
             Session["Check"] = true;
             DateTime fechaEntidad = Utilitarios.ConvertirAFecha(Session["Periodo"].ToString());
 
-            if (Session["Periodo1"] is null)
-                Session["Periodo1"] = fechaEntidad.AddMonths(-3).ToShortDateString();
-
             if (Session["Periodo2"] is null)
                 Session["Periodo2"] = fechaEntidad.AddMonths(-1).ToShortDateString();
+
+            if (Session["Periodo1"] is null)
+            {
+                DateTime p2 = Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString());
+                Session["Periodo1"] = p2.AddYears(-1).ToShortDateString();
+            }
 
             return View();
         }

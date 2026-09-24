@@ -20,8 +20,9 @@ namespace FGA.Controllers
         {
             Load();
             DateTime fechaEntidad = sp.FGA_Consultar_FechaCierre(Session["IdEntidad"].ToString());
-            Session["Periodo1"] = Session["Periodo1"] == null ? fechaEntidad.AddMonths(-4).ToShortDateString() : Session["Periodo1"];
             Session["Periodo2"] = Session["Periodo2"] == null ? fechaEntidad.AddMonths(-1).ToShortDateString() : Session["Periodo2"];
+            DateTime p2Ind = Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString());
+            Session["Periodo1"] = Session["Periodo1"] == null ? p2Ind.AddYears(-1).ToShortDateString() : Session["Periodo1"];
             Session["TipoReporte"] = "S";
         }
 
