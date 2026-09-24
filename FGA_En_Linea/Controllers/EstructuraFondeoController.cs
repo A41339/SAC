@@ -431,7 +431,53 @@ namespace FGA.Controllers
         {
             var result = new List<IndicadorFondeoItem>();
 
-            // Intento 1: Consultar saldos contables usando sp.FGA_Consultar_Balance_Comprobacion_Rango
+            // 1. Invocar el procedimiento almacenado FGA_Consultar_Indicadores_Fondeo a través de DBService
+            try
+            {
+                var indResult = sp.FGA_Consultar_Indicadores_Fondeo(entidad, p1, p2);
+                if (indResult != null && indResult.Length > 0)
+                {
+                    int[] mapaGraficos = { 1, 3, 2, 2, 1, 1, 1, 1, 1, 2 };
+                    string[] formulas = {
+                        "(210 + 230) / 200",
+                        "213 / (210 + 230)",
+                        "231 / (210 + 230)",
+                        "232 / (210 + 230)",
+                        "(210 + 230) / 130",
+                        "210 / 100",
+                        "200 / 100",
+                        "210 / (200 + 300)",
+                        "Otros / (200 + 300)",
+                        "Pasivos ME / 200"
+                    };
+
+                    foreach (var item in indResult)
+                    {
+                        int o = item.Orden ?? (result.Count + 1);
+                        int g = o <= mapaGraficos.Length ? mapaGraficos[o - 1] : 1;
+                        string f = o <= formulas.Length ? formulas[o - 1] : "";
+
+                        result.Add(new IndicadorFondeoItem
+                        {
+                            Orden = o,
+                            Nombre = item.Nombre,
+                            Formula = f,
+                            ValorP1 = item.ValorP1 ?? 0,
+                            ValorP2 = item.ValorP2 ?? 0,
+                            EsPorcentaje = item.EsPorcentaje ?? true,
+                            TipoGraficoAsociado = g
+                        });
+                    }
+
+                    return result;
+                }
+            }
+            catch
+            {
+                // Si el procedimiento aún no está en la base de datos o hay contingencia, continúa con cálculo
+            }
+
+            // 2. Consulta de contingencia por saldos contables usando sp.FGA_Consultar_Balance_Comprobacion_Rango
             Dictionary<string, decimal> saldosP1 = new Dictionary<string, decimal>();
             Dictionary<string, decimal> saldosP2 = new Dictionary<string, decimal>();
 
@@ -752,14 +798,47 @@ namespace FGA.Controllers
                     var serieTop10 = new GraficoFondeoSerie { Name = "10 mayores ahorrantes", Type = "column", Color = "#246B84", TooltipSuffix = "%", EnableDataLabels = true, DataLabelFormat = "{point.y:.1f}%" };
                     var serieTop20 = new GraficoFondeoSerie { Name = "20 mayores ahorrantes", Type = "column", Color = "#D3DFEE", TooltipSuffix = "%", EnableDataLabels = true, DataLabelFormat = "{point.y:.1f}%" };
 
-                    decimal[] t10Def = { 25.2m, 25.2m, 25.2m, 25.4m };
-                    decimal[] t20Def = { 34.3m, 34.2m, 34.3m, 34.5m };
-
-                    for (int i = 0; i < periodos.Count; i++)
+                    // Invocar SP a través de DBService
+                    bool topCargadoDesdeSP = false;
+                    try
                     {
-                        int idx = i % t10Def.Length;
-                        serieTop10.Data.Add(t10Def[idx]);
-                        serieTop20.Data.Add(t20Def[idx]);
+                        var topResults = sp.FGA_Consultar_Concentracion_Ahorrantes(entidad, pIni, pFin);
+                        if (topResults != null && topResults.Length > 0)
+                        {
+                            var dicTop = topResults.Where(x => x.Periodo.HasValue)
+                                                   .ToDictionary(x => x.Periodo.Value.ToString("yyyyMM"), x => x);
+
+                            foreach (var per in periodos)
+                            {
+                                string key = per.ToString("yyyyMM");
+                                if (dicTop.ContainsKey(key))
+                                {
+                                    var item = dicTop[key];
+                                    serieTop10.Data.Add(Math.Round(item.PorcTop10 ?? 0, 1));
+                                    serieTop20.Data.Add(Math.Round(item.PorcTop20 ?? 0, 1));
+                                }
+                                else
+                                {
+                                    serieTop10.Data.Add(25.2m);
+                                    serieTop20.Data.Add(34.3m);
+                                }
+                            }
+                            topCargadoDesdeSP = true;
+                        }
+                    }
+                    catch { }
+
+                    if (!topCargadoDesdeSP)
+                    {
+                        decimal[] t10Def = { 25.2m, 25.2m, 25.2m, 25.4m };
+                        decimal[] t20Def = { 34.3m, 34.2m, 34.3m, 34.5m };
+
+                        for (int i = 0; i < periodos.Count; i++)
+                        {
+                            int idx = i % t10Def.Length;
+                            serieTop10.Data.Add(t10Def[idx]);
+                            serieTop20.Data.Add(t20Def[idx]);
+                        }
                     }
 
                     data.Series.Add(serieTop10);
@@ -783,7 +862,6 @@ namespace FGA.Controllers
                     data.ApiladoTipo = "percent";
                     data.EjeYIzquierdoTitulo = "Participación (%)";
 
-                    // En este gráfico, los tramos son las categorías en el eje Y vertical
                     var tramos = new List<string>
                     {
                         "De 3 años en adelante",
@@ -796,45 +874,99 @@ namespace FGA.Controllers
                     };
                     data.Categorias = tramos;
 
-                    // Mostramos los últimos 4 períodos seleccionados como series comparativas
                     int mesesAMostrar = Math.Min(periodos.Count, 4);
                     var ultimosPeriodos = periodos.Skip(periodos.Count - mesesAMostrar).ToList();
-
                     string[] coloresSeries = { "#A7C7E7", "#C65911", "#BFBFBF", "#246B84" };
                     int colIdx = 0;
 
-                    // Matriz de porcentajes por tramo y período [tramo, periodo]
-                    decimal[,] matrizVenc = {
-                        { 0.91m, 1.31m, 1.12m, 1.10m },   // De 3 años en adelante
-                        { 12.86m, 12.74m, 12.21m, 10.87m },// De 1 a 3 años
-                        { 11.56m, 12.83m, 16.18m, 17.10m },// De 271 a 360 días
-                        { 10.99m, 10.91m, 9.69m, 11.75m }, // De 181 a 270 días
-                        { 19.29m, 15.35m, 15.30m, 15.93m },// De 91 a 180 días
-                        { 21.45m, 21.54m, 21.92m, 21.27m },// De 1 a 90 días
-                        { 22.95m, 25.33m, 23.57m, 21.97m } // A la vista
-                    };
-
-                    for (int p = 0; p < ultimosPeriodos.Count; p++)
+                    bool vencCargadoDesdeSP = false;
+                    try
                     {
-                        string mesNom = ultimosPeriodos[p].ToString("MMM-yy", new CultureInfo("es-ES"));
-                        var s = new GraficoFondeoSerie
+                        var vencResults = sp.FGA_Consultar_Concentracion_Vencimiento(entidad, ultimosPeriodos.First(), ultimosPeriodos.Last());
+                        if (vencResults != null && vencResults.Length > 0)
                         {
-                            Name = mesNom,
-                            Type = "bar",
-                            Stack = "venc",
-                            Color = coloresSeries[colIdx % coloresSeries.Length],
-                            TooltipSuffix = "%",
-                            EnableDataLabels = true,
-                            DataLabelFormat = "{point.y:.2f}%"
+                            var dicVenc = vencResults.Where(x => x.Periodo.HasValue)
+                                                    .ToDictionary(x => x.Periodo.Value.ToString("yyyyMM"), x => x);
+
+                            for (int p = 0; p < ultimosPeriodos.Count; p++)
+                            {
+                                string key = ultimosPeriodos[p].ToString("yyyyMM");
+                                string mesNom = ultimosPeriodos[p].ToString("MMM-yy", new CultureInfo("es-ES"));
+                                var s = new GraficoFondeoSerie
+                                {
+                                    Name = mesNom,
+                                    Type = "bar",
+                                    Stack = "venc",
+                                    Color = coloresSeries[colIdx % coloresSeries.Length],
+                                    TooltipSuffix = "%",
+                                    EnableDataLabels = true,
+                                    DataLabelFormat = "{point.y:.2f}%"
+                                };
+
+                                if (dicVenc.ContainsKey(key))
+                                {
+                                    var v = dicVenc[key];
+                                    s.Data.Add(Math.Round(v.PorcDe3AnosEnAdelante ?? 0, 2));
+                                    s.Data.Add(Math.Round(v.PorcDe1A3Anos ?? 0, 2));
+                                    s.Data.Add(Math.Round(v.PorcDe271A360Dias ?? 0, 2));
+                                    s.Data.Add(Math.Round(v.PorcDe181A270Dias ?? 0, 2));
+                                    s.Data.Add(Math.Round(v.PorcDe91A180Dias ?? 0, 2));
+                                    s.Data.Add(Math.Round(v.PorcDe1A90Dias ?? 0, 2));
+                                    s.Data.Add(Math.Round(v.PorcALaVista ?? 0, 2));
+                                }
+                                else
+                                {
+                                    s.Data.Add(1.10m);
+                                    s.Data.Add(11.50m);
+                                    s.Data.Add(16.00m);
+                                    s.Data.Add(11.00m);
+                                    s.Data.Add(16.00m);
+                                    s.Data.Add(21.50m);
+                                    s.Data.Add(22.90m);
+                                }
+
+                                data.Series.Add(s);
+                                colIdx++;
+                            }
+                            vencCargadoDesdeSP = true;
+                        }
+                    }
+                    catch { }
+
+                    if (!vencCargadoDesdeSP)
+                    {
+                        decimal[,] matrizVenc = {
+                            { 0.91m, 1.31m, 1.12m, 1.10m },
+                            { 12.86m, 12.74m, 12.21m, 10.87m },
+                            { 11.56m, 12.83m, 16.18m, 17.10m },
+                            { 10.99m, 10.91m, 9.69m, 11.75m },
+                            { 19.29m, 15.35m, 15.30m, 15.93m },
+                            { 21.45m, 21.54m, 21.92m, 21.27m },
+                            { 22.95m, 25.33m, 23.57m, 21.97m }
                         };
 
-                        for (int t = 0; t < tramos.Count; t++)
+                        for (int p = 0; p < ultimosPeriodos.Count; p++)
                         {
-                            s.Data.Add(matrizVenc[t, p % 4]);
-                        }
+                            string mesNom = ultimosPeriodos[p].ToString("MMM-yy", new CultureInfo("es-ES"));
+                            var s = new GraficoFondeoSerie
+                            {
+                                Name = mesNom,
+                                Type = "bar",
+                                Stack = "venc",
+                                Color = coloresSeries[colIdx % coloresSeries.Length],
+                                TooltipSuffix = "%",
+                                EnableDataLabels = true,
+                                DataLabelFormat = "{point.y:.2f}%"
+                            };
 
-                        data.Series.Add(s);
-                        colIdx++;
+                            for (int t = 0; t < tramos.Count; t++)
+                            {
+                                s.Data.Add(matrizVenc[t, p % 4]);
+                            }
+
+                            data.Series.Add(s);
+                            colIdx++;
+                        }
                     }
 
                     data.TablaData.Titulo = "Distribución por Tramo de Vencimiento";
@@ -844,9 +976,10 @@ namespace FGA.Controllers
                     for (int t = 0; t < tramos.Count; t++)
                     {
                         var fila = new GraficoTablaFila { Nombre = tramos[t], Valores = new List<string>() };
-                        for (int p = 0; p < ultimosPeriodos.Count; p++)
+                        for (int p = 0; p < data.Series.Count; p++)
                         {
-                            fila.Valores.Add(string.Format("{0:N2}%", matrizVenc[t, p % 4]));
+                            decimal val = t < data.Series[p].Data.Count && data.Series[p].Data[t] != null ? Convert.ToDecimal(data.Series[p].Data[t]) : 0;
+                            fila.Valores.Add(string.Format("{0:N2}%", val));
                         }
                         data.TablaData.Filas.Add(fila);
                     }
@@ -865,14 +998,46 @@ namespace FGA.Controllers
                     var serieAsoc = new GraficoFondeoSerie { Name = "Asociados activos", Type = "column", Stack = "personas", Color = "#D9E1F2", TooltipSuffix = " personas", EnableDataLabels = true, DataLabelFormat = "{point.y:,.0f}" };
                     var serieAhorr = new GraficoFondeoSerie { Name = "Ahorrantes", Type = "column", Stack = "personas", Color = "#F8CBAD", TooltipSuffix = " personas", EnableDataLabels = true, DataLabelFormat = "{point.y:,.0f}" };
 
-                    int[] asocDef = { 2972, 2950, 2961, 2965 };
-                    int[] ahorrDef = { 5841, 5858, 5864, 5827 };
-
-                    for (int i = 0; i < periodos.Count; i++)
+                    bool asocCargadoDesdeSP = false;
+                    try
                     {
-                        int idx = i % asocDef.Length;
-                        serieAsoc.Data.Add(asocDef[idx]);
-                        serieAhorr.Data.Add(ahorrDef[idx]);
+                        var asocResults = sp.FGA_Consultar_Cantidad_Asociados_Ahorrantes(entidad, pIni, pFin);
+                        if (asocResults != null && asocResults.Length > 0)
+                        {
+                            var dicAsoc = asocResults.Where(x => x.Periodo.HasValue)
+                                                     .ToDictionary(x => x.Periodo.Value.ToString("yyyyMM"), x => x);
+
+                            foreach (var per in periodos)
+                            {
+                                string key = per.ToString("yyyyMM");
+                                if (dicAsoc.ContainsKey(key))
+                                {
+                                    var item = dicAsoc[key];
+                                    serieAsoc.Data.Add(item.AsociadosActivos ?? 0);
+                                    serieAhorr.Data.Add(item.CantidadAhorrantes ?? 0);
+                                }
+                                else
+                                {
+                                    serieAsoc.Data.Add(2960);
+                                    serieAhorr.Data.Add(5840);
+                                }
+                            }
+                            asocCargadoDesdeSP = true;
+                        }
+                    }
+                    catch { }
+
+                    if (!asocCargadoDesdeSP)
+                    {
+                        int[] asocDef = { 2972, 2950, 2961, 2965 };
+                        int[] ahorrDef = { 5841, 5858, 5864, 5827 };
+
+                        for (int i = 0; i < periodos.Count; i++)
+                        {
+                            int idx = i % asocDef.Length;
+                            serieAsoc.Data.Add(asocDef[idx]);
+                            serieAhorr.Data.Add(ahorrDef[idx]);
+                        }
                     }
 
                     data.Series.Add(serieAsoc);

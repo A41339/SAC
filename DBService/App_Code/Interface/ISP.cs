@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ServiceModel;
 using Entities.Entities.Procedures;
@@ -347,5 +347,25 @@ public interface ISP
     [OperationContract]
     [ReferencePreservingDataContractFormat]
     List<FGA_Consultar_Grafico_Oper_EAD_Result> FGA_Consultar_Grafico_Oper_EAD(string iDENTIDAD, DateTime pERIODOI, DateTime pERIODOF);
+
+    [OperationContract]
+    [ReferencePreservingDataContractFormat]
+    List<FGA_Consultar_Concentracion_Ahorrantes_Result> FGA_Consultar_Concentracion_Ahorrantes(string iDENTIDAD, DateTime? pERIODOI, DateTime? pERIODOF);
+
+    [OperationContract]
+    [ReferencePreservingDataContractFormat]
+    List<FGA_Consultar_Concentracion_Vencimiento_Result> FGA_Consultar_Concentracion_Vencimiento(string iDENTIDAD, DateTime? pERIODOI, DateTime? pERIODOF);
+
+    [OperationContract]
+    [ReferencePreservingDataContractFormat]
+    List<FGA_Consultar_Cantidad_Asociados_Ahorrantes_Result> FGA_Consultar_Cantidad_Asociados_Ahorrantes(string iDENTIDAD, DateTime? pERIODOI, DateTime? pERIODOF);
+
+    [OperationContract]
+    [ReferencePreservingDataContractFormat]
+    List<FGA_Consultar_Indicadores_Fondeo_Result> FGA_Consultar_Indicadores_Fondeo(string iDENTIDAD, DateTime? pERIODO1, DateTime? pERIODO2);
+
+    [OperationContract]
+    [ReferencePreservingDataContractFormat]
+    int FGA_Generar_Estructura_Fondeo(string iDENTIDAD, DateTime? pERIODO);
 
 }

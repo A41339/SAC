@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity.Core.Objects;
 using System.Linq;
@@ -434,5 +434,30 @@ public class SP : ISP
     public List<FGA_Consultar_Grafico_Oper_EAD_Result> FGA_Consultar_Grafico_Oper_EAD(string iDENTIDAD, DateTime pERIODOI, DateTime pERIODOF)
     {
         return sp.FGA_Consultar_Grafico_Oper_EAD(iDENTIDAD, pERIODOI, pERIODOF).ToList();
+    }
+
+    public List<FGA_Consultar_Concentracion_Ahorrantes_Result> FGA_Consultar_Concentracion_Ahorrantes(string iDENTIDAD, DateTime? pERIODOI, DateTime? pERIODOF)
+    {
+        return sp.FGA_Consultar_Concentracion_Ahorrantes(iDENTIDAD, pERIODOI, pERIODOF).ToList();
+    }
+
+    public List<FGA_Consultar_Concentracion_Vencimiento_Result> FGA_Consultar_Concentracion_Vencimiento(string iDENTIDAD, DateTime? pERIODOI, DateTime? pERIODOF)
+    {
+        return sp.FGA_Consultar_Concentracion_Vencimiento(iDENTIDAD, pERIODOI, pERIODOF).ToList();
+    }
+
+    public List<FGA_Consultar_Cantidad_Asociados_Ahorrantes_Result> FGA_Consultar_Cantidad_Asociados_Ahorrantes(string iDENTIDAD, DateTime? pERIODOI, DateTime? pERIODOF)
+    {
+        return sp.FGA_Consultar_Cantidad_Asociados_Ahorrantes(iDENTIDAD, pERIODOI, pERIODOF).ToList();
+    }
+
+    public List<FGA_Consultar_Indicadores_Fondeo_Result> FGA_Consultar_Indicadores_Fondeo(string iDENTIDAD, DateTime? pERIODO1, DateTime? pERIODO2)
+    {
+        return sp.FGA_Consultar_Indicadores_Fondeo(iDENTIDAD, pERIODO1, pERIODO2).ToList();
+    }
+
+    public int FGA_Generar_Estructura_Fondeo(string iDENTIDAD, DateTime? pERIODO)
+    {
+        return sp.FGA_Generar_Estructura_Fondeo(iDENTIDAD, pERIODO);
     }
 }

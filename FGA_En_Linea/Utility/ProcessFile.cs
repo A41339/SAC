@@ -10,6 +10,7 @@ namespace FGA.Utility
             {
                 FGA_En_Linea.SPService.SPClient sp = new FGA_En_Linea.SPService.SPClient();
                 sp.FGA_Cierre_Mensual(id, periodo);
+                sp.FGA_Generar_Estructura_Fondeo(id, periodo);
             }
             catch (Exception)
             {
