@@ -527,7 +527,7 @@ DEALLOCATE CurCierres;
 PRINT 'Migración histórica inicial finalizada con éxito.';
 GO
 
-/****** 9. REGISTRO EN MENÚ DEL SISTEMA Y PERMISOS ******/
+/****** 9. REGISTRO EN MENÚ DEL SISTEMA Y PERMISOS (ROLE ID = 1) ******/
 PRINT 'Configurando opción de menú para Estructura de Fondeo...';
 
 DECLARE @ParentFinanId INT;
@@ -537,52 +537,104 @@ WHERE (MenuText LIKE '%Estructura%Financiera%' OR MenuText LIKE '%Informaci%Fina
   AND (ParentId IS NULL OR MenuURL = 'root' OR MenuURL = '#')
 ORDER BY CASE WHEN MenuText LIKE '%Estructura%Financiera%' THEN 1 ELSE 2 END;
 
-IF @ParentFinanId IS NOT NULL
+-- Si no se localiza por texto, buscar el primer menú raíz disponible
+IF @ParentFinanId IS NULL
 BEGIN
-    DECLARE @FondeoId INT;
-    SELECT @FondeoId = Id FROM [dbo].[Menu] WHERE MenuURL IN ('EstructuraFondeo/Index', 'EstructuraFondeo');
+    SELECT TOP 1 @ParentFinanId = Id FROM [dbo].[Menu] WHERE ParentId IS NULL ORDER BY Id ASC;
+END
+
+DECLARE @FondeoId INT;
+SELECT @FondeoId = Id FROM [dbo].[Menu] WHERE MenuURL IN ('EstructuraFondeo/Index', 'EstructuraFondeo');
+
+IF @FondeoId IS NULL
+BEGIN
+    DECLARE @NextFondeoId INT, @NextSortFondeo INT;
+    SELECT @NextFondeoId = ISNULL(MAX(Id), 0) + 1 FROM [dbo].[Menu];
+    SELECT @NextSortFondeo = ISNULL(MAX(SortOrder), 0) + 1 FROM [dbo].[Menu] WHERE ParentId = @ParentFinanId;
     
-    IF @FondeoId IS NULL
+    IF COLUMNPROPERTY(OBJECT_ID('dbo.Menu'), 'Id', 'IsIdentity') = 1
     BEGIN
-        DECLARE @NextFondeoId INT, @NextSortFondeo INT;
-        SELECT @NextFondeoId = ISNULL(MAX(Id), 0) + 1 FROM [dbo].[Menu];
-        SELECT @NextSortFondeo = ISNULL(MAX(SortOrder), 0) + 1 FROM [dbo].[Menu] WHERE ParentId = @ParentFinanId;
-        
-        IF COLUMNPROPERTY(OBJECT_ID('dbo.Menu'), 'Id', 'IsIdentity') = 1
-        BEGIN
-            SET IDENTITY_INSERT [dbo].[Menu] ON;
-            INSERT INTO [dbo].[Menu] ([Id], [MenuText], [MenuURL], [ParentId], [SortOrder], [MenuIcon], [Description])
-            VALUES (@NextFondeoId, 'Estructura de Fondeo', 'EstructuraFondeo/Index', @ParentFinanId, @NextSortFondeo, 'fa fa-database', 'Analice la composición de las fuentes de fondeo de la entidad.');
-            SET IDENTITY_INSERT [dbo].[Menu] OFF;
-        END
-        ELSE
-        BEGIN
-            INSERT INTO [dbo].[Menu] ([Id], [MenuText], [MenuURL], [ParentId], [SortOrder], [MenuIcon], [Description])
-            VALUES (@NextFondeoId, 'Estructura de Fondeo', 'EstructuraFondeo/Index', @ParentFinanId, @NextSortFondeo, 'fa fa-database', 'Analice la composición de las fuentes de fondeo de la entidad.');
-        END
-        SET @FondeoId = @NextFondeoId;
-        PRINT '-> Opción de Menú [Estructura de Fondeo] creada con Id: ' + CAST(@FondeoId AS VARCHAR(10));
+        SET IDENTITY_INSERT [dbo].[Menu] ON;
+        INSERT INTO [dbo].[Menu] ([Id], [MenuText], [MenuURL], [ParentId], [SortOrder], [MenuIcon], [Description])
+        VALUES (@NextFondeoId, 'Estructura de Fondeo', 'EstructuraFondeo/Index', @ParentFinanId, @NextSortFondeo, 'fa fa-database', 'Analice la composición de las fuentes de fondeo de la entidad.');
+        SET IDENTITY_INSERT [dbo].[Menu] OFF;
     END
     ELSE
     BEGIN
-        UPDATE [dbo].[Menu]
-        SET [MenuText] = 'Estructura de Fondeo',
-            [MenuIcon] = 'fa fa-database',
-            [Description] = 'Analice la composición de las fuentes de fondeo de la entidad.'
-        WHERE [Id] = @FondeoId;
-        PRINT '-> Opción de Menú [Estructura de Fondeo] actualizada con Id: ' + CAST(@FondeoId AS VARCHAR(10));
+        INSERT INTO [dbo].[Menu] ([Id], [MenuText], [MenuURL], [ParentId], [SortOrder], [MenuIcon], [Description])
+        VALUES (@NextFondeoId, 'Estructura de Fondeo', 'EstructuraFondeo/Index', @ParentFinanId, @NextSortFondeo, 'fa fa-database', 'Analice la composición de las fuentes de fondeo de la entidad.');
     END
+    SET @FondeoId = @NextFondeoId;
+    PRINT '-> Opción de Menú [Estructura de Fondeo] creada con Id: ' + CAST(@FondeoId AS VARCHAR(10));
+END
+ELSE
+BEGIN
+    UPDATE [dbo].[Menu]
+    SET [MenuText] = 'Estructura de Fondeo',
+        [MenuURL] = 'EstructuraFondeo/Index',
+        [ParentId] = ISNULL([ParentId], @ParentFinanId),
+        [MenuIcon] = 'fa fa-database',
+        [Description] = 'Analice la composición de las fuentes de fondeo de la entidad.'
+    WHERE [Id] = @FondeoId;
+    PRINT '-> Opción de Menú [Estructura de Fondeo] actualizada con Id: ' + CAST(@FondeoId AS VARCHAR(10));
+END
 
-    -- Asignar permisos automáticos a los roles autorizados
+-- ASIGNACIÓN EXPLÍCITA DE PERMISOS AL ROLE ID = 1 (ADMINISTRADOR)
+IF NOT EXISTS (SELECT 1 FROM [dbo].[MenuPermission] WHERE [MenuId] = @FondeoId AND [RoleId] = 1)
+BEGIN
+    INSERT INTO [dbo].[MenuPermission] ([MenuId], [RoleId], [SortOrder], [IsCreate], [IsRead], [IsUpdate], [IsDelete])
+    VALUES (@FondeoId, 1, 1, 1, 1, 1, 1);
+    PRINT '-> Permiso asignado explícitamente al RoleId = 1 (Administrador) en MenuPermission.';
+END
+ELSE
+BEGIN
+    UPDATE [dbo].[MenuPermission]
+    SET [IsCreate] = 1, [IsRead] = 1, [IsUpdate] = 1, [IsDelete] = 1
+    WHERE [MenuId] = @FondeoId AND [RoleId] = 1;
+    PRINT '-> Permiso del RoleId = 1 (Administrador) actualizado en MenuPermission.';
+END
+
+-- Asignar permisos automáticos a los demás roles que tengan acceso al módulo padre
+IF @ParentFinanId IS NOT NULL
+BEGIN
     INSERT INTO [dbo].[MenuPermission] ([MenuId], [RoleId], [SortOrder], [IsCreate], [IsRead], [IsUpdate], [IsDelete])
     SELECT @FondeoId, mp.RoleId, 1, 1, 1, 1, 1
     FROM [dbo].[MenuPermission] mp
     WHERE mp.MenuId = @ParentFinanId
+      AND mp.RoleId != 1
       AND NOT EXISTS (SELECT 1 FROM [dbo].[MenuPermission] x WHERE x.MenuId = @FondeoId AND x.RoleId = mp.RoleId);
       
-    PRINT '-> Permisos de menú asignados para Estructura de Fondeo.';
+    PRINT '-> Permisos heredados asignados a los demás roles autorizados del módulo padre.';
 END
 GO
+
+/****** 10. ESPECIFICACIÓN DE LÍNEAS PARA EL PROCEDIMIENTO DE CIERRE MENSUAL [FGA_Ejecutar_Cierre] ******/
+/*
+===================================================================================================
+ INSTRUCCIONES PARA AGREGAR AL CIERRE MENSUAL [dbo].[FGA_Ejecutar_Cierre]:
+===================================================================================================
+
+ En el procedimiento almacenado [dbo].[FGA_Ejecutar_Cierre], ubicar el bloque donde se ejecutan
+ los cálculos mensuales (después de FGA_GENERAR_CATEGORIA_CARTERA o FGA_GENERAR_MODELO_TASAS_MARGEN,
+ antes de los respaldos de XML_ENCABEZADO_HIS):
+
+ --- LÍNEAS EXACTAS A AGREGAR ---
+
+				SELECT @VDONDE = 'EXEC FGA_GENERAR_ESTRUCTURA_FONDEO';
+
+				EXEC [dbo].[FGA_Generar_Estructura_Fondeo] @IDENTIDAD, @PERIODO;
+
+ --------------------------------
+
+ ¿Qué hace esta invocación durante cada cierre mensual?
+ 1. Llena la tabla [dbo].[Salida_Concentracion_Ahorrantes]:
+    Calcula y almacena MontoTop10, MontoTop20, MontoTotal, PorcTop10, PorcTop20 y CantidadAhorrantes.
+ 2. Llena la tabla [dbo].[Salida_Concentracion_Vencimiento]:
+    Calcula y clasifica los saldos del XML 2702 (Pasivo Contable 210) en los 7 tramos de vencimiento
+    residual (A la vista, 1-90 d, 91-180 d, 181-270 d, 271-360 d, 1-3 años, >3 años).
+===================================================================================================
+*/
+
 PRINT '-----------------------------------------------------------------------------------';
 PRINT 'CONFIGURACIÓN DE ESTRUCTURA DE FONDEO COMPLETADA SATISFACTORIAMENTE';
 PRINT '-----------------------------------------------------------------------------------';
