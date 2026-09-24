@@ -9,7 +9,7 @@ namespace FGA.Controllers
 {
     public class ModuloController : BaseController
     {
-        public ActionResult Index(int? id, string modulo = null, string IdEntidad = null, string Periodo = null, string TipoComparacion = "Mensual")
+        public ActionResult Index(int? id, string modulo = null, string IdEntidad = null, string Periodo = null, string TipoComparacion = null)
         {
             if (!string.IsNullOrWhiteSpace(IdEntidad))
             {
@@ -322,7 +322,7 @@ namespace FGA.Controllers
                     MostrarFiltros = mostrarFiltros,
                     IdEntidad = Session["IdEntidad"]?.ToString() ?? "",
                     PeriodoReferencia = formattedPeriodo,
-                    TipoComparacion = Session["TipoComparacion"]?.ToString() ?? "Mensual",
+                    TipoComparacion = Session["TipoComparacion"]?.ToString() ?? "Interanual",
                     Entidades = ViewBag.Entidades as SelectList,
                     Tarjetas = tarjetas
                 };
@@ -379,9 +379,13 @@ namespace FGA.Controllers
                     {
                         Session["Periodo1"] = refDate.AddYears(-1).ToShortDateString();
                     }
-                    else
+                    else if (tipo.Equals("Mensual", StringComparison.OrdinalIgnoreCase))
                     {
                         Session["Periodo1"] = refDate.AddMonths(-1).ToShortDateString();
+                    }
+                    else
+                    {
+                        Session["Periodo1"] = refDate.AddYears(-1).ToShortDateString();
                     }
                 }
                 else if (!string.IsNullOrEmpty(tipoComparacion))
@@ -394,13 +398,13 @@ namespace FGA.Controllers
                         {
                             Session["Periodo1"] = refDate.AddMonths(-3).ToShortDateString();
                         }
-                        else if (tipoComparacion.Equals("Interanual", StringComparison.OrdinalIgnoreCase))
+                        else if (tipoComparacion.Equals("Mensual", StringComparison.OrdinalIgnoreCase))
                         {
-                            Session["Periodo1"] = refDate.AddYears(-1).ToShortDateString();
+                            Session["Periodo1"] = refDate.AddMonths(-1).ToShortDateString();
                         }
                         else
                         {
-                            Session["Periodo1"] = refDate.AddMonths(-1).ToShortDateString();
+                            Session["Periodo1"] = refDate.AddYears(-1).ToShortDateString();
                         }
                     }
                 }

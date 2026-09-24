@@ -70,7 +70,16 @@ namespace FGA.Controllers
             }
             else if (Session["Periodo1"] != null)
             {
-                p1Date = Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString());
+                DateTime sP1 = Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString());
+                string tipoComp = Session["TipoComparacion"]?.ToString() ?? "Interanual";
+                if (tipoComp.Equals("Interanual", StringComparison.OrdinalIgnoreCase) || sP1 >= p2Date.AddMonths(-2))
+                {
+                    p1Date = p2Date.AddYears(-1);
+                }
+                else
+                {
+                    p1Date = sP1;
+                }
             }
             else
             {

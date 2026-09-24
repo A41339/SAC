@@ -144,7 +144,17 @@ namespace FGA.Controllers
                         Session["Periodo1"] = p1.ToShortDateString();
                         Session["TipoComparacion"] = "Interanual";
                     }
-                    catch { }
+                    catch
+                    {
+                        DateTime now = DateTime.Now;
+                        DateTime fechaCierre = new DateTime(now.Year, now.Month, 1);
+                        DateTime p2 = fechaCierre.AddMonths(-1);
+                        DateTime p1 = p2.AddYears(-1);
+                        Session["Periodo"] = fechaCierre.ToShortDateString();
+                        Session["Periodo2"] = p2.ToShortDateString();
+                        Session["Periodo1"] = p1.ToShortDateString();
+                        Session["TipoComparacion"] = "Interanual";
+                    }
 
                     try
                     {
@@ -315,6 +325,7 @@ namespace FGA.Controllers
 
             var AuthenticationManager = HttpContext.GetOwinContext().Authentication;
             AuthenticationManager.SignOut();
+            Session.Clear();
             Session.Abandon();
             return RedirectToAction("login", "Account");
         }

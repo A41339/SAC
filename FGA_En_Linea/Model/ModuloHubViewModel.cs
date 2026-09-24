@@ -17,7 +17,7 @@ namespace FGA.Models
         public string MenuURL { get; set; } = "";
         public string IdEntidad { get; set; } = "";
         public string PeriodoReferencia { get; set; } = "";
-        public string TipoComparacion { get; set; } = "Mensual"; // Mensual, Trimestral, Interanual
+        public string TipoComparacion { get; set; } = "Interanual"; // Mensual, Trimestral, Interanual
         public SelectList Entidades { get; set; }
 
         // Lista de tarjetas del modulo

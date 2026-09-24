@@ -41,9 +41,13 @@ namespace FGA.Controllers
                 if (Session["Periodo2"] is null)
                     Session["Periodo2"] = fechaCierre.AddMonths(-1).ToShortDateString();
 
-                if (Session["Periodo1"] is null)
+                DateTime p2 = Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString());
+                string tipoComp = Session["TipoComparacion"]?.ToString() ?? "Interanual";
+                if (Session["TipoComparacion"] is null)
+                    Session["TipoComparacion"] = "Interanual";
+
+                if (Session["Periodo1"] is null || (tipoComp.Equals("Interanual", StringComparison.OrdinalIgnoreCase) && Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()) >= p2.AddMonths(-2)))
                 {
-                    DateTime p2 = Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString());
                     Session["Periodo1"] = p2.AddYears(-1).ToShortDateString();
                 }
 

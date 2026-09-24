@@ -29,8 +29,10 @@ namespace FGA.Controllers
             if (Session["Periodo2"] is null)
                 Session["Periodo2"] = fechaEntidad.AddMonths(-1).ToShortDateString();
 
-            if (Session["Periodo1"] is null)
-                Session["Periodo1"] = ConvertirAFecha(Session["Periodo2"].ToString()).AddYears(-1).ToShortDateString();
+            DateTime p2 = ConvertirAFecha(Session["Periodo2"].ToString());
+            string tipoComp = Session["TipoComparacion"]?.ToString() ?? "Interanual";
+            if (Session["Periodo1"] is null || (tipoComp.Equals("Interanual", StringComparison.OrdinalIgnoreCase) && ConvertirAFecha(Session["Periodo1"].ToString()) >= p2.AddMonths(-2)))
+                Session["Periodo1"] = p2.AddYears(-1).ToShortDateString();
 
             Session["TipoReporte"] = enum_tipoGrafico.variacionCarteraMensual;
             ViewBag.Grafico = new SelectList(gr.GetAll().Where(o=>o.Ind_FGA == true).OrderByDescending(o => o.Nombre), "Id", "Nombre", Session["TipoReporte"].ToString());
