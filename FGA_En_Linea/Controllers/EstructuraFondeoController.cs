@@ -62,19 +62,15 @@ namespace FGA.Controllers
                 p2Date = fechaReferencia.AddMonths(-1);
             }
 
-            // Período 1 (un mes antes de Período 2 por defecto para comparación mensual)
+            // Período 1 (un año antes de Período 2 por defecto para comparación interanual)
             DateTime p1Date;
             if (!string.IsNullOrWhiteSpace(periodo1))
             {
                 p1Date = Utilitarios.ConvertirAFecha(periodo1);
             }
-            else if (Session["Periodo1"] != null)
-            {
-                p1Date = Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString());
-            }
             else
             {
-                p1Date = p2Date.AddMonths(-1);
+                p1Date = p2Date.AddYears(-1);
             }
 
             Session["Periodo1"] = p1Date.ToShortDateString();
@@ -88,7 +84,7 @@ namespace FGA.Controllers
                 Periodo2 = p2Date.ToString("MM/yyyy"),
                 Periodo1Header = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(p1Date.ToString("MMMM yyyy", new CultureInfo("es-ES"))),
                 Periodo2Header = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(p2Date.ToString("MMMM yyyy", new CultureInfo("es-ES"))),
-                PeriodoInicialGrafico = p2Date.AddMonths(-11).ToString("MM/yyyy"),
+                PeriodoInicialGrafico = p1Date.ToString("MM/yyyy"),
                 PeriodoFinalGrafico = p2Date.ToString("MM/yyyy"),
                 TipoGraficoSeleccionado = 1,
                 Indicadores = ObtenerIndicadoresCalculados(currentEntidad, p1Date, p2Date)
