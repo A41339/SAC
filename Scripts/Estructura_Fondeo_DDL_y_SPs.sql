@@ -621,7 +621,31 @@ BEGIN
 END
 GO
 
-/****** 10. ESPECIFICACIÓN DE LÍNEAS PARA EL PROCEDIMIENTO DE CIERRE MENSUAL [FGA_Ejecutar_Cierre] ******/
+/****** 10. ASIGNACIÓN DE PERMISOS (GRANT) AL ROL DE BASE DE DATOS [FGA] ******/
+IF DATABASE_PRINCIPAL_ID('FGA') IS NOT NULL
+BEGIN
+    PRINT 'Asignando permisos (GRANT) al rol de base de datos [FGA]...';
+
+    -- Permisos de ejecución en procedimientos almacenados
+    GRANT EXECUTE ON [dbo].[FGA_Generar_Estructura_Fondeo] TO [FGA];
+    GRANT EXECUTE ON [dbo].[FGA_Consultar_Concentracion_Ahorrantes] TO [FGA];
+    GRANT EXECUTE ON [dbo].[FGA_Consultar_Concentracion_Vencimiento] TO [FGA];
+    GRANT EXECUTE ON [dbo].[FGA_Consultar_Cantidad_Asociados_Ahorrantes] TO [FGA];
+    GRANT EXECUTE ON [dbo].[FGA_Consultar_Indicadores_Fondeo] TO [FGA];
+
+    -- Permisos en tablas de salida
+    GRANT SELECT, INSERT, UPDATE, DELETE ON [dbo].[Salida_Concentracion_Ahorrantes] TO [FGA];
+    GRANT SELECT, INSERT, UPDATE, DELETE ON [dbo].[Salida_Concentracion_Vencimiento] TO [FGA];
+
+    PRINT '-> Permisos otorgados exitosamente al rol [FGA].';
+END
+ELSE
+BEGIN
+    PRINT '-> Rol [FGA] no existe en esta base de datos o tiene otro nombre. Omita si no aplica.';
+END
+GO
+
+/****** 11. ESPECIFICACIÓN DE LÍNEAS PARA EL PROCEDIMIENTO DE CIERRE MENSUAL [FGA_Ejecutar_Cierre] ******/
 /*
 ===================================================================================================
  INSTRUCCIONES PARA AGREGAR AL CIERRE MENSUAL [dbo].[FGA_Ejecutar_Cierre]:
