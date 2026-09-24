@@ -939,7 +939,36 @@
                 plotOptions: plotOptionsConfig,
                 series: seriesFormatted,
                 exporting: {
-                    enabled: true
+                    enabled: true,
+                    buttons: {
+                        contextButton: {
+                            align: 'right',
+                            verticalAlign: 'top',
+                            y: 10,
+                            x: -10,
+                            text: 'Descargar \u25be',
+                            symbol: null,
+                            theme: {
+                                fill: '#2F5597',
+                                stroke: '#204880',
+                                'stroke-width': 1,
+                                r: 8,
+                                padding: 8,
+                                height: 18,
+                                style: {
+                                    color: '#ffffff',
+                                    fontWeight: '600',
+                                    fontSize: '13px',
+                                    cursor: 'pointer'
+                                },
+                                states: {
+                                    hover: { fill: '#204880', style: { color: '#ffffff' } },
+                                    select: { fill: '#1b3866' }
+                                }
+                            },
+                            menuItems: ['viewData', 'separator', 'downloadPNG', 'downloadJPEG', 'downloadSVG', 'separator', 'downloadCSV', 'downloadXLS', 'downloadPDF']
+                        }
+                    }
                 }
             });
 
