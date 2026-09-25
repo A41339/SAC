@@ -176,7 +176,7 @@
 </section>
 
 <section class="content" style="padding: 0 20px 24px 20px;">
-    <!-- Selector General: Entidad y Períodos al mismo nivel -->
+    <!-- Selector General: Entidad, Tipo de Gráfico y Períodos al mismo nivel -->
     <div class="row">
         <div class="col-xs-12">
             <div class="modern-filter-card" style="margin-bottom: 16px; padding: 14px 20px; background: #ffffff; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); border: 1px solid #e2e8f0;">
@@ -192,8 +192,25 @@
                             </div>
                         </div>
 
-                        <!-- Período inicial y final al mismo nivel que Entidad -->
-                        <div id="secFiltrosIndicadores" style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+                        <!-- Selector Tipo de Gráfico (solo en pestaña Gráficos) -->
+                        <div id="secTipoGrafico" style="display: none; align-items: center; gap: 8px;">
+                            <label for="ddlTipoGrafico" style="margin: 0; font-size: 13px; font-weight: 700; color: #1e3a8a; display: flex; align-items: center; gap: 6px; white-space: nowrap;">
+                                <i class="fa fa-bar-chart" style="color: #2F5597;"></i> Gr&aacute;fico:
+                            </label>
+                            <div style="min-width: 320px;">
+                                <select id="ddlTipoGrafico" class="form-control modern-select" style="width: 100%; height: 38px; font-size: 13px; font-weight: 500; border-radius: 6px; border: 1px solid #cbd5e1;">
+                                    <option value="1">Estructura de financiamiento</option>
+                                    <option value="2">Variaciones interanuales por tipo de fondeo</option>
+                                    <option value="3">Variación y composición por tipo de captaciones</option>
+                                    <option value="4">Concentración de los 10 y  20 mayores ahorrantes</option>
+                                    <option value="5">Concentración de saldos por vencimiento</option>
+                                    <option value="6">Cantidad de ahorrantes y asociados</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Período inicial y final (se mantienen siempre en ambos tabs) -->
+                        <div id="secPeriodos" style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
                             <div style="display: flex; align-items: center; gap: 8px;">
                                 <label for="Periodo1" style="margin: 0; font-size: 13px; font-weight: 600; color: #475569; white-space: nowrap;">
                                     <i class="fa fa-calendar" style="color: #2F5597; margin-right: 4px;"></i> Per&iacute;odo inicial:
@@ -214,9 +231,12 @@
                         </div>
                     </div>
 
-                    <!-- Botones de Acción para Indicadores -->
-                    <div id="secBotonesIndicadores" style="display: flex; align-items: center; gap: 10px;">
+                    <!-- Botones de Acción -->
+                    <div id="secBotonesToolbar" style="display: flex; align-items: center; gap: 10px;">
                         <button type="button" id="btnGenerarIndicadores" class="btn-modern-filter" style="background: linear-gradient(135deg, #3d6cb9 0%, #2F5597 50%, #204880 100%) !important; color: #ffffff !important; border: 1px solid #204880 !important; box-shadow: 0 4px 14px rgba(47, 85, 151, 0.35) !important;">
+                            <i class="fa fa-search"></i> Generar
+                        </button>
+                        <button type="button" id="btnGenerarGrafico" class="btn-modern-filter" style="display: none; background: linear-gradient(135deg, #3d6cb9 0%, #2F5597 50%, #204880 100%) !important; color: #ffffff !important; border: 1px solid #204880 !important; box-shadow: 0 4px 14px rgba(47, 85, 151, 0.35) !important;">
                             <i class="fa fa-search"></i> Generar
                         </button>
                         <button type="button" id="btnExportarIndicadores" class="btn-modern-filter" style="height: 38px; padding: 0 18px; background: #ffffff; color: #15803d; border: 1px solid #bbf7d0; font-weight: 600; font-size: 13px; border-radius: 8px; display: flex; align-items: center; gap: 7px; cursor: pointer;">
@@ -427,8 +447,8 @@
             $('#btnDescargarExcelGrafico, #btnDescargarExcelDesdeModal').on('click', function () {
                 var ent = $('#ddlEntidad').val();
                 var tipo = $('#ddlTipoGrafico').val();
-                var pIni = $('#PeriodoInicialGrafico').val();
-                var pFin = $('#PeriodoFinalGrafico').val();
+                var pIni = $('#Periodo1').val();
+                var pFin = $('#Periodo2').val();
                 window.location.href = '@Url.Action("ExportarGraficoExcel", "EstructuraFondeo")' +
                     '?entidad=' + encodeURIComponent(ent) +
                     '&tipoGrafico=' + encodeURIComponent(tipo) +
@@ -442,14 +462,20 @@
             // Redibujar gráfico y ajustar columnas de DataTables al cambiar de tab
             $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
                 if ($(e.target).attr('href') === '#tab-graficos') {
-                    $('#secFiltrosIndicadores, #secBotonesIndicadores').hide();
+                    $('#secTipoGrafico').css('display', 'flex');
+                    $('#btnGenerarIndicadores').hide();
+                    $('#btnGenerarGrafico').show();
+                    $('#btnExportarIndicadores').hide();
                     if (currentChart) {
                         currentChart.reflow();
                     } else {
                         cargarGrafico();
                     }
                 } else {
-                    $('#secFiltrosIndicadores, #secBotonesIndicadores').show();
+                    $('#secTipoGrafico').hide();
+                    $('#btnGenerarIndicadores').show();
+                    $('#btnGenerarGrafico').hide();
+                    $('#btnExportarIndicadores').show();
                     if ($.fn.dataTable.isDataTable('#tblIndicadores')) {
                         $('#tblIndicadores').DataTable().columns.adjust();
                     }
@@ -677,8 +703,8 @@
         function cargarGrafico() {
             var ent = $('#ddlEntidad').val();
             var tipo = $('#ddlTipoGrafico').val();
-            var pIni = $('#PeriodoInicialGrafico').val();
-            var pFin = $('#PeriodoFinalGrafico').val();
+            var pIni = $('#Periodo1').val();
+            var pFin = $('#Periodo2').val();
 
             $('#fondeoChartContainer').html('<div style="text-align: center; padding: 60px 0; color: #64748b;"><i class="fa fa-spinner fa-spin fa-2x"></i><p style="margin-top: 10px; font-size: 13px;">Cargando gráfico...</p></div>');
 
