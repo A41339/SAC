@@ -53,18 +53,30 @@
 
                 <!-- Tipo de Comparación -->
                 <div class="hub-filter-item" style="min-width: 170px;">
-                    <label for="hubTipoComparacion">
-                        Tipo de comparaci&oacute;n:
-                        <span class="hub-info-tooltip" tabindex="0" title="Informaci&oacute;n sobre tipos de comparaci&oacute;n">
+                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 4px;">
+                        <label for="hubTipoComparacion" style="margin: 0; cursor: pointer;">
+                            Tipo de comparaci&oacute;n:
+                        </label>
+                        <span class="hub-info-tooltip" tabindex="0" role="button" aria-label="Información sobre tipos de comparación">
                             <i class="fa fa-info-circle"></i>
                             <span class="hub-tooltip-content">
-                                <strong style="color: #38bdf8;">Tipos de Comparaci&oacute;n:</strong><br />
-                                &bull; <strong>Mensual:</strong> Compara con el mes inmediato anterior.<br />
-                                &bull; <strong>Trimestral:</strong> Compara con 3 meses atr&aacute;s.<br />
-                                &bull; <strong>Interanual:</strong> Compara con el mismo mes del a&ntilde;o anterior.
+                                <span style="display: flex; align-items: center; gap: 6px; font-weight: 700; color: #0284c7; margin-bottom: 8px; font-size: 12.5px; border-bottom: 1px solid #e0f2fe; padding-bottom: 5px;">
+                                    <i class="fa fa-info-circle"></i> Tipos de comparaci&oacute;n
+                                </span>
+                                <div style="color: #334155; font-size: 11.5px; line-height: 1.55;">
+                                    <div style="margin-bottom: 7px;">
+                                        <strong style="color: #0369a1;">Mensual:</strong> se compara el mes seleccionado con el mes anterior.
+                                    </div>
+                                    <div style="margin-bottom: 7px;">
+                                        <strong style="color: #0369a1;">Trimestral:</strong> permite comparar dos trimestres seleccionados correspondientes al mismo a&ntilde;o o a&ntilde;os anteriores.
+                                    </div>
+                                    <div>
+                                        <strong style="color: #0369a1;">Interanual:</strong> se compara el mes seleccionado con el mismo mes del a&ntilde;o anterior.
+                                    </div>
+                                </div>
                             </span>
                         </span>
-                    </label>
+                    </div>
                     <select id="hubTipoComparacion" class="form-control modern-select" style="height: 38px; font-size: 13px;">
                         <option value="Mensual" @(Model.TipoComparacion == "Mensual" ? "selected" : "")>Mensual</option>
                         <option value="Trimestral" @(Model.TipoComparacion == "Trimestral" ? "selected" : "")>Trimestral</option>
@@ -74,15 +86,22 @@
 
                 <!-- Período de referencia -->
                 <div class="hub-filter-item" style="min-width: 160px;">
-                    <label for="hubPeriodo">
-                        Per&iacute;odo de referencia:
-                        <span class="hub-info-tooltip" tabindex="0" title="Per&iacute;odo de referencia">
+                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 4px;">
+                        <label for="hubPeriodo" style="margin: 0; cursor: pointer;">
+                            Per&iacute;odo de referencia:
+                        </label>
+                        <span class="hub-info-tooltip align-right" tabindex="0" role="button" aria-label="Información sobre período de referencia">
                             <i class="fa fa-info-circle"></i>
                             <span class="hub-tooltip-content">
-                                Fecha base (mes y a&ntilde;o) a partir de la cual se procesar&aacute;n las consultas y variaciones del m&oacute;dulo.
+                                <span style="display: flex; align-items: center; gap: 6px; font-weight: 700; color: #0284c7; margin-bottom: 8px; font-size: 12.5px; border-bottom: 1px solid #e0f2fe; padding-bottom: 5px;">
+                                    <i class="fa fa-calendar"></i> Per&iacute;odo de referencia
+                                </span>
+                                <div style="color: #334155; font-size: 11.5px; line-height: 1.55;">
+                                    Fecha base (mes y a&ntilde;o de corte) a partir de la cual se procesar&aacute;n las consultas, variaciones y an&aacute;lisis del m&oacute;dulo.
+                                </div>
                             </span>
                         </span>
-                    </label>
+                    </div>
                     <div class="modern-input-wrapper" style="width: 100%;">
                         <input id="hubPeriodo" class="datecontrol form-control modern-date-input" value="@Model.PeriodoReferencia" style="width: 100%; height: 38px; font-size: 13px;" />
                     </div>
@@ -207,5 +226,22 @@
                 });
             }
         }
+
+        // Manejador interactivo para tooltips informativos (soporte click / hover / tap)
+        $('.hub-info-tooltip').on('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var $this = $(this);
+            $('.hub-info-tooltip').not($this).removeClass('active');
+            $this.toggleClass('active');
+        });
+
+        $(document).on('click', function () {
+            $('.hub-info-tooltip').removeClass('active');
+        });
+
+        $('.hub-info-tooltip .hub-tooltip-content').on('click', function (e) {
+            e.stopPropagation();
+        });
     });
 </script>
