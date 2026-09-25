@@ -32,14 +32,21 @@ namespace FGA.Controllers
 
             try
             {
-                if (Session["Periodo"] != null)
+                string keyFecha = "FechaCierre_" + currentEntidad;
+                if (Session[keyFecha] is DateTime dtCached)
+                {
+                    fechaReferencia = dtCached;
+                }
+                else if (Session["Periodo"] != null)
                 {
                     fechaReferencia = Utilitarios.ConvertirAFecha(Session["Periodo"].ToString());
+                    Session[keyFecha] = fechaReferencia;
                 }
                 else
                 {
                     fechaReferencia = sp.FGA_Consultar_FechaCierre(currentEntidad);
                     Session["Periodo"] = fechaReferencia.ToShortDateString();
+                    Session[keyFecha] = fechaReferencia;
                 }
             }
             catch

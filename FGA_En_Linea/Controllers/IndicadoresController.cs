@@ -19,7 +19,25 @@ namespace FGA.Controllers
         public void LoadPage()
         {
             Load();
-            DateTime fechaEntidad = sp.FGA_Consultar_FechaCierre(Session["IdEntidad"].ToString());
+            string entId = Session["IdEntidad"]?.ToString() ?? "2";
+            DateTime fechaEntidad;
+            string keyFecha = "FechaCierre_" + entId;
+            if (Session[keyFecha] is DateTime dtCached)
+            {
+                fechaEntidad = dtCached;
+            }
+            else
+            {
+                try
+                {
+                    fechaEntidad = sp.FGA_Consultar_FechaCierre(entId);
+                    Session[keyFecha] = fechaEntidad;
+                }
+                catch
+                {
+                    fechaEntidad = DateTime.Now;
+                }
+            }
             Session["Periodo2"] = Session["Periodo2"] == null ? fechaEntidad.AddMonths(-1).ToShortDateString() : Session["Periodo2"];
             DateTime p2Ind = Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString());
             string tipoComp = Session["TipoComparacion"]?.ToString() ?? "Interanual";
