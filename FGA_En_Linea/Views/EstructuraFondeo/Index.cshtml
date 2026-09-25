@@ -7,41 +7,45 @@
 @section ScriptsOrCss
 {
     <style>
-        .modern-tabs {
-            border-bottom: 2px solid #e2e8f0;
-            margin-bottom: 0;
-            display: flex;
-            gap: 8px;
+        .nav-tabs-custom > .nav-tabs {
+            border-bottom: 2px solid #e2e8f0 !important;
+            margin-bottom: 20px;
         }
 
-        .modern-tabs > li > a {
-            font-size: 14px;
-            font-weight: 600;
-            color: #64748b;
-            border: none;
-            border-radius: 8px 8px 0 0;
-            padding: 12px 22px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.2s ease;
-            background: transparent;
+        .nav-tabs-custom > .nav-tabs > li {
+            border-top: 3px solid transparent;
+            margin-bottom: -2px;
+            margin-right: 4px;
         }
 
-        .modern-tabs > li > a:hover {
-            color: #1e3a8a;
-            background: #f1f5f9;
-            border: none;
+        .nav-tabs-custom > .nav-tabs > li.active {
+            border-top: 3px solid #2F5597 !important;
         }
 
-        .modern-tabs > li.active > a,
-        .modern-tabs > li.active > a:hover,
-        .modern-tabs > li.active > a:focus {
-            color: #1e3a8a;
-            background: #ffffff;
-            border: none;
-            border-bottom: 3px solid #2F5597;
+        .nav-tabs-custom > .nav-tabs > li > a {
+            font-size: 13px;
             font-weight: 700;
+            color: #64748b;
+            border-radius: 8px 8px 0 0;
+            padding: 10px 18px;
+            border: 1px solid transparent;
+            border-bottom: none;
+            transition: all 0.2s ease;
+        }
+
+        .nav-tabs-custom > .nav-tabs > li > a:hover {
+            color: #1e3a8a;
+            background: #f8fafc;
+            border-color: transparent;
+        }
+
+        .nav-tabs-custom > .nav-tabs > li.active > a,
+        .nav-tabs-custom > .nav-tabs > li.active > a:hover,
+        .nav-tabs-custom > .nav-tabs > li.active > a:focus {
+            color: #143750 !important;
+            background-color: #ffffff !important;
+            border-color: #e2e8f0 #e2e8f0 transparent !important;
+            font-weight: 700 !important;
         }
 
         .badge-pill-positive {
@@ -227,28 +231,32 @@
     <!-- Pestañas de Navegación -->
     <div class="row">
         <div class="col-xs-12">
-            <ul class="nav nav-tabs modern-tabs" id="fondeoTabs" role="tablist">
-                <li class="active" role="presentation">
-                    <a href="#tab-indicadores" aria-controls="tab-indicadores" role="tab" data-toggle="tab">
-                        <i class="fa fa-th-large"></i> Indicadores
-                    </a>
-                </li>
-                <li role="presentation">
-                    <a href="#tab-graficos" aria-controls="tab-graficos" role="tab" data-toggle="tab">
-                        <i class="fa fa-line-chart"></i> Gráficos
-                    </a>
-                </li>
-            </ul>
+            <div class="modern-table-card" style="border: 1px solid #e2e8f0; border-radius: 12px; background: #ffffff; box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05); overflow: hidden; padding: 22px; margin-bottom: 24px;">
+                <div class="nav-tabs-custom" style="box-shadow: none; margin-bottom: 0;">
+                    <ul class="nav nav-tabs" id="fondeoTabs" style="border-bottom: 2px solid #e2e8f0; margin-bottom: 20px;">
+                        <li class="active">
+                            <a href="#tab-indicadores" data-toggle="tab" style="font-weight: 700; font-size: 13px; color: #143750; border-radius: 8px 8px 0 0; padding: 10px 18px;">
+                                <i class="fa fa-th-large" style="color: #0284c7; margin-right: 6px;"></i> Indicadores
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#tab-graficos" data-toggle="tab" style="font-weight: 700; font-size: 13px; color: #143750; border-radius: 8px 8px 0 0; padding: 10px 18px;">
+                                <i class="fa fa-line-chart" style="color: #059669; margin-right: 6px;"></i> Gr&aacute;ficos
+                            </a>
+                        </li>
+                    </ul>
 
-            <div class="tab-content">
-                <!-- Pestaña 1: Indicadores -->
-                <div role="tabpanel" class="tab-pane active" id="tab-indicadores">
-                    @Html.Partial("_Indicadores", Model)
-                </div>
+                    <div class="tab-content" style="padding: 0;">
+                        <!-- Pestaña 1: Indicadores -->
+                        <div class="tab-pane active" id="tab-indicadores">
+                            @Html.Partial("_Indicadores", Model)
+                        </div>
 
-                <!-- Pestaña 2: Gráficos -->
-                <div role="tabpanel" class="tab-pane" id="tab-graficos">
-                    @Html.Partial("_Graficos", Model)
+                        <!-- Pestaña 2: Gráficos -->
+                        <div class="tab-pane" id="tab-graficos">
+                            @Html.Partial("_Graficos", Model)
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -944,16 +952,16 @@
                         contextButton: {
                             text: 'Descargar \u25be',
                             theme: {
-                                fill: '#2F5597',
-                                stroke: '#204880',
+                                fill: 'rgba(47, 85, 151, 0.75)',
+                                stroke: 'rgba(32, 72, 128, 0.85)',
                                 'stroke-width': 1,
                                 r: 8,
                                 padding: 8,
                                 height: 18,
                                 style: { color: '#ffffff', fontWeight: '600', fontSize: '13px', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif', cursor: 'pointer' },
                                 states: {
-                                    hover: { fill: '#1e3d6e', stroke: '#152d52', style: { color: '#ffffff' } },
-                                    select: { fill: '#152d52', stroke: '#0e1f38', style: { color: '#ffffff' } }
+                                    hover: { fill: '#2F5597', stroke: '#204880', style: { color: '#ffffff' } },
+                                    select: { fill: '#1b3866', stroke: '#0e1f38', style: { color: '#ffffff' } }
                                 }
                             },
                             menuItems: ['viewData', 'separator', 'downloadPNG', 'downloadJPEG', 'downloadSVG', 'separator', 'downloadCSV', 'downloadXLS', 'downloadPDF']
