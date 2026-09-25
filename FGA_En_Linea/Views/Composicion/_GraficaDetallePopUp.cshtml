@@ -37,7 +37,10 @@
             <div class="modal-header" style="background: linear-gradient(135deg, #1b3866 0%, #2F5597 100%); color: #ffffff; padding: 16px 22px;">
                 <div style="display: flex; align-items: center; gap: 12px; background: transparent;">
                     <img width="40" height="40" src="@Session["Logo"]" style="border-radius: 6px; background: #ffffff; padding: 2px;" />
-                    <h3 id="pEntidad" class="modal-title" style="margin: 0; color: #ffffff !important; font-size: 16px; font-weight: 600;"></h3>
+                    <div>
+                        <h3 id="pEntidad" class="modal-title" style="margin: 0; color: #ffffff !important; font-size: 16px; font-weight: 600;"></h3>
+                        <div id="pSubEntidad" style="font-size: 12px; color: rgba(255,255,255,0.85); font-weight: 400; margin-top: 2px;"></div>
+                    </div>
                 </div>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: #ffffff !important; opacity: 0.9;"><span aria-hidden="true">&times;</span></button>
             </div>
@@ -54,6 +57,14 @@
 
 <script type="text/javascript">
     function mPopUp() {
+        var entText = $("#IdEntidad :selected").text() || '';
+        var grafText = $("#Grafico :selected").text() || '';
+        if (grafText) {
+            $("#pEntidad").text(grafText);
+        }
+        if (entText) {
+            $("#pSubEntidad").text(entText);
+        }
         $('#mPopUp').modal('show');
     }
     $('#mPopUp').on('shown.bs.modal', function () {
@@ -71,6 +82,8 @@
                         return c && c.renderTo && $(c.renderTo).closest('#mPopUp').length && c.series && c.series.length > 0;
                     });
                     if (modalCharts.length === 0) return;
+                    var chart = modalCharts[0];
+
                     function renderComposicionKpi(selectedIdx) {
                         var seriesIdx = 0;
                         if (typeof selectedIdx === 'number' && selectedIdx >= 0 && selectedIdx < chart.series.length) {
@@ -85,10 +98,20 @@
                         }
 
                         var s = chart.series[seriesIdx];
+                        if (!s || !s.data || s.data.length === 0) {
+                            for (var k = 0; k < chart.series.length; k++) {
+                                if (chart.series[k] && chart.series[k].data && chart.series[k].data.length > 0) {
+                                    seriesIdx = k;
+                                    s = chart.series[k];
+                                    break;
+                                }
+                            }
+                        }
                         if (!s || !s.data || s.data.length === 0) return;
 
-                        var cats = (chart.xAxis && chart.xAxis[0]) ? chart.xAxis[0].categories : [];
+                        var cats = (chart.xAxis && chart.xAxis[0] && chart.xAxis[0].categories) ? chart.xAxis[0].categories : [];
                         var rawData = s.data.map(function (pt) {
+                            if (!pt) return 0;
                             if (typeof pt.y === 'number') return pt.y;
                             if (Array.isArray(pt) && typeof pt[1] === 'number') return pt[1];
                             return parseFloat(pt.y) || 0;
@@ -107,9 +130,10 @@
                         var maxVal = Math.max.apply(null, rawData);
 
                         var sName = s.name || '';
+                        var yLabelsFormatter = (s.yAxis && s.yAxis.options && s.yAxis.options.labels && s.yAxis.options.labels.formatter) ? s.yAxis.options.labels.formatter.toString() : '';
                         var isPct = (sName.indexOf('%') > -1) ||
-                                    (s.yAxis && s.yAxis.options && s.yAxis.options.title && s.yAxis.options.title.text && s.yAxis.options.title.text.indexOf('Porcent') > -1) ||
-                                    (s.yAxis && s.yAxis.options && s.yAxis.options.title && s.yAxis.options.title.text && s.yAxis.options.title.text.indexOf('Concentrac') > -1);
+                                    (s.yAxis && s.yAxis.options && s.yAxis.options.title && s.yAxis.options.title.text && (s.yAxis.options.title.text.indexOf('Porcent') > -1 || s.yAxis.options.title.text.indexOf('Concentrac') > -1)) ||
+                                    (yLabelsFormatter.indexOf('formatPercent') > -1 || yLabelsFormatter.indexOf('%') > -1);
                         var suf = isPct ? '%' : '';
 
                         var isPos = diff >= 0;
@@ -125,7 +149,7 @@
                         var selectorHtml = '';
                         if (chart.series.length > 1) {
                             selectorHtml =
-                                '<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; flex-wrap: wrap; gap: 8px;">' +
+                                '<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">' +
                                 '    <div style="font-size: 13px; font-weight: 700; color: #1e3a8a; display: flex; align-items: center; gap: 6px;">' +
                                 '        <i class="fa fa-sliders" style="color: #2F5597;"></i> Indicadores de la serie:' +
                                 '    </div>' +
@@ -135,7 +159,7 @@
                             for (var idx = 0; idx < chart.series.length; idx++) {
                                 var ser = chart.series[idx];
                                 var isSelected = (idx === seriesIdx) ? ' selected' : '';
-                                selectorHtml += '<option value="' + idx + '"' + isSelected + '>● ' + ser.name + '</option>';
+                                selectorHtml += '<option value="' + idx + '"' + isSelected + '>● ' + (ser.name || ('Serie ' + (idx + 1))) + '</option>';
                             }
 
                             selectorHtml +=

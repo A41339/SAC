@@ -166,8 +166,13 @@
             },
              success: function (result) {
                  $('#grafica').html(result);
-                 $("#entidad").text($("#Grafico :selected").text());
-                 $("#pEntidad").text($("#Grafico :selected").text());
+                 var entText = $("#IdEntidad :selected").text() || '';
+                 var grafText = $("#Grafico :selected").text() || '';
+                 $("#entidad").text(grafText);
+                 $("#pEntidad").text(grafText);
+                 if (entText) {
+                     $("#pSubEntidad").text(entText);
+                 }
             },
             error: function () {
                 $('#grafica').html('<div class="alert alert-danger" style="margin: 20px;">Ocurrió un error al cargar el gráfico.</div>');
@@ -181,8 +186,13 @@
 
     function formatMillion() {
         if ($("#Grafico").length && $("#Grafico :selected").length) {
-            $("#entidad").text($("#Grafico :selected").text() + " en millones");
-            $("#pEntidad").text($("#Grafico :selected").text() + " en millones");
+            var entText = $("#IdEntidad :selected").text() || '';
+            var grafText = $("#Grafico :selected").text() + " en millones";
+            $("#entidad").text(grafText);
+            $("#pEntidad").text(grafText);
+            if (entText) {
+                $("#pSubEntidad").text(entText);
+            }
         }
         if (typeof Highcharts !== 'undefined' && Highcharts.numberFormat) {
             var decimals = (this.value % 1 !== 0) ? 2 : 0;
