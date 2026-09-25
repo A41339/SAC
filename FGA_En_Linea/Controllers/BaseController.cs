@@ -13,8 +13,21 @@ namespace FGA.Controllers
         {
             try
             {             
-                Entidad[] lista = ent.GetAll();
-                Usuario ObjUser = usr.Get(Env.GetUserInfo("userid"));
+                Entidad[] rawLista = Session["AllEntidades"] as Entidad[];
+                if (rawLista == null)
+                {
+                    rawLista = ent.GetAll();
+                    Session["AllEntidades"] = rawLista;
+                }
+
+                Usuario ObjUser = Session["CurrentUserObj"] as Usuario;
+                if (ObjUser == null)
+                {
+                    ObjUser = usr.Get(Env.GetUserInfo("userid"));
+                    Session["CurrentUserObj"] = ObjUser;
+                }
+
+                Entidad[] lista = (Entidad[])rawLista.Clone();
                 String ruta = string.Empty;
                 if (ObjUser.Entidad_Usuario_Id == Utility.Utilitarios.entidadAdministradora)
                 {                   
@@ -24,14 +37,18 @@ namespace FGA.Controllers
                         Session["IdEntidad"] = lista[0].Id;
                             
                     ViewBag.Entidades = new SelectList(lista, "Id", "Nombre", Session["IdEntidad"]);
-                    ruta = MicrosoftHelper.MSHelper.GetSiteRoot() + "/Content/images/" + ent.Get(Session["IdEntidad"].ToString()).Nombre + ".jpg";
-                   
+                    string idActual = Session["IdEntidad"].ToString();
+                    string nomEnt = rawLista.FirstOrDefault(o => o.Id == idActual)?.Nombre ?? (ent.Get(idActual)?.Nombre ?? "");
+                    ruta = MicrosoftHelper.MSHelper.GetSiteRoot() + "/Content/images/" + nomEnt + ".jpg";
+                    Session["NomEntidad"] = nomEnt;
                 }
                 else
                 {
                     ViewBag.Entidades = new SelectList(lista.Where(o => o.Id == ObjUser.Entidad_Usuario_Id), "Id", "Nombre");
                     Session["IdEntidad"] = ObjUser.Entidad_Usuario_Id;
                     ruta = MicrosoftHelper.MSHelper.GetSiteRoot() + "/Content/images/" + Env.GetUserInfo("logo");
+                    string idActual = Session["IdEntidad"].ToString();
+                    Session["NomEntidad"] = rawLista.FirstOrDefault(o => o.Id == idActual)?.Nombre ?? (ent.Get(idActual)?.Nombre ?? "");
                 }
 
                 if (Session["Periodo"] is null)
@@ -52,7 +69,11 @@ namespace FGA.Controllers
                 }
 
                 Session["Logo"] = ruta;
-                Session["NomEntidad"] = ent.Get(Session["IdEntidad"].ToString()).Nombre;
+                if (Session["NomEntidad"] == null)
+                {
+                    string idActual = Session["IdEntidad"].ToString();
+                    Session["NomEntidad"] = rawLista.FirstOrDefault(o => o.Id == idActual)?.Nombre ?? (ent.Get(idActual)?.Nombre ?? "");
+                }
                 Session["RutaLogo"] = Server.MapPath("~/Content/images/" + Session["NomEntidad"] + ".jpg");
             }
             catch (Exception)
