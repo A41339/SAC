@@ -839,7 +839,7 @@ namespace FGA.Controllers
 
                     var seriePub = new GraficoFondeoSerie { Name = "Obligaciones con el público", Type = "column", Stack = "finan", Color = "#2F5597", TooltipSuffix = "%", YAxis = 0 };
                     var serieEnt = new GraficoFondeoSerie { Name = "Obligaciones con entidades", Type = "column", Stack = "finan", Color = "#6B9FD4", TooltipSuffix = "%", YAxis = 0 };
-                    var serieCap = new GraficoFondeoSerie { Name = "Capital social", Type = "column", Stack = "finan", Color = "#52B788", TooltipSuffix = "%", YAxis = 0 };
+                    var serieCap = new GraficoFondeoSerie { Name = "Capital social", Type = "column", Stack = "finan", Color = "#94A3B8", TooltipSuffix = "%", YAxis = 0 };
                     var serieTotal = new GraficoFondeoSerie { Name = "Monto total de Financiamiento", Type = "spline", Color = "#F4A261", TooltipSuffix = " M", YAxis = 1, DataLabelFormat = "{point.y:,.2f}" };
 
                     // Datos base escalados o de requerimiento
@@ -884,7 +884,7 @@ namespace FGA.Controllers
                     data.TipoGraficoHighcharts = "spline";
 
                     var serieVarPub = new GraficoFondeoSerie { Name = "Obligaciones con el público", Type = "spline", Color = "#2F5597", TooltipSuffix = "%", YAxis = 0 };
-                    var serieVarCap = new GraficoFondeoSerie { Name = "Capital social", Type = "spline", Color = "#6B9FD4", TooltipSuffix = "%", YAxis = 0 };
+                    var serieVarCap = new GraficoFondeoSerie { Name = "Capital social", Type = "spline", Color = "#94A3B8", TooltipSuffix = "%", YAxis = 0 };
                     var serieVarEnt = new GraficoFondeoSerie { Name = "Obligaciones con entidades", Type = "spline", Color = "#F4A261", TooltipSuffix = "%", YAxis = 1 };
 
                     // Valores patrón coincidentes con la imagen del requerimiento
@@ -927,9 +927,9 @@ namespace FGA.Controllers
 
                     var serieCapPlazo = new GraficoFondeoSerie { Name = "Captaciones a plazo", Type = "column", Stack = "capt", Color = "#2F5597", TooltipSuffix = "%", YAxis = 0 };
                     var serieCapVista = new GraficoFondeoSerie { Name = "Captaciones a la vista", Type = "column", Stack = "capt", Color = "#6B9FD4", TooltipSuffix = "%", YAxis = 0 };
-                    var serieCargos = new GraficoFondeoSerie { Name = "Cargos de obligaciones", Type = "column", Stack = "capt", Color = "#52B788", TooltipSuffix = "%", YAxis = 0 };
+                    var serieCargos = new GraficoFondeoSerie { Name = "Cargos de obligaciones", Type = "column", Stack = "capt", Color = "#94A3B8", TooltipSuffix = "%", YAxis = 0 };
                     var serieVarCP = new GraficoFondeoSerie { Name = "Variación interanual CP", Type = "spline", Color = "#F4A261", TooltipSuffix = "%", YAxis = 1 };
-                    var serieVarAH = new GraficoFondeoSerie { Name = "Variación interanual AH", Type = "spline", Color = "#FCD34D", TooltipSuffix = "%", YAxis = 1 };
+                    var serieVarAH = new GraficoFondeoSerie { Name = "Variación interanual AH", Type = "spline", Color = "#52B788", TooltipSuffix = "%", YAxis = 1 };
 
                     decimal[] cVistaDef = { 21.20m, 22.80m, 20.40m, 20.10m, 19.30m, 18.50m };
                     decimal[] cPlazoDef = { 77.30m, 75.80m, 78.20m, 78.40m, 79.20m, 80.00m };
@@ -1059,7 +1059,7 @@ namespace FGA.Controllers
 
                     int mesesAMostrar = Math.Min(periodos.Count, 4);
                     var ultimosPeriodos = periodos.Skip(periodos.Count - mesesAMostrar).ToList();
-                    string[] coloresSeries = { "#2F5597", "#F4A261", "#6B9FD4", "#52B788" };
+                    string[] coloresSeries = { "#2F5597", "#6B9FD4", "#94A3B8", "#F4A261" };
                     int colIdx = 0;
 
                     bool vencCargadoDesdeSP = false;
