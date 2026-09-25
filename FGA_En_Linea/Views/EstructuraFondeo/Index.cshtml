@@ -236,12 +236,11 @@
                         <button type="button" id="btnGenerarIndicadores" class="btn-modern-filter" style="background: linear-gradient(135deg, #3d6cb9 0%, #2F5597 50%, #204880 100%) !important; color: #ffffff !important; border: 1px solid #204880 !important; box-shadow: 0 4px 14px rgba(47, 85, 151, 0.35) !important;">
                             <i class="fa fa-search"></i> Generar
                         </button>
-                        <button type="button" id="btnGenerarGrafico" class="btn-modern-filter" style="display: none; background: linear-gradient(135deg, #3d6cb9 0%, #2F5597 50%, #204880 100%) !important; color: #ffffff !important; border: 1px solid #204880 !important; box-shadow: 0 4px 14px rgba(47, 85, 151, 0.35) !important;">
-                            <i class="fa fa-search"></i> Generar
-                        </button>
-                        <button type="button" id="btnExportarIndicadores" class="btn-modern-filter" style="height: 38px; padding: 0 18px; background: #ffffff; color: #15803d; border: 1px solid #bbf7d0; font-weight: 600; font-size: 13px; border-radius: 8px; display: flex; align-items: center; gap: 7px; cursor: pointer;">
-                            <i class="fa fa-file-excel-o" style="color: #16a34a;"></i> Exportar Excel
-                        </button>
+                        <div id="secExportarIndicadores">
+                            <button type="button" id="btnExportarIndicadores" class="btn-modern-filter" style="height: 38px; padding: 0 18px; background: #ffffff; color: #15803d; border: 1px solid #bbf7d0; font-weight: 600; font-size: 13px; border-radius: 8px; display: flex; align-items: center; gap: 7px; cursor: pointer;">
+                                <i class="fa fa-file-excel-o" style="color: #16a34a;"></i> Exportar Excel
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -384,9 +383,14 @@
                 }
             });
 
-            // Botón Generar Reporte de Indicadores
+            // Botón Generar (detecta automáticamente si está en pestaña Indicadores o Gráficos)
             $('#btnGenerarIndicadores').on('click', function () {
-                cargarIndicadores();
+                var activeTab = $('#fondeoTabs li.active a').attr('href');
+                if (activeTab === '#tab-graficos') {
+                    cargarGrafico();
+                } else {
+                    cargarIndicadores();
+                }
             });
 
             // Cambio de entidad actualiza ambos tabs
@@ -463,9 +467,7 @@
             $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
                 if ($(e.target).attr('href') === '#tab-graficos') {
                     $('#secTipoGrafico').css('display', 'flex');
-                    $('#btnGenerarIndicadores').hide();
-                    $('#btnGenerarGrafico').show();
-                    $('#btnExportarIndicadores').hide();
+                    $('#secExportarIndicadores').hide();
                     if (currentChart) {
                         currentChart.reflow();
                     } else {
@@ -473,9 +475,7 @@
                     }
                 } else {
                     $('#secTipoGrafico').hide();
-                    $('#btnGenerarIndicadores').show();
-                    $('#btnGenerarGrafico').hide();
-                    $('#btnExportarIndicadores').show();
+                    $('#secExportarIndicadores').show();
                     if ($.fn.dataTable.isDataTable('#tblIndicadores')) {
                         $('#tblIndicadores').DataTable().columns.adjust();
                     }
@@ -706,6 +706,9 @@
             var pIni = $('#Periodo1').val();
             var pFin = $('#Periodo2').val();
 
+            var $btn = $('#btnGenerarIndicadores');
+            $btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Generando...');
+
             $('#fondeoChartContainer').html('<div style="text-align: center; padding: 60px 0; color: #64748b;"><i class="fa fa-spinner fa-spin fa-2x"></i><p style="margin-top: 10px; font-size: 13px;">Cargando gráfico...</p></div>');
 
             $.ajax({
@@ -713,6 +716,7 @@
                 type: 'GET',
                 data: { entidad: ent, tipoGrafico: tipo, periodoI: pIni, periodoF: pFin },
                 success: function (res) {
+                    $btn.prop('disabled', false).html('<i class="fa fa-search"></i> Generar');
                     if (res && res.success && res.data) {
                         var d = res.data;
                         currentGraficoData = d;
@@ -730,6 +734,7 @@
                     }
                 },
                 error: function () {
+                    $btn.prop('disabled', false).html('<i class="fa fa-search"></i> Generar');
                     $('#fondeoChartContainer').html('<div class="alert alert-danger" style="margin: 20px;">Ocurrió un error al cargar el gráfico.</div>');
                 }
             });
