@@ -787,6 +787,20 @@
                 series: {
                     animation: { duration: 600 },
                     reversedStacks: data.TipoGraficoHighcharts === 'bar' ? false : true
+                },
+                line: {
+                    dataLabels: {
+                        enabled: true,
+                        allowOverlap: false,
+                        style: { fontSize: '10px', fontWeight: '600', textOutline: '1px #ffffff' }
+                    }
+                },
+                spline: {
+                    dataLabels: {
+                        enabled: true,
+                        allowOverlap: false,
+                        style: { fontSize: '10px', fontWeight: '600', textOutline: '1px #ffffff' }
+                    }
                 }
             };
 
@@ -798,7 +812,12 @@
                         reversedStacks: false,
                         dataLabels: {
                             enabled: true,
-                            format: '{point.y:.1f}%',
+                            formatter: function () {
+                                if (this.y != null && this.y >= 3) {
+                                    return Highcharts.numberFormat(this.y, 1, '.', ',') + '%';
+                                }
+                                return null;
+                            },
                             style: { fontSize: '10px', fontWeight: '600', textOutline: 'none' }
                         }
                     };
@@ -806,11 +825,17 @@
                     plotOptionsConfig.column = {
                         stacking: stackingType,
                         dataLabels: {
-                            enabled: data.TipoGrafico === 6,
+                            enabled: true,
                             formatter: function () {
-                                return Highcharts.numberFormat(this.y, 0, ',', ' ');
+                                if (data.TipoGrafico === 6) {
+                                    return Highcharts.numberFormat(this.y, 0, '.', ',');
+                                }
+                                if (this.y != null && this.y >= 3) {
+                                    return Highcharts.numberFormat(this.y, 1, '.', ',') + '%';
+                                }
+                                return null;
                             },
-                            style: { fontSize: '11px', fontWeight: '600', textOutline: 'none' }
+                            style: { fontSize: '10px', fontWeight: '600', textOutline: 'none' }
                         }
                     };
                 }
@@ -835,12 +860,27 @@
                     stack: s.Stack
                 };
 
-                if (s.EnableDataLabels) {
-                    sObj.dataLabels = {
-                        enabled: true,
-                        format: s.DataLabelFormat || '{point.y:.2f}%',
-                        style: { fontSize: '10px', fontWeight: '600', textOutline: 'none' }
-                    };
+                // Si la serie tiene dataLabels habilitados o es spline/line
+                if (s.EnableDataLabels || s.Type === 'spline' || s.Type === 'line') {
+                    var esBarraOColumnaApilada = data.Apilado && (s.Type === 'column' || s.Type === 'bar');
+                    if (!esBarraOColumnaApilada) {
+                        sObj.dataLabels = {
+                            enabled: true,
+                            allowOverlap: false,
+                            style: {
+                                fontSize: '10px',
+                                fontWeight: '600',
+                                textOutline: (s.Type === 'spline' || s.Type === 'line') ? '1px #ffffff' : 'none'
+                            }
+                        };
+                        if (s.DataLabelFormat) {
+                            sObj.dataLabels.format = s.DataLabelFormat;
+                        } else if (s.TooltipSuffix && s.TooltipSuffix.indexOf('%') !== -1) {
+                            sObj.dataLabels.format = '{point.y:.2f}%';
+                        } else if (s.TooltipSuffix && s.TooltipSuffix.trim() === 'M') {
+                            sObj.dataLabels.format = '₡{point.y:,.0f}M';
+                        }
+                    }
                 }
 
                 if (s.TooltipSuffix) {

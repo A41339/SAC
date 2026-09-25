@@ -844,10 +844,10 @@ namespace FGA.Controllers
                     data.ApiladoTipo = "percent";
                     data.TipoGraficoHighcharts = "column";
 
-                    var seriePub = new GraficoFondeoSerie { Name = "Obligaciones con el público", Type = "column", Stack = "finan", Color = "#2F5597", TooltipSuffix = "%", YAxis = 0 };
-                    var serieEnt = new GraficoFondeoSerie { Name = "Obligaciones con entidades", Type = "column", Stack = "finan", Color = "#6B9FD4", TooltipSuffix = "%", YAxis = 0 };
-                    var serieCap = new GraficoFondeoSerie { Name = "Capital social", Type = "column", Stack = "finan", Color = "#94A3B8", TooltipSuffix = "%", YAxis = 0 };
-                    var serieTotal = new GraficoFondeoSerie { Name = "Monto total de Financiamiento", Type = "spline", Color = "#F4A261", TooltipSuffix = " M", YAxis = 1, DataLabelFormat = "{point.y:,.2f}" };
+                    var seriePub = new GraficoFondeoSerie { Name = "Obligaciones con el público", Type = "column", Stack = "finan", Color = "#2F5597", TooltipSuffix = "%", YAxis = 0, EnableDataLabels = true, DataLabelFormat = "{point.y:.1f}%" };
+                    var serieEnt = new GraficoFondeoSerie { Name = "Obligaciones con entidades", Type = "column", Stack = "finan", Color = "#6B9FD4", TooltipSuffix = "%", YAxis = 0, EnableDataLabels = true, DataLabelFormat = "{point.y:.1f}%" };
+                    var serieCap = new GraficoFondeoSerie { Name = "Capital social", Type = "column", Stack = "finan", Color = "#94A3B8", TooltipSuffix = "%", YAxis = 0, EnableDataLabels = true, DataLabelFormat = "{point.y:.1f}%" };
+                    var serieTotal = new GraficoFondeoSerie { Name = "Monto total de Financiamiento", Type = "spline", Color = "#F4A261", TooltipSuffix = " M", YAxis = 1, EnableDataLabels = true, DataLabelFormat = "₡{point.y:,.0f}M" };
 
                     // Datos base escalados o de requerimiento
                     for (int i = 0; i < periodos.Count; i++)
@@ -890,9 +890,9 @@ namespace FGA.Controllers
                     data.EjeYDerechoTitulo = "Variación Obligaciones con Entidades (%)";
                     data.TipoGraficoHighcharts = "spline";
 
-                    var serieVarPub = new GraficoFondeoSerie { Name = "Obligaciones con el público", Type = "spline", Color = "#2F5597", TooltipSuffix = "%", YAxis = 0 };
-                    var serieVarCap = new GraficoFondeoSerie { Name = "Capital social", Type = "spline", Color = "#94A3B8", TooltipSuffix = "%", YAxis = 0 };
-                    var serieVarEnt = new GraficoFondeoSerie { Name = "Obligaciones con entidades", Type = "spline", Color = "#F4A261", TooltipSuffix = "%", YAxis = 1 };
+                    var serieVarPub = new GraficoFondeoSerie { Name = "Obligaciones con el público", Type = "spline", Color = "#2F5597", TooltipSuffix = "%", YAxis = 0, EnableDataLabels = true, DataLabelFormat = "{point.y:.2f}%" };
+                    var serieVarCap = new GraficoFondeoSerie { Name = "Capital social", Type = "spline", Color = "#94A3B8", TooltipSuffix = "%", YAxis = 0, EnableDataLabels = true, DataLabelFormat = "{point.y:.2f}%" };
+                    var serieVarEnt = new GraficoFondeoSerie { Name = "Obligaciones con entidades", Type = "spline", Color = "#F4A261", TooltipSuffix = "%", YAxis = 1, EnableDataLabels = true, DataLabelFormat = "{point.y:.2f}%" };
 
                     // Valores patrón coincidentes con la imagen del requerimiento
                     decimal[] vPubDef = { 1.79m, 5.30m, 5.08m, 2.85m, 2.37m, 3.25m, 2.68m, 1.45m, 1.50m, 1.30m, 0.00m, 0.75m, 5.42m };
@@ -932,11 +932,11 @@ namespace FGA.Controllers
                     data.ApiladoTipo = "percent";
                     data.TipoGraficoHighcharts = "column";
 
-                    var serieCapPlazo = new GraficoFondeoSerie { Name = "Captaciones a plazo", Type = "column", Stack = "capt", Color = "#2F5597", TooltipSuffix = "%", YAxis = 0 };
-                    var serieCapVista = new GraficoFondeoSerie { Name = "Captaciones a la vista", Type = "column", Stack = "capt", Color = "#6B9FD4", TooltipSuffix = "%", YAxis = 0 };
-                    var serieCargos = new GraficoFondeoSerie { Name = "Cargos de obligaciones", Type = "column", Stack = "capt", Color = "#94A3B8", TooltipSuffix = "%", YAxis = 0 };
-                    var serieVarCP = new GraficoFondeoSerie { Name = "Variación interanual CP", Type = "spline", Color = "#F4A261", TooltipSuffix = "%", YAxis = 1 };
-                    var serieVarAH = new GraficoFondeoSerie { Name = "Variación interanual AH", Type = "spline", Color = "#52B788", TooltipSuffix = "%", YAxis = 1 };
+                    var serieCapPlazo = new GraficoFondeoSerie { Name = "Captaciones a plazo", Type = "column", Stack = "capt", Color = "#2F5597", TooltipSuffix = "%", YAxis = 0, EnableDataLabels = true, DataLabelFormat = "{point.y:.1f}%" };
+                    var serieCapVista = new GraficoFondeoSerie { Name = "Captaciones a la vista", Type = "column", Stack = "capt", Color = "#6B9FD4", TooltipSuffix = "%", YAxis = 0, EnableDataLabels = true, DataLabelFormat = "{point.y:.1f}%" };
+                    var serieCargos = new GraficoFondeoSerie { Name = "Cargos de obligaciones", Type = "column", Stack = "capt", Color = "#94A3B8", TooltipSuffix = "%", YAxis = 0, EnableDataLabels = true, DataLabelFormat = "{point.y:.1f}%" };
+                    var serieVarCP = new GraficoFondeoSerie { Name = "Variación interanual CP", Type = "spline", Color = "#F4A261", TooltipSuffix = "%", YAxis = 1, EnableDataLabels = true, DataLabelFormat = "{point.y:.2f}%" };
+                    var serieVarAH = new GraficoFondeoSerie { Name = "Variación interanual AH", Type = "spline", Color = "#52B788", TooltipSuffix = "%", YAxis = 1, EnableDataLabels = true, DataLabelFormat = "{point.y:.2f}%" };
 
                     decimal[] cVistaDef = { 21.20m, 22.80m, 20.40m, 20.10m, 19.30m, 18.50m };
                     decimal[] cPlazoDef = { 77.30m, 75.80m, 78.20m, 78.40m, 79.20m, 80.00m };
