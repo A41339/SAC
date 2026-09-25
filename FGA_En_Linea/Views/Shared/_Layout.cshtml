@@ -222,6 +222,34 @@
         $(document).ajaxComplete(function () { window.fixDomEncoding(); });
         $(document).on('draw.dt init.dt page.dt order.dt search.dt', function () { window.fixDomEncoding(); });
 
+        window.formatearMesPeriodo = function (val) {
+            if (!val && val !== 0) return '';
+            var str = ('' + val).trim();
+            // Formatos M-yyyy, MM-yyyy, M.yyyy, M/yyyy (ej: "1-2025", "08.2025", "12/2024")
+            var m = str.match(/^(\d{1,2})[-/. ](\d{2,4})$/);
+            if (m) {
+                var mes = parseInt(m[1], 10);
+                var anio = parseInt(m[2], 10);
+                if (mes >= 1 && mes <= 12) {
+                    var anioStr = (anio < 100) ? ('' + anio) : ('' + anio).slice(-2);
+                    var meses = ['ene.', 'feb.', 'mar.', 'abr.', 'may.', 'jun.', 'jul.', 'ago.', 'set.', 'oct.', 'nov.', 'dic.'];
+                    return meses[mes - 1] + '-' + anioStr;
+                }
+            }
+            // Formatos yyyy-M o yyyy-MM
+            var mY = str.match(/^(\d{4})[-/. ](\d{1,2})$/);
+            if (mY) {
+                var anio = parseInt(mY[1], 10);
+                var mes = parseInt(mY[2], 10);
+                if (mes >= 1 && mes <= 12) {
+                    var anioStr = ('' + anio).slice(-2);
+                    var meses = ['ene.', 'feb.', 'mar.', 'abr.', 'may.', 'jun.', 'jul.', 'ago.', 'set.', 'oct.', 'nov.', 'dic.'];
+                    return meses[mes - 1] + '-' + anioStr;
+                }
+            }
+            return str;
+        };
+
         window.formatGlobalChartTooltip = function (ctx) {
             if (!ctx) return '';
             var p0 = (ctx.points && ctx.points.length > 0) ? ctx.points[0] : (ctx.point || ctx);
@@ -247,7 +275,7 @@
             if (headerText && /^\d+$/.test(headerText.trim())) {
                 headerText = '';
             }
-            headerText = window.sanitizeTextAccents(headerText);
+            headerText = window.formatearMesPeriodo(window.sanitizeTextAccents(headerText));
 
             function formatTooltipVal(point) {
                 var val = point.y;

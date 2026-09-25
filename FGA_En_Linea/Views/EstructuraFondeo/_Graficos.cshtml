@@ -1,7 +1,29 @@
 @model FGA.Model.EstructuraFondeoIndexViewModel
 
 <div class="row">
-
+    <!-- Selector de Tipo de Gráfico dentro de la pestaña Gráficos -->
+    <div class="col-xs-12">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px 18px; flex-wrap: wrap; gap: 14px;">
+            <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                <label for="ddlTipoGrafico" style="margin: 0; font-size: 13.5px; font-weight: 700; color: #1e3a8a; display: flex; align-items: center; gap: 6px; white-space: nowrap;">
+                    <i class="fa fa-bar-chart" style="color: #2F5597;"></i> Tipo de Gr&aacute;fico:
+                </label>
+                <div style="min-width: 350px;">
+                    <select id="ddlTipoGrafico" class="form-control modern-select" style="width: 100%; height: 38px; font-size: 13px; font-weight: 600; border-radius: 6px; border: 1px solid #cbd5e1; color: #1e3a8a; background: #ffffff;">
+                        <option value="1" @(Model.TipoGraficoSeleccionado == 1 ? "selected" : "")>Estructura de financiamiento</option>
+                        <option value="2" @(Model.TipoGraficoSeleccionado == 2 ? "selected" : "")>Variaciones interanuales por tipo de fondeo</option>
+                        <option value="3" @(Model.TipoGraficoSeleccionado == 3 ? "selected" : "")>Variación y composición por tipo de captaciones</option>
+                        <option value="4" @(Model.TipoGraficoSeleccionado == 4 ? "selected" : "")>Concentración de los 10 y  20 mayores ahorrantes</option>
+                        <option value="5" @(Model.TipoGraficoSeleccionado == 5 ? "selected" : "")>Concentración de saldos por vencimiento</option>
+                        <option value="6" @(Model.TipoGraficoSeleccionado == 6 ? "selected" : "")>Cantidad de ahorrantes y asociados</option>
+                    </select>
+                </div>
+            </div>
+            <div style="font-size: 12px; color: #64748b; font-style: italic;">
+                <i class="fa fa-info-circle" style="color: #0284c7; margin-right: 4px;"></i> Seleccione el gráfico que desea analizar
+            </div>
+        </div>
+    </div>
 
     <!-- Contenedor del Gráfico idéntico a Composición -->
     <div class="col-xs-12">

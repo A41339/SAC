@@ -192,23 +192,6 @@
                             </div>
                         </div>
 
-                        <!-- Selector Tipo de Gráfico (solo en pestaña Gráficos) -->
-                        <div id="secTipoGrafico" style="display: none; align-items: center; gap: 8px;">
-                            <label for="ddlTipoGrafico" style="margin: 0; font-size: 13px; font-weight: 700; color: #1e3a8a; display: flex; align-items: center; gap: 6px; white-space: nowrap;">
-                                <i class="fa fa-bar-chart" style="color: #2F5597;"></i> Gr&aacute;fico:
-                            </label>
-                            <div style="min-width: 320px;">
-                                <select id="ddlTipoGrafico" class="form-control modern-select" style="width: 100%; height: 38px; font-size: 13px; font-weight: 500; border-radius: 6px; border: 1px solid #cbd5e1;">
-                                    <option value="1">Estructura de financiamiento</option>
-                                    <option value="2">Variaciones interanuales por tipo de fondeo</option>
-                                    <option value="3">Variación y composición por tipo de captaciones</option>
-                                    <option value="4">Concentración de los 10 y  20 mayores ahorrantes</option>
-                                    <option value="5">Concentración de saldos por vencimiento</option>
-                                    <option value="6">Cantidad de ahorrantes y asociados</option>
-                                </select>
-                            </div>
-                        </div>
-
                         <!-- Período inicial y final (se mantienen siempre en ambos tabs) -->
                         <div id="secPeriodos" style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
                             <div style="display: flex; align-items: center; gap: 8px;">
@@ -466,7 +449,6 @@
             // Redibujar gráfico y ajustar columnas de DataTables al cambiar de tab
             $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
                 if ($(e.target).attr('href') === '#tab-graficos') {
-                    $('#secTipoGrafico').css('display', 'flex');
                     $('#secExportarIndicadores').hide();
                     if (currentChart) {
                         currentChart.reflow();
@@ -474,12 +456,16 @@
                         cargarGrafico();
                     }
                 } else {
-                    $('#secTipoGrafico').hide();
                     $('#secExportarIndicadores').show();
                     if ($.fn.dataTable.isDataTable('#tblIndicadores')) {
                         $('#tblIndicadores').DataTable().columns.adjust();
                     }
                 }
+            });
+
+            // Recargar gráfico automáticamente al cambiar la opción dentro del tab
+            $(document).on('change', '#ddlTipoGrafico', function () {
+                cargarGrafico();
             });
 
             // Ajuste automático al redimensionar ventana

@@ -625,12 +625,60 @@ namespace FGA.Model
             catch (Exception) { return null; }
         }
 
+        public static string[] FormatearCategoriasAMeses(string[] values)
+        {
+            if (values == null || values.Length == 0) return values;
+            string[] result = new string[values.Length];
+            var culture = new System.Globalization.CultureInfo("es-ES");
+
+            for (int i = 0; i < values.Length; i++)
+            {
+                result[i] = FormatearPeriodoAMes(values[i], culture);
+            }
+            return result;
+        }
+
+        public static string FormatearPeriodoAMes(string val, System.Globalization.CultureInfo culture = null)
+        {
+            if (string.IsNullOrWhiteSpace(val)) return val;
+            culture = culture ?? new System.Globalization.CultureInfo("es-ES");
+            string trimmed = val.Trim();
+
+            // Formato M-yyyy o MM-yyyy o M.yyyy o M/yyyy (ej: "1-2025", "8.2025", "08/2026")
+            var matchM = System.Text.RegularExpressions.Regex.Match(trimmed, @"^(\d{1,2})[-/. ](\d{4})$");
+            if (matchM.Success)
+            {
+                if (int.TryParse(matchM.Groups[1].Value, out int m) && int.TryParse(matchM.Groups[2].Value, out int y))
+                {
+                    if (m >= 1 && m <= 12 && y >= 1990 && y <= 2100)
+                    {
+                        return new DateTime(y, m, 1).ToString("MMM-yy", culture);
+                    }
+                }
+            }
+
+            // Formato yyyy-M o yyyy-MM (ej: "2025-01", "2025-1")
+            var matchY = System.Text.RegularExpressions.Regex.Match(trimmed, @"^(\d{4})[-/. ](\d{1,2})$");
+            if (matchY.Success)
+            {
+                if (int.TryParse(matchY.Groups[1].Value, out int y) && int.TryParse(matchY.Groups[2].Value, out int m))
+                {
+                    if (m >= 1 && m <= 12 && y >= 1990 && y <= 2100)
+                    {
+                        return new DateTime(y, m, 1).ToString("MMM-yy", culture);
+                    }
+                }
+            }
+
+            return val;
+        }
+
         public static XAxis GetXAxis(string[] values) {
             try
             {
                 return new XAxis
                 {
-                    Categories = values,
+                    Categories = FormatearCategoriasAMeses(values),
                     GridLineWidth = 1,
                     GridLineColor = ColorTranslator.FromHtml("#f1f5f9"),
                     GridLineDashStyle = DashStyles.Dash,
