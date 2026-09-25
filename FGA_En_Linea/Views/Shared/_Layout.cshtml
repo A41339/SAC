@@ -225,28 +225,78 @@
         window.formatearMesPeriodo = function (val) {
             if (!val && val !== 0) return '';
             var str = ('' + val).trim();
-            // Formatos M-yyyy, MM-yyyy, M.yyyy, M/yyyy (ej: "1-2025", "08.2025", "12/2024")
+            if (!str) return '';
+            var meses = ['ene.', 'feb.', 'mar.', 'abr.', 'may.', 'jun.', 'jul.', 'ago.', 'set.', 'oct.', 'nov.', 'dic.'];
+
+            // 1. Formatos numéricos: M-yyyy, MM-yyyy, M.yyyy, M/yyyy (ej: "1-2025", "08.2025", "12/2024")
             var m = str.match(/^(\d{1,2})[-/. ](\d{2,4})$/);
             if (m) {
                 var mes = parseInt(m[1], 10);
                 var anio = parseInt(m[2], 10);
                 if (mes >= 1 && mes <= 12) {
-                    var anioStr = (anio < 100) ? ('' + anio) : ('' + anio).slice(-2);
-                    var meses = ['ene.', 'feb.', 'mar.', 'abr.', 'may.', 'jun.', 'jul.', 'ago.', 'set.', 'oct.', 'nov.', 'dic.'];
-                    return meses[mes - 1] + '-' + anioStr;
+                    if (anio >= 1990 && anio <= 2100) {
+                        return meses[mes - 1] + '-' + ('' + anio).slice(-2);
+                    } else if (anio >= 20 && anio <= 45) {
+                        return meses[mes - 1] + '-' + anio;
+                    }
                 }
             }
-            // Formatos yyyy-M o yyyy-MM
+
+            // 2. Formatos numéricos invertidos: yyyy-M o yyyy-MM (ej: "2025-01", "2024/12")
             var mY = str.match(/^(\d{4})[-/. ](\d{1,2})$/);
             if (mY) {
                 var anio = parseInt(mY[1], 10);
                 var mes = parseInt(mY[2], 10);
-                if (mes >= 1 && mes <= 12) {
-                    var anioStr = ('' + anio).slice(-2);
-                    var meses = ['ene.', 'feb.', 'mar.', 'abr.', 'may.', 'jun.', 'jul.', 'ago.', 'set.', 'oct.', 'nov.', 'dic.'];
-                    return meses[mes - 1] + '-' + anioStr;
+                if (mes >= 1 && mes <= 12 && anio >= 1990 && anio <= 2100) {
+                    return meses[mes - 1] + '-' + ('' + anio).slice(-2);
                 }
             }
+
+            // 3. Formato fecha completa yyyy-MM-dd (ej: "2025-01-31" o "2025-01-31T00:00:00")
+            var mISO = str.match(/^(\d{4})[-/. ](\d{1,2})[-/. ](\d{1,2})/);
+            if (mISO) {
+                var anio = parseInt(mISO[1], 10);
+                var mes = parseInt(mISO[2], 10);
+                if (mes >= 1 && mes <= 12 && anio >= 1990 && anio <= 2100) {
+                    return meses[mes - 1] + '-' + ('' + anio).slice(-2);
+                }
+            }
+
+            // 4. Formato fecha completa dd/MM/yyyy o dd-MM-yyyy (ej: "31/01/2025")
+            var mDMY = str.match(/^(\d{1,2})[-/. ](\d{1,2})[-/. ](\d{4})$/);
+            if (mDMY) {
+                var mes = parseInt(mDMY[2], 10);
+                var anio = parseInt(mDMY[3], 10);
+                if (mes >= 1 && mes <= 12 && anio >= 1990 && anio <= 2100) {
+                    return meses[mes - 1] + '-' + ('' + anio).slice(-2);
+                }
+            }
+
+            // 5. Nombres de meses en texto (ej: "Enero 2025", "Diciembre 24", "ene 25", "ene.-25")
+            var mTxt = str.match(/^([a-zA-ZáéíóúÁÉÍÓÚ.]+)[-/\s]+(\d{2,4})$/);
+            if (mTxt) {
+                var txt = mTxt[1].toLowerCase().replace(/\./g, '');
+                var anioVal = parseInt(mTxt[2], 10);
+                var dictMeses = {
+                    'ene': 1, 'enero': 1,
+                    'feb': 2, 'febrero': 2,
+                    'mar': 3, 'marzo': 3,
+                    'abr': 4, 'abril': 4,
+                    'may': 5, 'mayo': 5,
+                    'jun': 6, 'junio': 6,
+                    'jul': 7, 'julio': 7,
+                    'ago': 8, 'agosto': 8,
+                    'set': 9, 'sep': 9, 'setiembre': 9, 'septiembre': 9,
+                    'oct': 10, 'octubre': 10,
+                    'nov': 11, 'noviembre': 11,
+                    'dic': 12, 'diciembre': 12
+                };
+                if (dictMeses[txt] && ((anioVal >= 1990 && anioVal <= 2100) || (anioVal >= 20 && anioVal <= 45))) {
+                    var anioStr = anioVal >= 100 ? ('' + anioVal).slice(-2) : ('' + anioVal);
+                    return meses[dictMeses[txt] - 1] + '-' + anioStr;
+                }
+            }
+
             return str;
         };
 
@@ -459,6 +509,14 @@
                             color: '#2F5597'
                         }
                     },
+                    xAxis: {
+                        labels: {
+                            formatter: function () {
+                                var val = (this.value !== undefined && this.value !== null) ? this.value : '';
+                                return window.formatearMesPeriodo ? window.formatearMesPeriodo(val) : val;
+                            }
+                        }
+                    },
                     colors: ['#2F5597', '#6B9FD4', '#94A3B8', '#F4A261', '#52B788', '#64748B', '#A78BFA', '#FCD34D', '#5DADE2', '#F08080'],
                     plotOptions: {
                         series: {
@@ -496,6 +554,42 @@
                 if (Highcharts.defaultOptions && Highcharts.defaultOptions.lang) {
                     Highcharts.defaultOptions.lang.thousandsSep = ',';
                     Highcharts.defaultOptions.lang.decimalPoint = '.';
+                }
+
+                // Interceptar universalmente la inicialización de cualquier gráfico para garantizar meses normalizados (ej: ene.-25)
+                if (Highcharts.wrap) {
+                    Highcharts.wrap(Highcharts.Chart.prototype, 'init', function (proceed, userOptions, callback) {
+                        try {
+                            if (userOptions && userOptions.xAxis) {
+                                var axes = Array.isArray(userOptions.xAxis) ? userOptions.xAxis : [userOptions.xAxis];
+                                axes.forEach(function (axis) {
+                                    if (axis && axis.categories && Array.isArray(axis.categories)) {
+                                        for (var i = 0; i < axis.categories.length; i++) {
+                                            axis.categories[i] = window.formatearMesPeriodo(axis.categories[i]);
+                                        }
+                                    }
+                                });
+                            }
+                        } catch (e) {
+                            console.error("Error en Highcharts category formatting:", e);
+                        }
+                        return proceed.call(this, userOptions, callback);
+                    });
+
+                    if (Highcharts.Axis && Highcharts.Axis.prototype.setCategories) {
+                        Highcharts.wrap(Highcharts.Axis.prototype, 'setCategories', function (proceed, newCategories, redraw) {
+                            try {
+                                if (newCategories && Array.isArray(newCategories)) {
+                                    for (var i = 0; i < newCategories.length; i++) {
+                                        newCategories[i] = window.formatearMesPeriodo(newCategories[i]);
+                                    }
+                                }
+                            } catch (e) {
+                                console.error("Error en Highcharts setCategories formatting:", e);
+                            }
+                            return proceed.call(this, newCategories, redraw);
+                        });
+                    }
                 }
             }
         })();

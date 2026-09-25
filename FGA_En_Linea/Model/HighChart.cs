@@ -644,7 +644,7 @@ namespace FGA.Model
             culture = culture ?? new System.Globalization.CultureInfo("es-ES");
             string trimmed = val.Trim();
 
-            // Formato M-yyyy o MM-yyyy o M.yyyy o M/yyyy (ej: "1-2025", "8.2025", "08/2026")
+            // 1. Formato M-yyyy o MM-yyyy o M.yyyy o M/yyyy (ej: "1-2025", "8.2025", "08/2026")
             var matchM = System.Text.RegularExpressions.Regex.Match(trimmed, @"^(\d{1,2})[-/. ](\d{4})$");
             if (matchM.Success)
             {
@@ -657,7 +657,7 @@ namespace FGA.Model
                 }
             }
 
-            // Formato yyyy-M o yyyy-MM (ej: "2025-01", "2025-1")
+            // 2. Formato yyyy-M o yyyy-MM (ej: "2025-01", "2025-1")
             var matchY = System.Text.RegularExpressions.Regex.Match(trimmed, @"^(\d{4})[-/. ](\d{1,2})$");
             if (matchY.Success)
             {
@@ -670,7 +670,99 @@ namespace FGA.Model
                 }
             }
 
+            // 3. Formato fecha completa yyyy-MM-dd (ej: "2025-01-31" o "2025-01-31T00:00:00")
+            var matchISO = System.Text.RegularExpressions.Regex.Match(trimmed, @"^(\d{4})[-/. ](\d{1,2})[-/. ](\d{1,2})");
+            if (matchISO.Success)
+            {
+                if (int.TryParse(matchISO.Groups[1].Value, out int y) && int.TryParse(matchISO.Groups[2].Value, out int m))
+                {
+                    if (m >= 1 && m <= 12 && y >= 1990 && y <= 2100)
+                    {
+                        return new DateTime(y, m, 1).ToString("MMM-yy", culture);
+                    }
+                }
+            }
+
+            // 4. Formato fecha completa dd/MM/yyyy o dd-MM-yyyy (ej: "31/01/2025")
+            var matchDMY = System.Text.RegularExpressions.Regex.Match(trimmed, @"^(\d{1,2})[-/. ](\d{1,2})[-/. ](\d{4})$");
+            if (matchDMY.Success)
+            {
+                if (int.TryParse(matchDMY.Groups[2].Value, out int m) && int.TryParse(matchDMY.Groups[3].Value, out int y))
+                {
+                    if (m >= 1 && m <= 12 && y >= 1990 && y <= 2100)
+                    {
+                        return new DateTime(y, m, 1).ToString("MMM-yy", culture);
+                    }
+                }
+            }
+
+            // 5. Nombres de meses en texto (ej: "Enero 2025", "Diciembre 24", "ene 25", "ene.-25")
+            var matchTxt = System.Text.RegularExpressions.Regex.Match(trimmed, @"^([a-zA-ZáéíóúÁÉÍÓÚ.]+)[-/\s]+(\d{2,4})$");
+            if (matchTxt.Success)
+            {
+                string txt = matchTxt.Groups[1].Value.ToLower().Replace(".", "");
+                if (int.TryParse(matchTxt.Groups[2].Value, out int y))
+                {
+                    if (y < 100) y += 2000;
+                    if (y >= 1990 && y <= 2100)
+                    {
+                        int mesNum = GetMesNumero(txt);
+                        if (mesNum >= 1 && mesNum <= 12)
+                        {
+                            return new DateTime(y, mesNum, 1).ToString("MMM-yy", culture);
+                        }
+                    }
+                }
+            }
+
             return val;
+        }
+
+        private static int GetMesNumero(string nombreMes)
+        {
+            switch (nombreMes.ToLower().Trim())
+            {
+                case "ene":
+                case "enero":
+                    return 1;
+                case "feb":
+                case "febrero":
+                    return 2;
+                case "mar":
+                case "marzo":
+                    return 3;
+                case "abr":
+                case "abril":
+                    return 4;
+                case "may":
+                case "mayo":
+                    return 5;
+                case "jun":
+                case "junio":
+                    return 6;
+                case "jul":
+                case "julio":
+                    return 7;
+                case "ago":
+                case "agosto":
+                    return 8;
+                case "set":
+                case "sep":
+                case "setiembre":
+                case "septiembre":
+                    return 9;
+                case "oct":
+                case "octubre":
+                    return 10;
+                case "nov":
+                case "noviembre":
+                    return 11;
+                case "dic":
+                case "diciembre":
+                    return 12;
+                default:
+                    return 0;
+            }
         }
 
         public static XAxis GetXAxis(string[] values) {
