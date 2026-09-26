@@ -13,8 +13,8 @@
     if (!string.IsNullOrEmpty(cleanPageTitle))
     {
         cleanPageTitle = cleanPageTitle
-            .Replace("CategorÃa", "Período")
-            .Replace("categorÃa", "período")
+            .Replace("CategorÃa", "Periodo")
+            .Replace("categorÃa", "periodo")
             .Replace("MenÃƒÂº", "Menú")
             .Replace("MenÃÂº", "Menú")
             .Replace("MenÃº", "Menú")
@@ -31,8 +31,8 @@
     @Styles.Render("~/Content/css")
     <link rel="stylesheet" href="~/Content/theme/bower_components/font-awesome/css/font-awesome.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
-    <link rel="stylesheet" href="~/Content/dashboard_modern.css?v=20260924.1" />
-    <link rel="stylesheet" href="~/Content/modulo_hub.css?v=20260924.1" />
+    <link rel="stylesheet" href="~/Content/dashboard_modern.css?v=20260925.2" />
+    <link rel="stylesheet" href="~/Content/modulo_hub.css?v=20260925.2" />
     @Scripts.Render("~/bundles/javascript")
     <script type="text/javascript">
         // ==========================================================================
@@ -165,6 +165,145 @@
     <script src="https://code.highcharts.com/modules/export-data.js"></script>
     <script src="https://code.highcharts.com/modules/offline-exporting.js"></script>
     <script>
+        // ==========================================================================
+        // HOMOLOGACION CORPORATIVA GLOBAL DE HIGHCHARTS (DataLabels, Ejes y Legibilidad)
+        // ==========================================================================
+        if (typeof Highcharts !== 'undefined') {
+            Highcharts.setOptions({
+                chart: {
+                    spacingTop: 45,
+                    style: {
+                        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
+                    }
+                },
+                lang: {
+                    thousandsSep: ',',
+                    decimalPoint: '.'
+                },
+                xAxis: {
+                    labels: {
+                        style: {
+                            color: '#1e293b',
+                            fontSize: '12px',
+                            fontWeight: '600',
+                            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
+                        }
+                    },
+                    lineColor: '#cbd5e1',
+                    tickColor: '#cbd5e1'
+                },
+                yAxis: {
+                    maxPadding: 0.12,
+                    labels: {
+                        style: {
+                            color: '#334155',
+                            fontSize: '12px',
+                            fontWeight: '600',
+                            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
+                        }
+                    },
+                    title: {
+                        style: {
+                            color: '#1e3a8a',
+                            fontSize: '13px',
+                            fontWeight: '700',
+                            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
+                        }
+                    }
+                },
+                plotOptions: {
+                    series: {
+                        dataLabels: {
+                            style: {
+                                fontSize: '12px',
+                                fontWeight: '700',
+                                fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
+                            }
+                        }
+                    },
+                    column: {
+                        dataLabels: {
+                            style: {
+                                fontSize: '12px',
+                                fontWeight: '700'
+                            }
+                        }
+                    },
+                    bar: {
+                        dataLabels: {
+                            style: {
+                                fontSize: '12px',
+                                fontWeight: '700'
+                            }
+                        }
+                    },
+                    line: {
+                        dataLabels: {
+                            style: {
+                                fontSize: '12px',
+                                fontWeight: '700'
+                            },
+                            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                            borderColor: '#cbd5e1',
+                            borderWidth: 1,
+                            borderRadius: 4,
+                            padding: 3,
+                            y: -10
+                        }
+                    },
+                    spline: {
+                        dataLabels: {
+                            style: {
+                                fontSize: '12px',
+                                fontWeight: '700'
+                            },
+                            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                            borderColor: '#cbd5e1',
+                            borderWidth: 1,
+                            borderRadius: 4,
+                            padding: 3,
+                            y: -10
+                        }
+                    },
+                    areaspline: {
+                        dataLabels: {
+                            style: {
+                                fontSize: '12px',
+                                fontWeight: '700'
+                            },
+                            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                            borderColor: '#cbd5e1',
+                            borderWidth: 1,
+                            borderRadius: 4,
+                            padding: 3,
+                            y: -10
+                        }
+                    },
+                    pie: {
+                        dataLabels: {
+                            style: {
+                                fontSize: '12px',
+                                fontWeight: '700'
+                            }
+                        }
+                    }
+                },
+                legend: {
+                    itemStyle: {
+                        color: '#1e293b',
+                        fontSize: '12.5px',
+                        fontWeight: '600',
+                        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
+                    }
+                },
+                tooltip: {
+                    style: {
+                        fontSize: '12.5px'
+                    }
+                }
+            });
+        }
+
         // Funcion universal para decodificar entidades HTML y corregir artefactos UTF-8 / tildes
         window.sanitizeTextAccents = function (str) {
             if (!str) return str;
@@ -619,7 +758,7 @@
         display: none !important;
     }
 
-    /* Keep button text and symbol clearly visible */
+    /* Keep button text and symbol clearly visible with subtle executive styling */
     .highcharts-button text,
     .highcharts-contextbutton text,
     .highcharts-button tspan,
@@ -627,30 +766,38 @@
         display: inline-block !important;
         visibility: visible !important;
         opacity: 1 !important;
-        fill: #ffffff !important;
-        color: #ffffff !important;
-        font-size: 13px !important;
+        fill: #334155 !important;
+        color: #334155 !important;
+        font-size: 12px !important;
         font-weight: 600 !important;
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
     }
 
+    .highcharts-button:hover text,
+    .highcharts-contextbutton:hover text,
+    .highcharts-button:hover tspan,
+    .highcharts-contextbutton:hover tspan {
+        fill: #1e3a8a !important;
+        color: #1e3a8a !important;
+    }
+
     .highcharts-button .highcharts-button-box,
     .highcharts-contextbutton .highcharts-button-box {
-        fill: #2F5597 !important;
-        fill-opacity: 0.72 !important;
-        stroke: #204880 !important;
-        stroke-opacity: 0.85 !important;
+        fill: #ffffff !important;
+        fill-opacity: 0.95 !important;
+        stroke: #cbd5e1 !important;
+        stroke-opacity: 1 !important;
         stroke-width: 1px !important;
-        rx: 8px !important;
-        ry: 8px !important;
+        rx: 6px !important;
+        ry: 6px !important;
         transition: all 0.2s ease;
     }
 
     .highcharts-button:hover .highcharts-button-box,
     .highcharts-contextbutton:hover .highcharts-button-box {
-        fill: #204880 !important;
+        fill: #eff6ff !important;
         fill-opacity: 1 !important;
-        stroke: #172e56 !important;
+        stroke: #93c5fd !important;
         stroke-opacity: 1 !important;
     }
 
@@ -658,9 +805,14 @@
     .highcharts-contextbutton .highcharts-button-symbol {
         opacity: 1 !important;
         visibility: visible !important;
-        stroke: #ffffff !important;
-        stroke-width: 1.8px !important;
+        stroke: #475569 !important;
+        stroke-width: 1.6px !important;
         fill: none !important;
+    }
+
+    .highcharts-button:hover .highcharts-button-symbol,
+    .highcharts-contextbutton:hover .highcharts-button-symbol {
+        stroke: #1e3a8a !important;
     }
 
     /* Boton "Ampliar" estandarizado (Dashboard, Composicion, Cartera, etc.) */
@@ -1593,7 +1745,7 @@
             hideData: '<i class="fa fa-table" style="color: #4338ca; margin-right: 10px; width: 16px; text-align: center;"></i> Ocultar datos',
             exportData: {
                 annotationHeader: 'Anotaciones',
-                categoryHeader: 'Período',
+                categoryHeader: 'Periodo',
                 categoryDatetimeHeader: 'Fecha/Hora'
             },
             downloadPNG: '<i class="fa fa-picture-o" style="color: #0284c7; margin-right: 10px; width: 16px; text-align: center;"></i> Descargar PNG',
@@ -1607,7 +1759,7 @@
         colors: ['#2F5597', '#6B9FD4', '#94A3B8', '#F4A261', '#52B788', '#64748B', '#A78BFA', '#FCD34D', '#5DADE2', '#F08080', '#81B3A8', '#E11D48'],
         chart: {
             backgroundColor: '#FFF',
-            spacingTop: 50,
+            spacingTop: 60,
             spacingRight: 15,
             style: {
                 fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
@@ -1646,6 +1798,9 @@
                     fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
                 }
             }
+        },
+        yAxis: {
+            maxPadding: 0.15
         },
         legend: {
             itemStyle: {
@@ -1712,18 +1867,18 @@
 	        contextButton: {
                 align: 'right',
                 verticalAlign: 'top',
-                y: 10,
-                x: -10,
+                y: -12,
+                x: -8,
                 text: 'Descargar ▾',
                 theme: {
-                    fill: 'rgba(47, 85, 151, 0.75)',
-                    stroke: 'rgba(32, 72, 128, 0.85)',
+                    fill: '#ffffff',
+                    stroke: '#cbd5e1',
                     'stroke-width': 1,
-                    r: 8,
-                    padding: 8,
-                    height: 18,
+                    r: 6,
+                    padding: 6,
+                    height: 16,
                     style: {
-                        color: '#ffffff',
+                        color: '#475569',
                         fontWeight: '600',
                         fontSize: '12px',
                         fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
@@ -1731,14 +1886,14 @@
                     },
                     states: {
                         hover: {
-                            fill: '#2F5597',
-                            stroke: '#204880',
+                            fill: '#eff6ff',
+                            stroke: '#93c5fd',
                             style: {
-                                color: '#ffffff'
+                                color: '#1e3a8a'
                             }
                         },
                         select: {
-                            fill: '#1b3866'
+                            fill: '#e0f2fe'
                         }
                     }
                 },

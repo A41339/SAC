@@ -55,6 +55,7 @@ namespace FGA.Model
         public string ApiladoTipo { get; set; } // "normal" or "percent"
         public string TipoGraficoHighcharts { get; set; } = "column"; // "column", "line", "bar"
         public GraficoTablaData TablaData { get; set; } = new GraficoTablaData();
+        public DiagnosticoTecnicoFondeo Diagnostico { get; set; } = new DiagnosticoTecnicoFondeo();
     }
 
     public class GraficoFondeoSerie
@@ -100,6 +101,27 @@ namespace FGA.Model
         public decimal PrimerValor { get; set; }
         public decimal UltimoValor { get; set; }
         public decimal VariacionPeriodo { get; set; }
+    }
+
+    public class DiagnosticoTecnicoFondeo
+    {
+        public string Estado { get; set; } = "Adecuado"; // "Adecuado", "Monitoreo", "Atencion"
+        public string EstadoLabel { get; set; } = "ADECUADO";
+        public string TituloAnalisis { get; set; }
+        public string ResumenEjecutivo { get; set; }
+        public List<DiagnosticoMetricaItem> Metricas { get; set; } = new List<DiagnosticoMetricaItem>();
+        public List<string> Hallazgos { get; set; } = new List<string>();
+        public List<string> Recomendaciones { get; set; } = new List<string>();
+        public string UltimoPeriodo { get; set; }
+    }
+
+    public class DiagnosticoMetricaItem
+    {
+        public string Etiqueta { get; set; }
+        public string Valor { get; set; }
+        public string Subtexto { get; set; }
+        public string Nivel { get; set; } = "normal"; // "positivo", "advertencia", "peligro", "normal"
+        public string Icono { get; set; } = "fa-bar-chart";
     }
 }
 

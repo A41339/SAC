@@ -769,8 +769,12 @@
                 </div>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: #ffffff !important; opacity: 0.9; font-size: 22px;"><span aria-hidden="true">&times;</span></button>
             </div>
-            <div class="modal-body" style="padding: 20px; min-height: 480px;">
-                @modelData.pSuficiencia
+            <div class="modal-body" style="padding: 20px 24px; min-height: 480px; background: #ffffff;">
+                <!-- Strip resumen con métricas clave del indicador / series -->
+                <div id="suficienciaModalKpiStrip" style="margin-bottom: 18px;"></div>
+                <div style="width: 100%; min-height: 460px; overflow: visible;">
+                    @modelData.pSuficiencia
+                </div>
             </div>
             <div class="modal-footer" style="background: #f8fafc; border-top: 1px solid #e2e8f0; padding: 12px 20px; display: flex; justify-content: flex-end;">
                 <button type="button" class="btn btn-default" data-dismiss="modal" style="padding: 8px 22px; border-radius: 8px; font-weight: 600;">
@@ -923,16 +927,128 @@
             getGraph('C22');
         });
 
+        function renderSuficienciaKpi(seriesIdx) {
+            seriesIdx = (typeof seriesIdx === 'number') ? seriesIdx : 0;
+            try {
+                if (typeof Highcharts === 'undefined' || !Highcharts.charts) return;
+                var chart = $('#pSuficiencia').highcharts();
+                if (!chart) {
+                    var charts = Highcharts.charts.filter(function (c) {
+                        return c && c.renderTo && (c.renderTo.id === 'pSuficiencia' || $(c.renderTo).closest('#mSuficiencia').length > 0);
+                    });
+                    if (charts.length > 0) chart = charts[0];
+                }
+                if (!chart && Highcharts.charts.length > 0) {
+                    var candidateCharts = Highcharts.charts.filter(function (c) {
+                        return c && c.series && c.series.length >= 4;
+                    });
+                    if (candidateCharts.length > 0) chart = candidateCharts[0];
+                }
+                if (!chart || !chart.series || chart.series.length === 0) return;
+
+                try { chart.reflow(); } catch (e) {}
+
+                var s = chart.series[seriesIdx] || chart.series[0];
+                if (!s || !s.data || s.data.length === 0) return;
+
+                var cats = (chart.xAxis && chart.xAxis[0]) ? chart.xAxis[0].categories : [];
+                var rawData = s.data.map(function (pt) {
+                    if (typeof pt.y === 'number') return pt.y;
+                    if (Array.isArray(pt) && typeof pt[1] === 'number') return pt[1];
+                    return parseFloat(pt.y) || 0;
+                });
+
+                if (rawData.length === 0) return;
+
+                var p1Label = cats && cats.length > 0 ? cats[0] : 'Inicial';
+                var p2Label = cats && cats.length > 0 ? cats[cats.length - 1] : 'Final';
+                var v1 = rawData[0];
+                var v2 = rawData[rawData.length - 1];
+                var diff = v2 - v1;
+                var sum = rawData.reduce(function (a, b) { return a + b; }, 0);
+                var avg = sum / rawData.length;
+                var minVal = Math.min.apply(null, rawData);
+                var maxVal = Math.max.apply(null, rawData);
+
+                var isPos = diff >= 0;
+                var badgeBg = isPos ? 'background-color: #dcfce7; color: #15803d;' : 'background-color: #fee2e2; color: #b91c1c;';
+                var sign = isPos ? '+' : '';
+
+                var formatNum = function (n) {
+                    return (typeof n === 'number') ? n.toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : n;
+                };
+
+                var diffFormatted = sign + formatNum(diff) + ' p.p.';
+
+                var selectorHtml =
+                    '<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">' +
+                    '    <div style="font-size: 13px; font-weight: 700; color: #1e3a8a; display: flex; align-items: center; gap: 6px;">' +
+                    '        <i class="fa fa-sliders" style="color: #2F5597;"></i> Indicadores de Capital:' +
+                    '    </div>' +
+                    '    <div>' +
+                    '        <select id="suficienciaModalSeriesSelect" class="form-control" style="height: 34px; font-size: 12.5px; font-weight: 600; padding: 2px 12px; border-radius: 6px; border: 1.5px solid #cbd5e1; color: #1e3a8a; background: #ffffff; min-width: 250px;">';
+
+                for (var idx = 0; idx < chart.series.length; idx++) {
+                    var ser = chart.series[idx];
+                    var isSelected = (idx === seriesIdx) ? ' selected' : '';
+                    selectorHtml += '<option value="' + idx + '"' + isSelected + '>● ' + (ser.name || ('Serie ' + (idx + 1))) + '</option>';
+                }
+
+                selectorHtml +=
+                    '        </select>' +
+                    '    </div>' +
+                    '</div>';
+
+                var stripHtml = selectorHtml +
+                    '<div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px 18px;">' +
+                    '    <div>' +
+                    '        <span style="font-size: 12px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block;">Período Inicial (' + p1Label + ')</span>' +
+                    '        <span style="font-size: 16px; font-weight: 700; color: #1e3a8a;">' + formatNum(v1) + '%</span>' +
+                    '    </div>' +
+                    '    <div style="border-left: 1px solid #cbd5e1; padding-left: 16px;">' +
+                    '        <span style="font-size: 12px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block;">Período Final (' + p2Label + ')</span>' +
+                    '        <span style="font-size: 16px; font-weight: 700; color: #0f172a;">' + formatNum(v2) + '%</span>' +
+                    '    </div>' +
+                    '    <div style="border-left: 1px solid #cbd5e1; padding-left: 16px;">' +
+                    '        <span style="font-size: 12px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block;">Variación</span>' +
+                    '        <span class="badge" style="' + badgeBg + ' font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 6px;">' +
+                    '            ' + diffFormatted +
+                    '        </span>' +
+                    '    </div>' +
+                    '    <div style="border-left: 1px solid #cbd5e1; padding-left: 16px;">' +
+                    '        <span style="font-size: 12px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block;">Promedio</span>' +
+                    '        <span style="font-size: 16px; font-weight: 700; color: #334155;">' + formatNum(avg) + '%</span>' +
+                    '    </div>' +
+                    '    <div style="border-left: 1px solid #cbd5e1; padding-left: 16px;">' +
+                    '        <span style="font-size: 12px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block;">Mín / Máx</span>' +
+                    '        <span style="font-size: 13px; font-weight: 600; color: #475569;">' +
+                    '            ' + formatNum(minVal) + '% / ' + formatNum(maxVal) + '%' +
+                    '        </span>' +
+                    '    </div>' +
+                    '</div>';
+
+                $('#suficienciaModalKpiStrip').html(stripHtml);
+
+                $('#suficienciaModalSeriesSelect').off('change').on('change', function () {
+                    var newIdx = parseInt($(this).val(), 10);
+                    renderSuficienciaKpi(newIdx);
+                });
+            } catch (err) {
+                console.error('Error al generar métricas de Suficiencia:', err);
+            }
+        }
+
         $('#mSuficiencia').on('shown.bs.modal', function () {
-            if (typeof Highcharts !== 'undefined' && Highcharts.charts) {
-                setTimeout(function () {
+            setTimeout(function () {
+                renderSuficienciaKpi(0);
+                if (typeof Highcharts !== 'undefined' && Highcharts.charts) {
                     Highcharts.charts.forEach(function (c) {
                         if (c) {
                             try { c.reflow(); } catch (e) {}
                         }
                     });
-                }, 100);
-            }
+                }
+            }, 120);
         });
     });
 </script>

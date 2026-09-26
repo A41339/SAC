@@ -12,7 +12,7 @@ namespace FGA.Model
 {
     public static class HighChart
     {
-        public static void ConfigChart(ref Highcharts graph, string nombre, ChartTypes? type, int? Heigh = 0)
+        public static void ConfigChart(ref Highcharts graph, string nombre, ChartTypes? type, int? Heigh = 0, int? SpacingTop = 60)
         {
             try
             {
@@ -31,7 +31,7 @@ namespace FGA.Model
                     BorderRadius = 0,
                     BorderWidth = 0,
                     SpacingBottom = 8,
-                    SpacingTop = 12,
+                    SpacingTop = SpacingTop ?? 60,
                     SpacingLeft = 10,
                     SpacingRight = 10,
                     Height = (Heigh == 0 ? null : Heigh)
@@ -55,7 +55,7 @@ namespace FGA.Model
                 graph.SetLegend(new Legend
                 {
                     Enabled = true,
-                    ItemStyle = "fontSize: '12px', color: '#334155', fontWeight: '600', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'",
+                    ItemStyle = "fontSize: '12.5px', color: '#1e293b', fontWeight: '600', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'",
                     ItemHoverStyle = "color: '#2F5597'",
                     ItemMarginTop = 6,
                     ItemMarginBottom = 4,
@@ -72,7 +72,7 @@ namespace FGA.Model
                     BackgroundColor = new BackColorOrGradient(Color.Transparent),
                     BorderWidth = 0,
                     Shadow = false,
-                    Style = "fontSize: '12px', color: '#1e293b', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'"
+                    Style = "fontSize: '12.5px', color: '#1e293b', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'"
                 });
                
             }
@@ -95,7 +95,7 @@ namespace FGA.Model
                         {
                             Enabled = System.Web.HttpContext.Current.Session[FGA.Utility.Utilitarios.show_ColumnDetail] is null ? false : true,
                             Format = "{point.y:,.2f}%",
-                            Style = "fontSize: '12px', textShadow: 'none', textOutline: 'none',  fontFamily: 'Arial, sans-serif'",
+                            Style = "fontSize: '12px', fontWeight: '700', textShadow: 'none', textOutline: 'none', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'",
                         }
                     }
                 };
@@ -116,7 +116,7 @@ namespace FGA.Model
                         {
                             Enabled = System.Web.HttpContext.Current.Session[FGA.Utility.Utilitarios.show_ColumnDetail] is null ? false : true,
                             Format = "{point.y:,.2f}",
-                            Style = "fontSize: '12px', textShadow: 'none', textOutline: 'none',  fontFamily: 'Arial, sans-serif'",
+                            Style = "fontSize: '12px', fontWeight: '700', textShadow: 'none', textOutline: 'none', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'",
                         }
                     }
                 };
@@ -137,7 +137,7 @@ namespace FGA.Model
                         {
                             Enabled = System.Web.HttpContext.Current.Session[FGA.Utility.Utilitarios.show_ColumnDetail] is null ? false : true,
                             Format = "{point.y:,.0f}",
-                            Style = "fontSize: '12px', textShadow: 'none', textOutline: 'none',  fontFamily: 'Arial, sans-serif'",
+                            Style = "fontSize: '12px', fontWeight: '700', textShadow: 'none', textOutline: 'none', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'",
                         }
                     }
                 };
@@ -159,7 +159,7 @@ namespace FGA.Model
                         {
                             Enabled = System.Web.HttpContext.Current.Session[FGA.Utility.Utilitarios.show_ColumnDetail] is null ? false : true,
                             Format = "{point.y:,.2f}%",
-                            Style = "fontSize: '12px', textShadow: 'none', textOutline: 'none',  fontFamily: 'Arial, sans-serif'",
+                            Style = "fontSize: '12px', fontWeight: '700', textShadow: 'none', textOutline: 'none', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'",
                              
                         }                         
                     }
@@ -183,7 +183,7 @@ namespace FGA.Model
                         {
                             Enabled = System.Web.HttpContext.Current.Session[FGA.Utility.Utilitarios.show_ColumnDetail] is null ? false : true,
                             Format = "{point.y:,.2f}%",
-                            Style = "fontSize: '12px', textShadow: 'none', textOutline: 'none',  fontFamily: 'Arial, sans-serif'",
+                            Style = "fontSize: '12px', fontWeight: '700', textShadow: 'none', textOutline: 'none', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'",
                         },
                         MinPointLength = 15 
                     }
@@ -207,7 +207,7 @@ namespace FGA.Model
                         {
                             Enabled = System.Web.HttpContext.Current.Session[FGA.Utility.Utilitarios.show_ColumnDetail] is null ? false : true,
                             Format = "{point.y:,.2f}%",
-                            Style = "fontSize: '12px', textShadow: 'none', textOutline: 'none',  fontFamily: 'Arial, sans-serif'",
+                            Style = "fontSize: '12px', fontWeight: '700', textShadow: 'none', textOutline: 'none', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'",
                             Overflow = "allow"
                         },
                         PointWidth = (Number)pointWidth
@@ -231,7 +231,7 @@ namespace FGA.Model
                         {
                             Enabled = System.Web.HttpContext.Current.Session[FGA.Utility.Utilitarios.show_ColumnDetail] is null ? false : true,
                             Format = "{point.y:,.2f}%",
-                            Style = "fontSize: '12x', textShadow: 'none', textOutline: 'none',  fontFamily: 'Arial, sans-serif'",
+                            Style = "fontSize: '12px', fontWeight: '700', textShadow: 'none', textOutline: 'none', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'",
                             Inside = false,
                             Overflow = "allow"
                         },
@@ -255,7 +255,7 @@ namespace FGA.Model
                         {
                             Enabled = System.Web.HttpContext.Current.Session[FGA.Utility.Utilitarios.show_ColumnDetail] is null ? false : true,
                             Format = "{point.y:,.0f}",
-                            Style = "fontSize: '12px', textShadow: 'none', textOutline: 'none',  fontFamily: 'Arial, sans-serif'",
+                            Style = "fontSize: '12px', fontWeight: '700', textShadow: 'none', textOutline: 'none', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'",
                             Inside = false,
                             Y = -10
                         },
@@ -280,7 +280,7 @@ namespace FGA.Model
                         {
                             Enabled = System.Web.HttpContext.Current.Session[FGA.Utility.Utilitarios.show_ColumnDetail] is null ? false : true,
                             Format = "{point.y:,.0f}",
-                            Style = "fontSize: '12px', textShadow: 'none', textOutline: 'none',  fontFamily: 'Arial, sans-serif'",
+                            Style = "fontSize: '12px', fontWeight: '700', textShadow: 'none', textOutline: 'none', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'",
                             Inside = false,
                             Y = -10,
 
@@ -304,7 +304,7 @@ namespace FGA.Model
                         {
                             Enabled = System.Web.HttpContext.Current.Session[FGA.Utility.Utilitarios.show_ColumnDetail] is null ? false : true,
                             Format = "{point.y:,.0f}",
-                            Style = "fontSize: '12px', textShadow: 'none', textOutline: 'none',  fontFamily: 'Arial, sans-serif'",
+                            Style = "fontSize: '12px', fontWeight: '700', textShadow: 'none', textOutline: 'none', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'",
                             Inside = false                            
                         },
                         MinPointLength = 15
@@ -326,7 +326,7 @@ namespace FGA.Model
                         {
                             Enabled = System.Web.HttpContext.Current.Session[FGA.Utility.Utilitarios.show_ColumnDetail] is null ? false : true,
                             Format = "{point.y:,.2f}",
-                            Style = "fontSize: '12px', textShadow: 'none', textOutline: 'none',  fontFamily: 'Arial, sans-serif'",
+                            Style = "fontSize: '12px', fontWeight: '700', textShadow: 'none', textOutline: 'none', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'",
                             Inside = false,
                             Y = -10
                         },
@@ -353,7 +353,7 @@ namespace FGA.Model
                     {
                         Enabled = System.Web.HttpContext.Current.Session[FGA.Utility.Utilitarios.show_LineDetail] is null ? false : true,
                         Format = "{point.y:,.2f}",
-                        Style = "fontSize: '12px', textShadow: 'none', textOutline: 'none',  fontFamily: 'Arial, sans-serif'",
+                        Style = "fontSize: '12px', fontWeight: '700', textShadow: 'none', textOutline: 'none', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'",
                         Inside = false,
                         Y = -10
                     }
@@ -380,7 +380,7 @@ namespace FGA.Model
                     {
                         Enabled = System.Web.HttpContext.Current.Session[FGA.Utility.Utilitarios.show_LineDetail] is null ? false : true,
                         Format = "{point.y:,.2f}%",
-                        Style = "fontSize: '12px', textShadow: 'none', textOutline: 'none',  fontFamily: 'Arial, sans-serif'",
+                        Style = "fontSize: '12px', fontWeight: '700', textShadow: 'none', textOutline: 'none', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'",
                         Inside = false,
                         Overflow = "allow",
                         Y = -10
@@ -411,7 +411,7 @@ namespace FGA.Model
                     {
                         Enabled = System.Web.HttpContext.Current.Session[FGA.Utility.Utilitarios.show_LineDetail] is null ? false : true,
                         Format = "{point.y:,.2f}",
-                        Style = "fontSize: '12px', textShadow: 'none', textOutline: 'none',  fontFamily: 'Arial, sans-serif'",
+                        Style = "fontSize: '12px', fontWeight: '700', textShadow: 'none', textOutline: 'none', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'",
                         Inside = false,
                         Overflow = "allow",
                         Y = -10
@@ -442,7 +442,7 @@ namespace FGA.Model
                     {
                         Enabled = System.Web.HttpContext.Current.Session[FGA.Utility.Utilitarios.show_LineDetail] is null ? false : true,
                         Format = "{point.y:,.2f}%",
-                        Style = "fontSize: '12px', textShadow: 'none', textOutline: 'none',  fontFamily: 'Arial, sans-serif'",
+                        Style = "fontSize: '12px', fontWeight: '700', textShadow: 'none', textOutline: 'none', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'",
                         Inside = false,
                         Overflow = "allow",
                         Y = -10
@@ -470,7 +470,7 @@ namespace FGA.Model
                     {
                         Enabled = System.Web.HttpContext.Current.Session[FGA.Utility.Utilitarios.show_LineDetail] is null ? false : true,
                         Format = "{point.y:,.2f}",
-                        Style = "fontSize: '12px', textShadow: 'none', textOutline: 'none',  fontFamily: 'Arial, sans-serif'",
+                        Style = "fontSize: '12px', fontWeight: '700', textShadow: 'none', textOutline: 'none', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'",
                         Inside = false,
                         Overflow = "allow",
                         Y = -10
@@ -502,7 +502,7 @@ namespace FGA.Model
                     {
                         Enabled = System.Web.HttpContext.Current.Session[FGA.Utility.Utilitarios.show_LineDetail] is null ? false : true,
                         Format = "{point.y:,.2f}",
-                        Style = "fontSize: '11px', fontWeight: '600', color: '#334155', textShadow: 'none', textOutline: 'none', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'",
+                        Style = "fontSize: '12px', fontWeight: '700', color: '#1e293b', textShadow: 'none', textOutline: 'none', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'",
                         Inside = false,
                         Overflow = "allow",
                         Y = -10
@@ -529,7 +529,7 @@ namespace FGA.Model
                     {
                         Enabled = System.Web.HttpContext.Current.Session[FGA.Utility.Utilitarios.show_LineDetail] is null ? false : true,
                         Format = "{point.y:,.2f}%",
-                        Style = "fontSize: '11px', fontWeight: '600', color: '#334155', textShadow: 'none', textOutline: 'none', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'",
+                        Style = "fontSize: '12px', fontWeight: '700', color: '#1e293b', textShadow: 'none', textOutline: 'none', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'",
                         Inside = false,
                         Overflow = "allow",
                         Y = -10
@@ -556,7 +556,7 @@ namespace FGA.Model
                     {
                         Enabled = System.Web.HttpContext.Current.Session[FGA.Utility.Utilitarios.show_LineDetail] is null ? false : true,
                         Format = "{point.y:,.2f}%",
-                        Style = "fontSize: '11px', fontWeight: '600', color: '#334155', textShadow: 'none', textOutline: 'none', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'",
+                        Style = "fontSize: '12px', fontWeight: '700', color: '#1e293b', textShadow: 'none', textOutline: 'none', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'",
                         Inside = false,
                         Overflow = "allow",
                         Y = -10
@@ -582,7 +582,7 @@ namespace FGA.Model
                     {
                         Enabled = System.Web.HttpContext.Current.Session[FGA.Utility.Utilitarios.show_LineDetail] is null ? false : true,
                         Format = "{point.y:,.2f}%",
-                        Style = "fontSize: '11px', fontWeight: '600', color: '#2F5597', textShadow: 'none', textOutline: 'none', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'",
+                        Style = "fontSize: '12px', fontWeight: '700', color: '#1e293b', textShadow: 'none', textOutline: 'none', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'",
                         Inside = false,
                         Overflow = "allow",
                         Y = -10
@@ -604,7 +604,7 @@ namespace FGA.Model
                     {
                         Enabled = System.Web.HttpContext.Current.Session[FGA.Utility.Utilitarios.show_ColumnDetail] is null ? false : true,
                         Format = percent ? "{point.y:,.2f}%" : "{point.y:,.0f}",
-                        Style = "fontSize: '11px', fontWeight: '600', color: '#334155', textShadow: 'none', textOutline: 'none', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'",
+                        Style = "fontSize: '12px', fontWeight: '700', color: '#1e293b', textShadow: 'none', textOutline: 'none', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'",
                         Inside = false
                     },
                     MinPointLength = 10
@@ -779,7 +779,7 @@ namespace FGA.Model
                     Labels = new XAxisLabels()
                     {
                         Step = System.Web.HttpContext.Current.Session[FGA.Utility.Utilitarios.show_DateEachN] is null ? 1 : 3,
-                        Style = "fontSize: '11px', color: '#64748b', fontWeight: '500', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'"                       
+                        Style = "fontSize: '12.5px', color: '#1e293b', fontWeight: '600', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'"                       
                     },
                     ShowEmpty = true,                     
                     Title = new XAxisTitle()
@@ -795,7 +795,7 @@ namespace FGA.Model
         {
             try
             {
-                string yLabel = System.Web.HttpContext.Current.Session[FGA.Utility.Utilitarios.show_YAxis] is null ? "fontSize: '0px'" : "fontSize: '11px', color: '#64748b', fontWeight: '500', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'";
+                string yLabel = System.Web.HttpContext.Current.Session[FGA.Utility.Utilitarios.show_YAxis] is null ? "fontSize: '0px'" : "fontSize: '12px', color: '#334155', fontWeight: '600', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'";
                 return new YAxis()
                 {
                     Title = new YAxisTitle()
@@ -811,6 +811,7 @@ namespace FGA.Model
                     ShowLastLabel = true,
                     ShowEmpty = true,
                     AllowDecimals = true, 
+                    MaxPadding = (Number)0.22,
                     //Min = (Number?)pMin,
                     //Max = (Number?)pMax,
                     GridLineWidth = 1,
@@ -828,7 +829,7 @@ namespace FGA.Model
         {
             try
             {
-                string yLabel = System.Web.HttpContext.Current.Session[FGA.Utility.Utilitarios.show_YAxis] is null ? "fontSize: '0px'" : "fontSize: '11px', color: '#64748b', fontWeight: '500', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'";
+                string yLabel = System.Web.HttpContext.Current.Session[FGA.Utility.Utilitarios.show_YAxis] is null ? "fontSize: '0px'" : "fontSize: '12px', color: '#334155', fontWeight: '600', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'";
                 return new YAxis()
                 {
                     Title = new YAxisTitle()

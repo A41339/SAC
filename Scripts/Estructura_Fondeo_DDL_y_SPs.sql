@@ -76,12 +76,16 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
+    SET @PERIODO = DATEFROMPARTS(YEAR(@PERIODO), MONTH(@PERIODO), 1);
+
     -- Limpieza previa para reproceso seguro
     DELETE FROM [dbo].[Salida_Concentracion_Ahorrantes] 
-    WHERE IdEntidad = @IDENTIDAD AND Periodo = @PERIODO;
+    WHERE IdEntidad = @IDENTIDAD 
+      AND (Periodo = @PERIODO OR (YEAR(Periodo) = YEAR(@PERIODO) AND MONTH(Periodo) = MONTH(@PERIODO)));
 
     DELETE FROM [dbo].[Salida_Concentracion_Vencimiento] 
-    WHERE IdEntidad = @IDENTIDAD AND Periodo = @PERIODO;
+    WHERE IdEntidad = @IDENTIDAD 
+      AND (Periodo = @PERIODO OR (YEAR(Periodo) = YEAR(@PERIODO) AND MONTH(Periodo) = MONTH(@PERIODO)));
 
     -- Consolidación de registros de Pasivos 210 (tabla activa e histórica)
     CREATE TABLE #Pasivos210 (
@@ -92,15 +96,27 @@ BEGIN
         FechaVencimiento DATE
     );
 
-    -- 1. Intentar desde tabla activa
+    -- 1. Intentar desde tabla activa (Estado = 3 Aprobado o cualquier estado no anulado != 12)
     INSERT INTO #Pasivos210 (IdAcreedor, CuentaContablePrincipal, SaldoPrincipal, SaldoProducto, FechaVencimiento)
     SELECT A.IdAcreedor, A.CuentaContablePrincipal, A.SaldoPrincipal, A.SaldoProducto, A.FechaVencimiento
     FROM [dbo].[XML_Pasivo_Cuenta_Contable_210] A WITH(NOLOCK)
     INNER JOIN [dbo].[XML_Encabezado] B WITH(NOLOCK) ON B.Id = A.IdEncabezado_Id
     WHERE B.IdEntidad_Id = @IDENTIDAD 
-      AND B.Periodo = @PERIODO 
+      AND (B.Periodo = @PERIODO OR (YEAR(B.Periodo) = YEAR(@PERIODO) AND MONTH(B.Periodo) = MONTH(@PERIODO)))
       AND B.IdEstado_Id = 3 
       AND B.IdArchivo_Id = '2702';
+
+    IF NOT EXISTS (SELECT 1 FROM #Pasivos210)
+    BEGIN
+        INSERT INTO #Pasivos210 (IdAcreedor, CuentaContablePrincipal, SaldoPrincipal, SaldoProducto, FechaVencimiento)
+        SELECT A.IdAcreedor, A.CuentaContablePrincipal, A.SaldoPrincipal, A.SaldoProducto, A.FechaVencimiento
+        FROM [dbo].[XML_Pasivo_Cuenta_Contable_210] A WITH(NOLOCK)
+        INNER JOIN [dbo].[XML_Encabezado] B WITH(NOLOCK) ON B.Id = A.IdEncabezado_Id
+        WHERE B.IdEntidad_Id = @IDENTIDAD 
+          AND (B.Periodo = @PERIODO OR (YEAR(B.Periodo) = YEAR(@PERIODO) AND MONTH(B.Periodo) = MONTH(@PERIODO)))
+          AND B.IdEstado_Id != 12 
+          AND B.IdArchivo_Id = '2702';
+    END
 
     -- 2. Si no hay datos en activa, buscar en histórico
     IF NOT EXISTS (SELECT 1 FROM #Pasivos210)
@@ -110,8 +126,20 @@ BEGIN
         FROM [dbo].[XML_Pasivo_Cuenta_Contable_210_His] A WITH(NOLOCK)
         INNER JOIN [dbo].[XML_Encabezado_His] B WITH(NOLOCK) ON B.Id = A.IdEncabezado_Id
         WHERE B.IdEntidad_Id = @IDENTIDAD 
-          AND B.Periodo = @PERIODO 
+          AND (B.Periodo = @PERIODO OR (YEAR(B.Periodo) = YEAR(@PERIODO) AND MONTH(B.Periodo) = MONTH(@PERIODO)))
           AND B.IdEstado_Id = 3 
+          AND B.IdArchivo_Id = '2702';
+    END
+
+    IF NOT EXISTS (SELECT 1 FROM #Pasivos210)
+    BEGIN
+        INSERT INTO #Pasivos210 (IdAcreedor, CuentaContablePrincipal, SaldoPrincipal, SaldoProducto, FechaVencimiento)
+        SELECT A.IdAcreedor, A.CuentaContablePrincipal, A.SaldoPrincipal, A.SaldoProducto, A.FechaVencimiento
+        FROM [dbo].[XML_Pasivo_Cuenta_Contable_210_His] A WITH(NOLOCK)
+        INNER JOIN [dbo].[XML_Encabezado_His] B WITH(NOLOCK) ON B.Id = A.IdEncabezado_Id
+        WHERE B.IdEntidad_Id = @IDENTIDAD 
+          AND (B.Periodo = @PERIODO OR (YEAR(B.Periodo) = YEAR(@PERIODO) AND MONTH(B.Periodo) = MONTH(@PERIODO)))
+          AND B.IdEstado_Id != 12 
           AND B.IdArchivo_Id = '2702';
     END
 
@@ -199,14 +227,16 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
-    SET @PERIODOI = ISNULL(@PERIODOI, @PERIODOINICIAL);
-    SET @PERIODOF = ISNULL(@PERIODOF, @PERIODOFINAL);
+    SET @PERIODOI = DATEFROMPARTS(YEAR(ISNULL(@PERIODOI, @PERIODOINICIAL)), MONTH(ISNULL(@PERIODOI, @PERIODOINICIAL)), 1);
+    SET @PERIODOF = DATEFROMPARTS(YEAR(ISNULL(@PERIODOF, @PERIODOFINAL)), MONTH(ISNULL(@PERIODOF, @PERIODOFINAL)), 1);
 
     -- Validar si para algún período del rango falta el cálculo en la tabla de salida
     DECLARE @PeriodoCursor DATE = @PERIODOI;
     WHILE @PeriodoCursor <= @PERIODOF
     BEGIN
-        IF NOT EXISTS (SELECT 1 FROM [dbo].[Salida_Concentracion_Ahorrantes] WITH(NOLOCK) WHERE IdEntidad = @IDENTIDAD AND Periodo = @PeriodoCursor)
+        IF NOT EXISTS (SELECT 1 FROM [dbo].[Salida_Concentracion_Ahorrantes] WITH(NOLOCK) 
+                       WHERE IdEntidad = @IDENTIDAD 
+                         AND (Periodo = @PeriodoCursor OR (YEAR(Periodo) = YEAR(@PeriodoCursor) AND MONTH(Periodo) = MONTH(@PeriodoCursor))))
         BEGIN
             EXEC [dbo].[FGA_Generar_Estructura_Fondeo] @IDENTIDAD, @PeriodoCursor;
         END
@@ -223,7 +253,7 @@ BEGIN
         CantidadAhorrantes
     FROM [dbo].[Salida_Concentracion_Ahorrantes] WITH(NOLOCK)
     WHERE IdEntidad = @IDENTIDAD 
-      AND Periodo BETWEEN @PERIODOI AND @PERIODOF
+      AND (Periodo BETWEEN @PERIODOI AND @PERIODOF OR (YEAR(Periodo) * 100 + MONTH(Periodo) BETWEEN YEAR(@PERIODOI) * 100 + MONTH(@PERIODOI) AND YEAR(@PERIODOF) * 100 + MONTH(@PERIODOF)))
     ORDER BY Periodo ASC;
 END
 GO
@@ -245,13 +275,15 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
-    SET @PERIODOI = ISNULL(@PERIODOI, @PERIODOINICIAL);
-    SET @PERIODOF = ISNULL(@PERIODOF, @PERIODOFINAL);
+    SET @PERIODOI = DATEFROMPARTS(YEAR(ISNULL(@PERIODOI, @PERIODOINICIAL)), MONTH(ISNULL(@PERIODOI, @PERIODOINICIAL)), 1);
+    SET @PERIODOF = DATEFROMPARTS(YEAR(ISNULL(@PERIODOF, @PERIODOFINAL)), MONTH(ISNULL(@PERIODOF, @PERIODOFINAL)), 1);
 
     DECLARE @PeriodoCursor DATE = @PERIODOI;
     WHILE @PeriodoCursor <= @PERIODOF
     BEGIN
-        IF NOT EXISTS (SELECT 1 FROM [dbo].[Salida_Concentracion_Vencimiento] WITH(NOLOCK) WHERE IdEntidad = @IDENTIDAD AND Periodo = @PeriodoCursor)
+        IF NOT EXISTS (SELECT 1 FROM [dbo].[Salida_Concentracion_Vencimiento] WITH(NOLOCK) 
+                       WHERE IdEntidad = @IDENTIDAD 
+                         AND (Periodo = @PeriodoCursor OR (YEAR(Periodo) = YEAR(@PeriodoCursor) AND MONTH(Periodo) = MONTH(@PeriodoCursor))))
         BEGIN
             EXEC [dbo].[FGA_Generar_Estructura_Fondeo] @IDENTIDAD, @PeriodoCursor;
         END
@@ -277,7 +309,7 @@ BEGIN
         CASE WHEN TotalPrincipal > 0 THEN (Tramo7_Mas3Anios / TotalPrincipal) * 100.0 ELSE 0 END AS PorcDe3AnosEnAdelante
     FROM [dbo].[Salida_Concentracion_Vencimiento] WITH(NOLOCK)
     WHERE IdEntidad = @IDENTIDAD 
-      AND Periodo BETWEEN @PERIODOI AND @PERIODOF
+      AND (Periodo BETWEEN @PERIODOI AND @PERIODOF OR (YEAR(Periodo) * 100 + MONTH(Periodo) BETWEEN YEAR(@PERIODOI) * 100 + MONTH(@PERIODOI) AND YEAR(@PERIODOF) * 100 + MONTH(@PERIODOF)))
     ORDER BY Periodo ASC;
 END
 GO
@@ -299,8 +331,8 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
-    SET @PERIODOI = ISNULL(@PERIODOI, @PERIODOINICIAL);
-    SET @PERIODOF = ISNULL(@PERIODOF, @PERIODOFINAL);
+    SET @PERIODOI = DATEFROMPARTS(YEAR(ISNULL(@PERIODOI, @PERIODOINICIAL)), MONTH(ISNULL(@PERIODOI, @PERIODOINICIAL)), 1);
+    SET @PERIODOF = DATEFROMPARTS(YEAR(ISNULL(@PERIODOF, @PERIODOFINAL)), MONTH(ISNULL(@PERIODOF, @PERIODOFINAL)), 1);
 
     CREATE TABLE #Resultado (
         Periodo DATE,
@@ -313,6 +345,15 @@ BEGIN
     WHILE @PeriodoCursor <= @PERIODOF
     BEGIN
         INSERT INTO #Resultado (Periodo) VALUES (@PeriodoCursor);
+
+        -- Generar dinámicamente concentración de fondeo y ahorrantes si aún no existe en salida
+        IF NOT EXISTS (SELECT 1 FROM [dbo].[Salida_Concentracion_Ahorrantes] WITH(NOLOCK) 
+                       WHERE IdEntidad = @IDENTIDAD 
+                         AND (Periodo = @PeriodoCursor OR (YEAR(Periodo) = YEAR(@PeriodoCursor) AND MONTH(Periodo) = MONTH(@PeriodoCursor))))
+        BEGIN
+            EXEC [dbo].[FGA_Generar_Estructura_Fondeo] @IDENTIDAD, @PeriodoCursor;
+        END
+
         SET @PeriodoCursor = DATEADD(MONTH, 1, @PeriodoCursor);
     END
 
@@ -322,14 +363,24 @@ BEGIN
     FROM #Resultado R
     OUTER APPLY (
         SELECT TOP 1 MontoDatoAdicional 
-        FROM [dbo].[XML_Contable_DatosAdicionales] D WITH(NOLOCK)
-        INNER JOIN [dbo].[XML_Encabezado] E WITH(NOLOCK) ON E.Id = D.IdEncabezado_Id
-        WHERE E.IdEntidad_Id = @IDENTIDAD AND E.Periodo = R.Periodo AND E.IdEstado_Id = 3 AND D.CuentaCatalogo = 20026
-        UNION ALL
-        SELECT TOP 1 MontoDatoAdicional 
-        FROM [dbo].[XML_Contable_DatosAdicionales_His] D WITH(NOLOCK)
-        INNER JOIN [dbo].[XML_Encabezado_His] E WITH(NOLOCK) ON E.Id = D.IdEncabezado_Id
-        WHERE E.IdEntidad_Id = @IDENTIDAD AND E.Periodo = R.Periodo AND E.IdEstado_Id = 3 AND D.CuentaCatalogo = 20026
+        FROM (
+            SELECT D.MontoDatoAdicional, E.IdEstado_Id, E.Id AS EncId
+            FROM [dbo].[XML_Contable_DatosAdicionales] D WITH(NOLOCK)
+            INNER JOIN [dbo].[XML_Encabezado] E WITH(NOLOCK) ON E.Id = D.IdEncabezado_Id
+            WHERE E.IdEntidad_Id = @IDENTIDAD 
+              AND (E.Periodo = R.Periodo OR (YEAR(E.Periodo) = YEAR(R.Periodo) AND MONTH(E.Periodo) = MONTH(R.Periodo)))
+              AND E.IdEstado_Id != 12 
+              AND D.CuentaCatalogo = 20026
+            UNION ALL
+            SELECT D.MontoDatoAdicional, E.IdEstado_Id, E.Id AS EncId
+            FROM [dbo].[XML_Contable_DatosAdicionales_His] D WITH(NOLOCK)
+            INNER JOIN [dbo].[XML_Encabezado_His] E WITH(NOLOCK) ON E.Id = D.IdEncabezado_Id
+            WHERE E.IdEntidad_Id = @IDENTIDAD 
+              AND (E.Periodo = R.Periodo OR (YEAR(E.Periodo) = YEAR(R.Periodo) AND MONTH(E.Periodo) = MONTH(R.Periodo)))
+              AND E.IdEstado_Id != 12 
+              AND D.CuentaCatalogo = 20026
+        ) X
+        ORDER BY CASE WHEN X.IdEstado_Id = 3 THEN 0 ELSE 1 END, X.EncId DESC
     ) A;
 
     UPDATE R
@@ -337,14 +388,24 @@ BEGIN
     FROM #Resultado R
     OUTER APPLY (
         SELECT TOP 1 MontoDatoAdicional 
-        FROM [dbo].[XML_Contable_DatosAdicionales] D WITH(NOLOCK)
-        INNER JOIN [dbo].[XML_Encabezado] E WITH(NOLOCK) ON E.Id = D.IdEncabezado_Id
-        WHERE E.IdEntidad_Id = @IDENTIDAD AND E.Periodo = R.Periodo AND E.IdEstado_Id = 3 AND D.CuentaCatalogo = 20024
-        UNION ALL
-        SELECT TOP 1 MontoDatoAdicional 
-        FROM [dbo].[XML_Contable_DatosAdicionales_His] D WITH(NOLOCK)
-        INNER JOIN [dbo].[XML_Encabezado_His] E WITH(NOLOCK) ON E.Id = D.IdEncabezado_Id
-        WHERE E.IdEntidad_Id = @IDENTIDAD AND E.Periodo = R.Periodo AND E.IdEstado_Id = 3 AND D.CuentaCatalogo = 20024
+        FROM (
+            SELECT D.MontoDatoAdicional, E.IdEstado_Id, E.Id AS EncId
+            FROM [dbo].[XML_Contable_DatosAdicionales] D WITH(NOLOCK)
+            INNER JOIN [dbo].[XML_Encabezado] E WITH(NOLOCK) ON E.Id = D.IdEncabezado_Id
+            WHERE E.IdEntidad_Id = @IDENTIDAD 
+              AND (E.Periodo = R.Periodo OR (YEAR(E.Periodo) = YEAR(R.Periodo) AND MONTH(E.Periodo) = MONTH(R.Periodo)))
+              AND E.IdEstado_Id != 12 
+              AND D.CuentaCatalogo = 20024
+            UNION ALL
+            SELECT D.MontoDatoAdicional, E.IdEstado_Id, E.Id AS EncId
+            FROM [dbo].[XML_Contable_DatosAdicionales_His] D WITH(NOLOCK)
+            INNER JOIN [dbo].[XML_Encabezado_His] E WITH(NOLOCK) ON E.Id = D.IdEncabezado_Id
+            WHERE E.IdEntidad_Id = @IDENTIDAD 
+              AND (E.Periodo = R.Periodo OR (YEAR(E.Periodo) = YEAR(R.Periodo) AND MONTH(E.Periodo) = MONTH(R.Periodo)))
+              AND E.IdEstado_Id != 12 
+              AND D.CuentaCatalogo = 20024
+        ) X
+        ORDER BY CASE WHEN X.IdEstado_Id = 3 THEN 0 ELSE 1 END, X.EncId DESC
     ) A;
 
     -- Cantidad de ahorrantes desde Salida_Concentracion_Ahorrantes
@@ -352,7 +413,8 @@ BEGIN
     SET R.CantidadAhorrantes = ISNULL(S.CantidadAhorrantes, 0)
     FROM #Resultado R
     LEFT JOIN [dbo].[Salida_Concentracion_Ahorrantes] S WITH(NOLOCK) 
-        ON S.IdEntidad = @IDENTIDAD AND S.Periodo = R.Periodo;
+        ON S.IdEntidad = @IDENTIDAD 
+       AND (S.Periodo = R.Periodo OR (YEAR(S.Periodo) = YEAR(R.Periodo) AND MONTH(S.Periodo) = MONTH(R.Periodo)));
 
     SELECT Periodo, AsociadosActivos, AsociadosInactivos, CantidadAhorrantes 
     FROM #Resultado 

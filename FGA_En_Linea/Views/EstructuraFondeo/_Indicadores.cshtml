@@ -4,12 +4,9 @@
             
             <!-- Header institucional con Logo, Título y Subtítulo idéntico a Indicadores FGA -->
             <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid #f1f5f9;">
-                @if (Session["Logo"] != null)
-                {
-                    <img width="44" height="44" src="@Session["Logo"]" style="border-radius: 8px; background: #ffffff; padding: 3px; border: 1px solid #e2e8f0; object-fit: contain;" />
-                }
+                <img id="imgLogoIndicadores" class="img-logo-entidad" width="44" height="44" src="@(Session["Logo"] ?? Url.Content("~/Content/images/FFC.jpg"))" onerror="this.onerror=null;this.src='@Url.Content("~/Content/images/FFC.jpg")';" style="border-radius: 8px; background: #ffffff; padding: 3px; border: 1px solid #e2e8f0; object-fit: contain;" />
                 <div>
-                    <h4 style="margin: 0; font-size: 16px; font-weight: 700; color: #143750;">Indicadores de Estructura de Fondeo</h4>
+                    <h4 style="margin: 0; font-size: 16px; font-weight: 700; color: #143750;">Indicadores de Estructura de Fondeo - <span id="lblEntidadIndicadores">@Model.NombreEntidad</span></h4>
                     <p style="margin: 2px 0 0 0; font-size: 12px; color: #64748b;">Comportamiento comparativo de fuentes de pasivo con costo, captaciones y concentración</p>
                 </div>
             </div>
@@ -36,7 +33,7 @@
                                         @ind.Nombre
                                         @if (!string.IsNullOrEmpty(ind.Formula))
                                         {
-                                            <span style="display: block; font-size: 11px; font-weight: 400; color: #64748b; margin-top: 2px;">
+                                            <span style="display: block; font-size: 12px; font-weight: 400; color: #64748b; margin-top: 2px;">
                                                 <i class="fa fa-calculator" style="margin-right: 3px; color: #94a3b8;"></i> @ind.Formula
                                             </span>
                                         }
@@ -50,19 +47,19 @@
                                     <td class="text-center" style="padding: 10px; vertical-align: middle; text-align: center !important; font-variant-numeric: tabular-nums;">
                                         @if (ind.Variacion > 0)
                                         {
-                                            <span class="badge" style="background-color: #dcfce7; color: #15803d; font-size: 11px; font-weight: 600; padding: 4px 8px; border-radius: 6px; display: inline-block; min-width: 75px; text-align: center;">
+                                            <span class="badge" style="background-color: #dcfce7; color: #15803d; font-size: 12px; font-weight: 700; padding: 4px 8px; border-radius: 6px; display: inline-block; min-width: 75px; text-align: center;">
                                                 @ind.VariacionFormateada
                                             </span>
                                         }
                                         else if (ind.Variacion < 0)
                                         {
-                                            <span class="badge" style="background-color: #fee2e2; color: #b91c1c; font-size: 11px; font-weight: 600; padding: 4px 8px; border-radius: 6px; display: inline-block; min-width: 75px; text-align: center;">
+                                            <span class="badge" style="background-color: #fee2e2; color: #b91c1c; font-size: 12px; font-weight: 700; padding: 4px 8px; border-radius: 6px; display: inline-block; min-width: 75px; text-align: center;">
                                                 @ind.VariacionFormateada
                                             </span>
                                         }
                                         else
                                         {
-                                            <span class="badge" style="background-color: #f1f5f9; color: #475569; font-size: 11px; font-weight: 600; padding: 4px 8px; border-radius: 6px; display: inline-block; min-width: 75px; text-align: center;">
+                                            <span class="badge" style="background-color: #f1f5f9; color: #475569; font-size: 12px; font-weight: 700; padding: 4px 8px; border-radius: 6px; display: inline-block; min-width: 75px; text-align: center;">
                                                 0.00
                                             </span>
                                         }

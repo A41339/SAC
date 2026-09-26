@@ -605,6 +605,21 @@
           <Parameter Name="PERIODO" Type="date" Mode="In" />
           <Parameter Name="IDENTIDAD" Type="nvarchar" Mode="In" />
         </Function>
+        <Function Name="FGA_Consultar_Concentracion_Ahorrantes" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="IDENTIDAD" Type="nvarchar" Mode="In" />
+          <Parameter Name="PERIODOI" Type="date" Mode="In" />
+          <Parameter Name="PERIODOF" Type="date" Mode="In" />
+        </Function>
+        <Function Name="FGA_Consultar_Concentracion_Vencimiento" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="IDENTIDAD" Type="nvarchar" Mode="In" />
+          <Parameter Name="PERIODOI" Type="date" Mode="In" />
+          <Parameter Name="PERIODOF" Type="date" Mode="In" />
+        </Function>
+        <Function Name="FGA_Consultar_Cantidad_Asociados_Ahorrantes" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="IDENTIDAD" Type="nvarchar" Mode="In" />
+          <Parameter Name="PERIODOI" Type="date" Mode="In" />
+          <Parameter Name="PERIODOF" Type="date" Mode="In" />
+        </Function>
         <EntityContainer Name="FGAModelStoreContainer" />
       </Schema>
     </edmx:StorageModels>
@@ -1206,6 +1221,21 @@
           <FunctionImport Name="FGA_Validar_Proyecciones_IRL" ReturnType="Collection(String)">
             <Parameter Name="IDENTIDAD" Mode="In" Type="String" />
             <Parameter Name="PERIODO" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <FunctionImport Name="FGA_Consultar_Concentracion_Ahorrantes" ReturnType="Collection(FGAModel.FGA_Consultar_Concentracion_Ahorrantes_Result)">
+            <Parameter Name="IDENTIDAD" Mode="In" Type="String" />
+            <Parameter Name="PERIODOI" Mode="In" Type="DateTime" />
+            <Parameter Name="PERIODOF" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <FunctionImport Name="FGA_Consultar_Concentracion_Vencimiento" ReturnType="Collection(FGAModel.FGA_Consultar_Concentracion_Vencimiento_Result)">
+            <Parameter Name="IDENTIDAD" Mode="In" Type="String" />
+            <Parameter Name="PERIODOI" Mode="In" Type="DateTime" />
+            <Parameter Name="PERIODOF" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <FunctionImport Name="FGA_Consultar_Cantidad_Asociados_Ahorrantes" ReturnType="Collection(FGAModel.FGA_Consultar_Cantidad_Asociados_Ahorrantes_Result)">
+            <Parameter Name="IDENTIDAD" Mode="In" Type="String" />
+            <Parameter Name="PERIODOI" Mode="In" Type="DateTime" />
+            <Parameter Name="PERIODOF" Mode="In" Type="DateTime" />
           </FunctionImport>
         </EntityContainer>
         <ComplexType Name="FGA_Analisis_Horizontal_Result">
@@ -3040,6 +3070,39 @@
           <Property Type="Decimal" Name="IMP_UTILIDADES_6" Nullable="true" Precision="35" Scale="5" />
           <Property Type="Decimal" Name="PARTICIPACIONES_UTILIDAD_6" Nullable="true" Precision="35" Scale="5" />
           <Property Type="Decimal" Name="RESUL_PERIODO_6" Nullable="true" Precision="35" Scale="5" />
+        </ComplexType>
+        <ComplexType Name="FGA_Consultar_Concentracion_Ahorrantes_Result">
+          <Property Type="DateTime" Name="Periodo" Nullable="true" />
+          <Property Type="Decimal" Name="MontoTop10" Nullable="true" Precision="25" Scale="2" />
+          <Property Type="Decimal" Name="MontoTop20" Nullable="true" Precision="25" Scale="2" />
+          <Property Type="Decimal" Name="MontoTotal" Nullable="true" Precision="25" Scale="2" />
+          <Property Type="Decimal" Name="PorcTop10" Nullable="true" Precision="18" Scale="6" />
+          <Property Type="Decimal" Name="PorcTop20" Nullable="true" Precision="18" Scale="6" />
+          <Property Type="Int32" Name="CantidadAhorrantes" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="FGA_Consultar_Concentracion_Vencimiento_Result">
+          <Property Type="DateTime" Name="Periodo" Nullable="true" />
+          <Property Type="Decimal" Name="ALaVista" Nullable="true" Precision="25" Scale="2" />
+          <Property Type="Decimal" Name="De1A90Dias" Nullable="true" Precision="25" Scale="2" />
+          <Property Type="Decimal" Name="De91A180Dias" Nullable="true" Precision="25" Scale="2" />
+          <Property Type="Decimal" Name="De181A270Dias" Nullable="true" Precision="25" Scale="2" />
+          <Property Type="Decimal" Name="De271A360Dias" Nullable="true" Precision="25" Scale="2" />
+          <Property Type="Decimal" Name="De1A3Anos" Nullable="true" Precision="25" Scale="2" />
+          <Property Type="Decimal" Name="De3AnosEnAdelante" Nullable="true" Precision="25" Scale="2" />
+          <Property Type="Decimal" Name="Total" Nullable="true" Precision="25" Scale="2" />
+          <Property Type="Decimal" Name="PorcALaVista" Nullable="true" Precision="18" Scale="4" />
+          <Property Type="Decimal" Name="PorcDe1A90Dias" Nullable="true" Precision="18" Scale="4" />
+          <Property Type="Decimal" Name="PorcDe91A180Dias" Nullable="true" Precision="18" Scale="4" />
+          <Property Type="Decimal" Name="PorcDe181A270Dias" Nullable="true" Precision="18" Scale="4" />
+          <Property Type="Decimal" Name="PorcDe271A360Dias" Nullable="true" Precision="18" Scale="4" />
+          <Property Type="Decimal" Name="PorcDe1A3Anos" Nullable="true" Precision="18" Scale="4" />
+          <Property Type="Decimal" Name="PorcDe3AnosEnAdelante" Nullable="true" Precision="18" Scale="4" />
+        </ComplexType>
+        <ComplexType Name="FGA_Consultar_Cantidad_Asociados_Ahorrantes_Result">
+          <Property Type="DateTime" Name="Periodo" Nullable="true" />
+          <Property Type="Int32" Name="AsociadosActivos" Nullable="true" />
+          <Property Type="Int32" Name="AsociadosInactivos" Nullable="true" />
+          <Property Type="Int32" Name="CantidadAhorrantes" Nullable="true" />
         </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
@@ -5274,6 +5337,51 @@
           <FunctionImportMapping FunctionImportName="FGA_Valida_Operaciones_Dir_Contable" FunctionName="FGAModel.Store.FGA_Valida_Operaciones_Dir_Contable" />
           <FunctionImportMapping FunctionImportName="FGA_Valida_Permite_Cargar" FunctionName="FGAModel.Store.FGA_Valida_Permite_Cargar" />
           <FunctionImportMapping FunctionImportName="FGA_Validar_Proyecciones_IRL" FunctionName="FGAModel.Store.FGA_Validar_Proyecciones_IRL" />
+          <FunctionImportMapping FunctionImportName="FGA_Consultar_Concentracion_Ahorrantes" FunctionName="FGAModel.Store.FGA_Consultar_Concentracion_Ahorrantes">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="FGAModel.FGA_Consultar_Concentracion_Ahorrantes_Result">
+                <ScalarProperty Name="Periodo" ColumnName="Periodo" />
+                <ScalarProperty Name="MontoTop10" ColumnName="MontoTop10" />
+                <ScalarProperty Name="MontoTop20" ColumnName="MontoTop20" />
+                <ScalarProperty Name="MontoTotal" ColumnName="MontoTotal" />
+                <ScalarProperty Name="PorcTop10" ColumnName="PorcTop10" />
+                <ScalarProperty Name="PorcTop20" ColumnName="PorcTop20" />
+                <ScalarProperty Name="CantidadAhorrantes" ColumnName="CantidadAhorrantes" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="FGA_Consultar_Concentracion_Vencimiento" FunctionName="FGAModel.Store.FGA_Consultar_Concentracion_Vencimiento">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="FGAModel.FGA_Consultar_Concentracion_Vencimiento_Result">
+                <ScalarProperty Name="Periodo" ColumnName="Periodo" />
+                <ScalarProperty Name="ALaVista" ColumnName="ALaVista" />
+                <ScalarProperty Name="De1A90Dias" ColumnName="De1A90Dias" />
+                <ScalarProperty Name="De91A180Dias" ColumnName="De91A180Dias" />
+                <ScalarProperty Name="De181A270Dias" ColumnName="De181A270Dias" />
+                <ScalarProperty Name="De271A360Dias" ColumnName="De271A360Dias" />
+                <ScalarProperty Name="De1A3Anos" ColumnName="De1A3Anos" />
+                <ScalarProperty Name="De3AnosEnAdelante" ColumnName="De3AnosEnAdelante" />
+                <ScalarProperty Name="Total" ColumnName="Total" />
+                <ScalarProperty Name="PorcALaVista" ColumnName="PorcALaVista" />
+                <ScalarProperty Name="PorcDe1A90Dias" ColumnName="PorcDe1A90Dias" />
+                <ScalarProperty Name="PorcDe91A180Dias" ColumnName="PorcDe91A180Dias" />
+                <ScalarProperty Name="PorcDe181A270Dias" ColumnName="PorcDe181A270Dias" />
+                <ScalarProperty Name="PorcDe271A360Dias" ColumnName="PorcDe271A360Dias" />
+                <ScalarProperty Name="PorcDe1A3Anos" ColumnName="PorcDe1A3Anos" />
+                <ScalarProperty Name="PorcDe3AnosEnAdelante" ColumnName="PorcDe3AnosEnAdelante" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="FGA_Consultar_Cantidad_Asociados_Ahorrantes" FunctionName="FGAModel.Store.FGA_Consultar_Cantidad_Asociados_Ahorrantes">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="FGAModel.FGA_Consultar_Cantidad_Asociados_Ahorrantes_Result">
+                <ScalarProperty Name="Periodo" ColumnName="Periodo" />
+                <ScalarProperty Name="AsociadosActivos" ColumnName="AsociadosActivos" />
+                <ScalarProperty Name="AsociadosInactivos" ColumnName="AsociadosInactivos" />
+                <ScalarProperty Name="CantidadAhorrantes" ColumnName="CantidadAhorrantes" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

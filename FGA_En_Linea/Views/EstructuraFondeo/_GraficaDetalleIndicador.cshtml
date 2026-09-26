@@ -1,50 +1,50 @@
 @model FGA.Model.IndicadorHistoricoViewModel
 
-<div class="modal-header" style="background: linear-gradient(135deg, #1b3866 0%, #2F5597 100%); padding: 16px 22px; display: flex; align-items: center; justify-content: space-between; border: none;">
-    <div style="display: flex; align-items: center; gap: 12px;">
+<div class="modal-header" style="background: linear-gradient(135deg, #1b3866 0%, #2F5597 100%); padding: 10px 18px; display: flex; align-items: center; justify-content: space-between; border: none;">
+    <div style="display: flex; align-items: center; gap: 10px;">
         @if (Session["Logo"] != null)
         {
-            <img width="38" height="38" src="@Session["Logo"]" style="border-radius: 8px; background: #ffffff; padding: 2px; box-shadow: 0 2px 6px rgba(0,0,0,0.15); object-fit: contain;" />
+            <img width="30" height="30" src="@Session["Logo"]" style="border-radius: 6px; background: #ffffff; padding: 2px; box-shadow: 0 2px 6px rgba(0,0,0,0.15); object-fit: contain;" />
         }
         <div>
-            <h4 class="modal-title" style="margin: 0; color: #ffffff !important; font-size: 16px; font-weight: 700;">@Model.Nombre</h4>
-            <span style="font-size: 12px; color: #cbd5e1; display: block; margin-top: 2px;">
+            <h4 class="modal-title" style="margin: 0; color: #ffffff !important; font-size: 15px; font-weight: 700;">@Model.Nombre</h4>
+            <span style="font-size: 11.5px; color: #cbd5e1; display: block; margin-top: 1px;">
                 @if (!string.IsNullOrEmpty(Model.Formula))
                 {
                     <span>F&oacute;rmula: <strong>@Model.Formula</strong> &bull; </span>
                 }
-                <span>Per&iacute;odo: @Model.PeriodoI - @Model.PeriodoF</span>
+                <span>Periodo: @Model.PeriodoI - @Model.PeriodoF</span>
             </span>
         </div>
     </div>
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: #ffffff; opacity: 0.85; font-size: 24px; text-shadow: none; margin: 0; padding: 0;">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: #ffffff; opacity: 0.85; font-size: 22px; text-shadow: none; margin: 0; padding: 0;">
         <span aria-hidden="true">&times;</span>
     </button>
 </div>
 
-<div class="modal-body" style="padding: 22px 24px; background: #ffffff;">
+<div class="modal-body" style="padding: 10px 18px 4px 18px; background: #ffffff;">
     <!-- Strip resumen con métricas clave del indicador -->
-    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px 18px;">
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 7px 14px;">
         <div>
-            <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block;">Período Inicial (@Model.PeriodoI)</span>
-            <span style="font-size: 16px; font-weight: 700; color: #1e3a8a;">@(Model.EsPorcentaje ? Model.PrimerValor.ToString("N2") + "%" : Model.PrimerValor.ToString("N2"))</span>
+            <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block; line-height: 1.2;">Periodo Inicial (@Model.PeriodoI)</span>
+            <span style="font-size: 14.5px; font-weight: 700; color: #1e3a8a;">@(Model.EsPorcentaje ? Model.PrimerValor.ToString("N2") + "%" : Model.PrimerValor.ToString("N2"))</span>
         </div>
-        <div style="border-left: 1px solid #cbd5e1; padding-left: 16px;">
-            <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block;">Período Final (@Model.PeriodoF)</span>
-            <span style="font-size: 16px; font-weight: 700; color: #0f172a;">@(Model.EsPorcentaje ? Model.UltimoValor.ToString("N2") + "%" : Model.UltimoValor.ToString("N2"))</span>
+        <div style="border-left: 1px solid #cbd5e1; padding-left: 14px;">
+            <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block; line-height: 1.2;">Periodo Final (@Model.PeriodoF)</span>
+            <span style="font-size: 14.5px; font-weight: 700; color: #0f172a;">@(Model.EsPorcentaje ? Model.UltimoValor.ToString("N2") + "%" : Model.UltimoValor.ToString("N2"))</span>
         </div>
-        <div style="border-left: 1px solid #cbd5e1; padding-left: 16px;">
-            <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block;">Variación</span>
-            <span class="badge" style="@(Model.VariacionPeriodo >= 0 ? "background-color: #dcfce7; color: #15803d;" : "background-color: #fee2e2; color: #b91c1c;") font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 6px;">
+        <div style="border-left: 1px solid #cbd5e1; padding-left: 14px;">
+            <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block; line-height: 1.2;">Variación</span>
+            <span class="badge" style="@(Model.VariacionPeriodo >= 0 ? "background-color: #dcfce7; color: #15803d;" : "background-color: #fee2e2; color: #b91c1c;") font-size: 11.5px; font-weight: 700; padding: 3px 8px; border-radius: 6px;">
                 @(Model.VariacionPeriodo >= 0 ? "+" : "")@(Model.EsPorcentaje ? Model.VariacionPeriodo.ToString("N2") + "%" : Model.VariacionPeriodo.ToString("N2"))
             </span>
         </div>
-        <div style="border-left: 1px solid #cbd5e1; padding-left: 16px;">
-            <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block;">Promedio</span>
-            <span style="font-size: 16px; font-weight: 700; color: #334155;">@(Model.EsPorcentaje ? Model.Promedio.ToString("N2") + "%" : Model.Promedio.ToString("N2"))</span>
+        <div style="border-left: 1px solid #cbd5e1; padding-left: 14px;">
+            <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block; line-height: 1.2;">Promedio</span>
+            <span style="font-size: 14.5px; font-weight: 700; color: #334155;">@(Model.EsPorcentaje ? Model.Promedio.ToString("N2") + "%" : Model.Promedio.ToString("N2"))</span>
         </div>
-        <div style="border-left: 1px solid #cbd5e1; padding-left: 16px;">
-            <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block;">Mín / Máx</span>
+        <div style="border-left: 1px solid #cbd5e1; padding-left: 14px;">
+            <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block; line-height: 1.2;">Mín / Máx</span>
             <span style="font-size: 13px; font-weight: 600; color: #475569;">
                 @(Model.EsPorcentaje ? Model.Minimo.ToString("N2") + "%" : Model.Minimo.ToString("N2")) / @(Model.EsPorcentaje ? Model.Maximo.ToString("N2") + "%" : Model.Maximo.ToString("N2"))
             </span>
@@ -52,7 +52,7 @@
     </div>
 
     <!-- Contenedor del gráfico Highcharts -->
-    <div id="indicadorChartModal_@Model.Orden" style="width: 100%; min-height: 400px;"></div>
+    <div id="indicadorChartModal_@Model.Orden" style="width: 100%; height: 420px; min-height: 380px;"></div>
 
     <script type="text/javascript">
         (function() {
@@ -65,11 +65,12 @@
                 chart: {
                     type: 'areaspline',
                     backgroundColor: '#ffffff',
-                    spacingTop: 20,
+                    spacingTop: 60,
+                    spacingRight: 15,
                     spacingBottom: 20
                 },
                 title: {
-                    text: 'Comportamiento del Indicador en el Período',
+                    text: 'Comportamiento del Indicador en el Periodo',
                     style: { fontSize: '15px', fontWeight: '700', color: '#1e3a8a' }
                 },
                 subtitle: {
@@ -81,18 +82,22 @@
                     enabled: true,
                     buttons: {
                         contextButton: {
+                            align: 'right',
+                            verticalAlign: 'top',
+                            y: -48,
+                            x: -8,
                             text: 'Descargar ▾',
                             theme: {
-                                fill: 'rgba(47, 85, 151, 0.75)',
-                                stroke: 'rgba(32, 72, 128, 0.85)',
+                                fill: '#ffffff',
+                                stroke: '#cbd5e1',
                                 'stroke-width': 1,
-                                r: 8,
-                                padding: 8,
-                                height: 18,
-                                style: { color: '#ffffff', fontWeight: '600', fontSize: '13px', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif', cursor: 'pointer' },
+                                r: 6,
+                                padding: 6,
+                                height: 16,
+                                style: { color: '#475569', fontWeight: '600', fontSize: '12px', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif', cursor: 'pointer' },
                                 states: {
-                                    hover: { fill: '#2F5597', stroke: '#204880', style: { color: '#ffffff' } },
-                                    select: { fill: '#1b3866', stroke: '#0e1f38', style: { color: '#ffffff' } }
+                                    hover: { fill: '#eff6ff', stroke: '#93c5fd', style: { color: '#1e3a8a' } },
+                                    select: { fill: '#e0f2fe' }
                                 }
                             }
                         }
@@ -100,25 +105,26 @@
                 },
                 xAxis: {
                     categories: categorias,
-                    labels: { style: { fontSize: '11px', color: '#475569' } },
+                    labels: { style: { fontSize: '12.5px', fontWeight: '600', color: '#1e293b' } },
                     lineColor: '#cbd5e1',
                     tickColor: '#cbd5e1'
                 },
                 yAxis: {
+                    maxPadding: 0.18,
                     title: {
                         text: esPorcentaje ? 'Porcentaje (%)' : 'Valor',
-                        style: { color: '#475569', fontSize: '12px' }
+                        style: { color: '#1e3a8a', fontSize: '13px', fontWeight: '700' }
                     },
                     labels: {
                         formatter: function() { return this.value + sufijo; },
-                        style: { color: '#475569', fontSize: '11px' }
+                        style: { color: '#334155', fontSize: '12px', fontWeight: '600' }
                     },
                     gridLineWidth: 0
                 },
                 tooltip: {
                     shared: true,
                     useHTML: true,
-                    headerFormat: '<span style="font-size:11px; color:#64748b;">{point.key}</span><br/>',
+                    headerFormat: '<span style="font-size:12.5px; font-weight:700; color:#1e3a8a;">{point.key}</span><br/>',
                     pointFormat: '<span style="color:#2F5597; font-weight:700;">\u25CF @Model.Nombre: </span><b>{point.y:,.2f}' + sufijo + '</b><br/>'
                 },
                 plotOptions: {
@@ -150,7 +156,7 @@
                     dataLabels: {
                         enabled: valores.length <= 15,
                         format: '{y:,.2f}' + sufijo,
-                        style: { fontSize: '10px', color: '#1e3a8a', fontWeight: '600' }
+                        style: { fontSize: '12px', color: '#1e3a8a', fontWeight: '700' }
                     }
                 }]
             });

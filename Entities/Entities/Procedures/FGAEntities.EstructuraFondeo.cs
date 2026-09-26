@@ -3,6 +3,7 @@ namespace Entities.Entities.Procedures
     using System;
     using System.Data.Entity.Core.Objects;
     using System.Data.Entity.Infrastructure;
+    using System.Data.SqlClient;
 
     public partial class FGAEntities
     {
@@ -59,32 +60,21 @@ namespace Entities.Entities.Procedures
 
         public virtual ObjectResult<FGA_Consultar_Indicadores_Fondeo_Result> FGA_Consultar_Indicadores_Fondeo(string iDENTIDAD, Nullable<System.DateTime> pERIODO1, Nullable<System.DateTime> pERIODO2)
         {
-            var iDENTIDADParameter = iDENTIDAD != null ?
-                new ObjectParameter("IDENTIDAD", iDENTIDAD) :
-                new ObjectParameter("IDENTIDAD", typeof(string));
+            var p1 = new SqlParameter("IDENTIDAD", (object)iDENTIDAD ?? DBNull.Value);
+            var p2 = new SqlParameter("PERIODO1", (object)pERIODO1 ?? DBNull.Value);
+            var p3 = new SqlParameter("PERIODO2", (object)pERIODO2 ?? DBNull.Value);
 
-            var pERIODO1Parameter = pERIODO1.HasValue ?
-                new ObjectParameter("PERIODO1", pERIODO1) :
-                new ObjectParameter("PERIODO1", typeof(System.DateTime));
-
-            var pERIODO2Parameter = pERIODO2.HasValue ?
-                new ObjectParameter("PERIODO2", pERIODO2) :
-                new ObjectParameter("PERIODO2", typeof(System.DateTime));
-
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<FGA_Consultar_Indicadores_Fondeo_Result>("FGA_Consultar_Indicadores_Fondeo", iDENTIDADParameter, pERIODO1Parameter, pERIODO2Parameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteStoreQuery<FGA_Consultar_Indicadores_Fondeo_Result>(
+                "EXEC [dbo].[FGA_Consultar_Indicadores_Fondeo] @IDENTIDAD, @PERIODO1, @PERIODO2", p1, p2, p3);
         }
 
         public virtual int FGA_Generar_Estructura_Fondeo(string iDENTIDAD, Nullable<System.DateTime> pERIODO)
         {
-            var iDENTIDADParameter = iDENTIDAD != null ?
-                new ObjectParameter("IDENTIDAD", iDENTIDAD) :
-                new ObjectParameter("IDENTIDAD", typeof(string));
+            var p1 = new SqlParameter("IDENTIDAD", (object)iDENTIDAD ?? DBNull.Value);
+            var p2 = new SqlParameter("PERIODO", (object)pERIODO ?? DBNull.Value);
 
-            var pERIODOParameter = pERIODO.HasValue ?
-                new ObjectParameter("PERIODO", pERIODO) :
-                new ObjectParameter("PERIODO", typeof(System.DateTime));
-
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("FGA_Generar_Estructura_Fondeo", iDENTIDADParameter, pERIODOParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteStoreCommand(
+                "EXEC [dbo].[FGA_Generar_Estructura_Fondeo] @IDENTIDAD, @PERIODO", p1, p2);
         }
     }
 }

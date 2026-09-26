@@ -41,10 +41,10 @@
     @if (Model.MostrarFiltros)
     {
         <!-- BARRA DE FILTROS -->
-        <div class="hub-filter-card">
+        <div class="hub-filter-card" style="position: relative; z-index: 1050; overflow: visible !important;">
             <div class="hub-filter-row">
                 <!-- Entidad -->
-                <div class="hub-filter-item" style="flex: 1 1 300px; max-width: 420px;">
+                <div class="hub-filter-item" style="flex: 1 1 300px; max-width: 420px; position: relative; z-index: 1;">
                     <label for="hubEntidad">
                         <i class="fa fa-university" style="color: #64748b;"></i> Entidad:
                     </label>
@@ -52,7 +52,7 @@
                 </div>
 
                 <!-- Tipo de Comparación -->
-                <div class="hub-filter-item" style="min-width: 170px;">
+                <div class="hub-filter-item" style="min-width: 170px; position: relative; z-index: 1;">
                     <div style="display: flex; align-items: center; justify-content: space-between; gap: 4px;">
                         <label for="hubTipoComparacion" style="margin: 0; cursor: pointer;">
                             Tipo de comparaci&oacute;n:
@@ -85,7 +85,7 @@
                 </div>
 
                 <!-- Período de referencia -->
-                <div class="hub-filter-item" style="min-width: 160px;">
+                <div class="hub-filter-item" style="min-width: 160px; position: relative; z-index: 1;">
                     <div style="display: flex; align-items: center; justify-content: space-between; gap: 4px;">
                         <label for="hubPeriodo" style="margin: 0; cursor: pointer;">
                             Per&iacute;odo de referencia:
@@ -111,7 +111,7 @@
     }
 
     <!-- SECCIÓN DE CONSULTAS DISPONIBLES EN CONTENEDOR BOX -->
-    <div class="hub-section-card">
+    <div class="hub-section-card" style="position: relative; z-index: 1;">
         <div class="hub-section-title">
             <div class="hub-section-bar"></div>
             <span class="hub-section-text">Seleccione la consulta que desea visualizar</span>
@@ -227,17 +227,50 @@
             }
         }
 
-        // Manejador interactivo para tooltips informativos (soporte click / hover / tap)
+        // Manejador interactivo para tooltips informativos (soporte hover / click / tap)
+        $('.hub-info-tooltip').on('mouseenter', function () {
+            var $this = $(this);
+            $this.closest('.hub-filter-item').css('z-index', 2500);
+            $this.closest('.hub-filter-card').css('z-index', 2000);
+        }).on('mouseleave', function () {
+            var $this = $(this);
+            if (!$this.hasClass('active')) {
+                $this.closest('.hub-filter-item').css('z-index', '');
+                if ($('.hub-info-tooltip.active').length === 0) {
+                    $this.closest('.hub-filter-card').css('z-index', '');
+                }
+            }
+        });
+
         $('.hub-info-tooltip').on('click', function (e) {
             e.preventDefault();
             e.stopPropagation();
             var $this = $(this);
-            $('.hub-info-tooltip').not($this).removeClass('active');
-            $this.toggleClass('active');
+            var wasActive = $this.hasClass('active');
+            $('.hub-info-tooltip').removeClass('active');
+            $('.hub-filter-item').css('z-index', '');
+            $('.hub-filter-card').css('z-index', '');
+
+            if (!wasActive) {
+                $this.addClass('active');
+                $this.closest('.hub-filter-item').css('z-index', 2500);
+                $this.closest('.hub-filter-card').css('z-index', 2000);
+                
+                // Ajuste inteligente si se sale de la pantalla por la izquierda en pantallas angostas
+                var $content = $this.find('.hub-tooltip-content');
+                if ($content.length) {
+                    var rect = $content[0].getBoundingClientRect();
+                    if (rect.left < 15) {
+                        $content.css({ 'right': 'auto', 'left': '0' });
+                    }
+                }
+            }
         });
 
         $(document).on('click', function () {
             $('.hub-info-tooltip').removeClass('active');
+            $('.hub-filter-item').css('z-index', '');
+            $('.hub-filter-card').css('z-index', '');
         });
 
         $('.hub-info-tooltip .hub-tooltip-content').on('click', function (e) {

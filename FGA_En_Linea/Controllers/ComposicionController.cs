@@ -50,7 +50,7 @@ namespace FGA.Controllers
             Highcharts gp = null;
             Highcharts pGp = null;
 
-            HighChart.ConfigChart(ref gp, "Graph", null, 720);
+            HighChart.ConfigChart(ref gp, "Graph", null, 420, 60);
             HighChart.ConfigChart(ref pGp, "pGraph", null);
 
             Session["IdEntidad"] = Entidades;

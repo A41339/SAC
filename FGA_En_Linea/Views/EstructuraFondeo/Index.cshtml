@@ -7,46 +7,6 @@
 @section ScriptsOrCss
 {
     <style>
-        .nav-tabs-custom > .nav-tabs {
-            border-bottom: 2px solid #e2e8f0 !important;
-            margin-bottom: 20px;
-        }
-
-        .nav-tabs-custom > .nav-tabs > li {
-            border-top: 3px solid transparent;
-            margin-bottom: -2px;
-            margin-right: 4px;
-        }
-
-        .nav-tabs-custom > .nav-tabs > li.active {
-            border-top: 3px solid #2F5597 !important;
-        }
-
-        .nav-tabs-custom > .nav-tabs > li > a {
-            font-size: 13px;
-            font-weight: 700;
-            color: #64748b;
-            border-radius: 8px 8px 0 0;
-            padding: 10px 18px;
-            border: 1px solid transparent;
-            border-bottom: none;
-            transition: all 0.2s ease;
-        }
-
-        .nav-tabs-custom > .nav-tabs > li > a:hover {
-            color: #1e3a8a;
-            background: #f8fafc;
-            border-color: transparent;
-        }
-
-        .nav-tabs-custom > .nav-tabs > li.active > a,
-        .nav-tabs-custom > .nav-tabs > li.active > a:hover,
-        .nav-tabs-custom > .nav-tabs > li.active > a:focus {
-            color: #143750 !important;
-            background-color: #ffffff !important;
-            border-color: #e2e8f0 #e2e8f0 transparent !important;
-            font-weight: 700 !important;
-        }
 
         .badge-pill-positive {
             background-color: #dcfce7 !important;
@@ -153,74 +113,414 @@
         #graphModalIndicador .highcharts-tooltip * {
             pointer-events: none !important;
         }
+
+        /* Barra interactiva de selección de tipo de gráfico (Segmented Control Ejecutivo Compacto) */
+        .graficos-switcher-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 4px 6px;
+            margin-bottom: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+            transition: all 0.25s ease;
+        }
+
+        .graficos-switcher-header {
+            display: none !important;
+        }
+
+        .segmented-control-container {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+            background: #f8fafc;
+            padding: 3px;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .btn-tipo-grafico {
+            flex: 1 1 auto;
+            min-width: 140px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 4px 10px;
+            height: 30px;
+            border-radius: 6px;
+            font-size: 11.5px;
+            font-weight: 600;
+            color: #475569;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            outline: none !important;
+            user-select: none;
+            text-decoration: none !important;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .btn-tipo-grafico:hover {
+            background: #f1f5f9;
+            color: #1e3a8a;
+            border-color: #cbd5e1;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .btn-tipo-grafico.active {
+            background: #2F5597 !important;
+            color: #ffffff !important;
+            border-color: #2F5597 !important;
+            font-weight: 700 !important;
+            box-shadow: 0 2px 5px rgba(47, 85, 151, 0.25) !important;
+        }
+
+        .btn-tipo-grafico.active i {
+            color: #bfdbfe !important;
+        }
+
+        /* Botón de Análisis Técnico en Toolbar */
+        .btn-analisis-tecnico {
+            height: 28px;
+            padding: 0 11px;
+            background: #ffffff;
+            color: #1e3a8a;
+            border: 1px solid #cbd5e1;
+            font-size: 11.5px;
+            font-weight: 600;
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            outline: none !important;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+        }
+        .btn-analisis-tecnico:hover {
+            background: #eff6ff;
+            border-color: #93c5fd;
+            color: #1d4ed8;
+            box-shadow: 0 2px 6px rgba(30, 58, 138, 0.12);
+        }
+        .btn-analisis-tecnico:active {
+            transform: scale(0.98);
+        }
+
+        /* Backdrop del Drawer */
+        .drawer-analisis-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(15, 23, 42, 0.45);
+            backdrop-filter: blur(2px);
+            z-index: 1050;
+            opacity: 0;
+            transition: opacity 0.25s ease-in-out;
+        }
+        .drawer-analisis-backdrop.show {
+            opacity: 1;
+        }
+
+        /* Slide-Over Drawer de Análisis Técnico */
+        .drawer-analisis-tecnico {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 480px;
+            max-width: 92vw;
+            height: 100vh;
+            background: #ffffff;
+            z-index: 1060;
+            box-shadow: -10px 0 35px rgba(15, 23, 42, 0.18);
+            display: flex;
+            flex-direction: column;
+            transform: translateX(100%);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .drawer-analisis-tecnico.open {
+            transform: translateX(0);
+        }
+
+        /* Header del Drawer */
+        .drawer-header {
+            padding: 18px 20px;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .drawer-header-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: rgba(245, 158, 11, 0.15);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #f59e0b;
+            font-size: 16px;
+        }
+        .drawer-title {
+            margin: 0;
+            font-size: 15px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: -0.2px;
+        }
+        .drawer-subtitle {
+            margin: 2px 0 0 0;
+            font-size: 12px;
+            color: #94a3b8;
+        }
+        .drawer-close-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: #cbd5e1;
+            width: 30px;
+            height: 30px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .drawer-close-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+        }
+
+        /* Cuerpo del Drawer con scroll */
+        .drawer-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: #f8fafc;
+        }
+
+        /* Tarjetas dentro del Drawer */
+        .drawer-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+            margin-bottom: 14px;
+        }
+        .drawer-semaforo-card {
+            padding: 16px;
+            border-left: 4px solid #10b981;
+        }
+        .drawer-semaforo-card.estado-monitoreo {
+            border-left-color: #f59e0b;
+        }
+        .drawer-semaforo-card.estado-atencion {
+            border-left-color: #ef4444;
+        }
+
+        /* Badges de semáforo */
+        .badge-semaforo {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+            letter-spacing: 0.3px;
+        }
+        .badge-adecuado {
+            background: #dcfce7;
+            color: #15803d;
+            border: 1px solid #bbf7d0;
+        }
+        .badge-monitoreo {
+            background: #fef3c7;
+            color: #b45309;
+            border: 1px solid #fde68a;
+        }
+        .badge-atencion {
+            background: #fee2e2;
+            color: #b91c1c;
+            border: 1px solid #fca5a5;
+        }
+
+        /* Grid de métricas técnicas */
+        .drawer-metricas-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        .drawer-metrica-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            transition: all 0.2s ease;
+        }
+        .drawer-metrica-card:hover {
+            border-color: #cbd5e1;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        }
+        .drawer-metrica-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .drawer-metrica-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+        }
+        .drawer-metrica-icon {
+            font-size: 13px;
+            color: #0284c7;
+        }
+        .drawer-metrica-val {
+            font-size: 17px;
+            font-weight: 800;
+            color: #0f172a;
+            letter-spacing: -0.3px;
+        }
+        .drawer-metrica-sub {
+            font-size: 11px;
+            color: #94a3b8;
+            margin-top: 2px;
+        }
+
+        /* Listas de insights y recomendaciones */
+        .drawer-insights-list li {
+            position: relative;
+            padding-left: 24px;
+            margin-bottom: 12px;
+            font-size: 13px;
+            color: #334155;
+            line-height: 1.5;
+        }
+        .drawer-insights-list li:last-child {
+            margin-bottom: 0;
+        }
+        .drawer-insights-list li i.bullet-icon {
+            position: absolute;
+            left: 0;
+            top: 2px;
+            font-size: 13px;
+        }
+        .drawer-recomendaciones-card {
+            background: #fffbeb;
+            border: 1px solid #fef3c7;
+        }
+        .drawer-recomendaciones-card .drawer-insights-list li {
+            color: #78350f;
+        }
+
+        /* Footer del Drawer */
+        .drawer-footer {
+            padding: 14px 20px;
+            background: #ffffff;
+            border-top: 1px solid #e2e8f0;
+        }
+        .btn-copiar-diagnostico {
+            width: 100%;
+            height: 38px;
+            background: #1e3a8a;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .btn-copiar-diagnostico:hover {
+            background: #1d4ed8;
+            box-shadow: 0 2px 8px rgba(30, 58, 138, 0.25);
+        }
     </style>
 }
 
-<section class="content-header" style="padding: 24px 20px 14px 20px;">
-    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+<section class="content-header" style="padding: 10px 20px 6px 20px;">
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
         <div>
-            <h1 style="margin: 0; font-size: 22px; font-weight: 700; color: #143750; display: flex; align-items: center; gap: 10px;">
+            <h1 style="margin: 0; font-size: 18px; font-weight: 700; color: #143750; display: flex; align-items: center; gap: 8px;">
                 <i class="fa fa-database" style="color: #ea580c;"></i>
                 Estructura de Fondeo
             </h1>
-            <p style="margin: 6px 0 0 0; font-size: 13px; color: #64748b;">
+            <p style="margin: 2px 0 0 0; font-size: 12px; color: #64748b;">
                 Consulta y análisis de la estructura de fondeo de la entidad.
             </p>
         </div>
     </div>
-    <ol class="breadcrumb">
+    <ol class="breadcrumb" style="top: 8px;">
         <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
         <li><a href="@Url.Action("Index", "Modulo", new { modulo = "Estructura Financiera" })" class="breadcrumb-parent-pill" title="Volver al menú de Estructura Financiera"><i class="fa fa-file-text-o" style="margin-right: 4px;"></i> Estructura Financiera</a></li>
         <li class="active">Estructura de Fondeo</li>
     </ol>
 </section>
 
-<section class="content" style="padding: 0 20px 24px 20px;">
+<section class="content" style="padding: 0 20px 14px 20px;">
     <!-- Selector General: Entidad, Tipo de Gráfico y Períodos al mismo nivel -->
     <div class="row">
         <div class="col-xs-12">
-            <div class="modern-filter-card" style="margin-bottom: 16px; padding: 14px 20px; background: #ffffff; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); border: 1px solid #e2e8f0;">
-                <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;">
-                    <div style="display: flex; align-items: center; gap: 18px; flex-wrap: wrap;">
+            <div class="modern-filter-card" style="margin-bottom: 8px; padding: 7px 14px; background: #ffffff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;">
+                <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+                    <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
                         <!-- Entidad -->
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <label for="ddlEntidad" style="margin: 0; font-size: 13px; font-weight: 700; color: #1e3a8a; display: flex; align-items: center; gap: 6px; white-space: nowrap;">
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <label for="ddlEntidad" style="margin: 0; font-size: 12px; font-weight: 700; color: #1e3a8a; display: flex; align-items: center; gap: 5px; white-space: nowrap;">
                                 <i class="fa fa-university" style="color: #2F5597;"></i> Entidad:
                             </label>
-                            <div style="min-width: 250px;">
-                                @Html.DropDownList("Entidades", null, new { @id = "ddlEntidad", @class = "form-control modern-select", style = "width: 100%; height: 38px; font-size: 13px; font-weight: 500; border-radius: 6px; border: 1px solid #cbd5e1;" })
+                            <div style="min-width: 230px;">
+                                @Html.DropDownList("Entidades", null, new { @id = "ddlEntidad", @class = "form-control modern-select", style = "width: 100%; height: 32px; font-size: 12.5px; font-weight: 500; border-radius: 6px; border: 1px solid #cbd5e1; padding: 4px 8px;" })
                             </div>
                         </div>
 
-                        <!-- Período inicial y final (se mantienen siempre en ambos tabs) -->
-                        <div id="secPeriodos" style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
-                            <div style="display: flex; align-items: center; gap: 8px;">
-                                <label for="Periodo1" style="margin: 0; font-size: 13px; font-weight: 600; color: #475569; white-space: nowrap;">
-                                    <i class="fa fa-calendar" style="color: #2F5597; margin-right: 4px;"></i> Per&iacute;odo inicial:
+                        <!-- Periodo inicial y final (se mantienen siempre en ambos tabs) -->
+                        <div id="secPeriodos" style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                            <div style="display: flex; align-items: center; gap: 6px;">
+                                <label for="Periodo1" style="margin: 0; font-size: 12px; font-weight: 600; color: #475569; white-space: nowrap;">
+                                    <i class="fa fa-calendar" style="color: #2F5597; margin-right: 3px;"></i> Inicio:
                                 </label>
                                 <div class="modern-input-wrapper">
-                                    <input name="Periodo1" id="Periodo1" class="datecontrol form-control modern-date-input" value="@Model.Periodo1" style="min-width: 120px; height: 38px; font-size: 13px;" />
+                                    <input name="Periodo1" id="Periodo1" class="datecontrol form-control modern-date-input" value="@Model.Periodo1" style="min-width: 110px; height: 32px; font-size: 12.5px; padding: 4px 8px;" />
                                 </div>
                             </div>
 
-                            <div style="display: flex; align-items: center; gap: 8px;">
-                                <label for="Periodo2" style="margin: 0; font-size: 13px; font-weight: 600; color: #475569; white-space: nowrap;">
-                                    <i class="fa fa-calendar-check-o" style="color: #2F5597; margin-right: 4px;"></i> Per&iacute;odo final:
+                            <div style="display: flex; align-items: center; gap: 6px;">
+                                <label for="Periodo2" style="margin: 0; font-size: 12px; font-weight: 600; color: #475569; white-space: nowrap;">
+                                    <i class="fa fa-calendar-check-o" style="color: #2F5597; margin-right: 3px;"></i> Fin:
                                 </label>
                                 <div class="modern-input-wrapper">
-                                    <input name="Periodo2" id="Periodo2" class="datecontrol form-control modern-date-input" value="@Model.Periodo2" style="min-width: 120px; height: 38px; font-size: 13px;" />
+                                    <input name="Periodo2" id="Periodo2" class="datecontrol form-control modern-date-input" value="@Model.Periodo2" style="min-width: 110px; height: 32px; font-size: 12.5px; padding: 4px 8px;" />
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Botones de Acción -->
-                    <div id="secBotonesToolbar" style="display: flex; align-items: center; gap: 10px;">
-                        <button type="button" id="btnGenerarIndicadores" class="btn-modern-filter" style="background: linear-gradient(135deg, #3d6cb9 0%, #2F5597 50%, #204880 100%) !important; color: #ffffff !important; border: 1px solid #204880 !important; box-shadow: 0 4px 14px rgba(47, 85, 151, 0.35) !important;">
+                    <div id="secBotonesToolbar" style="display: flex; align-items: center; gap: 8px;">
+                        <button type="button" id="btnGenerarIndicadores" class="btn-modern-filter" style="height: 32px; padding: 0 15px; font-size: 12px; background: linear-gradient(135deg, #3d6cb9 0%, #2F5597 50%, #204880 100%) !important; color: #ffffff !important; border: 1px solid #204880 !important; box-shadow: 0 2px 6px rgba(47, 85, 151, 0.25) !important;">
                             <i class="fa fa-search"></i> Generar
                         </button>
                         <div id="secExportarIndicadores">
-                            <button type="button" id="btnExportarIndicadores" class="btn-modern-filter" style="height: 38px; padding: 0 18px; background: #ffffff; color: #15803d; border: 1px solid #bbf7d0; font-weight: 600; font-size: 13px; border-radius: 8px; display: flex; align-items: center; gap: 7px; cursor: pointer;">
+                            <button type="button" id="btnExportarIndicadores" class="btn-modern-filter" style="height: 32px; padding: 0 12px; background: #ffffff; color: #15803d; border: 1px solid #bbf7d0; font-weight: 600; font-size: 12px; border-radius: 6px; display: flex; align-items: center; gap: 6px; cursor: pointer;">
                                 <i class="fa fa-file-excel-o" style="color: #16a34a;"></i> Exportar Excel
                             </button>
                         </div>
@@ -233,17 +533,17 @@
     <!-- Pestañas de Navegación -->
     <div class="row">
         <div class="col-xs-12">
-            <div class="modern-table-card" style="border: 1px solid #e2e8f0; border-radius: 12px; background: #ffffff; box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05); overflow: hidden; padding: 22px; margin-bottom: 24px;">
+            <div class="modern-table-card" style="border: 1px solid #e2e8f0; border-radius: 10px; background: #ffffff; box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04); overflow: hidden; padding: 8px 12px; margin-bottom: 8px;">
                 <div class="nav-tabs-custom" style="box-shadow: none; margin-bottom: 0;">
-                    <ul class="nav nav-tabs" id="fondeoTabs" style="border-bottom: 2px solid #e2e8f0; margin-bottom: 20px;">
+                    <ul class="nav nav-tabs" id="fondeoTabs" style="border-bottom: 1px solid #e2e8f0; margin-bottom: 8px;">
                         <li class="active">
-                            <a href="#tab-indicadores" data-toggle="tab" style="font-weight: 700; font-size: 13px; color: #143750; border-radius: 8px 8px 0 0; padding: 10px 18px;">
-                                <i class="fa fa-th-large" style="color: #0284c7; margin-right: 6px;"></i> Indicadores
+                            <a href="#tab-indicadores" data-toggle="tab" style="font-weight: 700; font-size: 12.5px; color: #143750; border-radius: 6px 6px 0 0; padding: 6px 14px;">
+                                <i class="fa fa-pie-chart" style="color: #0284c7; margin-right: 5px;"></i> Indicadores
                             </a>
                         </li>
                         <li>
-                            <a href="#tab-graficos" data-toggle="tab" style="font-weight: 700; font-size: 13px; color: #143750; border-radius: 8px 8px 0 0; padding: 10px 18px;">
-                                <i class="fa fa-line-chart" style="color: #059669; margin-right: 6px;"></i> Gr&aacute;ficos
+                            <a href="#tab-graficos" data-toggle="tab" style="font-weight: 700; font-size: 12.5px; color: #143750; border-radius: 6px 6px 0 0; padding: 6px 14px;">
+                                <i class="fa fa-line-chart" style="color: #059669; margin-right: 5px;"></i> Gr&aacute;ficos
                             </a>
                         </li>
                     </ul>
@@ -272,7 +572,7 @@
                     i
                 </div>
                 <div style="font-size: 13px; color: #1e3a8a;">
-                    <strong>Nota:</strong> Toda la información se presenta en millones de colones y corresponde al período de referencia seleccionado.
+                    <strong>Nota:</strong> Toda la información se presenta en millones de colones y corresponde al periodo de referencia seleccionado.
                 </div>
             </div>
         </div>
@@ -310,7 +610,7 @@
 
 <!-- Modal Grafico Detalle Indicador (Evolución histórica idéntica a Indicadores FGA) -->
 <div class="modal fade" id="graphModalIndicador" tabindex="-1" role="dialog" aria-labelledby="graphModalIndicadorLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-chart-xl" style="max-width: 1200px; width: 92%; margin: 25px auto;">
+    <div class="modal-dialog modal-xl modal-dialog-chart-xl" style="max-width: 1440px; width: 96%; margin: 12px auto;">
         <div class="modal-content" style="border-radius: 14px; overflow: hidden; border: none; box-shadow: 0 16px 40px rgba(0,0,0,0.25);">
             <div id="graficaIndicadorContainer"></div>
         </div>
@@ -325,8 +625,31 @@
         var currentModalChart = null;
         var currentGraficoData = null;
         var currentTablaData = null;
+        var currentDiagnosticoData = null;
 
         $(document).ready(function () {
+
+            // Eventos del Drawer de Análisis Técnico
+            $(document).on('click', '#btnToggleAnalisisTecnico', function (e) {
+                e.preventDefault();
+                abrirDrawerAnalisis();
+            });
+
+            $(document).on('click', '#btnCerrarDrawerAnalisis, #drawerAnalisisBackdrop', function (e) {
+                e.preventDefault();
+                cerrarDrawerAnalisis();
+            });
+
+            $(document).on('click', '#btnCopiarDiagnostico', function (e) {
+                e.preventDefault();
+                copiarDiagnosticoPortapapeles();
+            });
+
+            $(document).on('keydown', function (e) {
+                if (e.key === 'Escape' && $('#drawerAnalisisTecnico').hasClass('open')) {
+                    cerrarDrawerAnalisis();
+                }
+            });
 
             // Inicialización de DataTable en tabla de Indicadores con diseño e iconografía idénticos a FGA
             dtIndicadores = $("#tblIndicadores").DataTable({
@@ -376,10 +699,17 @@
                 }
             });
 
-            // Cambio de entidad actualiza ambos tabs
+            // Cambio de entidad actualiza logo y datos del tab activo
             $('#ddlEntidad').on('change', function () {
-                cargarIndicadores();
-                cargarGrafico();
+                var nomEnt = ($('#ddlEntidad option:selected').text() || '').trim();
+                actualizarLogoYEntidadUI(null, nomEnt);
+                var activeTab = $('#fondeoTabs li.active a').attr('href');
+                if (activeTab === '#tab-graficos') {
+                    cargarGrafico();
+                } else {
+                    cargarIndicadores();
+                    currentChart = null; // para que recargue limpio al pasar al tab de gráficos
+                }
             });
 
             // Exportar Indicadores a Excel
@@ -391,16 +721,6 @@
                     '?entidad=' + encodeURIComponent(ent) +
                     '&periodo1=' + encodeURIComponent(p1) +
                     '&periodo2=' + encodeURIComponent(p2);
-            });
-
-            // Botón GENERAR del Tab Gráficos
-            $('#btnGenerarGrafico').on('click', function () {
-                cargarGrafico();
-            });
-
-            // Cambio en dropdown de Tipo de Gráfico
-            $('#ddlTipoGrafico').on('change', function () {
-                cargarGrafico();
             });
 
             // Ver tabla modal
@@ -417,6 +737,8 @@
                         currentModalChart.reflow();
                     }
                 }
+            }).on('hidden.bs.modal', function () {
+                currentModalChart = null;
             });
 
             // Reflow automático al abrir modal de indicador
@@ -443,13 +765,16 @@
                     '&periodoF=' + encodeURIComponent(pFin);
             });
 
-            // Cargar gráfico inicial
-            cargarGrafico();
+            // Cargar gráfico inicial solo si la pestaña activa es Gráficos
+            if ($('#fondeoTabs li.active a').attr('href') === '#tab-graficos') {
+                cargarGrafico();
+            }
 
             // Redibujar gráfico y ajustar columnas de DataTables al cambiar de tab
             $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
                 if ($(e.target).attr('href') === '#tab-graficos') {
                     $('#secExportarIndicadores').hide();
+                    actualizarEstadoPillsTipoGrafico($('#ddlTipoGrafico').val());
                     if (currentChart) {
                         currentChart.reflow();
                     } else {
@@ -465,7 +790,18 @@
 
             // Recargar gráfico automáticamente al cambiar la opción dentro del tab
             $(document).on('change', '#ddlTipoGrafico', function () {
+                var tipo = $(this).val();
+                actualizarEstadoPillsTipoGrafico(tipo);
                 cargarGrafico();
+            });
+
+            // Clic directo en botones interactivos de tipo de gráfico (Pills)
+            $(document).on('click', '.btn-tipo-grafico', function (e) {
+                e.preventDefault();
+                var tipo = $(this).data('tipo');
+                if ($('#ddlTipoGrafico').val() != tipo) {
+                    $('#ddlTipoGrafico').val(tipo).trigger('change');
+                }
             });
 
             // Ajuste automático al redimensionar ventana
@@ -525,6 +861,23 @@
             });
         }
 
+        function actualizarLogoYEntidadUI(rutaLogo, nombreEntidad) {
+            var nom = nombreEntidad || ($('#ddlEntidad option:selected').text() || '').trim();
+            if (nom) {
+                $('#pEntidad').text(nom);
+                $('#lblEntidadIndicadores').text(nom);
+            }
+
+            if (rutaLogo) {
+                $('.img-logo-entidad, #imgLogoEntidad, #imgLogoEntidadModal, #imgLogoIndicadores').attr('src', rutaLogo);
+            } else if (nom) {
+                var rootUrl = '@Url.Content("~").TrimEnd('/')';
+                var cleanNom = nom.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+                var logoUrl = rootUrl + '/Content/images/' + cleanNom + '.jpg';
+                $('.img-logo-entidad, #imgLogoEntidad, #imgLogoEntidadModal, #imgLogoIndicadores').attr('src', logoUrl);
+            }
+        }
+
         function cargarIndicadores() {
             var ent = $('#ddlEntidad').val();
             var p1 = $('#Periodo1').val();
@@ -540,6 +893,7 @@
                 success: function (res) {
                     $btn.prop('disabled', false).html('<i class="fa fa-search"></i> Generar');
                     if (res && res.success) {
+                        actualizarLogoYEntidadUI(res.rutaLogo, res.nombreEntidad);
                         $('#thPeriodo1').text(res.periodo1Header);
                         $('#thPeriodo2').text(res.periodo2Header);
 
@@ -547,12 +901,12 @@
                             dtIndicadores.clear();
                             $.each(res.indicadores, function (idx, item) {
                                 var badgeStyle = item.EsPositiva ? 'background-color: #dcfce7; color: #15803d;' : 'background-color: #fee2e2; color: #b91c1c;';
-                                var formulaHtml = item.Formula ? '<span style="display: block; font-size: 11px; font-weight: 400; color: #64748b; margin-top: 2px;"><i class="fa fa-calculator" style="margin-right: 3px; color: #94a3b8;"></i> ' + item.Formula + '</span>' : '';
-                                var colCuenta = '<span style="font-weight: 400; color: #334155; font-size: 13px;">' + item.Nombre + '</span>' + formulaHtml;
-                                var colP1 = '<span style="font-weight: 400; color: #334155; font-size: 13px;">' + item.ValorP1Str + '</span>';
-                                var colP2 = '<span style="font-weight: 400; color: #334155; font-size: 13px;">' + item.ValorP2Str + '</span>';
-                                var colBadge = '<span class="badge" style="' + badgeStyle + ' font-size: 11px; font-weight: 600; padding: 4px 8px; border-radius: 6px; display: inline-block; min-width: 75px; text-align: center;">' + item.VariacionStr + '</span>';
-                                var colBtn = '<a style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid #6B9FD4;border-radius:6px;color:#2F5597;text-decoration:none;" data-toggle="tooltip" data-placement="top" title="Diagramar comportamiento" href="javascript:getGraphIndicador(' + item.Orden + ')"><i class="fa fa-line-chart"></i></a>';
+                                var formulaHtml = item.Formula ? '<span style="display: block; font-size: 12px; font-weight: 400; color: #64748b; margin-top: 3px;"><i class="fa fa-calculator" style="margin-right: 4px; color: #94a3b8;"></i> ' + item.Formula + '</span>' : '';
+                                var colCuenta = '<span style="font-weight: 500; color: #1e293b; font-size: 13.5px;">' + item.Nombre + '</span>' + formulaHtml;
+                                var colP1 = '<span style="font-weight: 500; color: #1e293b; font-size: 13.5px;">' + item.ValorP1Str + '</span>';
+                                var colP2 = '<span style="font-weight: 500; color: #1e293b; font-size: 13.5px;">' + item.ValorP2Str + '</span>';
+                                var colBadge = '<span class="badge" style="' + badgeStyle + ' font-size: 12px; font-weight: 700; padding: 5px 9px; border-radius: 6px; display: inline-block; min-width: 80px; text-align: center;">' + item.VariacionStr + '</span>';
+                                var colBtn = '<a style="display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border:1px solid #6B9FD4;border-radius:6px;color:#2F5597;text-decoration:none;" data-toggle="tooltip" data-placement="top" title="Diagramar comportamiento" href="javascript:getGraphIndicador(' + item.Orden + ')"><i class="fa fa-line-chart"></i></a>';
 
                                 dtIndicadores.row.add([
                                     colCuenta,
@@ -631,12 +985,12 @@
             var selectorHtml = '';
             if (d.Series.length > 1) {
                 selectorHtml =
-                    '<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; flex-wrap: wrap; gap: 8px;">' +
-                    '    <div style="font-size: 13px; font-weight: 700; color: #1e3a8a; display: flex; align-items: center; gap: 6px;">' +
+                    '<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">' +
+                    '    <div style="font-size: 12.5px; font-weight: 700; color: #1e3a8a; display: flex; align-items: center; gap: 6px;">' +
                     '        <i class="fa fa-sliders" style="color: #2F5597;"></i> Indicadores de la serie:' +
                     '    </div>' +
                     '    <div>' +
-                    '        <select id="fondeoModalSeriesSelector" class="form-control" style="height: 32px; font-size: 12.5px; font-weight: 600; padding: 2px 10px; border-radius: 6px; border: 1px solid #cbd5e1; color: #1e3a8a; background: #ffffff; min-width: 260px;">';
+                    '        <select id="fondeoModalSeriesSelector" class="form-control" style="height: 28px; font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 6px; border: 1px solid #cbd5e1; color: #1e3a8a; background: #ffffff; min-width: 240px;">';
 
                 for (var idx = 0; idx < d.Series.length; idx++) {
                     var ser = d.Series[idx];
@@ -651,27 +1005,27 @@
             }
 
             var html = selectorHtml +
-                '<div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px 18px;">' +
+                '<div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 7px 14px;">' +
                 '    <div>' +
-                '        <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block;">Período Inicial (' + p1Label + ')</span>' +
-                '        <span style="font-size: 16px; font-weight: 700; color: #1e3a8a;">' + prefix + formatNum(v1) + suffix + '</span>' +
+                '        <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block; line-height: 1.2;">Periodo Inicial (' + p1Label + ')</span>' +
+                '        <span style="font-size: 14.5px; font-weight: 700; color: #1e3a8a;">' + prefix + formatNum(v1) + suffix + '</span>' +
                 '    </div>' +
-                '    <div style="border-left: 1px solid #cbd5e1; padding-left: 16px;">' +
-                '        <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block;">Período Final (' + p2Label + ')</span>' +
-                '        <span style="font-size: 16px; font-weight: 700; color: #0f172a;">' + prefix + formatNum(v2) + suffix + '</span>' +
+                '    <div style="border-left: 1px solid #cbd5e1; padding-left: 14px;">' +
+                '        <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block; line-height: 1.2;">Periodo Final (' + p2Label + ')</span>' +
+                '        <span style="font-size: 14.5px; font-weight: 700; color: #0f172a;">' + prefix + formatNum(v2) + suffix + '</span>' +
                 '    </div>' +
-                '    <div style="border-left: 1px solid #cbd5e1; padding-left: 16px;">' +
-                '        <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block;">Variación</span>' +
-                '        <span class="badge" style="' + badgeBg + ' font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 6px;">' +
+                '    <div style="border-left: 1px solid #cbd5e1; padding-left: 14px;">' +
+                '        <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block; line-height: 1.2;">Variación</span>' +
+                '        <span class="badge" style="' + badgeBg + ' font-size: 11.5px; font-weight: 700; padding: 3px 8px; border-radius: 6px;">' +
                 '            ' + diffFormatted +
                 '        </span>' +
                 '    </div>' +
-                '    <div style="border-left: 1px solid #cbd5e1; padding-left: 16px;">' +
-                '        <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block;">Promedio</span>' +
-                '        <span style="font-size: 16px; font-weight: 700; color: #334155;">' + prefix + formatNum(avg) + suffix + '</span>' +
+                '    <div style="border-left: 1px solid #cbd5e1; padding-left: 14px;">' +
+                '        <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block; line-height: 1.2;">Promedio</span>' +
+                '        <span style="font-size: 14.5px; font-weight: 700; color: #334155;">' + prefix + formatNum(avg) + suffix + '</span>' +
                 '    </div>' +
-                '    <div style="border-left: 1px solid #cbd5e1; padding-left: 16px;">' +
-                '        <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block;">Mín / Máx</span>' +
+                '    <div style="border-left: 1px solid #cbd5e1; padding-left: 14px;">' +
+                '        <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block; line-height: 1.2;">Mín / Máx</span>' +
                 '        <span style="font-size: 13px; font-weight: 600; color: #475569;">' +
                 '            ' + prefix + formatNum(minVal) + suffix + ' / ' + prefix + formatNum(maxVal) + suffix +
                 '        </span>' +
@@ -686,27 +1040,50 @@
             });
         }
 
+        function actualizarEstadoPillsTipoGrafico(tipo) {
+            tipo = tipo || $('#ddlTipoGrafico').val() || 1;
+            $('.btn-tipo-grafico').removeClass('active');
+            var $activeBtn = $('.btn-tipo-grafico[data-tipo="' + tipo + '"]');
+            $activeBtn.addClass('active');
+            $('#chartNumberBadge').html('<i class="fa fa-check-circle"></i> Gráfico ' + tipo + ' de 6');
+            var activeText = $activeBtn.find('span').text() || ('Gráfico ' + tipo);
+            $('#switcherActiveIndicator').html('<i class="fa fa-eye"></i> ' + activeText);
+        }
+
+        var xhrGraficoActual = null;
+
         function cargarGrafico() {
+            if (xhrGraficoActual && xhrGraficoActual.readyState !== 4) {
+                xhrGraficoActual.abort();
+            }
+
             var ent = $('#ddlEntidad').val();
-            var tipo = $('#ddlTipoGrafico').val();
+            var tipo = $('#ddlTipoGrafico').val() || 1;
             var pIni = $('#Periodo1').val();
             var pFin = $('#Periodo2').val();
+
+            actualizarEstadoPillsTipoGrafico(tipo);
 
             var $btn = $('#btnGenerarIndicadores');
             $btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Generando...');
 
             $('#fondeoChartContainer').html('<div style="text-align: center; padding: 60px 0; color: #64748b;"><i class="fa fa-spinner fa-spin fa-2x"></i><p style="margin-top: 10px; font-size: 13px;">Cargando gráfico...</p></div>');
 
-            $.ajax({
+            xhrGraficoActual = $.ajax({
                 url: '@Url.Action("GetGraficoData", "EstructuraFondeo")',
                 type: 'GET',
                 data: { entidad: ent, tipoGrafico: tipo, periodoI: pIni, periodoF: pFin },
                 success: function (res) {
                     $btn.prop('disabled', false).html('<i class="fa fa-search"></i> Generar');
                     if (res && res.success && res.data) {
+                        actualizarLogoYEntidadUI(res.rutaLogo, res.nombreEntidad);
                         var d = res.data;
                         currentGraficoData = d;
                         currentTablaData = d.TablaData;
+                        currentDiagnosticoData = d.Diagnostico;
+                        renderizarDiagnosticoTecnico(d.Diagnostico, d.Titulo);
+
+                        actualizarEstadoPillsTipoGrafico(d.TipoGrafico || tipo);
 
                         $('#chartTitle').text(d.Titulo);
                         $('#chartSubtitle').text(d.Subtitulo);
@@ -719,7 +1096,8 @@
                         $('#fondeoChartContainer').html('<div class="alert alert-warning" style="margin: 20px;">No se obtuvieron datos para el gráfico seleccionado.</div>');
                     }
                 },
-                error: function () {
+                error: function (xhr, status) {
+                    if (status === 'abort') return;
                     $btn.prop('disabled', false).html('<i class="fa fa-search"></i> Generar');
                     $('#fondeoChartContainer').html('<div class="alert alert-danger" style="margin: 20px;">Ocurrió un error al cargar el gráfico.</div>');
                 }
@@ -732,13 +1110,14 @@
 
             if (data.TieneDobleEje) {
                 yAxisConfig.push({
+                    maxPadding: 0.15,
                     title: {
                         text: data.EjeYIzquierdoTitulo,
-                        style: { color: '#2F5597', fontWeight: '600' }
+                        style: { color: '#1e3a8a', fontWeight: '700', fontSize: '13.5px' }
                     },
                     labels: {
                         format: '{value}%',
-                        style: { color: '#475569' }
+                        style: { color: '#334155', fontSize: '12px', fontWeight: '600' }
                     },
                     gridLineWidth: 0,
                     minorGridLineWidth: 0,
@@ -746,13 +1125,14 @@
                     lineWidth: 0
                 });
                 yAxisConfig.push({
+                    maxPadding: 0.15,
                     title: {
                         text: data.EjeYDerechoTitulo,
-                        style: { color: '#ED7D31', fontWeight: '600' }
+                        style: { color: '#ea580c', fontWeight: '700', fontSize: '13.5px' }
                     },
                     labels: {
                         format: data.TipoGrafico === 1 ? '₡{value:,.0f}M' : '{value}%',
-                        style: { color: '#475569' }
+                        style: { color: '#334155', fontSize: '12px', fontWeight: '600' }
                     },
                     opposite: true,
                     gridLineWidth: 0,
@@ -761,10 +1141,10 @@
                     lineWidth: 0
                 });
             } else {
-                yAxisConfig.push({
+                var yAxisObj = {
                     title: {
                         text: data.EjeYIzquierdoTitulo || '',
-                        style: { color: '#2F5597', fontWeight: '600' }
+                        style: { color: '#1e3a8a', fontWeight: '700', fontSize: '13.5px' }
                     },
                     labels: {
                         formatter: function () {
@@ -773,14 +1153,25 @@
                             }
                             return this.value + '%';
                         },
-                        style: { color: '#475569' }
+                        style: { color: '#334155', fontSize: '12px', fontWeight: '600' }
                     },
                     reversedStacks: data.TipoGraficoHighcharts === 'bar' ? false : true,
                     gridLineWidth: 0,
                     minorGridLineWidth: 0,
                     gridLineColor: 'transparent',
                     lineWidth: 0
-                });
+                };
+
+                if (data.TipoGraficoHighcharts === 'bar' && data.Apilado && data.ApiladoTipo === 'percent') {
+                    yAxisObj.min = 0;
+                    yAxisObj.max = 100;
+                    yAxisObj.tickInterval = 10;
+                    yAxisObj.maxPadding = 0;
+                } else {
+                    yAxisObj.maxPadding = 0.15;
+                }
+
+                yAxisConfig.push(yAxisObj);
             }
 
             var plotOptionsConfig = {
@@ -791,60 +1182,100 @@
                 line: {
                     dataLabels: {
                         enabled: true,
-                        allowOverlap: false,
-                        style: { fontSize: '10px', fontWeight: '600', textOutline: '1px #ffffff' }
+                        allowOverlap: true,
+                        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                        borderColor: '#ea580c',
+                        borderWidth: 1,
+                        borderRadius: 4,
+                        padding: 3,
+                        y: -12,
+                        style: { fontSize: '12px', fontWeight: '700', color: '#c2410c' }
                     }
                 },
                 spline: {
                     dataLabels: {
                         enabled: true,
-                        allowOverlap: false,
-                        style: { fontSize: '10px', fontWeight: '600', textOutline: '1px #ffffff' }
+                        allowOverlap: true,
+                        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                        borderColor: '#ea580c',
+                        borderWidth: 1,
+                        borderRadius: 4,
+                        padding: 3,
+                        y: -12,
+                        style: { fontSize: '12px', fontWeight: '700', color: '#c2410c' }
                     }
                 }
             };
 
-            if (data.Apilado) {
-                var stackingType = data.ApiladoTipo || 'normal';
-                if (data.TipoGraficoHighcharts === 'bar') {
+            if (data.TipoGraficoHighcharts === 'bar') {
+                if (data.Apilado) {
                     plotOptionsConfig.bar = {
-                        stacking: stackingType,
+                        stacking: data.ApiladoTipo || 'normal',
                         reversedStacks: false,
+                        pointWidth: 38,
+                        borderWidth: 1.5,
+                        borderColor: '#ffffff',
+                        borderRadius: 3,
                         dataLabels: {
                             enabled: true,
                             formatter: function () {
-                                if (this.y != null && this.y >= 3) {
-                                    return Highcharts.numberFormat(this.y, 1, '.', ',') + '%';
+                                if (this.y != null && this.y >= 2.0) {
+                                    return Highcharts.numberFormat(this.y, 2, '.', ',') + '%';
                                 }
                                 return null;
                             },
-                            style: { fontSize: '10px', fontWeight: '600', textOutline: 'none' }
+                            style: { fontSize: '11px', fontWeight: '700', color: '#ffffff', textOutline: '1px rgba(15, 23, 42, 0.45)' }
                         }
                     };
                 } else {
-                    plotOptionsConfig.column = {
-                        stacking: stackingType,
+                    plotOptionsConfig.bar = {
+                        grouping: true,
+                        pointPadding: 0.08,
+                        groupPadding: 0.16,
+                        borderWidth: 0,
+                        borderRadius: 3,
                         dataLabels: {
                             enabled: true,
+                            inside: false,
+                            align: 'left',
+                            verticalAlign: 'middle',
+                            x: 4,
+                            y: 0,
                             formatter: function () {
-                                if (data.TipoGrafico === 6) {
-                                    return Highcharts.numberFormat(this.y, 0, '.', ',');
-                                }
-                                if (this.y != null && this.y >= 3) {
+                                if (this.y != null && this.y > 0) {
                                     return Highcharts.numberFormat(this.y, 1, '.', ',') + '%';
                                 }
                                 return null;
                             },
-                            style: { fontSize: '10px', fontWeight: '600', textOutline: 'none' }
+                            style: { fontSize: '11px', fontWeight: '700', textOutline: 'none', color: '#1e293b' }
                         }
                     };
                 }
+            } else if (data.Apilado) {
+                var stackingType = data.ApiladoTipo || 'normal';
+                plotOptionsConfig.column = {
+                    stacking: stackingType,
+                    dataLabels: {
+                        enabled: true,
+                        formatter: function () {
+                            if (data.TipoGrafico === 6) {
+                                return Highcharts.numberFormat(this.y, 0, '.', ',');
+                            }
+                            if (this.y != null && this.y >= 0.3) {
+                                return Highcharts.numberFormat(this.y, 1, '.', ',') + '%';
+                            }
+                            return null;
+                        },
+                        style: { fontSize: '12px', fontWeight: '700', textOutline: 'none', color: '#ffffff' }
+                    }
+                };
             } else if (data.TipoGraficoHighcharts === 'column') {
                 plotOptionsConfig.column = {
                     dataLabels: {
                         enabled: true,
                         format: '{point.y:.1f}%',
-                        style: { fontSize: '10px', fontWeight: '600', textOutline: 'none' }
+                        y: -6,
+                        style: { fontSize: '12px', fontWeight: '700', textOutline: 'none', color: '#1e3a8a' }
                     }
                 };
             }
@@ -864,22 +1295,44 @@
                 if (s.EnableDataLabels || s.Type === 'spline' || s.Type === 'line') {
                     var esBarraOColumnaApilada = data.Apilado && (s.Type === 'column' || s.Type === 'bar');
                     if (!esBarraOColumnaApilada) {
+                        var esLinea = (s.Type === 'spline' || s.Type === 'line');
+                        var esBarra = (s.Type === 'bar');
                         sObj.dataLabels = {
                             enabled: true,
-                            allowOverlap: false,
+                            allowOverlap: true,
+                            inside: false,
+                            align: esBarra ? 'left' : undefined,
+                            verticalAlign: esBarra ? 'middle' : undefined,
+                            x: esBarra ? 4 : 0,
+                            y: esLinea ? -12 : (esBarra ? 0 : -6),
+                            backgroundColor: esLinea ? 'rgba(255, 255, 255, 0.95)' : undefined,
+                            borderColor: esLinea ? (s.Color || '#ea580c') : undefined,
+                            borderWidth: esLinea ? 1 : 0,
+                            borderRadius: esLinea ? 4 : 0,
+                            padding: esLinea ? 3 : 2,
                             style: {
-                                fontSize: '10px',
-                                fontWeight: '600',
-                                textOutline: (s.Type === 'spline' || s.Type === 'line') ? '1px #ffffff' : 'none'
+                                fontSize: esBarra ? '11px' : '12px',
+                                fontWeight: '700',
+                                color: esLinea ? (s.Color || '#c2410c') : (esBarra ? '#1e293b' : '#1e3a8a'),
+                                textOutline: 'none'
                             }
                         };
                         if (s.DataLabelFormat) {
                             sObj.dataLabels.format = s.DataLabelFormat;
                         } else if (s.TooltipSuffix && s.TooltipSuffix.indexOf('%') !== -1) {
-                            sObj.dataLabels.format = '{point.y:.2f}%';
+                            sObj.dataLabels.format = '{point.y:.1f}%';
                         } else if (s.TooltipSuffix && s.TooltipSuffix.trim() === 'M') {
                             sObj.dataLabels.format = '₡{point.y:,.0f}M';
                         }
+                    } else if (data.Apilado && s.Type === 'bar') {
+                        sObj.dataLabels = {
+                            style: {
+                                color: '#ffffff',
+                                fontSize: '11px',
+                                fontWeight: '700',
+                                textOutline: '1px rgba(15, 23, 42, 0.45)'
+                            }
+                        };
                     }
                 }
 
@@ -892,12 +1345,23 @@
                 seriesFormatted.push(sObj);
             });
 
+            var chartHeight = null;
+            if (containerId === 'fondeoChartContainer') {
+                chartHeight = 415;
+            } else if (containerId === 'fondeoModalChartContainer') {
+                var vh = $(window).height();
+                chartHeight = (vh >= 900) ? 410 : (vh >= 768 ? 380 : 340);
+            } else if (data.TipoGraficoHighcharts === 'bar' && data.Categorias && data.Categorias.length <= 6) {
+                chartHeight = 430;
+            }
+
             var chartInstance = Highcharts.chart(containerId, {
                 chart: {
                     type: data.TipoGraficoHighcharts,
+                    height: chartHeight,
                     backgroundColor: '#ffffff',
-                    spacingTop: 35,
-                    spacingBottom: 15,
+                    spacingTop: 46,
+                    spacingBottom: 16,
                     events: {
                         render: function () {
                             if (this.exportSVGElements && this.exportSVGElements[0]) {
@@ -906,7 +1370,7 @@
                         }
                     }
                 },
-                colors: ['#2F5597', '#6B9FD4', '#94A3B8', '#F4A261', '#52B788', '#64748B', '#A78BFA', '#FCD34D', '#5DADE2', '#F08080'],
+                colors: ['#2F5597', '#94A3B8', '#6B9FD4', '#4A7BB0', '#52B788', '#E09F67', '#64748B'],
                 title: { text: null },
                 credits: { enabled: false },
                 xAxis: {
@@ -914,11 +1378,11 @@
                     crosshair: false,
                     gridLineWidth: 0,
                     minorGridLineWidth: 0,
+                    lineWidth: 0,
+                    tickWidth: 0,
                     labels: {
-                        style: { color: '#475569', fontSize: '11px' }
-                    },
-                    lineColor: '#cbd5e1',
-                    tickColor: '#cbd5e1'
+                        style: { color: '#0f172a', fontSize: '12px', fontWeight: '600' }
+                    }
                 },
                 yAxis: yAxisConfig,
                 tooltip: {
@@ -985,9 +1449,9 @@
                             }
 
                             body += '<tr>' +
-                                    '<td class="tt-bullet" style="width: 14px; color:' + sColor + '; font-size: 13px; line-height: 1; padding: 4px 6px 4px 0; vertical-align: middle;">&#9679;</td>' +
-                                    '<td class="tt-name" style="font-size: 12px; color: #475569; font-weight: 500; padding: 4px 18px 4px 0; vertical-align: middle; white-space: nowrap;">' + sName + ':</td>' +
-                                    '<td class="tt-val" style="font-size: 12px; font-weight: 700; color: #0f172a; text-align: right; white-space: nowrap; padding: 4px 0; vertical-align: middle;">' + formattedVal + '</td>' +
+                                    '<td class="tt-bullet" style="width: 14px; color:' + sColor + '; font-size: 14px; line-height: 1; padding: 4px 6px 4px 0; vertical-align: middle;">&#9679;</td>' +
+                                    '<td class="tt-name" style="font-size: 12.5px; color: #475569; font-weight: 500; padding: 4px 18px 4px 0; vertical-align: middle; white-space: nowrap;">' + sName + ':</td>' +
+                                    '<td class="tt-val" style="font-size: 12.5px; font-weight: 700; color: #0f172a; text-align: right; white-space: nowrap; padding: 4px 0; vertical-align: middle;">' + formattedVal + '</td>' +
                                     '</tr>';
                         });
                         return header + body + '</table></div>';
@@ -997,9 +1461,10 @@
                     align: 'center',
                     verticalAlign: 'bottom',
                     layout: 'horizontal',
-                    itemStyle: { color: '#334155', fontWeight: '600', fontSize: '12px' },
+                    itemStyle: { color: '#1e293b', fontWeight: '600', fontSize: '11.5px' },
                     itemHoverStyle: { color: '#2F5597' },
-                    margin: 20
+                    margin: 10,
+                    padding: 2
                 },
                 plotOptions: plotOptionsConfig,
                 series: seriesFormatted,
@@ -1007,18 +1472,22 @@
                     enabled: true,
                     buttons: {
                         contextButton: {
+                            align: 'right',
+                            verticalAlign: 'top',
+                            y: -46,
+                            x: -8,
                             text: 'Descargar \u25be',
                             theme: {
-                                fill: 'rgba(47, 85, 151, 0.75)',
-                                stroke: 'rgba(32, 72, 128, 0.85)',
+                                fill: '#ffffff',
+                                stroke: '#cbd5e1',
                                 'stroke-width': 1,
-                                r: 8,
-                                padding: 8,
-                                height: 18,
-                                style: { color: '#ffffff', fontWeight: '600', fontSize: '12px', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif', cursor: 'pointer' },
+                                r: 6,
+                                padding: 6,
+                                height: 16,
+                                style: { color: '#475569', fontWeight: '600', fontSize: '12px', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif', cursor: 'pointer' },
                                 states: {
-                                    hover: { fill: '#2F5597', stroke: '#204880', style: { color: '#ffffff' } },
-                                    select: { fill: '#1b3866', stroke: '#0e1f38', style: { color: '#ffffff' } }
+                                    hover: { fill: '#eff6ff', stroke: '#93c5fd', style: { color: '#1e3a8a' } },
+                                    select: { fill: '#e0f2fe' }
                                 }
                             },
                             menuItems: ['viewData', 'separator', 'downloadPNG', 'downloadJPEG', 'downloadSVG', 'separator', 'downloadCSV', 'downloadXLS', 'downloadPDF']
@@ -1047,20 +1516,20 @@
             $('#modalTablaTitulo').html('<i class="fa fa-table"></i> ' + (currentTablaData.Titulo || 'Datos del Gráfico'));
 
             var html = '<div class="table-responsive">';
-            html += '<table class="table table-bordered table-striped" style="margin-bottom: 0; font-size: 12px;">';
+            html += '<table class="table table-bordered table-striped" style="margin-bottom: 0; font-size: 13px;">';
             html += '<thead><tr style="background: #2F5597; color: #ffffff;">';
 
             $.each(currentTablaData.Columnas, function (idx, col) {
                 var align = idx === 0 ? 'left' : 'center';
-                html += '<th style="text-align: ' + align + '; padding: 10px 12px; white-space: nowrap;">' + col + '</th>';
+                html += '<th style="text-align: ' + align + '; padding: 10px 12px; white-space: nowrap; font-size: 13px;">' + col + '</th>';
             });
             html += '</tr></thead><tbody>';
 
             $.each(currentTablaData.Filas, function (idx, fila) {
                 html += '<tr>';
-                html += '<td style="font-weight: 700; color: #1e3a8a; padding: 8px 12px; white-space: nowrap;">' + fila.Nombre + '</td>';
+                html += '<td style="font-weight: 700; color: #1e3a8a; padding: 9px 12px; white-space: nowrap; font-size: 13px;">' + fila.Nombre + '</td>';
                 $.each(fila.Valores, function (vIdx, val) {
-                    html += '<td style="text-align: right; padding: 8px 12px; font-variant-numeric: tabular-nums;">' + val + '</td>';
+                    html += '<td style="text-align: right; padding: 9px 12px; font-variant-numeric: tabular-nums; font-size: 13px;">' + val + '</td>';
                 });
                 html += '</tr>';
             });
@@ -1072,23 +1541,186 @@
         }
 
         function exportarGrafico(mimeType) {
-            if (!currentChart) return;
+            var targetChart = currentModalChart || currentChart;
+            if (!targetChart) return;
 
             if (mimeType === 'image/png') {
-                currentChart.exportChart({ type: 'image/png' });
+                targetChart.exportChart({ type: 'image/png' });
             } else if (mimeType === 'image/jpeg') {
-                currentChart.exportChart({ type: 'image/jpeg' });
+                targetChart.exportChart({ type: 'image/jpeg' });
             } else if (mimeType === 'image/svg+xml') {
-                currentChart.exportChart({ type: 'image/svg+xml' });
+                targetChart.exportChart({ type: 'image/svg+xml' });
             } else if (mimeType === 'application/pdf') {
-                currentChart.exportChart({ type: 'application/pdf' });
-            } else if (mimeType === 'text/csv') {
-                if (currentChart.downloadCSV) {
-                    currentChart.downloadCSV();
+                targetChart.exportChart({ type: 'application/pdf' });
+            } else if (mimeType === 'xls') {
+                if (targetChart.downloadXLS) {
+                    targetChart.downloadXLS();
+                } else if (targetChart.downloadCSV) {
+                    targetChart.downloadCSV();
                 } else {
-                    $('#btnDescargarExcelGrafico').trigger('click');
+                    $('#btnExportarIndicadores').trigger('click');
+                }
+            } else if (mimeType === 'text/csv') {
+                if (targetChart.downloadCSV) {
+                    targetChart.downloadCSV();
+                } else {
+                    $('#btnExportarIndicadores').trigger('click');
                 }
             }
+        }
+
+        // ==========================================
+        // FUNCIONES DE ANÁLISIS TÉCNICO Y DIAGNÓSTICO
+        // ==========================================
+        function renderizarDiagnosticoTecnico(diag, tituloGrafico) {
+            if (!diag) return;
+            currentDiagnosticoData = diag;
+
+            $('#drawerTituloGrafico').text(diag.TituloAnalisis || tituloGrafico || 'Análisis Técnico y Diagnóstico');
+            $('#drawerSubtitulo').text('Período evaluado: ' + (diag.UltimoPeriodo || $('#Periodo2').val() || 'Reciente'));
+
+            // Estado y Semáforo
+            var estado = (diag.Estado || 'Adecuado').toLowerCase();
+            var $badge = $('#drawerBadgeEstado');
+            var $card = $('#drawerSemaforoCard');
+
+            $card.removeClass('estado-monitoreo estado-atencion');
+            $badge.removeClass('badge-adecuado badge-monitoreo badge-atencion');
+
+            if (estado === 'adecuado') {
+                $badge.addClass('badge-adecuado').html('<i class="fa fa-circle"></i> ' + (diag.EstadoLabel || 'ADECUADO'));
+            } else if (estado === 'atencion') {
+                $card.addClass('estado-atencion');
+                $badge.addClass('badge-atencion').html('<i class="fa fa-exclamation-circle"></i> ' + (diag.EstadoLabel || 'ATENCIÓN'));
+            } else {
+                $card.addClass('estado-monitoreo');
+                $badge.addClass('badge-monitoreo').html('<i class="fa fa-adjust"></i> ' + (diag.EstadoLabel || 'MONITOREO'));
+            }
+
+            $('#drawerResumenEjecutivo').text(diag.ResumenEjecutivo || '');
+
+            // Métricas Grid
+            var mHtml = '';
+            if (diag.Metricas && diag.Metricas.length > 0) {
+                $.each(diag.Metricas, function (i, m) {
+                    mHtml += '<div class="drawer-metrica-card">';
+                    mHtml += '  <div class="drawer-metrica-header">';
+                    mHtml += '    <span class="drawer-metrica-label">' + m.Etiqueta + '</span>';
+                    mHtml += '    <i class="fa ' + (m.Icono || 'fa-bar-chart') + ' drawer-metrica-icon"></i>';
+                    mHtml += '  </div>';
+                    mHtml += '  <span class="drawer-metrica-val">' + m.Valor + '</span>';
+                    if (m.Subtexto) {
+                        mHtml += '  <span class="drawer-metrica-sub">' + m.Subtexto + '</span>';
+                    }
+                    mHtml += '</div>';
+                });
+            }
+            $('#drawerMetricasContainer').html(mHtml);
+
+            // Hallazgos Clave
+            var hHtml = '';
+            if (diag.Hallazgos && diag.Hallazgos.length > 0) {
+                $.each(diag.Hallazgos, function (i, h) {
+                    hHtml += '<li><i class="fa fa-check-circle bullet-icon" style="color: #059669;"></i> ' + h + '</li>';
+                });
+            } else {
+                hHtml = '<li><i class="fa fa-info-circle bullet-icon" style="color: #64748b;"></i> Sin observaciones particulares para este período.</li>';
+            }
+            $('#drawerHallazgosList').html(hHtml);
+
+            // Recomendaciones
+            var rHtml = '';
+            if (diag.Recomendaciones && diag.Recomendaciones.length > 0) {
+                $.each(diag.Recomendaciones, function (i, r) {
+                    rHtml += '<li><i class="fa fa-lightbulb-o bullet-icon" style="color: #d97706;"></i> ' + r + '</li>';
+                });
+            } else {
+                rHtml = '<li><i class="fa fa-shield bullet-icon" style="color: #64748b;"></i> Mantener las políticas de control vigentes.</li>';
+            }
+            $('#drawerRecomendacionesList').html(rHtml);
+        }
+
+        function abrirDrawerAnalisis() {
+            if (!currentDiagnosticoData && currentGraficoData && currentGraficoData.Diagnostico) {
+                renderizarDiagnosticoTecnico(currentGraficoData.Diagnostico, currentGraficoData.Titulo);
+            }
+            var $drawer = $('#drawerAnalisisTecnico');
+            var $backdrop = $('#drawerAnalisisBackdrop');
+            $backdrop.show();
+            setTimeout(function () {
+                $backdrop.addClass('show');
+                $drawer.addClass('open');
+            }, 10);
+            $('body').css('overflow', 'hidden');
+        }
+
+        function cerrarDrawerAnalisis() {
+            var $drawer = $('#drawerAnalisisTecnico');
+            var $backdrop = $('#drawerAnalisisBackdrop');
+            $drawer.removeClass('open');
+            $backdrop.removeClass('show');
+            setTimeout(function () {
+                $backdrop.hide();
+                $('body').css('overflow', '');
+            }, 300);
+        }
+
+        function copiarDiagnosticoPortapapeles() {
+            if (!currentDiagnosticoData) return;
+            var d = currentDiagnosticoData;
+            var text = '=== ' + (d.TituloAnalisis || 'DIAGNÓSTICO TÉCNICO DE FONDEO') + ' ===\n';
+            text += 'Estado: ' + (d.EstadoLabel || d.Estado) + '\n';
+            text += 'Resumen: ' + d.ResumenEjecutivo + '\n\n';
+            text += '--- MÉTRICAS TÉCNICAS ---\n';
+            if (d.Metricas) {
+                $.each(d.Metricas, function (i, m) {
+                    text += '• ' + m.Etiqueta + ': ' + m.Valor + ' (' + (m.Subtexto || '') + ')\n';
+                });
+            }
+            text += '\n--- HALLAZGOS PRINCIPALES ---\n';
+            if (d.Hallazgos) {
+                $.each(d.Hallazgos, function (i, h) {
+                    text += '• ' + String(h).replace(/<[^>]*>/g, '') + '\n';
+                });
+            }
+            text += '\n--- RECOMENDACIONES ---\n';
+            if (d.Recomendaciones) {
+                $.each(d.Recomendaciones, function (i, r) {
+                    text += '• ' + String(r).replace(/<[^>]*>/g, '') + '\n';
+                });
+            }
+
+            var copiarExitoso = function () {
+                var $btn = $('#btnCopiarDiagnostico');
+                var origHtml = $btn.html();
+                $btn.html('<i class="fa fa-check"></i> ¡Copiado al portapapeles!').css('background', '#16a34a');
+                setTimeout(function () {
+                    $btn.html(origHtml).css('background', '');
+                }, 2000);
+            };
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(copiarExitoso).catch(function () {
+                    copiarFallback(text, copiarExitoso);
+                });
+            } else {
+                copiarFallback(text, copiarExitoso);
+            }
+        }
+
+        function copiarFallback(text, callback) {
+            var ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.focus();
+            ta.select();
+            try {
+                document.execCommand('copy');
+                if (callback) callback();
+            } catch (err) { }
+            document.body.removeChild(ta);
         }
     </script>
 }

@@ -1,78 +1,203 @@
 @model FGA.Model.EstructuraFondeoIndexViewModel
 
+<!-- Selector sincronizado para mantener compatibilidad total con JS y exportaciones -->
+<select id="ddlTipoGrafico" style="display: none;">
+    <option value="1" @(Model.TipoGraficoSeleccionado == 1 ? "selected" : "")>1. Estructura de financiamiento</option>
+    <option value="2" @(Model.TipoGraficoSeleccionado == 2 ? "selected" : "")>2. Variaciones interanuales por tipo de fondeo</option>
+    <option value="3" @(Model.TipoGraficoSeleccionado == 3 ? "selected" : "")>3. Variación y composición por tipo de captaciones</option>
+    <option value="4" @(Model.TipoGraficoSeleccionado == 4 ? "selected" : "")>4. Concentración de los 10 y 20 mayores ahorrantes</option>
+    <option value="5" @(Model.TipoGraficoSeleccionado == 5 ? "selected" : "")>5. Concentración de saldos por vencimiento</option>
+    <option value="6" @(Model.TipoGraficoSeleccionado == 6 ? "selected" : "")>6. Cantidad de ahorrantes y asociados</option>
+</select>
+
 <div class="row">
-    <!-- Selector de Tipo de Gráfico dentro de la pestaña Gráficos -->
+    <!-- Barra Ejecutiva de Selección de Análisis (Segmented Control Compacto) -->
     <div class="col-xs-12">
-        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px 18px; flex-wrap: wrap; gap: 14px;">
-            <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
-                <label for="ddlTipoGrafico" style="margin: 0; font-size: 13.5px; font-weight: 700; color: #1e3a8a; display: flex; align-items: center; gap: 6px; white-space: nowrap;">
-                    <i class="fa fa-bar-chart" style="color: #2F5597;"></i> Tipo de Gr&aacute;fico:
-                </label>
-                <div style="min-width: 350px;">
-                    <select id="ddlTipoGrafico" class="form-control modern-select" style="width: 100%; height: 38px; font-size: 13px; font-weight: 600; border-radius: 6px; border: 1px solid #cbd5e1; color: #1e3a8a; background: #ffffff;">
-                        <option value="1" @(Model.TipoGraficoSeleccionado == 1 ? "selected" : "")>Estructura de financiamiento</option>
-                        <option value="2" @(Model.TipoGraficoSeleccionado == 2 ? "selected" : "")>Variaciones interanuales por tipo de fondeo</option>
-                        <option value="3" @(Model.TipoGraficoSeleccionado == 3 ? "selected" : "")>Variación y composición por tipo de captaciones</option>
-                        <option value="4" @(Model.TipoGraficoSeleccionado == 4 ? "selected" : "")>Concentración de los 10 y  20 mayores ahorrantes</option>
-                        <option value="5" @(Model.TipoGraficoSeleccionado == 5 ? "selected" : "")>Concentración de saldos por vencimiento</option>
-                        <option value="6" @(Model.TipoGraficoSeleccionado == 6 ? "selected" : "")>Cantidad de ahorrantes y asociados</option>
-                    </select>
-                </div>
-            </div>
-            <div style="font-size: 12px; color: #64748b; font-style: italic;">
-                <i class="fa fa-info-circle" style="color: #0284c7; margin-right: 4px;"></i> Seleccione el gráfico que desea analizar
+        <div class="graficos-switcher-card" style="margin-bottom: 8px; padding: 4px 6px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;">
+            <!-- Segmented Control de selección rápida -->
+            <div id="tipoGraficoPills" class="segmented-control-container" style="background: transparent; border: none; padding: 0; gap: 4px; display: flex; flex-wrap: wrap;">
+                <button type="button" class="btn-tipo-grafico @(Model.TipoGraficoSeleccionado == 1 ? "active" : "")" data-tipo="1">
+                    <i class="fa fa-pie-chart"></i> <span>1. Estructura Financiamiento</span>
+                </button>
+                <button type="button" class="btn-tipo-grafico @(Model.TipoGraficoSeleccionado == 2 ? "active" : "")" data-tipo="2">
+                    <i class="fa fa-line-chart"></i> <span>2. Variaciones Interanuales</span>
+                </button>
+                <button type="button" class="btn-tipo-grafico @(Model.TipoGraficoSeleccionado == 3 ? "active" : "")" data-tipo="3">
+                    <i class="fa fa-bar-chart"></i> <span>3. Captaciones por Tipo</span>
+                </button>
+                <button type="button" class="btn-tipo-grafico @(Model.TipoGraficoSeleccionado == 4 ? "active" : "")" data-tipo="4">
+                    <i class="fa fa-users"></i> <span>4. Top 10 y 20 Ahorrantes</span>
+                </button>
+                <button type="button" class="btn-tipo-grafico @(Model.TipoGraficoSeleccionado == 5 ? "active" : "")" data-tipo="5">
+                    <i class="fa fa-hourglass-half"></i> <span>5. Saldos por Vencimiento</span>
+                </button>
+                <button type="button" class="btn-tipo-grafico @(Model.TipoGraficoSeleccionado == 6 ? "active" : "")" data-tipo="6">
+                    <i class="fa fa-id-card-o"></i> <span>6. Ahorrantes y Asociados</span>
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- Contenedor del Gráfico idéntico a Composición -->
+    <!-- Contenedor del Gráfico -->
     <div class="col-xs-12">
-        <div class="modern-table-card" style="background: #ffffff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; margin-bottom: 22px; overflow: hidden;">
+        <div class="modern-table-card" style="background: #ffffff; border-radius: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); border: 1px solid #e2e8f0; margin-bottom: 8px; overflow: hidden;">
             <!-- Header del gráfico con Logo, Título y botón Ampliar -->
-            <div style="display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; border-radius: 12px 12px 0 0;">
-                <div style="display: flex; align-items: center; gap: 12px; margin: 0; padding: 0; text-align: left;">
-                    <img width="38" height="38" src="@Session["Logo"]" style="border-radius: 8px; background: #ffffff; padding: 3px; box-shadow: 0 2px 4px rgba(0,0,0,0.08); flex-shrink: 0;" />
-                    <h3 id="chartTitle" class="box-title" style="margin: 0; font-size: 15px; font-weight: 700; color: #0f172a; text-align: left;">
-                        Estructura de Financiamiento
-                    </h3>
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 7px 14px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; border-radius: 10px 10px 0 0;">
+                <div style="display: flex; align-items: center; gap: 10px; margin: 0; padding: 0; text-align: left;">
+                    <img id="imgLogoEntidad" class="img-logo-entidad" width="28" height="28" src="@Session["Logo"]" onerror="this.onerror=null;this.src='@Url.Content("~/Content/images/FFC.jpg")';" style="border-radius: 6px; background: #ffffff; padding: 2px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); flex-shrink: 0;" />
+                    <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                        <h3 id="chartTitle" class="box-title" style="margin: 0; font-size: 13.5px; font-weight: 700; color: #0f172a; text-align: left;">
+                            Estructura de Financiamiento
+                        </h3>
+                        <span id="chartNumberBadge" class="badge" style="background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 5px;"><i class="fa fa-check-circle"></i> Gráfico 1 de 6</span>
+                    </div>
                 </div>
-                <a class="btn-ampliar" data-toggle="tooltip" data-placement="top" title="Ampliar gr&aacute;fico" href="javascript:mPopUp()">
-                    <i class="fa fa-line-chart"></i> Ampliar
-                </a>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <button type="button" id="btnToggleAnalisisTecnico" class="btn-analisis-tecnico" title="Ver análisis técnico y recomendaciones" style="height: 28px; padding: 0 10px; font-size: 11.5px;">
+                        <i class="fa fa-bolt" style="color: #f59e0b;"></i> Análisis Técnico
+                    </button>
+                    <a class="btn-ampliar" data-toggle="tooltip" data-placement="top" title="Ampliar gr&aacute;fico" href="javascript:mPopUp()" style="height: 28px; padding: 0 10px; font-size: 11.5px; display: inline-flex; align-items: center; gap: 5px;">
+                        <i class="fa fa-line-chart"></i> Ampliar
+                    </a>
+                </div>
             </div>
 
             <!-- Contenedor del Highcharts con su botón Descargar nativo corporativo -->
-            <div style="padding: 16px;">
-                <div id="fondeoChartContainer" style="width: 100%; min-height: 480px;"></div>
+            <div style="padding: 6px 12px 2px 12px;">
+                <div id="fondeoChartContainer" style="width: 100%; min-height: 400px; height: 415px;"></div>
             </div>
 
             <!-- Nota al pie del gráfico -->
-            <div style="padding: 10px 20px 14px 20px; border-top: 1px solid #f1f5f9;">
-                <p id="chartFooterNote" style="margin: 0; font-size: 12px; color: #64748b; font-style: italic;">
-                    Nota: Toda la información se presenta en millones de colones y corresponde al período seleccionado.
+            <div style="padding: 5px 14px 6px 14px; border-top: 1px solid #f1f5f9;">
+                <p id="chartFooterNote" style="margin: 0; font-size: 11.5px; color: #64748b; font-style: italic;">
+                    Nota: Toda la información se presenta en millones de colones y corresponde al periodo seleccionado.
                 </p>
             </div>
         </div>
     </div>
 </div>
 
+<!-- Backdrop oscuro semitransparente para el Drawer -->
+<div id="drawerAnalisisBackdrop" class="drawer-analisis-backdrop" style="display: none;"></div>
+
+<!-- Panel Lateral Deslizable (Slide-Over Drawer) de Análisis Técnico -->
+<div id="drawerAnalisisTecnico" class="drawer-analisis-tecnico">
+    <!-- Header del Drawer -->
+    <div class="drawer-header">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <div class="drawer-header-icon">
+                <i class="fa fa-bolt"></i>
+            </div>
+            <div>
+                <h4 id="drawerTituloGrafico" class="drawer-title">Análisis Técnico y Diagnóstico</h4>
+                <p id="drawerSubtitulo" class="drawer-subtitle">Diagnóstico cuantitativo del fondeo</p>
+            </div>
+        </div>
+        <button type="button" id="btnCerrarDrawerAnalisis" class="drawer-close-btn" title="Cerrar panel">
+            <i class="fa fa-times"></i>
+        </button>
+    </div>
+
+    <!-- Contenido del Drawer con scroll elegante -->
+    <div class="drawer-body">
+        <!-- Tarjeta de Semáforo y Estado Global -->
+        <div id="drawerSemaforoCard" class="drawer-card drawer-semaforo-card">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #64748b;">
+                    Estado Estructural
+                </span>
+                <span id="drawerBadgeEstado" class="badge-semaforo badge-adecuado">
+                    <i class="fa fa-circle"></i> ADECUADO
+                </span>
+            </div>
+            <p id="drawerResumenEjecutivo" style="margin: 0; font-size: 13.5px; line-height: 1.5; color: #1e293b; font-weight: 500;">
+                Cargando diagnóstico...
+            </p>
+        </div>
+
+        <!-- Grid de Métricas Clave -->
+        <div style="margin-bottom: 18px;">
+            <h5 style="margin: 0 0 10px 0; font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #64748b;">
+                <i class="fa fa-tachometer" style="color: #0284c7;"></i> Métricas Técnicas Calculadas
+            </h5>
+            <div id="drawerMetricasContainer" class="drawer-metricas-grid">
+                <!-- Se llena dinámicamente -->
+            </div>
+        </div>
+
+        <!-- Hallazgos Principales -->
+        <div style="margin-bottom: 18px;">
+            <h5 style="margin: 0 0 10px 0; font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #64748b;">
+                <i class="fa fa-file-text-o" style="color: #0d9488;"></i> Hallazgos Clave de Balance
+            </h5>
+            <div class="drawer-card" style="padding: 14px 16px;">
+                <ul id="drawerHallazgosList" class="drawer-insights-list" style="margin: 0; padding: 0; list-style: none;">
+                    <!-- Se llena dinámicamente -->
+                </ul>
+            </div>
+        </div>
+
+        <!-- Recomendaciones de Gestión -->
+        <div style="margin-bottom: 20px;">
+            <h5 style="margin: 0 0 10px 0; font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #64748b;">
+                <i class="fa fa-lightbulb-o" style="color: #f59e0b;"></i> Recomendaciones
+            </h5>
+            <div class="drawer-card drawer-recomendaciones-card" style="padding: 14px 16px;">
+                <ul id="drawerRecomendacionesList" class="drawer-insights-list" style="margin: 0; padding: 0; list-style: none;">
+                    <!-- Se llena dinámicamente -->
+                </ul>
+            </div>
+        </div>
+
+        <!-- Marco Normativo Aplicable -->
+        <div style="margin-bottom: 20px;">
+            <h5 style="margin: 0 0 10px 0; font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #64748b;">
+                <i class="fa fa-book" style="color: #0284c7;"></i> Marco Normativo Aplicable
+            </h5>
+            <div class="drawer-card" style="padding: 12px 14px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;">
+                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 12px;">
+                    <a href="https://www.sugef.fi.cr/normativa/normativa_vigente/SUGEF%2017-13%20(v18%201%C2%B0%20SET2024).pdf" target="_blank" rel="noopener noreferrer" style="color: #0369a1; text-decoration: none; display: flex; align-items: center; justify-content: space-between; font-weight: 600; padding: 4px 6px; border-radius: 4px; transition: background 0.15s;" onmouseover="this.style.background='#e0f2fe'" onmouseout="this.style.background='transparent'">
+                        <span><i class="fa fa-file-pdf-o text-danger" style="margin-right: 6px;"></i> Acuerdo SUGEF 17-13 (Riesgo de Liquidez y Cobertura)</span>
+                        <i class="fa fa-external-link" style="font-size: 11px; opacity: 0.7;"></i>
+                    </a>
+                    <a href="https://www.sugef.fi.cr/normativa/normativa_vigente/SUGEF%202-10%20(v29%201%C2%B0%20de%20enero%20de%202024).pdf" target="_blank" rel="noopener noreferrer" style="color: #0369a1; text-decoration: none; display: flex; align-items: center; justify-content: space-between; font-weight: 600; padding: 4px 6px; border-radius: 4px; transition: background 0.15s;" onmouseover="this.style.background='#e0f2fe'" onmouseout="this.style.background='transparent'">
+                        <span><i class="fa fa-file-pdf-o text-danger" style="margin-right: 6px;"></i> Acuerdo SUGEF 2-10 (Administración Integral de Riesgos)</span>
+                        <i class="fa fa-external-link" style="font-size: 11px; opacity: 0.7;"></i>
+                    </a>
+                    <a href="https://www.sugef.fi.cr/normativa/normativa_vigente.aspx" target="_blank" rel="noopener noreferrer" style="color: #64748b; text-decoration: none; display: flex; align-items: center; justify-content: space-between; font-size: 11px; padding: 4px 6px; border-radius: 4px; border-top: 1px dashed #cbd5e1; margin-top: 2px;">
+                        <span><i class="fa fa-institution" style="margin-right: 6px;"></i> Portal General de Normativa SUGEF</span>
+                        <i class="fa fa-external-link" style="font-size: 10px; opacity: 0.7;"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer del Drawer con acción rápida de copiar -->
+    <div class="drawer-footer">
+        <button type="button" id="btnCopiarDiagnostico" class="btn-copiar-diagnostico">
+            <i class="fa fa-clipboard"></i> Copiar Minuta de Análisis
+        </button>
+    </div>
+</div>
+
 <!-- Modal Ampliar Gráfico idéntico al de Composición -->
 <div class="modal fade" id="mPopUp" tabindex="-1" role="dialog" aria-labelledby="modalAmpliarLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" style="width: 90%; max-width: 1200px;">
+    <div class="modal-dialog modal-xl" style="width: 96%; max-width: 1440px; margin: 10px auto;">
         <div class="modal-content" style="border-radius: 12px; overflow: hidden; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
-            <div class="modal-header" style="background: linear-gradient(135deg, #1b3866 0%, #2F5597 100%); color: #ffffff; padding: 16px 22px;">
-                <div style="display: flex; align-items: center; gap: 12px; background: transparent;">
-                    <img width="40" height="40" src="@Session["Logo"]" style="border-radius: 6px; background: #ffffff; padding: 2px;" />
-                    <h3 id="pEntidad" class="modal-title" style="margin: 0; color: #ffffff !important; font-size: 16px; font-weight: 600;"></h3>
+            <div class="modal-header" style="background: linear-gradient(135deg, #1b3866 0%, #2F5597 100%); color: #ffffff; padding: 10px 18px;">
+                <div style="display: flex; align-items: center; gap: 10px; background: transparent;">
+                    <img id="imgLogoEntidadModal" class="img-logo-entidad" width="30" height="30" src="@Session["Logo"]" onerror="this.onerror=null;this.src='@Url.Content("~/Content/images/FFC.jpg")';" style="border-radius: 6px; background: #ffffff; padding: 2px;" />
+                    <h3 id="pEntidad" class="modal-title" style="margin: 0; color: #ffffff !important; font-size: 15px; font-weight: 700;"></h3>
                 </div>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: #ffffff !important; opacity: 0.9;"><span aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: #ffffff !important; opacity: 0.9; font-size: 22px; line-height: 1;"><span aria-hidden="true">&times;</span></button>
             </div>
-            <div class="modal-body" style="padding: 24px;">
-                <div id="fondeoModalKpiStrip" style="margin-bottom: 20px;"></div>
-                <div id="fondeoModalChartContainer" style="width: 100%; min-height: 560px;"></div>
+            <div class="modal-body" style="padding: 10px 18px 14px 18px;">
+                <div id="fondeoModalKpiStrip" style="margin-bottom: 10px;"></div>
+                <div id="fondeoModalChartContainer" style="width: 100%; min-height: 380px;"></div>
             </div>
-            <div class="modal-footer" style="padding: 14px 22px; background: #f8fafc; border-top: 1px solid #e2e8f0;">
-                <button type="button" class="btn btn-default" data-dismiss="modal" style="border-radius: 8px; font-weight: 600;">Cerrar</button>
+            <div class="modal-footer" style="padding: 8px 18px; background: #f8fafc; border-top: 1px solid #e2e8f0; text-align: right;">
+                <button type="button" class="btn btn-default" data-dismiss="modal" style="border-radius: 6px; font-weight: 600; padding: 4px 14px; font-size: 12.5px;">Cerrar</button>
             </div>
         </div>
     </div>
