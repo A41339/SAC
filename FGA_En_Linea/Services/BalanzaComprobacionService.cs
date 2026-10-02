@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Web;
 using FGA.Model;
+using FGA.Utility;
 
 namespace FGA.Services
 {
@@ -372,9 +373,9 @@ namespace FGA.Services
             }
             finally
             {
-                if (disposeSp) { try { spClient.Close(); } catch { } }
-                if (disposeEnt) { try { entClient.Close(); } catch { } }
-                if (disposeCat) { try { catClient.Close(); } catch { } }
+                if (disposeSp) { spClient.SafeClose(); }
+                if (disposeEnt) { entClient.SafeClose(); }
+                if (disposeCat) { catClient.SafeClose(); }
             }
         }
 

@@ -451,8 +451,8 @@ namespace FGA.Controllers
                 int numPeriodos = numHistoricos + numProyeccion;
                 string[] fechas = new string[numPeriodos];
                 List<Serie> listaSeries = new List<Serie>();
-                listaSeries.Add(new Serie(numPeriodos, "Hist髍ico"));
-                listaSeries.Add(new Serie(numPeriodos, "Proyecci髇"));
+                listaSeries.Add(new Serie(numPeriodos, "Hist贸rico"));
+                listaSeries.Add(new Serie(numPeriodos, "Proyecci贸n"));
 
                 foreach (FGA_Consultar_Datos_Historicos_Result detalle in getHistoricos())
                 {
@@ -652,14 +652,14 @@ namespace FGA.Controllers
                 view.IRLGraph.SetSeries(new Series[]
                 {
                     new Series{
-                        Name = "Raz髇 IRL por banda",
+                        Name = "Raz贸n IRL por banda",
                         Data = new Data(Brecha),
                         Color = ColorTranslator.FromHtml("#0B4E91"),
                         Type = ChartTypes.Line,
                         PlotOptionsLine = HighChart.getLinePercent()
                     },
                     new Series{
-                        Name = "Raz髇 IRL acumulado",
+                        Name = "Raz贸n IRL acumulado",
                         Data = new Data(Acumulada),
                         Color = ColorTranslator.FromHtml("#ed7c2f"),
                         Type = ChartTypes.Line,
@@ -816,11 +816,11 @@ namespace FGA.Controllers
         {
             if (disposing)
             {
-                ent.Close();
-                sp.Close();
-                usr.Close();
-                proy.Close();
-                exc.Close();
+                ent.SafeClose();
+                sp.SafeClose();
+                usr.SafeClose();
+                proy.SafeClose();
+                exc.SafeClose();
             }
             base.Dispose(disposing);
         }

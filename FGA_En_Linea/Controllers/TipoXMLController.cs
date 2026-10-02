@@ -1,10 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
 using FGA.Models;
+using FGA.Utility;
 
 namespace FGA.Controllers
 {
@@ -361,9 +362,9 @@ namespace FGA.Controllers
         {
             if (disposing)
             {
-                db.Close();
-                ent.Close();
-                exc.Close();
+                db.SafeClose();
+                ent.SafeClose();
+                exc.SafeClose();
             }
             base.Dispose(disposing);
         }

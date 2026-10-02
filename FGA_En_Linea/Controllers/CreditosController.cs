@@ -8,6 +8,7 @@ using System.Web.Mvc;
 using FGA.Controllers;
 using FGA.Models;
 using FGA_En_Linea.CreditoService;
+using FGA.Utility;
 
 namespace FGA_En_Linea.Controllers
 {
@@ -239,10 +240,7 @@ namespace FGA_En_Linea.Controllers
         {
             if (disposing)
             {
-                if (service.State == System.ServiceModel.CommunicationState.Opened)
-                {
-                    service.Close();
-                }
+                service.SafeClose();
             }
             base.Dispose(disposing);
         }

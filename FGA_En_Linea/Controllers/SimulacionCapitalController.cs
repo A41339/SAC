@@ -6,6 +6,7 @@ using Entities.Entities.Procedures;
 using System.IO;
 using FGA.Models;
 using System.Linq;
+using FGA.Utility;
 
 namespace FGA.Controllers
 {
@@ -128,8 +129,8 @@ namespace FGA.Controllers
         {
             if (disposing)
             {
-                ent.Close();
-                sp.Close();
+                ent.SafeClose();
+                sp.SafeClose();
             }
             base.Dispose(disposing);
         }

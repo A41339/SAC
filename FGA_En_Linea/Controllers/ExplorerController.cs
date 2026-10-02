@@ -7,6 +7,7 @@ using System.Web;
 using System.Web.Mvc;
 using FGA.Model;
 using FGA.Models;
+using FGA.Utility;
 
 namespace FGA.Controllers
 {
@@ -400,11 +401,12 @@ namespace FGA.Controllers
         {
             if (disposing)
             {
-                usr.Close();
-                ti.Close();
-                ent.Close();
-                inf.Close();
-                param.Close();
+                usr.SafeClose();
+                ti.SafeClose();
+                ent.SafeClose();
+                inf.SafeClose();
+                not.SafeClose();
+                param.SafeClose();
             }
             base.Dispose(disposing);
         }

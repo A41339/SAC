@@ -1,9 +1,10 @@
-﻿using System;
+using System;
 using System.Data;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
 using FGA.Models;
+using FGA.Utility;
 
 namespace FGA.Controllers
 {
@@ -282,7 +283,7 @@ namespace FGA.Controllers
         protected override void Dispose(bool disposing)
         {
             if (disposing)
-                ti.Close();
+                ti.SafeClose();
 
             base.Dispose(disposing);
         }

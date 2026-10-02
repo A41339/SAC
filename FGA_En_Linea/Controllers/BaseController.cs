@@ -307,24 +307,31 @@ namespace FGA.Controllers
         private dynamic MenuBarCache(string cacheItemKey, dynamic globle, string cachecaption)
         {
             FGA_En_Linea.MenuPermissionService.MenuPermissionServiceClient db = new FGA_En_Linea.MenuPermissionService.MenuPermissionServiceClient();
-            var mp = db.GetAll().Select(m => new MenuOfRole
+            try
             {
-                Id = m.Id,
-                MenuURL = m.Menu_MenuId.MenuURL.ToLower(),
-                RoleId = m.RoleId.Value,
-                IsCreate = m.IsCreate,
-                IsDelete = m.IsDelete,
-                IsRead = m.IsRead,
-                IsUpdate = m.IsUpdate
-            }).Where(i => i.MenuURL != "root").ToArray();
+                var mp = db.GetAll().Select(m => new MenuOfRole
+                {
+                    Id = m.Id,
+                    MenuURL = m.Menu_MenuId.MenuURL.ToLower(),
+                    RoleId = m.RoleId.Value,
+                    IsCreate = m.IsCreate,
+                    IsDelete = m.IsDelete,
+                    IsRead = m.IsRead,
+                    IsUpdate = m.IsUpdate
+                }).Where(i => i.MenuURL != "root").ToArray();
 
-            globle = mp;
-            if (cachecaption == "shortcache")
-                HttpRuntime.Cache.Insert(cacheItemKey, mp, null, DateTime.Now.AddMilliseconds(2), System.Web.Caching.Cache.NoSlidingExpiration);
-            else
-                HttpRuntime.Cache.Insert(cacheItemKey, mp, null, DateTime.Now.AddMinutes(60), System.Web.Caching.Cache.NoSlidingExpiration);
+                globle = mp;
+                if (cachecaption == "shortcache")
+                    HttpRuntime.Cache.Insert(cacheItemKey, mp, null, DateTime.Now.AddMilliseconds(2), System.Web.Caching.Cache.NoSlidingExpiration);
+                else
+                    HttpRuntime.Cache.Insert(cacheItemKey, mp, null, DateTime.Now.AddMinutes(60), System.Web.Caching.Cache.NoSlidingExpiration);
 
-            return globle;
+                return globle;
+            }
+            finally
+            {
+                db.SafeClose();
+            }
         }
 
         private void UnAuthoRedirect(ActionExecutingContext context)

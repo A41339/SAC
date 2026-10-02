@@ -663,7 +663,7 @@ namespace FGA.Controllers
         {
             if (disposing)
             {
-                db.Close();
+                db.SafeClose();
             }
             base.Dispose(disposing);
         }

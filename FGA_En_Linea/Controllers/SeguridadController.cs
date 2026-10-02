@@ -1,5 +1,6 @@
 using System;
 using System.Web.Mvc;
+using FGA.Utility;
 
 namespace FGA.Controllers
 {
@@ -11,20 +12,21 @@ namespace FGA.Controllers
 
         public PartialViewResult GetPartial()
         {
-            var files = sp.FGA_Consultar_Sessiones(Utility.Utilitarios.ConvertirAFecha(Session["Fecha"].ToString()));
+            DateTime fecha = GetSessionDate("Fecha");
+            var files = sp.FGA_Consultar_Sessiones(fecha);
             return PartialView("DetailSession", files);
         }
 
         public ActionResult Index()
         {
-            Session["Fecha"] = DateTime.Now.ToShortDateString();
+            SetSessionDate("Fecha", DateTime.Now);
             var files = sp.FGA_Consultar_Sessiones(DateTime.Now);
             return View(files);
         }
 
         public ActionResult Buscar(DateTime Fecha)
         {
-            Session["Fecha"] = Fecha.ToShortDateString();
+            SetSessionDate("Fecha", Fecha);
             var files = sp.FGA_Consultar_Sessiones(Fecha);
             return View("Index", files);
         }
@@ -34,7 +36,9 @@ namespace FGA.Controllers
         protected override void Dispose(bool disposing)
         {
             if (disposing)
-                sp.Close();
+            {
+                sp.SafeClose();
+            }
 
             base.Dispose(disposing);
         }

@@ -2286,6 +2286,7 @@ namespace FGA.Controllers
                 usr.SafeClose();
                 rpt.SafeClose();
                 log.SafeClose();
+                catClient.SafeClose();
             }
             base.Dispose(disposing);
         }

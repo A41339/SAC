@@ -5,6 +5,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using FGA.Models;
+using FGA.Utility;
 
 namespace FGA.Controllers
 {
@@ -399,7 +400,10 @@ namespace FGA.Controllers
         protected override void Dispose(bool disposing)
         {
             if (disposing)
-                ent.Close();
+            {
+                ent.SafeClose();
+                per.SafeClose();
+            }
    
             base.Dispose(disposing);
         }

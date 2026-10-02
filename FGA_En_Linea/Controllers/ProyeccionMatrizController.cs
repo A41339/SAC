@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Web.Mvc;
+using FGA.Utility;
 
 namespace FGA.Controllers
 {
@@ -348,8 +349,8 @@ namespace FGA.Controllers
         {
             if (disposing)
             {
-                ent.Close();
-                sp.Close();
+                ent.SafeClose();
+                sp.SafeClose();
             }
             base.Dispose(disposing);
         }

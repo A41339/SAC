@@ -12,6 +12,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
 using DocumentFormat.OpenXml.Office2010.Excel;
 using FGA.Models;
+using FGA.Utility;
 
 namespace FGA.Controllers
 {
@@ -669,12 +670,12 @@ namespace FGA.Controllers
         {
             if (disposing)
             {
-                usr.Close();
-                ent.Close();
-                rs.Close();
-                usre.Close();
-                sx.Close();
-                param.Close();
+                usr.SafeClose();
+                ent.SafeClose();
+                rs.SafeClose();
+                usre.SafeClose();
+                sx.SafeClose();
+                param.SafeClose();
             }
             base.Dispose(disposing);
         }

@@ -9,6 +9,7 @@ using System.Web.Mvc;
 using FGA.Models;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
+using FGA.Utility;
 
 namespace FGA.Controllers
 {
@@ -35,7 +36,7 @@ namespace FGA.Controllers
             Convert.ToString(Estado.GetNombre(c.IndEstado.Value)),
             Convert.ToString(c.FechaRegistro.Value.ToShortDateString()),
             Convert.ToString(c.Descripcion),
-            Convert.ToString(c.IndEmergencia == true ? "SÌ" : "No"),
+            Convert.ToString(c.IndEmergencia == true ? "S√≠" : "No"),
             Utility.Utilitarios.GetToolBar(c.IdResponsableActual_Id.Value, c.IndEstado.Value, c.Id, int.Parse(Env.GetUserInfo("userid")), Url.Content("~/SolicitudCambio"),
             c.IdAprobador_Id.Value, c.IndMejoraEstetica)};
 
@@ -359,9 +360,9 @@ namespace FGA.Controllers
             var PasswordCorreo = listParam.Where(o => o.Llave == Utility.Utilitarios.Contrasena_Correo).Select(o => o.Valor).FirstOrDefault();
 
             MailSend.Email.EnviarCorreoAduntos("Requerimiento #" + ObjSol.Id.ToString(), "<br /><br />  Se le informa que el requerimiento #" + ObjSol.Id.ToString() +
-                                               " solicitado el dÌa " + ObjSol.FechaRegistro.Value.ToShortDateString() + " por " + ObjSol.IdSolicitante.Nombre +
+                                               " solicitado el d√≠a " + ObjSol.FechaRegistro.Value.ToShortDateString() + " por " + ObjSol.IdSolicitante.Nombre +
                                                " con el siguiente detalle: " + ObjSol.Descripcion + " ha pasado a estado <b>" + Estado.GetTooltip(ObjSol.IndEstado.Value) + ".</b>" +
-                                               " Realice las validaciones en la siguiente direcciÛn: " + "https://www.ffc.co.cr/FFC/solicitudcambio/", destinatarios,
+                                               " Realice las validaciones en la siguiente direcci√≥n: " + "https://www.ffc.co.cr/FFC/solicitudcambio/", destinatarios,
                                                ServidorCorreo, CuentaCorreo, CuentaCorreo, PasswordCorreo, path);
         }
 
@@ -410,16 +411,16 @@ namespace FGA.Controllers
                 table.AddCell(new Phrase(ObjSol.IdResponsableActual.Nombre, font5));
 
                 table.AddCell(new Phrase("Urgente", font5));
-                table.AddCell(new Phrase(ObjSol.IndEmergencia ? "SÌ" : "No", font5));
+                table.AddCell(new Phrase(ObjSol.IndEmergencia ? "S√≠" : "No", font5));
 
-                table.AddCell(new Phrase("Est·ndar", font5));
-                table.AddCell(new Phrase(ObjSol.IndEstandar ? "SÌ" : "No", font5));
+                table.AddCell(new Phrase("Est√°ndar", font5));
+                table.AddCell(new Phrase(ObjSol.IndEstandar ? "S√≠" : "No", font5));
 
                 table.AddCell(new Phrase("Normal", font5));
-                table.AddCell(new Phrase(ObjSol.IndNormal ? "SÌ" : "No", font5));
+                table.AddCell(new Phrase(ObjSol.IndNormal ? "S√≠" : "No", font5));
 
                 table.AddCell(new Phrase("Complejo", font5));
-                table.AddCell(new Phrase(ObjSol.IndComplejo ? "SÌ" : "No", font5));
+                table.AddCell(new Phrase(ObjSol.IndComplejo ? "S√≠" : "No", font5));
 
                 para = new Paragraph("", new Font(Font.FontFamily.HELVETICA, 10));
                 cell = new PdfPCell();
@@ -427,7 +428,7 @@ namespace FGA.Controllers
                 cell.AddElement(para);
                 table.AddCell(cell);
 
-                para = new Paragraph("IdentificaciÛn del cambio", new Font(Font.FontFamily.HELVETICA, 10));
+                para = new Paragraph("Identificaci√≥n del cambio", new Font(Font.FontFamily.HELVETICA, 10));
                 cell = new PdfPCell();
                 cell.Colspan = 2;
                 cell.AddElement(para);
@@ -436,7 +437,7 @@ namespace FGA.Controllers
                 table.AddCell(new Phrase("Proyecto", font5));
                 table.AddCell(new Phrase(ObjSol.IdProyecto.Nombre, font5));
 
-                table.AddCell(new Phrase("DescripciÛn del cambio", font5));
+                table.AddCell(new Phrase("Descripci√≥n del cambio", font5));
                 table.AddCell(new Phrase(ObjSol.Descripcion, font5));
 
                 table.AddCell(new Phrase("Impacto", font5));
@@ -446,7 +447,7 @@ namespace FGA.Controllers
                 table.AddCell(new Phrase(ObjSol.IdUrgencia == 1 ? "Baja" : ObjSol.IdUrgencia == 2 ? "Media" : "Alta", font5));
 
                 table.AddCell(new Phrase("Entorno", font5));
-                table.AddCell(new Phrase(ObjSol.IdEnterno == 1 ? "Desarrollo" : "ProducciÛn", font5));
+                table.AddCell(new Phrase(ObjSol.IdEnterno == 1 ? "Desarrollo" : "Producci√≥n", font5));
 
                 table.AddCell(new Phrase("Servicio afectado", font5));
                 table.AddCell(new Phrase(ObjSol.Seccion.MenuText, font5));
@@ -470,7 +471,7 @@ namespace FGA.Controllers
                 table.AddCell(new Phrase("Usuarios afectados", font5));
                 table.AddCell(new Phrase(usuarios, font5));
 
-                table.AddCell(new Phrase("Fecha lÌmite", font5));
+                table.AddCell(new Phrase("Fecha l√≠mite", font5));
                 table.AddCell(new Phrase(ObjSol.FechaLimite.HasValue ? ObjSol.FechaLimite.Value.ToShortDateString() : "No aplica", font5));
 
                 para = new Paragraph("", new Font(Font.FontFamily.HELVETICA, 10));
@@ -500,7 +501,7 @@ namespace FGA.Controllers
                 table.AddCell(new Phrase("Inicio previsto", font5));
                 table.AddCell(new Phrase(ObjSol.FechaInicioPrev.HasValue ? ObjSol.FechaInicioPrev.Value.ToShortDateString() : "No aplica", font5));
 
-                table.AddCell(new Phrase("FinalizaciÛn previsto", font5));
+                table.AddCell(new Phrase("Finalizaci√≥n previsto", font5));
                 table.AddCell(new Phrase(ObjSol.FechaFinPrev.HasValue ? ObjSol.FechaFinPrev.Value.ToShortDateString() : "No aplica", font5));
 
                 para = new Paragraph("", new Font(Font.FontFamily.HELVETICA, 10));
@@ -509,7 +510,7 @@ namespace FGA.Controllers
                 cell.AddElement(para);
                 table.AddCell(cell);
 
-                para = new Paragraph("ClasificaciÛn del cambio", new Font(Font.FontFamily.HELVETICA, 10));
+                para = new Paragraph("Clasificaci√≥n del cambio", new Font(Font.FontFamily.HELVETICA, 10));
                 cell = new PdfPCell();
                 cell.Colspan = 2;
                 cell.AddElement(para);
@@ -519,16 +520,16 @@ namespace FGA.Controllers
                 table.AddCell(new Phrase("", font5));
 
                 table.AddCell(new Phrase("Nueva funcionalidad", font5));
-                table.AddCell(new Phrase(ObjSol.IndNuevaFunc ? "SÌ" : "No", font5));
+                table.AddCell(new Phrase(ObjSol.IndNuevaFunc ? "S√≠" : "No", font5));
 
-                table.AddCell(new Phrase("Nueva versiÛn", font5));
-                table.AddCell(new Phrase(ObjSol.IndNuevaVersion ? "SÌ" : "No", font5));
+                table.AddCell(new Phrase("Nueva versi√≥n", font5));
+                table.AddCell(new Phrase(ObjSol.IndNuevaVersion ? "S√≠" : "No", font5));
 
                 table.AddCell(new Phrase("Nuevo servicio", font5));
-                table.AddCell(new Phrase(ObjSol.IndNuevoServ ? "SÌ" : "No", font5));
+                table.AddCell(new Phrase(ObjSol.IndNuevoServ ? "S√≠" : "No", font5));
 
                 table.AddCell(new Phrase("Pase de entorno", font5));
-                table.AddCell(new Phrase(ObjSol.IndPaseEntorno ? "SÌ" : "No", font5));
+                table.AddCell(new Phrase(ObjSol.IndPaseEntorno ? "S√≠" : "No", font5));
 
                 para = new Paragraph("", new Font(Font.FontFamily.HELVETICA, 10));
                 cell = new PdfPCell();
@@ -537,7 +538,7 @@ namespace FGA.Controllers
                 table.AddCell(cell);
 
                 table.AddCell(new Phrase("Mantenimiento adaptativo", font5));
-                table.AddCell(new Phrase(ObjSol.IndMantAdaptativo ? "SÌ" : "No", font5));
+                table.AddCell(new Phrase(ObjSol.IndMantAdaptativo ? "S√≠" : "No", font5));
 
                 para = new Paragraph("", new Font(Font.FontFamily.HELVETICA, 10));
                 cell = new PdfPCell();
@@ -546,7 +547,7 @@ namespace FGA.Controllers
                 table.AddCell(cell);
 
                 table.AddCell(new Phrase("Mantenimiento correctivo", font5));
-                table.AddCell(new Phrase(ObjSol.IndMantCorrectivo ? "SÌ" : "No", font5));
+                table.AddCell(new Phrase(ObjSol.IndMantCorrectivo ? "S√≠" : "No", font5));
 
                 document.Add(table);
                 document.Close();
@@ -565,12 +566,12 @@ namespace FGA.Controllers
         {
             if (disposing)
             {
-                sol.Close();
-                tar.Close();
-                usr.Close();
-                proy.Close();
-                men.Close();
-                param.Close();
+                sol.SafeClose();
+                tar.SafeClose();
+                usr.SafeClose();
+                proy.SafeClose();
+                men.SafeClose();
+                param.SafeClose();
             }
             base.Dispose(disposing);
         }

@@ -8,6 +8,7 @@ using DotNet.Highcharts.Helpers;
 using DotNet.Highcharts.Options;
 using Entities.Entities.Procedures;
 using FGA.Model;
+using FGA.Utility;
 
 namespace FGA.Controllers
 {
@@ -283,8 +284,8 @@ namespace FGA.Controllers
         {
             if (disposing)
             {
-                ent.Close();
-                sp.Close();
+                ent.SafeClose();
+                sp.SafeClose();
             }
             base.Dispose(disposing);
         }

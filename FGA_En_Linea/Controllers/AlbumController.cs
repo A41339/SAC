@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using FGA.Models;
+using FGA.Utility;
 
 namespace FGA.Controllers
 {
@@ -484,7 +485,8 @@ namespace FGA.Controllers
         {
             if (disposing)
             {
-                alb.Close();
+                alb.SafeClose();
+                tp.SafeClose();
             }
             base.Dispose(disposing);
         }

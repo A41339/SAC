@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web.Mvc;
 using FGA.Enum;
 using FGA.Models;
+using FGA.Utility;
 
 namespace FGA.Controllers
 {
@@ -117,8 +118,8 @@ namespace FGA.Controllers
         {
             if (disposing)
             {
-                tipos.Close();
-                indicador.Close();
+                tipos.SafeClose();
+                indicador.SafeClose();
             }
             base.Dispose(disposing);
         }
