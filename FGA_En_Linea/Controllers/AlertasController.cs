@@ -35,10 +35,12 @@ namespace FGA.Controllers
                 int.TryParse(idEntidadUsuario, out idEntParsed);
                 ViewBag.IdEntidadUsuario = idEntParsed;
 
-                using (var spClient = new FGA_En_Linea.SPService.SPClient())
+                FGA_Obtener_Alertas_Financieras_Result[] rawAlertas = null;
+                var spClient = new FGA_En_Linea.SPService.SPClient();
+                try
                 {
                     // Si no existen alertas, intentar disparar una evaluación inicial del período actual
-                    var rawAlertas = spClient.FGA_Obtener_Alertas_Financieras(idEntidad, false, 100);
+                    rawAlertas = spClient.FGA_Obtener_Alertas_Financieras(idEntidad, false, 100);
                     if (rawAlertas == null || rawAlertas.Length == 0)
                     {
                         try
@@ -50,8 +52,13 @@ namespace FGA.Controllers
                             rawAlertas = new FGA_Obtener_Alertas_Financieras_Result[0];
                         }
                     }
+                }
+                finally
+                {
+                    spClient.SafeClose();
+                }
 
-                    // Filtrar estrictamente por los umbrales vigentes configurados en Parámetros
+                // Filtrar estrictamente por los umbrales vigentes configurados en Parámetros
                     var todos = (rawAlertas ?? new FGA_Obtener_Alertas_Financieras_Result[0])
                         .Where(a => Math.Abs(a.VariacionPorcentaje) >= umbralPorc && Math.Abs(a.VariacionMonto) >= umbralMonto)
                         .ToList();
@@ -83,7 +90,6 @@ namespace FGA.Controllers
                     ViewBag.EntidadesList = GetEntidadesCombo();
 
                     return View(listAlertas);
-                }
             }
             catch (Exception ex)
             {
@@ -221,7 +227,7 @@ namespace FGA.Controllers
         {
             try
             {
-                string idEnt = string.IsNullOrEmpty(entidadId) ? (Session["IdEntidad"] != null ? Session["IdEntidad"].ToString() : "-1") : entidadId;
+                string idEnt = string.IsNullOrEmpty(entidadId) ? GetSessionString("IdEntidad", "-1") : entidadId;
                 DateTime? fecha = null;
                 if (!string.IsNullOrEmpty(periodo))
                 {
@@ -233,17 +239,24 @@ namespace FGA.Controllers
 
                 ObtenerUmbralesEfectivos(idEnt, out decimal umbralPorc, out decimal umbralMonto, out string modoMonitoreo, out bool esPersonalizado);
 
-                using (var spClient = new FGA_En_Linea.SPService.SPClient())
+                FGA_Obtener_Alertas_Financieras_Result[] result = null;
+                var spClient = new FGA_En_Linea.SPService.SPClient();
+                try
                 {
-                    var result = spClient.FGA_Generar_Alertas_Variacion_Financiera(idEnt, fecha, mod, tipoComp);
-                    var filtradas = (result ?? new FGA_Obtener_Alertas_Financieras_Result[0])
-                        .Where(a => Math.Abs(a.VariacionPorcentaje) >= umbralPorc && Math.Abs(a.VariacionMonto) >= umbralMonto)
-                        .ToList();
-
-                    int total = filtradas.Count;
-                    string descModo = modoMonitoreo == "SOLO_WATCHLIST" ? " [Modo: Lista de Seguimiento]" : (modoMonitoreo == "EXCLUIR_BLACKLIST" ? " [Modo: Exclusión de Cuentas]" : "");
-                    return Json(new { success = true, totalGeneradas = total, message = string.Format("Se evaluaron las cuentas contables con los umbrales configurados (Variación ≥ {0:N1}%, Monto ≥ ₡{1:N0}){2}. Total de alertas vigentes: {3}", umbralPorc, umbralMonto, descModo, total) });
+                    result = spClient.FGA_Generar_Alertas_Variacion_Financiera(idEnt, fecha, mod, tipoComp);
                 }
+                finally
+                {
+                    spClient.SafeClose();
+                }
+
+                var filtradas = (result ?? new FGA_Obtener_Alertas_Financieras_Result[0])
+                    .Where(a => Math.Abs(a.VariacionPorcentaje) >= umbralPorc && Math.Abs(a.VariacionMonto) >= umbralMonto)
+                    .ToList();
+
+                int total = filtradas.Count;
+                string descModo = modoMonitoreo == "SOLO_WATCHLIST" ? " [Modo: Lista de Seguimiento]" : (modoMonitoreo == "EXCLUIR_BLACKLIST" ? " [Modo: Exclusión de Cuentas]" : "");
+                return Json(new { success = true, totalGeneradas = total, message = string.Format("Se evaluaron las cuentas contables con los umbrales configurados (Variación ≥ {0:N1}%, Monto ≥ ₡{1:N0}){2}. Total de alertas vigentes: {3}", umbralPorc, umbralMonto, descModo, total) });
             }
             catch (Exception ex)
             {
@@ -258,40 +271,46 @@ namespace FGA.Controllers
 
             try
             {
-                using (var paramClient = new FGA_En_Linea.ParametrosService.ParametrosServiceClient())
+                FGA.Models.Parametros[] lista = null;
+                var paramClient = new FGA_En_Linea.ParametrosService.ParametrosServiceClient();
+                try
                 {
-                    var lista = paramClient.GetAll() ?? new FGA.Models.Parametros[0];
+                    lista = paramClient.GetAll() ?? new FGA.Models.Parametros[0];
+                }
+                finally
+                {
+                    paramClient.SafeClose();
+                }
 
-                    // Búsqueda flexible por llave o por descripción para el Porcentaje
-                    var pPorc = lista.FirstOrDefault(p => p.Llave != null && (
-                        p.Llave.Trim().Equals("ALERTA_VARIACION_PORC", StringComparison.OrdinalIgnoreCase) ||
-                        p.Llave.Trim().Equals("ALERTA_PORCENTAJE", StringComparison.OrdinalIgnoreCase) ||
-                        p.Llave.Trim().Equals("ALERTA_PORC", StringComparison.OrdinalIgnoreCase) ||
-                        p.Llave.Trim().Equals("ALERTA_VARIACION_PORCENTAJE", StringComparison.OrdinalIgnoreCase) ||
-                        (p.Llave.IndexOf("ALERTA", StringComparison.OrdinalIgnoreCase) >= 0 && p.Llave.IndexOf("PORC", StringComparison.OrdinalIgnoreCase) >= 0)
-                    )) ?? lista.FirstOrDefault(p => p.Descripcion != null &&
-                        p.Descripcion.IndexOf("alerta", StringComparison.OrdinalIgnoreCase) >= 0 &&
-                        (p.Descripcion.IndexOf("porcent", StringComparison.OrdinalIgnoreCase) >= 0 || p.Descripcion.IndexOf("%", StringComparison.OrdinalIgnoreCase) >= 0));
+                // Búsqueda flexible por llave o por descripción para el Porcentaje
+                var pPorc = lista.FirstOrDefault(p => p.Llave != null && (
+                    p.Llave.Trim().Equals("ALERTA_VARIACION_PORC", StringComparison.OrdinalIgnoreCase) ||
+                    p.Llave.Trim().Equals("ALERTA_PORCENTAJE", StringComparison.OrdinalIgnoreCase) ||
+                    p.Llave.Trim().Equals("ALERTA_PORC", StringComparison.OrdinalIgnoreCase) ||
+                    p.Llave.Trim().Equals("ALERTA_VARIACION_PORCENTAJE", StringComparison.OrdinalIgnoreCase) ||
+                    (p.Llave.IndexOf("ALERTA", StringComparison.OrdinalIgnoreCase) >= 0 && p.Llave.IndexOf("PORC", StringComparison.OrdinalIgnoreCase) >= 0)
+                )) ?? lista.FirstOrDefault(p => p.Descripcion != null &&
+                    p.Descripcion.IndexOf("alerta", StringComparison.OrdinalIgnoreCase) >= 0 &&
+                    (p.Descripcion.IndexOf("porcent", StringComparison.OrdinalIgnoreCase) >= 0 || p.Descripcion.IndexOf("%", StringComparison.OrdinalIgnoreCase) >= 0));
 
-                    if (pPorc != null && !string.IsNullOrWhiteSpace(pPorc.Valor))
-                    {
-                        umbralPorc = ParseFlexibleDecimal(pPorc.Valor, FGAConstants.Alertas.UmbralVariacionPorcGlobal);
-                    }
+                if (pPorc != null && !string.IsNullOrWhiteSpace(pPorc.Valor))
+                {
+                    umbralPorc = ParseFlexibleDecimal(pPorc.Valor, FGAConstants.Alertas.UmbralVariacionPorcGlobal);
+                }
 
-                    // Búsqueda flexible por llave o por descripción para el Monto
-                    var pMonto = lista.FirstOrDefault(p => p.Llave != null && (
-                        p.Llave.Trim().Equals("ALERTA_VARIACION_MONTO", StringComparison.OrdinalIgnoreCase) ||
-                        p.Llave.Trim().Equals("ALERTA_MONTO", StringComparison.OrdinalIgnoreCase) ||
-                        p.Llave.Trim().Equals("MONTO_ALERTA", StringComparison.OrdinalIgnoreCase) ||
-                        (p.Llave.IndexOf("ALERTA", StringComparison.OrdinalIgnoreCase) >= 0 && p.Llave.IndexOf("MONTO", StringComparison.OrdinalIgnoreCase) >= 0)
-                    )) ?? lista.FirstOrDefault(p => p.Descripcion != null &&
-                        p.Descripcion.IndexOf("alerta", StringComparison.OrdinalIgnoreCase) >= 0 &&
-                        (p.Descripcion.IndexOf("monto", StringComparison.OrdinalIgnoreCase) >= 0 || p.Descripcion.IndexOf("₡", StringComparison.OrdinalIgnoreCase) >= 0));
+                // Búsqueda flexible por llave o por descripción para el Monto
+                var pMonto = lista.FirstOrDefault(p => p.Llave != null && (
+                    p.Llave.Trim().Equals("ALERTA_VARIACION_MONTO", StringComparison.OrdinalIgnoreCase) ||
+                    p.Llave.Trim().Equals("ALERTA_MONTO", StringComparison.OrdinalIgnoreCase) ||
+                    p.Llave.Trim().Equals("MONTO_ALERTA", StringComparison.OrdinalIgnoreCase) ||
+                    (p.Llave.IndexOf("ALERTA", StringComparison.OrdinalIgnoreCase) >= 0 && p.Llave.IndexOf("MONTO", StringComparison.OrdinalIgnoreCase) >= 0)
+                )) ?? lista.FirstOrDefault(p => p.Descripcion != null &&
+                    p.Descripcion.IndexOf("alerta", StringComparison.OrdinalIgnoreCase) >= 0 &&
+                    (p.Descripcion.IndexOf("monto", StringComparison.OrdinalIgnoreCase) >= 0 || p.Descripcion.IndexOf("₡", StringComparison.OrdinalIgnoreCase) >= 0));
 
-                    if (pMonto != null && !string.IsNullOrWhiteSpace(pMonto.Valor))
-                    {
-                        umbralMonto = ParseFlexibleDecimal(pMonto.Valor, FGAConstants.Alertas.UmbralVariacionMontoGlobal);
-                    }
+                if (pMonto != null && !string.IsNullOrWhiteSpace(pMonto.Valor))
+                {
+                    umbralMonto = ParseFlexibleDecimal(pMonto.Valor, FGAConstants.Alertas.UmbralVariacionMontoGlobal);
                 }
             }
             catch
@@ -462,13 +481,18 @@ namespace FGA.Controllers
                 bool guardado = false;
                 try
                 {
-                    using (var spClient = new FGA_En_Linea.SPService.SPClient())
+                    var spClient = new FGA_En_Linea.SPService.SPClient();
+                    try
                     {
                         var resSp = spClient.FGA_Guardar_Configuracion_Alerta_Entidad(idEntidad, umbralPorc, umbralMonto, modoMonitoreo, activo, usuario);
                         if (resSp != null)
                         {
                             guardado = true;
                         }
+                    }
+                    finally
+                    {
+                        spClient.SafeClose();
                     }
                 }
                 catch
@@ -531,7 +555,8 @@ namespace FGA.Controllers
                 bool obtenido = false;
                 try
                 {
-                    using (var spClient = new FGA_En_Linea.SPService.SPClient())
+                    var spClient = new FGA_En_Linea.SPService.SPClient();
+                    try
                     {
                         var cuentasSp = spClient.FGA_Obtener_Cuentas_Monitoreadas_Entidad(idEntidad, true);
                         if (cuentasSp != null)
@@ -556,6 +581,10 @@ namespace FGA.Controllers
                             }
                             obtenido = true;
                         }
+                    }
+                    finally
+                    {
+                        spClient.SafeClose();
                     }
                 }
                 catch
@@ -642,7 +671,8 @@ namespace FGA.Controllers
                 // 1. Intentar vía CatalogoCuentaClient si está disponible
                 try
                 {
-                    using (var catClient = new FGA_En_Linea.CatalogoCuentaService.CatalogoCuentaClient())
+                    var catClient = new FGA_En_Linea.CatalogoCuentaService.CatalogoCuentaClient();
+                    try
                     {
                         var cuentas = catClient.GetAll();
                         if (cuentas != null && cuentas.Length > 0)
@@ -669,6 +699,10 @@ namespace FGA.Controllers
                                 }, JsonRequestBehavior.AllowGet);
                             }
                         }
+                    }
+                    finally
+                    {
+                        catClient.SafeClose();
                     }
                 }
                 catch { }
@@ -741,10 +775,15 @@ namespace FGA.Controllers
                 bool guardado = false;
                 try
                 {
-                    using (var spClient = new FGA_En_Linea.SPService.SPClient())
+                    var spClient = new FGA_En_Linea.SPService.SPClient();
+                    try
                     {
                         var res = spClient.FGA_Guardar_Cuenta_Monitoreada_Entidad(idEntidad, cuenta.Trim(), nombreCuenta, regla, umbralPorc, umbralMonto, usuario);
                         if (res != null) guardado = true;
+                    }
+                    finally
+                    {
+                        spClient.SafeClose();
                     }
                 }
                 catch
@@ -806,10 +845,15 @@ namespace FGA.Controllers
                 bool eliminado = false;
                 try
                 {
-                    using (var spClient = new FGA_En_Linea.SPService.SPClient())
+                    var spClient = new FGA_En_Linea.SPService.SPClient();
+                    try
                     {
                         spClient.FGA_Eliminar_Cuenta_Monitoreada_Entidad(id, idEntidad, usuario);
                         eliminado = true;
+                    }
+                    finally
+                    {
+                        spClient.SafeClose();
                     }
                 }
                 catch
@@ -943,7 +987,8 @@ namespace FGA.Controllers
             bool obtenidoWcf = false;
             try
             {
-                using (var spClient = new FGA_En_Linea.SPService.SPClient())
+                var spClient = new FGA_En_Linea.SPService.SPClient();
+                try
                 {
                     var cfg = spClient.FGA_Obtener_Configuracion_Alerta_Entidad(idEntidad);
                     if (cfg != null && cfg.Length > 0)
@@ -957,6 +1002,10 @@ namespace FGA.Controllers
                         usuarioModif = item.UsuarioModificacion;
                         obtenidoWcf = true;
                     }
+                }
+                finally
+                {
+                    spClient.SafeClose();
                 }
             }
             catch

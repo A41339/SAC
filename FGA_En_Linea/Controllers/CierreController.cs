@@ -14,7 +14,9 @@ namespace FGA.Controllers
         public ActionResult Index()
         {
             Load();
-            var entities = sp.FGA_Consultar_ArchivosCargados(Session["IdEntidad"].ToString(), Utility.Utilitarios.ConvertirAFecha(Session["Periodo"].ToString()), true).ToList();
+            string idEnt = GetSessionString(FGAConstants.Sesion.IdEntidad);
+            DateTime periodo = GetSessionDate("Periodo");
+            var entities = sp.FGA_Consultar_ArchivosCargados(idEnt, periodo, true).ToList();
             EstatusCarga view = new EstatusCarga();
             view.listaArchivos = entities;
             var aceptados = entities.Where(o => o.XML_ID == FGA.Utility.Utilitarios.archivoAceptado).Count();
@@ -224,12 +226,12 @@ namespace FGA.Controllers
         {
             if (disposing)
             {
-                usr.Close();
-                ent.Close();
-                enc.Close();
-                arce.Close();
-                err.Close();
-                sp.Close();
+                usr.SafeClose();
+                ent.SafeClose();
+                enc.SafeClose();
+                arce.SafeClose();
+                err.SafeClose();
+                sp.SafeClose();
             }
             base.Dispose(disposing);
         }

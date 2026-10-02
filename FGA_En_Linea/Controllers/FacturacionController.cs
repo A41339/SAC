@@ -19,19 +19,10 @@ namespace FGA.Controllers
             Session["TipoReporte"] = null;
             Session["TipoReporte2"] = null;
 
-            string idEntidad = Session["IdEntidad"]?.ToString() ?? "";
-            int anio = DateTime.Now.Year;
+            string idEntidad = GetSessionString(FGAConstants.Sesion.IdEntidad);
             int mesActual = DateTime.Now.Month;
-            int trimestre = (mesActual - 1) / 3 + 1;
-
-            if (Session["Anno"] != null && int.TryParse(Session["Anno"].ToString(), out int parsedAnio))
-            {
-                anio = parsedAnio;
-            }
-            if (Session["Trimestre"] != null && int.TryParse(Session["Trimestre"].ToString(), out int parsedTrimestre))
-            {
-                trimestre = parsedTrimestre;
-            }
+            int anio = GetSessionInt("Anno", DateTime.Now.Year);
+            int trimestre = GetSessionInt("Trimestre", (mesActual - 1) / 3 + 1);
 
             var model = CargarDatosFacturacion(idEntidad, anio, trimestre);
             return View(model);
@@ -857,10 +848,15 @@ namespace FGA.Controllers
                 {
                     try
                     {
-                        using (var entService = new FGA_En_Linea.EntidadService.EntidadServiceClient())
+                        var entService = new FGA_En_Linea.EntidadService.EntidadServiceClient();
+                        try
                         {
                             var e = entService.Get(idEnt);
                             if (e != null) nomEntidad = e.Nombre;
+                        }
+                        finally
+                        {
+                            entService.SafeClose();
                         }
                     }
                     catch { }

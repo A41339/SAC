@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -10,6 +10,7 @@ using DotNet.Highcharts.Options;
 using Entities.Entities.Procedures;
 using FGA.Model;
 using FGA.Models;
+using FGA.Utility;
 
 namespace FGA.Controllers
 {
@@ -19,7 +20,7 @@ namespace FGA.Controllers
         public void LoadPage()
         {
             Load();
-            string entId = Session["IdEntidad"]?.ToString() ?? "2";
+            string entId = GetSessionString(FGAConstants.Sesion.IdEntidad, "2");
             DateTime fechaEntidad;
             string keyFecha = "FechaCierre_" + entId;
             if (Session[keyFecha] is DateTime dtCached)
@@ -763,11 +764,11 @@ namespace FGA.Controllers
         {
             if (disposing)
             {
-                ent.Close();
-                sp.Close();
-                usr.Close();
-                formu.Close();
-                cat.Close();
+                ent.SafeClose();
+                sp.SafeClose();
+                usr.SafeClose();
+                formu.SafeClose();
+                cat.SafeClose();
             }
             base.Dispose(disposing);
         }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text.RegularExpressions;
@@ -423,6 +423,11 @@ namespace FGA.Utility
 
         public static DateTime ConvertirAFecha(string fecha)
         {
+            if (string.IsNullOrWhiteSpace(fecha))
+            {
+                throw new ArgumentException("El valor de fecha no puede ser nulo ni vacío.", nameof(fecha));
+            }
+
             try
             {
                 fecha = fecha.Replace("\n", String.Empty);
@@ -452,6 +457,34 @@ namespace FGA.Utility
             }
 
             return resultado;
+        }
+
+        /// <summary>
+        /// Convierte un valor (string, DateTime, object) a DateTime de forma segura sin lanzar excepciones.
+        /// Si el valor es nulo, vacío o inválido, retorna el valor de respaldo proporcionado.
+        /// </summary>
+        public static DateTime ConvertirAFechaSegura(object fechaObj, DateTime fallback)
+        {
+            if (fechaObj == null) return fallback;
+            if (fechaObj is DateTime dt) return dt;
+
+            string fechaStr = fechaObj.ToString();
+            if (string.IsNullOrWhiteSpace(fechaStr)) return fallback;
+
+            try
+            {
+                return ConvertirAFecha(fechaStr);
+            }
+            catch
+            {
+                if (DateTime.TryParse(fechaStr, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedInv))
+                    return parsedInv;
+
+                if (DateTime.TryParse(fechaStr, FGAConstants.CulturaCR, DateTimeStyles.None, out DateTime parsedCR))
+                    return parsedCR;
+
+                return fallback;
+            }
         }
 
         public static DateTime ConvertirAFechaNula(string fecha)

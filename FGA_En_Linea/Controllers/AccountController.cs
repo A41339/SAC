@@ -10,6 +10,7 @@ using System.Threading;
 using System.Linq;
 using FGA.Model;
 using System.Threading.Tasks;
+using FGA.Utility;
 
 namespace FGA.Controllers
 {
@@ -136,7 +137,15 @@ namespace FGA.Controllers
                     try
                     {
                         var spClient = new FGA_En_Linea.SPService.SPClient();
-                        DateTime fechaCierre = spClient.FGA_Consultar_FechaCierre(defaultEnt);
+                        DateTime fechaCierre;
+                        try
+                        {
+                            fechaCierre = spClient.FGA_Consultar_FechaCierre(defaultEnt);
+                        }
+                        finally
+                        {
+                            spClient.SafeClose();
+                        }
                         DateTime p2 = fechaCierre.AddMonths(-1);
                         DateTime p1 = p2.AddYears(-1);
                         Session["Periodo"] = fechaCierre.ToShortDateString();
@@ -348,7 +357,9 @@ namespace FGA.Controllers
         {
             if (disposing)
             {
-                db.Close();
+                db.SafeClose();
+                param.SafeClose();
+                bit.SafeClose();
             }
             base.Dispose(disposing);
         }

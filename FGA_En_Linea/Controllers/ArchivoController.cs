@@ -11,6 +11,7 @@ using FGA_En_Linea.ProcessFileService;
 using DocumentFormat.OpenXml.Spreadsheet;
 using DocumentFormat.OpenXml.Packaging;
 using System.Collections.Generic;
+using FGA.Utility;
 
 namespace FGA.Controllers
 {
@@ -241,7 +242,14 @@ namespace FGA.Controllers
                                                  encabezado.IdArchivo = null;
                                                  enc.Add(ref encabezado);*/
                         ProcessFileServiceClient process = new ProcessFileServiceClient();
-                        mensaje = process.SaveFile(path, fileName, ObjUser.Entidad_Usuario.Id, ObjUser.Id.Value, periodo);
+                        try
+                        {
+                            mensaje = process.SaveFile(path, fileName, ObjUser.Entidad_Usuario.Id, ObjUser.Id.Value, periodo);
+                        }
+                        finally
+                        {
+                            process.SafeClose();
+                        }
 
                         /*}
                     }
@@ -289,7 +297,6 @@ namespace FGA.Controllers
                         string guid = Guid.NewGuid().ToString() + ".xlsx";
                         var xlsPath = Path.Combine(path, guid);
                         xlsFile.SaveAs(xlsPath);
-                        ProcessFileServiceClient process = new ProcessFileServiceClient();
                         Sugef_Encabezado sugef_Encabezado = new Sugef_Encabezado();
                         DateTime periodo = DateTime.Now;
 
@@ -310,7 +317,14 @@ namespace FGA.Controllers
                         this.senc.Add(ref sugef_Encabezado);
 
                         ProcessFileServiceClient processFileServiceClient = new ProcessFileServiceClient();
-                        processFileServiceClient.ProcessIndustria(xlsPath, sugef_Encabezado.Id);
+                        try
+                        {
+                            processFileServiceClient.ProcessIndustria(xlsPath, sugef_Encabezado.Id);
+                        }
+                        finally
+                        {
+                            processFileServiceClient.SafeClose();
+                        }
                     }
                 }
                 else
@@ -347,7 +361,6 @@ namespace FGA.Controllers
                         string guid = Guid.NewGuid().ToString() + ".xlsx";
                         var xlsPath = Path.Combine(path, guid);
                         xlsFile.SaveAs(xlsPath);
-                        ProcessFileServiceClient process = new ProcessFileServiceClient();
                         Sugef_Encabezado sugef_Encabezado = new Sugef_Encabezado();
                         DateTime periodo = DateTime.Now;
 
@@ -368,7 +381,14 @@ namespace FGA.Controllers
                         this.senc.Add(ref sugef_Encabezado);
 
                         ProcessFileServiceClient processFileServiceClient = new ProcessFileServiceClient();
-                        processFileServiceClient.ProcessIndicador(xlsPath, sugef_Encabezado.Id);
+                        try
+                        {
+                            processFileServiceClient.ProcessIndicador(xlsPath, sugef_Encabezado.Id);
+                        }
+                        finally
+                        {
+                            processFileServiceClient.SafeClose();
+                        }
                     }
                 }
                 else
@@ -406,7 +426,6 @@ namespace FGA.Controllers
                         string guid = Guid.NewGuid().ToString() + ".xlsx";
                         var xlsPath = Path.Combine(path, guid);
                         xlsFile.SaveAs(xlsPath);
-                        ProcessFileServiceClient process = new ProcessFileServiceClient();
                         Sugef_Encabezado sugef_Encabezado = new Sugef_Encabezado();
                         DateTime periodo = DateTime.Now;
 
@@ -427,7 +446,14 @@ namespace FGA.Controllers
                         this.senc.Add(ref sugef_Encabezado);
 
                         ProcessFileServiceClient processFileServiceClient = new ProcessFileServiceClient();
-                        processFileServiceClient.ProcessCartera(xlsPath, sugef_Encabezado.Id);
+                        try
+                        {
+                            processFileServiceClient.ProcessCartera(xlsPath, sugef_Encabezado.Id);
+                        }
+                        finally
+                        {
+                            processFileServiceClient.SafeClose();
+                        }
                     }
                 }
                 else
@@ -514,12 +540,14 @@ namespace FGA.Controllers
         {
             if (disposing)
             {
-                arc.Close();
-                usr.Close();
-                ent.Close();
-                arces.Close();
-                enc.Close();
-                err.Close();
+                arc.SafeClose();
+                usr.SafeClose();
+                ent.SafeClose();
+                arces.SafeClose();
+                enc.SafeClose();
+                senc.SafeClose();
+                err.SafeClose();
+                sp.SafeClose();
             }
             base.Dispose(disposing);
         }

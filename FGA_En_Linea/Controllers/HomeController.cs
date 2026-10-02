@@ -776,8 +776,8 @@ namespace FGA.Controllers
         {
             if (disposing)
             {
-                sp.Close();
-                ent.Close();
+                sp.SafeClose();
+                ent.SafeClose();
             }
 
             base.Dispose(disposing);

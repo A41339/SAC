@@ -10,6 +10,7 @@ using DotNet.Highcharts.Options;
 using Entities.Entities.Procedures;
 using FGA.Model;
 using FGA.Models;
+using FGA.Utility;
 using static FGA.Utility.Utilitarios;
 
 namespace FGA.Controllers
@@ -936,9 +937,9 @@ namespace FGA.Controllers
         {
             if (disposing)
             {
-                ent.Close();
-                sp.Close();
-                usr.Close();
+                ent.SafeClose();
+                sp.SafeClose();
+                usr.SafeClose();
             }
             base.Dispose(disposing);
         }

@@ -40,8 +40,8 @@ namespace FGA.Controllers
                         Session["IdEntidad"] = lista[0].Id;
                             
                     ViewBag.Entidades = new SelectList(lista, "Id", "Nombre", Session["IdEntidad"]);
-                    string idActual = Session["IdEntidad"].ToString();
-                    string nomEnt = rawLista.FirstOrDefault(o => o.Id == idActual)?.Nombre ?? (ent.Get(idActual)?.Nombre ?? "");
+                    string idAdminEnt = Session["IdEntidad"].ToString();
+                    string nomEnt = rawLista.FirstOrDefault(o => o.Id == idAdminEnt)?.Nombre ?? (ent.Get(idAdminEnt)?.Nombre ?? "");
                     ruta = MicrosoftHelper.MSHelper.GetSiteRoot() + "/Content/images/" + nomEnt + ".jpg";
                     Session["NomEntidad"] = nomEnt;
                 }
@@ -50,14 +50,25 @@ namespace FGA.Controllers
                     ViewBag.Entidades = new SelectList(lista.Where(o => o.Id == ObjUser.Entidad_Usuario_Id), "Id", "Nombre");
                     Session["IdEntidad"] = ObjUser.Entidad_Usuario_Id;
                     ruta = MicrosoftHelper.MSHelper.GetSiteRoot() + "/Content/images/" + Env.GetUserInfo("logo");
-                    string idActual = Session["IdEntidad"].ToString();
-                    Session["NomEntidad"] = rawLista.FirstOrDefault(o => o.Id == idActual)?.Nombre ?? (ent.Get(idActual)?.Nombre ?? "");
+                    string idEnt = Session["IdEntidad"].ToString();
+                    Session["NomEntidad"] = rawLista.FirstOrDefault(o => o.Id == idEnt)?.Nombre ?? (ent.Get(idEnt)?.Nombre ?? "");
                 }
 
-                if (Session["Periodo"] is null)
-                    Session["Periodo"] = sp.FGA_Consultar_FechaCierre(Session["IdEntidad"].ToString()).ToShortDateString();
+                string idActual = GetSessionString(FGAConstants.Sesion.IdEntidad, ObjUser?.Entidad_Usuario_Id ?? FGAConstants.Entidades.Administradora);
 
-                DateTime fechaCierre = Utility.Utilitarios.ConvertirAFecha(Session["Periodo"].ToString());
+                if (Session["Periodo"] is null)
+                {
+                    try
+                    {
+                        Session["Periodo"] = sp.FGA_Consultar_FechaCierre(idActual).ToShortDateString();
+                    }
+                    catch
+                    {
+                        Session["Periodo"] = DateTime.Today.ToShortDateString();
+                    }
+                }
+
+                DateTime fechaCierre = GetSessionDate("Periodo", DateTime.Today);
                 if (Session["Periodo2"] is null)
                     Session["Periodo2"] = fechaCierre.AddMonths(-1).ToShortDateString();
 
@@ -65,8 +76,8 @@ namespace FGA.Controllers
                 {
                     try
                     {
-                        DateTime f3 = Utility.Utilitarios.ConvertirAFecha(Session["Periodo3"].ToString());
-                        DateTime f2 = Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString());
+                        DateTime f3 = GetSessionDate("Periodo3", fechaCierre);
+                        DateTime f2 = GetSessionDate("Periodo2", fechaCierre.AddMonths(-1));
                         if (f3 > f2)
                         {
                             Session["Periodo2"] = f3.ToShortDateString();
@@ -75,12 +86,11 @@ namespace FGA.Controllers
                     catch { }
                 }
 
-                DateTime p2 = Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString());
-                string tipoComp = Session["TipoComparacion"]?.ToString() ?? "Interanual";
-                if (Session["TipoComparacion"] is null)
-                    Session["TipoComparacion"] = "Interanual";
+                DateTime p2 = GetSessionDate("Periodo2", fechaCierre.AddMonths(-1));
+                string tipoComp = GetSessionString("TipoComparacion", FGAConstants.Alertas.ComparacionInteranual);
+                Session["TipoComparacion"] = tipoComp;
 
-                if (Session["Periodo1"] is null || (tipoComp.Equals("Interanual", StringComparison.OrdinalIgnoreCase) && Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()) >= p2.AddMonths(-2)))
+                if (Session["Periodo1"] is null || (tipoComp.Equals(FGAConstants.Alertas.ComparacionInteranual, StringComparison.OrdinalIgnoreCase) && GetSessionDate("Periodo1", p2.AddYears(-1)) >= p2.AddMonths(-2)))
                 {
                     Session["Periodo1"] = p2.AddYears(-1).ToShortDateString();
                 }
@@ -88,7 +98,6 @@ namespace FGA.Controllers
                 Session["Logo"] = ruta;
                 if (Session["NomEntidad"] == null)
                 {
-                    string idActual = Session["IdEntidad"].ToString();
                     Session["NomEntidad"] = rawLista.FirstOrDefault(o => o.Id == idActual)?.Nombre ?? (ent.Get(idActual)?.Nombre ?? "");
                 }
                 Session["RutaLogo"] = Server.MapPath("~/Content/images/" + Session["NomEntidad"] + ".jpg");
@@ -415,7 +424,8 @@ namespace FGA.Controllers
                     return cached;
                 }
 
-                using (var entClient = new FGA_En_Linea.EntidadService.EntidadServiceClient())
+                var entClient = new FGA_En_Linea.EntidadService.EntidadServiceClient();
+                try
                 {
                     var entidades = (entClient.GetAll() ?? new Entidad[0])
                         .Where(e => e != null && !string.IsNullOrWhiteSpace(e.Nombre) &&
@@ -432,6 +442,10 @@ namespace FGA.Controllers
                         System.Web.HttpContext.Current.Cache.Insert("CatEntidadesCombo", entidades, null, DateTime.Now.AddMinutes(15), System.Web.Caching.Cache.NoSlidingExpiration);
                     }
                     return entidades;
+                }
+                finally
+                {
+                    entClient.SafeClose();
                 }
             }
             catch
@@ -480,6 +494,50 @@ namespace FGA.Controllers
         }
         #endregion
 
+        #region Session & Date Helpers
+        /// <summary>
+        /// Obtiene una fecha de Session de forma segura evitando NullReferenceException o FormatException.
+        /// </summary>
+        protected DateTime GetSessionDate(string key, DateTime? fallback = null)
+        {
+            DateTime def = fallback ?? DateTime.Today;
+            object val = Session != null ? Session[key] : null;
+            return Utilitarios.ConvertirAFechaSegura(val, def);
+        }
+
+        /// <summary>
+        /// Asigna una fecha a la sesión formateada como fecha corta estandarizada.
+        /// </summary>
+        protected void SetSessionDate(string key, DateTime date)
+        {
+            if (Session != null)
+            {
+                Session[key] = date.ToShortDateString();
+            }
+        }
+
+        /// <summary>
+        /// Obtiene un string de Session de forma segura.
+        /// </summary>
+        protected string GetSessionString(string key, string fallback = "")
+        {
+            if (Session == null || Session[key] == null) return fallback;
+            return Session[key].ToString();
+        }
+
+        /// <summary>
+        /// Obtiene un entero de Session de forma segura.
+        /// </summary>
+        protected int GetSessionInt(string key, int fallback = 0)
+        {
+            if (Session == null || Session[key] == null) return fallback;
+            int res;
+            if (int.TryParse(Session[key].ToString(), out res))
+                return res;
+            return fallback;
+        }
+        #endregion
+
         private readonly FGA_En_Linea.EntidadService.EntidadServiceClient ent = new FGA_En_Linea.EntidadService.EntidadServiceClient();
         private readonly FGA_En_Linea.UsuarioService.UsuarioServiceClient usr = new FGA_En_Linea.UsuarioService.UsuarioServiceClient();
         private readonly FGA_En_Linea.SPService.SPClient sp = new FGA_En_Linea.SPService.SPClient();
@@ -488,9 +546,9 @@ namespace FGA.Controllers
         {
             if (disposing)
             {
-                ent.Close();
-                usr.Close();
-                sp.Close();
+                ent.SafeClose();
+                usr.SafeClose();
+                sp.SafeClose();
             }
             base.Dispose(disposing);
         }
