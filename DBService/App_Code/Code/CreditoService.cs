@@ -176,7 +176,7 @@ public class CreditoService : ICreditoService
                         };
                         db.Creditos_Documentos.Add(docPagare);
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         // Log error pero permitimos que la resolución continúe
                         // En un sistema real usaríamos un logger

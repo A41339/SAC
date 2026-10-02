@@ -1,4 +1,4 @@
-﻿using FGA.Models;
+using FGA.Models;
 using FGA.Utility;
 using System;
 using System.Collections.Generic;
@@ -17,7 +17,7 @@ namespace FileService
 {
     public partial class FileService : ServiceBase
     {
-        private readonly String minutes = System.Configuration.ConfigurationSettings.AppSettings["Minutes"];
+        private readonly String minutes = System.Configuration.ConfigurationManager.AppSettings["Minutes"];
 
         public FileService()
         {
