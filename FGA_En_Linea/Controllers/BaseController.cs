@@ -1,5 +1,8 @@
 using FGA.Models;
+using FGA.Utility;
 using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -344,8 +347,138 @@ namespace FGA.Controllers
 
         protected bool IsFGA()
         {
-            return Session["IsFGA"].ToString() == "1" ? true : false;
+            return Session["IsFGA"] != null && Session["IsFGA"].ToString() == "1";
         }
+
+        #region Helpers Centralizados FFC
+        /// <summary>
+        /// Cultura institucional costarricense (es-CR) para formateo unificado de montos y fechas
+        /// </summary>
+        protected CultureInfo CulturaCR => FGAConstants.CulturaCR;
+
+        /// <summary>
+        /// Obtiene el identificador de rol actual del usuario en sesión
+        /// </summary>
+        protected int CurrentRoleId
+        {
+            get
+            {
+                int.TryParse(Env.GetUserInfo(FGAConstants.Sesion.RoleId), out int roleId);
+                return roleId;
+            }
+        }
+
+        /// <summary>
+        /// Determina si el usuario autenticado posee rol con privilegios de administrador institucional
+        /// </summary>
+        protected bool IsCurrentUserAdmin => FGAConstants.Roles.EsAdministrador(CurrentRoleId);
+
+        /// <summary>
+        /// Resuelve la entidad contable activa para el usuario y contexto actual.
+        /// Si el usuario no es administrador, fuerza la entidad asignada a su perfil.
+        /// </summary>
+        protected string ResolveCurrentEntity(string entidadParam, out bool esAdmin)
+        {
+            esAdmin = IsCurrentUserAdmin;
+            string idEntidadSession = Session?[FGAConstants.Sesion.IdEntidad]?.ToString();
+            string idEntidadUsuario = Env.GetUserInfo(FGAConstants.Sesion.Entidad);
+
+            string idEntidad = string.IsNullOrEmpty(entidadParam)
+                ? (string.IsNullOrEmpty(idEntidadSession) ? FGAConstants.Entidades.Todas : idEntidadSession)
+                : entidadParam;
+
+            if (!esAdmin && !string.IsNullOrEmpty(idEntidadUsuario) &&
+                idEntidadUsuario != FGAConstants.Entidades.Todas &&
+                idEntidadUsuario != FGAConstants.Entidades.Administradora)
+            {
+                idEntidad = idEntidadUsuario;
+            }
+
+            if (Session != null)
+            {
+                Session[FGAConstants.Sesion.IdEntidad] = idEntidad;
+            }
+
+            return idEntidad;
+        }
+
+        /// <summary>
+        /// Retorna la lista activa de entidades/cooperativas para combos y filtros, con almacenamiento en caché en memoria
+        /// </summary>
+        protected List<Entidad> GetEntidadesCombo()
+        {
+            try
+            {
+                var cached = System.Web.HttpContext.Current?.Cache["CatEntidadesCombo"] as List<Entidad>;
+                if (cached != null && cached.Count > 0)
+                {
+                    return cached;
+                }
+
+                using (var entClient = new FGA_En_Linea.EntidadService.EntidadServiceClient())
+                {
+                    var entidades = (entClient.GetAll() ?? new Entidad[0])
+                        .Where(e => e != null && !string.IsNullOrWhiteSpace(e.Nombre) &&
+                                    e.Id != FGAConstants.Entidades.Todas &&
+                                    e.Id != FGAConstants.Entidades.Administradora &&
+                                    e.Id != FGAConstants.Entidades.Comodin &&
+                                    !e.Nombre.Trim().Equals(FGAConstants.Entidades.TextoTodasCooperativas, StringComparison.OrdinalIgnoreCase) &&
+                                    !e.Nombre.Trim().Equals(FGAConstants.Entidades.TextoTodasEntidades, StringComparison.OrdinalIgnoreCase))
+                        .OrderBy(e => e.Nombre)
+                        .ToList();
+
+                    if (entidades.Count > 0 && System.Web.HttpContext.Current != null)
+                    {
+                        System.Web.HttpContext.Current.Cache.Insert("CatEntidadesCombo", entidades, null, DateTime.Now.AddMinutes(15), System.Web.Caching.Cache.NoSlidingExpiration);
+                    }
+                    return entidades;
+                }
+            }
+            catch
+            {
+                return new List<Entidad>();
+            }
+        }
+
+        /// <summary>
+        /// Configura el SelectList de ViewBag.Entidades respetando permisos de Administrador vs Entidad individual
+        /// </summary>
+        protected void ConfigurarComboEntidades(string selectedId = null, bool incluirTodas = true)
+        {
+            try
+            {
+                Usuario ObjUser = Session[FGAConstants.Sesion.CurrentUserObj] as Usuario;
+                if (ObjUser == null)
+                {
+                    ObjUser = usr.Get(Env.GetUserInfo(FGAConstants.Sesion.UserId));
+                    Session[FGAConstants.Sesion.CurrentUserObj] = ObjUser;
+                }
+
+                if (IsCurrentUserAdmin || (ObjUser != null && ObjUser.Entidad_Usuario_Id == FGAConstants.Entidades.Administradora))
+                {
+                    var lista = new List<Entidad>(GetEntidadesCombo());
+                    if (incluirTodas)
+                    {
+                        lista.Add(new Entidad
+                        {
+                            Id = FGAConstants.Entidades.Todas,
+                            Nombre = FGAConstants.Entidades.TextoTodasCooperativas
+                        });
+                    }
+                    ViewBag.Entidades = new SelectList(lista, "Id", "Nombre", selectedId ?? Session[FGAConstants.Sesion.IdEntidad]);
+                }
+                else if (ObjUser != null)
+                {
+                    var lista = ent.GetAll().Where(o => o.Id == ObjUser.Entidad_Usuario_Id).ToList();
+                    ViewBag.Entidades = new SelectList(lista, "Id", "Nombre", selectedId ?? ObjUser.Entidad_Usuario_Id);
+                }
+            }
+            catch
+            {
+                ViewBag.Entidades = new SelectList(new List<Entidad>(), "Id", "Nombre");
+            }
+        }
+        #endregion
 
         private readonly FGA_En_Linea.EntidadService.EntidadServiceClient ent = new FGA_En_Linea.EntidadService.EntidadServiceClient();
         private readonly FGA_En_Linea.UsuarioService.UsuarioServiceClient usr = new FGA_En_Linea.UsuarioService.UsuarioServiceClient();

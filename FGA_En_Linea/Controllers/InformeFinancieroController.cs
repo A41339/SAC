@@ -21,6 +21,7 @@ using Microsoft.VisualStudio.OLE.Interop;
 using System.Data.Entity.Core.Common.CommandTrees.ExpressionBuilder;
 using stdole;
 using FGA.Services;
+using FGA.Utility;
 
 namespace FGA.Controllers
 {
@@ -99,12 +100,7 @@ namespace FGA.Controllers
             Graficos_Financieros gp = GetGraphER();
             Load();
 
-            List<Entidad> lista = ent.GetAll().Where(o => o.Id != Utility.Utilitarios.entidadAdministradora && o.Activo == true).OrderBy(o => o.Nombre).ToList();
-            Entidad entidad = new Entidad();
-            entidad.Id = "-1";
-            entidad.Nombre = "TODAS LAS COOPERATIVAS";
-            lista.Add(entidad);
-            ViewBag.Entidades = new SelectList(lista, "Id", "Nombre", entidad);
+            ConfigurarComboEntidades(FGAConstants.Entidades.Todas);
 
             return View("ER", gp);
         }
@@ -128,27 +124,7 @@ namespace FGA.Controllers
                 Session["IdEntidad"] = model.EntidadId;
             }
 
-            Usuario ObjUser = Session["CurrentUserObj"] as Usuario;
-            if (ObjUser == null)
-            {
-                ObjUser = usr.Get(Env.GetUserInfo("userid"));
-                Session["CurrentUserObj"] = ObjUser;
-            }
-
-            if (ObjUser != null && ObjUser.Entidad_Usuario_Id == Utility.Utilitarios.entidadAdministradora)
-            {
-                List<Entidad> lista = ent.GetAll().Where(o => o.Id != Utility.Utilitarios.entidadAdministradora && o.Activo == true).OrderBy(o => o.Nombre).ToList();
-                Entidad entidadTodas = new Entidad();
-                entidadTodas.Id = "-1";
-                entidadTodas.Nombre = "TODAS LAS COOPERATIVAS";
-                lista.Add(entidadTodas);
-                ViewBag.Entidades = new SelectList(lista, "Id", "Nombre", model.EntidadId);
-            }
-            else if (ObjUser != null)
-            {
-                var lista = ent.GetAll().Where(o => o.Id == ObjUser.Entidad_Usuario_Id).ToList();
-                ViewBag.Entidades = new SelectList(lista, "Id", "Nombre", model.EntidadId);
-            }
+            ConfigurarComboEntidades(model.EntidadId);
 
             return model;
         }
@@ -422,12 +398,7 @@ namespace FGA.Controllers
             Session["IdEntidad"] = model.EntidadId;
             Session["TipoReporte"] = Utility.Utilitarios.enum_tipoReporte.origen_aplicacion;
 
-            List<Entidad> lista = ent.GetAll().Where(o => o.Id != Utility.Utilitarios.entidadAdministradora && o.Activo == true).OrderBy(o => o.Nombre).ToList();
-            Entidad entidad = new Entidad();
-            entidad.Id = "-1";
-            entidad.Nombre = "TODAS LAS COOPERATIVAS";
-            lista.Add(entidad);
-            ViewBag.Entidades = new SelectList(lista, "Id", "Nombre", model.EntidadId);
+            ConfigurarComboEntidades(model.EntidadId);
 
             return model;
         }
@@ -656,8 +627,7 @@ namespace FGA.Controllers
                     {
                         Session["NomEntidad"] = entItem.Nombre;
                     }
-                    var lista = rawLista.Where(o => o.Id != Utility.Utilitarios.entidadAdministradora && o.Activo == true).OrderBy(o => o.Nombre).ToArray();
-                    ViewBag.Entidades = new SelectList(lista, "Id", "Nombre", entidadId);
+                    ConfigurarComboEntidades(entidadId);
                 }
                 catch { }
             }
@@ -889,27 +859,7 @@ namespace FGA.Controllers
                 Session["TipoReporte"] = Utility.Utilitarios.enum_tipoReporte.rpt_balance;
             }
 
-            Usuario ObjUser = Session["CurrentUserObj"] as Usuario;
-            if (ObjUser == null)
-            {
-                ObjUser = usr.Get(Env.GetUserInfo("userid"));
-                Session["CurrentUserObj"] = ObjUser;
-            }
-
-            if (ObjUser != null && ObjUser.Entidad_Usuario_Id == Utility.Utilitarios.entidadAdministradora)
-            {
-                List<Entidad> lista = ent.GetAll().Where(o => o.Id != Utility.Utilitarios.entidadAdministradora && o.Activo == true).OrderBy(o => o.Nombre).ToList();
-                Entidad entidadTodas = new Entidad();
-                entidadTodas.Id = "-1";
-                entidadTodas.Nombre = "TODAS LAS COOPERATIVAS";
-                lista.Add(entidadTodas);
-                ViewBag.Entidades = new SelectList(lista, "Id", "Nombre", model.EntidadId);
-            }
-            else if (ObjUser != null)
-            {
-                var lista = ent.GetAll().Where(o => o.Id == ObjUser.Entidad_Usuario_Id).ToList();
-                ViewBag.Entidades = new SelectList(lista, "Id", "Nombre", model.EntidadId);
-            }
+            ConfigurarComboEntidades(model.EntidadId);
 
             return model;
         }

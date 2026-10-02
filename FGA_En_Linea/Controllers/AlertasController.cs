@@ -7,12 +7,13 @@ using System.Linq;
 using System.Web.Mvc;
 using Entities.Entities.Procedures;
 using FGA.Models;
+using FGA.Utility;
 
 namespace FGA.Controllers
 {
     public class AlertasController : BaseController
     {
-        private readonly CultureInfo _crCulture = new CultureInfo("es-CR");
+        private readonly CultureInfo _crCulture = FGAConstants.CulturaCR;
 
         /// <summary>
         /// Vista principal: Bandeja / Centro de Notificaciones y Alertas Financieras
@@ -21,18 +22,8 @@ namespace FGA.Controllers
         {
             try
             {
-                var roleId = 0;
-                int.TryParse(Env.GetUserInfo("roleid"), out roleId);
-                var idEntidadSession = Session["IdEntidad"] != null ? Session["IdEntidad"].ToString() : Env.GetUserInfo("identidad");
+                string idEntidad = ResolveCurrentEntity(entidad, out bool esAdmin);
                 var idEntidadUsuario = Env.GetUserInfo("identidad");
-                bool esAdmin = roleId == 1 || string.IsNullOrEmpty(idEntidadUsuario) || idEntidadUsuario == "-1" || idEntidadUsuario == "0";
-
-                string idEntidad = string.IsNullOrEmpty(entidad) ? (string.IsNullOrEmpty(idEntidadSession) ? "-1" : idEntidadSession) : entidad;
-                if (!esAdmin && !string.IsNullOrEmpty(idEntidadUsuario) && idEntidadUsuario != "-1" && idEntidadUsuario != "0")
-                {
-                    idEntidad = idEntidadUsuario;
-                }
-                Session["IdEntidad"] = idEntidad;
 
                 ObtenerUmbralesEfectivos(idEntidad, out decimal umbralPorc, out decimal umbralMonto, out string modoMonitoreo, out bool esPersonalizado);
                 ViewBag.UmbralPorc = umbralPorc;
@@ -88,25 +79,8 @@ namespace FGA.Controllers
                     ViewBag.TotalCriticas = todos.Count(a => a.TipoAlerta != null && a.TipoAlerta.Equals("CRITICA", StringComparison.OrdinalIgnoreCase));
                     ViewBag.TotalAdvertencias = todos.Count(a => a.TipoAlerta != null && a.TipoAlerta.Equals("ADVERTENCIA", StringComparison.OrdinalIgnoreCase));
 
-                    // Cargar entidades para el selector excluyendo registros duplicados o comodines
-                    try
-                    {
-                        using (var entClient = new FGA_En_Linea.EntidadService.EntidadServiceClient())
-                        {
-                            var entidades = (entClient.GetAll() ?? new FGA.Models.Entidad[0])
-                                .Where(e => e != null && !string.IsNullOrWhiteSpace(e.Nombre) &&
-                                            e.Id != "-1" && e.Id != "99" && e.Id != "0" &&
-                                            !e.Nombre.Trim().Equals("TODAS LAS COOPERATIVAS", StringComparison.OrdinalIgnoreCase) &&
-                                            !e.Nombre.Trim().Equals("TODAS LAS ENTIDADES", StringComparison.OrdinalIgnoreCase))
-                                .OrderBy(e => e.Nombre)
-                                .ToList();
-                            ViewBag.EntidadesList = entidades;
-                        }
-                    }
-                    catch
-                    {
-                        ViewBag.EntidadesList = new List<FGA.Models.Entidad>();
-                    }
+                    // Cargar entidades para el selector mediante helper centralizado con caché
+                    ViewBag.EntidadesList = GetEntidadesCombo();
 
                     return View(listAlertas);
                 }
@@ -121,9 +95,9 @@ namespace FGA.Controllers
                 ViewBag.EsAdmin = true;
                 ViewBag.IdEntidadUsuario = -1;
                 ViewBag.EsPersonalizado = false;
-                ViewBag.ModoMonitoreo = "TODAS";
-                ViewBag.UmbralPorc = 15.0m;
-                ViewBag.UmbralMonto = 10000000.0m;
+                ViewBag.ModoMonitoreo = FGAConstants.Alertas.ModoTodas;
+                ViewBag.UmbralPorc = FGAConstants.Alertas.UmbralVariacionPorcGlobal;
+                ViewBag.UmbralMonto = FGAConstants.Alertas.UmbralVariacionMontoGlobal;
                 ViewBag.ErrorMessage = "Error al cargar las alertas financieras: " + ex.Message;
                 return View(new List<FGA_Obtener_Alertas_Financieras_Result>());
             }
@@ -279,8 +253,8 @@ namespace FGA.Controllers
 
         private void ObtenerUmbralesConfigurados(out decimal umbralPorc, out decimal umbralMonto)
         {
-            umbralPorc = 15.0m;
-            umbralMonto = 10000000.0m;
+            umbralPorc = FGAConstants.Alertas.UmbralVariacionPorcGlobal;
+            umbralMonto = FGAConstants.Alertas.UmbralVariacionMontoGlobal;
 
             try
             {
@@ -301,7 +275,7 @@ namespace FGA.Controllers
 
                     if (pPorc != null && !string.IsNullOrWhiteSpace(pPorc.Valor))
                     {
-                        umbralPorc = ParseFlexibleDecimal(pPorc.Valor, 15.0m);
+                        umbralPorc = ParseFlexibleDecimal(pPorc.Valor, FGAConstants.Alertas.UmbralVariacionPorcGlobal);
                     }
 
                     // Búsqueda flexible por llave o por descripción para el Monto
@@ -316,7 +290,7 @@ namespace FGA.Controllers
 
                     if (pMonto != null && !string.IsNullOrWhiteSpace(pMonto.Valor))
                     {
-                        umbralMonto = ParseFlexibleDecimal(pMonto.Valor, 10000000.0m);
+                        umbralMonto = ParseFlexibleDecimal(pMonto.Valor, FGAConstants.Alertas.UmbralVariacionMontoGlobal);
                     }
                 }
             }

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Web.Mvc;
 using FGA.Model;
+using FGA.Utility;
 using static FGA.Utility.Utilitarios;
 
 namespace FGA.Controllers
@@ -833,7 +834,7 @@ namespace FGA.Controllers
             {
                 p *= 100m;
             }
-            return p.ToString("0.000", new CultureInfo("es-CR")) + "%";
+            return p.ToString("0.000", FGAConstants.CulturaCR) + "%";
         }
 
         private static string ObtenerTextoTrimestre(int trimestre)

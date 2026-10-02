@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Web;
 using System.Web.ModelBinding;
+using FGA.Utility;
 
 namespace FGA.Model
 {
@@ -41,7 +42,7 @@ namespace FGA.Model
                     Scale = 1,
                     SourceHeight = 500,
                     SourceWidth = 1000,
-                    Filename = "FFC",
+                    Filename = FGAConstants.Entidades.NombreAdministradora,
                     Buttons = new ExportingButtons
                     {
                         ContextButton = new ExportingButtonsContextButton
@@ -56,7 +57,7 @@ namespace FGA.Model
                 {
                     Enabled = true,
                     ItemStyle = "fontSize: '12.5px', color: '#1e293b', fontWeight: '600', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'",
-                    ItemHoverStyle = "color: '#2F5597'",
+                    ItemHoverStyle = "color: '" + FGAConstants.Colores.AzulCorporativo + "'",
                     ItemMarginTop = 6,
                     ItemMarginBottom = 4,
                     ItemDistance = 16,
@@ -864,33 +865,27 @@ namespace FGA.Model
             switch (i)
             {
                 case 0:
-                    return ColorTranslator.FromHtml("#0071AD"); // Azul principal FFC (primario)
+                    return ColorTranslator.FromHtml(FGAConstants.Colores.AzulCorporativo); // #2F5597
                 case 1:
-                    return ColorTranslator.FromHtml("#959595"); // Gris auxiliar FFC (tono medio/claro elegante)
+                    return ColorTranslator.FromHtml(FGAConstants.Colores.AzulClaro);       // #0284c7
                 case 2:
-                    return ColorTranslator.FromHtml("#6DB5CB"); // Celeste medio FFC
+                    return ColorTranslator.FromHtml(FGAConstants.Colores.VerdeExito);      // #10b981
                 case 3:
-                    return ColorTranslator.FromHtml("#FE7235"); // Naranja FFC
+                    return ColorTranslator.FromHtml(FGAConstants.Colores.NaranjaInstitucional); // #ea580c
                 case 4:
-                    return ColorTranslator.FromHtml("#B7D8DF"); // Celeste claro FFC
+                    return ColorTranslator.FromHtml(FGAConstants.Colores.AmbarAlerta);     // #f59e0b
                 case 5:
-                    return ColorTranslator.FromHtml("#565656"); // Gris principal FFC
+                    return ColorTranslator.FromHtml(FGAConstants.Colores.Purpura);         // #8b5cf6
                 case 6:
-                    return ColorTranslator.FromHtml("#CFCFCF"); // Gris claro FFC
+                    return ColorTranslator.FromHtml(FGAConstants.Colores.Cian);            // #06b6d4
                 case 7:
-                    return ColorTranslator.FromHtml("#003F6B"); // Azul oscuro (derivado FFC)
+                    return ColorTranslator.FromHtml(FGAConstants.Colores.AzulOscuro);      // #143750
                 case 8:
-                    return ColorTranslator.FromHtml("#0099D6"); // Azul medio (derivado FFC)
+                    return ColorTranslator.FromHtml(FGAConstants.Colores.VerdeOscuro);     // #059669
                 case 9:
-                    return ColorTranslator.FromHtml("#FFB347"); // Naranja claro (derivado FFC)
-                case 10:
-                    return ColorTranslator.FromHtml("#FF4500"); // Naranja rojo (alerta/mora)
-                case 11:
-                    return ColorTranslator.FromHtml("#8B0000"); // Rojo oscuro (mora grave)
-                case 12:
-                    return ColorTranslator.FromHtml("#004E7C"); // Azul profundo FFC
+                    return ColorTranslator.FromHtml(FGAConstants.Colores.RojoPeligro);     // #dc2626
                 default:
-                    return ColorTranslator.FromHtml("#0071AD"); // Azul principal FFC (fallback)
+                    return ColorTranslator.FromHtml(FGAConstants.Colores.AzulCorporativo);
             }
         }
 
@@ -898,13 +893,13 @@ namespace FGA.Model
         {
             switch (tramo)
             {
-                case 0: return GetColor(3);  // 1 - 30 días: Verde esmeralda (#10b981)
-                case 1: return GetColor(6);  // 31 - 60 días: Cyan (#06b6d4)
-                case 2: return GetColor(5);  // 61 - 90 días: Ámbar (#f59e0b)
-                case 3: return GetColor(1);  // 91 - 180 días: Naranja cálido (#ea580c)
-                case 4: return GetColor(10); // Más de 180 días: Rojo alerta (#e11d48)
-                case 5: return GetColor(11); // Cobro Judicial: Borgoña / Rojo oscuro (#991b1b)
-                default: return GetColor(7); // Alerta genérica (#ef4444)
+                case 0: return ColorTranslator.FromHtml(FGAConstants.Colores.VerdeExito);  // 1 - 30 días: Verde (#10b981)
+                case 1: return ColorTranslator.FromHtml(FGAConstants.Colores.Cian);        // 31 - 60 días: Cian (#06b6d4)
+                case 2: return ColorTranslator.FromHtml(FGAConstants.Colores.AmbarAlerta); // 61 - 90 días: Ámbar (#f59e0b)
+                case 3: return ColorTranslator.FromHtml(FGAConstants.Colores.NaranjaInstitucional); // 91 - 180 días: Naranja (#ea580c)
+                case 4: return ColorTranslator.FromHtml(FGAConstants.Colores.RojoPeligro); // > 180 días: Rojo (#dc2626)
+                case 5: return ColorTranslator.FromHtml("#991b1b"); // Cobro Judicial: Borgoña
+                default: return ColorTranslator.FromHtml(FGAConstants.Colores.RojoPeligro);
             }
         }
     }
