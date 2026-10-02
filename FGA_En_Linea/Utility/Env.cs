@@ -439,7 +439,7 @@ namespace FGA
                 sb.Append(GetMenuBar(ParentId, globle, activeMenuId));
                 return MvcHtmlString.Create(sb.ToString());
             }
-            catch (Exception e)
+            catch (Exception)
             {
             }
 

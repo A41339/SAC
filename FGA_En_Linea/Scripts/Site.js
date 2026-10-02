@@ -1,13 +1,3 @@
-
-function preventBack() {
-    window.history.forward();
-}
-
-setTimeout("preventBack()", 0);
-
-window.onunload = function () { null };
-
-
 $(function () {
 
     $('.ui-state-disabled').removeClass('ui-state-disabled');
@@ -109,6 +99,45 @@ $(function () {
     $(document).on('dragstart', '.main-sidebar, .sidebar-menu, .sidebar-menu a, .sidebar-menu li, .sidebar-logout-btn', function (e) {
         e.preventDefault();
         return false;
+    });
+
+    // Prevención de doble envío en formularios y feedback visual de procesamiento
+    $(document).on('submit', 'form:not([target="_blank"])', function (e) {
+        var $form = $(this);
+        var action = ($form.attr('action') || '').toLowerCase();
+        
+        // Excluir descargas/exportaciones donde no hay recarga de página completa
+        if (action.indexOf('export') !== -1 || action.indexOf('excel') !== -1 || action.indexOf('descargar') !== -1 || $form.hasClass('no-double-submit-prevent')) {
+            return;
+        }
+
+        if ($form.data('submitting') === true) {
+            e.preventDefault();
+            return false;
+        }
+
+        if (typeof $form.valid === 'function' && !$form.valid()) {
+            return;
+        }
+
+        $form.data('submitting', true);
+        var $btn = $form.find('button[type="submit"], input[type="submit"]').not('.no-loading').first();
+        if ($btn.length) {
+            var originalHtml = $btn.html();
+            $btn.data('original-html', originalHtml);
+            if ($btn.is('button')) {
+                $btn.css('min-width', $btn.outerWidth() + 'px');
+                $btn.html('<i class="fa fa-spinner fa-spin" style="margin-right: 5px;"></i> Procesando...');
+            }
+            
+            // Failsafe timeout por si la respuesta es rápida o el usuario permanece en pantalla
+            setTimeout(function () {
+                $form.data('submitting', false);
+                if ($btn.is('button') && $btn.data('original-html')) {
+                    $btn.html($btn.data('original-html'));
+                }
+            }, 8000);
+        }
     });
 });
 

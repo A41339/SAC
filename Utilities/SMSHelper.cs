@@ -8,8 +8,8 @@ namespace FGA.Utilities
     public static class SMSHelper
     {
         // NOTA: Estos valores deberían venir de un Web.config o Base de Datos
-        private static readonly string ApiUrl = "https://api.sms-provider.com/send"; 
-        private static readonly string ApiKey = "YOUR_API_KEY";
+        // private static readonly string ApiUrl = "https://api.sms-provider.com/send"; 
+        // private static readonly string ApiKey = "YOUR_API_KEY";
 
         public static async Task<bool> SendSMS(string telefono, string mensaje)
         {

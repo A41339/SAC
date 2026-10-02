@@ -499,6 +499,49 @@ namespace FGA.Controllers
                 ViewBag.Entidades = new SelectList(new List<Entidad>(), "Id", "Nombre");
             }
         }
+
+        /// <summary>
+        /// Obtiene la lista de parámetros del sistema desde caché en memoria (30 min) o BD mediante WCF.
+        /// </summary>
+        public static List<FGA.Models.Parametros> GetParametrosSistema()
+        {
+            const string cacheKey = "Cache_Parametros_Sistema";
+            var cached = System.Web.HttpContext.Current?.Cache[cacheKey] as List<FGA.Models.Parametros>;
+            if (cached != null) return cached;
+
+            var paramClient = new FGA_En_Linea.ParametrosService.ParametrosServiceClient();
+            try
+            {
+                var raw = paramClient.GetAll();
+                var list = raw != null ? raw.ToList() : new List<FGA.Models.Parametros>();
+                if (System.Web.HttpContext.Current != null && list.Count > 0)
+                {
+                    System.Web.HttpContext.Current.Cache.Insert(
+                        cacheKey,
+                        list,
+                        null,
+                        DateTime.Now.AddMinutes(30),
+                        System.Web.Caching.Cache.NoSlidingExpiration);
+                }
+                paramClient.SafeClose();
+                return list;
+            }
+            catch
+            {
+                paramClient.SafeClose();
+                return new List<FGA.Models.Parametros>();
+            }
+        }
+
+        /// <summary>
+        /// Obtiene el valor de un parámetro del sistema por su llave.
+        /// </summary>
+        public static string GetValorParametro(string llave, string fallback = "")
+        {
+            var list = GetParametrosSistema();
+            var item = list.FirstOrDefault(p => string.Equals(p.Llave, llave, StringComparison.OrdinalIgnoreCase));
+            return item != null && !string.IsNullOrEmpty(item.Valor) ? item.Valor : fallback;
+        }
         #endregion
 
         #region Session & Date Helpers

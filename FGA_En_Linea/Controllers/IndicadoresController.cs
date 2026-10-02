@@ -295,7 +295,7 @@ namespace FGA.Controllers
                 // Retornar ambos resultados combinados en una sola propiedad 'aaData'
                 return Json(new { aaData = combinedResults }, JsonRequestBehavior.AllowGet);
             }
-            catch (Exception e)
+            catch (Exception)
             {
             }
 

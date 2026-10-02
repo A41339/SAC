@@ -25,6 +25,7 @@ using FGA.Utility;
 
 namespace FGA.Controllers
 {
+    [System.Web.Mvc.SessionState(System.Web.SessionState.SessionStateBehavior.ReadOnly)]
     public class InformeFinancieroController : BaseController
     {
         private readonly BalanceGeneralService _balanceService = new BalanceGeneralService();

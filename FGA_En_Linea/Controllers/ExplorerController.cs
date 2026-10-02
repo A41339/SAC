@@ -43,7 +43,7 @@ namespace FGA.Controllers
                     lst_Periodos.Add(lista[i].Year.ToString());
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
 

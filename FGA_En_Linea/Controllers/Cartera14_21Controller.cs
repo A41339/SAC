@@ -15,6 +15,7 @@ using static FGA.Utility.Utilitarios;
 
 namespace FGA.Controllers
 {
+    [System.Web.Mvc.SessionState(System.Web.SessionState.SessionStateBehavior.ReadOnly)]
     public class Cartera14_21Controller : BaseController
     {
         private readonly FGA_En_Linea.EntidadService.EntidadServiceClient ent = new FGA_En_Linea.EntidadService.EntidadServiceClient();

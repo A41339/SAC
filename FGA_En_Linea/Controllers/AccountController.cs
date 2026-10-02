@@ -29,6 +29,7 @@ namespace FGA.Controllers
         public ActionResult Recovery() => View();
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Recovery(FormCollection frmCollection)
         {
             string correo = frmCollection["Email"].ToString();

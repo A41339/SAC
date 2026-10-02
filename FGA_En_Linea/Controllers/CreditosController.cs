@@ -129,7 +129,7 @@ namespace FGA_En_Linea.Controllers
         // POST: Creditos/Resolver
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Resolver(int solicitudId, int estadoId, string motivoRechazo)
+        public new ActionResult Resolver(int solicitudId, int estadoId, string motivoRechazo)
         {
             try
             {

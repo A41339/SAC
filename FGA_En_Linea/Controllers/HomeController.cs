@@ -64,7 +64,7 @@ namespace FGA.Controllers
                 Dashboard view = CargarDashboard(IdEntidad, p1, p2);
                 return PartialView("_Intro", view);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 try
                 {

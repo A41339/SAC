@@ -18,6 +18,7 @@ using static FGA.Utility.Utilitarios;
 
 namespace FGA.Controllers
 {
+    [System.Web.Mvc.SessionState(System.Web.SessionState.SessionStateBehavior.ReadOnly)]
     public class IndustriaController : BaseController
     {
         private readonly FGA_En_Linea.SPService.SPClient sp = new FGA_En_Linea.SPService.SPClient();

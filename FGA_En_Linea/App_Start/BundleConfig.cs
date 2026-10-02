@@ -26,7 +26,13 @@ namespace FGA
                 "~/Content/DataTable/new/buttons.dataTables.min.css",
                 "~/Content/jquery-steps/demo/css/jquery.steps.css",
                 "~/Content/jquery-ui.css",
-                "~/Content/dashboard_modern.css"));
+                "~/Content/dashboard_modern.css",
+                "~/Content/modulo_hub.css",
+                "~/Content/informe_financiero.css",
+                "~/Content/facturacion.css",
+                "~/Content/entidades.css",
+                "~/Content/estructura_fondeo.css",
+                "~/Content/alertas.css"));
 
             bundles.Add(new ScriptBundle("~/bundles/javascript").Include(
                     "~/Content/theme/plugins/jQuery/jQuery-2.1.3.min.js",
