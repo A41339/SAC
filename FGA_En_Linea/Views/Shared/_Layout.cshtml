@@ -2447,19 +2447,52 @@
             // Vinculación interactiva y auto-resolución DINÁMICA del Menú Papá en Breadcrumbs
             // ==========================================================================
             var moduloBaseUrl = '@Url.Action("Index", "Modulo")';
+            var homeBaseUrl = '@Url.Action("Index", "Home")';
 
-            // 1. Manejo inteligente de clic en el botón/píldora del menú papá:
-            // Si el usuario navegó desde la pantalla anterior (referrer interno válido), volver dinámicamente a la opción previa
-            $(document).on('click', '.breadcrumb-parent-pill, .breadcrumb-back-btn, .header-back-link', function (e) {
-                if (document.referrer && document.referrer.indexOf(window.location.host) !== -1) {
-                    var refPath = document.referrer.toLowerCase();
-                    var currentPath = window.location.href.toLowerCase();
-                    if (refPath !== currentPath && refPath.indexOf('/account/') === -1 && refPath.indexOf('/login') === -1) {
-                        e.preventDefault();
-                        window.location.href = document.referrer;
-                        return false;
-                    }
+            function decodeHtml(html) {
+                var txt = document.createElement("textarea");
+                txt.innerHTML = html;
+                return txt.value;
+            }
+
+            function normalizar(texto) {
+                if (!texto) return '';
+                try {
+                    texto = decodeHtml(texto);
+                    return texto.toLowerCase()
+                        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+                        .replace(/[^a-z0-9\s]/g, ' ')
+                        .replace(/\s+/g, ' ')
+                        .trim();
+                } catch (e) {
+                    return texto.toLowerCase().replace(/á/g, 'a').replace(/é/g, 'e').replace(/í/g, 'i').replace(/ó/g, 'o').replace(/ú/g, 'u').replace(/ñ/g, 'n').trim();
                 }
+            }
+
+            // 1. Manejo inteligente de clic en botones de volver:
+            // Si el enlace tiene una URL válida (!== '#' y no javascript:), permite la navegación natural del navegador.
+            // Solo intercepta si el enlace es '#' o vacío.
+            $(document).on('click', '.breadcrumb-parent-pill, .breadcrumb-back-btn, .header-back-link', function (e) {
+                var href = $(this).attr('href');
+                if (href && href !== '#' && href.indexOf('javascript:') !== 0) {
+                    return true;
+                }
+
+                e.preventDefault();
+                if (document.referrer && document.referrer.indexOf(window.location.host) !== -1) {
+                    try {
+                        var refUrl = new URL(document.referrer, window.location.origin);
+                        var curPath = window.location.pathname.toLowerCase().replace(/\/+$/, '');
+                        var refPath = refUrl.pathname.toLowerCase().replace(/\/+$/, '');
+                        if (refPath !== curPath && refPath.indexOf('/account') === -1 && refPath.indexOf('/login') === -1) {
+                            window.location.href = document.referrer;
+                            return false;
+                        }
+                    } catch (ex) { }
+                }
+
+                window.location.href = homeBaseUrl;
+                return false;
             });
 
             // 2. Obtener el módulo padre raíz activo desde el menú lateral de la base de datos (dinámico sin URLs en duro)
@@ -2472,35 +2505,50 @@
                 var $parentTree = $activeSidebarLink.parents('li.treeview').first();
                 var $parentA = $parentTree.length > 0 ? $parentTree.children('a').first() : $activeSidebarLink;
                 if ($parentA.length > 0) {
-                    parentModuleUrl = $parentA.attr('href');
+                    var rawHref = $parentA.attr('href');
                     parentModuleName = $.trim($parentA.find('span').first().text());
+                    if (rawHref && rawHref !== '#' && rawHref.indexOf('javascript:') !== 0) {
+                        parentModuleUrl = rawHref;
+                    } else if (parentModuleName) {
+                        parentModuleUrl = moduloBaseUrl + '?modulo=' + encodeURIComponent(parentModuleName);
+                    }
                     var $i = $parentA.find('i').first();
                     parentModuleIcon = ($i.length && $i.attr('class')) ? $i.attr('class') : 'fa fa-folder-open-o';
                 }
             }
 
-            function normalizar(texto) {
-                if (!texto) return '';
-                return texto.toLowerCase()
-                    .replace(/ã³/g, 'o').replace(/ã¡/g, 'a').replace(/ã©/g, 'e').replace(/ã­/g, 'i').replace(/ãº/g, 'u').replace(/ã±/g, 'n')
-                    .replace(/á/g, 'a').replace(/é/g, 'e').replace(/í/g, 'i').replace(/ó/g, 'o').replace(/ú/g, 'u').replace(/ñ/g, 'n').trim();
-            }
+            function resolverUrlModulo(texto, existingHref) {
+                if (existingHref && existingHref !== '#' && existingHref.indexOf('javascript:') !== 0) {
+                    return existingHref;
+                }
+                if (!texto) return parentModuleUrl || homeBaseUrl;
 
-            function resolverUrlModulo(texto) {
-                if (!texto) return parentModuleUrl || moduloBaseUrl;
-                var tNorm = normalizar(texto);
+                var cleanText = decodeHtml(texto).trim();
+                var tNorm = normalizar(cleanText);
 
-                // Buscar coincidencias dinámicas en la estructura del menú lateral cargada desde BD
+                if (!tNorm || tNorm === 'inicio') return homeBaseUrl;
+
+                // Buscar coincidencias dinámicas navegables en el menú lateral
                 var found = null;
                 $('.sidebar-menu li a').each(function () {
+                    var h = $(this).attr('href');
+                    if (!h || h === '#' || h.indexOf('javascript:') === 0) return;
                     var sText = normalizar($(this).find('span').first().text());
                     if (sText && (sText === tNorm || tNorm.indexOf(sText) !== -1 || sText.indexOf(tNorm) !== -1)) {
-                        found = $(this).attr('href');
+                        found = h;
                         return false;
                     }
                 });
 
-                return found || parentModuleUrl || moduloBaseUrl;
+                if (found && found !== '#' && found.indexOf('javascript:') !== 0) {
+                    return found;
+                }
+
+                if (parentModuleUrl && parentModuleUrl !== '#' && parentModuleUrl.indexOf('javascript:') !== 0) {
+                    return parentModuleUrl;
+                }
+
+                return moduloBaseUrl + '?modulo=' + encodeURIComponent(cleanText);
             }
 
             $('.breadcrumb').each(function () {
@@ -2540,47 +2588,61 @@
 
                     if (!norm || norm === 'inicio') return;
 
-                    var targetUrl = resolverUrlModulo(rawText);
+                    var existingHref = $a.length ? $a.attr('href') : null;
+                    var targetUrl = resolverUrlModulo(rawText, existingHref);
 
                     if ($a.length === 0) {
                         $li.html('<a href="' + targetUrl + '" class="breadcrumb-parent-pill" title="Volver al menú de ' + rawText + '">' + rawText + '</a>');
                     } else {
-                        $a.attr('href', targetUrl);
+                        if (!existingHref || existingHref === '#' || existingHref.indexOf('javascript:') === 0) {
+                            $a.attr('href', targetUrl);
+                        }
                         $a.addClass('breadcrumb-parent-pill');
-                        $a.attr('title', 'Volver al menú de ' + rawText);
+                        if (!$a.attr('title')) {
+                            $a.attr('title', 'Volver al menú de ' + rawText);
+                        }
                     }
                 });
             });
 
             // 3. Auto-inyección del enlace de cabecera "← Volver a [Módulo Padre]" hacia /Modulo/Index/id en todas las páginas hijas
-            var $parentPill = $('.breadcrumb .breadcrumb-parent-pill').first();
+            var $parentPill = $('.breadcrumb .breadcrumb-parent-pill').last();
+            if ($parentPill.length === 0) {
+                $parentPill = $('.breadcrumb li:not(:first-child):not(.active) a').last();
+            }
+
             var headerBackUrl = null;
             var headerBackName = null;
 
             if ($parentPill.length > 0) {
                 headerBackName = $.trim($parentPill.text());
-                headerBackUrl = resolverUrlModulo(headerBackName);
+                headerBackUrl = resolverUrlModulo(headerBackName, $parentPill.attr('href'));
             } else if (parentModuleName) {
                 headerBackName = parentModuleName;
-                headerBackUrl = resolverUrlModulo(parentModuleName);
+                headerBackUrl = resolverUrlModulo(parentModuleName, parentModuleUrl);
             }
 
-            if (headerBackName && headerBackUrl) {
-                var normBack = normalizar(headerBackName);
-                if (normBack && normBack !== 'inicio') {
-                    var $header = $('.content-header').first();
-                    if ($header.length > 0 && $header.find('.header-back-link').length === 0 && $header.find('.hub-header').length === 0) {
-                        var $titleEl = $header.find('h1, .modern-page-title').first();
-                        var backHtml = '<div class="header-back-container" style="margin-bottom: 6px;">' +
-                            '<a href="' + headerBackUrl + '" class="breadcrumb-back-btn header-back-link" style="display: inline-flex; align-items: center; gap: 6px; font-size: 13.5px; font-weight: 600; color: #0284c7; text-decoration: none; transition: all 0.2s ease;">' +
-                            '<i class="fa fa-arrow-left" style="font-size: 12px;"></i> Volver' +
-                            '</a></div>';
+            var currentPathNorm = window.location.pathname.toLowerCase().replace(/\/+$/, '');
+            var isHomePage = (!currentPathNorm || currentPathNorm === '' || currentPathNorm === '/' || currentPathNorm.indexOf('/home') !== -1);
 
-                        if ($titleEl.length > 0) {
-                            $(backHtml).insertBefore($titleEl);
-                        } else {
-                            $header.prepend(backHtml);
-                        }
+            if (!headerBackUrl && !isHomePage) {
+                headerBackUrl = homeBaseUrl;
+                headerBackName = 'Inicio';
+            }
+
+            if (headerBackName && headerBackUrl && !isHomePage) {
+                var $header = $('.content-header').first();
+                if ($header.length > 0 && $header.find('.header-back-link').length === 0 && $header.find('.hub-header').length === 0) {
+                    var $titleEl = $header.find('h1, .modern-page-title, .alertas-title-box, .cuenta-header-title').first();
+                    var backHtml = '<div class="header-back-container" style="margin-bottom: 6px;">' +
+                        '<a href="' + headerBackUrl + '" class="breadcrumb-back-btn header-back-link" title="Volver a ' + headerBackName + '" style="display: inline-flex; align-items: center; gap: 6px; font-size: 13.5px; font-weight: 600; color: #0284c7; text-decoration: none; transition: all 0.2s ease;">' +
+                        '<i class="fa fa-arrow-left" style="font-size: 12px;"></i> Volver a ' + headerBackName +
+                        '</a></div>';
+
+                    if ($titleEl.length > 0) {
+                        $(backHtml).insertBefore($titleEl);
+                    } else {
+                        $header.prepend(backHtml);
                     }
                 }
             }

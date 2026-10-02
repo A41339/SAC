@@ -15,8 +15,16 @@
             @if (Model.ParentMenuId.HasValue && !string.IsNullOrEmpty(Model.ParentMenuTitulo))
             {
                 <div style="margin-bottom: 8px;">
-                    <a href="@Url.Action("Index", "Modulo", new { id = Model.ParentMenuId.Value })" style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: #0284c7; text-decoration: none;">
-                        <i class="fa fa-arrow-left"></i> Volver
+                    <a href="@Url.Action("Index", "Modulo", new { id = Model.ParentMenuId.Value })" class="header-back-link" style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: #0284c7; text-decoration: none;">
+                        <i class="fa fa-arrow-left"></i> Volver a @Model.ParentMenuTitulo
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div style="margin-bottom: 8px;">
+                    <a href="@Url.Action("Index", "Home")" class="header-back-link" style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: #0284c7; text-decoration: none;">
+                        <i class="fa fa-arrow-left"></i> Volver al Inicio
                     </a>
                 </div>
             }
