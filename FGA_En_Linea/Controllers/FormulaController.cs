@@ -1,9 +1,10 @@
-﻿using System;
+using System;
 using System.Data;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
 using FGA.Models;
+using FGA.Utility;
 
 namespace FGA.Controllers
 {
@@ -301,7 +302,8 @@ namespace FGA.Controllers
         {
             if (disposing)
             {
-                formu.Close();
+                formu.SafeClose();
+                usr.SafeClose();
             }
             base.Dispose(disposing);
         }

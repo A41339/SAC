@@ -4,6 +4,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Entities.Entities.Evaluacion;
+using FGA.Utility;
 
 namespace FGA.Controllers
 {
@@ -879,6 +880,21 @@ namespace FGA.Controllers
             {
                 return Json(new { success = false, message = "Error al eliminar la categoría: " + ex.Message });
             }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                categoriaService.SafeClose();
+                subCategoriaService.SafeClose();
+                preguntaService.SafeClose();
+                spService.SafeClose();
+                usuarioService.SafeClose();
+                responsableService.SafeClose();
+                respuestaService.SafeClose();
+            }
+            base.Dispose(disposing);
         }
     }
 }

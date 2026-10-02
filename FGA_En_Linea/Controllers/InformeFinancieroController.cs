@@ -2280,12 +2280,12 @@ namespace FGA.Controllers
         {
             if (disposing)
             {
-                us.Close();
-                ent.Close();
-                sp.Close();
-                usr.Close();
-                rpt.Close();
-                log.Close();
+                us.SafeClose();
+                ent.SafeClose();
+                sp.SafeClose();
+                usr.SafeClose();
+                rpt.SafeClose();
+                log.SafeClose();
             }
             base.Dispose(disposing);
         }

@@ -10,6 +10,7 @@ using DotNet.Highcharts.Options;
 using Entities.Entities.Procedures;
 using FGA.Model;
 using FGA.Models;
+using FGA.Utility;
 using static FGA.Utility.Utilitarios;
 
 namespace FGA.Controllers
@@ -26,13 +27,14 @@ namespace FGA.Controllers
         public ActionResult Index()
         {
             Load();
-            DateTime fechaEntidad = sp.FGA_Consultar_FechaCierre(Session["IdEntidad"].ToString());
+            string idEnt = GetSessionString(FGAConstants.Sesion.IdEntidad);
+            DateTime fechaEntidad = sp.FGA_Consultar_FechaCierre(idEnt);
             if (Session["Periodo2"] is null)
                 Session["Periodo2"] = fechaEntidad.AddMonths(-1).ToShortDateString();
 
-            DateTime p2 = ConvertirAFecha(Session["Periodo2"].ToString());
-            string tipoComp = Session["TipoComparacion"]?.ToString() ?? "Interanual";
-            if (Session["Periodo1"] is null || (tipoComp.Equals("Interanual", StringComparison.OrdinalIgnoreCase) && ConvertirAFecha(Session["Periodo1"].ToString()) >= p2.AddMonths(-2)))
+            DateTime p2 = GetSessionDate("Periodo2", fechaEntidad.AddMonths(-1));
+            string tipoComp = GetSessionString("TipoComparacion", "Interanual");
+            if (Session["Periodo1"] is null || (tipoComp.Equals("Interanual", StringComparison.OrdinalIgnoreCase) && GetSessionDate("Periodo1", p2.AddYears(-1)) >= p2.AddMonths(-2)))
                 Session["Periodo1"] = p2.AddYears(-1).ToShortDateString();
 
             Session["TipoReporte"] = (int)enum_tipoGrafico.carteraTotal;
@@ -1526,12 +1528,12 @@ namespace FGA.Controllers
         {
             if (disposing)
             {
-                ent.Close();
-                sp.Close();
-                usr.Close();
-                gr.Close();
-                cat.Close();
-                tipCar.Close();
+                ent.SafeClose();
+                sp.SafeClose();
+                usr.SafeClose();
+                gr.SafeClose();
+                cat.SafeClose();
+                tipCar.SafeClose();
             }
             base.Dispose(disposing);
         }

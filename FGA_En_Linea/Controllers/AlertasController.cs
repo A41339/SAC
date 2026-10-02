@@ -117,14 +117,16 @@ namespace FGA.Controllers
         {
             try
             {
-                string idEntidad = Session["IdEntidad"] != null ? Session["IdEntidad"].ToString() : Env.GetUserInfo("identidad");
+                string idEntidad = GetSessionString(FGAConstants.Sesion.IdEntidad, Env.GetUserInfo("identidad") ?? "-1");
                 if (string.IsNullOrEmpty(idEntidad)) idEntidad = "-1";
 
                 ObtenerUmbralesConfigurados(out decimal umbralPorc, out decimal umbralMonto);
 
-                using (var spClient = new FGA_En_Linea.SPService.SPClient())
+                FGA_Obtener_Alertas_Financieras_Result[] rawAlertas = null;
+                var spClient = new FGA_En_Linea.SPService.SPClient();
+                try
                 {
-                    var rawAlertas = spClient.FGA_Obtener_Alertas_Financieras(idEntidad, false, 50);
+                    rawAlertas = spClient.FGA_Obtener_Alertas_Financieras(idEntidad, false, 50);
                     if (rawAlertas == null || rawAlertas.Length == 0)
                     {
                         // Intentar autogenerar para el período actual si aún no hay registros
@@ -137,36 +139,40 @@ namespace FGA.Controllers
                             rawAlertas = new FGA_Obtener_Alertas_Financieras_Result[0];
                         }
                     }
-
-                    var list = (rawAlertas ?? new FGA_Obtener_Alertas_Financieras_Result[0])
-                        .Where(a => Math.Abs(a.VariacionPorcentaje) >= umbralPorc && Math.Abs(a.VariacionMonto) >= umbralMonto)
-                        .ToList();
-                    int noLeidas = list.Count(a => !a.Leido);
-
-                    var items = list.Take(6).Select(a => new
-                    {
-                        id = a.Id,
-                        cuenta = a.Cuenta,
-                        nombreCuenta = a.NombreCuenta,
-                        tipo = a.TipoAlerta,
-                        titulo = a.Titulo,
-                        mensaje = a.Mensaje,
-                        leido = a.Leido,
-                        montoFormato = FormatearMontoColones(a.VariacionMonto),
-                        porcFormato = (a.VariacionPorcentaje >= 0 ? "+" : "") + a.VariacionPorcentaje.ToString("N1", _crCulture) + "%",
-                        esPositivo = a.VariacionMonto >= 0,
-                        tiempoRelativo = ObtenerTiempoRelativo(a.FechaGeneracion),
-                        entidad = a.NombreEntidad
-                    }).ToList();
-
-                    return Json(new
-                    {
-                        success = true,
-                        totalNoLeidas = noLeidas,
-                        total = list.Count,
-                        alertas = items
-                    }, JsonRequestBehavior.AllowGet);
                 }
+                finally
+                {
+                    spClient.SafeClose();
+                }
+
+                var list = (rawAlertas ?? new FGA_Obtener_Alertas_Financieras_Result[0])
+                    .Where(a => Math.Abs(a.VariacionPorcentaje) >= umbralPorc && Math.Abs(a.VariacionMonto) >= umbralMonto)
+                    .ToList();
+                int noLeidas = list.Count(a => !a.Leido);
+
+                var items = list.Take(6).Select(a => new
+                {
+                    id = a.Id,
+                    cuenta = a.Cuenta,
+                    nombreCuenta = a.NombreCuenta,
+                    tipo = a.TipoAlerta,
+                    titulo = a.Titulo,
+                    mensaje = a.Mensaje,
+                    leido = a.Leido,
+                    montoFormato = FormatearMontoColones(a.VariacionMonto),
+                    porcFormato = (a.VariacionPorcentaje >= 0 ? "+" : "") + a.VariacionPorcentaje.ToString("N1", _crCulture) + "%",
+                    esPositivo = a.VariacionMonto >= 0,
+                    tiempoRelativo = ObtenerTiempoRelativo(a.FechaGeneracion),
+                    entidad = a.NombreEntidad
+                }).ToList();
+
+                return Json(new
+                {
+                    success = true,
+                    totalNoLeidas = noLeidas,
+                    total = list.Count,
+                    alertas = items
+                }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
@@ -183,11 +189,17 @@ namespace FGA.Controllers
             try
             {
                 string usuario = Env.GetUserInfo("name") ?? "SYSTEM";
-                using (var spClient = new FGA_En_Linea.SPService.SPClient())
+                int res = 0;
+                var spClient = new FGA_En_Linea.SPService.SPClient();
+                try
                 {
-                    int res = spClient.FGA_Marcar_Alerta_Leida(id, null, usuario);
-                    return Json(new { success = true, afectados = res });
+                    res = spClient.FGA_Marcar_Alerta_Leida(id, null, usuario);
                 }
+                finally
+                {
+                    spClient.SafeClose();
+                }
+                return Json(new { success = true, afectados = res });
             }
             catch (Exception ex)
             {
@@ -203,15 +215,21 @@ namespace FGA.Controllers
         {
             try
             {
-                string idEntidad = Session["IdEntidad"] != null ? Session["IdEntidad"].ToString() : Env.GetUserInfo("identidad");
+                string idEntidad = GetSessionString(FGAConstants.Sesion.IdEntidad, Env.GetUserInfo("identidad") ?? "-1");
                 if (string.IsNullOrEmpty(idEntidad)) idEntidad = "-1";
                 string usuario = Env.GetUserInfo("name") ?? "SYSTEM";
 
-                using (var spClient = new FGA_En_Linea.SPService.SPClient())
+                int res = 0;
+                var spClient = new FGA_En_Linea.SPService.SPClient();
+                try
                 {
-                    int res = spClient.FGA_Marcar_Alerta_Leida(null, idEntidad, usuario);
-                    return Json(new { success = true, afectados = res });
+                    res = spClient.FGA_Marcar_Alerta_Leida(null, idEntidad, usuario);
                 }
+                finally
+                {
+                    spClient.SafeClose();
+                }
+                return Json(new { success = true, afectados = res });
             }
             catch (Exception ex)
             {

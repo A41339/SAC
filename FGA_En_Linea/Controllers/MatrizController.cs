@@ -8,6 +8,7 @@ using DotNet.Highcharts.Helpers;
 using DotNet.Highcharts.Options;
 using Entities.Entities.Procedures;
 using FGA.Model;
+using FGA.Utility;
 
 namespace FGA.Controllers
 {
@@ -17,7 +18,8 @@ namespace FGA.Controllers
         public void CargaInicial()
         {
             Load();
-            DateTime fechaEntidad = sp.FGA_Consultar_FechaCierre(Session["IdEntidad"].ToString());
+            string idEnt = GetSessionString(FGAConstants.Sesion.IdEntidad);
+            DateTime fechaEntidad = sp.FGA_Consultar_FechaCierre(idEnt);
             
             if(Session["Periodo1"] is null)
                 Session["Periodo1"] = fechaEntidad.AddMonths(-13).ToShortDateString();
@@ -414,8 +416,8 @@ namespace FGA.Controllers
         {
             if (disposing)
             {
-                ent.Close();
-                sp.Close();
+                ent.SafeClose();
+                sp.SafeClose();
             }
             base.Dispose(disposing);
         }

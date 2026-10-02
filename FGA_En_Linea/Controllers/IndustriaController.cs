@@ -13,6 +13,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using FGA.Utility;
 using static FGA.Utility.Utilitarios;
 
 namespace FGA.Controllers
@@ -38,7 +39,7 @@ namespace FGA.Controllers
 
         public void PageLoad()
         {
-            DateTime fecha = Session["Periodo"] == null ? new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1) : Utility.Utilitarios.ConvertirAFecha(Session["Periodo"].ToString());
+            DateTime fecha = GetSessionDate("Periodo", new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1));
             Session["Periodo1"] = Session["Periodo1"] == null ? fecha.AddMonths(-4).ToShortDateString() : Session["Periodo1"];
             Session["Periodo2"] = Session["Periodo2"] == null ? fecha.AddMonths(-1).ToShortDateString() : Session["Periodo2"];
             Session["Periodo3"] = Session["Periodo3"] == null ? fecha.ToShortDateString() : Session["Periodo3"];
@@ -47,7 +48,7 @@ namespace FGA.Controllers
 
         public ActionResult Index()
         {
-            DateTime fecha = Session["Periodo"] == null ? new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1) : Utility.Utilitarios.ConvertirAFecha(Session["Periodo"].ToString());
+            DateTime fecha = GetSessionDate("Periodo", new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1));
             Session["Periodo1"] = Session["Periodo1"] == null ? fecha.AddMonths(-4).ToShortDateString() : Session["Periodo1"];
             Session["Periodo2"] = Session["Periodo2"] == null ? fecha.AddMonths(-1).ToShortDateString() : Session["Periodo2"];
             ViewBag.Sectores = new SelectList(sec.GetAll(), "Id", "Nombre");
@@ -59,7 +60,7 @@ namespace FGA.Controllers
 
         public ActionResult ER()
         {
-            DateTime fecha = Session["Periodo"] == null ? new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1) : Utility.Utilitarios.ConvertirAFecha(Session["Periodo"].ToString());
+            DateTime fecha = GetSessionDate("Periodo", new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1));
             Session["Periodo1"] = Session["Periodo1"] == null ? fecha.AddMonths(-4).ToShortDateString() : Session["Periodo1"];
             Session["Periodo2"] = Session["Periodo2"] == null ? fecha.AddMonths(-1).ToShortDateString() : Session["Periodo2"];
             Session["TipoReporte"] = Utility.Utilitarios.enum_tipoReporte.rpt_er_sf;
@@ -69,7 +70,7 @@ namespace FGA.Controllers
 
         public ActionResult Balance()
         {
-            DateTime fecha = Session["Periodo"] == null ? new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1) : Utility.Utilitarios.ConvertirAFecha(Session["Periodo"].ToString());
+            DateTime fecha = GetSessionDate("Periodo", new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1));
             Session["Periodo1"] = Session["Periodo1"] == null ? fecha.AddMonths(-6).ToShortDateString() : Session["Periodo1"];
             Session["Periodo2"] = Session["Periodo2"] == null ? fecha.AddMonths(-3).ToShortDateString() : Session["Periodo2"];
             Session["TipoReporte"] = Utility.Utilitarios.enum_tipoReporte.rpt_balance_sf;
@@ -1045,8 +1046,9 @@ namespace FGA.Controllers
         {
             if (disposing)
             {
-                sp.Close();
-                sec.Close();
+                sp.SafeClose();
+                sec.SafeClose();
+                gr.SafeClose();
             }
             base.Dispose(disposing);
         }

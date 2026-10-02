@@ -40,7 +40,7 @@ namespace FGA.Controllers
                 }
                 else if (Session["Periodo"] != null)
                 {
-                    fechaReferencia = Utilitarios.ConvertirAFecha(Session["Periodo"].ToString());
+                    fechaReferencia = GetSessionDate("Periodo");
                     Session[keyFecha] = fechaReferencia;
                 }
                 else
@@ -59,11 +59,11 @@ namespace FGA.Controllers
             DateTime p2Date;
             if (!string.IsNullOrWhiteSpace(periodo2))
             {
-                p2Date = Utilitarios.ConvertirAFecha(periodo2);
+                p2Date = Utilitarios.ConvertirAFechaSegura(periodo2, fechaReferencia.AddMonths(-1));
             }
             else if (Session["Periodo2"] != null)
             {
-                p2Date = Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString());
+                p2Date = GetSessionDate("Periodo2", fechaReferencia.AddMonths(-1));
             }
             else
             {
@@ -74,12 +74,12 @@ namespace FGA.Controllers
             DateTime p1Date;
             if (!string.IsNullOrWhiteSpace(periodo1))
             {
-                p1Date = Utilitarios.ConvertirAFecha(periodo1);
+                p1Date = Utilitarios.ConvertirAFechaSegura(periodo1, p2Date.AddYears(-1));
             }
             else if (Session["Periodo1"] != null)
             {
-                DateTime sP1 = Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString());
-                string tipoComp = Session["TipoComparacion"]?.ToString() ?? "Interanual";
+                DateTime sP1 = GetSessionDate("Periodo1", p2Date.AddYears(-1));
+                string tipoComp = GetSessionString("TipoComparacion", "Interanual");
                 if (tipoComp.Equals("Interanual", StringComparison.OrdinalIgnoreCase) || sP1 >= p2Date.AddMonths(-2))
                 {
                     p1Date = p2Date.AddYears(-1);
@@ -892,29 +892,16 @@ namespace FGA.Controllers
             return model;
         }
 
-        private FGA_En_Linea.SPService.SPClient GetSPClient()
-        {
-            try
-            {
-                return new FGA_En_Linea.SPService.SPClient();
-            }
-            catch
-            {
-                return new FGA_En_Linea.SPService.SPClient();
-            }
-        }
-
         private Dictionary<string, decimal> ObtenerSaldosSnapshot(string entidad, DateTime fecha)
         {
             var dict = new Dictionary<string, decimal>();
             try
             {
-                var client = GetSPClient();
                 DateTime finMes = new DateTime(fecha.Year, fecha.Month, DateTime.DaysInMonth(fecha.Year, fecha.Month));
-                var tak = client.FGA_Consultar_Balance_Comprobacion_Rango(entidad, finMes, finMes, false, false);
+                var tak = sp.FGA_Consultar_Balance_Comprobacion_Rango(entidad, finMes, finMes, false, false);
                 if (tak == null || tak.Length == 0)
                 {
-                    tak = client.FGA_Consultar_Balance_Comprobacion_Rango(entidad, new DateTime(fecha.Year, fecha.Month, 1), new DateTime(fecha.Year, fecha.Month, 1), false, false);
+                    tak = sp.FGA_Consultar_Balance_Comprobacion_Rango(entidad, new DateTime(fecha.Year, fecha.Month, 1), new DateTime(fecha.Year, fecha.Month, 1), false, false);
                 }
                 if (tak != null)
                 {
@@ -946,11 +933,10 @@ namespace FGA.Controllers
 
             try
             {
-                var client = GetSPClient();
                 DateTime dtIni = new DateTime(periodos.First().Year, periodos.First().Month, 1);
                 DateTime dtFin = new DateTime(periodos.Last().Year, periodos.Last().Month, 1);
 
-                var tak = client.FGA_Consultar_Balance_Comprobacion_Rango(entidad, dtIni, dtFin, false, false);
+                var tak = sp.FGA_Consultar_Balance_Comprobacion_Rango(entidad, dtIni, dtFin, false, false);
                 bool hayDatos = false;
 
                 if (tak != null && tak.Length > 0)
@@ -1284,11 +1270,10 @@ namespace FGA.Controllers
                     var serieTop10 = new GraficoFondeoSerie { Name = "10 mayores ahorrantes", Type = "column", Color = "#0071AD", TooltipSuffix = "%", EnableDataLabels = true, DataLabelFormat = "{point.y:.1f}%" };
                     var serieTop20 = new GraficoFondeoSerie { Name = "20 mayores ahorrantes", Type = "column", Color = "#959595", TooltipSuffix = "%", EnableDataLabels = true, DataLabelFormat = "{point.y:.1f}%" };
 
-                    var clientG4 = GetSPClient();
                     var dictAhorrantes = new Dictionary<string, Entities.Entities.Procedures.FGA_Consultar_Concentracion_Ahorrantes_Result>();
                     try
                     {
-                        var datosAhorrantes = clientG4.FGA_Consultar_Concentracion_Ahorrantes(entidad, periodos.First(), periodos.Last());
+                        var datosAhorrantes = sp.FGA_Consultar_Concentracion_Ahorrantes(entidad, periodos.First(), periodos.Last());
                         if (datosAhorrantes != null)
                         {
                             foreach (var r in datosAhorrantes)
@@ -1350,11 +1335,10 @@ namespace FGA.Controllers
                     var s1a3A    = new GraficoFondeoSerie { Name = "De 1 a 3 años",           Type = "bar", Stack = "venc", Color = "#565656", TooltipSuffix = "%", EnableDataLabels = true, DataLabelFormat = "{point.y:.2f}%" };
                     var sMas3A   = new GraficoFondeoSerie { Name = "De 3 años en adelante",   Type = "bar", Stack = "venc", Color = "#959595", TooltipSuffix = "%", EnableDataLabels = true, DataLabelFormat = "{point.y:.2f}%" };
 
-                    var clientG5 = GetSPClient();
                     var dictVenc = new Dictionary<string, Entities.Entities.Procedures.FGA_Consultar_Concentracion_Vencimiento_Result>();
                     try
                     {
-                        var datosVenc = clientG5.FGA_Consultar_Concentracion_Vencimiento(entidad, ultimosPeriodos.First(), ultimosPeriodos.Last());
+                        var datosVenc = sp.FGA_Consultar_Concentracion_Vencimiento(entidad, ultimosPeriodos.First(), ultimosPeriodos.Last());
                         if (datosVenc != null)
                         {
                             foreach (var r in datosVenc)
@@ -1429,11 +1413,10 @@ namespace FGA.Controllers
                     var serieAsoc  = new GraficoFondeoSerie { Name = "Asociados activos", Type = "column", Stack = "personas", Color = "#0071AD", TooltipSuffix = " personas", EnableDataLabels = true, DataLabelFormat = "{point.y:,.0f}" };
                     var serieAhorr = new GraficoFondeoSerie { Name = "Ahorrantes",        Type = "column", Stack = "personas", Color = "#959595", TooltipSuffix = " personas", EnableDataLabels = true, DataLabelFormat = "{point.y:,.0f}" };
 
-                    var clientG6 = GetSPClient();
                     var dictAsocAhorr = new Dictionary<string, Entities.Entities.Procedures.FGA_Consultar_Cantidad_Asociados_Ahorrantes_Result>();
                     try
                     {
-                        var datosAsocAhorr = clientG6.FGA_Consultar_Cantidad_Asociados_Ahorrantes(entidad, periodos.First(), periodos.Last());
+                        var datosAsocAhorr = sp.FGA_Consultar_Cantidad_Asociados_Ahorrantes(entidad, periodos.First(), periodos.Last());
                         if (datosAsocAhorr != null)
                         {
                             foreach (var r in datosAsocAhorr)
@@ -1739,5 +1722,15 @@ namespace FGA.Controllers
         }
 
         #endregion
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                ent.SafeClose();
+                sp.SafeClose();
+            }
+            base.Dispose(disposing);
+        }
     }
 }
