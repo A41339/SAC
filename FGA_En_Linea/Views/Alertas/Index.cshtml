@@ -1,0 +1,1154 @@
+@model List<Entities.Entities.Procedures.FGA_Obtener_Alertas_Financieras_Result>
+@{
+    ViewBag.Title = "Bandeja de Alertas Financieras";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var crCulture = new System.Globalization.CultureInfo("es-CR");
+}
+
+<link rel="stylesheet" href="~/Content/alertas.css?v=@DateTime.Now.Ticks" />
+
+<!-- ENCABEZADO ESTÁNDAR FFC -->
+<section class="content-header alertas-content-header">
+    <div class="alertas-header-top-row">
+        <div class="alertas-title-box">
+            <div class="alertas-title-icon">
+                <i class="fa fa-bell"></i>
+            </div>
+            <div class="alertas-title-text">
+                <h1>Bandeja de Alertas Financieras</h1>
+                <p>Monitoreo inteligente de fluctuaciones atípicas y desviaciones contables entre períodos.</p>
+            </div>
+        </div>
+    </div>
+    <ol class="breadcrumb modern-breadcrumb-pill">
+        <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
+        <li><a href="@Url.Action("Index", "Modulo", new { id = 1500 })">Estructura Financiera</a></li>
+        <li class="active">Alertas Financieras</li>
+    </ol>
+    <div class="alertas-header-actions">
+        <button type="button" class="btn-al-action btn-al-outline-blue" id="btnAbrirConfigEntidad" title="Personalizar umbrales y cuentas monitoreadas para la entidad">
+            <i class="fa fa-sliders"></i> Parámetros de la Entidad
+        </button>
+        <button type="button" class="btn-al-action btn-al-primary" id="btnEvaluarPeriodo" title="Disparar evaluación automática de cuentas para la entidad seleccionada">
+            <i class="fa fa-refresh"></i> Reevaluar Cuentas
+        </button>
+        <button type="button" class="btn-al-action btn-al-secondary" id="btnMarcarTodas" title="Marcar todas las alertas visibles como leídas">
+            <i class="fa fa-check-circle-o"></i> Marcar Todas Leídas
+        </button>
+    </div>
+</section>
+
+<!-- CONTENIDO PRINCIPAL -->
+<section class="content" style="padding: 16px 24px 30px 24px;">
+    <div class="alertas-main-wrapper">
+
+        <!-- RESUMEN DE MÉTRICAS CLAVE (KPIs) -->
+        <div class="alertas-kpi-grid">
+            <!-- Total Vigentes -->
+            <div class="alertas-kpi-card kpi-card-total" onclick="filtrarRapido('TODAS', false);" title="Click para ver todas las alertas">
+                <div class="kpi-content-box">
+                    <span class="kpi-tag-label">Total Vigentes</span>
+                    <span class="kpi-number-display" id="kpiTotalAlertas">@ViewBag.TotalAlertas</span>
+                    <span class="kpi-subtext">Desviaciones detectadas</span>
+                </div>
+                <div class="kpi-icon-badge icon-bg-blue">
+                    <i class="fa fa-database"></i>
+                </div>
+            </div>
+
+            <!-- No Leídas -->
+            <div class="alertas-kpi-card kpi-card-unread" onclick="filtrarRapido('TODAS', true);" title="Click para filtrar solo las no leídas">
+                <div class="kpi-content-box">
+                    <span class="kpi-tag-label">
+                        Alertas No Leídas
+                        @if (Convert.ToInt32(ViewBag.TotalNoLeidas ?? 0) > 0)
+                        {
+                            <span class="pulse-dot-wrapper"><span class="pulse-ring"></span><span class="pulse-dot"></span></span>
+                        }
+                    </span>
+                    <span class="kpi-number-display" style="color: #ea580c;" id="kpiNoLeidas">@ViewBag.TotalNoLeidas</span>
+                    <span class="kpi-subtext">Pendientes de atención</span>
+                </div>
+                <div class="kpi-icon-badge icon-bg-red">
+                    <i class="fa fa-envelope-open-o"></i>
+                </div>
+            </div>
+
+            <!-- Variaciones Críticas -->
+            <div class="alertas-kpi-card kpi-card-criticas" onclick="filtrarRapido('CRITICA', false);" title="Click para filtrar alertas críticas">
+                <div class="kpi-content-box">
+                    <span class="kpi-tag-label">Variaciones Críticas</span>
+                    <span class="kpi-number-display" style="color: #ea580c;" id="kpiCriticas">@ViewBag.TotalCriticas</span>
+                    <span class="kpi-subtext">Superan umbral de monto</span>
+                </div>
+                <div class="kpi-icon-badge icon-bg-orange">
+                    <i class="fa fa-bolt"></i>
+                </div>
+            </div>
+
+            <!-- Advertencias Moderadas -->
+            <div class="alertas-kpi-card kpi-card-advertencias" onclick="filtrarRapido('ADVERTENCIA', false);" title="Click para filtrar advertencias">
+                <div class="kpi-content-box">
+                    <span class="kpi-tag-label">Advertencias</span>
+                    <span class="kpi-number-display" style="color: #0284c7;" id="kpiAdvertencias">@ViewBag.TotalAdvertencias</span>
+                    <span class="kpi-subtext">Fluctuación porcentual atípica</span>
+                </div>
+                <div class="kpi-icon-badge icon-bg-cyan">
+                    <i class="fa fa-info-circle"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- BARRA DE FILTROS, PARÁMETROS Y BÚSQUEDA -->
+        <div class="alertas-control-panel">
+            <!-- Fila 1: Filtros de Selección y Búsqueda -->
+            <div class="alertas-filter-row">
+                <form method="get" action="@Url.Action("Index", "Alertas")" id="formFiltroAlertas" class="alertas-filter-form">
+                    <!-- Parámetro 1: Entidad -->
+                    <div class="param-control-group">
+                        <span class="param-control-label">
+                            <i class="fa fa-university"></i> Entidad:
+                        </span>
+                        <div class="param-select-wrapper">
+                            <select id="selectEntidad" name="entidad" class="param-modern-select" onchange="$('#formFiltroAlertas').submit();">
+                                <option value="-1" @(ViewBag.EntidadSeleccionada == "-1" || string.IsNullOrEmpty(ViewBag.EntidadSeleccionada) ? "selected" : "")>TODAS LAS COOPERATIVAS</option>
+                                @if (ViewBag.EntidadesList != null)
+                                {
+                                    foreach (var ent in (List<FGA.Models.Entidad>)ViewBag.EntidadesList)
+                                    {
+                                        if (ent.Id != "-1" && ent.Id != "99" && !ent.Nombre.Trim().Equals("TODAS LAS COOPERATIVAS", StringComparison.OrdinalIgnoreCase))
+                                        {
+                                            <option value="@ent.Id" @(ViewBag.EntidadSeleccionada == ent.Id ? "selected" : "")>@ent.Nombre</option>
+                                        }
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Parámetro 2: Criticidad -->
+                    <div class="param-control-group">
+                        <span class="param-control-label">
+                            <i class="fa fa-sliders"></i> Criticidad:
+                        </span>
+                        <div class="param-select-wrapper">
+                            <select id="selectTipo" name="tipoAlerta" class="param-modern-select param-select-criticidad" onchange="$('#formFiltroAlertas').submit();">
+                                <option value="TODAS" @(ViewBag.TipoAlertaSeleccionado == "TODAS" ? "selected" : "")>Todas las severidades</option>
+                                <option value="CRITICA" @(ViewBag.TipoAlertaSeleccionado == "CRITICA" ? "selected" : "")>Críticas (Monto)</option>
+                                <option value="ADVERTENCIA" @(ViewBag.TipoAlertaSeleccionado == "ADVERTENCIA" ? "selected" : "")>Advertencias (Porcentaje)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Parámetro 3: Solo No Leídas (Switch Pill interactivo) -->
+                    <div class="param-control-group">
+                        <label class="param-toggle-pill @(ViewBag.SoloNoLeidas ? "is-active" : "")" title="Filtrar únicamente alertas pendientes de revisión">
+                            <input type="checkbox" id="chkSoloNoLeidas" name="soloNoLeidas" value="true" @(ViewBag.SoloNoLeidas ? "checked" : "") onchange="$('#formFiltroAlertas').submit();" />
+                            <span class="param-toggle-icon"><i class="fa fa-envelope@(ViewBag.SoloNoLeidas ? "-open-o" : "")"></i></span>
+                            <span class="param-toggle-text">Solo No Leídas</span>
+                        </label>
+                    </div>
+                </form>
+
+                <!-- Buscador en tiempo real con Lupa Prominente -->
+                <div class="param-search-container">
+                    <div class="param-search-box">
+                        <i class="fa fa-search param-search-icon" aria-hidden="true"></i>
+                        <input type="text" id="txtBuscarAlerta" class="param-search-input" placeholder="Buscar por cuenta, descripción o entidad..." autocomplete="off" style="padding-left: 42px !important; padding-right: 36px !important;" />
+                        <button type="button" id="btnLimpiarBuscar" class="param-search-clear" style="display: none;" title="Limpiar búsqueda">&times;</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fila 2: Franja de Parámetros y Umbrales Activos de Evaluación -->
+            @{
+                bool esPersonalizado = ViewBag.EsPersonalizado != null && (bool)ViewBag.EsPersonalizado;
+                string modoMonitoreo = ViewBag.ModoMonitoreo != null ? ViewBag.ModoMonitoreo.ToString() : "TODAS";
+                decimal umbralPorc = ViewBag.UmbralPorc != null ? Convert.ToDecimal(ViewBag.UmbralPorc) : 15.0m;
+                decimal umbralMonto = ViewBag.UmbralMonto != null ? Convert.ToDecimal(ViewBag.UmbralMonto) : 10000000.0m;
+            }
+            <div class="alertas-threshold-banner">
+                <div class="threshold-summary-left">
+                    <span class="threshold-chip-label">
+                        <i class="fa fa-sliders"></i> Parámetros de Detección:
+                    </span>
+                    <div class="threshold-chips-list">
+                        <!-- Origen de Umbrales Badge -->
+                        @if (esPersonalizado)
+                        {
+                            <span class="threshold-chip-item" id="chipOrigenParametros" style="border-color: #fed7aa; background: #fff7ed;" title="Esta entidad tiene configurados umbrales y reglas personalizadas">
+                                <span class="chip-dot dot-orange"></span>
+                                <strong style="color: #c2410c;"><i class="fa fa-check-circle"></i> Personalizados por Entidad</strong>
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="threshold-chip-item" id="chipOrigenParametros" style="border-color: #cbd5e1; background: #ffffff;" title="Esta entidad utiliza los umbrales globales estándar de FFC">
+                                <span class="chip-dot" style="background-color: #2F5597;"></span>
+                                <strong style="color: #2F5597;"><i class="fa fa-globe"></i> Globales FFC</strong>
+                            </span>
+                        }
+
+                        <span class="threshold-chip-item">
+                            <span class="chip-dot dot-amber"></span>
+                            <span class="chip-name">Variación Mínima:</span>
+                            <strong class="chip-val" id="bannerUmbralPorc">≥ @(umbralPorc.ToString("N1", crCulture))%</strong>
+                        </span>
+                        <span class="threshold-chip-item">
+                            <span class="chip-dot dot-orange"></span>
+                            <span class="chip-name">Monto Mínimo:</span>
+                            <strong class="chip-val" id="bannerUmbralMonto">≥ ₡@(umbralMonto.ToString("#,##0", crCulture))</strong>
+                        </span>
+
+                        <!-- Modo de Monitoreo Chip -->
+                        <span class="threshold-chip-item" title="Criterio de filtrado de cuentas contables">
+                            <i class="fa fa-filter" style="color: #64748b; font-size: 11px;"></i>
+                            <span class="chip-name">Modo:</span>
+                            <strong class="chip-val" id="bannerModoMonitoreo">
+                                @if (modoMonitoreo == "SOLO_WATCHLIST")
+                                {
+                                    <span style="color: #0284c7;"><i class="fa fa-bookmark"></i> Solo Cuentas Prioritarias</span>
+                                }
+                                else if (modoMonitoreo == "EXCLUIR_BLACKLIST")
+                                {
+                                    <span style="color: #475569;"><i class="fa fa-ban"></i> Excluyendo Omitidas</span>
+                                }
+                                else
+                                {
+                                    <span><i class="fa fa-th-list"></i> Todas las Cuentas</span>
+                                }
+                            </strong>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="threshold-actions-right">
+                    <button type="button" class="btn-threshold-config" id="btnConfigEntidadToolbar" title="Personalizar umbrales y cuentas monitoreadas para esta entidad">
+                        <i class="fa fa-cog"></i> Configurar Entidad
+                    </button>
+                    <button type="button" class="btn-threshold-reeval" id="btnEvaluarPeriodoToolbar" title="Ejecutar reevaluación con los parámetros actuales">
+                        <i class="fa fa-refresh"></i> Reevaluar Cuentas
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TABLA DE ALERTAS DETECTADAS -->
+        <div class="alertas-table-card">
+            <div class="alertas-table-header">
+                <div class="table-header-title">
+                    <i class="fa fa-table" style="color: #2F5597; font-size: 17px;"></i>
+                    <h3>Matriz de Desviaciones Financieras</h3>
+                    <span class="table-count-pill" id="lblCountAlertas">@Model.Count registros</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <button type="button" class="btn btn-default btn-xs" id="btnExportarCsv" style="border-radius: 6px; font-weight: 600;" title="Descargar como archivo CSV">
+                        <i class="fa fa-file-excel-o" style="color: #16a34a;"></i> Exportar CSV
+                    </button>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-modern-alertas" id="tablaAlertasFinancieras">
+                    <thead>
+                        <tr>
+                            <th style="width: 120px;">Criticidad</th>
+                            <th>Entidad</th>
+                            <th>Cuenta Contable</th>
+                            <th>Períodos Comparados</th>
+                            <th style="text-align: right;">Saldo Anterior</th>
+                            <th style="text-align: right;">Saldo Actual</th>
+                            <th style="text-align: right;">Variación Monto</th>
+                            <th style="text-align: right;">Variación %</th>
+                            <th style="width: 130px; text-align: center;">Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbodyAlertas">
+                        @if (Model == null || Model.Count == 0)
+                        {
+                            <tr id="rowEmptyAlertas">
+                                <td colspan="9">
+                                    <div class="empty-state-box">
+                                        <div class="empty-state-icon">
+                                            <i class="fa fa-check"></i>
+                                        </div>
+                                        <h4 style="font-size: 16px; font-weight: 700; color: #1e293b; margin: 0 0 6px 0;">No hay alertas pendientes para los criterios seleccionados</h4>
+                                        <p style="font-size: 13px; color: #64748b; margin: 0;">Todas las cuentas contables evaluadas se encuentran dentro de los rangos de variación esperados.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                        else
+                        {
+                            foreach (var item in Model)
+                            {
+                                var esCritica = item.TipoAlerta != null && item.TipoAlerta.Equals("CRITICA", StringComparison.OrdinalIgnoreCase);
+                                var esPositivo = item.VariacionMonto >= 0;
+                                string rowClasses = (!item.Leido ? "row-unread" : "") + (esCritica ? " row-critical" : "");
+
+                                <tr class="@rowClasses" id="alerta-row-@item.Id"
+                                    data-cuenta="@item.Cuenta"
+                                    data-nombre-cuenta="@item.NombreCuenta"
+                                    data-entidad="@item.NombreEntidad"
+                                    data-tipo="@item.TipoAlerta"
+                                    data-leido="@(item.Leido ? "1" : "0")">
+                                    <td>
+                                        @if (esCritica)
+                                        {
+                                            <span class="badge-severidad-pill sev-pill-critica">
+                                                <i class="fa fa-exclamation-triangle"></i> Crítica
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge-severidad-pill sev-pill-advertencia">
+                                                <i class="fa fa-bell-o"></i> Advertencia
+                                            </span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <div style="font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 6px;">
+                                            <i class="fa fa-university" style="color: #64748b; font-size: 12px;"></i>
+                                            @item.NombreEntidad
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div>
+                                            <span class="badge-account-code">@item.Cuenta</span>
+                                        </div>
+                                        <div style="font-size: 12.5px; color: #475569; font-weight: 600; line-height: 1.3;">
+                                            @item.NombreCuenta
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span style="font-size: 12px; color: #475569; background: #f8fafc; border: 1px solid #e2e8f0; padding: 3px 8px; border-radius: 6px; white-space: nowrap;">
+                                            @item.PeriodoAnterior.ToString("MM/yyyy") &rarr; @item.PeriodoActual.ToString("MM/yyyy")
+                                        </span>
+                                    </td>
+                                    <td style="text-align: right; font-family: Consolas, 'Courier New', monospace; font-size: 13px; color: #475569;">
+                                        ₡ @item.SaldoAnterior.ToString("#,##0.00", crCulture)
+                                    </td>
+                                    <td style="text-align: right; font-family: Consolas, 'Courier New', monospace; font-size: 13px; font-weight: 600; color: #0f172a;">
+                                        ₡ @item.SaldoActual.ToString("#,##0.00", crCulture)
+                                    </td>
+                                    <td style="text-align: right;">
+                                        <!-- En fondo azul como los indicadores del tablero para positivos -->
+                                        <span class="@(esPositivo ? "monto-positive" : "monto-negative")">
+                                            @(esPositivo ? "+" : "")₡ @item.VariacionMonto.ToString("#,##0.00", crCulture)
+                                        </span>
+                                    </td>
+                                    <td style="text-align: right;">
+                                        <!-- Variación Porcentual con badge azul para aumento -->
+                                        <span class="@(esPositivo ? "badge-var-positive" : "badge-var-negative")">
+                                            <i class="fa fa-arrow-@(esPositivo ? "up" : "down")"></i>
+                                            @(esPositivo ? "+" : "")@item.VariacionPorcentaje.ToString("N1", crCulture)%
+                                        </span>
+                                    </td>
+                                    <td style="text-align: center;" id="action-cell-@item.Id">
+                                        @if (!item.Leido)
+                                        {
+                                            <button type="button" class="btn-al-mark" onclick="marcarAlertaLeida(@item.Id, this);" title="Marcar como atendida y leída">
+                                                <i class="fa fa-check"></i> Atender
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge-al-read">
+                                                <i class="fa fa-check-circle"></i> Leída
+                                            </span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- MODAL DE CONFIGURACIÓN DE PARÁMETROS Y CUENTAS POR ENTIDAD -->
+<div class="modal fade modal-config-entidad" id="modalConfigAlertaEntidad" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <div class="modal-config-title">
+                    <i class="fa fa-sliders"></i>
+                    <span>Parámetros de Detección y Cuentas de la Entidad</span>
+                </div>
+                <p class="modal-config-subtitle">
+                    Defina si la entidad utiliza umbrales financieros personalizados o los globales de FFC, y configure cuentas prioritarias o excluidas.
+                </p>
+                <div class="modal-entity-pill" id="modalEntityPill">
+                    <i class="fa fa-university"></i>
+                    <span id="lblModalNombreEntidad">Cargando entidad...</span>
+                </div>
+            </div>
+
+            <!-- Modal Tabs -->
+            <div class="config-nav-tabs">
+                <button type="button" class="config-tab-btn active" id="tabBtnUmbrales" onclick="cambiarTabConfig('umbrales')">
+                    <i class="fa fa-sliders"></i> Umbrales de Variación
+                </button>
+                <button type="button" class="config-tab-btn" id="tabBtnCuentas" onclick="cambiarTabConfig('cuentas')">
+                    <i class="fa fa-list-ol"></i> Cuentas a Monitorear
+                    <span class="config-tab-badge" id="lblCountCuentasBadge">0</span>
+                </button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body" style="padding: 24px;">
+                <!-- TAB 1: UMBRALES Y REGLAS DE DETECCIÓN -->
+                <div id="tabContentUmbrales" class="tab-content-panel">
+                    <!-- Switch Personalizado -->
+                    <div class="custom-switch-box" id="boxSwitchPersonalizado">
+                        <div class="custom-switch-info">
+                            <h4 id="lblSwitchTitle">Activar Umbrales Propios de la Entidad</h4>
+                            <p id="lblSwitchDesc">Si se desactiva, la entidad evaluará alertas con los umbrales globales estándar de FFC (15.0% y ₡10,000,000).</p>
+                        </div>
+                        <label class="switch-ui" title="Alternar entre umbrales propios o globales FFC">
+                            <input type="checkbox" id="chkUsarPersonalizado" onchange="toggleModoPersonalizado(this.checked);" />
+                            <span class="switch-slider"></span>
+                        </label>
+                    </div>
+
+                    <!-- Campos de Umbrales -->
+                    <div id="formCamposUmbrales" style="transition: opacity 0.25s ease;">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group" style="margin-bottom: 16px;">
+                                    <label style="font-size: 13px; font-weight: 700; color: #1e293b; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+                                        <i class="fa fa-percent" style="color: #2F5597;"></i> Variación Porcentual Mínima
+                                    </label>
+                                    <div class="input-group">
+                                        <input type="number" id="txtCfgUmbralPorc" class="form-control" style="border-radius: 8px 0 0 8px; font-weight: 700; height: 40px; font-size: 14px;" min="0.1" max="1000" step="0.1" placeholder="Ej: 15.0" />
+                                        <span class="input-group-addon" style="border-radius: 0 8px 8px 0; background: #f8fafc; font-weight: 700; color: #475569;">%</span>
+                                    </div>
+                                    <small class="text-muted" style="font-size: 11px; display: block; margin-top: 4px;">
+                                        Porcentaje mínimo de desviación absoluta entre saldos de períodos comparados.
+                                    </small>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <div class="form-group" style="margin-bottom: 16px;">
+                                    <label style="font-size: 13px; font-weight: 700; color: #1e293b; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+                                        <i class="fa fa-money" style="color: #2F5597;"></i> Variación de Monto Mínima (Severidad Crítica)
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-addon" style="border-radius: 8px 0 0 8px; background: #f8fafc; font-weight: 700; color: #475569;">₡</span>
+                                        <input type="number" id="txtCfgUmbralMonto" class="form-control" style="border-radius: 0 8px 8px 0; font-weight: 700; height: 40px; font-size: 14px;" min="0" step="500000" placeholder="Ej: 10000000" />
+                                    </div>
+                                    <small class="text-muted" style="font-size: 11px; display: block; margin-top: 4px;">
+                                        Monto en colones a partir del cual la fluctuación se clasifica como <strong>Crítica</strong>.
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Modo de Monitoreo -->
+                        <div style="margin-top: 8px; margin-bottom: 20px;">
+                            <label style="font-size: 13px; font-weight: 700; color: #1e293b; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
+                                <i class="fa fa-filter" style="color: #2F5597;"></i> Alcance y Modo de Monitoreo de Cuentas
+                            </label>
+                            <p style="font-size: 12px; color: #64748b; margin-bottom: 10px;">
+                                Seleccione la estrategia con la que el motor de alertas filtrará las cuentas contables de su entidad:
+                            </p>
+
+                            <div class="radio-card-grid">
+                                <!-- Opción 1: TODAS -->
+                                <div class="radio-card-item selected" id="cardModoTodas" onclick="seleccionarModoMonitoreo('TODAS');">
+                                    <div class="radio-card-header">
+                                        <input type="radio" name="rdModoMonitoreo" id="rdModoTodas" value="TODAS" checked style="margin: 0; accent-color: #2F5597;" />
+                                        <span>Todas las Cuentas</span>
+                                    </div>
+                                    <div class="radio-card-desc">
+                                        Evalúa cualquier cuenta contable del catálogo que sobrepase los umbrales de variación.
+                                    </div>
+                                </div>
+
+                                <!-- Opción 2: SOLO_WATCHLIST -->
+                                <div class="radio-card-item" id="cardModoWatchlist" onclick="seleccionarModoMonitoreo('SOLO_WATCHLIST');">
+                                    <div class="radio-card-header">
+                                        <input type="radio" name="rdModoMonitoreo" id="rdModoWatchlist" value="SOLO_WATCHLIST" style="margin: 0; accent-color: #2F5597;" />
+                                        <span>Solo Cuentas Prioritarias</span>
+                                    </div>
+                                    <div class="radio-card-desc">
+                                        Dispara alertas <strong>únicamente</strong> para las cuentas registradas en su Lista Prioritaria (Watchlist).
+                                    </div>
+                                </div>
+
+                                <!-- Opción 3: EXCLUIR_BLACKLIST -->
+                                <div class="radio-card-item" id="cardModoBlacklist" onclick="seleccionarModoMonitoreo('EXCLUIR_BLACKLIST');">
+                                    <div class="radio-card-header">
+                                        <input type="radio" name="rdModoMonitoreo" id="rdModoBlacklist" value="EXCLUIR_BLACKLIST" style="margin: 0; accent-color: #2F5597;" />
+                                        <span>Excluir Cuentas Omitidas</span>
+                                    </div>
+                                    <div class="radio-card-desc">
+                                        Evalúa todo el catálogo, <strong>excepto</strong> aquellas cuentas agregadas a su Lista de Exclusión.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px; padding-top: 16px; border-top: 1px solid #e2e8f0;">
+                        <button type="button" class="btn btn-default" data-dismiss="modal" style="border-radius: 8px; font-weight: 600; padding: 8px 18px;">
+                            Cancelar
+                        </button>
+                        <button type="button" class="btn-al-action btn-al-primary" id="btnGuardarConfigUmbrales" onclick="guardarConfiguracionEntidad();">
+                            <i class="fa fa-floppy-o"></i> Guardar Parámetros de Entidad
+                        </button>
+                    </div>
+                </div>
+
+                <!-- TAB 2: GESTIÓN DE CUENTAS MONITOREADAS (WATCHLIST / BLACKLIST) -->
+                <div id="tabContentCuentas" class="tab-content-panel" style="display: none;">
+                    <!-- Formulario de Inclusión de Cuenta -->
+                    <div style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 18px 20px; margin-bottom: 22px;">
+                        <h4 style="margin: 0 0 12px 0; font-size: 14px; font-weight: 800; color: #0f172a; display: flex; align-items: center; gap: 8px;">
+                            <i class="fa fa-plus-circle" style="color: #2F5597;"></i> Registrar Cuenta a la Lista
+                        </h4>
+
+                        <div class="row">
+                            <div class="col-sm-7">
+                                <div class="form-group" style="margin-bottom: 12px;">
+                                    <label style="font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 4px;">
+                                        Buscar Cuenta Contable (por código o nombre):
+                                    </label>
+                                    <div class="autocomplete-search-container">
+                                        <div style="position: relative;">
+                                            <input type="text" id="txtBuscarCuentaCatalogo" class="form-control" placeholder="Escriba código o nombre de la cuenta..." autocomplete="off" style="border-radius: 8px; font-size: 13px; height: 38px; padding-right: 30px;" />
+                                            <i class="fa fa-spinner fa-spin" id="spinBuscarCuenta" style="position: absolute; right: 10px; top: 12px; color: #2F5597; display: none;"></i>
+                                        </div>
+                                        <div id="dropdownResultadosCuentas" class="autocomplete-dropdown"></div>
+                                    </div>
+                                    <div id="boxCuentaSeleccionada" style="display: none;">
+                                        <div class="selected-account-pill">
+                                            <i class="fa fa-check-circle" style="color: #16a34a;"></i>
+                                            <span id="lblCuentaSeleccionadaTexto"></span>
+                                            <button type="button" class="btn-clear-pill" onclick="limpiarCuentaSeleccionada();" title="Quitar selección">&times;</button>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" id="hdnCuentaCodigo" />
+                                    <input type="hidden" id="hdnCuentaNombre" />
+                                </div>
+                            </div>
+
+                            <div class="col-sm-5">
+                                <div class="form-group" style="margin-bottom: 12px;">
+                                    <label style="font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 4px;">
+                                        Tipo de Monitoreo:
+                                    </label>
+                                    <select id="selectTipoMonitoreoCuenta" class="form-control" style="border-radius: 8px; font-size: 13px; height: 38px; font-weight: 600;">
+                                        <option value="WATCHLIST">⭐ Prioritaria (Watchlist - Monitorear)</option>
+                                        <option value="BLACKLIST">⛔ Excluida (Blacklist - Omitir Alertas)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-9">
+                                <div class="form-group" style="margin-bottom: 8px;">
+                                    <label style="font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 4px;">
+                                        Motivo o Justificación (Opcional):
+                                    </label>
+                                    <input type="text" id="txtJustificacionCuenta" class="form-control" placeholder="Ej: Cuenta de alto volumen sometida a auditoría o revisión especial..." style="border-radius: 8px; font-size: 12.5px; height: 38px;" />
+                                </div>
+                            </div>
+                            <div class="col-sm-3" style="display: flex; align-items: flex-end;">
+                                <button type="button" class="btn btn-primary btn-block" id="btnGuardarCuenta" onclick="guardarCuentaMonitoreada();" style="height: 38px; border-radius: 8px; font-weight: 700; font-size: 12.5px; background: #2F5597; border-color: #1e3a8a; margin-bottom: 8px;">
+                                    <i class="fa fa-plus"></i> Agregar Cuenta
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tabla de Cuentas Registradas -->
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+                        <span style="font-size: 13px; font-weight: 700; color: #0f172a;">
+                            <i class="fa fa-table" style="color: #2F5597;"></i> Cuentas Configuradas para esta Entidad
+                        </span>
+                        <span class="table-count-pill" id="lblCountCuentasTabla">0 cuentas</span>
+                    </div>
+
+                    <div style="max-height: 280px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 8px;">
+                        <table class="table table-cuentas-monitoreadas" style="margin-bottom: 0;">
+                            <thead>
+                                <tr>
+                                    <th style="width: 140px;">Código</th>
+                                    <th>Nombre de Cuenta</th>
+                                    <th style="width: 130px; text-align: center;">Tipo</th>
+                                    <th>Justificación</th>
+                                    <th style="width: 80px; text-align: center;">Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbodyCuentasMonitoreadas">
+                                <tr>
+                                    <td colspan="5" style="text-align: center; padding: 30px; color: #94a3b8;">
+                                        <i class="fa fa-spinner fa-spin" style="font-size: 18px;"></i> Cargando cuentas...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="modal-footer" style="display: flex; align-items: center; justify-content: space-between; background: #f8fafc; border-top: 1px solid #e2e8f0; padding: 12px 24px;">
+                <span style="font-size: 12px; color: #64748b;">
+                    <i class="fa fa-info-circle" style="color: #2F5597;"></i> Los cambios se aplicarán inmediatamente en la siguiente evaluación de alertas.
+                </span>
+                <button type="button" class="btn btn-default" data-dismiss="modal" style="border-radius: 8px; font-weight: 600; padding: 6px 16px;">
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SCRIPT DE INTERACCIÓN DINÁMICA -->
+<script type="text/javascript">
+    // Marcar alerta individual como leída vía AJAX
+    function marcarAlertaLeida(id, btnElement) {
+        var $btn = $(btnElement);
+        $btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i>');
+
+        $.post('@Url.Action("MarcarLeida", "Alertas")', { id: id }, function(res) {
+            if (res && res.success) {
+                var $row = $('#alerta-row-' + id);
+                $row.removeClass('row-unread row-critical').attr('data-leido', '1');
+                $('#action-cell-' + id).html('<span class="badge-al-read"><i class="fa fa-check-circle"></i> Leída</span>');
+
+                // Decrementar contador visual de no leídas
+                var $kpiNoLeidas = $('#kpiNoLeidas');
+                var currentNoLeidas = parseInt($kpiNoLeidas.text(), 10) || 0;
+                if (currentNoLeidas > 0) {
+                    $kpiNoLeidas.text(currentNoLeidas - 1);
+                }
+
+                // Sincronizar campana del Navbar
+                if (window.actualizarCampanaAlertas) {
+                    window.actualizarCampanaAlertas();
+                }
+
+                // Toast flotante FFC
+                if (window.mostrarToastExito) {
+                    window.mostrarToastExito('Alerta financiera marcada como leída exitosamente.', 'Atendida');
+                }
+            } else {
+                $btn.prop('disabled', false).html('<i class="fa fa-check"></i> Atender');
+                if (window.mostrarToastError) {
+                    window.mostrarToastError('No se pudo marcar la alerta como leída.', 'Atención');
+                }
+            }
+        }).fail(function() {
+            $btn.prop('disabled', false).html('<i class="fa fa-check"></i> Atender');
+        });
+    }
+
+    // Filtro rápido al hacer clic en las tarjetas KPI
+    function filtrarRapido(tipo, soloNoLeidas) {
+        $('#selectTipo').val(tipo);
+        $('#chkSoloNoLeidas').prop('checked', soloNoLeidas);
+        $('#formFiltroAlertas').submit();
+    }
+
+    // ==========================================================================
+    // CONFIGURACIÓN DE PARÁMETROS Y CUENTAS POR ENTIDAD (MODAL AJAX)
+    // ==========================================================================
+    var currentConfigEntidadId = -1;
+    var searchCuentaTimeout = null;
+
+    function abrirModalConfigEntidad() {
+        var selectVal = $('#selectEntidad').val();
+        var esAdmin = @((ViewBag.EsAdmin != null && (bool)ViewBag.EsAdmin) ? "true" : "false");
+        var idEntidadUsuario = parseInt('@(ViewBag.IdEntidadUsuario != null ? ViewBag.IdEntidadUsuario.ToString() : "-1")', 10) || -1;
+        var entidadId = -1;
+        var entidadNombre = "";
+
+        if (esAdmin) {
+            if (!selectVal || selectVal === "-1") {
+                if (window.mostrarToast) {
+                    window.mostrarToast('Por favor seleccione una cooperativa o entidad en el filtro superior para configurar sus parámetros específicos.', 'info', 'Seleccione una Entidad', 4500);
+                } else {
+                    alert('Por favor seleccione una cooperativa en el filtro superior para configurar sus parámetros.');
+                }
+                $('#selectEntidad').focus();
+                return;
+            }
+            entidadId = parseInt(selectVal, 10);
+            entidadNombre = $('#selectEntidad option:selected').text();
+        } else {
+            entidadId = (idEntidadUsuario > 0) ? idEntidadUsuario : parseInt(selectVal, 10);
+            entidadNombre = $('#selectEntidad option:selected').text() || 'Mi Entidad';
+        }
+
+        currentConfigEntidadId = entidadId;
+        $('#lblModalNombreEntidad').text(entidadNombre);
+        cambiarTabConfig('umbrales');
+        cargarConfiguracionEntidad(entidadId);
+        cargarCuentasMonitoreadas(entidadId);
+        limpiarCuentaSeleccionada();
+
+        $('#modalConfigAlertaEntidad').modal('show');
+    }
+
+    function cambiarTabConfig(tab) {
+        if (tab === 'umbrales') {
+            $('#tabBtnUmbrales').addClass('active');
+            $('#tabBtnCuentas').removeClass('active');
+            $('#tabContentUmbrales').show();
+            $('#tabContentCuentas').hide();
+        } else {
+            $('#tabBtnCuentas').addClass('active');
+            $('#tabBtnUmbrales').removeClass('active');
+            $('#tabContentCuentas').show();
+            $('#tabContentUmbrales').hide();
+        }
+    }
+
+    function toggleModoPersonalizado(activo) {
+        if (activo) {
+            $('#boxSwitchPersonalizado').removeClass('is-disabled');
+            $('#lblSwitchTitle').html('<i class="fa fa-check-circle" style="color: #16a34a;"></i> Umbrales Personalizados ACTIVOS');
+            $('#lblSwitchDesc').text('La evaluación de alertas utilizará los porcentajes y montos configurados a continuación para esta entidad.');
+            $('#formCamposUmbrales').css({ 'opacity': '1', 'pointer-events': 'auto' });
+        } else {
+            $('#boxSwitchPersonalizado').addClass('is-disabled');
+            $('#lblSwitchTitle').text('Activar Umbrales Propios de la Entidad');
+            $('#lblSwitchDesc').text('Desactivado: La entidad utilizará los umbrales globales estándar de FFC (15.0% y ₡10,000,000).');
+            $('#formCamposUmbrales').css({ 'opacity': '0.6', 'pointer-events': 'none' });
+        }
+    }
+
+    function seleccionarModoMonitoreo(modo) {
+        $('input[name="rdModoMonitoreo"][value="' + modo + '"]').prop('checked', true);
+        $('.radio-card-item').removeClass('selected');
+        if (modo === 'TODAS') $('#cardModoTodas').addClass('selected');
+        else if (modo === 'SOLO_WATCHLIST') $('#cardModoWatchlist').addClass('selected');
+        else if (modo === 'EXCLUIR_BLACKLIST') $('#cardModoBlacklist').addClass('selected');
+    }
+
+    function cargarConfiguracionEntidad(entidadId) {
+        $('#btnGuardarConfigUmbrales').prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Cargando...');
+
+        $.getJSON('@Url.Action("GetConfiguracionEntidad", "Alertas")', { entidadId: entidadId }, function(res) {
+            $('#btnGuardarConfigUmbrales').prop('disabled', false).html('<i class="fa fa-floppy-o"></i> Guardar Parámetros de Entidad');
+
+            if (res && res.success && res.config) {
+                var c = res.config;
+                $('#chkUsarPersonalizado').prop('checked', c.Activo);
+                toggleModoPersonalizado(c.Activo);
+
+                $('#txtCfgUmbralPorc').val(c.UmbralVariacionPorcentaje || res.globalUmbralPorc || 15.0);
+                $('#txtCfgUmbralMonto').val(c.UmbralVariacionMonto || res.globalUmbralMonto || 10000000.0);
+                seleccionarModoMonitoreo(c.ModoMonitoreo || 'TODAS');
+            } else {
+                $('#chkUsarPersonalizado').prop('checked', false);
+                toggleModoPersonalizado(false);
+                $('#txtCfgUmbralPorc').val((res && res.globalUmbralPorc) ? res.globalUmbralPorc : 15.0);
+                $('#txtCfgUmbralMonto').val((res && res.globalUmbralMonto) ? res.globalUmbralMonto : 10000000.0);
+                seleccionarModoMonitoreo('TODAS');
+            }
+        }).fail(function() {
+            $('#btnGuardarConfigUmbrales').prop('disabled', false).html('<i class="fa fa-floppy-o"></i> Guardar Parámetros de Entidad');
+        });
+    }
+
+    function guardarConfiguracionEntidad() {
+        var activo = $('#chkUsarPersonalizado').is(':checked');
+        var umbralPorc = parseFloat($('#txtCfgUmbralPorc').val());
+        var umbralMonto = parseFloat($('#txtCfgUmbralMonto').val());
+        var modoMonitoreo = $('input[name="rdModoMonitoreo"]:checked').val() || 'TODAS';
+
+        if (activo) {
+            if (isNaN(umbralPorc) || umbralPorc <= 0) {
+                alert('Por favor ingrese un porcentaje de variación mínimo válido mayor a 0%.');
+                $('#txtCfgUmbralPorc').focus();
+                return;
+            }
+            if (isNaN(umbralMonto) || umbralMonto < 0) {
+                alert('Por favor ingrese un monto mínimo de variación válido.');
+                $('#txtCfgUmbralMonto').focus();
+                return;
+            }
+        }
+
+        var $btn = $('#btnGuardarConfigUmbrales');
+        $btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Guardando...');
+
+        $.post('@Url.Action("GuardarConfiguracionEntidad", "Alertas")', {
+            entidadId: currentConfigEntidadId,
+            activo: activo,
+            umbralPorcentaje: isNaN(umbralPorc) ? 15.0 : umbralPorc,
+            umbralMonto: isNaN(umbralMonto) ? 10000000.0 : umbralMonto,
+            modoMonitoreo: modoMonitoreo
+        }, function(res) {
+            $btn.prop('disabled', false).html('<i class="fa fa-floppy-o"></i> Guardar Parámetros de Entidad');
+            if (res && res.success) {
+                if (window.mostrarToast) {
+                    window.mostrarToast(res.message || 'Configuración guardada exitosamente.', 'success', 'Parámetros Actualizados', 4000);
+                } else {
+                    alert(res.message || 'Configuración guardada exitosamente.');
+                }
+
+                // Actualizar chips de la barra de resumen en tiempo real
+                if (activo) {
+                    $('#chipOrigenParametros').css({ 'border-color': '#fed7aa', 'background': '#fff7ed' })
+                        .html('<span class="chip-dot dot-orange"></span><strong style="color: #c2410c;"><i class="fa fa-check-circle"></i> Personalizados por Entidad</strong>');
+                    $('#bannerUmbralPorc').text('≥ ' + umbralPorc.toFixed(1) + '%');
+                    $('#bannerUmbralMonto').text('≥ ₡' + Number(umbralMonto).toLocaleString('es-CR'));
+                } else {
+                    $('#chipOrigenParametros').css({ 'border-color': '#cbd5e1', 'background': '#ffffff' })
+                        .html('<span class="chip-dot" style="background-color: #2F5597;"></span><strong style="color: #2F5597;"><i class="fa fa-globe"></i> Globales FFC</strong>');
+                }
+
+                var modoTexto = '<span><i class="fa fa-th-list"></i> Todas las Cuentas</span>';
+                if (modoMonitoreo === 'SOLO_WATCHLIST') {
+                    modoTexto = '<span style="color: #0284c7;"><i class="fa fa-bookmark"></i> Solo Cuentas Prioritarias</span>';
+                } else if (modoMonitoreo === 'EXCLUIR_BLACKLIST') {
+                    modoTexto = '<span style="color: #475569;"><i class="fa fa-ban"></i> Excluyendo Omitidas</span>';
+                }
+                $('#bannerModoMonitoreo').html(modoTexto);
+
+                $('#modalConfigAlertaEntidad').modal('hide');
+            } else {
+                if (window.mostrarToast) {
+                    window.mostrarToast((res && res.message) ? res.message : 'Error al guardar los parámetros.', 'error', 'Error');
+                } else {
+                    alert((res && res.message) ? res.message : 'Error al guardar los parámetros.');
+                }
+            }
+        }).fail(function() {
+            $btn.prop('disabled', false).html('<i class="fa fa-floppy-o"></i> Guardar Parámetros de Entidad');
+            alert('Error de comunicación con el servidor al guardar la configuración.');
+        });
+    }
+
+    // GESTIÓN DE CUENTAS MONITOREADAS
+    function cargarCuentasMonitoreadas(entidadId) {
+        var $tbody = $('#tbodyCuentasMonitoreadas');
+        $tbody.html('<tr><td colspan="5" style="text-align: center; padding: 25px; color: #94a3b8;"><i class="fa fa-spinner fa-spin"></i> Cargando cuentas...</td></tr>');
+
+        $.getJSON('@Url.Action("GetCuentasMonitoreadas", "Alertas")', { entidadId: entidadId }, function(res) {
+            if (res && res.success && res.cuentas) {
+                var cuentas = res.cuentas;
+                $('#lblCountCuentasBadge').text(cuentas.length);
+                $('#lblCountCuentasTabla').text(cuentas.length + (cuentas.length === 1 ? ' cuenta' : ' cuentas'));
+
+                if (cuentas.length === 0) {
+                    $tbody.html('<tr><td colspan="5" style="text-align: center; padding: 35px 20px; color: #94a3b8;"><i class="fa fa-info-circle" style="font-size: 20px; margin-bottom: 6px; display: block;"></i>No hay cuentas registradas en la lista de esta entidad.</td></tr>');
+                    return;
+                }
+
+                var html = '';
+                for (var i = 0; i < cuentas.length; i++) {
+                    var c = cuentas[i];
+                    var isWatchlist = (c.TipoMonitoreo === 'WATCHLIST');
+                    var badgeHtml = isWatchlist
+                        ? '<span class="badge-tipo-watchlist"><i class="fa fa-star"></i> Prioritaria</span>'
+                        : '<span class="badge-tipo-blacklist"><i class="fa fa-ban"></i> Excluida</span>';
+
+                    html += '<tr id="row-cuenta-' + c.Id + '">';
+                    html += '<td style="font-family: Consolas, monospace; font-weight: 700; color: #1e3a8a;">' + escapeHtml(c.CuentaContable) + '</td>';
+                    html += '<td style="font-weight: 600; color: #1e293b;">' + escapeHtml(c.NombreCuenta || '') + '</td>';
+                    html += '<td style="text-align: center;">' + badgeHtml + '</td>';
+                    html += '<td style="color: #64748b; font-size: 12px;">' + escapeHtml(c.Justificacion || '-') + '</td>';
+                    html += '<td style="text-align: center;">';
+                    html += '<button type="button" class="btn-delete-cuenta" onclick="eliminarCuentaMonitoreada(' + c.Id + ', \'' + escapeAttr(c.CuentaContable) + '\');" title="Remover de la lista">';
+                    html += '<i class="fa fa-trash-o"></i> Quitar';
+                    html += '</button>';
+                    html += '</td>';
+                    html += '</tr>';
+                }
+                $tbody.html(html);
+            } else {
+                $tbody.html('<tr><td colspan="5" style="text-align: center; padding: 25px; color: #ea580c;">No fue posible obtener las cuentas registradas.</td></tr>');
+            }
+        }).fail(function() {
+            $tbody.html('<tr><td colspan="5" style="text-align: center; padding: 25px; color: #ea580c;">Error al consultar cuentas monitoreadas.</td></tr>');
+        });
+    }
+
+    function guardarCuentaMonitoreada() {
+        var cuenta = $('#hdnCuentaCodigo').val();
+        var nombre = $('#hdnCuentaNombre').val();
+        var tipo = $('#selectTipoMonitoreoCuenta').val();
+        var justificacion = $('#txtJustificacionCuenta').val();
+
+        if (!cuenta) {
+            alert('Por favor busque y seleccione una cuenta contable del catálogo.');
+            $('#txtBuscarCuentaCatalogo').focus();
+            return;
+        }
+
+        var $btn = $('#btnGuardarCuenta');
+        $btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Agregando...');
+
+        $.post('@Url.Action("GuardarCuentaMonitoreada", "Alertas")', {
+            entidadId: currentConfigEntidadId,
+            cuentaContable: cuenta,
+            nombreCuenta: nombre,
+            tipoMonitoreo: tipo,
+            justificacion: justificacion
+        }, function(res) {
+            $btn.prop('disabled', false).html('<i class="fa fa-plus"></i> Agregar Cuenta');
+            if (res && res.success) {
+                if (window.mostrarToast) {
+                    window.mostrarToast(res.message || 'Cuenta agregada exitosamente a la lista.', 'success', 'Cuenta Registrada');
+                }
+                limpiarCuentaSeleccionada();
+                $('#txtJustificacionCuenta').val('');
+                cargarCuentasMonitoreadas(currentConfigEntidadId);
+            } else {
+                alert((res && res.message) ? res.message : 'Error al registrar la cuenta.');
+            }
+        }).fail(function() {
+            $btn.prop('disabled', false).html('<i class="fa fa-plus"></i> Agregar Cuenta');
+            alert('Error de comunicación con el servidor al registrar la cuenta.');
+        });
+    }
+
+    function eliminarCuentaMonitoreada(id, cuenta) {
+        if (!confirm('¿Confirma que desea remover la cuenta ' + cuenta + ' de la lista de monitoreo de esta entidad?')) {
+            return;
+        }
+
+        $.post('@Url.Action("EliminarCuentaMonitoreada", "Alertas")', {
+            id: id,
+            entidadId: currentConfigEntidadId
+        }, function(res) {
+            if (res && res.success) {
+                if (window.mostrarToast) {
+                    window.mostrarToast('Cuenta contable removida exitosamente.', 'success', 'Eliminada');
+                }
+                cargarCuentasMonitoreadas(currentConfigEntidadId);
+            } else {
+                alert((res && res.message) ? res.message : 'No se pudo remover la cuenta.');
+            }
+        }).fail(function() {
+            alert('Error al remover la cuenta contable.');
+        });
+    }
+
+    function limpiarCuentaSeleccionada() {
+        $('#hdnCuentaCodigo').val('');
+        $('#hdnCuentaNombre').val('');
+        $('#lblCuentaSeleccionadaTexto').text('');
+        $('#boxCuentaSeleccionada').hide();
+        $('#txtBuscarCuentaCatalogo').val('').show();
+        $('#dropdownResultadosCuentas').hide().empty();
+    }
+
+    function seleccionarItemCuenta(codigo, nombre) {
+        $('#hdnCuentaCodigo').val(codigo);
+        $('#hdnCuentaNombre').val(nombre);
+        $('#lblCuentaSeleccionadaTexto').text(codigo + ' - ' + nombre);
+        $('#boxCuentaSeleccionada').show();
+        $('#txtBuscarCuentaCatalogo').val('').hide();
+        $('#dropdownResultadosCuentas').hide().empty();
+    }
+
+    function escapeHtml(text) {
+        if (!text) return '';
+        return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+    }
+
+    function escapeAttr(text) {
+        if (!text) return '';
+        return text.replace(/'/g, "\\'");
+    }
+
+    $(document).ready(function() {
+        // Búsqueda en vivo (Live Instant Search)
+        $('#txtBuscarAlerta').on('keyup', function() {
+            var value = $(this).val().toLowerCase().trim();
+            var visibleCount = 0;
+
+            $('#btnLimpiarBuscar').toggle(value.length > 0);
+
+            $('#tbodyAlertas tr').each(function() {
+                if ($(this).attr('id') === 'rowEmptyAlertas') return;
+
+                var cuenta = ($(this).attr('data-cuenta') || '').toLowerCase();
+                var nombre = ($(this).attr('data-nombre-cuenta') || '').toLowerCase();
+                var entidad = ($(this).attr('data-entidad') || '').toLowerCase();
+                var textMatch = $(this).text().toLowerCase();
+
+                if (cuenta.indexOf(value) > -1 || nombre.indexOf(value) > -1 || entidad.indexOf(value) > -1 || textMatch.indexOf(value) > -1) {
+                    $(this).show();
+                    visibleCount++;
+                } else {
+                    $(this).hide();
+                }
+            });
+
+            $('#lblCountAlertas').text(visibleCount + ' registros');
+        }).on('keydown', function(e) {
+            if (e.which === 13) {
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        $('#btnLimpiarBuscar').on('click', function() {
+            $('#txtBuscarAlerta').val('').trigger('keyup').focus();
+            $(this).hide();
+        });
+
+        // Enlazar botón Reevaluar de la franja de parámetros con el botón principal
+        $('#btnEvaluarPeriodoToolbar').on('click', function() {
+            $('#btnEvaluarPeriodo').trigger('click');
+        });
+
+        // Marcar todas como leídas
+        $('#btnMarcarTodas').on('click', function() {
+            if (confirm('¿Desea marcar todas las alertas de la entidad seleccionada como atendidas y leídas?')) {
+                var $btn = $(this);
+                $btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Procesando...');
+
+                $.post('@Url.Action("MarcarTodasLeidas", "Alertas")', function(res) {
+                    if (res && res.success) {
+                        if (window.mostrarToastExito) {
+                            window.mostrarToastExito('Todas las alertas fueron marcadas como leídas.', 'Correcto');
+                        }
+                        setTimeout(function() {
+                            location.reload();
+                        }, 500);
+                    } else {
+                        $btn.prop('disabled', false).html('<i class="fa fa-check-circle-o"></i> Marcar Todas Leídas');
+                    }
+                }).fail(function() {
+                    $btn.prop('disabled', false).html('<i class="fa fa-check-circle-o"></i> Marcar Todas Leídas');
+                });
+            }
+        });
+
+        // Reevaluar cuentas contables del período
+        $('#btnEvaluarPeriodo').on('click', function() {
+            var $btn = $(this);
+            $btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Evaluando cuentas...');
+
+            $.post('@Url.Action("EvaluarPeriodo", "Alertas")', {
+                entidadId: $('#selectEntidad').val(),
+                periodo: '',
+                modalidad: 'Acumulado',
+                tipoComparacion: 'Interanual'
+            }, function(res) {
+                $btn.prop('disabled', false).html('<i class="fa fa-refresh"></i> Reevaluar Cuentas');
+                if (res && res.success) {
+                    if (window.mostrarToast) {
+                        window.mostrarToast(res.message || 'Evaluación de variaciones completada exitosamente.', 'success', 'Proceso Exitoso', 4000);
+                    } else if (window.mostrarToastExito) {
+                        window.mostrarToastExito(res.message || 'Evaluación de variaciones completada exitosamente.', 'Proceso Exitoso');
+                    }
+                    setTimeout(function() {
+                        location.reload();
+                    }, 1200);
+                } else {
+                    if (window.mostrarToast) {
+                        window.mostrarToast((res && res.message) ? res.message : 'Error al procesar la evaluación.', 'error', 'Error');
+                    } else if (window.mostrarToastError) {
+                        window.mostrarToastError((res && res.message) ? res.message : 'Error al procesar la evaluación.', 'Error');
+                    }
+                }
+            }).fail(function() {
+                $btn.prop('disabled', false).html('<i class="fa fa-refresh"></i> Reevaluar Cuentas');
+            });
+        });
+
+        // Exportar a CSV básico
+        $('#btnExportarCsv').on('click', function() {
+            var csv = [];
+            csv.push(['Criticidad', 'Entidad', 'Cuenta', 'Nombre Cuenta', 'Periodo Comparado', 'Saldo Anterior', 'Saldo Actual', 'Variacion Monto', 'Variacion %', 'Estado'].join(';'));
+
+            $('#tbodyAlertas tr:visible').each(function() {
+                if ($(this).attr('id') === 'rowEmptyAlertas') return;
+                var cols = [];
+                $(this).find('td').each(function(idx) {
+                    if (idx < 8) {
+                        var text = $(this).text().replace(/\s+/g, ' ').trim().replace(/;/g, ',');
+                        cols.push('"' + text + '"');
+                    }
+                });
+                var leido = $(this).attr('data-leido') === '1' ? 'Leída' : 'Pendiente';
+                cols.push('"' + leido + '"');
+                csv.push(cols.join(';'));
+            });
+
+            var csvContent = "data:text/csv;charset=utf-8,\uFEFF" + csv.join("\n");
+            var encodedUri = encodeURI(csvContent);
+            var link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "Alertas_Financieras_FFC.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+
+        // Botones para abrir Modal de Parámetros por Entidad
+        $('#btnAbrirConfigEntidad, #btnConfigEntidadToolbar').on('click', function(e) {
+            e.preventDefault();
+            abrirModalConfigEntidad();
+        });
+
+        // Autocomplete en vivo para búsqueda de cuentas contables
+        $('#txtBuscarCuentaCatalogo').on('input', function() {
+            var val = $(this).val().trim();
+            var $dropdown = $('#dropdownResultadosCuentas');
+            var $spin = $('#spinBuscarCuenta');
+
+            clearTimeout(searchCuentaTimeout);
+
+            if (val.length < 2) {
+                $dropdown.hide().empty();
+                $spin.hide();
+                return;
+            }
+
+            $spin.show();
+            searchCuentaTimeout = setTimeout(function() {
+                $.getJSON('@Url.Action("BuscarCuentasCatalogo", "Alertas")', {
+                    filtro: val,
+                    entidadId: currentConfigEntidadId
+                }, function(res) {
+                    $spin.hide();
+                    if (res && res.success && res.items && res.items.length > 0) {
+                        var html = '';
+                        for (var i = 0; i < res.items.length; i++) {
+                            var item = res.items[i];
+                            var safeCuenta = escapeAttr(item.Cuenta);
+                            var safeNombre = escapeAttr(item.Descripcion);
+                            html += '<div class="autocomplete-item" onclick="seleccionarItemCuenta(\'' + safeCuenta + '\', \'' + safeNombre + '\');">';
+                            html += '<span class="autocomplete-code">' + escapeHtml(item.Cuenta) + '</span>';
+                            html += '<span class="autocomplete-name">' + escapeHtml(item.Descripcion) + '</span>';
+                            html += '</div>';
+                        }
+                        $dropdown.html(html).show();
+                    } else {
+                        $dropdown.html('<div style="padding: 12px; font-size: 12px; color: #94a3b8; text-align: center;">No se encontraron cuentas contables que coincidan.</div>').show();
+                    }
+                }).fail(function() {
+                    $spin.hide();
+                    $dropdown.hide().empty();
+                });
+            }, 250);
+        });
+
+        // Cerrar dropdown de cuentas al hacer clic fuera del control
+        $(document).on('click', function(e) {
+            if (!$(e.target).closest('.autocomplete-search-container').length) {
+                $('#dropdownResultadosCuentas').hide();
+            }
+        });
+    });
+</script>

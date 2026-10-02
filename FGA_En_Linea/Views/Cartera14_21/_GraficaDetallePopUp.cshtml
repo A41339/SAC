@@ -1,36 +1,64 @@
 @model FGA.Model.Grafico
 
-<div class="modern-table-card">
-    <div style="display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; border-radius: 12px 12px 0 0;">
-        <div style="display: flex; align-items: center; gap: 12px; margin: 0; padding: 0; text-align: left;">
-            <img width="38" height="38" src="@Session["Logo"]" style="border-radius: 8px; background: #ffffff; padding: 3px; box-shadow: 0 2px 4px rgba(0,0,0,0.08); flex-shrink: 0;" />
-            <h3 id="entidad" class="box-title" style="margin: 0; font-size: 15px; font-weight: 700; color: #0f172a; text-align: left;"></h3>
+<script type="text/javascript">
+    if (typeof Highcharts !== 'undefined') {
+        Highcharts.setOptions({
+            lang: {
+                thousandsSep: ',',
+                decimalPoint: '.'
+            },
+            exporting: {
+                buttons: {
+                    contextButton: {
+                        y: -44,
+                        x: -10
+                    }
+                }
+            }
+        });
+        if (Highcharts.defaultOptions && Highcharts.defaultOptions.lang) {
+            Highcharts.defaultOptions.lang.thousandsSep = ',';
+            Highcharts.defaultOptions.lang.decimalPoint = '.';
+        }
+    }
+</script>
+
+<div class="modern-table-card" style="border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; background: #ffffff; overflow: hidden;">
+    <div style="display: flex; align-items: center; justify-content: space-between; padding: 7px 14px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; border-radius: 8px 8px 0 0;">
+        <div style="display: flex; align-items: center; gap: 8px; margin: 0; padding: 0; text-align: left;">
+            <img width="28" height="28" src="@Session["Logo"]" style="border-radius: 6px; background: #ffffff; padding: 2px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); flex-shrink: 0;" />
+            <h3 id="entidad" class="box-title" style="margin: 0; font-size: 14px; font-weight: 700; color: #0f172a; text-align: left;"></h3>
         </div>
-        <a class="btn-ampliar" data-toggle="tooltip" data-placement="top" title="Ampliar gr&aacute;fico" href="javascript:mPopUp()">
+        <a class="btn-ampliar" data-toggle="tooltip" data-placement="top" title="Ampliar gr&aacute;fico" href="javascript:mPopUp()" style="height: 28px; padding: 0 11px; font-size: 11.5px; border-radius: 6px; display: inline-flex; align-items: center; gap: 5px;">
             <i class="fa fa-line-chart"></i> Ampliar
         </a>
     </div>
-    <div style="padding: 16px;">
-        <div id="container" style="width: 100%;">
+    <div style="padding: 10px 14px 6px 14px; max-width: 100%;">
+        <div id="container" style="width: 100%; max-width: 100%;">
             @(Model.detalle)
         </div>
     </div>
 </div>
+
 <div class="modal fade" id="mPopUp" tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div style="display: flex; align-items: center; gap: 12px; background: transparent;">
-                    <img width="40" height="40" src="@Session["Logo"]" style="border-radius: 6px; background: #ffffff; padding: 2px;" />
-                    <h3 id="pEntidad" class="modal-title" style="margin: 0; color: #ffffff !important; font-size: 16px; font-weight: 600;"></h3>
+    <div class="modal-dialog modal-xl" style="width: 96%; max-width: 1440px; margin: 10px auto;">
+        <div class="modal-content" style="border-radius: 12px; overflow: hidden; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
+            <div class="modal-header" style="background: linear-gradient(135deg, #1b3866 0%, #2F5597 100%); color: #ffffff; padding: 10px 18px;">
+                <div style="display: flex; align-items: center; gap: 10px; background: transparent;">
+                    <img width="30" height="30" src="@Session["Logo"]" style="border-radius: 6px; background: #ffffff; padding: 2px;" />
+                    <div>
+                        <h3 id="pEntidad" class="modal-title" style="margin: 0; color: #ffffff !important; font-size: 15px; font-weight: 700;"></h3>
+                        <div id="pSubEntidad" style="font-size: 11.5px; color: rgba(255,255,255,0.85); font-weight: 400; margin-top: 1px;"></div>
+                    </div>
                 </div>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: #ffffff !important; opacity: 0.9;"><span aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: #ffffff !important; opacity: 0.9; font-size: 22px; line-height: 1;"><span aria-hidden="true">&times;</span></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="padding: 10px 18px 4px 18px;">
+                <div id="cartera1421ModalKpiStrip" style="margin-bottom: 10px;"></div>
                  @(Model.pDetalle)
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal" style="border-radius: 8px; font-weight: 600;">Cerrar</button>
+            <div class="modal-footer" style="padding: 8px 18px; background: #f8fafc; border-top: 1px solid #e2e8f0; text-align: right;">
+                <button type="button" class="btn btn-default" data-dismiss="modal" style="border-radius: 6px; font-weight: 600; padding: 4px 14px; font-size: 12.5px;">Cerrar</button>
             </div>
         </div>
     </div>
@@ -38,8 +66,17 @@
 
 <script type="text/javascript">
     function mPopUp() {
+        var entText = $("#IdEntidad :selected").text() || '';
+        var grafText = $("#Grafico :selected").text() || '';
+        if (grafText) {
+            $("#pEntidad").text(grafText);
+        }
+        if (entText) {
+            $("#pSubEntidad").text(entText);
+        }
         $('#mPopUp').modal('show');
     }
+
     $('#mPopUp').on('shown.bs.modal', function () {
         if (typeof Highcharts !== 'undefined') {
             Highcharts.charts.forEach(function (chart) {
@@ -47,12 +84,157 @@
                     chart.reflow();
                 }
             });
+
+            setTimeout(function () {
+                try {
+                    if (typeof Highcharts === 'undefined' || !Highcharts.charts) return;
+                    var modalCharts = Highcharts.charts.filter(function (c) {
+                        return c && c.renderTo && $(c.renderTo).closest('#mPopUp').length && c.series && c.series.length > 0;
+                    });
+                    if (modalCharts.length === 0) return;
+                    var chart = modalCharts[0];
+
+                    function renderCarteraKpi(selectedIdx) {
+                        var seriesIdx = 0;
+                        if (typeof selectedIdx === 'number' && selectedIdx >= 0 && selectedIdx < chart.series.length) {
+                            seriesIdx = selectedIdx;
+                        } else {
+                            for (var k = 0; k < chart.series.length; k++) {
+                                if (chart.series[k].type === 'spline' || chart.series[k].type === 'line') {
+                                    seriesIdx = k;
+                                    break;
+                                }
+                            }
+                        }
+
+                        var s = chart.series[seriesIdx];
+                        if (!s || !s.data || s.data.length === 0) {
+                            for (var k = 0; k < chart.series.length; k++) {
+                                if (chart.series[k] && chart.series[k].data && chart.series[k].data.length > 0) {
+                                    seriesIdx = k;
+                                    s = chart.series[k];
+                                    break;
+                                }
+                            }
+                        }
+                        if (!s || !s.data || s.data.length === 0) return;
+
+                        var cats = (chart.xAxis && chart.xAxis[0] && chart.xAxis[0].categories) ? chart.xAxis[0].categories : [];
+                        var rawData = s.data.map(function (pt) {
+                            if (!pt) return 0;
+                            if (typeof pt.y === 'number') return pt.y;
+                            if (Array.isArray(pt) && typeof pt[1] === 'number') return pt[1];
+                            return parseFloat(pt.y) || 0;
+                        });
+
+                        if (rawData.length === 0) return;
+
+                        var p1Label = cats && cats.length > 0 ? cats[0] : 'Inicial';
+                        var p2Label = cats && cats.length > 0 ? cats[cats.length - 1] : 'Final';
+                        var v1 = rawData[0];
+                        var v2 = rawData[rawData.length - 1];
+                        var diff = v2 - v1;
+                        var sum = rawData.reduce(function (a, b) { return a + b; }, 0);
+                        var avg = sum / rawData.length;
+                        var minVal = Math.min.apply(null, rawData);
+                        var maxVal = Math.max.apply(null, rawData);
+
+                        var sName = s.name || '';
+                        var yLabelsFormatter = (s.yAxis && s.yAxis.options && s.yAxis.options.labels && s.yAxis.options.labels.formatter) ? s.yAxis.options.labels.formatter.toString() : '';
+                        var isPct = (sName.indexOf('%') > -1) ||
+                                    (s.yAxis && s.yAxis.options && s.yAxis.options.title && s.yAxis.options.title.text && (s.yAxis.options.title.text.indexOf('Porcent') > -1 || s.yAxis.options.title.text.indexOf('Concentrac') > -1)) ||
+                                    (yLabelsFormatter.indexOf('formatPercent') > -1 || yLabelsFormatter.indexOf('%') > -1);
+                        var suf = isPct ? '%' : '';
+
+                        var isPos = diff >= 0;
+                        var badgeBg = isPos ? 'background-color: #dbeafe; color: #1e40af;' : 'background-color: #ffedd5; color: #c2410c;';
+                        var sign = isPos ? '+' : '';
+
+                        var formatNum = function (n) {
+                            return (typeof n === 'number') ? n.toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : n;
+                        };
+
+                        var diffFormatted = sign + formatNum(diff) + (isPct ? ' p.p.' : suf);
+
+                        var selectorHtml = '';
+                        if (chart.series.length > 1) {
+                            selectorHtml =
+                                '<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">' +
+                                '    <div style="font-size: 12.5px; font-weight: 700; color: #1e3a8a; display: flex; align-items: center; gap: 6px;">' +
+                                '        <i class="fa fa-sliders" style="color: #2F5597;"></i> Indicadores de la serie:' +
+                                '    </div>' +
+                                '    <div>' +
+                                '        <select id="cartera1421ModalSeriesSelect" class="form-control" style="height: 28px; font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 6px; border: 1px solid #cbd5e1; color: #1e3a8a; background: #ffffff; min-width: 240px;">';
+
+                            for (var idx = 0; idx < chart.series.length; idx++) {
+                                var ser = chart.series[idx];
+                                var isSelected = (idx === seriesIdx) ? ' selected' : '';
+                                selectorHtml += '<option value="' + idx + '"' + isSelected + '>● ' + (ser.name || ('Serie ' + (idx + 1))) + '</option>';
+                            }
+
+                            selectorHtml +=
+                                '        </select>' +
+                                '    </div>' +
+                                '</div>';
+                        }
+
+                        var stripHtml = selectorHtml +
+                            '<div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 7px 14px;">' +
+                            '    <div>' +
+                            '        <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block; line-height: 1.2;">Período Inicial (' + p1Label + ')</span>' +
+                            '        <span style="font-size: 14.5px; font-weight: 700; color: #1e3a8a;">' + formatNum(v1) + suf + '</span>' +
+                            '    </div>' +
+                            '    <div style="border-left: 1px solid #cbd5e1; padding-left: 14px;">' +
+                            '        <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block; line-height: 1.2;">Período Final (' + p2Label + ')</span>' +
+                            '        <span style="font-size: 14.5px; font-weight: 700; color: #0f172a;">' + formatNum(v2) + suf + '</span>' +
+                            '    </div>' +
+                            '    <div style="border-left: 1px solid #cbd5e1; padding-left: 14px;">' +
+                            '        <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block; line-height: 1.2;">Variación</span>' +
+                            '        <span class="badge" style="' + badgeBg + ' font-size: 11.5px; font-weight: 700; padding: 3px 8px; border-radius: 6px;">' +
+                            '            ' + diffFormatted +
+                            '        </span>' +
+                            '    </div>' +
+                            '    <div style="border-left: 1px solid #cbd5e1; padding-left: 14px;">' +
+                            '        <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block; line-height: 1.2;">Promedio</span>' +
+                            '        <span style="font-size: 14.5px; font-weight: 700; color: #334155;">' + formatNum(avg) + suf + '</span>' +
+                            '    </div>' +
+                            '    <div style="border-left: 1px solid #cbd5e1; padding-left: 14px;">' +
+                            '        <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block; line-height: 1.2;">Mín / Máx</span>' +
+                            '        <span style="font-size: 13px; font-weight: 600; color: #475569;">' +
+                            '            ' + formatNum(minVal) + suf + ' / ' + formatNum(maxVal) + suf +
+                            '        </span>' +
+                            '    </div>' +
+                            '</div>';
+
+                        $('#cartera1421ModalKpiStrip').html(stripHtml);
+
+                        $('#cartera1421ModalSeriesSelect').off('change').on('change', function () {
+                            var newIdx = parseInt($(this).val(), 10);
+                            renderCarteraKpi(newIdx);
+                        });
+                    }
+
+                    renderCarteraKpi();
+                } catch (e) {
+                    console.error(e);
+                }
+            }, 180);
         }
     });
+
     function formatMillion() {
+        if (typeof Highcharts !== 'undefined' && Highcharts.numberFormat) {
+            var decimals = (this.value % 1 !== 0) ? 2 : 0;
+            return Highcharts.numberFormat(this.value, decimals, '.', ',');
+        }
         return this.value;
     }
+
     function formatPercent() {
+        if (typeof Highcharts !== 'undefined' && Highcharts.numberFormat) {
+            var decimals = (this.value % 1 !== 0) ? 2 : 0;
+            return Highcharts.numberFormat(this.value, decimals, '.', ',') + ' %';
+        }
         return this.value + " %";
     }
 </script>

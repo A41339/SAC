@@ -1,133 +1,226 @@
 @{
-    ViewBag.Title = "Nuevo informe";
+    ViewBag.Title = "Gestión de Informes";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<section class="content-header" style="padding: 24px 20px 14px 20px;">
+
+
+<section class="content-header" style="padding: 20px 20px 10px 20px;">
     <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
         <div>
-            <h1 style="margin: 0; font-size: 21px; font-weight: 700; color: #143750; display: flex; align-items: center; gap: 10px;">
-                <i class="fa fa-cloud-upload" style="color: #0284c7;"></i>
-                Carga y Env&iacute;o de Informes
+            <h1 class="modern-page-title" style="margin: 0; font-size: 21px; font-weight: 700; color: #143750; display: flex; align-items: center; gap: 10px;">
+                <i class="fa fa-folder-open" style="color: #0284c7;"></i>
+                Gesti&oacute;n de Informes
+                <small style="font-size: 13px; color: #64748b; font-weight: normal; margin-left: 8px;">Carga, comunicados / notificaciones y cat&aacute;logo de tipos de informe</small>
             </h1>
-            <p style="margin: 6px 0 0 0; font-size: 13px; color: #64748b;">
-                Seleccione la entidad, el periodo y el tipo de informe para adjuntar y notificar a los destinatarios.
-            </p>
         </div>
     </div>
-    <ol class="breadcrumb">
+    <ol class="breadcrumb" style="margin-top: 8px;">
         <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
-        <li><a href="@Url.Action("Index", "Modulo", new { modulo = "Explorer/Informe" })" class="breadcrumb-parent-pill"><i class="fa fa-bar-chart" style="margin-right: 4px;"></i> Informes</a></li>
-        <li class="active">Cargar Informe</li>
+        <li><a href="@Url.Action("Index", "Modulo", new { modulo = "Explorer/Informe" })" class="breadcrumb-parent-pill"><i class="fa fa-folder" style="margin-right: 4px;"></i> Informes</a></li>
+        <li class="active">Gesti&oacute;n de Informes</li>
     </ol>
 </section>
 
-<section class="content">
-    <div id="dropzone">
+<section class="content" style="padding-top: 8px;">
+    <div class="nav-tabs-custom" style="border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); border: 1px solid #e2e8f0; overflow: hidden; background: #ffffff;">
+        <ul class="nav nav-tabs informe-tab-nav" id="informeTabs">
+            <li class="active">
+                <a href="#tab_carga" data-toggle="tab">
+                    <i class="fa fa-cloud-upload" style="color: #0284c7; margin-right: 6px;"></i> Carga de Informes
+                </a>
+            </li>
+            <li>
+                <a href="#tab_notificaciones" data-toggle="tab">
+                    <i class="fa fa-paper-plane" style="color: #0284c7; margin-right: 6px;"></i> Notificaciones a Entidades
+                </a>
+            </li>
+            <li>
+                <a href="#tab_tipos" data-toggle="tab">
+                    <i class="fa fa-tags" style="color: #d97706; margin-right: 6px;"></i> Tipos de Informe
+                </a>
+            </li>
+        </ul>
 
-        <!-- 1. Tarjeta de Configuraci&oacute;n y Filtros -->
-        <div class="modern-table-card" style="margin-bottom: 22px; padding: 22px 24px; border: 1px solid #e2e8f0; border-radius: 12px; background: #ffffff; box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05);">
-            
-            <h4 style="margin: 0 0 16px 0; font-size: 14px; font-weight: 700; color: #143750; display: flex; align-items: center; gap: 7px;">
-                <i class="fa fa-sliders" style="color: #0284c7;"></i>
-                Par&aacute;metros del informe
-            </h4>
+        <div class="tab-content" style="padding: 10px 20px 24px 20px;">
+            <!-- ================================================================= -->
+            <!-- CEJILLA 1: CARGA DE INFORMES                                      -->
+            <!-- ================================================================= -->
+            <div class="tab-pane active" id="tab_carga">
+                <div id="dropzone">
+                    <!-- 1. Tarjeta de Configuración y Filtros -->
+                    <div class="modern-table-card" style="margin-bottom: 20px; padding: 20px 22px; border: 1px solid #e2e8f0; border-radius: 10px; background: #f8fafc;">
+                        <h4 style="margin: 0 0 16px 0; font-size: 14px; font-weight: 700; color: #143750; display: flex; align-items: center; gap: 7px;">
+                            <i class="fa fa-sliders" style="color: #0284c7;"></i>
+                            Par&aacute;metros del informe
+                        </h4>
 
-            <div class="row">
-                <div class="col-md-3 col-sm-6" style="margin-bottom: 14px;">
-                    <label for="IdEntidad" style="font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 5px; display: flex; align-items: center; gap: 6px;">
-                        <i class="fa fa-building-o" style="color: #0284c7;"></i> Entidad
-                    </label>
-                    @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", @class = "form-control modern-select", @style = "width: 100%; height: 38px; font-size: 13px;" })
-                </div>
+                        <div class="row">
+                            <div class="col-md-3 col-sm-6" style="margin-bottom: 14px;">
+                                <label for="IdEntidad" style="font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 5px; display: flex; align-items: center; gap: 6px;">
+                                    <i class="fa fa-building-o" style="color: #0284c7;"></i> Entidad
+                                </label>
+                                @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", @class = "form-control modern-select", @style = "width: 100%; height: 38px; font-size: 13px;" })
+                            </div>
 
-                <div class="col-md-3 col-sm-6" style="margin-bottom: 14px;">
-                    <label for="Mes" style="font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 5px; display: flex; align-items: center; gap: 6px;">
-                        <i class="fa fa-calendar" style="color: #0284c7;"></i> Mes
-                    </label>
-                    @Html.DropDownList("Mes", Enumerable.Range(1, 12).Select(i => new SelectListItem
-                    {
-                        Value = i.ToString(),
-                        Text = System.Globalization.CultureInfo.CurrentUICulture.DateTimeFormat.GetMonthName(i).ToUpper(),
-                        Selected = (DateTime.Now.Month - 1 == i ? true : false)
-                    }), new { @id = "Mes", @class = "form-control modern-select", @style = "width: 100%; height: 38px; font-size: 13px;" })
-                </div>
+                            <div class="col-md-3 col-sm-6" style="margin-bottom: 14px;">
+                                <label for="Mes" style="font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 5px; display: flex; align-items: center; gap: 6px;">
+                                    <i class="fa fa-calendar" style="color: #0284c7;"></i> Mes
+                                </label>
+                                @Html.DropDownList("Mes", Enumerable.Range(1, 12).Select(i => new SelectListItem
+                                {
+                                    Value = i.ToString(),
+                                    Text = System.Globalization.CultureInfo.CurrentUICulture.DateTimeFormat.GetMonthName(i).ToUpper(),
+                                    Selected = (DateTime.Now.Month - 1 == i ? true : false)
+                                }), new { @id = "Mes", @class = "form-control modern-select", @style = "width: 100%; height: 38px; font-size: 13px;" })
+                            </div>
 
-                <div class="col-md-3 col-sm-6" style="margin-bottom: 14px;">
-                    <label for="Anno" style="font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 5px; display: flex; align-items: center; gap: 6px;">
-                        <i class="fa fa-calendar-o" style="color: #0284c7;"></i> A&ntilde;o
-                    </label>
-                    @Html.DropDownList("Anno", Enumerable.Range(2018, DateTime.Now.Year - 2018 + 3).
-                                               Select(i => new SelectListItem { Value = i.ToString(), Text = i.ToString(), Selected = (i == DateTime.Now.Year ? true : false) }),
-                                               new { @id = "Anno", @class = "form-control modern-select", @style = "width: 100%; height: 38px; font-size: 13px;" })
-                </div>
+                            <div class="col-md-3 col-sm-6" style="margin-bottom: 14px;">
+                                <label for="Anno" style="font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 5px; display: flex; align-items: center; gap: 6px;">
+                                    <i class="fa fa-calendar-o" style="color: #0284c7;"></i> A&ntilde;o
+                                </label>
+                                @Html.DropDownList("Anno", Enumerable.Range(2018, DateTime.Now.Year - 2018 + 3).
+                                                           Select(i => new SelectListItem { Value = i.ToString(), Text = i.ToString(), Selected = (i == DateTime.Now.Year ? true : false) }),
+                                                           new { @id = "Anno", @class = "form-control modern-select", @style = "width: 100%; height: 38px; font-size: 13px;" })
+                            </div>
 
-                <div class="col-md-3 col-sm-6" style="margin-bottom: 14px;">
-                    <label for="TipoInforme" style="font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 5px; display: flex; align-items: center; gap: 6px;">
-                        <i class="fa fa-file-text-o" style="color: #0284c7;"></i> Tipo de Informe
-                    </label>
-                    @Html.DropDownList("TipoInforme", null, new { @id = "TipoInforme", @class = "form-control modern-select", @style = "width: 100%; height: 38px; font-size: 13px;" })
+                            <div class="col-md-3 col-sm-6" style="margin-bottom: 14px;">
+                                <label for="TipoInforme" style="font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 5px; display: flex; align-items: center; gap: 6px;">
+                                    <i class="fa fa-file-text-o" style="color: #0284c7;"></i> Tipo de Informe
+                                </label>
+                                @Html.DropDownList("TipoInforme", null, new { @id = "TipoInforme", @class = "form-control modern-select", @style = "width: 100%; height: 38px; font-size: 13px;" })
+                            </div>
+                        </div>
+
+                        <!-- Sección de destinatarios -->
+                        <div style="margin-top: 8px; padding-top: 14px; border-top: 1px solid #e2e8f0;">
+                            <div class="row">
+                                <div class="col-md-7 col-sm-12" style="margin-bottom: 12px;">
+                                    <label style="font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+                                        <i class="fa fa-users" style="color: #0284c7;"></i> Destinatarios configurados:
+                                    </label>
+                                    <div id="divDest"></div>
+                                </div>
+                                <div class="col-md-5 col-sm-12">
+                                    <label for="txt_destinatario" style="font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+                                        <i class="fa fa-user-plus" style="color: #0284c7;"></i> A&ntilde;adir otro destinatario:
+                                    </label>
+                                    <div style="display: flex; gap: 8px; align-items: center;">
+                                        <input id="txt_destinatario" class="form-control modern-select" style="flex: 1; height: 38px; font-size: 13px;" placeholder="ejemplo@entidad.fi.cr" />
+                                        <button type="button" onclick="AddDest();" title="Agregar correo" class="btn-modern-filter" style="height: 38px; padding: 0 16px; border-radius: 8px; flex-shrink: 0;">
+                                            <i class="fa fa-plus"></i> A&ntilde;adir
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. Área de carga Dropzone -->
+                    <div class="modern-table-card" style="margin-bottom: 20px; padding: 20px 22px; border: 1px solid #e2e8f0; border-radius: 10px; background: #ffffff;">
+                        <h4 style="margin: 0 0 14px 0; font-size: 14px; font-weight: 700; color: #143750; display: flex; align-items: center; gap: 7px;">
+                            <i class="fa fa-paperclip" style="color: #0284c7;"></i>
+                            Adjuntar archivo del informe
+                        </h4>
+
+                        @using (Html.BeginForm("UploadInforme", "Explorer", FormMethod.Post, new { enctype = "multipart/form-data", id = "my-awesome-dropzone", @class = "dropzone", style = "border-radius: 12px; border: 2px dashed #94a3b8; background: #f8fafc; min-height: 170px; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease;" }))
+                        {
+                            <div class="fallback">
+                                <input name="file" id="file" type="file" multiple />
+                            </div>
+                        }
+                    </div>
+
+                    <!-- 3. Botón de acción principal -->
+                    <div style="display: flex; justify-content: flex-end; margin-bottom: 10px;">
+                        <button type="button" name="submit" id="btn_guardar" class="btn-modern-filter" style="padding: 11px 32px; font-size: 14px; border-radius: 8px; font-weight: 700; height: 44px; box-shadow: 0 4px 14px rgba(56, 124, 147, 0.4);">
+                            <i class="fa fa-paper-plane" style="margin-right: 8px;"></i> Cargar y Enviar informe
+                        </button>
+                    </div>
                 </div>
             </div>
 
-            <!-- Secci&oacute;n de destinatarios -->
-            <div style="margin-top: 10px; padding-top: 16px; border-top: 1px solid #f1f5f9;">
-                <div class="row">
-                    <div class="col-md-7 col-sm-12" style="margin-bottom: 12px;">
-                        <label style="font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
-                            <i class="fa fa-users" style="color: #0284c7;"></i> Destinatarios configurados:
-                        </label>
-                        <div id="divDest"></div>
+            <!-- ================================================================= -->
+            <!-- CEJILLA 2: NOTIFICACIONES / COMUNICADOS                           -->
+            <!-- ================================================================= -->
+            <div class="tab-pane" id="tab_notificaciones">
+                <div class="modern-table-card" style="border: 1px solid #e2e8f0; border-radius: 10px; background: #ffffff; overflow: hidden;">
+                    <div style="padding: 16px 20px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; gap: 12px;">
+                        <div style="width: 38px; height: 38px; border-radius: 8px; background: linear-gradient(135deg, #143750 0%, #2F5597 100%); color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;">
+                            <i class="fa fa-envelope-o"></i>
+                        </div>
+                        <div>
+                            <h3 style="margin: 0; font-size: 15px; font-weight: 700; color: #143750;">Emisi&oacute;n de Comunicados y Notificaciones</h3>
+                            <p style="margin: 2px 0 0 0; font-size: 12px; color: #64748b;">Redacte y transmita comunicados generales a los usuarios y entidades del sistema.</p>
+                        </div>
                     </div>
-                    <div class="col-md-5 col-sm-12">
-                        <label for="txt_destinatario" style="font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
-                            <i class="fa fa-user-plus" style="color: #0284c7;"></i> A&ntilde;adir otro destinatario:
-                        </label>
-                        <div style="display: flex; gap: 8px; align-items: center;">
-                            <input id="txt_destinatario" class="form-control modern-select" style="flex: 1; height: 38px; font-size: 13px;" placeholder="ejemplo@entidad.fi.cr" />
-                            <button type="button" onclick="AddDest();" title="Agregar correo" class="btn-modern-filter" style="height: 38px; padding: 0 16px; border-radius: 8px; flex-shrink: 0; background: linear-gradient(135deg, #059669 0%, #0d7377 100%);">
-                                <i class="fa fa-plus"></i> A&ntilde;adir
+
+                    <div style="padding: 20px;">
+                        <div class="form-group" style="margin-bottom: 16px;">
+                            <label for="lbl_notif_asunto" style="font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+                                <i class="fa fa-tag" style="color: #0284c7;"></i> Asunto del Mensaje <span class="text-danger">*</span>
+                            </label>
+                            <input class="form-control modern-select" id="lbl_notif_asunto" placeholder="Ingrese el asunto de la notificación..." style="width: 100%; height: 38px; font-size: 13px;">
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 16px;">
+                            <label for="compose-textarea-notif" style="font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+                                <i class="fa fa-align-left" style="color: #0284c7;"></i> Contenido del Mensaje <span class="text-danger">*</span>
+                            </label>
+                            <textarea id="compose-textarea-notif" class="form-control" style="height: 260px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 13px;"></textarea>
+                        </div>
+                    </div>
+
+                    <div style="padding: 14px 20px; background: #f8fafc; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end;">
+                        <button type="button" onclick="EnviarNotificacionGeneral();" class="btn-modern-filter" style="padding: 10px 28px; font-size: 13.5px; border-radius: 8px; font-weight: 600; height: 42px;">
+                            <i class="fa fa-paper-plane" style="margin-right: 8px;"></i> Enviar Notificaci&oacute;n
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================================================================= -->
+            <!-- CEJILLA 3: TIPOS DE INFORME                                       -->
+            <!-- ================================================================= -->
+            <div class="tab-pane" id="tab_tipos">
+                <div class="modern-table-card" style="border: 1px solid #e2e8f0; border-radius: 10px; background: #ffffff; padding: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+                        <div>
+                            <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: #143750; display: flex; align-items: center; gap: 8px;">
+                                <i class="fa fa-tags" style="color: #d97706;"></i> Cat&aacute;logo de Tipos de Informe
+                            </h4>
+                            <p style="margin: 3px 0 0 0; font-size: 12.5px; color: #64748b;">Administre las categor&iacute;as y plantillas base de reportes para supervisi&oacute;n.</p>
+                        </div>
+                        <div>
+                            <button type="button" id="btnNuevoTipoInforme" class="btn-modern-filter" style="padding: 8px 18px; font-size: 13px; border-radius: 8px; font-weight: 600;">
+                                <i class="fa fa-plus-circle" style="margin-right: 6px;"></i> Crear Tipo de Informe
                             </button>
                         </div>
                     </div>
+
+                    <table id="tbTipoInforme" class="table table-striped table-bordered modern-data-table" style="width: 100%;">
+                        <thead>
+                            <tr>
+                                <th style="width: 110px; text-align: center;">Acci&oacute;n</th>
+                                <th style="width: 70%;">Nombre del Tipo de Informe</th>
+                                <th style="width: 18%; text-align: center;">Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
                 </div>
             </div>
-
         </div>
-
-        <!-- 2. &Aacute;rea de carga Dropzone -->
-        <div class="modern-table-card" style="margin-bottom: 20px; padding: 22px 24px; border: 1px solid #e2e8f0; border-radius: 12px; background: #ffffff; box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05);">
-            <h4 style="margin: 0 0 14px 0; font-size: 14px; font-weight: 700; color: #143750; display: flex; align-items: center; gap: 7px;">
-                <i class="fa fa-paperclip" style="color: #0284c7;"></i>
-                Adjuntar archivo del informe
-            </h4>
-
-            @using (Html.BeginForm("UploadInforme", "Explorer", FormMethod.Post, new { enctype = "multipart/form-data", id = "my-awesome-dropzone", @class = "dropzone", style = "border-radius: 12px; border: 2px dashed #94a3b8; background: #f8fafc; min-height: 180px; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease;" }))
-            {
-                <div class="fallback">
-                    <input name="file" id="file" type="file" multiple />
-                </div>
-            }
-        </div>
-
-        <!-- 3. Bot&oacute;n de acci&oacute;n principal -->
-        <div style="display: flex; justify-content: flex-end; margin-bottom: 30px;">
-            <button type="button" name="submit" id="btn_guardar" class="btn-modern-filter" style="padding: 11px 32px; font-size: 14px; border-radius: 8px; font-weight: 700; height: 44px; box-shadow: 0 4px 14px rgba(56, 124, 147, 0.4);">
-                <i class="fa fa-paper-plane" style="margin-right: 8px;"></i> Cargar y Enviar informe
-            </button>
-        </div>
-
     </div>
 </section>
 
-<!-- ---------------------------------------
-     MODAL: Confirmaci&oacute;n de env&iacute;o
---------------------------------------- -->
+<!-- ======================================================================= -->
+<!-- MODALES: CARGA DE INFORME (Confirmación, Error, Éxito)                  -->
+<!-- ======================================================================= -->
 <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" style="max-width: 860px; width: 92%; margin: 30px auto;">
         <div class="modal-content" style="border-radius: 14px; overflow: hidden; border: none; box-shadow: 0 12px 36px rgba(0,0,0,0.2);">
-            
-            <div class="modal-header" style="background: linear-gradient(135deg, #143750 0%, #0d7377 100%); padding: 18px 22px; display: flex; align-items: center; justify-content: space-between;">
+            <div class="modal-header" style="background: linear-gradient(135deg, #143750 0%, #0d7377 100%); padding: 16px 22px; display: flex; align-items: center; justify-content: space-between;">
                 <h4 class="modal-title" style="margin: 0; color: #ffffff; font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
                     <i class="fa fa-envelope-o" style="font-size: 18px;"></i>
                     Confirmaci&oacute;n de carga y env&iacute;o del informe
@@ -136,17 +229,14 @@
                     <span>&times;</span>
                 </button>
             </div>
-
-            <div class="modal-body" style="padding: 22px 24px; background: #f8fafc;">
-                
-                <div class="modern-table-card" style="padding: 18px 20px; border: 1px solid #e2e8f0; border-radius: 10px; background: #ffffff; margin-bottom: 16px;">
+            <div class="modal-body" style="padding: 20px 22px; background: #f8fafc;">
+                <div class="modern-table-card" style="padding: 16px 18px; border: 1px solid #e2e8f0; border-radius: 10px; background: #ffffff; margin-bottom: 14px;">
                     <div class="form-group" style="margin-bottom: 12px;">
                         <label style="font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 4px; display: block;">
                             <i class="fa fa-envelope" style="color: #0284c7; margin-right: 5px;"></i> Para:
                         </label>
                         <input class="form-control modern-select" id="lbl_para" placeholder="Destinatarios" style="font-size: 13px; height: 38px;">
                     </div>
-                    
                     <div class="row">
                         <div class="col-md-6" style="margin-bottom: 12px;">
                             <label style="font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 4px; display: block;">
@@ -161,7 +251,6 @@
                             <input class="form-control modern-select" id="lbl_cooperativa" placeholder="Cooperativa" style="font-size: 13px; height: 38px;">
                         </div>
                     </div>
-
                     <div class="form-group" style="margin-bottom: 0;">
                         <label style="font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 6px; display: block;">
                             <i class="fa fa-align-left" style="color: #0284c7; margin-right: 5px;"></i> Mensaje del correo:
@@ -169,43 +258,36 @@
                         <div id="txt_mail"></div>
                     </div>
                 </div>
-
-                <!-- Archivo adjunto -->
                 <div id="adjunto"></div>
-
             </div>
-
-            <div class="modal-footer" style="background: #ffffff; border-top: 1px solid #e2e8f0; padding: 14px 22px; display: flex; justify-content: flex-end; gap: 10px;">
-                <button type="button" onclick="DescartarInforme();" class="btn-modern-filter" style="padding: 9px 20px; border-radius: 8px; background: #fee2e2; color: #ef4444; border-color: #fecaca; box-shadow: none;">
+            <div class="modal-footer" style="background: #ffffff; border-top: 1px solid #e2e8f0; padding: 12px 22px; display: flex; justify-content: flex-end; gap: 10px;">
+                <button type="button" onclick="DescartarInforme();" class="btn btn-default" style="border-radius: 8px; padding: 8px 18px;">
                     <i class="fa fa-trash"></i> Descartar
                 </button>
-                <button type="button" onclick="ModificarInforme();" class="btn-modern-filter" style="padding: 9px 20px; border-radius: 8px; background: #64748b; box-shadow: none;">
+                <button type="button" onclick="ModificarInforme();" class="btn btn-default" style="border-radius: 8px; padding: 8px 18px;">
                     <i class="fa fa-edit"></i> Modificar
                 </button>
-                <button type="button" onclick="GuardarInforme();" class="btn-modern-filter" style="padding: 9px 24px; border-radius: 8px; background: linear-gradient(135deg, #059669 0%, #0d7377 100%);">
+                <button type="button" onclick="GuardarInforme();" class="btn-modern-filter" style="padding: 8px 22px; border-radius: 8px; background: linear-gradient(135deg, #059669 0%, #0d7377 100%);">
                     <i class="fa fa-paper-plane"></i> Enviar informe
                 </button>
             </div>
-
         </div>
     </div>
 </div>
 
-<!-- ---------------------------------------
-     MODAL: Error
---------------------------------------- -->
+<!-- Modal Error General -->
 <div id="modalError" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-sm" style="max-width: 440px; margin: 60px auto;">
         <div class="modal-content" style="border-radius: 14px; overflow: hidden; border: none; box-shadow: 0 12px 36px rgba(0,0,0,0.25);">
             <div class="modal-body" style="padding: 30px 24px 20px; text-align: center; background: #ffffff;">
-                <div style="width: 60px; height: 60px; border-radius: 50%; background: #fee2e2; color: #ef4444; display: inline-flex; align-items: center; justify-content: center; font-size: 26px; margin-bottom: 16px;">
+                <div style="width: 56px; height: 56px; border-radius: 50%; background: #ffedd5; color: #c2410c; display: inline-flex; align-items: center; justify-content: center; font-size: 26px; margin-bottom: 16px;">
                     <i class="fa fa-exclamation-triangle"></i>
                 </div>
                 <h4 style="margin: 0 0 8px 0; font-size: 16px; font-weight: 700; color: #1e293b;">Ocurri&oacute; un error</h4>
                 <p id="lbl_mensajeError" style="font-size: 13px; color: #64748b; margin: 0; line-height: 1.5;"></p>
             </div>
             <div class="modal-footer" style="background: #f8fafc; border-top: 1px solid #f1f5f9; padding: 12px 20px; display: flex; justify-content: center;">
-                <button type="button" class="btn-modern-filter" data-dismiss="modal" style="width: 100%; border-radius: 8px; background: #ef4444; border-color: #ef4444; box-shadow: none;">
+                <button type="button" class="btn btn-default" data-dismiss="modal" style="width: 100%; border-radius: 8px;">
                     Aceptar
                 </button>
             </div>
@@ -213,14 +295,12 @@
     </div>
 </div>
 
-<!-- ---------------------------------------
-     MODAL: &Eacute;xito
---------------------------------------- -->
+<!-- Modal Éxito General -->
 <div id="modalSuccess" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-sm" style="max-width: 440px; margin: 60px auto;">
         <div class="modal-content" style="border-radius: 14px; overflow: hidden; border: none; box-shadow: 0 12px 36px rgba(0,0,0,0.25);">
             <div class="modal-body" style="padding: 30px 24px 20px; text-align: center; background: #ffffff;">
-                <div style="width: 60px; height: 60px; border-radius: 50%; background: #dcfce7; color: #16a34a; display: inline-flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 16px;">
+                <div style="width: 56px; height: 56px; border-radius: 50%; background: #dcfce7; color: #16a34a; display: inline-flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 16px;">
                     <i class="fa fa-check"></i>
                 </div>
                 <h4 style="margin: 0 0 8px 0; font-size: 16px; font-weight: 700; color: #1e293b;">&iexcl;Operaci&oacute;n exitosa!</h4>
@@ -235,6 +315,122 @@
     </div>
 </div>
 
+<!-- ======================================================================= -->
+<!-- MODALES: TIPOS DE INFORME (Crear/Editar, Consultar, Eliminar)           -->
+<!-- ======================================================================= -->
+<div class="modal fade" id="modalTipoInforme" tabindex="-1" role="dialog" aria-labelledby="lblModalInformeTitulo" data-backdrop="static">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content" style="border-radius: 12px; overflow: hidden; border: none; box-shadow: 0 10px 25px rgba(0,0,0,0.15);">
+            <div class="modal-header" style="background: #f8fafc; border-bottom: 1px solid #e2e8f0; padding: 14px 20px;">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="lblModalInformeTitulo" style="margin: 0; font-size: 16px; font-weight: 700; color: #0f172a;">
+                    <i class="fa fa-plus-circle" style="color: #0284c7; margin-right: 8px;"></i>
+                    <span id="lblTituloInformeTexto">Nuevo Tipo de Informe</span>
+                </h4>
+            </div>
+            <form id="frmTipoInformeModal" autocomplete="off">
+                @Html.AntiForgeryToken()
+                <input type="hidden" id="informeEsNuevo" value="true" />
+                <input type="hidden" id="informeId" value="" />
+
+                <div class="modal-body" style="padding: 20px;">
+                    <div id="modalInformeError" class="alert alert-warning" style="display: none; border-radius: 8px; background: #ffedd5; color: #c2410c; border: 1px solid #fed7aa;"></div>
+
+                    <div class="form-group form-group-custom">
+                        <label for="informeNombre">Nombre del Tipo de Informe <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="informeNombre" maxlength="150" placeholder="Ej: INFORME MENSUAL DE SUPERVISIÓN" required style="text-transform: uppercase;" />
+                    </div>
+
+                    <div class="form-group form-group-custom" style="margin-top: 14px;">
+                        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px;">
+                            <label for="informeTexto" style="margin-bottom: 0;">Plantilla / Contenido Base del Informe</label>
+                            <span class="text-muted" style="font-size: 11.5px;">Permite texto o formato HTML</span>
+                        </div>
+                        <textarea class="form-control" id="informeTexto" rows="8" placeholder="Escriba la plantilla base o contenido del informe..." style="min-height: 180px; resize: vertical; line-height: 1.5; font-size: 13px;"></textarea>
+                    </div>
+
+                    <div class="form-group form-group-custom" id="grpInformeEstado" style="margin-top: 14px; display: none;">
+                        <label class="custom-switch-label">
+                            <input type="checkbox" id="informeEstado" checked />
+                            <span>Tipo de Informe Activo</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="modal-footer" style="background: #f8fafc; border-top: 1px solid #e2e8f0; padding: 12px 20px;">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" style="border-radius: 8px; padding: 6px 16px;">
+                        Cancelar
+                    </button>
+                    <button type="submit" id="btnGuardarTipoInforme" class="btn-modern-filter" style="border-radius: 8px; padding: 7px 20px; font-weight: 600;">
+                        <i class="fa fa-check" style="margin-right: 4px;"></i> Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalDetalleTipoInforme" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content" style="border-radius: 12px; overflow: hidden; border: none; box-shadow: 0 10px 25px rgba(0,0,0,0.15);">
+            <div class="modal-header" style="background: #f8fafc; border-bottom: 1px solid #e2e8f0; padding: 14px 20px;">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" style="margin: 0; font-size: 16px; font-weight: 700; color: #0f172a;">
+                    <i class="fa fa-info-circle" style="color: #0284c7; margin-right: 8px;"></i>
+                    Detalle del Tipo de Informe
+                </h4>
+            </div>
+            <div class="modal-body" style="padding: 20px;">
+                <dl class="dl-horizontal" style="margin-bottom: 0;">
+                    <dt style="color: #64748b; text-align: left; width: 120px;">Identificador:</dt>
+                    <dd id="detInformeId" style="margin-left: 130px; font-weight: 700; color: #0f172a;">-</dd>
+
+                    <dt style="color: #64748b; text-align: left; width: 120px; margin-top: 10px;">Nombre:</dt>
+                    <dd id="detInformeNombre" style="margin-left: 130px; margin-top: 10px; font-weight: 600; color: #0284c7;">-</dd>
+
+                    <dt style="color: #64748b; text-align: left; width: 120px; margin-top: 10px;">Estado:</dt>
+                    <dd id="detInformeEstado" style="margin-left: 130px; margin-top: 10px;">-</dd>
+
+                    <dt style="color: #64748b; text-align: left; width: 120px; margin-top: 14px;">Plantilla Base:</dt>
+                    <dd style="margin-left: 130px; margin-top: 14px;">
+                        <div id="detInformeTexto" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; max-height: 200px; overflow-y: auto; font-size: 13px;"></div>
+                    </dd>
+                </dl>
+            </div>
+            <div class="modal-footer" style="background: #f8fafc; border-top: 1px solid #e2e8f0; padding: 10px 20px;">
+                <button type="button" class="btn btn-default" data-dismiss="modal" style="border-radius: 8px; padding: 6px 16px;">
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalDeleteTipoInforme" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-sm" style="max-width: 440px; margin: 60px auto;">
+        <div class="modal-content" style="border-radius: 12px; overflow: hidden; border: none; box-shadow: 0 10px 25px rgba(0,0,0,0.15);">
+            <div class="modal-body" style="padding: 24px 20px 16px; text-align: center; background: #ffffff;">
+                <div style="width: 52px; height: 52px; border-radius: 50%; background: #fee2e2; color: #dc2626; display: inline-flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 14px;">
+                    <i class="fa fa-trash"></i>
+                </div>
+                <h4 style="margin: 0 0 8px 0; font-size: 16px; font-weight: 700; color: #1e293b;">&iquest;Eliminar tipo de informe?</h4>
+                <p style="font-size: 13px; color: #64748b; margin: 0; line-height: 1.5;">
+                    Se eliminar&aacute; <strong id="deleteInformeNombre" style="color: #0f172a;"></strong>. Esta acci&oacute;n cambiar&aacute; su estado a inactivo.
+                </p>
+                <input type="hidden" id="deleteInformeId" />
+            </div>
+            <div class="modal-footer" style="background: #f8fafc; border-top: 1px solid #f1f5f9; padding: 10px 18px; display: flex; justify-content: flex-end; gap: 8px;">
+                <button type="button" class="btn btn-default" data-dismiss="modal" style="border-radius: 6px; padding: 6px 14px; font-size: 13px;">
+                    Cancelar
+                </button>
+                <button type="button" id="btnConfirmarEliminarInforme" class="btn btn-danger" style="border-radius: 6px; padding: 6px 16px; font-size: 13px; background: #dc2626; border-color: #dc2626;">
+                    <i class="fa fa-trash"></i> Confirmar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section ScriptsOrCss
 {
     <link href="~/Content/dropzone-master/dist/dropzone.css" rel="stylesheet" />
@@ -243,20 +439,265 @@
 }
 
 <script type="text/javascript">
-    Dropzone.options.myAwesomeDropzone = {
-        paramName: "files",
-        maxFilesize: 1024,
-        maxFiles: 1,
-        timeout: 18000000,
-        acceptedFiles: "application/pdf",
-        dictDefaultMessage: '<i class="fa fa-cloud-upload" style="font-size: 44px; color: #0284c7; display: block; margin-bottom: 12px;"></i><span style="font-size: 15px; font-weight: 600; color: #1e293b; display: block; margin-bottom: 4px;">Arrastre aqu&iacute; el informe en PDF o haga clic para seleccionar</span><span style="font-size: 12px; color: #64748b;">(Solo se permite 1 archivo en formato PDF, m&aacute;x. 1024 MB)</span>',
-        init: function () {
-            this.on("complete", function (data) {
-                $('#adjunto').html(data.xhr.response);
-            });
-        }
-    };
+    $(document).ready(function () {
+        // Inicializar editor WYSIWYG en notificaciones
+        try {
+            if ($("#compose-textarea-notif").wysihtml5) {
+                $("#compose-textarea-notif").wysihtml5();
+            }
+        } catch (e) { }
 
+        // Navegación directa por hash en URL o parámetro
+        var urlHash = window.location.hash;
+        if (urlHash) {
+            $('.informe-tab-nav a[href="' + urlHash + '"]').tab('show');
+        } else {
+            var urlParams = new URLSearchParams(window.location.search);
+            var tabParam = urlParams.get('tab');
+            if (tabParam) {
+                $('.informe-tab-nav a[href="#tab_' + tabParam + '"]').tab('show');
+            }
+        }
+
+        // Dropzone
+        if (typeof Dropzone !== 'undefined') {
+            Dropzone.options.myAwesomeDropzone = {
+                paramName: "files",
+                maxFilesize: 1024,
+                maxFiles: 1,
+                timeout: 18000000,
+                acceptedFiles: "application/pdf",
+                dictDefaultMessage: '<i class="fa fa-cloud-upload" style="font-size: 40px; color: #0284c7; display: block; margin-bottom: 10px;"></i><span style="font-size: 14px; font-weight: 600; color: #1e293b; display: block; margin-bottom: 4px;">Arrastre aqu&iacute; el informe en PDF o haga clic para seleccionar</span><span style="font-size: 12px; color: #64748b;">(Solo formato PDF, m&aacute;x. 1024 MB)</span>',
+                init: function () {
+                    this.on("complete", function (data) {
+                        $('#adjunto').html(data.xhr.response);
+                    });
+                }
+            };
+        }
+
+        // DataTable de Tipos de Informe
+        var oTableTipoInforme = $("#tbTipoInforme").DataTable({
+            "bRetrieve": true,
+            "bProcessing": true,
+            "dom": 'lBfrtip',
+            "sAjaxSource": "@Url.Content("~/TipoInforme/GetGrid")",
+            "buttons": [
+                { extend: 'copyHtml5', exportOptions: { columns: ':visible' } },
+                { extend: 'excelHtml5', exportOptions: { columns: ':visible' } },
+                { extend: 'pdfHtml5', exportOptions: { columns: ':visible' } },
+                { extend: 'print', exportOptions: { columns: ':visible' } },
+                'colvis'
+            ],
+            "pageLength": 10,
+            "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "Todos"]],
+            "order": [[1, "asc"]],
+            "aoColumns": [
+                {
+                    "sClass": "text-center",
+                    "bSortable": false,
+                    "mRender": function (data, type, row) {
+                        var id = row[0];
+                        var nombre = (row[1] || '').replace(/"/g, '&quot;');
+                        return '<div class="text-center"><div class="btn-group text-left">' +
+                            '<button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" ' +
+                            'style="border-radius:6px; border:1px solid #cbd5e1; font-size:12px; padding:4px 10px; color:#374151;">' +
+                            '<i class="fa fa-cog" style="margin-right:4px;"></i> Acci&oacute;n <span class="caret"></span></button>' +
+                            '<ul class="dropdown-menu pull-left" role="menu">' +
+                            '<li><a href="javascript:void(0)" class="btn-edit-informe" data-id="' + id + '"><i class="fa fa-pencil text-primary"></i> Modificar</a></li>' +
+                            '<li><a href="javascript:void(0)" class="btn-detail-informe" data-id="' + id + '"><i class="fa fa-info-circle text-info"></i> Consultar</a></li>' +
+                            '<li class="divider"></li>' +
+                            '<li><a href="javascript:void(0)" class="btn-delete-informe" data-id="' + id + '" data-nombre="' + nombre + '"><i class="fa fa-trash text-danger"></i> Eliminar</a></li>' +
+                            '</ul>' +
+                            '</div></div>';
+                    }
+                },
+                {
+                    "mRender": function (data) {
+                        return '<strong style="color: #0f172a; font-size: 13.5px;"><i class="fa fa-file-text-o text-primary" style="margin-right: 6px;"></i>' + (data || '') + '</strong>';
+                    }
+                },
+                {
+                    "sClass": "text-center",
+                    "mRender": function (data) {
+                        var isActivo = ('' + data).toLowerCase().indexOf('activo') !== -1;
+                        return '<span class="badge-pill-tag ' + (isActivo ? 'yes' : 'no') + '">' +
+                            '<i class="fa ' + (isActivo ? 'fa-check' : 'fa-times') + '"></i> ' + (isActivo ? 'Activo' : 'Inactivo') + '</span>';
+                    }
+                }
+            ],
+            "language": {
+                "sProcessing": "Procesando...",
+                "sLengthMenu": "Mostrar _MENU_ registros",
+                "sZeroRecords": "No se encontraron resultados",
+                "sEmptyTable": "Ningún dato disponible en esta tabla",
+                "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+                "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+                "sSearch": "Buscar:",
+                "oPaginate": {
+                    "sFirst": "Primero",
+                    "sLast": "Último",
+                    "sNext": "Siguiente",
+                    "sPrevious": "Anterior"
+                }
+            }
+        });
+
+        // Reflow DataTable al mostrar la pestaña de tipos
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+            if ($(e.target).attr('href') === '#tab_tipos') {
+                oTableTipoInforme.columns.adjust().draw();
+            }
+        });
+
+        // Modales y acciones Tipos de Informe
+        $('#btnNuevoTipoInforme').on('click', function () {
+            $('#lblTituloInformeTexto').text('Nuevo Tipo de Informe');
+            $('#lblModalInformeTitulo i').attr('class', 'fa fa-plus-circle');
+            $('#informeEsNuevo').val('true');
+            $('#informeId').val('');
+            $('#informeNombre').val('');
+            $('#informeTexto').val('');
+            $('#grpInformeEstado').hide();
+            $('#modalInformeError').hide();
+            $('#modalTipoInforme').modal('show');
+            setTimeout(function () { $('#informeNombre').focus(); }, 400);
+        });
+
+        $(document).on('click', '.btn-edit-informe', function () {
+            var informeId = $(this).data('id');
+            $('#lblTituloInformeTexto').text('Modificar Tipo de Informe');
+            $('#lblModalInformeTitulo i').attr('class', 'fa fa-pencil');
+            $('#informeEsNuevo').val('false');
+            $('#informeId').val(informeId);
+            $('#grpInformeEstado').show();
+            $('#modalInformeError').hide();
+
+            $.ajax({
+                url: '@Url.Action("GetTipoInforme", "TipoInforme")',
+                type: 'GET',
+                data: { id: informeId },
+                success: function (res) {
+                    if (res.success) {
+                        var d = res.data;
+                        $('#informeNombre').val(d.Nombre);
+                        $('#informeTexto').val(d.Texto);
+                        $('#informeEstado').prop('checked', d.Estado);
+                        $('#modalTipoInforme').modal('show');
+                        setTimeout(function () { $('#informeNombre').focus(); }, 400);
+                    } else {
+                        $("#lbl_mensajeError").html(res.message);
+                        $("#modalError").modal('show');
+                    }
+                }
+            });
+        });
+
+        $(document).on('click', '.btn-detail-informe', function () {
+            var informeId = $(this).data('id');
+            $.ajax({
+                url: '@Url.Action("GetDetalleTipoInforme", "TipoInforme")',
+                type: 'GET',
+                data: { id: informeId },
+                success: function (res) {
+                    if (res.success) {
+                        var d = res.data;
+                        $('#detInformeId').text(d.Id);
+                        $('#detInformeNombre').text(d.Nombre);
+                        var isAct = d.Estado === 'Activo';
+                        $('#detInformeEstado').html(
+                            '<span class="badge-pill-tag ' + (isAct ? 'yes' : 'no') + '">' +
+                            '<i class="fa ' + (isAct ? 'fa-check' : 'fa-times') + '"></i> ' + d.Estado + '</span>'
+                        );
+                        $('#detInformeTexto').html(d.Texto || '<em class="text-muted">Sin plantilla configurada</em>');
+                        $('#modalDetalleTipoInforme').modal('show');
+                    }
+                }
+            });
+        });
+
+        $('#frmTipoInformeModal').on('submit', function (e) {
+            e.preventDefault();
+            var $btn = $('#btnGuardarTipoInforme');
+            $btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Guardando...');
+            $('#modalInformeError').hide();
+
+            var token = $('input[name="__RequestVerificationToken"]', '#frmTipoInformeModal').val();
+            var data = {
+                __RequestVerificationToken: token,
+                esNuevo: $('#informeEsNuevo').val(),
+                id: $('#informeId').val(),
+                nombre: $('#informeNombre').val(),
+                texto: $('#informeTexto').val(),
+                estado: $('#informeEstado').is(':checked')
+            };
+
+            $.ajax({
+                url: '@Url.Action("GuardarTipoInforme", "TipoInforme")',
+                type: 'POST',
+                data: data,
+                success: function (res) {
+                    $btn.prop('disabled', false).html('<i class="fa fa-check" style="margin-right: 4px;"></i> Guardar');
+                    if (res.success) {
+                        $('#modalTipoInforme').modal('hide');
+                        oTableTipoInforme.ajax.reload(null, false);
+                        $("#lbl_mensajeExito").html(res.message);
+                        $("#modalSuccess").modal('show');
+                    } else {
+                        $('#modalInformeError').text(res.message).fadeIn();
+                    }
+                },
+                error: function () {
+                    $btn.prop('disabled', false).html('<i class="fa fa-check" style="margin-right: 4px;"></i> Guardar');
+                    $('#modalInformeError').text('Error de comunicación al guardar tipo de informe.').fadeIn();
+                }
+            });
+        });
+
+        $(document).on('click', '.btn-delete-informe', function () {
+            var id = $(this).data('id');
+            var nombre = $(this).data('nombre');
+            $('#deleteInformeId').val(id);
+            $('#deleteInformeNombre').text(nombre);
+            $('#modalDeleteTipoInforme').modal('show');
+        });
+
+        $('#btnConfirmarEliminarInforme').on('click', function () {
+            var id = $('#deleteInformeId').val();
+            var $btn = $(this);
+            $btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Eliminando...');
+            var token = $('input[name="__RequestVerificationToken"]', '#frmTipoInformeModal').val();
+
+            $.ajax({
+                url: '@Url.Action("EliminarTipoInforme", "TipoInforme")',
+                type: 'POST',
+                data: { __RequestVerificationToken: token, id: id },
+                success: function (res) {
+                    $btn.prop('disabled', false).html('<i class="fa fa-trash"></i> Confirmar');
+                    $('#modalDeleteTipoInforme').modal('hide');
+                    if (res.success) {
+                        oTableTipoInforme.ajax.reload(null, false);
+                        $("#lbl_mensajeExito").html(res.message);
+                        $("#modalSuccess").modal('show');
+                    } else {
+                        $("#lbl_mensajeError").html(res.message);
+                        $("#modalError").modal('show');
+                    }
+                },
+                error: function () {
+                    $btn.prop('disabled', false).html('<i class="fa fa-trash"></i> Confirmar');
+                    $('#modalDeleteTipoInforme').modal('hide');
+                    $("#lbl_mensajeError").html('Error al eliminar tipo de informe.');
+                    $("#modalError").modal('show');
+                }
+            });
+        });
+    });
+
+    // -------------------------------------------------------------
+    // FUNCIONES DE CARGA DE INFORMES
+    // -------------------------------------------------------------
     $("#IdEntidad").change(function () {
         ActualizarDestinatarios();
     });
@@ -270,20 +711,19 @@
         var informe = $('#TipoInforme').find('option:selected').text().toLowerCase();
         var entidad = $('#IdEntidad').find('option:selected').text();
         var mes = $('#Mes').find('option:selected').text();
-        var anno =  $('#Anno').find('option:selected').text();
+        var anno = $('#Anno').find('option:selected').text();
         $('#Destinatarios option').each(function () {
             correos += $(this).text() + ";";
         });
         $('#lbl_para').val(correos);
         $('#lbl_asunto').val('Informe ' + informe + '. Periodo: ' + mes + '/' + anno);
         $('#lbl_cooperativa').val(entidad);
-        $('#lbl_tipoInforme').val(informe);
         $('#confirmModal').modal('show');
     });
 
     function GuardarInforme() {
         var destinatarios = $('#lbl_para').val();
-        var texto = $('#compose-textarea').val();
+        var texto = $('#compose-textarea-notif').val() || '';
         var idEntidad = $('#IdEntidad').val();
         var idInforme = $('#TipoInforme').val();
         var mes = $('#Mes').val();
@@ -307,8 +747,7 @@
                 if (result == false) {
                     $("#lbl_mensajeError").html(data.resultado.mensaje);
                     $("#modalError").modal('show');
-                }
-                else {
+                } else {
                     $("#lbl_mensajeExito").html(data.resultado.mensaje);
                     if ($('.dropzone')[0] && $('.dropzone')[0].dropzone) {
                         $('.dropzone')[0].dropzone.removeAllFiles();
@@ -317,7 +756,8 @@
                     $('#confirmModal').modal('hide');
                 }
             },
-            error: function (data) {
+            error: function () {
+                $("#lbl_mensajeError").html('Error al procesar la carga del informe.');
                 $("#modalError").modal('show');
             }
         });
@@ -340,9 +780,7 @@
             type: 'POST',
             cache: false,
             async: false,
-            data: {
-                'IdEntidad': $('#IdEntidad').val(),
-            },
+            data: { 'IdEntidad': $('#IdEntidad').val() },
             success: function (result) {
                 $("#divDest").html(result);
             }
@@ -355,9 +793,7 @@
             type: 'POST',
             cache: false,
             async: false,
-            data: {
-                'IdInforme': $('#TipoInforme').val(),
-            },
+            data: { 'IdInforme': $('#TipoInforme').val() },
             success: function (result) {
                 $("#txt_mail").html(result);
             }
@@ -374,6 +810,50 @@
 
     function DelDest() {
         $('#Destinatarios').find('option:selected').remove();
+    }
+
+    // -------------------------------------------------------------
+    // FUNCIONES DE NOTIFICACIONES / COMUNICADOS
+    // -------------------------------------------------------------
+    function EnviarNotificacionGeneral() {
+        var asunto = $('#lbl_notif_asunto').val().trim();
+        var texto = $('#compose-textarea-notif').val() || '';
+
+        if (!asunto) {
+            $("#lbl_mensajeError").html('Por favor ingrese el asunto del mensaje.');
+            $("#modalError").modal('show');
+            return;
+        }
+
+        $.ajax({
+            url: '@Url.Action("EnviarNotificacion", "Explorer")',
+            type: 'POST',
+            cache: false,
+            data: {
+                'idEntidad': '',
+                'asunto': asunto,
+                'texto': texto,
+                'destinatarios': ''
+            },
+            success: function (data) {
+                if (data.resultado && data.resultado.exito) {
+                    $('#lbl_notif_asunto').val('');
+                    $('#compose-textarea-notif').val('');
+                    if ($('#compose-textarea-notif').data("wysihtml5")) {
+                        $('#compose-textarea-notif').data("wysihtml5").editor.setValue('');
+                    }
+                    $("#lbl_mensajeExito").html(data.resultado.mensaje);
+                    $("#modalSuccess").modal('show');
+                } else {
+                    $("#lbl_mensajeError").html(data.resultado ? data.resultado.mensaje : 'Error al enviar notificación.');
+                    $("#modalError").modal('show');
+                }
+            },
+            error: function () {
+                $("#lbl_mensajeError").html('Error de conexión al enviar la notificación.');
+                $("#modalError").modal('show');
+            }
+        });
     }
 
     ActualizarDestinatarios();

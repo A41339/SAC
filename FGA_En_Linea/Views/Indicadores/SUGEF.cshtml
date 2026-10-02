@@ -15,17 +15,17 @@
     <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
         <div>
             <h1 style="margin: 0; font-size: 21px; font-weight: 700; color: #143750; display: flex; align-items: center; gap: 10px;">
-                <i class="fa fa-university" style="color: #0284c7;"></i>
-                Indicadores Normativos SUGEF
+                <i class="fa fa-line-chart" style="color: #0284c7;"></i>
+                Indicadores Financieros SUGEF
             </h1>
             <p style="margin: 6px 0 0 0; font-size: 13px; color: #64748b;">
-                An&aacute;lisis de cumplimiento normativo CAMEL y suficiencia patrimonial comparativa.
+                Monitoreo de solvencia patrimonial, suficiencia y an&aacute;lisis de indicadores normativos.
             </p>
         </div>
     </div>
     <ol class="breadcrumb">
         <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
-        <li><a href="@Url.Action("Index", "Modulo", new { modulo = "Indicadores/SUGEF" })" class="breadcrumb-parent-pill"><i class="fa fa-file-text-o" style="margin-right: 4px;"></i> InformaciÃ³n Financiera</a></li>
+        <li><a href="@Url.Action("Index", "Modulo", new { modulo = "Indicadores/SUGEF" })" class="breadcrumb-parent-pill"><i class="fa fa-file-text-o" style="margin-right: 4px;"></i> Informaci&oacute;n Financiera</a></li>
         <li class="active">Indicadores SUGEF</li>
     </ol>
 </section>
@@ -80,41 +80,38 @@
                 <div class="nav-tabs-custom" style="box-shadow: none; margin-bottom: 0;">
                     <ul class="nav nav-tabs" style="border-bottom: 2px solid #e2e8f0; margin-bottom: 20px;">
                         <li class="active">
-                            <a href="#tab_1" data-toggle="tab" style="font-weight: 700; font-size: 13px; color: #143750; border-radius: 8px 8px 0 0; padding: 10px 18px;">
-                                <i class="fa fa-check-square-o" style="color: #0284c7; margin-right: 6px;"></i> Normativos
+                            <a href="#tab_2" data-toggle="tab" style="font-weight: 700; font-size: 13px; color: #143750; border-radius: 8px 8px 0 0; padding: 10px 18px;">
+                                <i class="fa fa-shield" style="color: #059669; margin-right: 6px;"></i> Indicador de Suficiencia Patrimonial
                             </a>
                         </li>
                         <li>
-                            <a href="#tab_2" data-toggle="tab" style="font-weight: 700; font-size: 13px; color: #143750; border-radius: 8px 8px 0 0; padding: 10px 18px;">
-                                <i class="fa fa-shield" style="color: #059669; margin-right: 6px;"></i> Suficiencia Patrimonial
+                            <a href="#tab_1" data-toggle="tab" style="font-weight: 700; font-size: 13px; color: #143750; border-radius: 8px 8px 0 0; padding: 10px 18px;">
+                                <i class="fa fa-line-chart" style="color: #0284c7; margin-right: 6px;"></i> Indicadores Financieros
                             </a>
                         </li>
                     </ul>
 
                     <div class="tab-content" style="padding: 0;">
-                        <!-- TAB 1: NORMATIVOS -->
-                        <div class="tab-pane active" id="tab_1">
-                            <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid #f1f5f9;">
-                                @if (Session["Logo"] != null)
-                                {
-                                    <img width="44" height="44" src="@Session["Logo"]" style="border-radius: 8px; background: #ffffff; padding: 3px; border: 1px solid #e2e8f0; object-fit: contain;" />
-                                }
+                        <!-- TAB 1: INDICADORES FINANCIEROS (CAMEL) -->
+                        <div class="tab-pane" id="tab_1">
+                            <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid #f1f5f9;">
+                                <img class="img-logo-entidad" width="44" height="44" src="@(Session["Logo"] ?? Url.Content("~/Content/images/FFC.jpg"))" onerror="this.onerror=null;this.src='@Url.Content("~/Content/images/FFC.jpg")';" style="border-radius: 8px; background: #ffffff; padding: 3px; border: 1px solid #e2e8f0; object-fit: contain;" />
                                 <div>
-                                    <h4 style="margin: 0; font-size: 16px; font-weight: 700; color: #143750;">Normativos</h4>
+                                    <h4 style="margin: 0; font-size: 16px; font-weight: 700; color: #143750;">Indicadores Normativos CAMEL - <span class="lblEntidadHeader">@(Session["NomEntidad"] ?? "")</span></h4>
                                     <p style="margin: 2px 0 0 0; font-size: 12px; color: #64748b;">Indicadores del acuerdo CAMEL y supervisi&oacute;n SUGEF</p>
                                 </div>
                             </div>
                             <div class="table-responsive">
-                                <table id="tbCAMEL" class="table modern-data-table" style="width:100%">
+                                <table id="tbCAMEL" class="table table-striped modern-data-table" style="width:100%">
                                     <thead>
                                         <tr>
                                             <th>Id</th>
-                                            <th>Cuenta</th>
-                                            <th>@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MMMM yyyy"))</th>
-                                            <th>@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MMMM yyyy"))</th>
-                                            <th>@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MMMM yyyy")) (Promedio)</th>
-                                            <th>@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MMMM yyyy")) (Promedio)</th>
-                                            <th style="width: 50px;"></th>
+                                            <th class="text-left" style="text-align: left !important; padding-left: 16px;">Cuenta</th>
+                                            <th class="text-right" style="text-align: right !important; padding-right: 14px;">@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MMMM yyyy"))</th>
+                                            <th class="text-right" style="text-align: right !important; padding-right: 14px;">@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MMMM yyyy"))</th>
+                                            <th class="text-right" style="text-align: right !important; padding-right: 14px;">@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MMMM yyyy")) (Promedio)</th>
+                                            <th class="text-right" style="text-align: right !important; padding-right: 14px;">@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MMMM yyyy")) (Promedio)</th>
+                                            <th class="text-center" style="width: 50px; text-align: center !important;"></th>
                                         </tr>
                                     </thead>
                                     <tbody></tbody>
@@ -123,35 +120,35 @@
                         </div>
 
                         <!-- TAB 2: SUFICIENCIA PATRIMONIAL -->
-                        <div class="tab-pane" id="tab_2">
+                        <div class="tab-pane active" id="tab_2">
                             
                             <!-- Subcard 1: Suficiencia a partir de enero 2025 -->
                             <div class="modern-table-card" style="border: 1px solid #e2e8f0; border-radius: 10px; background: #ffffff; padding: 18px 20px; margin-bottom: 22px;">
                                 <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9;">
-                                    @if (Session["Logo"] != null)
-                                    {
-                                        <img width="38" height="38" src="@Session["Logo"]" style="border-radius: 8px; background: #ffffff; padding: 2px; border: 1px solid #e2e8f0; object-fit: contain;" />
-                                    }
-                                    <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: #143750;">
-                                        <i class="fa fa-calendar-check-o" style="color: #0284c7; margin-right: 6px;"></i>
-                                        Suficiencia a partir de enero 2025
-                                    </h4>
+                                    <img class="img-logo-entidad" width="38" height="38" src="@(Session["Logo"] ?? Url.Content("~/Content/images/FFC.jpg"))" onerror="this.onerror=null;this.src='@Url.Content("~/Content/images/FFC.jpg")';" style="border-radius: 8px; background: #ffffff; padding: 2px; border: 1px solid #e2e8f0; object-fit: contain;" />
+                                    <div>
+                                        <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: #143750;">
+                                            <i class="fa fa-calendar-check-o" style="color: #0284c7; margin-right: 6px;"></i>
+                                            Suficiencia Patrimonial a partir de enero 2025 &mdash; <span class="lblEntidadHeader">@(Session["NomEntidad"] ?? "")</span>
+                                        </h4>
+                                        <p style="margin: 2px 0 0 0; font-size: 11.5px; color: #64748b;">Conforme a la nueva normativa SUGEF 3-06</p>
+                                    </div>
                                 </div>
 
-                                <div id="alerta-diferencia" style="display: none; background: #fffbeb; color: #b45309; padding: 12px 16px; margin-bottom: 14px; border: 1px solid #fde68a; border-radius: 8px; align-items: center; gap: 12px;">
-                                    <i class="fa fa-exclamation-triangle" style="font-size: 20px; color: #f59e0b;"></i>
+                                <div id="alerta-diferencia" style="display: none; background: #fff7ed; color: #c2410c; padding: 12px 16px; margin-bottom: 14px; border: 1px solid #fed7aa; border-radius: 8px; align-items: center; gap: 12px;">
+                                    <i class="fa fa-exclamation-triangle" style="font-size: 20px; color: #ea580c;"></i>
                                     <span id="mensaje-alerta" style="font-size: 13px; font-weight: 600;"></span>
                                 </div>
 
                                 <div class="table-responsive">
-                                    <table id="tbSuficiencia306" class="table modern-data-table" style="width:100%">
+                                    <table id="tbSuficiencia306" class="table table-striped modern-data-table" style="width:100%">
                                         <thead>
                                             <tr>
                                                 <th>Id</th>
-                                                <th>Cuenta</th>
-                                                <th>@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MMMM yyyy"))</th>
-                                                <th>@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MMMM yyyy"))</th>
-                                                <th style="width: 50px;"></th>
+                                                <th class="text-left" style="text-align: left !important; padding-left: 16px;">Cuenta</th>
+                                                <th class="text-right" style="text-align: right !important; padding-right: 14px;">@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MMMM yyyy"))</th>
+                                                <th class="text-right" style="text-align: right !important; padding-right: 14px;">@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MMMM yyyy"))</th>
+                                                <th class="text-center" style="width: 50px; text-align: center !important;"></th>
                                             </tr>
                                         </thead>
                                         <tbody></tbody>
@@ -162,25 +159,25 @@
                             <!-- Subcard 2: Suficiencia antes de enero 2025 -->
                             <div class="modern-table-card" style="border: 1px solid #e2e8f0; border-radius: 10px; background: #ffffff; padding: 18px 20px; margin-bottom: 10px;">
                                 <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9;">
-                                    @if (Session["Logo"] != null)
-                                    {
-                                        <img width="38" height="38" src="@Session["Logo"]" style="border-radius: 8px; background: #ffffff; padding: 2px; border: 1px solid #e2e8f0; object-fit: contain;" />
-                                    }
-                                    <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: #143750;">
-                                        <i class="fa fa-history" style="color: #64748b; margin-right: 6px;"></i>
-                                        Suficiencia antes de enero 2025
-                                    </h4>
+                                    <img class="img-logo-entidad" width="38" height="38" src="@(Session["Logo"] ?? Url.Content("~/Content/images/FFC.jpg"))" onerror="this.onerror=null;this.src='@Url.Content("~/Content/images/FFC.jpg")';" style="border-radius: 8px; background: #ffffff; padding: 2px; border: 1px solid #e2e8f0; object-fit: contain;" />
+                                    <div>
+                                        <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: #143750;">
+                                            <i class="fa fa-history" style="color: #64748b; margin-right: 6px;"></i>
+                                            Suficiencia Patrimonial hist&oacute;rica (anterior a enero 2025) &mdash; <span class="lblEntidadHeader">@(Session["NomEntidad"] ?? "")</span>
+                                        </h4>
+                                        <p style="margin: 2px 0 0 0; font-size: 11.5px; color: #64748b;">C&aacute;lculos normativos precedentes</p>
+                                    </div>
                                 </div>
 
                                 <div class="table-responsive">
-                                    <table id="tbSuficiencia" class="table modern-data-table" style="width:100%">
+                                    <table id="tbSuficiencia" class="table table-striped modern-data-table" style="width:100%">
                                         <thead>
                                             <tr>
                                                 <th>Id</th>
-                                                <th>Cuenta</th>
-                                                <th>@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MMMM yyyy"))</th>
-                                                <th>@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MMMM yyyy"))</th>
-                                                <th style="width: 50px;"></th>
+                                                <th class="text-left" style="text-align: left !important; padding-left: 16px;">Cuenta</th>
+                                                <th class="text-right" style="text-align: right !important; padding-right: 14px;">@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MMMM yyyy"))</th>
+                                                <th class="text-right" style="text-align: right !important; padding-right: 14px;">@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MMMM yyyy"))</th>
+                                                <th class="text-center" style="width: 50px; text-align: center !important;"></th>
                                             </tr>
                                         </thead>
                                         <tbody></tbody>
@@ -192,13 +189,23 @@
                     </div>
                 </div>
 
+                <!-- Nota Informativa al pie de página idéntica a Estructura de Fondeo -->
+                <div class="modern-info-card" style="margin-top: 18px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 12px 18px; display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 28px; height: 28px; border-radius: 50%; background: #2F5597; color: #ffffff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-weight: 700; font-size: 13px;">
+                        <i class="fa fa-info"></i>
+                    </div>
+                    <div style="font-size: 12.5px; color: #1e3a8a;">
+                        <strong>Nota:</strong> Los datos presentados corresponden a los requerimientos de supervisi&oacute;n y suficiencia patrimonial remitidos por la entidad regulada.
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
 
 </section>
 
-<!-- Modal Grafico Detalle (fuera de contenedores con overflow para evitar parpadeos) -->
+<!-- Modal Grafico Detalle -->
 <div class="modal fade" id="graphModal" tabindex="-1" role="dialog" aria-labelledby="graphModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-chart-xl" style="max-width: 1300px; width: 95%; margin: 25px auto;">
         <div class="modal-content" style="border-radius: 14px; overflow: hidden; border: none; box-shadow: 0 16px 40px rgba(0,0,0,0.25);">
@@ -213,18 +220,86 @@
 </div>
 
 <style>
-    /* Estilos robustos de botones de grafico en filas de tablas */
+    /* ==============================================================================
+       ESTILOS DE TABLAS E INDICADORES SUGEF (BASADOS EN ESTRUCTURA DE FONDEO)
+       ============================================================================== */
+    #tbCAMEL, #tbSuficiencia306, #tbSuficiencia {
+        border-collapse: separate !important;
+        border-spacing: 0 !important;
+        width: 100% !important;
+    }
+
+    #tbCAMEL thead th,
+    #tbSuficiencia306 thead th,
+    #tbSuficiencia thead th {
+        font-size: 13px !important;
+        font-weight: 600 !important;
+        color: #2F5597 !important;
+        border-bottom: 2px solid #88D1E2 !important;
+        border-top: none !important;
+        padding: 10px 14px !important;
+        background-color: #ffffff !important;
+        white-space: nowrap !important;
+        letter-spacing: 0.2px !important;
+    }
+
+    #tbCAMEL tbody td,
+    #tbSuficiencia306 tbody td,
+    #tbSuficiencia tbody td {
+        font-size: 13px !important;
+        font-weight: 400 !important;
+        color: #334155 !important;
+        line-height: 1.4 !important;
+        vertical-align: middle !important;
+        border-top: 1px solid #f1f5f9 !important;
+        border-bottom: none !important;
+        padding: 10px 14px !important;
+    }
+
+    /* Zebra striping idéntica a Estructura de Fondeo */
+    #tbCAMEL.table-striped > tbody > tr:nth-of-type(odd),
+    #tbCAMEL tbody tr.odd,
+    #tbSuficiencia306.table-striped > tbody > tr:nth-of-type(odd),
+    #tbSuficiencia306 tbody tr.odd,
+    #tbSuficiencia.table-striped > tbody > tr:nth-of-type(odd),
+    #tbSuficiencia tbody tr.odd {
+        background-color: #f8fafc !important;
+    }
+
+    #tbCAMEL.table-striped > tbody > tr:nth-of-type(even),
+    #tbCAMEL tbody tr.even,
+    #tbSuficiencia306.table-striped > tbody > tr:nth-of-type(even),
+    #tbSuficiencia306 tbody tr.even,
+    #tbSuficiencia.table-striped > tbody > tr:nth-of-type(even),
+    #tbSuficiencia tbody tr.even {
+        background-color: #ffffff !important;
+    }
+
+    /* Hover de filas */
+    #tbCAMEL tbody tr:hover,
+    #tbCAMEL tbody tr.odd:hover,
+    #tbCAMEL tbody tr.even:hover,
+    #tbSuficiencia306 tbody tr:hover,
+    #tbSuficiencia306 tbody tr.odd:hover,
+    #tbSuficiencia306 tbody tr.even:hover,
+    #tbSuficiencia tbody tr:hover,
+    #tbSuficiencia tbody tr.odd:hover,
+    #tbSuficiencia tbody tr.even:hover {
+        background-color: #eef2f6 !important;
+    }
+
+    /* Estilos de botones de gráfico en filas idénticos a Estructura de Fondeo */
     table td a[href*="getGraph"],
     .table td a[href*="getGraph"],
     .modern-data-table td a[href*="getGraph"],
     a.btn-indicador-chart {
-        width: 32px !important;
-        height: 32px !important;
-        min-width: 32px !important;
-        max-width: 32px !important;
+        width: 30px !important;
+        height: 30px !important;
+        min-width: 30px !important;
+        max-width: 30px !important;
         padding: 0 !important;
         margin: 0 auto !important;
-        border-radius: 8px !important;
+        border-radius: 6px !important;
         display: inline-flex !important;
         align-items: center !important;
         justify-content: center !important;
@@ -261,7 +336,7 @@
         font-family: 'FontAwesome' !important;
         font-style: normal !important;
         font-weight: normal !important;
-        font-size: 14px !important;
+        font-size: 13px !important;
         line-height: 1 !important;
         color: inherit !important;
         background: transparent !important;
@@ -273,19 +348,141 @@
         box-shadow: none !important;
     }
 
-    table td a[href*="getGraph"] i::before,
-    table td a[href*="getGraph"] i.fa::before,
-    table td a[href*="getGraph"] i.fa-line-chart::before,
-    a.btn-indicador-chart i::before {
-        display: inline-block !important;
-        font-family: 'FontAwesome' !important;
-        font-style: normal !important;
-        font-weight: normal !important;
-        line-height: 1 !important;
-        content: "\f201" !important; /* fa-line-chart */
-        color: inherit !important;
+    /* Barra de botones de exportación DataTables moderna */
+    .modern-table-card .dt-buttons {
+        display: inline-flex !important;
+        gap: 6px !important;
+        margin-bottom: 14px !important;
+        flex-wrap: wrap !important;
     }
-    /* Prevenir parpadeo en graficos dentro de modales */
+
+    .modern-table-card .dt-buttons .dt-button,
+    .modern-table-card a.dt-button,
+    .modern-table-card button.dt-button {
+        height: 32px !important;
+        padding: 0 14px !important;
+        font-size: 12px !important;
+        font-weight: 600 !important;
+        border-radius: 6px !important;
+        background: #ffffff !important;
+        border: 1px solid #cbd5e1 !important;
+        color: #334155 !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+        transition: all 0.2s ease !important;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.04) !important;
+        margin-right: 4px !important;
+        cursor: pointer !important;
+    }
+
+    .modern-table-card .dt-buttons .dt-button:hover,
+    .modern-table-card a.dt-button:hover,
+    .modern-table-card button.dt-button:hover {
+        background: #f8fafc !important;
+        border-color: #2F5597 !important;
+        color: #2F5597 !important;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 6px rgba(47, 85, 151, 0.15) !important;
+    }
+
+    .modern-table-card .dt-buttons .buttons-excel {
+        color: #15803d !important;
+        border-color: #bbf7d0 !important;
+    }
+    .modern-table-card .dt-buttons .buttons-excel:hover {
+        background: #f0fdf4 !important;
+        border-color: #16a34a !important;
+        color: #15803d !important;
+    }
+
+    /* Buscador y selector de longitud */
+    .modern-table-card .dataTables_wrapper .dataTables_filter {
+        float: right !important;
+        margin-bottom: 14px !important;
+    }
+
+    .modern-table-card .dataTables_wrapper .dataTables_filter input {
+        height: 32px !important;
+        border: 1px solid #cbd5e1 !important;
+        border-radius: 6px !important;
+        padding: 4px 12px !important;
+        font-size: 12.5px !important;
+        color: #1e293b !important;
+        background: #ffffff !important;
+        outline: none !important;
+        transition: all 0.2s ease !important;
+        width: 220px !important;
+    }
+
+    .modern-table-card .dataTables_wrapper .dataTables_filter input:focus {
+        border-color: #2F5597 !important;
+        box-shadow: 0 0 0 3px rgba(47, 85, 151, 0.15) !important;
+    }
+
+    .modern-table-card .dataTables_wrapper .dataTables_length {
+        float: left !important;
+        margin-right: 16px !important;
+        margin-bottom: 14px !important;
+    }
+
+    .modern-table-card .dataTables_wrapper .dataTables_length select {
+        height: 32px !important;
+        border: 1px solid #cbd5e1 !important;
+        border-radius: 6px !important;
+        padding: 2px 8px !important;
+        font-size: 12.5px !important;
+        color: #334155 !important;
+        background: #ffffff !important;
+        outline: none !important;
+    }
+
+    /* Paginación DataTables */
+    .modern-table-card .dataTables_paginate {
+        padding-top: 10px !important;
+    }
+
+    .modern-table-card .dataTables_paginate .paginate_button {
+        border-radius: 6px !important;
+        border: 1px solid #e2e8f0 !important;
+        background: #ffffff !important;
+        color: #475569 !important;
+        margin: 0 2px !important;
+        padding: 4px 10px !important;
+        font-size: 12px !important;
+        font-weight: 500 !important;
+        transition: all 0.2s ease !important;
+    }
+
+    .modern-table-card .dataTables_paginate .paginate_button:hover {
+        background: #f1f5f9 !important;
+        border-color: #cbd5e1 !important;
+        color: #1e293b !important;
+    }
+
+    .modern-table-card .dataTables_paginate .paginate_button.current,
+    .modern-table-card .dataTables_paginate .paginate_button.current:hover {
+        background: #2F5597 !important;
+        border-color: #2F5597 !important;
+        color: #ffffff !important;
+    }
+
+    .modern-table-card .dataTables_info {
+        font-size: 12px !important;
+        color: #64748b !important;
+        padding-top: 14px !important;
+    }
+
+    /* Estilos de pestañas de navegación */
+    .nav-tabs > li.active > a,
+    .nav-tabs > li.active > a:focus,
+    .nav-tabs > li.active > a:hover {
+        color: #2F5597 !important;
+        border-color: #2F5597 #2F5597 transparent !important;
+        border-bottom: 2.5px solid #2F5597 !important;
+        background-color: transparent !important;
+    }
+
     #graphModal .modal-body {
         overflow: hidden !important;
     }
@@ -343,18 +540,46 @@
     }
 
     $(document).ready(function () {
+
+        // Actualizar dinámicamente nombre de la entidad en encabezados al cambiar combo
+        $('#IdEntidad').on('change', function () {
+            var txt = $(this).find('option:selected').text();
+            $('.lblEntidadHeader').text(txt);
+        });
+
+        // Configuración de botones compartida
+        var exportButtons = [
+             { extend: 'copyHtml5', text: '<i class="fa fa-copy" style="color: #64748b;"></i> Copiar', exportOptions: { columns: ':visible' } }
+            ,{ extend: 'excelHtml5', text: '<i class="fa fa-file-excel-o" style="color: #16a34a;"></i> Excel', exportOptions: { columns: ':visible' } }
+            ,{ extend: 'csvHtml5', text: '<i class="fa fa-file-text-o" style="color: #0284c7;"></i> CSV', exportOptions: { columns: ':visible' } }
+            ,{ extend: 'print', text: '<i class="fa fa-print" style="color: #475569;"></i> Imprimir', exportOptions: { columns: ':visible' } }
+            ,{ extend: 'colvis', text: '<i class="fa fa-columns" style="color: #64748b;"></i> Columnas' }
+        ];
+
+        // Idioma en español compartido
+        var languageConfig = {
+            "lengthMenu": "Mostrar _MENU_ registros",
+            "zeroRecords": "No se encontraron registros",
+            "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
+            "infoEmpty": "Mostrando 0 a 0 de 0 registros",
+            "infoFiltered": "(filtrado de un total de _MAX_ registros)",
+            "search": "Buscar:",
+            "searchPlaceholder": "Filtrar indicadores...",
+            "paginate": {
+                "first": "Primero",
+                "last": "Último",
+                "next": "Siguiente",
+                "previous": "Anterior"
+            }
+        };
+
+        // TABLA CAMEL
         $("#tbCAMEL").dataTable({
             "bRetrieve": true,
             "bProcessing": true,
             "dom": 'lBfrtip',
             "sAjaxSource": "@Url.Content("~/Indicadores/GetGridCAMEL")",
-            "buttons": [
-                { extend: 'copyHtml5', exportOptions: { columns: ':visible' } },
-                { extend: 'excelHtml5', exportOptions: { columns: ':visible' } },
-                { extend: 'csvHtml5', exportOptions: { columns: ':visible' } },
-                { extend: 'print', exportOptions: { columns: ':visible' } },
-                'colvis'
-            ],
+            "buttons": exportButtons,
             "columnDefs": [
                 { "targets": 0, "visible": false, "searchable": false },
                 { "targets": 1, "className": 'text-left font-weight-bold' },
@@ -362,33 +587,35 @@
                 { "targets": 6, "className": 'text-center', "width": '50px', "orderable": false }
             ],
             "rowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+                $('td:eq(0)', nRow).css({ 'font-weight': '500', 'color': '#1e293b' });
                 for (var i = 2; i <= 5; i++) {
                     var val = parseFloat(aData[i]) || 0;
                     var cell = $(nRow).find('td:eq(' + (i - 1) + ')');
-                    if (val < 0)
-                        cell.css('color', '#dc2626').css('font-weight', '600');
-                    else
-                        cell.css('color', '#1e293b');
+                    cell.css('font-variant-numeric', 'tabular-nums');
+                    if (val < 0) {
+                        cell.css({ 'color': '#c2410c', 'font-weight': '600' });
+                    } else {
+                        cell.css({ 'color': '#1e293b', 'font-weight': '500' });
+                    }
                 }
+            },
+            "drawCallback": function (settings) {
+                $(this).find('[data-toggle="tooltip"]').tooltip();
             },
             "pageLength": -1,
             "order": [[ 0, "asc" ]],
-            "lengthMenu": [[5, 15, 25, 50, -1], [5, 15, 25, 50, "Todos"]],
-            "autoWidth": false
+            "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "Todos"]],
+            "autoWidth": false,
+            "language": languageConfig
         });
 
+        // TABLA SUFICIENCIA HISTÓRICA
         $("#tbSuficiencia").dataTable({
             "bRetrieve": true,
             "bProcessing": true,
             "dom": 'lBfrtip',
             "sAjaxSource": "@Url.Content("~/Indicadores/GetSuficiencia")",
-            "buttons": [
-                { extend: 'copyHtml5', exportOptions: { columns: ':visible' } },
-                { extend: 'excelHtml5', exportOptions: { columns: ':visible' } },
-                { extend: 'csvHtml5', exportOptions: { columns: ':visible' } },
-                { extend: 'print', exportOptions: { columns: ':visible' } },
-                'colvis'
-            ],
+            "buttons": exportButtons,
             "columnDefs": [
                 { "targets": 0, "visible": false, "searchable": false },
                 { "targets": 1, "className": 'text-left font-weight-bold' },
@@ -396,35 +623,37 @@
                 { "targets": 4, "className": 'text-center', "width": '50px', "orderable": false }
             ],
             "rowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+                $('td:eq(0)', nRow).css({ 'font-weight': '500', 'color': '#1e293b' });
                 for (var i = 2; i <= 3; i++) {
                     var val = parseFloat(aData[i]) || 0;
                     var cell = $(nRow).find('td:eq(' + (i - 1) + ')');
-                    if (val < 0)
-                        cell.css('color', '#dc2626').css('font-weight', '600');
-                    else
-                        cell.css('color', '#1e293b');
+                    cell.css('font-variant-numeric', 'tabular-nums');
+                    if (val < 0) {
+                        cell.css({ 'color': '#c2410c', 'font-weight': '600' });
+                    } else {
+                        cell.css({ 'color': '#1e293b', 'font-weight': '500' });
+                    }
                 }
+            },
+            "drawCallback": function (settings) {
+                $(this).find('[data-toggle="tooltip"]').tooltip();
             },
             "pageLength": -1,
             "order": [[ 0, "asc" ]],
-            "lengthMenu": [[5, 15, 25, 50, -1], [5, 15, 25, 50, "Todos"]],
-            "autoWidth": false
+            "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "Todos"]],
+            "autoWidth": false,
+            "language": languageConfig
         });
 
         var valoresFilas = {};
 
+        // TABLA SUFICIENCIA 3-06 (2025)
         $("#tbSuficiencia306").dataTable({
             "bRetrieve": true,
             "bProcessing": true,
             "dom": 'lBfrtip',
             "sAjaxSource": "@Url.Content("~/Indicadores/GetSuficiencia306")",
-            "buttons": [
-                { extend: 'copyHtml5', exportOptions: { columns: ':visible' } },
-                { extend: 'excelHtml5', exportOptions: { columns: ':visible' } },
-                { extend: 'csvHtml5', exportOptions: { columns: ':visible' } },
-                { extend: 'print', exportOptions: { columns: ':visible' } },
-                'colvis'
-            ],
+            "buttons": exportButtons,
             "columnDefs": [
                 { "targets": 0, "visible": false, "searchable": false },
                 { "targets": 1, "className": 'text-left font-weight-bold' },
@@ -442,16 +671,20 @@
                     valoresFilas["Calculado"] = { v1: valor1, v2: valor2 };
                 }
 
+                $('td:eq(0)', nRow).css({ 'font-weight': '500', 'color': '#1e293b' });
                 for (var i = 2; i <= 3; i++) {
                     var val = parseFloat(aData[i]) || 0;
                     var cell = $(nRow).find('td:eq(' + (i - 1) + ')');
-                    if (val < 0)
-                        cell.css('color', '#dc2626').css('font-weight', '600');
-                    else
-                        cell.css('color', '#1e293b');
+                    cell.css('font-variant-numeric', 'tabular-nums');
+                    if (val < 0) {
+                        cell.css({ 'color': '#c2410c', 'font-weight': '600' });
+                    } else {
+                        cell.css({ 'color': '#1e293b', 'font-weight': '500' });
+                    }
                 }
             },
             "drawCallback": function (settings) {
+                $(this).find('[data-toggle="tooltip"]').tooltip();
                 if (valoresFilas["Suficiencia"] && valoresFilas["Calculado"]) {
                     var diff1 = Math.abs(valoresFilas["Suficiencia"].v1 - valoresFilas["Calculado"].v1);
                     var diff2 = Math.abs(valoresFilas["Suficiencia"].v2 - valoresFilas["Calculado"].v2);
@@ -468,8 +701,9 @@
             },
             "pageLength": -1,
             "order": [[0, "asc"]],
-            "lengthMenu": [[5, 15, 25, 50, -1], [5, 15, 25, 50, "Todos"]],
-            "autoWidth": false
+            "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "Todos"]],
+            "autoWidth": false,
+            "language": languageConfig
         });
 
         $('a[data-toggle="tab"]').on('shown.bs.tab', function () {

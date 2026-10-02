@@ -1,133 +1,607 @@
+@model FGA.Model.FacturacionViewModel
+
 @{
-    ViewBag.Title = "Facturaci&oacute;n de Contribuciones";
+    ViewBag.Title = "Facturación de Contribuciones - " + (Model?.NomEntidad ?? "FFC");
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var crCulture = new System.Globalization.CultureInfo("es-CR");
+
+    int anioActual = DateTime.Now.Year;
+    int anioSeleccionado = Model != null && Model.Anio > 0 ? Model.Anio : anioActual;
+    List<SelectListItem> anios = new List<SelectListItem>();
+    for (int i = anioActual - 3; i <= anioActual; i++)
+    {
+        bool isSelected = (i == anioSeleccionado);
+        anios.Add(new SelectListItem { Value = i.ToString(), Text = i.ToString(), Selected = isSelected });
+    }
+
+    int trimSeleccionado = Model != null && Model.Trimestre > 0 ? Model.Trimestre : 1;
 }
 
-<section class="content-header">
-    <h1 class="modern-page-title">
-        <i class="fa fa-calculator" style="color: #0284c7;"></i>
-        <span id="TituloContribuciones">Facturaci&oacute;n de Contribuciones</span>
-        <small id="SubtituloContribuciones">Generaci&oacute;n y consulta de reportes de facturaci&oacute;n FGD BCCR y FEE-FFC</small>
-    </h1>
-    <ol class="breadcrumb">
+<link rel="stylesheet" href="~/Content/informe_financiero.css?v=@DateTime.Now.Ticks" />
+<link rel="stylesheet" href="~/Content/facturacion.css?v=@DateTime.Now.Ticks" />
+
+<style>
+    .badge-cobertura-pill {
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 4px !important;
+        padding: 3px 8px !important;
+        border-radius: 12px !important;
+        font-size: 11px !important;
+        font-weight: 700 !important;
+        background-color: #dbeafe !important;
+        color: #1e40af !important;
+        border: 1px solid #bfdbfe !important;
+    }
+    .badge-cobertura-pill i {
+        color: #1e40af !important;
+    }
+</style>
+
+
+<!-- ============================================================ -->
+<!-- ENCABEZADO DE PÁGINA                                          -->
+<!-- ============================================================ -->
+<section class="content-header" style="padding: 18px 20px 10px 20px;">
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+        <div>
+            <h1 class="facturacion-header-title">
+                <i class="fa fa-calculator"></i>
+                <span id="TituloContribuciones">Facturación de Contribuciones</span>
+            </h1>
+            <p id="SubtituloContribuciones" class="facturacion-header-sub">
+                Cálculo y detalle de facturación de contribuciones FGD BCCR y Fondo de Fortalecimiento Cooperativo (FFC)
+            </p>
+        </div>
+    </div>
+    <ol class="breadcrumb" style="top: 18px;">
         <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
-        <li><a href="@Url.Action("Index", "Modulo", new { modulo = "Facturacion/Index" })" class="breadcrumb-parent-pill"><i class="fa fa-file-text-o" style="margin-right: 4px;"></i> Facturaci&oacute;n</a></li>
+        <li><a href="@Url.Action("Index", "Modulo", new { modulo = "Administracion" })" class="breadcrumb-parent-pill"><i class="fa fa-cogs" style="margin-right: 4px;"></i> Administración</a></li>
         <li class="active" id="BreadcrumbContribuciones">Contribuciones</li>
     </ol>
 </section>
 
-<section class="content">
+<!-- ============================================================ -->
+<!-- CONTENIDO PRINCIPAL                                          -->
+<!-- ============================================================ -->
+<section class="content facturacion-container" style="padding: 0 20px 24px 20px;">
+
+    <!-- Barra de Herramientas y Parámetros Estandarizada -->
     @using (Html.BeginForm("Buscar", "Facturacion", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmInforme" }))
     {
         @Html.AntiForgeryToken()
+        <input type="hidden" name="Trimestre" id="inputTrimestre" value="@trimSeleccionado" />
 
-        <div class="row">
-            <div class="col-xs-12">
-                <div class="modern-filter-card">
-                    <div class="modern-filter-toolbar">
-                        <div class="filter-item">
-                            <label for="IdEntidad"><i class="fa fa-university"></i> Entidad:</label>
-                            @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", @class = "form-control modern-select", style = "min-width: 220px;" })
-                        </div>
-                        <div class="filter-item">
-                            <label for="Anio"><i class="fa fa-calendar-check-o"></i> A&ntilde;o:</label>
-                            @{
-                                int anioActual = DateTime.Now.Year;
-                                List<SelectListItem> anios = new List<SelectListItem>();
+        <div class="report-toolbar-card">
+            <div class="report-filter-form" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; width: 100%;">
 
-                                for (int i = anioActual - 3; i <= anioActual; i++)
-                                {
-                                    bool isSelected = (i == anioActual);
+                <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
+                    <!-- Grupo 1: Entidad -->
+                    <div class="filter-param-item">
+                        <label class="filter-param-label"><i class="fa fa-university"></i> Entidad:</label>
+                        @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", @class = "form-control input-sm filter-param-select", onchange = "document.getElementById('frmInforme').submit();" })
+                    </div>
 
-                                    anios.Add(new SelectListItem { Value = i.ToString(), Text = i.ToString(), Selected = isSelected });
-                                }
-                            }
-                            @Html.DropDownList("Anio", anios, new { @id = "Anio", @class = "form-control modern-select", style = "min-width: 120px;" })
-                        </div>
-                        <div class="filter-item">
-                            <label for="Trimestre"><i class="fa fa-clock-o"></i> Trimestre:</label>
-                            @{
-                                List<SelectListItem> trimestres = new List<SelectListItem> {
-                                    new SelectListItem { Value = "1", Text = "I Trimestre" },
-                                    new SelectListItem { Value = "2", Text = "II Trimestre" },
-                                    new SelectListItem { Value = "3", Text = "III Trimestre" },
-                                    new SelectListItem { Value = "4", Text = "IV Trimestre" }
-                                };
-                            }
-                            @Html.DropDownList("Trimestre", trimestres, new { @id = "Trimestre", @class = "form-control modern-select", style = "min-width: 150px;" })
-                        </div>
-                        <div class="filter-item" style="margin-left: auto;">
-                            <button type="submit" id="btn_buscar" class="btn-modern-filter">
-                                <i class="fa fa-search"></i> Generar
+                    <div class="toolbar-divider"></div>
+
+                    <!-- Grupo 2: Año -->
+                    <div class="filter-param-item">
+                        <label class="filter-param-label"><i class="fa fa-calendar"></i> A&ntilde;o:</label>
+                        @Html.DropDownList("Anio", anios, new { @id = "Anio", @class = "form-control input-sm filter-param-select", style = "min-width: 95px; width: 95px;", onchange = "document.getElementById('frmInforme').submit();" })
+                    </div>
+
+                    <div class="toolbar-divider"></div>
+
+                    <!-- Grupo 3: Trimestre (Píldoras) -->
+                    <div class="filter-param-item">
+                        <label class="filter-param-label"><i class="fa fa-clock-o"></i> Trimestre:</label>
+                        <div class="pill-group">
+                            <button type="button" class="pill-item @(trimSeleccionado == 1 ? "active" : "")" onclick="cambiarTrimestre(1)" title="I Trimestre">
+                                I Trim
+                            </button>
+                            <button type="button" class="pill-item @(trimSeleccionado == 2 ? "active" : "")" onclick="cambiarTrimestre(2)" title="II Trimestre">
+                                II Trim
+                            </button>
+                            <button type="button" class="pill-item @(trimSeleccionado == 3 ? "active" : "")" onclick="cambiarTrimestre(3)" title="III Trimestre">
+                                III Trim
+                            </button>
+                            <button type="button" class="pill-item @(trimSeleccionado == 4 ? "active" : "")" onclick="cambiarTrimestre(4)" title="IV Trimestre">
+                                IV Trim
                             </button>
                         </div>
                     </div>
                 </div>
+
+                <!-- Grupo 4: Acciones a la Derecha -->
+                <div class="facturacion-toolbar-actions">
+                    <button type="submit" id="btn_buscar" class="btn btn-report-download">
+                        <i class="fa fa-refresh"></i> Generar
+                    </button>
+
+                    @if (Model != null && Model.TieneDatos)
+                    {
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-report-download dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fa fa-download"></i> Exportar <span class="caret" style="margin-left: 4px;"></span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-right" style="border-radius: 6px; box-shadow: 0 4px 16px rgba(0,0,0,0.12); border: 1px solid #d1d5db; padding: 4px 0; min-width: 220px;">
+                                <li>
+                                    <a href="@Url.Action("ExportarExcel", "Facturacion", new { Entidades = Model.IdEntidad, Anio = Model.Anio, Trimestre = Model.Trimestre, tab = "FFC" })" style="padding: 8px 16px; font-size: 12.5px; font-weight: 500; color: #1e293b;">
+                                        <i class="fa fa-file-excel-o text-success" style="margin-right: 8px;"></i> Exportar FEE-FFC (.xls)
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("ExportarExcel", "Facturacion", new { Entidades = Model.IdEntidad, Anio = Model.Anio, Trimestre = Model.Trimestre, tab = "FGD" })" style="padding: 8px 16px; font-size: 12.5px; font-weight: 500; color: #1e293b;">
+                                        <i class="fa fa-file-excel-o text-success" style="margin-right: 8px;"></i> Exportar FGD BCCR (.xls)
+                                    </a>
+                                </li>
+                                <li role="separator" class="divider" style="margin: 3px 0;"></li>
+                                <li>
+                                    <a href="javascript:exportarReporteComoImagen();" style="padding: 8px 16px; font-size: 12.5px; font-weight: 500; color: #1e293b;">
+                                        <i class="fa fa-file-image-o text-info" style="margin-right: 8px;"></i> Guardar como Imagen (.png)
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="javascript:window.print();" style="padding: 8px 16px; font-size: 12.5px; font-weight: 500; color: #1e293b;">
+                                        <i class="fa fa-print text-primary" style="margin-right: 8px;"></i> Imprimir / Guardar PDF
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    }
+                </div>
+
             </div>
         </div>
-
-        if (Session["TipoReporte"] != null || Session["TipoReporte2"] != null)
-        {
-            <div class="nav-tabs-custom" style="border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); border: 1px solid #e2e8f0; overflow: hidden; background: #ffffff; margin-top: 20px;">
-                <ul class="nav nav-tabs">
-                    <li class="active"><a href="#tab_1" data-toggle="tab"><i class="fa fa-shield" style="margin-right: 6px; color: #0284c7;"></i> FGD (BCCR)</a></li>
-                    <li><a href="#tab_2" data-toggle="tab"><i class="fa fa-university" style="margin-right: 6px; color: #0284c7;"></i> FEE-FFC</a></li>
-                </ul>
-                <div class="tab-content">
-                    <div class="tab-pane active" id="tab_1">
-                        <div class="row">
-                            <div class="col-xs-12">
-                                @if (Session["TipoReporte"] != null)
-                                {
-                                    <div class="modern-table-card" style="padding: 16px;">
-                                        <iframe src="~/Reportes/ReportView.aspx" width="100%" height="1200" style="border:none; border-radius: 8px; width: 100%;"></iframe>
-                                    </div>
-                                }
-                            </div>
-                        </div>
-                    </div>
-                    <div class="tab-pane" id="tab_2">
-                        <div class="row">
-                            <div class="col-xs-12">
-                                @if (Session["TipoReporte2"] != null)
-                                {
-                                    <div class="modern-table-card" style="padding: 16px;">
-                                        <iframe src="~/Reportes/ReportView2.aspx" width="100%" height="1200" style="border:none; border-radius: 8px; width: 100%;"></iframe>
-                                    </div>
-                                }
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        }
     }
+
+    <!-- ============================================================ -->
+    <!-- RESULTADO DEL REPORTE DE FACTURACIÓN                         -->
+    <!-- ============================================================ -->
+    @if (Model != null && Model.TieneDatos)
+    {
+        <div class="facturacion-tabs-card">
+            <!-- Pestañas Nativas Estilizadas -->
+            <ul class="facturacion-nav-tabs nav nav-tabs">
+                <li class="active">
+                    <a href="#tab_1" data-toggle="tab">
+                        <i class="fa fa-shield"></i> FGD (BCCR)
+                    </a>
+                </li>
+                <li>
+                    <a href="#tab_2" data-toggle="tab">
+                        <i class="fa fa-university"></i> FFC (FEE)
+                    </a>
+                </li>
+            </ul>
+
+            <div class="tab-content" style="padding: 0; background: transparent;">
+
+                <!-- ======================================================== -->
+                <!-- PESTAÑA 1: FGD (BCCR)                                    -->
+                <!-- ======================================================== -->
+                <div class="tab-pane active" id="tab_1">
+                    <!-- Membrete Formal -->
+                    <div class="facturacion-header-card">
+                        <div class="facturacion-header-brand">
+                            <div class="facturacion-logo-wrapper">
+                                <img src="@(string.IsNullOrEmpty(Model.LogoUrl) ? Url.Content("~/Content/images/FFC.jpg") : Model.LogoUrl)"
+                                     alt="Logo @Model.NomEntidad"
+                                     class="facturacion-header-logo"
+                                     onerror="this.onerror=null;this.src='@Url.Content("~/Content/images/FFC.jpg")';" />
+                            </div>
+                            <div class="facturacion-titles">
+                                <h2>FONDO DE GARANTÍA DE DEPÓSITOS (FGD)</h2>
+                                <h3>Facturación de Contribuciones BCCR &bull; @Model.NomEntidad</h3>
+                                <p class="facturacion-sub">@Model.TrimestreTexto @Model.Anio &bull; Valores expresados en colones costarricenses</p>
+                            </div>
+                        </div>
+                        <div>
+                            <span class="badge-meta-pill">
+                                <i class="fa fa-shield" style="color: #2F5597;"></i> FGD BCCR &bull; @Model.TrimestreTexto @Model.Anio
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Tabla FGD -->
+                    <div class="table-responsive facturacion-table-container">
+                        <table id="tblFacturacionFGD" class="table-facturacion">
+                            <colgroup>
+                                <col style="width: 36%;" />
+                                <col style="width: 16%;" />
+                                <col style="width: 16%;" />
+                                <col style="width: 16%;" />
+                                <col style="width: 16%;" />
+                            </colgroup>
+                            <thead>
+                                <tr>
+                                    <th class="th-concepto">Detalle expresado en colones</th>
+                                    @foreach (var mes in Model.MesesNombres)
+                                    {
+                                        <th class="th-monto">@mes</th>
+                                    }
+                                    <th class="th-monto th-promedio">Promedio</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var fila in Model.FGD.Filas)
+                                {
+                                    if (fila.EsHeaderGrupo)
+                                    {
+                                        <tr class="tr-factura-grupo">
+                                            <td colspan="5">
+                                                <i class="fa fa-angle-right" style="margin-right: 6px; color: #2F5597;"></i>@fila.Concepto
+                                            </td>
+                                        </tr>
+                                        continue;
+                                    }
+
+                                    string rowClass = fila.EsDestacado ? "tr-factura-destacado" : (fila.EsTotal ? "tr-factura-total" : "");
+                                    string padStyle = fila.IndentNivel > 0 ? $"padding-left: {fila.IndentNivel * 24 + 14}px !important;" : "";
+
+                                    <tr class="@rowClass">
+                                        <td class="td-concepto" style="@padStyle font-weight: @(fila.EsTotal ? "700" : "normal");">@fila.Concepto</td>
+                                        <td class="td-monto">
+                                            @if (fila.EsPorcentaje)
+                                            {
+                                                @fila.Mes1.ToString("P2", crCulture)
+                                            }
+                                            else if (fila.EsEntero)
+                                            {
+                                                @(((long)fila.Mes1).ToString("N0", crCulture))
+                                            }
+                                            else
+                                            {
+                                                @fila.Mes1.ToString("N2", crCulture)
+                                            }
+                                        </td>
+                                        <td class="td-monto">
+                                            @if (fila.EsPorcentaje)
+                                            {
+                                                @fila.Mes2.ToString("P2", crCulture)
+                                            }
+                                            else if (fila.EsEntero)
+                                            {
+                                                @(((long)fila.Mes2).ToString("N0", crCulture))
+                                            }
+                                            else
+                                            {
+                                                @fila.Mes2.ToString("N2", crCulture)
+                                            }
+                                        </td>
+                                        <td class="td-monto">
+                                            @if (fila.EsPorcentaje)
+                                            {
+                                                @fila.Mes3.ToString("P2", crCulture)
+                                            }
+                                            else if (fila.EsEntero)
+                                            {
+                                                @(((long)fila.Mes3).ToString("N0", crCulture))
+                                            }
+                                            else
+                                            {
+                                                @fila.Mes3.ToString("N2", crCulture)
+                                            }
+                                        </td>
+                                        <td class="td-monto td-promedio">
+                                            @if (fila.EsPorcentaje)
+                                            {
+                                                @fila.Promedio.ToString("P2", crCulture)
+                                            }
+                                            else if (fila.EsEntero)
+                                            {
+                                                @(((long)fila.Promedio).ToString("N0", crCulture))
+                                            }
+                                            else
+                                            {
+                                                @fila.Promedio.ToString("N2", crCulture)
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+
+                                <!-- Fila Integrada de Pago Trimestral -->
+                                <tr class="tr-pago-trimestral">
+                                    <td colspan="3" style="text-align: right; border-right: none;">
+                                        <i class="fa fa-check-circle" style="margin-right: 6px; color: #fed7aa;"></i> PAGO TRIMESTRAL (CF + CAR) / 4
+                                    </td>
+                                    <td colspan="2" class="td-monto" style="text-align: right; border-left: none;">
+                                        &cent; @Model.FGD.PagoTrimestral.ToString("N2", crCulture)
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Tarjeta Callout Destacada Pago Trimestral -->
+                    <div class="pago-trimestral-banner">
+                        <div class="pago-trimestral-label">
+                            <i class="fa fa-calculator"></i>
+                            <span>PAGO TRIMESTRAL FGD (BCCR) &bull; @Model.TrimestreTexto @Model.Anio</span>
+                        </div>
+                        <div class="pago-trimestral-monto">
+                            &cent; @Model.FGD.PagoTrimestral.ToString("N2", crCulture)
+                        </div>
+                    </div>
+
+                    <!-- Indicadores de Ahorrantes y Cobertura -->
+                    @if (Model.FGD.IndicadoresMeses.Count > 0)
+                    {
+                        <div class="ahorrantes-card">
+                            <div class="ahorrantes-card-header">
+                                <h4><i class="fa fa-users"></i> Indicadores de Cobertura y Ahorrantes</h4>
+                                <span class="badge-meta-pill">@Model.NomEntidad</span>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table-facturacion">
+                                    <colgroup>
+                                        <col style="width: 28%;" />
+                                        <col style="width: 18%;" />
+                                        <col style="width: 18%;" />
+                                        <col style="width: 18%;" />
+                                        <col style="width: 18%;" />
+                                    </colgroup>
+                                    <thead>
+                                        <tr>
+                                            <th class="th-concepto">Per&iacute;odo / Mes</th>
+                                            <th class="th-monto">Total Ahorrantes</th>
+                                            <th class="th-monto">Cubiertos al 100%</th>
+                                            <th class="th-monto">% Cubiertos al 100%</th>
+                                            <th class="th-monto">% Dep&oacute;sitos Cubiertos</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var ind in Model.FGD.IndicadoresMeses)
+                                        {
+                                            <tr>
+                                                <td class="td-concepto"><strong>@ind.MesNombre</strong> (@ind.Periodo)</td>
+                                                <td class="td-monto">@ind.CantidadTotalAhorrantes.ToString("N0", crCulture)</td>
+                                                <td class="td-monto">@ind.CantidadCubierto100.ToString("N0", crCulture)</td>
+                                                <td class="td-monto">
+                                                    <span class="badge-cobertura-pill">
+                                                        <i class="fa fa-check"></i> @ind.PorcCubierto100.ToString("0.00", crCulture)%
+                                                    </span>
+                                                </td>
+                                                <td class="td-monto">@ind.PorcCubiertoDepositos.ToString("0.00", crCulture)%</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <!-- ======================================================== -->
+                <!-- PESTAÑA 2: FEE-FFC                                       -->
+                <!-- ======================================================== -->
+                <div class="tab-pane" id="tab_2">
+                    <!-- Membrete Formal -->
+                    <div class="facturacion-header-card">
+                        <div class="facturacion-header-brand">
+                            <div class="facturacion-logo-wrapper">
+                                <img src="@(string.IsNullOrEmpty(Model.LogoUrl) ? Url.Content("~/Content/images/FFC.jpg") : Model.LogoUrl)"
+                                     alt="Logo @Model.NomEntidad"
+                                     class="facturacion-header-logo"
+                                     onerror="this.onerror=null;this.src='@Url.Content("~/Content/images/FFC.jpg")';" />
+                            </div>
+                            <div class="facturacion-titles">
+                                <h2>FONDO DE FORTALECIMIENTO COOPERATIVO (FFC)</h2>
+                                <h3>Fondo Especial de Estabilización (FEE) &bull; @Model.NomEntidad</h3>
+                                <p class="facturacion-sub">@Model.TrimestreTexto @Model.Anio &bull; Valores expresados en colones costarricenses</p>
+                            </div>
+                        </div>
+                        <div>
+                            <span class="badge-meta-pill">
+                                <i class="fa fa-university" style="color: #2F5597;"></i> FEE FFC &bull; @Model.TrimestreTexto @Model.Anio
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Tabla FEE-FFC -->
+                    <div class="table-responsive facturacion-table-container">
+                        <table id="tblFacturacionFFC" class="table-facturacion">
+                            <colgroup>
+                                <col style="width: 36%;" />
+                                <col style="width: 16%;" />
+                                <col style="width: 16%;" />
+                                <col style="width: 16%;" />
+                                <col style="width: 16%;" />
+                            </colgroup>
+                            <thead>
+                                <tr>
+                                    <th class="th-concepto">Detalle expresado en colones</th>
+                                    @foreach (var mes in Model.MesesNombres)
+                                    {
+                                        <th class="th-monto">@mes</th>
+                                    }
+                                    <th class="th-monto th-promedio">Promedio</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var fila in Model.FFC.Filas)
+                                {
+                                    if (fila.EsHeaderGrupo)
+                                    {
+                                        <tr class="tr-factura-grupo">
+                                            <td colspan="5">
+                                                <i class="fa fa-angle-right" style="margin-right: 6px; color: #2F5597;"></i>@fila.Concepto
+                                            </td>
+                                        </tr>
+                                        continue;
+                                    }
+
+                                    string rowClass = fila.EsDestacado ? "tr-factura-destacado" : (fila.EsTotal ? "tr-factura-total" : "");
+                                    string padStyle = fila.IndentNivel > 0 ? $"padding-left: {fila.IndentNivel * 24 + 14}px !important;" : "";
+
+                                    <tr class="@rowClass">
+                                        <td class="td-concepto" style="@padStyle font-weight: @(fila.EsTotal ? "700" : "normal");">@fila.Concepto</td>
+                                        <td class="td-monto">@fila.Mes1.ToString("N2", crCulture)</td>
+                                        <td class="td-monto">@fila.Mes2.ToString("N2", crCulture)</td>
+                                        <td class="td-monto">@fila.Mes3.ToString("N2", crCulture)</td>
+                                        <td class="td-monto td-promedio">@fila.Promedio.ToString("N2", crCulture)</td>
+                                    </tr>
+                                }
+
+                                <!-- Fila Integrada de Pago Trimestral -->
+                                <tr class="tr-pago-trimestral">
+                                    <td colspan="3" style="text-align: right; border-right: none;">
+                                        <i class="fa fa-check-circle" style="margin-right: 6px; color: #fed7aa;"></i> PAGO TRIMESTRAL FFC
+                                    </td>
+                                    <td colspan="2" class="td-monto" style="text-align: right; border-left: none;">
+                                        &cent; @Model.FFC.PagoTrimestral.ToString("N2", crCulture)
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Tarjeta Callout Destacada Pago Trimestral -->
+                    <div class="pago-trimestral-banner">
+                        <div class="pago-trimestral-label">
+                            <i class="fa fa-calculator"></i>
+                            <span>PAGO TRIMESTRAL FFC &bull; @Model.TrimestreTexto @Model.Anio</span>
+                        </div>
+                        <div class="pago-trimestral-monto">
+                            &cent; @Model.FFC.PagoTrimestral.ToString("N2", crCulture)
+                        </div>
+                    </div>
+
+                    <!-- Indicadores de Ahorrantes y Cobertura FEE-FFC -->
+                    @if (Model.FFC.IndicadoresMeses.Count > 0)
+                    {
+                        <div class="ahorrantes-card">
+                            <div class="ahorrantes-card-header">
+                                <h4><i class="fa fa-users"></i> Indicadores de Cobertura y Ahorrantes</h4>
+                                <span class="badge-meta-pill">@Model.NomEntidad</span>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table-facturacion">
+                                    <colgroup>
+                                        <col style="width: 28%;" />
+                                        <col style="width: 18%;" />
+                                        <col style="width: 18%;" />
+                                        <col style="width: 18%;" />
+                                        <col style="width: 18%;" />
+                                    </colgroup>
+                                    <thead>
+                                        <tr>
+                                            <th class="th-concepto">Per&iacute;odo / Mes</th>
+                                            <th class="th-monto">Total Ahorrantes</th>
+                                            <th class="th-monto">Cubiertos al 100%</th>
+                                            <th class="th-monto">% Cubiertos al 100%</th>
+                                            <th class="th-monto">% Dep&oacute;sitos Cubiertos</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var ind in Model.FFC.IndicadoresMeses)
+                                        {
+                                            <tr>
+                                                <td class="td-concepto"><strong>@ind.MesNombre</strong> (@ind.Periodo)</td>
+                                                <td class="td-monto">@ind.CantidadTotalAhorrantes.ToString("N0", crCulture)</td>
+                                                <td class="td-monto">@ind.CantidadCubierto100.ToString("N0", crCulture)</td>
+                                                <td class="td-monto">
+                                                    <span class="badge-cobertura-pill">
+                                                        <i class="fa fa-check"></i> @ind.PorcCubierto100.ToString("0.00", crCulture)%
+                                                    </span>
+                                                </td>
+                                                <td class="td-monto">@ind.PorcCubiertoDepositos.ToString("0.00", crCulture)%</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+            </div>
+        </div>
+    }
+    else if (!string.IsNullOrEmpty(Model?.IdEntidad))
+    {
+        <div class="facturacion-empty-card">
+            <i class="fa fa-folder-open-o facturacion-empty-icon"></i>
+            <h3 class="facturacion-empty-title">No se encontraron registros de facturación</h3>
+            <p class="facturacion-empty-sub">
+                No se encontraron datos de facturación para la entidad <strong>@Model.NomEntidad</strong> en el <strong>@Model.TrimestreTexto @Model.Anio</strong>.
+            </p>
+            <button type="submit" form="frmInforme" class="btn btn-report-download">
+                <i class="fa fa-refresh"></i> Reintentar Búsqueda
+            </button>
+        </div>
+    }
+
 </section>
 
+<!-- ============================================================ -->
+<!-- SCRIPTS                                                      -->
+<!-- ============================================================ -->
+<script src="~/Scripts/html2canvas.min.js"></script>
 <script type="text/javascript">
+    function cambiarTrimestre(trim) {
+        document.getElementById('inputTrimestre').value = trim;
+        document.getElementById('frmInforme').submit();
+    }
+
     $(document).ready(function () {
         function actualizarEncabezado(tabId) {
             if (tabId === '#tab_2') {
-                $('#TituloContribuciones').html('Facturaci&oacute;n - FEE-FFC');
-                $('#SubtituloContribuciones').text('C\u00E1lculo y detalle de facturaci\u00F3n de contribuciones FEE-FFC');
+                $('#TituloContribuciones').text('Facturación - FEE-FFC');
+                $('#SubtituloContribuciones').text('Cálculo y detalle de facturación de contribuciones FEE-FFC');
                 $('#BreadcrumbContribuciones').text('FEE-FFC');
             } else if (tabId === '#tab_1') {
-                $('#TituloContribuciones').html('Facturaci&oacute;n - FGD BCCR');
-                $('#SubtituloContribuciones').text('C\u00E1lculo y detalle de facturaci\u00F3n de contribuciones FGD BCCR');
+                $('#TituloContribuciones').text('Facturación - FGD BCCR');
+                $('#SubtituloContribuciones').text('Cálculo y detalle de facturación de contribuciones FGD BCCR');
                 $('#BreadcrumbContribuciones').text('FGD BCCR');
             }
         }
 
-        // Al hacer clic en las pestanas
         $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
             var tabId = $(e.target).attr('href');
             actualizarEncabezado(tabId);
         });
 
-        // Asegurar que el titulo se actualice al cargar la pagina si ya hay tab activo
         var activeTab = $('.nav-tabs .active a').attr('href');
         if (activeTab) {
             actualizarEncabezado(activeTab);
         }
     });
+
+    function exportarReporteComoImagen() {
+        var activePane = $('.tab-pane.active');
+        if (!activePane || activePane.length === 0) {
+            alert('No hay reporte activo para generar imagen.');
+            return;
+        }
+
+        var tabId = activePane.attr('id');
+        var tipoReporte = tabId === 'tab_2' ? 'FEE_FFC' : 'FGD_BCCR';
+        var entidad = '@(Model?.NomEntidad ?? "Entidad")'.replace(/[^a-zA-Z0-9_-]/g, '_');
+        var anio = '@(Model?.Anio ?? DateTime.Now.Year)';
+        var trimestre = '@(Model?.Trimestre ?? 1)';
+        var nombreArchivo = 'Facturacion_' + tipoReporte + '_' + entidad + '_' + anio + '_T' + trimestre + '.png';
+
+        if (typeof html2canvas === 'undefined') {
+            alert('El módulo de captura de imagen se está cargando, por favor intente de nuevo.');
+            return;
+        }
+
+        html2canvas(activePane[0], {
+            scale: 2,
+            useCORS: true,
+            backgroundColor: '#ffffff',
+            logging: false
+        }).then(function (canvas) {
+            var link = document.createElement('a');
+            link.download = nombreArchivo;
+            link.href = canvas.toDataURL('image/png');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }).catch(function (error) {
+            console.error('Error al capturar imagen del reporte:', error);
+            alert('No fue posible generar la imagen del reporte.');
+        });
+    }
 </script>

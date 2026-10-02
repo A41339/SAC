@@ -20,11 +20,18 @@ using System.Linq.Expressions;
 using Microsoft.VisualStudio.OLE.Interop;
 using System.Data.Entity.Core.Common.CommandTrees.ExpressionBuilder;
 using stdole;
+using FGA.Services;
 
 namespace FGA.Controllers
 {
     public class InformeFinancieroController : BaseController
     {
+        private readonly BalanceGeneralService _balanceService = new BalanceGeneralService();
+        private readonly BalanzaComprobacionService _balanzaService = new BalanzaComprobacionService();
+        private readonly EstadoResultadosService _erService = new EstadoResultadosService();
+        private readonly OrigenAplicacionService _origenService = new OrigenAplicacionService();
+        private readonly FGA_En_Linea.CatalogoCuentaService.CatalogoCuentaClient catClient = new FGA_En_Linea.CatalogoCuentaService.CatalogoCuentaClient();
+
         public void PageLoad()
         {
             Load();
@@ -75,15 +82,8 @@ namespace FGA.Controllers
         [AllowAnonymous]
         public ActionResult LoadBalance(String Entidades, DateTime Periodo1, DateTime Periodo2, DateTime Periodo3)
         {
-            Session["Periodo1"] = Periodo1.ToShortDateString();
-            Session["Periodo2"] = Periodo2.ToShortDateString();
-            Session["Periodo3"] = Periodo3.ToShortDateString();
-            Session["TipoReporte"] = Utility.Utilitarios.enum_tipoReporte.rpt_balance;
-            Session["TipoReporte2"] = Utility.Utilitarios.enum_tipoReporte.analisis_balance;
-            Session["IdEntidad"] = Entidades;
-            Graficos_Financieros gp = GetGraphBalance();
-            Load();
-            return View("Balance", gp);
+            var model = ConstruirModeloBalance(Entidades, Periodo2.ToString("MM/yyyy"), null);
+            return View("Balance", model);
         }
 
         [AllowAnonymous]
@@ -109,61 +109,1077 @@ namespace FGA.Controllers
             return View("ER", gp);
         }
 
-        public ActionResult Index()
+        public ActionResult Index(string Entidades = null, string Periodo = null, string Modalidad = "Acumulado", string TipoComparacion = null)
         {
-            Load();
-            Usuario ObjUser = usr.Get(Env.GetUserInfo("userid"));
-            List<Entidad> lista;
-            if (ObjUser.Entidad_Usuario_Id == Utility.Utilitarios.entidadAdministradora)
-            {
-                lista = ent.GetAll().Where(o => o.Id != Utility.Utilitarios.entidadAdministradora && o.Activo == true).OrderBy(o => o.Nombre).ToList();
-                Entidad entidad = new Entidad();
-                entidad.Id = "-1";
-                entidad.Nombre = "TODAS LAS COOPERATIVAS";
-                lista.Add(entidad);
-                ViewBag.Entidades = new SelectList(lista, "Id", "Nombre", Session["IdEntidad"]);
-            }
-            else
-            {
-                lista = ent.GetAll().Where(o => o.Id == ObjUser.Entidad_Usuario_Id && o.Activo == true).ToList();
-                ViewBag.Entidades = new SelectList(lista, "Id", "Nombre");
-            }
-
-            DateTime fechaEntidad = Utility.Utilitarios.ConvertirAFecha(Session["Periodo"].ToString());
-            Session["TipoReporte"] = Utility.Utilitarios.enum_tipoReporte.balanceCompleto.ToString();
-            Session["Periodo1"] = Session["Periodo1"] == null ? fechaEntidad.AddMonths(-6).ToShortDateString() : Session["Periodo1"];
-            Session["Periodo2"] = Session["Periodo2"] == null ? fechaEntidad.AddMonths(-1) : Session["Periodo2"];
-            Session["Periodo3"] = Session["Periodo3"] == null ? fechaEntidad.AddMonths(-1) : Session["Periodo3"];
-            return View();
+            var model = ConstruirModeloBalanza(Entidades, Periodo, Modalidad, TipoComparacion);
+            return View("Index", model);
         }
 
-        public ActionResult Origen()
+        public BalanzaComprobacionViewModel ConstruirModeloBalanza(string entidadId, string periodoSel, string modalidadSel, string tipoCompSel)
         {
             PageLoad();
-            DateTime fecha = Utility.Utilitarios.ConvertirAFecha(Session["Periodo"].ToString());
-            Session["Periodo1"] = Session["Periodo1"] == null ? fecha.AddMonths(-12).ToShortDateString() : Session["Periodo1"];
-            Session["Periodo2"] = Session["Periodo2"] == null ? fecha.AddMonths(-1).ToShortDateString() : Session["Periodo2"];
-            return View();
+            var model = _balanzaService.ConstruirModeloBalanza(entidadId, periodoSel, modalidadSel, tipoCompSel, Session, sp, ent, catClient);
+            if (model.FechasPeriodos != null && model.FechasPeriodos.Length == 5)
+            {
+                Session["Periodo1"] = model.FechasPeriodos[3].ToShortDateString();
+                Session["Periodo2"] = model.FechasPeriodos[4].ToShortDateString();
+                Session["Periodo3"] = model.FechasPeriodos[4].ToShortDateString();
+                Session["TipoComparacion"] = model.TipoComparacion;
+                Session["IdEntidad"] = model.EntidadId;
+            }
+
+            Usuario ObjUser = Session["CurrentUserObj"] as Usuario;
+            if (ObjUser == null)
+            {
+                ObjUser = usr.Get(Env.GetUserInfo("userid"));
+                Session["CurrentUserObj"] = ObjUser;
+            }
+
+            if (ObjUser != null && ObjUser.Entidad_Usuario_Id == Utility.Utilitarios.entidadAdministradora)
+            {
+                List<Entidad> lista = ent.GetAll().Where(o => o.Id != Utility.Utilitarios.entidadAdministradora && o.Activo == true).OrderBy(o => o.Nombre).ToList();
+                Entidad entidadTodas = new Entidad();
+                entidadTodas.Id = "-1";
+                entidadTodas.Nombre = "TODAS LAS COOPERATIVAS";
+                lista.Add(entidadTodas);
+                ViewBag.Entidades = new SelectList(lista, "Id", "Nombre", model.EntidadId);
+            }
+            else if (ObjUser != null)
+            {
+                var lista = ent.GetAll().Where(o => o.Id == ObjUser.Entidad_Usuario_Id).ToList();
+                ViewBag.Entidades = new SelectList(lista, "Id", "Nombre", model.EntidadId);
+            }
+
+            return model;
+        }
+
+        public ActionResult ExportarBalanzaExcel(string Entidades = null, string Periodo = null, string Modalidad = "Acumulado", string TipoComparacion = null)
+        {
+            var model = ConstruirModeloBalanza(Entidades, Periodo, Modalidad, TipoComparacion);
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            using (var package = new ExcelPackage())
+            {
+                var ws = package.Workbook.Worksheets.Add("Balanza Comprobacion");
+                ws.View.ShowGridLines = true;
+
+                // Paleta Institucional (RGB)
+                var cAzulPrimario = System.Drawing.Color.FromArgb(47, 85, 151);      // #2F5597
+                var cAzulOscuro = System.Drawing.Color.FromArgb(20, 55, 80);        // #143750
+                var cAzulVariacion = System.Drawing.Color.FromArgb(30, 58, 138);     // #1E3A8A
+                var cFondoSeccion = System.Drawing.Color.FromArgb(226, 232, 240);    // #E2E8F0
+                var cFondoTotales = System.Drawing.Color.FromArgb(241, 245, 249);    // #F1F5F9
+                var cBordeGris = System.Drawing.Color.FromArgb(203, 213, 225);       // #CBD5E1
+                var cBordeClaro = System.Drawing.Color.FromArgb(237, 242, 247);      // #EDF2F7
+                var cVerdeCuadre = System.Drawing.Color.FromArgb(236, 253, 245);     // #ECFDF5
+                var cVerdeTexto = System.Drawing.Color.FromArgb(5, 150, 105);       // #059669
+                var cRojoTexto = System.Drawing.Color.FromArgb(220, 38, 38);        // #DC2626
+                var cGrisTexto = System.Drawing.Color.FromArgb(100, 116, 139);      // #64748B
+
+                // 1. Membrete Institucional (Filas 1 a 4)
+                ws.Row(1).Height = 18;
+                ws.Cells["A1"].Value = "SISTEMA FGA EN LÍNEA";
+                ws.Cells["A1"].Style.Font.Size = 9;
+                ws.Cells["A1"].Style.Font.Bold = true;
+                ws.Cells["A1"].Style.Font.Color.SetColor(cGrisTexto);
+
+                ws.Row(2).Height = 24;
+                ws.Cells["A2"].Value = "BALANZA DE COMPROBACIÓN (" + model.Modalidad.ToUpper() + ") - " + (model.NombreEntidad ?? "ENTIDAD").ToUpper();
+                ws.Cells["A2"].Style.Font.Size = 13;
+                ws.Cells["A2"].Style.Font.Bold = true;
+                ws.Cells["A2"].Style.Font.Color.SetColor(cAzulOscuro);
+
+                ws.Row(3).Height = 18;
+                ws.Cells["A3"].Value = model.ComparacionTitulo + " • " + model.ComparacionSubtitulo;
+                ws.Cells["A3"].Style.Font.Size = 10;
+                ws.Cells["A3"].Style.Font.Italic = true;
+                ws.Cells["A3"].Style.Font.Color.SetColor(System.Drawing.Color.FromArgb(71, 85, 105));
+
+                // Metadatos a la derecha (Columnas G y H)
+                ws.Cells["G2:H2"].Merge = true;
+                ws.Cells["G2"].Value = "Corte: " + model.PeriodoReferencia.ToString("MM/yyyy");
+                ws.Cells["G2"].Style.Font.Size = 9.5f;
+                ws.Cells["G2"].Style.Font.Bold = true;
+                ws.Cells["G2"].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+                ws.Cells["G2"].Style.Font.Color.SetColor(cAzulOscuro);
+
+                ws.Cells["G3:H3"].Merge = true;
+                ws.Cells["G3"].Value = "Modalidad: " + model.Modalidad + " • Moneda: CRC (Millones)";
+                ws.Cells["G3"].Style.Font.Size = 9;
+                ws.Cells["G3"].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+                ws.Cells["G3"].Style.Font.Color.SetColor(cGrisTexto);
+
+                ws.Cells["G4:H4"].Merge = true;
+                if (model.EstaCuadrada)
+                {
+                    ws.Cells["G4"].Value = "✔ Balanza Cuadrada";
+                    ws.Cells["G4"].Style.Font.Color.SetColor(cVerdeTexto);
+                    ws.Cells["G4"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                    ws.Cells["G4"].Style.Fill.BackgroundColor.SetColor(cVerdeCuadre);
+                }
+                else
+                {
+                    ws.Cells["G4"].Value = "⚠ Descuadre Contable";
+                    ws.Cells["G4"].Style.Font.Color.SetColor(cRojoTexto);
+                    ws.Cells["G4"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                    ws.Cells["G4"].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.FromArgb(254, 242, 242));
+                }
+                ws.Cells["G4"].Style.Font.Size = 9.5f;
+                ws.Cells["G4"].Style.Font.Bold = true;
+                ws.Cells["G4"].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                ws.Cells["G4:H4"].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Thin, model.EstaCuadrada ? System.Drawing.Color.FromArgb(167, 243, 208) : System.Drawing.Color.FromArgb(254, 202, 202));
+
+                // 2. Encabezados de Tabla (Fila 5)
+                int r = 5;
+                ws.Row(r).Height = 26;
+                ws.Cells[r, 1].Value = "Cuenta Contable";
+                ws.Cells[r, 2].Value = "Nombre de la Cuenta";
+                for (int i = 0; i < 5; i++)
+                {
+                    ws.Cells[r, i + 3].Value = model.EncabezadosPeriodos[i];
+                }
+                ws.Cells[r, 8].Value = "Var. Absoluta";
+                ws.Cells[r, 9].Value = "Var. Relativa";
+
+                // Estilo Encabezados Principales (Col 1-7)
+                using (var range = ws.Cells[r, 1, r, 7])
+                {
+                    range.Style.Font.Bold = true;
+                    range.Style.Font.Size = 10f;
+                    range.Style.Font.Color.SetColor(System.Drawing.Color.White);
+                    range.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                    range.Style.Fill.BackgroundColor.SetColor(cAzulPrimario);
+                    range.Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
+                    range.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+                }
+                ws.Cells[r, 1].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                ws.Cells[r, 2].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Left;
+
+                // Estilo Encabezados Variaciones (Col 8-9)
+                using (var rangeVar = ws.Cells[r, 8, r, 9])
+                {
+                    rangeVar.Style.Font.Bold = true;
+                    rangeVar.Style.Font.Size = 10f;
+                    rangeVar.Style.Font.Color.SetColor(System.Drawing.Color.White);
+                    rangeVar.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                    rangeVar.Style.Fill.BackgroundColor.SetColor(cAzulVariacion);
+                    rangeVar.Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
+                    rangeVar.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+                }
+
+                // 3. Filas de Datos
+                r = 6;
+                foreach (var item in model.Filas)
+                {
+                    ws.Row(r).Height = item.EsClase ? 22 : (item.EsGrupo ? 20 : 18);
+
+                    string prefijoIndent = "";
+                    if (item.Nivel == 2) prefijoIndent = "   ";
+                    else if (item.Nivel == 3) prefijoIndent = "      ";
+                    else if (item.Nivel >= 4) prefijoIndent = "         ";
+
+                    ws.Cells[r, 1].Value = item.Cuenta;
+                    ws.Cells[r, 1].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+
+                    ws.Cells[r, 2].Value = prefijoIndent + item.Nombre.Trim();
+
+                    if (item.EsClase)
+                    {
+                        using (var range = ws.Cells[r, 1, r, 9])
+                        {
+                            range.Style.Font.Bold = true;
+                            range.Style.Font.Size = 10.5f;
+                            range.Style.Font.Color.SetColor(cAzulOscuro);
+                            range.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                            range.Style.Fill.BackgroundColor.SetColor(cFondoSeccion);
+                            range.Style.Border.Top.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
+                            range.Style.Border.Top.Color.SetColor(cAzulPrimario);
+                            range.Style.Border.Bottom.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
+                            range.Style.Border.Bottom.Color.SetColor(cBordeGris);
+                        }
+                    }
+                    else if (item.EsGrupo)
+                    {
+                        using (var range = ws.Cells[r, 1, r, 9])
+                        {
+                            range.Style.Font.Bold = true;
+                            range.Style.Font.Size = 10f;
+                            range.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                            range.Style.Fill.BackgroundColor.SetColor(cFondoTotales);
+                            range.Style.Border.Bottom.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
+                            range.Style.Border.Bottom.Color.SetColor(cBordeGris);
+                        }
+                    }
+                    else
+                    {
+                        ws.Cells[r, 1, r, 9].Style.Border.Bottom.Style = OfficeOpenXml.Style.ExcelBorderStyle.Hair;
+                        ws.Cells[r, 1, r, 9].Style.Border.Bottom.Color.SetColor(cBordeClaro);
+                    }
+
+                    for (int i = 0; i < 5; i++)
+                    {
+                        var cell = ws.Cells[r, i + 3];
+                        cell.Value = item.Periodos[i];
+                        cell.Style.Numberformat.Format = "#,##0.00;(#,##0.00);\"-\"";
+                        cell.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+                    }
+
+                    // Variación Absoluta
+                    var cellAbs = ws.Cells[r, 8];
+                    cellAbs.Value = item.VariacionAbsoluta;
+                    cellAbs.Style.Numberformat.Format = "#,##0.00;(#,##0.00);\"-\"";
+                    cellAbs.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+                    if (item.VariacionAbsoluta > 0) cellAbs.Style.Font.Color.SetColor(cVerdeTexto);
+                    else if (item.VariacionAbsoluta < 0) cellAbs.Style.Font.Color.SetColor(cRojoTexto);
+
+                    // Variación Relativa
+                    var cellRel = ws.Cells[r, 9];
+                    cellRel.Value = item.VariacionRelativa / 100m;
+                    cellRel.Style.Numberformat.Format = "0.00%;(0.00%);\"0.00%\"";
+                    cellRel.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+                    if (item.VariacionRelativa > 0) cellRel.Style.Font.Color.SetColor(cVerdeTexto);
+                    else if (item.VariacionRelativa < 0) cellRel.Style.Font.Color.SetColor(cRojoTexto);
+
+                    r++;
+                }
+
+                // Ajuste de anchos de columna
+                ws.Column(1).Width = 16;
+                ws.Column(2).Width = 46;
+                for (int i = 3; i <= 7; i++) ws.Column(i).Width = 16;
+                ws.Column(8).Width = 15;
+                ws.Column(9).Width = 14;
+
+                string fileName = string.Format("Balanza_Comprobacion_{0}_{1}_{2:yyyyMM}.xlsx",
+                    model.Modalidad,
+                    (model.NombreEntidad ?? "Entidad").Replace(" ", "_").Replace(".", ""),
+                    model.PeriodoReferencia);
+
+                var bytes = package.GetAsByteArray();
+                return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+            }
+        }
+
+        public ActionResult ExportarBalanzaCsv(string Entidades = null, string Periodo = null, string Modalidad = "Acumulado", string TipoComparacion = null)
+        {
+            var model = ConstruirModeloBalanza(Entidades, Periodo, Modalidad, TipoComparacion);
+            var sb = new System.Text.StringBuilder();
+
+            // Membrete
+            sb.AppendLine(string.Format("\"BALANZA DE COMPROBACIÓN ({0}) - {1}\"", model.Modalidad.ToUpper(), (model.NombreEntidad ?? "").Replace("\"", "\"\"")));
+            sb.AppendLine(string.Format("\"Corte: {0}\",\"Tipo: {1}\",\"Moneda: CRC (Millones)\"", model.PeriodoReferencia.ToString("MM/yyyy"), model.ComparacionTitulo));
+            sb.AppendLine();
+
+            // Encabezados
+            sb.Append("\"Cuenta\",\"Nombre\"");
+            for (int i = 0; i < 5; i++)
+            {
+                sb.AppendFormat(",\"{0}\"", model.EncabezadosPeriodos[i]);
+            }
+            sb.Append(",\"Var. Absoluta\",\"Var. Relativa (%)\"");
+            sb.AppendLine();
+
+            // Filas
+            foreach (var item in model.Filas)
+            {
+                sb.AppendFormat("\"{0}\",\"{1}\"", item.Cuenta, (item.Nombre ?? "").Replace("\"", "\"\""));
+                for (int i = 0; i < 5; i++)
+                {
+                    sb.AppendFormat(",{0}", item.Periodos[i].ToString("F2", System.Globalization.CultureInfo.InvariantCulture));
+                }
+                sb.AppendFormat(",{0},{1}",
+                    item.VariacionAbsoluta.ToString("F2", System.Globalization.CultureInfo.InvariantCulture),
+                    item.VariacionRelativa.ToString("F2", System.Globalization.CultureInfo.InvariantCulture));
+                sb.AppendLine();
+            }
+
+            var preamble = System.Text.Encoding.UTF8.GetPreamble();
+            var body = System.Text.Encoding.UTF8.GetBytes(sb.ToString());
+            var fullBytes = new byte[preamble.Length + body.Length];
+            Buffer.BlockCopy(preamble, 0, fullBytes, 0, preamble.Length);
+            Buffer.BlockCopy(body, 0, fullBytes, preamble.Length, body.Length);
+
+            string fileName = string.Format("Balanza_Comprobacion_{0}_{1}_{2:yyyyMM}.csv",
+                model.Modalidad,
+                (model.NombreEntidad ?? "Entidad").Replace(" ", "_").Replace(".", ""),
+                model.PeriodoReferencia);
+
+            return File(fullBytes, "text/csv; charset=utf-8", fileName);
+        }
+
+        public ActionResult Origen(string Entidades = null, string Periodo = null, string TipoComparacion = null)
+        {
+            var model = ConstruirModeloOrigen(Entidades, Periodo, TipoComparacion);
+            return View("Origen", model);
+        }
+
+        public OrigenAplicacionViewModel ConstruirModeloOrigen(string entidadId, string periodoSel, string tipoCompSel)
+        {
+            PageLoad();
+            var model = _origenService.ConstruirModeloOrigen(entidadId, periodoSel, tipoCompSel, Session, sp, ent);
+            Session["Periodo1"] = model.FechaComparacion.ToShortDateString();
+            Session["Periodo2"] = model.FechaBase.ToShortDateString();
+            Session["TipoComparacion"] = model.TipoComparacion;
+            Session["IdEntidad"] = model.EntidadId;
+            Session["TipoReporte"] = Utility.Utilitarios.enum_tipoReporte.origen_aplicacion;
+
+            List<Entidad> lista = ent.GetAll().Where(o => o.Id != Utility.Utilitarios.entidadAdministradora && o.Activo == true).OrderBy(o => o.Nombre).ToList();
+            Entidad entidad = new Entidad();
+            entidad.Id = "-1";
+            entidad.Nombre = "TODAS LAS COOPERATIVAS";
+            lista.Add(entidad);
+            ViewBag.Entidades = new SelectList(lista, "Id", "Nombre", model.EntidadId);
+
+            return model;
+        }
+
+        public ActionResult ExportarOrigenExcel(string Entidades = null, string Periodo = null, string TipoComparacion = null)
+        {
+            var model = ConstruirModeloOrigen(Entidades, Periodo, TipoComparacion);
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            using (var package = new ExcelPackage())
+            {
+                var ws = package.Workbook.Worksheets.Add("Origen y Aplicación");
+                ws.View.ShowGridLines = true;
+
+                // Paleta Institucional (RGB)
+                var cAzulPrimario = System.Drawing.Color.FromArgb(47, 85, 151);      // #2F5597
+                var cAzulOscuro = System.Drawing.Color.FromArgb(20, 55, 80);        // #143750
+                var cVerdeOrigen = System.Drawing.Color.FromArgb(49, 133, 156);     // #31859C
+                var cNaranjaAplic = System.Drawing.Color.FromArgb(237, 125, 49);     // #ED7D31
+
+                // Membrete
+                ws.Cells["A1:F1"].Merge = true;
+                ws.Cells["A1"].Value = "FONDO DE FORTALECIMIENTO COOPERATIVO (FFC)";
+                ws.Cells["A1"].Style.Font.Bold = true;
+                ws.Cells["A1"].Style.Font.Size = 13;
+                ws.Cells["A1"].Style.Font.Color.SetColor(cAzulOscuro);
+
+                ws.Cells["A2:F2"].Merge = true;
+                ws.Cells["A2"].Value = "ESTADO DE ORIGEN Y APLICACIÓN DE FONDOS";
+                ws.Cells["A2"].Style.Font.Bold = true;
+                ws.Cells["A2"].Style.Font.Size = 12;
+                ws.Cells["A2"].Style.Font.Color.SetColor(cAzulPrimario);
+
+                ws.Cells["A3:F3"].Merge = true;
+                ws.Cells["A3"].Value = string.Format("Entidad: {0} | {1}", model.EntidadNombre, model.ComparacionTitulo);
+                ws.Cells["A3"].Style.Font.Size = 10;
+                ws.Cells["A3"].Style.Font.Italic = true;
+
+                ws.Cells["A4:F4"].Merge = true;
+                ws.Cells["A4"].Value = "Cifras expresadas en millones de colones sin céntimos";
+                ws.Cells["A4"].Style.Font.Size = 9;
+                ws.Cells["A4"].Style.Font.Color.SetColor(System.Drawing.Color.Gray);
+
+                // Cuadros Lado a Lado: ORIGEN (Cols A-C) y APLICACIÓN (Cols E-G)
+                int startRow = 6;
+                ws.Cells[startRow, 1, startRow, 3].Merge = true;
+                ws.Cells[startRow, 1].Value = "FUENTES DE RECURSOS (ORIGEN)";
+                ws.Cells[startRow, 1].Style.Font.Bold = true;
+                ws.Cells[startRow, 1].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                ws.Cells[startRow, 1].Style.Fill.BackgroundColor.SetColor(cVerdeOrigen);
+                ws.Cells[startRow, 1].Style.Font.Color.SetColor(System.Drawing.Color.White);
+                ws.Cells[startRow, 1].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+
+                ws.Cells[startRow, 5, startRow, 7].Merge = true;
+                ws.Cells[startRow, 5].Value = "USOS DE RECURSOS (APLICACIÓN)";
+                ws.Cells[startRow, 5].Style.Font.Bold = true;
+                ws.Cells[startRow, 5].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                ws.Cells[startRow, 5].Style.Fill.BackgroundColor.SetColor(cNaranjaAplic);
+                ws.Cells[startRow, 5].Style.Font.Color.SetColor(System.Drawing.Color.White);
+                ws.Cells[startRow, 5].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+
+                int hRow = 7;
+                ws.Cells[hRow, 1].Value = "Concepto";
+                ws.Cells[hRow, 2].Value = "Monto (¢)";
+                ws.Cells[hRow, 3].Value = "% Part.";
+                ws.Cells[hRow, 1, hRow, 3].Style.Font.Bold = true;
+                ws.Cells[hRow, 1, hRow, 3].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                ws.Cells[hRow, 1, hRow, 3].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.FromArgb(240, 244, 248));
+
+                ws.Cells[hRow, 5].Value = "Concepto";
+                ws.Cells[hRow, 6].Value = "Monto (¢)";
+                ws.Cells[hRow, 7].Value = "% Part.";
+                ws.Cells[hRow, 5, hRow, 7].Style.Font.Bold = true;
+                ws.Cells[hRow, 5, hRow, 7].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                ws.Cells[hRow, 5, hRow, 7].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.FromArgb(240, 244, 248));
+
+                int maxRows = Math.Max(model.ItemsOrigen.Count, model.ItemsAplicacion.Count);
+                int rActual = 8;
+                for (int i = 0; i < maxRows; i++)
+                {
+                    if (i < model.ItemsOrigen.Count)
+                    {
+                        var it = model.ItemsOrigen[i];
+                        ws.Cells[rActual, 1].Value = it.Concepto;
+                        ws.Cells[rActual, 2].Value = it.Monto;
+                        ws.Cells[rActual, 2].Style.Numberformat.Format = "#,##0.00";
+                        ws.Cells[rActual, 3].Value = it.PorcentajeParticipacion / 100m;
+                        ws.Cells[rActual, 3].Style.Numberformat.Format = "0.00%";
+                    }
+                    if (i < model.ItemsAplicacion.Count)
+                    {
+                        var it = model.ItemsAplicacion[i];
+                        ws.Cells[rActual, 5].Value = it.Concepto;
+                        ws.Cells[rActual, 6].Value = it.Monto;
+                        ws.Cells[rActual, 6].Style.Numberformat.Format = "#,##0.00";
+                        ws.Cells[rActual, 7].Value = it.PorcentajeParticipacion / 100m;
+                        ws.Cells[rActual, 7].Style.Numberformat.Format = "0.00%";
+                    }
+                    rActual++;
+                }
+
+                // Fila de Totales
+                ws.Cells[rActual, 1].Value = "TOTAL ORIGEN";
+                ws.Cells[rActual, 1].Style.Font.Bold = true;
+                ws.Cells[rActual, 2].Value = model.TotalOrigen;
+                ws.Cells[rActual, 2].Style.Numberformat.Format = "#,##0.00";
+                ws.Cells[rActual, 2].Style.Font.Bold = true;
+                ws.Cells[rActual, 3].Value = 1m;
+                ws.Cells[rActual, 3].Style.Numberformat.Format = "0.00%";
+                ws.Cells[rActual, 3].Style.Font.Bold = true;
+                ws.Cells[rActual, 1, rActual, 3].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                ws.Cells[rActual, 1, rActual, 3].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.FromArgb(226, 240, 245));
+
+                ws.Cells[rActual, 5].Value = "TOTAL APLICACIÓN";
+                ws.Cells[rActual, 5].Style.Font.Bold = true;
+                ws.Cells[rActual, 6].Value = model.TotalAplicacion;
+                ws.Cells[rActual, 6].Style.Numberformat.Format = "#,##0.00";
+                ws.Cells[rActual, 6].Style.Font.Bold = true;
+                ws.Cells[rActual, 7].Value = 1m;
+                ws.Cells[rActual, 7].Style.Numberformat.Format = "0.00%";
+                ws.Cells[rActual, 7].Style.Font.Bold = true;
+                ws.Cells[rActual, 5, rActual, 7].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                ws.Cells[rActual, 5, rActual, 7].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.FromArgb(254, 237, 222));
+
+                // Fila de Cuadre
+                rActual += 2;
+                ws.Cells[rActual, 1, rActual, 3].Merge = true;
+                ws.Cells[rActual, 1].Value = "DIFERENCIA (CUADRE CONTABLE):";
+                ws.Cells[rActual, 1].Style.Font.Bold = true;
+                ws.Cells[rActual, 1].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+                ws.Cells[rActual, 4].Value = model.DiferenciaCuadre;
+                ws.Cells[rActual, 4].Style.Numberformat.Format = "#,##0.00";
+                ws.Cells[rActual, 4].Style.Font.Bold = true;
+
+                // Hoja 2: Balance Comparativo Base
+                var ws2 = package.Workbook.Worksheets.Add("Balance Comparativo");
+                ws2.View.ShowGridLines = true;
+
+                ws2.Cells["A1:D1"].Merge = true;
+                ws2.Cells["A1"].Value = "BALANCE GENERAL COMPARATIVO BASE";
+                ws2.Cells["A1"].Style.Font.Bold = true;
+                ws2.Cells["A1"].Style.Font.Size = 12;
+                ws2.Cells["A1"].Style.Font.Color.SetColor(cAzulOscuro);
+
+                ws2.Cells["A2:D2"].Merge = true;
+                ws2.Cells["A2"].Value = string.Format("Entidad: {0} | {1}", model.EntidadNombre, model.ComparacionTitulo);
+                ws2.Cells["A2"].Style.Font.Size = 10;
+                ws2.Cells["A2"].Style.Font.Italic = true;
+
+                int hRow2 = 4;
+                ws2.Cells[hRow2, 1].Value = "Rubro / Concepto";
+                ws2.Cells[hRow2, 2].Value = string.Format("Referencia ({0:MMM yyyy})", model.FechaComparacion);
+                ws2.Cells[hRow2, 3].Value = string.Format("Corte ({0:MMM yyyy})", model.FechaBase);
+                ws2.Cells[hRow2, 4].Value = "Diferencia";
+                ws2.Cells[hRow2, 1, hRow2, 4].Style.Font.Bold = true;
+                ws2.Cells[hRow2, 1, hRow2, 4].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                ws2.Cells[hRow2, 1, hRow2, 4].Style.Fill.BackgroundColor.SetColor(cAzulPrimario);
+                ws2.Cells[hRow2, 1, hRow2, 4].Style.Font.Color.SetColor(System.Drawing.Color.White);
+
+                int r2 = 5;
+                foreach (var f in model.FilasBalance)
+                {
+                    ws2.Cells[r2, 1].Value = f.Concepto;
+                    if (f.EsNegrita) ws2.Cells[r2, 1, r2, 4].Style.Font.Bold = true;
+                    if (f.EsItalica) ws2.Cells[r2, 1, r2, 4].Style.Font.Italic = true;
+
+                    if (!f.SinMontos)
+                    {
+                        ws2.Cells[r2, 2].Value = f.MontoReferencia;
+                        ws2.Cells[r2, 2].Style.Numberformat.Format = "#,##0.00";
+                        ws2.Cells[r2, 3].Value = f.MontoBase;
+                        ws2.Cells[r2, 3].Style.Numberformat.Format = "#,##0.00";
+                        ws2.Cells[r2, 4].Value = f.Diferencia;
+                        ws2.Cells[r2, 4].Style.Numberformat.Format = "#,##0.00";
+                    }
+                    r2++;
+                }
+
+                ws.Cells.AutoFitColumns();
+                ws2.Cells.AutoFitColumns();
+
+                var bytes = package.GetAsByteArray();
+                string fileName = string.Format("Origen_Aplicacion_{0}_{1:yyyyMM}.xlsx", model.EntidadId, model.FechaBase);
+                return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+            }
         }
 
         public ActionResult Consolidado()
         {
             PageLoad();
+            try
+            {
+                DateTime fechaRef = Utility.Utilitarios.ConvertirAFecha(Session["Periodo3"]?.ToString() ?? (Session["Periodo2"]?.ToString() ?? Session["Periodo"].ToString()));
+                Session["Periodo3"] = fechaRef.ToShortDateString();
+                Session["Periodo2"] = fechaRef.AddYears(-1).ToShortDateString();
+                Session["Periodo1"] = fechaRef.AddYears(-2).ToShortDateString();
+            }
+            catch { }
             return View();
         }
 
-        public ActionResult ER()
+        public ActionResult ER(string Entidades = null, string Periodo = null, string Modalidad = "Acumulado", string TipoComparacion = null)
         {
-            PageLoad();
-            Graficos_Financieros gp = null;
-            return View(gp);
+            if (!string.IsNullOrEmpty(Entidades))
+            {
+                Session["IdEntidad"] = Entidades;
+            }
+            var model = ConstruirModeloER(Entidades, Periodo, Modalidad, TipoComparacion);
+            return View("ER", model);
         }
 
-        public ActionResult Balance()
+        public EstadoResultadosViewModel ConstruirModeloER(string entidadId, string periodoSel, string modalidadSel, string tipoCompSel)
+        {
+            if (!string.IsNullOrEmpty(entidadId))
+            {
+                Session["IdEntidad"] = entidadId;
+            }
+            PageLoad();
+            if (!string.IsNullOrEmpty(entidadId))
+            {
+                Session["IdEntidad"] = entidadId;
+                try
+                {
+                    var rawLista = Session["AllEntidades"] as Entidad[] ?? ent.GetAll();
+                    var entItem = rawLista.FirstOrDefault(o => o.Id == entidadId) ?? ent.Get(entidadId);
+                    if (entItem != null)
+                    {
+                        Session["NomEntidad"] = entItem.Nombre;
+                    }
+                    var lista = rawLista.Where(o => o.Id != Utility.Utilitarios.entidadAdministradora && o.Activo == true).OrderBy(o => o.Nombre).ToArray();
+                    ViewBag.Entidades = new SelectList(lista, "Id", "Nombre", entidadId);
+                }
+                catch { }
+            }
+            var model = _erService.ConstruirModeloER(entidadId, periodoSel, modalidadSel, tipoCompSel, Session, sp, ent);
+            if (model.FechasPeriodos != null && model.FechasPeriodos.Length == 5)
+            {
+                Session["Periodo1"] = model.FechasPeriodos[3].ToShortDateString();
+                Session["Periodo2"] = model.FechasPeriodos[4].ToShortDateString();
+                Session["Periodo3"] = model.FechasPeriodos[4].ToShortDateString();
+                Session["TipoComparacion"] = model.TipoComparacion;
+                Session["IdEntidad"] = model.EntidadId;
+                Session["TipoReporte"] = Utility.Utilitarios.enum_tipoReporte.rpt_er;
+            }
+            return model;
+        }
+
+        public ActionResult ExportarERExcel(string Entidades = null, string Periodo = null, string Modalidad = "Acumulado", string TipoComparacion = null)
+        {
+            var model = ConstruirModeloER(Entidades, Periodo, Modalidad, TipoComparacion);
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            using (var package = new ExcelPackage())
+            {
+                var ws = package.Workbook.Worksheets.Add("Estado de Resultados");
+                ws.View.ShowGridLines = true;
+
+                // Paleta Institucional (RGB)
+                var cAzulPrimario = System.Drawing.Color.FromArgb(47, 85, 151);      // #2F5597
+                var cAzulOscuro = System.Drawing.Color.FromArgb(20, 55, 80);        // #143750
+                var cAzulVariacion = System.Drawing.Color.FromArgb(30, 58, 138);     // #1E3A8A
+                var cFondoSeccion = System.Drawing.Color.FromArgb(226, 232, 240);    // #E2E8F0
+                var cFondoTotales = System.Drawing.Color.FromArgb(241, 245, 249);    // #F1F5F9
+                var cFondoSubtotal = System.Drawing.Color.FromArgb(248, 250, 252);   // #F8FAFC
+                var cBordeGris = System.Drawing.Color.FromArgb(203, 213, 225);       // #CBD5E1
+                var cBordeClaro = System.Drawing.Color.FromArgb(237, 242, 247);      // #EDF2F7
+                var cVerdeTexto = System.Drawing.Color.FromArgb(5, 150, 105);       // #059669
+                var cRojoTexto = System.Drawing.Color.FromArgb(220, 38, 38);        // #DC2626
+                var cGrisTexto = System.Drawing.Color.FromArgb(100, 116, 139);      // #64748B
+
+                // 1. Membrete Institucional (Filas 1 a 4)
+                ws.Row(1).Height = 18;
+                ws.Cells["A1"].Value = "SISTEMA FGA EN LÍNEA";
+                ws.Cells["A1"].Style.Font.Size = 9;
+                ws.Cells["A1"].Style.Font.Bold = true;
+                ws.Cells["A1"].Style.Font.Color.SetColor(cGrisTexto);
+
+                ws.Row(2).Height = 24;
+                ws.Cells["A2"].Value = "ESTADO DE RESULTADOS (" + model.Modalidad.ToUpper() + ") - " + (model.NombreEntidad ?? "ENTIDAD").ToUpper();
+                ws.Cells["A2"].Style.Font.Size = 13;
+                ws.Cells["A2"].Style.Font.Bold = true;
+                ws.Cells["A2"].Style.Font.Color.SetColor(cAzulOscuro);
+
+                ws.Row(3).Height = 18;
+                ws.Cells["A3"].Value = model.ComparacionTitulo + " • " + model.ComparacionSubtitulo;
+                ws.Cells["A3"].Style.Font.Size = 10;
+                ws.Cells["A3"].Style.Font.Italic = true;
+                ws.Cells["A3"].Style.Font.Color.SetColor(System.Drawing.Color.FromArgb(71, 85, 105));
+
+                // Metadatos a la derecha (Columnas G y H)
+                ws.Cells["G2:H2"].Merge = true;
+                ws.Cells["G2"].Value = "Corte: " + model.PeriodoReferencia.ToString("MM/yyyy");
+                ws.Cells["G2"].Style.Font.Size = 9.5f;
+                ws.Cells["G2"].Style.Font.Bold = true;
+                ws.Cells["G2"].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+                ws.Cells["G2"].Style.Font.Color.SetColor(cAzulOscuro);
+
+                ws.Cells["G3:H3"].Merge = true;
+                ws.Cells["G3"].Value = "Modalidad: " + model.Modalidad + " • Moneda: CRC (Millones)";
+                ws.Cells["G3"].Style.Font.Size = 9;
+                ws.Cells["G3"].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+                ws.Cells["G3"].Style.Font.Color.SetColor(cGrisTexto);
+
+                // 2. Encabezados de Tabla (Fila 5)
+                int r = 5;
+                ws.Row(r).Height = 26;
+                ws.Cells[r, 1].Value = "Concepto / Cuenta";
+                for (int i = 0; i < 5; i++)
+                {
+                    ws.Cells[r, i + 2].Value = model.EncabezadosPeriodos[i];
+                }
+                ws.Cells[r, 7].Value = "Var. Absoluta";
+                ws.Cells[r, 8].Value = "Var. Relativa";
+
+                using (var range = ws.Cells[r, 1, r, 6])
+                {
+                    range.Style.Font.Bold = true;
+                    range.Style.Font.Size = 10f;
+                    range.Style.Font.Color.SetColor(System.Drawing.Color.White);
+                    range.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                    range.Style.Fill.BackgroundColor.SetColor(cAzulPrimario);
+                    range.Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
+                    range.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+                }
+                ws.Cells[r, 1].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Left;
+
+                using (var rangeVar = ws.Cells[r, 7, r, 8])
+                {
+                    rangeVar.Style.Font.Bold = true;
+                    rangeVar.Style.Font.Size = 10f;
+                    rangeVar.Style.Font.Color.SetColor(System.Drawing.Color.White);
+                    rangeVar.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                    rangeVar.Style.Fill.BackgroundColor.SetColor(cAzulVariacion);
+                    rangeVar.Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
+                    rangeVar.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+                }
+
+                // 3. Filas de Datos
+                r = 6;
+                foreach (var item in model.Filas)
+                {
+                    ws.Row(r).Height = item.EsSeccion ? 22 : (item.EsTotal ? 20 : 18);
+
+                    string prefijo = item.Nivel == 1 ? "   " : "";
+                    ws.Cells[r, 1].Value = prefijo + item.Concepto.Trim();
+
+                    if (item.EsSeccion)
+                    {
+                        using (var range = ws.Cells[r, 1, r, 8])
+                        {
+                            range.Style.Font.Bold = true;
+                            range.Style.Font.Size = 10.5f;
+                            range.Style.Font.Color.SetColor(cAzulOscuro);
+                            range.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                            range.Style.Fill.BackgroundColor.SetColor(cFondoSeccion);
+                            range.Style.Border.Top.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
+                            range.Style.Border.Top.Color.SetColor(cAzulPrimario);
+                            range.Style.Border.Bottom.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
+                            range.Style.Border.Bottom.Color.SetColor(cBordeGris);
+                        }
+                    }
+                    else if (item.EsGranTotal)
+                    {
+                        using (var range = ws.Cells[r, 1, r, 8])
+                        {
+                            range.Style.Font.Bold = true;
+                            range.Style.Font.Size = 10.5f;
+                            range.Style.Font.Color.SetColor(cAzulOscuro);
+                            range.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                            range.Style.Fill.BackgroundColor.SetColor(cFondoTotales);
+                            range.Style.Border.Top.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
+                            range.Style.Border.Top.Color.SetColor(cAzulPrimario);
+                            range.Style.Border.Bottom.Style = OfficeOpenXml.Style.ExcelBorderStyle.Double;
+                            range.Style.Border.Bottom.Color.SetColor(cAzulPrimario);
+                        }
+                    }
+                    else if (item.EsTotal)
+                    {
+                        using (var range = ws.Cells[r, 1, r, 8])
+                        {
+                            range.Style.Font.Bold = true;
+                            range.Style.Font.Italic = item.EsItalica;
+                            range.Style.Font.Size = 10f;
+                            range.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                            range.Style.Fill.BackgroundColor.SetColor(cFondoSubtotal);
+                            range.Style.Border.Top.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
+                            range.Style.Border.Top.Color.SetColor(cBordeGris);
+                            range.Style.Border.Bottom.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
+                            range.Style.Border.Bottom.Color.SetColor(cBordeGris);
+                        }
+                    }
+                    else
+                    {
+                        ws.Cells[r, 1, r, 8].Style.Border.Bottom.Style = OfficeOpenXml.Style.ExcelBorderStyle.Hair;
+                        ws.Cells[r, 1, r, 8].Style.Border.Bottom.Color.SetColor(cBordeClaro);
+                    }
+
+                    if (!item.SinMontos)
+                    {
+                        for (int i = 0; i < 5; i++)
+                        {
+                            var cell = ws.Cells[r, i + 2];
+                            cell.Value = item.Periodos[i];
+                            cell.Style.Numberformat.Format = "#,##0.00;(#,##0.00);\"-\"";
+                            cell.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+                        }
+
+                        // Variación Absoluta
+                        var cellAbs = ws.Cells[r, 7];
+                        cellAbs.Value = item.VariacionAbsoluta;
+                        cellAbs.Style.Numberformat.Format = "#,##0.00;(#,##0.00);\"-\"";
+                        cellAbs.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+                        if (item.VariacionAbsoluta > 0) cellAbs.Style.Font.Color.SetColor(cVerdeTexto);
+                        else if (item.VariacionAbsoluta < 0) cellAbs.Style.Font.Color.SetColor(cRojoTexto);
+
+                        // Variación Relativa
+                        var cellRel = ws.Cells[r, 8];
+                        cellRel.Value = item.VariacionRelativa / 100m;
+                        cellRel.Style.Numberformat.Format = "0.00%;(0.00%);\"0.00%\"";
+                        cellRel.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+                        if (item.VariacionRelativa > 0) cellRel.Style.Font.Color.SetColor(cVerdeTexto);
+                        else if (item.VariacionRelativa < 0) cellRel.Style.Font.Color.SetColor(cRojoTexto);
+                    }
+
+                    r++;
+                }
+
+                // Ajuste de anchos de columna
+                ws.Column(1).Width = 46;
+                for (int i = 2; i <= 6; i++) ws.Column(i).Width = 16;
+                ws.Column(7).Width = 15;
+                ws.Column(8).Width = 14;
+
+                string fileName = string.Format("Estado_Resultados_{0}_{1}_{2:yyyyMM}.xlsx",
+                    model.Modalidad,
+                    (model.NombreEntidad ?? "Entidad").Replace(" ", "_").Replace(".", ""),
+                    model.PeriodoReferencia);
+
+                var bytes = package.GetAsByteArray();
+                return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+            }
+        }
+
+        public ActionResult Balance(string Entidades = null, string Periodo = null, string TipoComparacion = null)
+        {
+            var model = ConstruirModeloBalance(Entidades, Periodo, TipoComparacion);
+            return View("Balance", model);
+        }
+
+        public BalanceGeneralViewModel ConstruirModeloBalance(string entidadId, string periodoSel, string tipoCompSel)
         {
             PageLoad();
-            Graficos_Financieros gp = null;
-            return View(gp);
+            var model = _balanceService.ConstruirModeloBalance(entidadId, periodoSel, tipoCompSel, Session, sp, ent);
+            if (model.FechasPeriodos != null && model.FechasPeriodos.Length == 5)
+            {
+                Session["Periodo1"] = model.FechasPeriodos[3].ToShortDateString();
+                Session["Periodo2"] = model.FechasPeriodos[4].ToShortDateString();
+                Session["Periodo3"] = model.FechasPeriodos[4].ToShortDateString();
+                Session["TipoComparacion"] = model.TipoComparacion;
+                Session["IdEntidad"] = model.EntidadId;
+                Session["TipoReporte"] = Utility.Utilitarios.enum_tipoReporte.rpt_balance;
+            }
+
+            Usuario ObjUser = Session["CurrentUserObj"] as Usuario;
+            if (ObjUser == null)
+            {
+                ObjUser = usr.Get(Env.GetUserInfo("userid"));
+                Session["CurrentUserObj"] = ObjUser;
+            }
+
+            if (ObjUser != null && ObjUser.Entidad_Usuario_Id == Utility.Utilitarios.entidadAdministradora)
+            {
+                List<Entidad> lista = ent.GetAll().Where(o => o.Id != Utility.Utilitarios.entidadAdministradora && o.Activo == true).OrderBy(o => o.Nombre).ToList();
+                Entidad entidadTodas = new Entidad();
+                entidadTodas.Id = "-1";
+                entidadTodas.Nombre = "TODAS LAS COOPERATIVAS";
+                lista.Add(entidadTodas);
+                ViewBag.Entidades = new SelectList(lista, "Id", "Nombre", model.EntidadId);
+            }
+            else if (ObjUser != null)
+            {
+                var lista = ent.GetAll().Where(o => o.Id == ObjUser.Entidad_Usuario_Id).ToList();
+                ViewBag.Entidades = new SelectList(lista, "Id", "Nombre", model.EntidadId);
+            }
+
+            return model;
+        }
+
+        public ActionResult ExportarBalanceExcel(string Entidades = null, string Periodo = null, string TipoComparacion = null)
+        {
+            var model = ConstruirModeloBalance(Entidades, Periodo, TipoComparacion);
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            using (var package = new ExcelPackage())
+            {
+                var ws = package.Workbook.Worksheets.Add("Balance General");
+                ws.View.ShowGridLines = true;
+
+                // Paleta Institucional (RGB)
+                var cAzulPrimario = System.Drawing.Color.FromArgb(47, 85, 151);      // #2F5597
+                var cAzulOscuro = System.Drawing.Color.FromArgb(20, 55, 80);        // #143750
+                var cAzulVariacion = System.Drawing.Color.FromArgb(30, 58, 138);     // #1E3A8A
+                var cFondoSeccion = System.Drawing.Color.FromArgb(226, 232, 240);    // #E2E8F0
+                var cFondoTotales = System.Drawing.Color.FromArgb(241, 245, 249);    // #F1F5F9
+                var cFondoSubtotal = System.Drawing.Color.FromArgb(248, 250, 252);   // #F8FAFC
+                var cBordeGris = System.Drawing.Color.FromArgb(203, 213, 225);       // #CBD5E1
+                var cBordeClaro = System.Drawing.Color.FromArgb(237, 242, 247);      // #EDF2F7
+                var cVerdeCuadre = System.Drawing.Color.FromArgb(236, 253, 245);     // #ECFDF5
+                var cVerdeTexto = System.Drawing.Color.FromArgb(5, 150, 105);       // #059669
+                var cRojoTexto = System.Drawing.Color.FromArgb(220, 38, 38);        // #DC2626
+                var cGrisTexto = System.Drawing.Color.FromArgb(100, 116, 139);      // #64748B
+
+                // 1. Membrete Institucional (Filas 1 a 4)
+                ws.Row(1).Height = 18;
+                ws.Cells["A1"].Value = "SISTEMA FGA EN LÍNEA";
+                ws.Cells["A1"].Style.Font.Size = 9;
+                ws.Cells["A1"].Style.Font.Bold = true;
+                ws.Cells["A1"].Style.Font.Color.SetColor(cGrisTexto);
+
+                ws.Row(2).Height = 24;
+                ws.Cells["A2"].Value = "BALANCE GENERAL - " + (model.NombreEntidad ?? "ENTIDAD").ToUpper();
+                ws.Cells["A2"].Style.Font.Size = 14;
+                ws.Cells["A2"].Style.Font.Bold = true;
+                ws.Cells["A2"].Style.Font.Color.SetColor(cAzulOscuro);
+
+                ws.Row(3).Height = 18;
+                ws.Cells["A3"].Value = model.ComparacionTitulo + " • " + model.ComparacionSubtitulo;
+                ws.Cells["A3"].Style.Font.Size = 10;
+                ws.Cells["A3"].Style.Font.Italic = true;
+                ws.Cells["A3"].Style.Font.Color.SetColor(System.Drawing.Color.FromArgb(71, 85, 105));
+
+                // Metadatos a la derecha (Columnas G y H)
+                ws.Cells["G2:H2"].Merge = true;
+                ws.Cells["G2"].Value = "Corte: " + model.PeriodoReferencia.ToString("MM/yyyy");
+                ws.Cells["G2"].Style.Font.Size = 9.5f;
+                ws.Cells["G2"].Style.Font.Bold = true;
+                ws.Cells["G2"].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+                ws.Cells["G2"].Style.Font.Color.SetColor(cAzulOscuro);
+
+                ws.Cells["G3:H3"].Merge = true;
+                ws.Cells["G3"].Value = "Moneda: CRC (Millones)";
+                ws.Cells["G3"].Style.Font.Size = 9;
+                ws.Cells["G3"].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+                ws.Cells["G3"].Style.Font.Color.SetColor(cGrisTexto);
+
+                ws.Cells["G4:H4"].Merge = true;
+                if (model.EstaBalanceCuadrado)
+                {
+                    ws.Cells["G4"].Value = "✔ Balance Cuadrado";
+                    ws.Cells["G4"].Style.Font.Color.SetColor(cVerdeTexto);
+                    ws.Cells["G4"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                    ws.Cells["G4"].Style.Fill.BackgroundColor.SetColor(cVerdeCuadre);
+                }
+                else
+                {
+                    ws.Cells["G4"].Value = "⚠ Descuadre Contable";
+                    ws.Cells["G4"].Style.Font.Color.SetColor(cRojoTexto);
+                    ws.Cells["G4"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                    ws.Cells["G4"].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.FromArgb(254, 242, 242));
+                }
+                ws.Cells["G4"].Style.Font.Size = 9.5f;
+                ws.Cells["G4"].Style.Font.Bold = true;
+                ws.Cells["G4"].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                ws.Cells["G4:H4"].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Thin, model.EstaBalanceCuadrado ? System.Drawing.Color.FromArgb(167, 243, 208) : System.Drawing.Color.FromArgb(254, 202, 202));
+
+                // 2. Encabezados de Tabla (Fila 5)
+                int r = 5;
+                ws.Row(r).Height = 26;
+                ws.Cells[r, 1].Value = "Concepto / Cuenta";
+                for (int i = 0; i < 5; i++)
+                {
+                    ws.Cells[r, i + 2].Value = model.EncabezadosPeriodos[i];
+                }
+                ws.Cells[r, 7].Value = "Var. Absoluta";
+                ws.Cells[r, 8].Value = "Var. Relativa";
+
+                // Estilo Encabezados Principales (Col 1-6)
+                using (var range = ws.Cells[r, 1, r, 6])
+                {
+                    range.Style.Font.Bold = true;
+                    range.Style.Font.Size = 10.5f;
+                    range.Style.Font.Color.SetColor(System.Drawing.Color.White);
+                    range.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                    range.Style.Fill.BackgroundColor.SetColor(cAzulPrimario);
+                    range.Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
+                    range.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+                }
+                ws.Cells[r, 1].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Left;
+
+                // Estilo Encabezados Variaciones (Col 7-8)
+                using (var rangeVar = ws.Cells[r, 7, r, 8])
+                {
+                    rangeVar.Style.Font.Bold = true;
+                    rangeVar.Style.Font.Size = 10.5f;
+                    rangeVar.Style.Font.Color.SetColor(System.Drawing.Color.White);
+                    rangeVar.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                    rangeVar.Style.Fill.BackgroundColor.SetColor(cAzulVariacion);
+                    rangeVar.Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
+                    rangeVar.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+                }
+
+                // 3. Filas de Datos
+                r = 6;
+                foreach (var item in model.Filas)
+                {
+                    ws.Row(r).Height = item.EsSeccion ? 22 : (item.EsGranTotal || item.EsPrueba ? 20 : 18);
+
+                    // Indentación idéntica a la vista web
+                    string prefijoIndent = "";
+                    if (item.Nivel == 1) prefijoIndent = "   ";
+                    else if (item.Nivel == 2) prefijoIndent = "      ";
+
+                    ws.Cells[r, 1].Value = prefijoIndent + item.Concepto.Trim();
+
+                    if (item.EsSeccion)
+                    {
+                        using (var range = ws.Cells[r, 1, r, 8])
+                        {
+                            range.Style.Font.Bold = true;
+                            range.Style.Font.Size = 11f;
+                            range.Style.Font.Color.SetColor(cAzulOscuro);
+                            range.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                            range.Style.Fill.BackgroundColor.SetColor(cFondoSeccion);
+                            range.Style.Border.Top.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
+                            range.Style.Border.Top.Color.SetColor(cAzulPrimario);
+                            range.Style.Border.Bottom.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
+                            range.Style.Border.Bottom.Color.SetColor(cBordeGris);
+                        }
+                    }
+                    else if (item.Concepto != null && item.Concepto.Trim().Equals("Total pasivos y patrimonio", StringComparison.OrdinalIgnoreCase))
+                    {
+                        using (var range = ws.Cells[r, 1, r, 8])
+                        {
+                            range.Style.Font.Bold = true;
+                            range.Style.Font.Size = 11f;
+                            range.Style.Font.Color.SetColor(cAzulOscuro);
+                            range.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                            range.Style.Fill.BackgroundColor.SetColor(cFondoTotales);
+                            range.Style.Border.Top.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
+                            range.Style.Border.Top.Color.SetColor(cAzulPrimario);
+                            range.Style.Border.Bottom.Style = OfficeOpenXml.Style.ExcelBorderStyle.Double;
+                            range.Style.Border.Bottom.Color.SetColor(cAzulPrimario);
+                        }
+                    }
+                    else if (item.EsGranTotal)
+                    {
+                        using (var range = ws.Cells[r, 1, r, 8])
+                        {
+                            range.Style.Font.Bold = true;
+                            range.Style.Font.Size = 10.5f;
+                            range.Style.Font.Color.SetColor(cAzulOscuro);
+                            range.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                            range.Style.Fill.BackgroundColor.SetColor(cFondoTotales);
+                            range.Style.Border.Top.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
+                            range.Style.Border.Top.Color.SetColor(cAzulPrimario);
+                            range.Style.Border.Bottom.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
+                            range.Style.Border.Bottom.Color.SetColor(cAzulPrimario);
+                        }
+                    }
+                    else if (item.EsSubtotalItalica)
+                    {
+                        using (var range = ws.Cells[r, 1, r, 8])
+                        {
+                            range.Style.Font.Bold = true;
+                            range.Style.Font.Italic = true;
+                            range.Style.Font.Size = 10f;
+                            range.Style.Font.Color.SetColor(System.Drawing.Color.FromArgb(30, 41, 59));
+                            range.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                            range.Style.Fill.BackgroundColor.SetColor(cFondoSubtotal);
+                            range.Style.Border.Top.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
+                            range.Style.Border.Top.Color.SetColor(cBordeGris);
+                            range.Style.Border.Bottom.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
+                            range.Style.Border.Bottom.Color.SetColor(cBordeGris);
+                        }
+                    }
+                    else if (item.EsPrueba)
+                    {
+                        bool cuadra = item.Periodos.All(p => Math.Abs(p) < 0.05m);
+                        ws.Cells[r, 1].Value = "✔ " + item.Concepto.Trim() + " (Comprobación: Activo - Pasivo y Patrimonio = 0)";
+                        using (var range = ws.Cells[r, 1, r, 8])
+                        {
+                            range.Style.Font.Bold = true;
+                            range.Style.Font.Size = 9.5f;
+                            range.Style.Font.Color.SetColor(cuadra ? cVerdeTexto : cRojoTexto);
+                            range.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                            range.Style.Fill.BackgroundColor.SetColor(cuadra ? cVerdeCuadre : System.Drawing.Color.FromArgb(254, 242, 242));
+                            range.Style.Border.Top.Style = OfficeOpenXml.Style.ExcelBorderStyle.Hair;
+                            range.Style.Border.Top.Color.SetColor(cuadra ? System.Drawing.Color.FromArgb(16, 185, 129) : cRojoTexto);
+                            range.Style.Border.Bottom.Style = OfficeOpenXml.Style.ExcelBorderStyle.Hair;
+                            range.Style.Border.Bottom.Color.SetColor(cuadra ? System.Drawing.Color.FromArgb(16, 185, 129) : cRojoTexto);
+                        }
+                    }
+                    else if (!item.SinMontos)
+                    {
+                        ws.Cells[r, 1, r, 8].Style.Border.Bottom.Style = OfficeOpenXml.Style.ExcelBorderStyle.Hair;
+                        ws.Cells[r, 1, r, 8].Style.Border.Bottom.Color.SetColor(cBordeClaro);
+                    }
+
+                    if (!item.SinMontos)
+                    {
+                        for (int i = 0; i < 5; i++)
+                        {
+                            var cell = ws.Cells[r, i + 2];
+                            cell.Value = item.Periodos[i];
+                            cell.Style.Numberformat.Format = "#,##0.00;(#,##0.00);\"-\"";
+                            cell.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+                        }
+
+                        // Variación Absoluta
+                        var cellAbs = ws.Cells[r, 7];
+                        cellAbs.Value = item.VariacionAbsoluta;
+                        cellAbs.Style.Numberformat.Format = "#,##0.00;(#,##0.00);\"-\"";
+                        cellAbs.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+                        if (!item.EsTotal && !item.EsPrueba)
+                        {
+                            if (item.VariacionAbsoluta > 0) cellAbs.Style.Font.Color.SetColor(cVerdeTexto);
+                            else if (item.VariacionAbsoluta < 0) cellAbs.Style.Font.Color.SetColor(cRojoTexto);
+                        }
+
+                        // Variación Relativa
+                        var cellRel = ws.Cells[r, 8];
+                        cellRel.Value = item.VariacionRelativa / 100m;
+                        cellRel.Style.Numberformat.Format = "0.00%;(0.00%);\"0.00%\"";
+                        cellRel.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+                        if (!item.EsTotal && !item.EsPrueba)
+                        {
+                            if (item.VariacionRelativa > 0) cellRel.Style.Font.Color.SetColor(cVerdeTexto);
+                            else if (item.VariacionRelativa < 0) cellRel.Style.Font.Color.SetColor(cRojoTexto);
+                        }
+                    }
+                    r++;
+                }
+
+                // 4. Inmovilizar Paneles (Fila de Encabezados y Columna Concepto fijas)
+                ws.View.FreezePanes(6, 2);
+
+                // 5. Dimensionamiento Óptimo de Columnas
+                ws.Column(1).Width = 46;
+                for (int c = 2; c <= 6; c++)
+                {
+                    ws.Column(c).Width = 16.5;
+                }
+                ws.Column(7).Width = 16;
+                ws.Column(8).Width = 15;
+
+                // 6. Configuración de Impresión / Guardado PDF
+                ws.PrinterSettings.Orientation = eOrientation.Landscape;
+                ws.PrinterSettings.FitToPage = true;
+                ws.PrinterSettings.FitToWidth = 1;
+                ws.PrinterSettings.FitToHeight = 0;
+
+                var bytes = package.GetAsByteArray();
+                string filename = "Balance_General_" + (model.NombreEntidad ?? "FFC").Replace(" ", "_") + "_" + DateTime.Now.ToString("yyyyMMdd_HHmm") + ".xlsx";
+                return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", filename);
+            }
         }
 
         public ActionResult Ejecutivo(string Entidades, string Periodo)

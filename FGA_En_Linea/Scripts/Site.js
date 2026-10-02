@@ -73,13 +73,18 @@ $(function () {
 
     $('.datecontrol').each(function () {
         var $input = $(this);
+        if ($.fn.datepicker) {
+            try { $input.datepicker('destroy'); } catch (e) { }
+        }
         if (!$input.parent().hasClass('modern-input-wrapper')) {
             $input.wrap('<div class="modern-input-wrapper" style="position: relative; display: inline-flex; align-items: center; width: 100%;"></div>');
         }
     });
 
+    var calImgSrc = (window.siteRoot || '') + '/Content/images/calendar.png';
+
     $('.datecontrol').MonthPicker({
-        Button: '<img src="https://www.ffc.co.cr/FFC/Content/images/calendar.png" />',
+        Button: '<img class="month-picker-open-button" src="' + calImgSrc + '" onerror="this.onerror=null;this.src=\'https://www.ffc.co.cr/FFC/Content/images/calendar.png\';" />',
         OnAfterMenuOpen: function () {
             posicionarMenu($(this));
             $('#MonthPicker_' + $(this).attr('id')).find('.ui-state-highlight').removeClass('ui-state-highlight');
@@ -96,7 +101,7 @@ $(function () {
 
     $(".date").datepicker({
         showOn: "button",
-        buttonImage: 'https://www.ffc.co.cr/FFC/Content/images/calendar.png',
+        buttonImage: calImgSrc,
         dateFormat: 'dd-mm-yy'
     });
 

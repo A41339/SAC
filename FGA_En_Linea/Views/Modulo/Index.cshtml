@@ -3,9 +3,11 @@
 @{
     ViewBag.Title = Model.Titulo;
     Layout = "~/Views/Shared/_Layout.cshtml";
+    bool esSbr = (Model.Titulo != null && (Model.Titulo.IndexOf("SBR", StringComparison.OrdinalIgnoreCase) >= 0 || Model.Titulo.IndexOf("Evaluaci", StringComparison.OrdinalIgnoreCase) >= 0))
+        || (Model.Subtitulo != null && Model.Subtitulo.IndexOf("SUGEF 24-22", StringComparison.OrdinalIgnoreCase) >= 0);
 }
 
-
+<link rel="stylesheet" href="~/Content/modulo_hub.css?v=@DateTime.Now.Ticks" />
 
 <section class="content-header" style="padding: 24px 20px 10px 20px;">
     <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
@@ -19,6 +21,10 @@
                 </div>
             }
             <h1>
+                @if (esSbr)
+                {
+                    <i class="fa fa-shield" style="color: #2F5597; font-size: 26px; margin-right: 2px;"></i>
+                }
                 @Model.Titulo
             </h1>
             <p>
@@ -30,7 +36,7 @@
         <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
         @if (Model.ParentMenuId.HasValue && !string.IsNullOrEmpty(Model.ParentMenuTitulo))
         {
-            <li><a href="@Url.Action("Index", "Modulo", new { id = Model.ParentMenuId.Value })" class="breadcrumb-parent-pill" title="Volver al menÃÂº de @Model.ParentMenuTitulo"><i class="fa fa-folder-open-o" style="margin-right: 4px;"></i> @Model.ParentMenuTitulo</a></li>
+            <li><a href="@Url.Action("Index", "Modulo", new { id = Model.ParentMenuId.Value })" class="breadcrumb-parent-pill" title="Volver al menú de @Model.ParentMenuTitulo"><i class="fa fa-folder-open-o" style="margin-right: 4px;"></i> @Model.ParentMenuTitulo</a></li>
         }
         <li class="active">@Model.Titulo</li>
     </ol>
@@ -41,132 +47,299 @@
     @if (Model.MostrarFiltros)
     {
         <!-- BARRA DE FILTROS -->
-        <div class="hub-filter-card" style="position: relative; z-index: 1050; overflow: visible !important;">
-            <div class="hub-filter-row">
+        <div class="hub-filter-card @(esSbr ? "sbr-filter-card" : "")" style="position: relative; z-index: 1050; overflow: visible !important;">
+            <div class="@(esSbr ? "sbr-filter-toolbar" : "hub-filter-row")">
                 <!-- Entidad -->
-                <div class="hub-filter-item" style="flex: 1 1 300px; max-width: 420px; position: relative; z-index: 1;">
-                    <label for="hubEntidad">
-                        <i class="fa fa-university" style="color: #64748b;"></i> Entidad:
-                    </label>
-                    @Html.DropDownList("Entidades", Model.Entidades, new { id = "hubEntidad", @class = "form-control modern-select", style = "width: 100%; height: 38px; font-size: 13px;" })
-                </div>
-
-                <!-- Tipo de Comparación -->
-                <div class="hub-filter-item" style="min-width: 170px; position: relative; z-index: 1;">
-                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 4px;">
-                        <label for="hubTipoComparacion" style="margin: 0; cursor: pointer;">
-                            Tipo de comparaci&oacute;n:
+                @if (esSbr)
+                {
+                    <div class="sbr-entidad-group">
+                        <label for="hubEntidad" class="filter-param-label" style="margin: 0; font-size: 13px; font-weight: 700; color: #143750; display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; cursor: pointer;">
+                            <i class="fa fa-university" style="color: #2F5597; font-size: 14px;"></i> Entidad:
                         </label>
-                        <span class="hub-info-tooltip" tabindex="0" role="button" aria-label="Información sobre tipos de comparación">
-                            <i class="fa fa-info-circle"></i>
-                            <span class="hub-tooltip-content">
-                                <span style="display: flex; align-items: center; gap: 6px; font-weight: 700; color: #0284c7; margin-bottom: 8px; font-size: 13px; border-bottom: 1px solid #e0f2fe; padding-bottom: 5px;">
-                                    <i class="fa fa-info-circle"></i> Tipos de comparaci&oacute;n
-                                </span>
-                                <div style="color: #334155; font-size: 12px; line-height: 1.55;">
-                                    <div style="margin-bottom: 7px;">
-                                        <strong style="color: #0369a1;">Mensual:</strong> se compara el mes seleccionado con el mes anterior.
-                                    </div>
-                                    <div style="margin-bottom: 7px;">
-                                        <strong style="color: #0369a1;">Trimestral:</strong> permite comparar dos trimestres seleccionados correspondientes al mismo a&ntilde;o o a&ntilde;os anteriores.
-                                    </div>
-                                    <div>
-                                        <strong style="color: #0369a1;">Interanual:</strong> se compara el mes seleccionado con el mismo mes del a&ntilde;o anterior.
-                                    </div>
-                                </div>
-                            </span>
+                        @Html.DropDownList("Entidades", Model.Entidades, new { id = "hubEntidad", @class = "form-control sbr-entidad-select" })
+                    </div>
+
+                    <div class="sbr-toolbar-badge hidden-xs">
+                        <span class="sbr-badge-pill">
+                            <i class="fa fa-shield"></i> Reglamento SUGEF 24-22
+                        </span>
+                        <span class="sbr-badge-pill-sub">
+                            <i class="fa fa-check-circle-o"></i> Supervisión Basada en Riesgos
                         </span>
                     </div>
-                    <select id="hubTipoComparacion" class="form-control modern-select" style="height: 38px; font-size: 13px;">
-                        <option value="Mensual" @(Model.TipoComparacion == "Mensual" ? "selected" : "")>Mensual</option>
-                        <option value="Trimestral" @(Model.TipoComparacion == "Trimestral" ? "selected" : "")>Trimestral</option>
-                        <option value="Interanual" @(Model.TipoComparacion == "Interanual" ? "selected" : "")>Interanual</option>
-                    </select>
+                }
+                else
+                {
+                    <div class="hub-filter-item" style="flex: 1 1 300px; max-width: 420px; position: relative; z-index: 1;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; gap: 4px;">
+                            <label for="hubEntidad" style="margin: 0; cursor: pointer;">
+                                <i class="fa fa-university" style="color: #64748b;"></i> Entidad:
+                            </label>
+                        </div>
+                        @Html.DropDownList("Entidades", Model.Entidades, new { id = "hubEntidad", @class = "form-control modern-select", style = "width: 100%; height: 38px; font-size: 13px;" })
+                    </div>
+
+                    <!-- Período de referencia -->
+                    <div class="hub-filter-item" style="min-width: 160px; position: relative; z-index: 1;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; gap: 4px;">
+                            <label for="hubPeriodo" style="margin: 0; cursor: pointer;">
+                                Per&iacute;odo de referencia:
+                            </label>
+                            <span class="hub-info-tooltip align-right" tabindex="0" role="button" aria-label="Información sobre período de referencia">
+                                <i class="fa fa-info-circle"></i>
+                                <span class="hub-tooltip-content">
+                                    <span style="display: flex; align-items: center; gap: 6px; font-weight: 700; color: #2F5597; margin-bottom: 8px; font-size: 13px; border-bottom: 1px solid #e2e8f0; padding-bottom: 5px;">
+                                        <i class="fa fa-calendar"></i> Per&iacute;odo de referencia
+                                    </span>
+                                    <div style="color: #334155; font-size: 12px; line-height: 1.55;">
+                                        Fecha base (mes y a&ntilde;o de corte) a partir de la cual se procesar&aacute;n las consultas, variaciones y an&aacute;lisis del m&oacute;dulo.
+                                    </div>
+                                </span>
+                            </span>
+                        </div>
+                        <div class="modern-input-wrapper" style="width: 100%;">
+                            <input id="hubPeriodo" class="datecontrol form-control modern-date-input" value="@Model.PeriodoReferencia" style="width: 100%; height: 38px; font-size: 13px;" />
+                        </div>
+                    </div>
+
+                    <!-- Tipo de Comparación -->
+                    <div class="hub-filter-item" style="min-width: 170px; position: relative; z-index: 1;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; gap: 4px;">
+                            <label for="hubTipoComparacion" style="margin: 0; cursor: pointer;">
+                                Tipo de comparaci&oacute;n:
+                            </label>
+                            <span class="hub-info-tooltip" tabindex="0" role="button" aria-label="Información sobre tipos de comparación">
+                                <i class="fa fa-info-circle"></i>
+                                <span class="hub-tooltip-content">
+                                    <span style="display: flex; align-items: center; gap: 6px; font-weight: 700; color: #2F5597; margin-bottom: 8px; font-size: 13px; border-bottom: 1px solid #e2e8f0; padding-bottom: 5px;">
+                                        <i class="fa fa-info-circle"></i> Tipos de comparaci&oacute;n
+                                    </span>
+                                    <div style="color: #334155; font-size: 12px; line-height: 1.55;">
+                                        <div style="margin-bottom: 7px;">
+                                            <strong style="color: #2F5597;">Trimestral:</strong> permite comparar dos trimestres seleccionados correspondientes al mismo a&ntilde;o o a&ntilde;os anteriores.
+                                        </div>
+                                        <div style="margin-bottom: 7px;">
+                                            <strong style="color: #2F5597;">Mensual:</strong> se compara el mes seleccionado con el mes anterior.
+                                        </div>
+                                        <div>
+                                            <strong style="color: #2F5597;">Interanual:</strong> se compara el mes seleccionado con el mismo mes del a&ntilde;o anterior.
+                                        </div>
+                                    </div>
+                                </span>
+                            </span>
+                        </div>
+                        <select id="hubTipoComparacion" class="form-control modern-select" style="height: 38px; font-size: 13px;">
+                            <option value="Trimestral" @(Model.TipoComparacion == "Trimestral" ? "selected" : "")>Trimestral</option>
+                            <option value="Mensual" @(Model.TipoComparacion == "Mensual" ? "selected" : "")>Mensual</option>
+                            <option value="Interanual" @(Model.TipoComparacion == "Interanual" ? "selected" : "")>Interanual</option>
+                        </select>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    @if (esSbr && Model.Tarjetas != null && Model.Tarjetas.Count == 1)
+    {
+        var tarjetaSBR = Model.Tarjetas[0];
+        var entidadNombre = Model.Entidades != null ? (Model.Entidades.FirstOrDefault(x => x.Selected)?.Text ?? Model.Entidades.FirstOrDefault()?.Text ?? "Entidad") : "Entidad";
+
+        <!-- HUB EJECUTIVO PRINCIPAL: EVALUACIÓN SBR (UNIFICADO) -->
+        <div class="sbr-hero-hub-card">
+            <div class="sbr-hero-grid">
+                <!-- Columna Izquierda: Información, Pilares y CTA de Acción Principal -->
+                <div class="sbr-hero-main">
+                    <div>
+                        <div class="sbr-hero-badge-tag">
+                            <i class="fa fa-shield"></i> SUPERVISIÓN BASADA EN RIESGOS (SBR) &bull; SUGEF 24-22
+                        </div>
+
+                        <h2 class="sbr-hero-heading">
+                            Autoevaluación de Aspectos Normativos
+                        </h2>
+
+                        <p class="sbr-hero-lead">
+                            Bienvenido al módulo oficial de autodiagnóstico de <strong>FFC</strong> acorde con las directrices del <strong>Reglamento SUGEF 24-22</strong>. Esta herramienta permite examinar de manera progresiva y confidencial el estado de los componentes evaluados por el Supervisor, anticipar brechas operativas y optimizar el marco de mitigación de riesgos institucionales.
+                        </p>
+
+                        <!-- Pilares Normativos Clave -->
+                        <div class="sbr-pillars-grid">
+                            <div class="sbr-pillar-item">
+                                <div class="sbr-pillar-icon icon-blue">
+                                    <i class="fa fa-balance-scale"></i>
+                                </div>
+                                <div class="sbr-pillar-body">
+                                    <div class="sbr-pillar-title">Marco Regulatorio</div>
+                                    <div class="sbr-pillar-desc">Criterios cualitativos y cuantitativos conforme a los estándares SUGEF.</div>
+                                </div>
+                            </div>
+
+                            <div class="sbr-pillar-item">
+                                <div class="sbr-pillar-icon icon-teal">
+                                    <i class="fa fa-tasks"></i>
+                                </div>
+                                <div class="sbr-pillar-body">
+                                    <div class="sbr-pillar-title">Autodiagnóstico Guiado</div>
+                                    <div class="sbr-pillar-desc">Evaluación progresiva por etapas con guardado automático continuo.</div>
+                                </div>
+                            </div>
+
+                            <div class="sbr-pillar-item">
+                                <div class="sbr-pillar-icon icon-amber">
+                                    <i class="fa fa-line-chart"></i>
+                                </div>
+                                <div class="sbr-pillar-body">
+                                    <div class="sbr-pillar-title">Planes de Mitigación</div>
+                                    <div class="sbr-pillar-desc">Enfoque proactivo para fortalecer el control interno y gobierno institucional.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Call To Action Principal -->
+                    <div class="sbr-hero-cta-wrapper">
+                        <a href="@tarjetaSBR.Url" class="sbr-primary-cta-btn hub-card" id="btnSbrHeroCta">
+                            <div class="sbr-cta-icon">
+                                <i class="fa fa-pencil-square-o"></i>
+                            </div>
+                            <div class="sbr-cta-info">
+                                <span class="sbr-cta-action">Comenzar / Continuar Autoevaluación</span>
+                                <span class="sbr-cta-sub">
+                                    Diligenciamiento para: <strong id="lblSbrEntidadNombre">@entidadNombre</strong>
+                                </span>
+                            </div>
+                            <div class="sbr-cta-arrow">
+                                <i class="fa fa-arrow-right"></i>
+                            </div>
+                        </a>
+                    </div>
                 </div>
 
-                <!-- Período de referencia -->
-                <div class="hub-filter-item" style="min-width: 160px; position: relative; z-index: 1;">
-                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 4px;">
-                        <label for="hubPeriodo" style="margin: 0; cursor: pointer;">
-                            Per&iacute;odo de referencia:
-                        </label>
-                        <span class="hub-info-tooltip align-right" tabindex="0" role="button" aria-label="Información sobre período de referencia">
-                            <i class="fa fa-info-circle"></i>
-                            <span class="hub-tooltip-content">
-                                <span style="display: flex; align-items: center; gap: 6px; font-weight: 700; color: #0284c7; margin-bottom: 8px; font-size: 13px; border-bottom: 1px solid #e0f2fe; padding-bottom: 5px;">
-                                    <i class="fa fa-calendar"></i> Per&iacute;odo de referencia
-                                </span>
-                                <div style="color: #334155; font-size: 12px; line-height: 1.55;">
-                                    Fecha base (mes y a&ntilde;o de corte) a partir de la cual se procesar&aacute;n las consultas, variaciones y an&aacute;lisis del m&oacute;dulo.
-                                </div>
-                            </span>
-                        </span>
+                <!-- Columna Derecha: Ilustración Vectorial y Garantías Técnicas -->
+                <div class="sbr-hero-side">
+                    <div class="sbr-illustration-box">
+                        <svg class="sbr-illus-svg" viewBox="0 0 280 220" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Ilustración Evaluación SBR">
+                            <!-- Aura de fondo suave -->
+                            <circle cx="160" cy="115" r="85" fill="#e0f2fe" fill-opacity="0.75" />
+                            <path d="M75 140 C65 110, 80 85, 110 75 C100 95, 105 120, 115 130 Z" fill="#bae6fd" fill-opacity="0.6" />
+                            <path d="M240 90 C250 120, 235 145, 205 155 C215 135, 210 110, 200 100 Z" fill="#bae6fd" fill-opacity="0.6" />
+                            <circle cx="230" cy="65" r="5" fill="#38bdf8" fill-opacity="0.5" />
+                            <circle cx="90" cy="165" r="4" fill="#38bdf8" fill-opacity="0.5" />
+
+                            <!-- Hoja de evaluación / Formulario -->
+                            <rect x="72" y="24" width="136" height="172" rx="10" fill="#ffffff" stroke="#1e293b" stroke-width="2.5" />
+
+                            <!-- Título SBR -->
+                            <text x="140" y="58" font-family="'Segoe UI', -apple-system, Roboto, sans-serif" font-size="20" font-weight="900" fill="#0f172a" text-anchor="middle" letter-spacing="1.5">SBR</text>
+                            <line x1="86" y1="68" x2="194" y2="68" stroke="#e2e8f0" stroke-width="2" />
+
+                            <!-- Item 1: Checkbox y líneas -->
+                            <rect x="86" y="80" width="18" height="18" rx="3" fill="#0284c7" />
+                            <path d="M90 89 L94 93 L100 85" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+                            <line x1="112" y1="86" x2="190" y2="86" stroke="#94a3b8" stroke-width="3" stroke-linecap="round" />
+                            <line x1="112" y1="94" x2="168" y2="94" stroke="#cbd5e1" stroke-width="3" stroke-linecap="round" />
+
+                            <!-- Item 2: Checkbox y líneas -->
+                            <rect x="86" y="112" width="18" height="18" rx="3" fill="#0284c7" />
+                            <path d="M90 121 L94 125 L100 117" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+                            <line x1="112" y1="118" x2="190" y2="118" stroke="#94a3b8" stroke-width="3" stroke-linecap="round" />
+                            <line x1="112" y1="126" x2="158" y2="126" stroke="#cbd5e1" stroke-width="3" stroke-linecap="round" />
+
+                            <!-- Item 3: Checkbox y líneas -->
+                            <rect x="86" y="144" width="18" height="18" rx="3" fill="#0284c7" />
+                            <path d="M90 153 L94 157 L100 149" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+                            <line x1="112" y1="150" x2="176" y2="150" stroke="#94a3b8" stroke-width="3" stroke-linecap="round" />
+                            <line x1="112" y1="158" x2="148" y2="158" stroke="#cbd5e1" stroke-width="3" stroke-linecap="round" />
+
+                            <!-- Lupa de supervisión -->
+                            <g transform="translate(196, 142)">
+                                <circle cx="0" cy="0" r="23" fill="#ffffff" fill-opacity="0.8" stroke="#0f172a" stroke-width="3.2" />
+                                <path d="M-8 -12 A 15 15 0 0 1 11 -4" stroke="#bae6fd" stroke-width="2" stroke-linecap="round" fill="none" />
+                                <line x1="16" y1="16" x2="34" y2="34" stroke="#0f172a" stroke-width="6.5" stroke-linecap="round" />
+                            </g>
+                        </svg>
                     </div>
-                    <div class="modern-input-wrapper" style="width: 100%;">
-                        <input id="hubPeriodo" class="datecontrol form-control modern-date-input" value="@Model.PeriodoReferencia" style="width: 100%; height: 38px; font-size: 13px;" />
+
+                    <div class="sbr-assurances-card">
+                        <div class="sbr-assurance-item">
+                            <i class="fa fa-lock" style="color: #2F5597;"></i>
+                            <div>
+                                <strong>Confidencialidad Técnica</strong>
+                                <span>Herramienta institucional orientada al acompañamiento y mejora continua.</span>
+                            </div>
+                        </div>
+                        <div class="sbr-assurance-item">
+                            <i class="fa fa-database" style="color: #0284c7;"></i>
+                            <div>
+                                <strong>Guardado en Tiempo Real</strong>
+                                <span>Avance almacenado de manera segura en cada respuesta.</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     }
+    else
+    {
+        <!-- SECCIÓN DE CONSULTAS DISPONIBLES EN CONTENEDOR BOX (MULTITARJETAS O ESTÁNDAR) -->
+        <div class="hub-section-card" style="position: relative; z-index: 1;">
+            <div class="hub-section-title">
+                <div class="hub-section-bar"></div>
+                <span class="hub-section-text">@(esSbr ? "Seleccione la opción que desea consultar" : "Seleccione la consulta que desea visualizar")</span>
+            </div>
 
-    <!-- SECCIÓN DE CONSULTAS DISPONIBLES EN CONTENEDOR BOX -->
-    <div class="hub-section-card" style="position: relative; z-index: 1;">
-        <div class="hub-section-title">
-            <div class="hub-section-bar"></div>
-            <span class="hub-section-text">Seleccione la consulta que desea visualizar</span>
-        </div>
-
-        <!-- GRID DE TARJETAS -->
-        <div class="hub-cards-grid">
-            @if (Model.Tarjetas != null && Model.Tarjetas.Count > 0)
-            {
-                foreach (var tarjeta in Model.Tarjetas)
+            <!-- GRID DE TARJETAS -->
+            <div class="hub-cards-grid @(esSbr ? "sbr-cards-grid" : "")">
+                @if (Model.Tarjetas != null && Model.Tarjetas.Count > 0)
                 {
-                    <a href="@tarjeta.Url" class="hub-card" style="--card-color: @tarjeta.ColorIcono; --card-bg: @tarjeta.ColorFondoIcono;" draggable="false">
-                        <div class="hub-card-accent"></div>
-                        <i class="@tarjeta.Icono hub-card-watermark"></i>
+                    foreach (var tarjeta in Model.Tarjetas)
+                    {
+                        <a href="@tarjeta.Url" class="hub-card" style="--card-color: @tarjeta.ColorIcono; --card-bg: @tarjeta.ColorFondoIcono;" draggable="false">
+                            <div class="hub-card-accent"></div>
+                            <i class="@tarjeta.Icono hub-card-watermark"></i>
 
-                        <div class="hub-card-top">
-                            <div class="hub-card-icon-badge">
-                                <i class="@tarjeta.Icono"></i>
+                            <div class="hub-card-top">
+                                <div class="hub-card-icon-badge">
+                                    <i class="@tarjeta.Icono"></i>
+                                </div>
+                                <div class="hub-card-title-area">
+                                    <div class="hub-card-title">@tarjeta.Titulo</div>
+                                    @if (tarjeta.EsSubModulo)
+                                    {
+                                        <span class="hub-card-subbadge">
+                                            <i class="fa fa-folder-open-o"></i> Subm&oacute;dulo@(tarjeta.CantidadOpciones > 0 ? " (" + tarjeta.CantidadOpciones + ")" : "")
+                                        </span>
+                                    }
+                                </div>
+                                <div class="hub-card-action-btn">
+                                    <i class="fa fa-chevron-right"></i>
+                                </div>
                             </div>
-                            <div class="hub-card-title-area">
-                                <div class="hub-card-title">@tarjeta.Titulo</div>
-                                @if (tarjeta.EsSubModulo)
-                                {
-                                    <span class="hub-card-subbadge">
-                                        <i class="fa fa-folder-open-o"></i> Subm&oacute;dulo@(tarjeta.CantidadOpciones > 0 ? " (" + tarjeta.CantidadOpciones + ")" : "")
-                                    </span>
-                                }
-                            </div>
-                            <div class="hub-card-action-btn">
-                                <i class="fa fa-chevron-right"></i>
-                            </div>
-                        </div>
 
-                        <div class="hub-card-body">
-                            <p class="hub-card-desc">@tarjeta.Descripcion</p>
-                        </div>
-                    </a>
+                            <div class="hub-card-body">
+                                <p class="hub-card-desc">@tarjeta.Descripcion</p>
+                            </div>
+                        </a>
+                    }
                 }
-            }
-            else
-            {
-                <div style="grid-column: 1 / -1; padding: 40px; text-align: center; background: #ffffff; border-radius: 16px; border: 1px dashed #cbd5e1; color: #64748b;">
-                    <i class="fa fa-folder-open-o" style="font-size: 38px; margin-bottom: 12px; color: #94a3b8;"></i>
-                    <p style="margin: 0; font-size: 14.5px; font-weight: 500;">No hay opciones disponibles en este m&oacute;dulo para su rol actual.</p>
-                </div>
-            }
+                else
+                {
+                    <div style="grid-column: 1 / -1; padding: 40px; text-align: center; background: #ffffff; border-radius: 16px; border: 1px dashed #cbd5e1; color: #64748b;">
+                        <i class="fa fa-folder-open-o" style="font-size: 38px; margin-bottom: 12px; color: #94a3b8;"></i>
+                        <p style="margin: 0; font-size: 14.5px; font-weight: 500;">No hay opciones disponibles en este m&oacute;dulo para su rol actual.</p>
+                    </div>
+                }
+            </div>
         </div>
-    </div>
+    }
 
     <!-- NOTA AL PIE -->
-    @if (!string.IsNullOrEmpty(Model.NotaPie))
+    @if (!string.IsNullOrEmpty(Model.NotaPie) || esSbr)
     {
         <div class="hub-footer-note">
             <i class="fa fa-info-circle"></i>
-            <span>@Model.NotaPie</span>
+            <span>@(esSbr ? "Nota: Los criterios y resultados de la autoevaluación se procesan conforme a las directrices del Reglamento SUGEF 24-22 para la Supervisión Basada en Riesgos." : Model.NotaPie)</span>
         </div>
     }
 
@@ -205,6 +378,10 @@
 
             // Al cambiar la Entidad
             $('#hubEntidad').on('change', function () {
+                var nombreSeleccionado = $('#hubEntidad option:selected').text();
+                if (nombreSeleccionado && $('#lblSbrEntidadNombre').length) {
+                    $('#lblSbrEntidadNombre').text(nombreSeleccionado);
+                }
                 actualizarFiltrosHub(true);
             });
 
@@ -225,6 +402,28 @@
                     }
                 });
             }
+
+            // Propagar filtros seleccionados del papá (Entidad, Período, TipoComparación) a las tarjetas hijas
+            $('.hub-card').on('click', function (e) {
+                var href = $(this).attr('href');
+                if (href && href !== '#' && href.indexOf('javascript') !== 0) {
+                    var entidad = $('#hubEntidad').val();
+                    var periodo = $('#hubPeriodo').val();
+                    var tipoComp = $('#hubTipoComparacion').val();
+
+                    if (entidad && periodo && tipoComp) {
+                        if (href.indexOf('?') < 0) {
+                            var targetUrl = href + '?Entidades=' + encodeURIComponent(entidad) + '&Periodo=' + encodeURIComponent(periodo) + '&TipoComparacion=' + encodeURIComponent(tipoComp);
+                            $(this).attr('href', targetUrl);
+                        }
+                    } else if (entidad) {
+                        if (href.indexOf('?') < 0) {
+                            var targetUrl = href + '?Entidades=' + encodeURIComponent(entidad);
+                            $(this).attr('href', targetUrl);
+                        }
+                    }
+                }
+            });
         }
 
         // Manejador interactivo para tooltips informativos (soporte hover / click / tap)

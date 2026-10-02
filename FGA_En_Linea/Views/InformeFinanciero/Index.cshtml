@@ -1,66 +1,366 @@
+@model FGA.Model.BalanzaComprobacionViewModel
+
 @{
-    ViewBag.Title = "Balanza de Comprobaci&oacute;n";
+    ViewBag.Title = "Balanza de Comprobación (" + Model.Modalidad + ") - " + Model.NombreEntidad;
 }
 
-<section class="content-header" style="padding: 24px 20px 14px 20px;">
+<link rel="stylesheet" href="~/Content/informe_financiero.css?v=@DateTime.Now.Ticks" />
+<style>
+    .pill-item.active, button.pill-item.active, a.pill-item.active {
+        background: #ffffff !important;
+        background-color: #ffffff !important;
+        color: #2F5597 !important;
+        border: 1px solid #cbd5e1 !important;
+        font-weight: 700 !important;
+    }
+</style>
+
+<section class="content-header" style="padding: 20px 20px 14px 20px;">
     <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
         <div>
             <h1 style="margin: 0; font-size: 21px; font-weight: 700; color: #143750; display: flex; align-items: center; gap: 10px;">
-                <i class="fa fa-book" style="color: #0284c7;"></i>
+                <i class="fa fa-book" style="color: #2F5597;"></i>
                 Balanza de Comprobaci&oacute;n
+                <span class="badge" style="background-color: #2F5597; font-size: 11px; font-weight: 600; padding: 4px 8px; border-radius: 4px;">
+                    @Model.Modalidad
+                </span>
             </h1>
             <p style="margin: 6px 0 0 0; font-size: 13px; color: #64748b;">
-                Generaci&oacute;n y consulta de balanza de comprobaci&oacute;n financiera comparativa por entidad y per&iacute;odo.
+                Generaci&oacute;n, consulta y an&aacute;lisis de la balanza de comprobaci&oacute;n financiera comparativa a 5 per&iacute;odos.
             </p>
         </div>
     </div>
-    <ol class="breadcrumb">
+    <ol class="breadcrumb" style="top: 18px;">
         <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
-        <li><a href="@Url.Action("Index", "Modulo", new { modulo = "InformeFinanciero/Index" })" class="breadcrumb-parent-pill" title="Volver al menÃÂº de InformaciÃÂ³n Financiera"><i class="fa fa-file-text-o" style="margin-right: 4px;"></i> Informaci&oacute;n Financiera</a></li>
+        <li><a href="@Url.Action("Index", "Modulo", new { modulo = "InformeFinanciero/Index" })" class="breadcrumb-parent-pill"><i class="fa fa-file-text-o" style="margin-right: 4px;"></i> Informaci&oacute;n Financiera</a></li>
         <li class="active">Balanza de Comprobaci&oacute;n</li>
     </ol>
 </section>
 
-<section class="content">
-    @using (Html.BeginForm("LoadReportAsync", "InformeFinanciero", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmInforme" }))
-    {
-        @Html.AntiForgeryToken()
+<section class="content" style="padding: 0 20px 24px 20px;">
 
-        <div class="row">
-            <div class="col-xs-12">
-                <div class="modern-filter-card" style="margin-bottom: 22px;">
-                    <div class="modern-filter-toolbar">
-                        <div class="filter-item">
-                            <label for="IdEntidad"><i class="fa fa-university"></i> Entidad:</label>
-                            @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", @class = "form-control modern-select", style = "min-width: 220px; height: 38px; font-size: 13px;" })
+    <!-- ======================================================== -->
+    <!-- BARRA DE HERRAMIENTAS Y FILTROS INTEGRADA               -->
+    <!-- ======================================================== -->
+    @using (Html.BeginForm("Index", "InformeFinanciero", FormMethod.Get, new { id = "frmBalanzaFiltros" }))
+    {
+        <input type="hidden" name="Modalidad" id="inputModalidad" value="@Model.Modalidad" />
+        <input type="hidden" name="TipoComparacion" id="inputTipoComparacion" value="@Model.TipoComparacion" />
+
+        <div class="report-toolbar-card">
+            <div class="report-filter-form" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; width: 100%;">
+
+                <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
+                    <!-- Grupo 1: Entidad -->
+                    <div class="filter-param-item">
+                        <label class="filter-param-label"><i class="fa fa-university"></i> Entidad:</label>
+                        @Html.DropDownList("Entidades", null, new { @class = "form-control input-sm filter-param-select", onchange = "document.getElementById('frmBalanzaFiltros').submit();" })
+                    </div>
+
+                    <div class="toolbar-divider"></div>
+
+                    <!-- Grupo 2: Período -->
+                    <div class="filter-param-item">
+                        <label class="filter-param-label"><i class="fa fa-calendar"></i> Per&iacute;odo:</label>
+                        <div class="filter-param-date-group">
+                            <input type="text" name="Periodo" id="Periodo" class="form-control input-sm datecontrol filter-param-date"
+                                   value="@Model.PeriodoReferencia.ToString("MM/yyyy")"
+                                   onchange="document.getElementById('frmBalanzaFiltros').submit();" />
                         </div>
-                        <div class="filter-item">
-                            <label for="Mensual"><i class="fa fa-calendar-check-o"></i> Mensual:</label>
-                            @Html.DropDownList("Mensual", new List<SelectListItem> {
-                                new SelectListItem { Value = "0", Text = "NO" },
-                                new SelectListItem { Value = "1", Text = "Sí" }
-                            }, new { @id = "Mensual", @class = "form-control modern-select", style = "min-width: 100px; height: 38px; font-size: 13px;" })
-                        </div>
-                        <div class="filter-item">
-                            <label for="Periodo1"><i class="fa fa-calendar"></i> Primer Per&iacute;odo:</label>
-                            <div class="modern-input-wrapper">
-                                <input name="Periodo1" id="Periodo1" class="datecontrol form-control modern-date-input" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MM/yyyy")" style="min-width: 130px; height: 38px;" />
-                            </div>
-                        </div>
-                        <div class="filter-item">
-                            <label for="Periodo2"><i class="fa fa-calendar-o"></i> Segundo Per&iacute;odo:</label>
-                            <div class="modern-input-wrapper">
-                                <input name="Periodo2" id="Periodo2" class="datecontrol form-control modern-date-input" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MM/yyyy")" style="min-width: 130px; height: 38px;" />
-                            </div>
-                        </div>
-                        <div class="filter-item" style="margin-left: auto;">
-                            <button type="submit" id="btn_buscar" class="btn-modern-filter" style="height: 38px; padding: 0 24px;">
-                                <i class="fa fa-search"></i> Generar informe
+                    </div>
+
+                    <div class="toolbar-divider"></div>
+
+                    <!-- Grupo 3: Modalidad -->
+                    <div class="filter-param-item">
+                        <label class="filter-param-label"><i class="fa fa-pie-chart"></i> Modalidad:</label>
+                        <div class="pill-group">
+                            <button type="button" class="pill-item @(Model.Modalidad.Equals("Acumulado", StringComparison.OrdinalIgnoreCase) ? "active" : "")"
+                                    onclick="cambiarModalidad('Acumulado')">
+                                Acumulado
+                            </button>
+                            <button type="button" class="pill-item @(Model.Modalidad.Equals("Mensual", StringComparison.OrdinalIgnoreCase) ? "active" : "")"
+                                    onclick="cambiarModalidad('Mensual')">
+                                Mensual
                             </button>
                         </div>
                     </div>
+
+                    <div class="toolbar-divider"></div>
+
+                    <!-- Grupo 4: Comparativo -->
+                    <div class="filter-param-item">
+                        <label class="filter-param-label"><i class="fa fa-sliders"></i> Comparativo:</label>
+                        <div class="pill-group">
+                            <button type="button" class="pill-item @(Model.TipoComparacion.Equals("Trimestral", StringComparison.OrdinalIgnoreCase) ? "active" : "")"
+                                    onclick="cambiarComparativo('Trimestral')">
+                                Trimestral
+                            </button>
+                            <button type="button" class="pill-item @(Model.TipoComparacion.Equals("Mensual", StringComparison.OrdinalIgnoreCase) ? "active" : "")"
+                                    onclick="cambiarComparativo('Mensual')">
+                                Mensual
+                            </button>
+                            <button type="button" class="pill-item @(Model.TipoComparacion.Equals("Interanual", StringComparison.OrdinalIgnoreCase) ? "active" : "")"
+                                    onclick="cambiarComparativo('Interanual')">
+                                Interanual
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="toolbar-divider"></div>
+
+                    <!-- Grupo 5: Buscador Rápido Contable -->
+                    <div class="quick-search-box">
+                        <i class="fa fa-search"></i>
+                        <input type="text" id="txtBuscarCuenta" placeholder="Buscar cuenta o descripci&oacute;n..." onkeyup="filtrarTablaCuentas()" />
+                    </div>
                 </div>
+
+                <!-- Grupo 6: Estado de Cuadre y Reportes -->
+                <div style="display: flex; align-items: center; gap: 10px; margin-left: auto;">
+                    @if (Model.EstaCuadrada)
+                    {
+                        <div class="status-indicator-pill status-pill-cuadrado" title="@Model.MensajeCuadre">
+                            <i class="fa fa-check-circle" style="color: #10b981; font-size: 13px;"></i>
+                            <span>Balanza Cuadrada</span>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="status-indicator-pill status-pill-descuadrado" title="@Model.MensajeCuadre">
+                            <i class="fa fa-exclamation-triangle" style="color: #c2410c; font-size: 13px;"></i>
+                            <span>Descuadre Contable</span>
+                        </div>
+                    }
+
+                    <!-- Dropdown Generar Reporte -->
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-report-download dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fa fa-download"></i> Generar Reporte <span class="caret" style="margin-left: 4px;"></span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-right" style="border-radius: 6px; box-shadow: 0 4px 16px rgba(0,0,0,0.12); border: 1px solid #d1d5db; padding: 4px 0; min-width: 200px;">
+                            <li>
+                                <a href="@Url.Action("ExportarBalanzaExcel", "InformeFinanciero", new { Entidades = Model.EntidadId, Periodo = Model.PeriodoReferencia.ToString("MM/yyyy"), Modalidad = Model.Modalidad, TipoComparacion = Model.TipoComparacion })" style="padding: 8px 16px; font-size: 12.5px; font-weight: 500; color: #1e293b;">
+                                    <i class="fa fa-file-excel-o text-success" style="margin-right: 8px;"></i> Exportar a Excel (.xlsx)
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript:window.print();" style="padding: 8px 16px; font-size: 12.5px; font-weight: 500; color: #1e293b;">
+                                    <i class="fa fa-print text-primary" style="margin-right: 8px;"></i> Imprimir / Guardar PDF
+                                </a>
+                            </li>
+                            <li role="separator" class="divider" style="margin: 3px 0;"></li>
+                            <li>
+                                <a href="@Url.Action("ExportarBalanzaCsv", "InformeFinanciero", new { Entidades = Model.EntidadId, Periodo = Model.PeriodoReferencia.ToString("MM/yyyy"), Modalidad = Model.Modalidad, TipoComparacion = Model.TipoComparacion })" style="padding: 8px 16px; font-size: 12.5px; font-weight: 500; color: #1e293b;">
+                                    <i class="fa fa-file-text-o text-info" style="margin-right: 8px;"></i> Exportar a CSV
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
             </div>
         </div>
     }
+
+    <!-- ======================================================== -->
+    <!-- INFORME DE BALANZA DE COMPROBACIÓN                      -->
+    <!-- ======================================================== -->
+    <div class="report-paper-container">
+
+        <!-- Membrete Formal Institucional -->
+        <div class="report-header-banner">
+            <div style="min-width: 150px;">
+                @if (!string.IsNullOrEmpty(Model.LogoUrl) && Model.EntidadId != "-1")
+                {
+                    <img src="@Model.LogoUrl" alt="Logo Entidad" class="report-header-logo" onerror="this.style.display='none';" />
+                }
+            </div>
+
+            <div class="report-header-titles">
+                <h1>BALANZA DE COMPROBACI&Oacute;N (@Model.Modalidad.ToUpper())</h1>
+                <p class="entity-name">@Model.NombreEntidad.ToUpper()</p>
+                <p class="report-subtitle">@Model.ComparacionTitulo &bull; @Model.ComparacionSubtitulo</p>
+            </div>
+
+            <div class="report-header-meta">
+                <div><strong>Corte:</strong> @Model.PeriodoReferencia.ToString("MM/yyyy")</div>
+                <div><strong>Modalidad:</strong> @Model.Modalidad</div>
+                <div><strong>Moneda:</strong> CRC (Millones)</div>
+            </div>
+        </div>
+
+        <!-- Tabla Contable con Scroll Sticky -->
+        <div class="balance-table-scroll-wrapper" id="balanzaTableWrapper">
+            <table id="tbBalanzaNativo" class="table-rdl-balance">
+                <thead>
+                    <tr>
+                        <th class="th-concept" style="min-width: 90px; width: 95px; text-align: center; color: #143750 !important; background-color: #f1f5f9 !important; border-top: 1px solid #cbd5e1 !important; border-bottom: 2.5px solid #2F5597 !important; border-left: 1px solid #cbd5e1 !important;">Cuenta</th>
+                        <th class="th-concept" style="min-width: 280px; text-align: left; color: #143750 !important; background-color: #f1f5f9 !important; border-top: 1px solid #cbd5e1 !important; border-bottom: 2.5px solid #2F5597 !important; border-left: 1px solid #cbd5e1 !important;">Nombre de la Cuenta</th>
+                        @for (int i = 0; i < 5; i++)
+                        {
+                            <th class="th-period" style="min-width: 105px; text-align: right; color: #143750 !important; background-color: #f8fafc !important; border-top: 1px solid #cbd5e1 !important; border-bottom: 2.5px solid #2F5597 !important; border-left: 1px solid #cbd5e1 !important;">@Model.EncabezadosPeriodos[i]</th>
+                        }
+                        <th class="th-var" style="min-width: 115px; text-align: right; color: #143750 !important; background-color: #e2e8f0 !important; border-top: 1px solid #cbd5e1 !important; border-bottom: 2.5px solid #2F5597 !important; border-left: 1px solid #cbd5e1 !important;">Var. Absoluta</th>
+                        <th class="th-var" style="min-width: 105px; text-align: right; color: #143750 !important; background-color: #e2e8f0 !important; border-top: 1px solid #cbd5e1 !important; border-bottom: 2.5px solid #2F5597 !important; border-left: 1px solid #cbd5e1 !important; border-right: 1px solid #cbd5e1 !important;">Var. Relativa</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        string seccionClaseActual = "";
+                    }
+                    @foreach (var fila in Model.Filas)
+                    {
+                        if (fila.EsClase)
+                        {
+                            seccionClaseActual = fila.Cuenta;
+                        }
+
+                        string rowClass = "tr-balance-collapsible";
+                        if (fila.EsClase) { rowClass += " tr-rdl-clase"; }
+                        else if (fila.EsGrupo) { rowClass += " tr-rdl-grupo"; }
+                        else if (fila.EsSubgrupo) { rowClass += " tr-rdl-subgrupo"; }
+                        else { rowClass += " tr-rdl-detalle"; }
+
+                        string dataParentAttr = !fila.EsClase ? $" data-parent-section=\"sec-{seccionClaseActual}\"" : "";
+
+                        <tr class="@rowClass"
+                            data-cuenta="@fila.Cuenta"
+                            data-nivel="@fila.Nivel"
+                            data-padre="@fila.Padre"@Html.Raw(dataParentAttr)>
+
+                            <!-- Columna 1: Código de Cuenta -->
+                            <td class="text-center col-cuenta">
+                                @fila.Cuenta
+                            </td>
+
+                            <!-- Columna 2: Nombre de la Cuenta con Indentación y Colapso -->
+                            <td>
+                                @if (fila.EsClase || (fila.EsGrupo && fila.EsPadre))
+                                {
+                                    <button type="button" class="btn-section-collapse"
+                                            data-section="sec-@fila.Cuenta"
+                                            onclick="toggleSectionBalanza('sec-@fila.Cuenta', this)"
+                                            title="Colapsar/Expandir cuenta @fila.Cuenta">
+                                        <i class="fa fa-chevron-down"></i>
+                                    </button>
+                                }
+                                <span class="balanza-indent-@fila.Nivel">@fila.Nombre.Trim()</span>
+                            </td>
+
+                            <!-- Columnas 3 a 7: Montos a 5 períodos -->
+                            @for (int i = 0; i < 5; i++)
+                            {
+                                <td class="col-amount">
+                                    @(fila.Periodos[i] != 0 ? fila.Periodos[i].ToString("N2") : "-")
+                                </td>
+                            }
+
+                            <!-- Columna 8: Variación Absoluta -->
+                            <td class="col-amount">
+                                @if (fila.VariacionAbsoluta > 0)
+                                {
+                                    <span class="badge-var-pos">+@fila.VariacionAbsoluta.ToString("N2")</span>
+                                }
+                                else if (fila.VariacionAbsoluta < 0)
+                                {
+                                    <span class="badge-var-neg">@fila.VariacionAbsoluta.ToString("N2")</span>
+                                }
+                                else
+                                {
+                                    <span class="badge-var-zero">-</span>
+                                }
+                            </td>
+
+                            <!-- Columna 9: Variación Relativa -->
+                            <td class="col-amount">
+                                @if (fila.VariacionRelativa > 0)
+                                {
+                                    <span class="badge-var-pos">+@(fila.VariacionRelativa.ToString("0.00"))%</span>
+                                }
+                                else if (fila.VariacionRelativa < 0)
+                                {
+                                    <span class="badge-var-neg">@(fila.VariacionRelativa.ToString("0.00"))%</span>
+                                }
+                                else
+                                {
+                                    <span class="badge-var-zero">-</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pie de página formal estilo RDL -->
+        <div style="margin-top: 14px; padding-top: 10px; border-top: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between; font-size: 11px; color: #64748b;">
+            <div>
+                <i class="fa fa-file-text-o"></i> Balanza de Comprobaci&oacute;n emitida con base en las cuentas oficiales de la Superintendencia General de Entidades Financieras (SUGEF).
+            </div>
+            <div>
+                Generado el @DateTime.Now.ToString("dd/MM/yyyy HH:mm")
+            </div>
+        </div>
+
+    </div>
+
 </section>
+
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+        // Asegurar que solo MonthPicker (Mes/Año) controle este campo y destruir datepicker si se hubiera adjuntado
+        if (window.jQuery && jQuery.fn.datepicker) {
+            try { jQuery('#Periodo').datepicker('destroy'); } catch (e) { }
+        }
+        if (window.jQuery && jQuery.fn.MonthPicker) {
+            jQuery('#Periodo').MonthPicker({
+                Button: '<img src="https://www.ffc.co.cr/FFC/Content/images/calendar.png" />',
+                OnAfterChooseMonth: function () {
+                    document.getElementById('frmBalanzaFiltros').submit();
+                }
+            });
+        }
+    });
+
+    // Cambiar Modalidad (Mensual vs Acumulado)
+    function cambiarModalidad(mod) {
+        document.getElementById('inputModalidad').value = mod;
+        document.getElementById('frmBalanzaFiltros').submit();
+    }
+
+    // Cambiar Tipo de Comparación
+    function cambiarComparativo(tipo) {
+        document.getElementById('inputTipoComparacion').value = tipo;
+        document.getElementById('frmBalanzaFiltros').submit();
+    }
+
+    // Colapsar / Expandir Cuentas Padre
+    function toggleSectionBalanza(sectionSlug, btn) {
+        var $rows = $('[data-parent-section="' + sectionSlug + '"]');
+        var isCollapsed = $(btn).hasClass('collapsed');
+        if (isCollapsed) {
+            $rows.removeClass('tr-section-hidden');
+            $(btn).removeClass('collapsed');
+        } else {
+            $rows.addClass('tr-section-hidden');
+            $(btn).addClass('collapsed');
+        }
+    }
+
+    // Buscador Rápido Contable en Vivo
+    function filtrarTablaCuentas() {
+        var filtro = document.getElementById('txtBuscarCuenta').value.toLowerCase().trim();
+        var filasBalanza = document.querySelectorAll('#tbBalanzaNativo tbody tr');
+
+        for (var i = 0; i < filasBalanza.length; i++) {
+            var cuenta = (filasBalanza[i].getAttribute('data-cuenta') || '').toLowerCase();
+            var texto = filasBalanza[i].textContent.toLowerCase();
+            if (filtro === '' || cuenta.indexOf(filtro) > -1 || texto.indexOf(filtro) > -1) {
+                filasBalanza[i].style.display = '';
+            } else {
+                filasBalanza[i].style.display = 'none';
+            }
+        }
+    }
+</script>

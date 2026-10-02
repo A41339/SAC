@@ -1,278 +1,1049 @@
-@model FGA.Model.Graficos_Financieros
+@model FGA.Model.EstadoResultadosViewModel
 
 @{
-    ViewBag.Title = "Estado Resultados";
+    ViewBag.Title = "Estado de Resultados - " + (Model.NombreEntidad ?? "Entidad");
 }
 
-<section class="content-header" style="padding: 24px 20px 14px 20px;">
-    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
-        <div>
-            <h1 style="margin: 0; font-size: 21px; font-weight: 700; color: #143750; display: flex; align-items: center; gap: 10px;">
-                <i class="fa fa-line-chart" style="color: #0284c7;"></i>
-                Estado de Resultados
-            </h1>
-            <p style="margin: 6px 0 0 0; font-size: 13px; color: #64748b;">
-                Consulta comparativa del estado de resultados financiero, operativo y administrativo.
-            </p>
-        </div>
-    </div>
-    <ol class="breadcrumb">
+<link rel="stylesheet" href="~/Content/informe_financiero.css?v=@DateTime.Now.Ticks" />
+<style>
+    .pill-item.active, button.pill-item.active, a.pill-item.active {
+        background: #ffffff !important;
+        background-color: #ffffff !important;
+        color: #2F5597 !important;
+        border: 1px solid #cbd5e1 !important;
+        font-weight: 700 !important;
+    }
+</style>
+
+<!-- ============================================================ -->
+<!-- ENCABEZADO Y MIGAS DE PAN                                    -->
+<!-- ============================================================ -->
+<section class="content-header" style="padding: 18px 20px 10px 20px;">
+    <ol class="breadcrumb" style="position: static !important; float: none !important; margin: 0 0 10px 0 !important; padding: 0 !important; background: transparent !important; display: flex !important; align-items: center; gap: 4px;">
         <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
-        <li><a href="@Url.Action("Index", "Modulo", new { modulo = "InformeFinanciero/ER" })" class="breadcrumb-parent-pill"><i class="fa fa-file-text-o" style="margin-right: 4px;"></i> InformaciÃ³n Financiera</a></li>
+        <li><a href="@Url.Action("Index", "Modulo", new { modulo = "InformeFinanciero/ER" })">Informaci&oacute;n Financiera</a></li>
         <li class="active">Estado de Resultados</li>
     </ol>
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+        <div>
+            <h1 style="margin: 0; font-size: 20px; font-weight: 700; color: #143750; display: flex; align-items: center; gap: 10px;">
+                <i class="fa fa-line-chart" style="color: #2F5597;"></i>
+                Estado de Resultados
+            </h1>
+            <p style="margin: 4px 0 0 0; font-size: 12.5px; color: #64748b;">
+                Reporte corporativo comparativo a 5 períodos &bull; @Model.ComparacionTitulo
+            </p>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <a href="@Url.Action("ExportarERExcel", "InformeFinanciero", new { Entidades = Model.EntidadId, Periodo = Model.PeriodoReferencia.ToString("MM/yyyy"), Modalidad = Model.Modalidad, TipoComparacion = Model.TipoComparacion })"
+               class="btn-ffc-excel"
+               style="background-color: #f1f5f9 !important; color: #1e293b !important; border: 1px solid #cbd5e1 !important; font-weight: 600; font-size: 12.5px; padding: 6px 14px; border-radius: 6px; display: inline-flex; align-items: center; gap: 7px; text-decoration: none !important; box-shadow: 0 1px 2px rgba(0,0,0,0.05);"
+               title="Descargar en formato Excel">
+                <i class="fa fa-file-excel-o" style="color: #16a34a !important; font-size: 13.5px;"></i> <span style="color: #1e293b !important;">Exportar a Excel</span>
+            </a>
+            <button onclick="window.print();" class="btn btn-default" style="font-size: 12px; font-weight: 600; padding: 7px 14px; border-radius: 6px;" title="Imprimir informe">
+                <i class="fa fa-print"></i> Imprimir
+            </button>
+        </div>
+    </div>
 </section>
 
-<section class="content">
+<!-- ============================================================ -->
+<!-- CONTENIDO PRINCIPAL                                          -->
+<!-- ============================================================ -->
+<section class="content" style="padding: 0 20px 20px 20px;">
 
-    @using (Html.BeginForm("LoadER", "InformeFinanciero", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmInforme" }))
-    {
-        <div class="modern-filter-card" style="margin-bottom: 22px;">
-            <div class="modern-filter-toolbar">
-                <div class="filter-item">
-                    <label for="IdEntidad"><i class="fa fa-university"></i> Entidad:</label>
-                    @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", @class = "form-control modern-select", style = "min-width: 220px; height: 38px; font-size: 13px;" })
-                </div>
-                <div class="filter-item">
-                    <label for="Periodo1"><i class="fa fa-calendar"></i> Primer Per&iacute;odo:</label>
-                    <div class="modern-input-wrapper" style="min-width: 130px;">
-                        <input name="Periodo1" id="Periodo1" class="datecontrol form-control modern-date-input" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MM/yyyy")" style="width: 100%; height: 38px;" />
-                    </div>
-                </div>
-                <div class="filter-item">
-                    <label for="Mensual"><i class="fa fa-sliders"></i> Mensual:</label>
-                    @Html.DropDownList("Mensual", new List<SelectListItem> {
-                        new SelectListItem { Value = "0", Text = "NO" },
-                        new SelectListItem { Value = "1", Text = "Sí" }
-                    }, new { @id = "Mensual", @class = "form-control modern-select", style = "min-width: 90px; height: 38px; font-size: 13px;" })
-                </div>
-                <div class="filter-item">
-                    <label for="Periodo2"><i class="fa fa-calendar"></i> Segundo Per&iacute;odo:</label>
-                    <div class="modern-input-wrapper" style="min-width: 130px;">
-                        <input name="Periodo2" id="Periodo2" class="datecontrol form-control modern-date-input" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MM/yyyy")" style="width: 100%; height: 38px;" />
-                    </div>
-                </div>
-                <div class="filter-item">
-                    <label for="Periodo3"><i class="fa fa-calendar-o"></i> Tercer Per&iacute;odo:</label>
-                    <div class="modern-input-wrapper" style="min-width: 130px;">
-                        <input name="Periodo3" id="Periodo3" class="datecontrol form-control modern-date-input" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo3"].ToString()).ToString("MM/yyyy")" style="width: 100%; height: 38px;" />
-                    </div>
-                </div>
-                <div class="filter-item" style="margin-left: auto;">
-                    <button type="submit" class="btn-modern-filter" style="height: 38px; padding: 0 24px;">
-                        <i class="fa fa-search"></i> Generar informe
-                    </button>
+    <!-- Barra de Filtros y Configuración de Parámetros -->
+    <div class="report-toolbar-card">
+        <form method="get" action="@Url.Action("ER", "InformeFinanciero")" id="formFiltroER" class="report-filter-form">
+            
+            <!-- Entidad -->
+            <div class="filter-param-item">
+                <label class="filter-param-label"><i class="fa fa-university"></i> Entidad:</label>
+                @Html.DropDownList("Entidades", (SelectList)ViewBag.Entidades, new { @class = "form-control input-sm filter-param-select", onchange = "document.getElementById('formFiltroER').submit();" })
+            </div>
+
+            <div class="toolbar-divider"></div>
+
+            <!-- Período -->
+            <div class="filter-param-item">
+                <label class="filter-param-label"><i class="fa fa-calendar"></i> Per&iacute;odo:</label>
+                <div class="filter-param-date-group">
+                    <input type="text" name="Periodo" value="@Model.PeriodoReferencia.ToString("MM/yyyy")" class="form-control input-sm datecontrol filter-param-date" onchange="document.getElementById('formFiltroER').submit();" />
                 </div>
             </div>
-        </div>
-    }
 
-    @if (Session["TipoReporte"] != null)
-    {
-        <div class="modern-table-card" style="border: 1px solid #e2e8f0; border-radius: 12px; background: #ffffff; box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05); overflow: hidden; padding: 22px; margin-bottom: 24px;">
-            <div class="nav-tabs-custom" style="box-shadow: none; margin-bottom: 0;">
-                <ul class="nav nav-tabs" style="border-bottom: 2px solid #e2e8f0; margin-bottom: 20px;">
-                    <li class="active">
-                        <a href="#tab_1" data-toggle="tab" style="font-weight: 700; font-size: 13px; color: #143750; border-radius: 8px 8px 0 0; padding: 10px 18px;">
-                            <i class="fa fa-file-text-o" style="color: #0284c7; margin-right: 6px;"></i> Estado de Resultados
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#tab_2" data-toggle="tab" style="font-weight: 700; font-size: 13px; color: #143750; border-radius: 8px 8px 0 0; padding: 10px 18px;">
-                            <i class="fa fa-line-chart" style="color: #059669; margin-right: 6px;"></i> An&aacute;lisis
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#tab_3" data-toggle="tab" style="font-weight: 700; font-size: 13px; color: #143750; border-radius: 8px 8px 0 0; padding: 10px 18px;">
-                            <i class="fa fa-pie-chart" style="color: #d97706; margin-right: 6px;"></i> Composici&oacute;n
-                        </a>
-                    </li>
-                </ul>
-                <div class="tab-content" style="padding: 0;">
-                    <div class="tab-pane active" id="tab_1">
-                        <div class="table-responsive" style="border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0;">
-                            <iframe src="~/Reportes/ReportView.aspx" width="100%" height="900" style="border:none; display: block; min-height: 800px;"></iframe>
-                        </div>
-                    </div>
-                    <div class="tab-pane" id="tab_2">
-                        <div class="table-responsive" style="border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0;">
-                            <iframe src="~/Reportes/ReportView2.aspx" width="100%" height="900" style="border:none; display: block; min-height: 800px;"></iframe>
-                        </div>
-                    </div>
-                    <div class="tab-pane" id="tab_3">
-                        <div class="row">
-                            <div class="col-md-6" style="margin-bottom: 20px;">
-                                <div class="modern-table-card" style="border: 1px solid #e2e8f0; border-radius: 10px; padding: 18px; background: #ffffff;">
-                                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9;">
-                                        @if (Session["Logo"] != null)
-                                        {
-                                            <img width="36" height="36" src="@Session["Logo"]" style="border-radius: 6px; border: 1px solid #e2e8f0; object-fit: contain;" />
-                                        }
-                                        <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: #143750;">
-                                            Ingresos
-                                        </h4>
-                                    </div>
-                                    <span id="found" class="label label-info"></span>
-                                    <div class="table-responsive">
-                                        <table id="tbIngreso" class="table modern-data-table" style="width:100%; min-height: 300px;">
-                                            <thead>
-                                                <tr>
-                                                    <th class="hidden"></th>
-                                                    <th></th>
-                                                    <th>Financiero</th>
-                                                    <th>Operativo</th>
-                                                    <th>Recuperaci&oacute;n</th>
-                                                    <th>Ingreso Promedio</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody></tbody>
-                                        </table>
-                                    </div>
-                                    <div id="summary"><div></div></div>
-                                </div>
-                            </div>
-                            <div class="col-md-6" style="margin-bottom: 20px;">
-                                <div class="modern-table-card" style="border: 1px solid #e2e8f0; border-radius: 10px; padding: 18px; background: #ffffff;">
-                                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9;">
-                                        @if (Session["Logo"] != null)
-                                        {
-                                            <img width="36" height="36" src="@Session["Logo"]" style="border-radius: 6px; border: 1px solid #e2e8f0; object-fit: contain;" />
-                                        }
-                                        <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: #143750;">
-                                            Ingreso
-                                        </h4>
-                                    </div>
-                                    <div>
-                                        @(Model.composicionIngreso)
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+            <div class="toolbar-divider"></div>
 
-                        <div class="row">
-                            <div class="col-md-7" style="margin-bottom: 20px;">
-                                <div class="modern-table-card" style="border: 1px solid #e2e8f0; border-radius: 10px; padding: 18px; background: #ffffff;">
-                                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9;">
-                                        @if (Session["Logo"] != null)
-                                        {
-                                            <img width="36" height="36" src="@Session["Logo"]" style="border-radius: 6px; border: 1px solid #e2e8f0; object-fit: contain;" />
-                                        }
-                                        <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: #143750;">
-                                            Gastos
-                                        </h4>
-                                    </div>
-                                    <span id="found" class="label label-info"></span>
-                                    <div class="table-responsive">
-                                        <table id="tbGasto" class="table modern-data-table" style="width:100%; min-height: 300px;">
-                                            <thead>
-                                                <tr>
-                                                    <th class="hidden"></th>
-                                                    <th></th>
-                                                    <th>Financiero</th>
-                                                    <th>Estimaci&oacute;n</th>
-                                                    <th>Operativo</th>
-                                                    <th>Administraci&oacute;n</th>
-                                                    <th>Impuesto</th>
-                                                    <th>Gasto Promedio</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody></tbody>
-                                        </table>
-                                    </div>
-                                    <div id="summary"><div></div></div>
-                                </div>
-                            </div>
-                            <div class="col-md-5" style="margin-bottom: 20px;">
-                                <div class="modern-table-card" style="border: 1px solid #e2e8f0; border-radius: 10px; padding: 18px; background: #ffffff;">
-                                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9;">
-                                        @if (Session["Logo"] != null)
-                                        {
-                                            <img width="36" height="36" src="@Session["Logo"]" style="border-radius: 6px; border: 1px solid #e2e8f0; object-fit: contain;" />
-                                        }
-                                        <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: #143750;">
-                                            Gasto
-                                        </h4>
-                                    </div>
-                                    <div>
-                                        @(Model.composicionGasto)
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
+            <!-- Modalidad -->
+            <div class="filter-param-item">
+                <label class="filter-param-label"><i class="fa fa-pie-chart"></i> Modalidad:</label>
+                <div class="pill-group">
+                    <a href="@Url.Action("ER", "InformeFinanciero", new { Entidades = Model.EntidadId, Periodo = Model.PeriodoReferencia.ToString("MM/yyyy"), Modalidad = "Acumulado", TipoComparacion = Model.TipoComparacion })"
+                       class="pill-item @(Model.Modalidad == "Acumulado" ? "active" : "")">Acumulado</a>
+                    <a href="@Url.Action("ER", "InformeFinanciero", new { Entidades = Model.EntidadId, Periodo = Model.PeriodoReferencia.ToString("MM/yyyy"), Modalidad = "Mensual", TipoComparacion = Model.TipoComparacion })"
+                       class="pill-item @(Model.Modalidad == "Mensual" ? "active" : "")">Mensual</a>
                 </div>
             </div>
+
+            <div class="toolbar-divider"></div>
+
+            <!-- Comparativo -->
+            <div class="filter-param-item">
+                <label class="filter-param-label"><i class="fa fa-sliders"></i> Comparativo:</label>
+                <div class="pill-group">
+                    <a href="@Url.Action("ER", "InformeFinanciero", new { Entidades = Model.EntidadId, Periodo = Model.PeriodoReferencia.ToString("MM/yyyy"), Modalidad = Model.Modalidad, TipoComparacion = "Trimestral" })"
+                       class="pill-item @(Model.TipoComparacion == "Trimestral" ? "active" : "")">Trimestral</a>
+                    <a href="@Url.Action("ER", "InformeFinanciero", new { Entidades = Model.EntidadId, Periodo = Model.PeriodoReferencia.ToString("MM/yyyy"), Modalidad = Model.Modalidad, TipoComparacion = "Mensual" })"
+                       class="pill-item @(Model.TipoComparacion == "Mensual" ? "active" : "")">Mensual</a>
+                    <a href="@Url.Action("ER", "InformeFinanciero", new { Entidades = Model.EntidadId, Periodo = Model.PeriodoReferencia.ToString("MM/yyyy"), Modalidad = Model.Modalidad, TipoComparacion = "Interanual" })"
+                       class="pill-item @(Model.TipoComparacion == "Interanual" ? "active" : "")">Interanual</a>
+                </div>
+            </div>
+
+            <input type="hidden" name="Modalidad" value="@Model.Modalidad" />
+            <input type="hidden" name="TipoComparacion" value="@Model.TipoComparacion" />
+        </form>
+    </div>
+
+    <!-- Pestañas del Reporte -->
+    <div class="nav-tabs-custom" style="box-shadow: none; background: transparent;">
+        <ul class="nav nav-tabs er-nav-tabs">
+            <li class="active">
+                <a href="#tab_er" data-toggle="tab">
+                    <i class="fa fa-file-text-o" style="color: #2F5597; margin-right: 6px;"></i>
+                    Estado de Resultados
+                </a>
+            </li>
+            <li>
+                <a href="#tab_analisis" data-toggle="tab">
+                    <i class="fa fa-bar-chart" style="color: #2F5597; margin-right: 6px;"></i>
+                    An&aacute;lisis Financiero
+                </a>
+            </li>
+            <li>
+                <a href="#tab_composicion" data-toggle="tab">
+                    <i class="fa fa-pie-chart" style="color: #2F5597; margin-right: 6px;"></i>
+                    Composici&oacute;n
+                </a>
+            </li>
+        </ul>
+
+        <div class="tab-content" style="padding: 0; background: transparent;">
+
+            <!-- ======================================================== -->
+            <!-- CEJILLA 1: ESTADO DE RESULTADOS                          -->
+            <!-- ======================================================== -->
+            <div class="tab-pane active" id="tab_er">
+                <div class="report-paper-container">
+
+                    <!-- Membrete Formal Institucional -->
+                    <div class="report-header-banner">
+                        <div style="min-width: 150px;">
+                            @if (!string.IsNullOrEmpty(Model.LogoUrl))
+                            {
+                                <img src="@Model.LogoUrl" alt="Logo Entidad" class="report-header-logo" onerror="this.style.display='none';" />
+                            }
+                        </div>
+
+                        <div class="report-header-titles">
+                            <h1>ESTADO DE RESULTADOS (@Model.Modalidad.ToUpper())</h1>
+                            <p class="entity-name">@Model.NombreEntidad.ToUpper()</p>
+                            <p class="report-subtitle">@Model.ComparacionTitulo &bull; @Model.ComparacionSubtitulo</p>
+                        </div>
+
+                        <div class="report-header-meta">
+                            <div><strong>Corte:</strong> @Model.PeriodoReferencia.ToString("MM/yyyy")</div>
+                            <div><strong>Modalidad:</strong> @Model.Modalidad</div>
+                            <div><strong>Moneda:</strong> CRC (Millones)</div>
+                        </div>
+                    </div>
+
+                    <!-- Tabla Contable con Scroll Sticky -->
+                    <div class="balance-table-scroll-wrapper" id="erTableWrapper">
+                        <table id="tbERNativo" class="table-rdl-balance">
+                            <thead>
+                                <tr>
+                                    <th class="th-concept" style="min-width: 320px; text-align: left; background-color: #f1f5f9 !important; color: #143750 !important; border-top: 1px solid #cbd5e1 !important; border-bottom: 2.5px solid #2F5597 !important; border-left: 1px solid #cbd5e1 !important;">Concepto / Cuenta</th>
+                                    @for (int i = 0; i < 5; i++)
+                                    {
+                                        <th class="th-period" style="min-width: 105px; text-align: right; background-color: #f8fafc !important; color: #143750 !important; border-top: 1px solid #cbd5e1 !important; border-bottom: 2.5px solid #2F5597 !important; border-left: 1px solid #cbd5e1 !important;">@Model.EncabezadosPeriodos[i]</th>
+                                    }
+                                    <th class="th-var" style="min-width: 115px; text-align: right; background-color: #e2e8f0 !important; color: #143750 !important; border-top: 1px solid #cbd5e1 !important; border-bottom: 2.5px solid #2F5597 !important; border-left: 1px solid #cbd5e1 !important;">Var. Absoluta</th>
+                                    <th class="th-var" style="min-width: 105px; text-align: right; background-color: #e2e8f0 !important; color: #143750 !important; border-top: 1px solid #cbd5e1 !important; border-bottom: 2.5px solid #2F5597 !important; border-left: 1px solid #cbd5e1 !important; border-right: 1px solid #cbd5e1 !important;">Var. Relativa</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    string seccionActual = "";
+                                    string seccionSlug = "";
+                                }
+                                @foreach (var fila in Model.Filas)
+                                {
+                                    if (fila.EsSeccion)
+                                    {
+                                        seccionActual = fila.Seccion ?? "";
+                                        seccionSlug = seccionActual.ToLowerInvariant().Replace(" ", "-");
+                                    }
+
+                                    string rowClass = "tr-rdl-detail tr-balance-collapsible";
+                                    string dataParent = !fila.EsSeccion ? $" data-parent-section=\"{seccionSlug}\"" : "";
+
+                                    if (fila.EsSeccion)
+                                    {
+                                        rowClass = "tr-rdl-section";
+                                    }
+                                    else if (fila.EsGranTotal)
+                                    {
+                                        rowClass = "tr-rdl-grand-total tr-balance-collapsible";
+                                    }
+                                    else if (fila.EsTotal)
+                                    {
+                                        rowClass = "tr-rdl-subtotal-italic tr-balance-collapsible";
+                                    }
+
+                                    <tr class="@rowClass"@Html.Raw(dataParent)>
+                                        <td>
+                                            @if (fila.EsSeccion)
+                                            {
+                                                <button class="btn-section-collapse"
+                                                        data-section="@seccionSlug"
+                                                        onclick="toggleSectionER('@seccionSlug', this)"
+                                                        title="Colapsar/Expandir @fila.Concepto.Trim()">
+                                                    <i class="fa fa-chevron-down"></i>
+                                                </button>
+                                                <span class="er-concepto indent-0">@fila.Concepto.Trim()</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="er-concepto indent-@fila.Nivel">@fila.Concepto.Trim()</span>
+                                            }
+                                        </td>
+
+                                        @if (fila.SinMontos)
+                                        {
+                                            for (int c = 0; c < 7; c++)
+                                            {
+                                                <td></td>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            for (int i = 0; i < 5; i++)
+                                            {
+                                                <td class="col-amount">
+                                                    @fila.Periodos[i].ToString("N2")
+                                                </td>
+                                            }
+
+                                            <!-- Variación Absoluta -->
+                                            <td class="col-amount">
+                                                @if (fila.VariacionAbsoluta > 0)
+                                                {
+                                                    <span class="badge-var-pos">+@fila.VariacionAbsoluta.ToString("N2")</span>
+                                                }
+                                                else if (fila.VariacionAbsoluta < 0)
+                                                {
+                                                    <span class="badge-var-neg">@fila.VariacionAbsoluta.ToString("N2")</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge-var-zero">0.00</span>
+                                                }
+                                            </td>
+
+                                            <!-- Variación Relativa -->
+                                            <td class="col-amount">
+                                                @if (fila.VariacionRelativa > 0)
+                                                {
+                                                    <span class="badge-var-pos">+@(fila.VariacionRelativa.ToString("0.00"))%</span>
+                                                }
+                                                else if (fila.VariacionRelativa < 0)
+                                                {
+                                                    <span class="badge-var-neg">@(fila.VariacionRelativa.ToString("0.00"))%</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge-var-zero">0.00%</span>
+                                                }
+                                            </td>
+                                        }
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pie de página formal estilo RDL -->
+                    <div style="margin-top: 14px; padding-top: 10px; border-top: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between; font-size: 11px; color: #64748b;">
+                        <div>
+                            <i class="fa fa-file-text-o"></i> Estado Financiero emitido con base en las cuentas oficiales de la Superintendencia General de Entidades Financieras (SUGEF).
+                        </div>
+                        <div>
+                            Generado el @DateTime.Now.ToString("dd/MM/yyyy HH:mm")
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- ======================================================== -->
+            <!-- CEJILLA 2: ANÁLISIS FINANCIERO                           -->
+            <!-- ======================================================== -->
+            <div class="tab-pane" id="tab_analisis">
+                <div class="report-paper-container">
+
+                    <!-- Membrete Formal Análisis -->
+                    <div class="report-header-banner">
+                        <div style="min-width: 150px;">
+                            @if (!string.IsNullOrEmpty(Model.LogoUrl))
+                            {
+                                <img src="@Model.LogoUrl" alt="Logo Entidad" class="report-header-logo" onerror="this.style.display='none';" />
+                            }
+                        </div>
+
+                        <div class="report-header-titles">
+                            <h1>AN&Aacute;LISIS DEL ESTADO DE RESULTADOS</h1>
+                            <p class="entity-name">@Model.NombreEntidad.ToUpper()</p>
+                            <p class="report-subtitle">An&aacute;lisis Vertical (% Representa) y Horizontal (Variaciones) &bull; @Model.Modalidad</p>
+                        </div>
+
+                        <div class="report-header-meta">
+                            <div><strong>Corte:</strong> @Model.PeriodoReferencia.ToString("MM/yyyy")</div>
+                            <div><strong>Modalidad:</strong> @Model.Modalidad</div>
+                            <div><strong>Moneda:</strong> CRC (Millones)</div>
+                        </div>
+                    </div>
+
+                    <!-- Tabla de Análisis Jerárquica de 2 Niveles -->
+                    <div class="balance-table-scroll-wrapper" id="analisisTableWrapper">
+                        <table id="tbAnalisisNativo" class="table-rdl-balance">
+                            <thead>
+                                <tr class="tr-header-group">
+                                    <th rowspan="2" class="th-span-full th-concept" style="min-width: 300px; text-align: left;">Concepto / Cuenta</th>
+                                    @for (int i = 0; i < 5; i++)
+                                    {
+                                        <th colspan="2" class="th-period-group">
+                                            @Model.EncabezadosPeriodos[i]
+                                        </th>
+                                    }
+                                    <th rowspan="2" class="th-var th-span-full" style="min-width: 110px;">Var. Absoluta</th>
+                                    <th rowspan="2" class="th-var th-span-full" style="min-width: 100px;">Var. Relativa</th>
+                                </tr>
+                                <tr class="tr-header-sub">
+                                    @for (int i = 0; i < 5; i++)
+                                    {
+                                        <th class="th-sub-monto">Monto</th>
+                                        <th class="th-sub-rep">% Rep.</th>
+                                    }
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    string seccionAnalisisActual = "";
+                                    string seccionAnalisisSlug = "";
+                                }
+                                @foreach (var fila in Model.Filas)
+                                {
+                                    if (fila.EsSeccion)
+                                    {
+                                        seccionAnalisisActual = fila.Seccion ?? "";
+                                        seccionAnalisisSlug = seccionAnalisisActual.ToLowerInvariant().Replace(" ", "-");
+                                    }
+
+                                    string rowClass = "tr-rdl-detail tr-balance-collapsible";
+                                    string dataParent = !fila.EsSeccion ? $" data-parent-section=\"{seccionAnalisisSlug}\"" : "";
+
+                                    if (fila.EsSeccion)
+                                    {
+                                        rowClass = "tr-rdl-section";
+                                    }
+                                    else if (fila.EsGranTotal)
+                                    {
+                                        rowClass = "tr-rdl-grand-total tr-balance-collapsible";
+                                    }
+                                    else if (fila.EsTotal)
+                                    {
+                                        rowClass = "tr-rdl-subtotal-italic tr-balance-collapsible";
+                                    }
+
+                                    <tr class="@rowClass"@Html.Raw(dataParent)>
+                                        <td>
+                                            @if (fila.EsSeccion)
+                                            {
+                                                <button class="btn-section-collapse"
+                                                        data-section="@seccionAnalisisSlug"
+                                                        onclick="toggleSectionER('@seccionAnalisisSlug', this)"
+                                                        title="Colapsar/Expandir @fila.Concepto.Trim()">
+                                                    <i class="fa fa-chevron-down"></i>
+                                                </button>
+                                                <span class="er-concepto indent-0">@fila.Concepto.Trim()</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="er-concepto indent-@fila.Nivel">@fila.Concepto.Trim()</span>
+                                            }
+                                        </td>
+
+                                        @if (fila.SinMontos)
+                                        {
+                                            for (int c = 0; c < 12; c++)
+                                            {
+                                                <td></td>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            for (int i = 0; i < 5; i++)
+                                            {
+                                                <td class="col-amount" style="border-left: 1px solid #f1f5f9 !important;">
+                                                    @fila.Periodos[i].ToString("N2")
+                                                </td>
+                                                <td class="col-rep">
+                                                    @(fila.PorcentajesRepresenta[i].ToString("0.0"))%
+                                                </td>
+                                            }
+
+                                            <!-- Variación Absoluta -->
+                                            <td class="col-amount" style="border-left: 1px solid #cbd5e1 !important;">
+                                                @if (fila.VariacionAbsoluta > 0)
+                                                {
+                                                    <span class="badge-var-pos">+@fila.VariacionAbsoluta.ToString("N2")</span>
+                                                }
+                                                else if (fila.VariacionAbsoluta < 0)
+                                                {
+                                                    <span class="badge-var-neg">@fila.VariacionAbsoluta.ToString("N2")</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge-var-zero">0.00</span>
+                                                }
+                                            </td>
+
+                                            <!-- Variación Relativa -->
+                                            <td class="col-amount">
+                                                @if (fila.VariacionRelativa > 0)
+                                                {
+                                                    <span class="badge-var-pos">+@(fila.VariacionRelativa.ToString("0.00"))%</span>
+                                                }
+                                                else if (fila.VariacionRelativa < 0)
+                                                {
+                                                    <span class="badge-var-neg">@(fila.VariacionRelativa.ToString("0.00"))%</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge-var-zero">0.00%</span>
+                                                }
+                                            </td>
+                                        }
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div style="margin-top: 14px; padding-top: 10px; border-top: 1px solid #e2e8f0; font-size: 11px; color: #64748b;">
+                        * El valor <strong>% Rep.</strong> refleja la proporción vertical de cada rubro respecto al <strong>Total de Ingresos Financieros</strong> del período.
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- ======================================================== -->
+            <!-- CEJILLA 3: COMPOSICIÓN (GRÁFICOS HIGHCHARTS)             -->
+            <!-- ======================================================== -->
+            <div class="tab-pane" id="tab_composicion">
+                @{
+                    var comp = Model.DatosComposicion ?? new FGA.Model.ComposicionERDTO();
+                    var crCulture = (System.Globalization.CultureInfo)System.Globalization.CultureInfo.GetCultureInfo("es-CR").Clone();
+                    crCulture.NumberFormat.NumberGroupSeparator = ".";
+                    crCulture.NumberFormat.NumberDecimalSeparator = ",";
+                    string totalIngresosStr = (comp.TotalIngresosUltimo).ToString("#,##0", crCulture);
+                    string totalGastosStr = (comp.TotalGastosUltimo).ToString("#,##0", crCulture);
+                }
+
+                <!-- Fila 1: Ingresos (Donut de Composición + Evolución) -->
+                <div class="er-comp-card" style="margin-top: 10px;">
+                    <div class="row">
+                        <!-- Mitad Izquierda: Donut de Ingresos -->
+                        <div class="col-md-5 col-sm-12 er-comp-donut-col">
+                            <div class="er-comp-header">
+                                <div class="er-comp-icon er-comp-icon-blue">
+                                    <i class="fa fa-line-chart"></i>
+                                </div>
+                                <div>
+                                    <h3 class="er-comp-title">Ingresos</h3>
+                                    <p class="er-comp-subtitle">Composici&oacute;n &bull; @comp.PeriodoUltimoLabel</p>
+                                    <p class="er-comp-desc">Porcentaje de participaci&oacute;n</p>
+                                </div>
+                            </div>
+                            <div class="er-donut-wrapper">
+                                <div id="chartIngresosDonutER" style="height: 290px; width: 100%;"></div>
+                                <div id="donutCenterIngresosER" class="er-donut-center-badge">
+                                    <div class="er-donut-center-title">Ingresos</div>
+                                    <div class="er-donut-center-amount">₡ @totalIngresosStr</div>
+                                    <div class="er-donut-center-unit">millones</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Mitad Derecha: Evolución de Ingresos -->
+                        <div class="col-md-7 col-sm-12 er-comp-evol-col">
+                            <div class="er-comp-header">
+                                <div>
+                                    <h3 class="er-comp-title">Evoluci&oacute;n de los ingresos financieros totales</h3>
+                                    <p class="er-comp-subtitle">Montos en millones de colones</p>
+                                </div>
+                            </div>
+                            <div id="chartIngresosEvolucionER" style="height: 290px; width: 100%;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fila 2: Gastos (Donut de Composición + Evolución) -->
+                <div class="er-comp-card">
+                    <div class="row">
+                        <!-- Mitad Izquierda: Donut de Gastos -->
+                        <div class="col-md-5 col-sm-12 er-comp-donut-col">
+                            <div class="er-comp-header">
+                                <div class="er-comp-icon er-comp-icon-orange">
+                                    <i class="fa fa-money"></i>
+                                </div>
+                                <div>
+                                    <h3 class="er-comp-title">Gastos</h3>
+                                    <p class="er-comp-subtitle">Composici&oacute;n &bull; @comp.PeriodoUltimoLabel</p>
+                                    <p class="er-comp-desc">Porcentaje de participaci&oacute;n</p>
+                                </div>
+                            </div>
+                            <div class="er-donut-wrapper">
+                                <div id="chartGastosDonutER" style="height: 290px; width: 100%;"></div>
+                                <div id="donutCenterGastosER" class="er-donut-center-badge">
+                                    <div class="er-donut-center-title">Gastos</div>
+                                    <div class="er-donut-center-amount">₡ @totalGastosStr</div>
+                                    <div class="er-donut-center-unit">millones</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Mitad Derecha: Evolución de Gastos -->
+                        <div class="col-md-7 col-sm-12 er-comp-evol-col">
+                            <div class="er-comp-header">
+                                <div>
+                                    <h3 class="er-comp-title">Evoluci&oacute;n de los gastos financieros</h3>
+                                    <p class="er-comp-subtitle">Montos en millones de colones</p>
+                                </div>
+                            </div>
+                            <div id="chartGastosEvolucionER" style="height: 290px; width: 100%;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fila 3: Nota Informativa al Pie -->
+                <div class="er-comp-note" style="margin-top: 15px; margin-bottom: 25px;">
+                    <i class="fa fa-info-circle" style="color: #2F5597; font-size: 20px; flex-shrink: 0;"></i>
+                    <span style="font-size: 13px; color: #1e3a8a; line-height: 1.4;">
+                        <strong>Nota:</strong> Los montos se presentan en millones de colones y corresponden al per&iacute;odo seleccionado.
+                    </span>
+                </div>
+
+            </div>
+
         </div>
-    }
+    </div>
+
 </section>
 
-<script type="text/javascript">
+<!-- Modal para Ampliación de Gráficos Highcharts -->
+<div class="modal fade" id="modalAmpliarGraficoER" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" style="width: 85%; max-width: 1200px;">
+        <div class="modal-content" style="border-radius: 8px;">
+            <div class="modal-header" style="background: #2F5597; color: #ffffff; border-radius: 8px 8px 0 0; padding: 12px 18px;">
+                <button type="button" class="close" data-dismiss="modal" style="color: #ffffff; opacity: 0.9;">&times;</button>
+                <h4 class="modal-title" id="modalGraficoTituloER" style="font-weight: 700; font-size: 15px;"></h4>
+            </div>
+            <div class="modal-body" style="padding: 20px;">
+                <div id="containerGraficoModalER" style="height: 520px; width: 100%;"></div>
+            </div>
+            <div class="modal-footer" style="padding: 10px 18px; border-top: 1px solid #e2e8f0;">
+                <button type="button" class="btn btn-default" data-dismiss="modal" style="font-size: 12px; font-weight: 600;">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
 
-    $(document).ready(function () {
+@section Scripts {
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script>
+        // Colapso y expansión de secciones contables
+        function toggleSectionER(sectionSlug, btn) {
+            var icon = btn.querySelector('i');
+            var selector = 'tr[data-parent-section="' + sectionSlug + '"]';
+            var rows = document.querySelectorAll(selector);
 
-        oTableIngreso = $("#tbIngreso").dataTable({
-        "rowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-            $(nRow).find('td:eq(0)').addClass('hidden');
-        },
-        "bRetrieve": true,
-        "bProcessing": true,
-        "bPaginate": false,
-        "bFilter": false,
-        "bInfo": false,
-        "dom": 'lBfrtip',
-        "sAjaxSource": "@Url.Content("~/Composicion/GetGridIngreso")",
-        "buttons": [
-                { extend: 'copyHtml5', exportOptions: { columns: ':visible' } }
-            ,{ extend: 'excelHtml5', exportOptions: { columns: ':visible' } }
-            ,{ extend: 'csvHtml5', exportOptions: { columns: ':visible' } }
-            ,{ extend: 'print', exportOptions: { columns: ':visible' } }
-            ,'colvis'
-            ],
-            columnDefs: [
-                    {
-                        className: 'text-right', targets: [2, 3, 4, 5]
+            var isCollapsed = btn.classList.contains('collapsed');
+
+            rows.forEach(function (r) {
+                if (isCollapsed) {
+                    r.style.display = '';
+                } else {
+                    r.style.display = 'none';
+                }
+            });
+
+            if (isCollapsed) {
+                btn.classList.remove('collapsed');
+                if (icon) icon.className = 'fa fa-chevron-down';
+            } else {
+                btn.classList.add('collapsed');
+                if (icon) icon.className = 'fa fa-chevron-right';
+            }
+        }
+
+        // Configuración y renderizado de gráficos Highcharts
+        var chartConfigsER = {};
+
+        @{
+            var invCulture = System.Globalization.CultureInfo.InvariantCulture;
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Paleta Corporativa Institucional
+            Highcharts.setOptions({
+                lang: {
+                    decimalPoint: ',',
+                    thousandsSep: '.',
+                    loading: 'Cargando...',
+                    contextButtonTitle: 'Menú contextual',
+                    viewData: '<i class="fa fa-table" style="color: #2F5597; margin-right: 8px;"></i> Ver tabla de datos',
+                    hideData: '<i class="fa fa-table" style="color: #2F5597; margin-right: 8px;"></i> Ocultar tabla de datos'
+                },
+                credits: { enabled: false }
+            });
+
+            function updateDonutCenterPosition(chart, badgeId) {
+                if (!chart || !chart.series || !chart.series[0] || !chart.series[0].center) return;
+                var badge = document.getElementById(badgeId);
+                if (!badge) return;
+                var cx = chart.series[0].center[0] + chart.plotLeft;
+                var cy = chart.series[0].center[1] + chart.plotTop;
+                badge.style.left = cx + 'px';
+                badge.style.top = cy + 'px';
+            }
+
+            var commonExporting = {
+                enabled: true,
+                showTable: false,
+                buttons: {
+                    contextButton: {
+                        align: 'right',
+                        verticalAlign: 'top',
+                        y: -44,
+                        x: -10,
+                        zIndex: 999,
+                        text: 'Descargar ▾',
+                        theme: {
+                            fill: '#ffffff',
+                            stroke: '#cbd5e1',
+                            'stroke-width': 1,
+                            r: 6,
+                            padding: 6,
+                            height: 16,
+                            style: {
+                                color: '#475569',
+                                fontWeight: '600',
+                                fontSize: '12px',
+                                fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+                                cursor: 'pointer'
+                            },
+                            states: {
+                                hover: { fill: '#eff6ff', stroke: '#93c5fd', style: { color: '#1e3a8a' } },
+                                select: { fill: '#e0f2fe' }
+                            }
+                        },
+                        menuItems: [
+                            'viewData',
+                            'separator',
+                            'downloadPNG',
+                            'downloadJPEG',
+                            'downloadSVG',
+                            'separator',
+                            'downloadCSV',
+                            'downloadXLS',
+                            'downloadPDF'
+                        ]
+                    }
+                }
+            };
+
+            // 1. Gráfico Donut: Composición de Ingresos
+            chartConfigsER['chartIngresosDonutER'] = {
+                chart: {
+                    type: 'pie',
+                    events: {
+                        render: function () {
+                            updateDonutCenterPosition(this, 'donutCenterIngresosER');
+                        }
+                    }
+                },
+                exporting: commonExporting,
+                title: { text: null },
+                tooltip: {
+                    pointFormat: '{series.name}: <b>{point.y:,.2f}M</b> ({point.percentage:.1f}%)'
+                },
+                legend: {
+                    enabled: true,
+                    layout: 'vertical',
+                    align: 'right',
+                    verticalAlign: 'middle',
+                    itemMarginTop: 6,
+                    itemMarginBottom: 6,
+                    symbolRadius: 6,
+                    symbolWidth: 9,
+                    symbolHeight: 9,
+                    useHTML: true,
+                    labelFormatter: function () {
+                        var pct = (this.percentage !== undefined && this.percentage !== null)
+                            ? this.percentage.toFixed(1).replace('.', ',') + '%'
+                            : '0,0%';
+                        return '<div style="display: flex; justify-content: space-between; width: 175px; font-size: 11px; font-family: Segoe UI, Calibri, sans-serif;">' +
+                            '<span style="color: #334155; font-weight: 500;">' + this.name + '</span>' +
+                            '<span style="color: #0f172a; font-weight: 700; margin-left: 8px;">' + pct + '</span>' +
+                            '</div>';
+                    }
+                },
+                plotOptions: {
+                    pie: {
+                        innerSize: '68%',
+                        showInLegend: true,
+                        center: ['30%', '50%'],
+                        size: '95%',
+                        dataLabels: {
+                            enabled: true,
+                            distance: -20,
+                            format: '{point.percentage:.1f}%',
+                            filter: {
+                                property: 'percentage',
+                                operator: '>',
+                                value: 4
+                            },
+                            style: {
+                                fontSize: '10.5px',
+                                fontWeight: '600',
+                                color: '#ffffff',
+                                textOutline: 'none'
+                            }
+                        }
+                    }
+                },
+                series: [{
+                    name: 'Ingresos',
+                    data: [
+                        { name: 'Cartera de crédito', y: @((Model.DatosComposicion?.CarteraUltimo ?? 0m).ToString("0.00", invCulture)), color: '#2F5597' },
+                        { name: 'Instrumentos financieros', y: @((Model.DatosComposicion?.InversionesUltimo ?? 0m).ToString("0.00", invCulture)), color: '#f58220' },
+                        { name: 'Ingresos por disponibilidad', y: @((Model.DatosComposicion?.DisponibilidadesUltimo ?? 0m).ToString("0.00", invCulture)), color: '#94a3b8' },
+                        { name: 'Otros ingresos', y: @((Model.DatosComposicion?.OtrosIngresosUltimo ?? 0m).ToString("0.00", invCulture)), color: '#4172be' }
+                    ]
+                }]
+            };
+            Highcharts.chart('chartIngresosDonutER', chartConfigsER['chartIngresosDonutER']);
+
+            // 2. Gráfico Combinado: Evolución de los Ingresos Financieros Totales
+            chartConfigsER['chartIngresosEvolucionER'] = {
+                chart: { zoomType: 'xy' },
+                exporting: commonExporting,
+                title: { text: null },
+                xAxis: [{
+                    categories: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.DatosComposicion.PeriodosCategorias)),
+                    crosshair: true,
+                    labels: {
+                        style: { fontSize: '11px', color: '#64748b' }
+                    }
+                }],
+                yAxis: [
+                    { // Eje 0: Montos en millones (Izquierda)
+                        labels: {
+                            format: '{value:,.0f}',
+                            style: { color: '#64748b', fontSize: '10px' }
+                        },
+                        title: { text: null },
+                        min: 0,
+                        gridLineDashStyle: 'Dash',
+                        gridLineColor: '#f1f5f9'
                     },
-            ],
-            "aoColumns": [
-                {},{},{},{},{},{}
-         ]
+                    { // Eje 1: Variación % (Derecha)
+                        title: { text: null },
+                        labels: {
+                            format: '{value}%',
+                            style: { color: '#ea580c', fontSize: '10px' }
+                        },
+                        opposite: true,
+                        gridLineWidth: 0
+                    }
+                ],
+                tooltip: {
+                    shared: true,
+                    formatter: function() {
+                        var s = '<b>' + this.x + '</b><br/>';
+                        this.points.forEach(function(p) {
+                            if (p.series.type === 'spline') {
+                                var v = (p.y !== null && p.y !== undefined) ? p.y.toFixed(1).replace('.', ',') + '%' : 'N/D';
+                                s += '<span style="color:' + p.series.color + '">\u25CF</span> ' + p.series.name + ': <b>' + v + '</b><br/>';
+                            } else {
+                                s += '<span style="color:' + p.series.color + '">\u25CF</span> ' + p.series.name + ': <b>' + Highcharts.numberFormat(p.y, 2, ',', '.') + ' M</b><br/>';
+                            }
+                        });
+                        return s;
+                    }
+                },
+                legend: {
+                    layout: 'horizontal',
+                    align: 'center',
+                    verticalAlign: 'bottom',
+                    itemStyle: { fontSize: '11px', color: '#475569', fontWeight: '500' }
+                },
+                series: [
+                    {
+                        name: 'Ingresos financieros totales (millones)',
+                        type: 'column',
+                        yAxis: 0,
+                        color: '#2F5597',
+                        data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.DatosComposicion.TotalIngresosFinancieros)),
+                        dataLabels: {
+                            enabled: true,
+                            format: '{point.y:,.0f}',
+                            style: { fontSize: '10px', color: '#1e293b', textOutline: 'none', fontWeight: '600' }
+                        },
+                        borderRadius: 2
+                    },
+                    {
+                        name: 'Variación (%)',
+                        type: 'spline',
+                        yAxis: 1,
+                        color: '#ea580c',
+                        data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.DatosComposicion.VarIngresosPct)),
+                        marker: {
+                            symbol: 'circle',
+                            radius: 4,
+                            fillColor: '#ffffff',
+                            lineWidth: 2,
+                            lineColor: '#ea580c'
+                        },
+                        dataLabels: {
+                            enabled: true,
+                            formatter: function() {
+                                if (this.y === null || this.y === undefined) return '';
+                                return this.y.toFixed(1).replace('.', ',') + '%';
+                            },
+                            backgroundColor: '#ffffff',
+                            borderColor: '#ea580c',
+                            borderWidth: 1,
+                            borderRadius: 4,
+                            padding: 3,
+                            style: { fontSize: '10px', color: '#ea580c', fontWeight: '700', textOutline: 'none' }
+                        }
+                    }
+                ]
+            };
+            Highcharts.chart('chartIngresosEvolucionER', chartConfigsER['chartIngresosEvolucionER']);
+
+            // 3. Gráfico Donut: Composición de Gastos
+            chartConfigsER['chartGastosDonutER'] = {
+                chart: {
+                    type: 'pie',
+                    events: {
+                        render: function () {
+                            updateDonutCenterPosition(this, 'donutCenterGastosER');
+                        }
+                    }
+                },
+                exporting: commonExporting,
+                title: { text: null },
+                tooltip: {
+                    pointFormat: '{series.name}: <b>{point.y:,.2f}M</b> ({point.percentage:.1f}%)'
+                },
+                legend: {
+                    enabled: true,
+                    layout: 'vertical',
+                    align: 'right',
+                    verticalAlign: 'middle',
+                    itemMarginTop: 8,
+                    itemMarginBottom: 8,
+                    symbolRadius: 6,
+                    symbolWidth: 9,
+                    symbolHeight: 9,
+                    useHTML: true,
+                    labelFormatter: function () {
+                        var pct = (this.percentage !== undefined && this.percentage !== null)
+                            ? this.percentage.toFixed(1).replace('.', ',') + '%'
+                            : '0,0%';
+                        return '<div style="display: flex; justify-content: space-between; width: 195px; font-size: 11px; font-family: Segoe UI, Calibri, sans-serif;">' +
+                            '<span style="color: #334155; font-weight: 500;">' + this.name + '</span>' +
+                            '<span style="color: #0f172a; font-weight: 700; margin-left: 8px;">' + pct + '</span>' +
+                            '</div>';
+                    }
+                },
+                plotOptions: {
+                    pie: {
+                        innerSize: '68%',
+                        showInLegend: true,
+                        center: ['30%', '50%'],
+                        size: '95%',
+                        dataLabels: {
+                            enabled: true,
+                            distance: -20,
+                            format: '{point.percentage:.1f}%',
+                            filter: {
+                                property: 'percentage',
+                                operator: '>',
+                                value: 4
+                            },
+                            style: {
+                                fontSize: '10.5px',
+                                fontWeight: '600',
+                                color: '#ffffff',
+                                textOutline: 'none'
+                            }
+                        }
+                    }
+                },
+                series: [{
+                    name: 'Gastos',
+                    data: [
+                        { name: 'Gastos por obligaciones con el público', y: @((Model.DatosComposicion?.GastosPublicoUltimo ?? 0m).ToString("0.00", invCulture)), color: '#2F5597' },
+                        { name: 'Gastos por obligaciones con entidades', y: @((Model.DatosComposicion?.GastosEntidadesUltimo ?? 0m).ToString("0.00", invCulture)), color: '#f58220' },
+                        { name: 'Otros gastos financieros', y: @((Model.DatosComposicion?.OtrosGastosFinancierosUltimo ?? 0m).ToString("0.00", invCulture)), color: '#4172be' }
+                    ]
+                }]
+            };
+            Highcharts.chart('chartGastosDonutER', chartConfigsER['chartGastosDonutER']);
+
+            // 4. Gráfico Combinado: Evolución de los Gastos Financieros
+            chartConfigsER['chartGastosEvolucionER'] = {
+                chart: { zoomType: 'xy' },
+                exporting: commonExporting,
+                title: { text: null },
+                xAxis: [{
+                    categories: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.DatosComposicion.PeriodosCategorias)),
+                    crosshair: true,
+                    labels: {
+                        style: { fontSize: '11px', color: '#64748b' }
+                    }
+                }],
+                yAxis: [
+                    { // Eje 0: Montos en millones (Izquierda)
+                        labels: {
+                            format: '{value:,.0f}',
+                            style: { color: '#64748b', fontSize: '10px' }
+                        },
+                        title: { text: null },
+                        min: 0,
+                        gridLineDashStyle: 'Dash',
+                        gridLineColor: '#f1f5f9'
+                    },
+                    { // Eje 1: Variación % (Derecha)
+                        title: { text: null },
+                        labels: {
+                            format: '{value}%',
+                            style: { color: '#ea580c', fontSize: '10px' }
+                        },
+                        opposite: true,
+                        gridLineWidth: 0
+                    }
+                ],
+                tooltip: {
+                    shared: true,
+                    formatter: function() {
+                        var s = '<b>' + this.x + '</b><br/>';
+                        this.points.forEach(function(p) {
+                            if (p.series.type === 'spline') {
+                                var v = (p.y !== null && p.y !== undefined) ? p.y.toFixed(1).replace('.', ',') + '%' : 'N/D';
+                                s += '<span style="color:' + p.series.color + '">\u25CF</span> ' + p.series.name + ': <b>' + v + '</b><br/>';
+                            } else {
+                                s += '<span style="color:' + p.series.color + '">\u25CF</span> ' + p.series.name + ': <b>' + Highcharts.numberFormat(p.y, 2, ',', '.') + ' M</b><br/>';
+                            }
+                        });
+                        return s;
+                    }
+                },
+                legend: {
+                    layout: 'horizontal',
+                    align: 'center',
+                    verticalAlign: 'bottom',
+                    itemStyle: { fontSize: '11px', color: '#475569', fontWeight: '500' }
+                },
+                series: [
+                    {
+                        name: 'Gastos financieros (millones)',
+                        type: 'column',
+                        yAxis: 0,
+                        color: '#2F5597',
+                        data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.DatosComposicion.TotalGastosFinancieros.Select(x => Math.Abs(x)).ToArray())),
+                        dataLabels: {
+                            enabled: true,
+                            format: '{point.y:,.0f}',
+                            style: { fontSize: '10px', color: '#1e293b', textOutline: 'none', fontWeight: '600' }
+                        },
+                        borderRadius: 2
+                    },
+                    {
+                        name: 'Variación (%)',
+                        type: 'spline',
+                        yAxis: 1,
+                        color: '#ea580c',
+                        data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.DatosComposicion.VarGastosPct)),
+                        marker: {
+                            symbol: 'circle',
+                            radius: 4,
+                            fillColor: '#ffffff',
+                            lineWidth: 2,
+                            lineColor: '#ea580c'
+                        },
+                        dataLabels: {
+                            enabled: true,
+                            formatter: function() {
+                                if (this.y === null || this.y === undefined) return '';
+                                return this.y.toFixed(1).replace('.', ',') + '%';
+                            },
+                            backgroundColor: '#ffffff',
+                            borderColor: '#ea580c',
+                            borderWidth: 1,
+                            borderRadius: 4,
+                            padding: 3,
+                            style: { fontSize: '10px', color: '#ea580c', fontWeight: '700', textOutline: 'none' }
+                        }
+                    }
+                ]
+            };
+            Highcharts.chart('chartGastosEvolucionER', chartConfigsER['chartGastosEvolucionER']);
+
+            // Redibujar Highcharts al cambiar a pestaña Composición
+            $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                if ($(e.target).attr('href') === '#tab_composicion') {
+                    setTimeout(function() {
+                        Highcharts.charts.forEach(function (chart) {
+                            if (chart) {
+                                chart.reflow();
+                            }
+                        });
+                    }, 50);
+                }
+            });
         });
 
-        oTableGasto = $("#tbGasto").dataTable({
-        "rowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-            $(nRow).find('td:eq(0)').addClass('hidden');
-        },
-        "bRetrieve": true,
-        "bProcessing": true,
-        "bPaginate": false,
-        "bFilter": false,
-        "bInfo": false,
-        "dom": 'lBfrtip',
-        "sAjaxSource": "@Url.Content("~/Composicion/GetGridGasto")",
-        "buttons": [
-                { extend: 'copyHtml5', exportOptions: { columns: ':visible' } }
-            ,{ extend: 'excelHtml5', exportOptions: { columns: ':visible' } }
-            ,{ extend: 'csvHtml5', exportOptions: { columns: ':visible' } }
-            ,{ extend: 'print', exportOptions: { columns: ':visible' } }
-            ,'colvis'
-            ],
-            columnDefs: [
-                    {
-                        className: 'text-right', targets: [2, 3, 4, 5, 6, 7]
-                    },
-            ],
-            "aoColumns": [
-                {},{},{},{},{},{},{},{}
-         ]
-          });
-     });
+        // Ampliar Gráfico en Modal
+        function expandirGraficoER(chartId, titulo) {
+            document.getElementById('modalGraficoTituloER').innerText = titulo;
+            $('#modalAmpliarGraficoER').modal('show');
 
-    function formatMillion() {
-        return this.value;
-    }
-
-    function formatPercent() {
-        return this.value + ' %';
-    }
-</script>
+            $('#modalAmpliarGraficoER').off('shown.bs.modal').on('shown.bs.modal', function () {
+                var config = chartConfigsER[chartId];
+                if (config) {
+                    var clone = $.extend(true, {}, config);
+                    Highcharts.chart('containerGraficoModalER', clone);
+                }
+            });
+        }
+    </script>
+}

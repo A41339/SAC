@@ -416,6 +416,11 @@ public class SP : ISP
         return sp.FGA_Consultar_FacturacionFGD(idEntidad, anno, trimestre).ToList();
     }
 
+    public List<FGA_Consultar_FacturacionFFC_Result> FGA_Consultar_FacturacionFFC(string idEntidad, int anno, int trimestre)
+    {
+        return sp.FGA_Consultar_FacturacionFFC(idEntidad, anno, trimestre).ToList();
+    }
+
     public List<FGA_Consultar_Grafico_Oper_Categoria_Result> FGA_Consultar_Grafico_Oper_Categoria(string iDENTIDAD, DateTime pERIODOI, DateTime pERIODOF)
     {
         return sp.FGA_Consultar_Grafico_Oper_Categoria(iDENTIDAD, pERIODOI, pERIODOF).ToList();
@@ -459,5 +464,60 @@ public class SP : ISP
     public int FGA_Generar_Estructura_Fondeo(string iDENTIDAD, DateTime? pERIODO)
     {
         return sp.FGA_Generar_Estructura_Fondeo(iDENTIDAD, pERIODO);
+    }
+
+    public List<FGA_Rpt_Balance_General_5Periodos_Result> FGA_Rpt_Balance_General_5Periodos(string iDENTIDAD, DateTime? pERIODO_REF, string tIPO_COMPARACION)
+    {
+        return sp.FGA_Rpt_Balance_General_5Periodos(iDENTIDAD, pERIODO_REF, tIPO_COMPARACION).ToList();
+    }
+
+    public List<FGA_Rpt_Balanza_Comprobacion_5Periodos_Result> FGA_Rpt_Balanza_Comprobacion_5Periodos(string iDENTIDAD, DateTime? pERIODO_REF, string mODALIDAD, string tIPO_COMPARACION)
+    {
+        return sp.FGA_Rpt_Balanza_Comprobacion_5Periodos(iDENTIDAD, pERIODO_REF, mODALIDAD, tIPO_COMPARACION).ToList();
+    }
+
+    public List<FGA_Rpt_Estado_Resultados_5Periodos_Result> FGA_Rpt_Estado_Resultados_5Periodos(string iDENTIDAD, DateTime? pERIODO_REF, string mODALIDAD, string tIPO_COMPARACION)
+    {
+        return sp.FGA_Rpt_Estado_Resultados_5Periodos(iDENTIDAD, pERIODO_REF, mODALIDAD, tIPO_COMPARACION).ToList();
+    }
+
+    public List<FGA_Obtener_Alertas_Financieras_Result> FGA_Generar_Alertas_Variacion_Financiera(string iDENTIDAD, DateTime? pERIODO, string mODALIDAD, string tIPO_COMPARACION)
+    {
+        return sp.FGA_Generar_Alertas_Variacion_Financiera(iDENTIDAD, pERIODO, mODALIDAD, tIPO_COMPARACION).ToList();
+    }
+
+    public List<FGA_Obtener_Alertas_Financieras_Result> FGA_Obtener_Alertas_Financieras(string iDENTIDAD, bool? sOLO_NO_LEIDAS, int? tOP)
+    {
+        return sp.FGA_Obtener_Alertas_Financieras(iDENTIDAD, sOLO_NO_LEIDAS, tOP).ToList();
+    }
+
+    public int FGA_Marcar_Alerta_Leida(int? aLERTA_ID, string iDENTIDAD, string uSUARIO)
+    {
+        return sp.FGA_Marcar_Alerta_Leida(aLERTA_ID, iDENTIDAD, uSUARIO);
+    }
+
+    public List<FGA_Configuracion_Alerta_Entidad_Result> FGA_Obtener_Configuracion_Alerta_Entidad(string iDENTIDAD)
+    {
+        return sp.FGA_Obtener_Configuracion_Alerta_Entidad(iDENTIDAD).ToList();
+    }
+
+    public List<FGA_Configuracion_Alerta_Entidad_Result> FGA_Guardar_Configuracion_Alerta_Entidad(string iDENTIDAD, decimal? uMBRAL_PORC, decimal? uMBRAL_MONTO, string mODO_MONITOREO, bool? aCTIVO, string uSUARIO)
+    {
+        return sp.FGA_Guardar_Configuracion_Alerta_Entidad(iDENTIDAD, uMBRAL_PORC, uMBRAL_MONTO, mODO_MONITOREO, aCTIVO, uSUARIO).ToList();
+    }
+
+    public List<FGA_Cuenta_Monitoreada_Entidad_Result> FGA_Obtener_Cuentas_Monitoreadas_Entidad(string iDENTIDAD, bool? sOLO_ACTIVAS)
+    {
+        return sp.FGA_Obtener_Cuentas_Monitoreadas_Entidad(iDENTIDAD, sOLO_ACTIVAS).ToList();
+    }
+
+    public List<FGA_Cuenta_Monitoreada_Entidad_Result> FGA_Guardar_Cuenta_Monitoreada_Entidad(string iDENTIDAD, string cUENTA, string nOMBRE_CUENTA, string tIPO_REGLA, decimal? uMBRAL_PORC, decimal? uMBRAL_MONTO, string uSUARIO)
+    {
+        return sp.FGA_Guardar_Cuenta_Monitoreada_Entidad(iDENTIDAD, cUENTA, nOMBRE_CUENTA, tIPO_REGLA, uMBRAL_PORC, uMBRAL_MONTO, uSUARIO).ToList();
+    }
+
+    public int FGA_Eliminar_Cuenta_Monitoreada_Entidad(int iD, string iDENTIDAD, string uSUARIO)
+    {
+        return sp.FGA_Eliminar_Cuenta_Monitoreada_Entidad(iD, iDENTIDAD, uSUARIO);
     }
 }

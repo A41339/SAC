@@ -1,91 +1,402 @@
+@model FGA.Model.OrigenAplicacionViewModel
 @{
-    ViewBag.Title = "Origen y Aplicaci&oacute;n de Fondos";
+    ViewBag.Title = "Estado de Origen y Aplicación de Fondos";
+    var fechaBaseStr = Model.FechaBase.ToString("MM/yyyy");
 }
 
-<section class="content-header" style="padding: 24px 20px 14px 20px;">
+<link rel="stylesheet" href="~/Content/informe_financiero.css?v=20260930.6" />
+
+<section class="content-header" style="padding: 20px 20px 10px 20px;">
     <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
         <div>
-            <h1 style="margin: 0; font-size: 21px; font-weight: 700; color: #143750; display: flex; align-items: center; gap: 10px;">
-                <i class="fa fa-exchange" style="color: #0284c7;"></i>
-                Origen y Aplicaci&oacute;n de Fondos
+            <h1 style="margin: 0; font-size: 21px !important; font-weight: 700 !important; color: #143750; display: flex; align-items: center; gap: 10px;">
+                <i class="fa fa-exchange" style="color: #2F5597;"></i>
+                Estado de Origen y Aplicación de Fondos
             </h1>
-            <p style="margin: 6px 0 0 0; font-size: 13px; color: #64748b;">
-                An&aacute;lisis del flujo y aplicaci&oacute;n de recursos financieros por per&iacute;odo.
+            <p style="margin: 4px 0 0 0; font-size: 13px !important; color: #64748b;">
+                Análisis comparativo de fuentes y usos de recursos financieros.
             </p>
         </div>
+        <ol class="breadcrumb" style="background: transparent; margin: 0; padding: 0;">
+            <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
+            <li><a href="#"><i class="fa fa-file-text-o"></i> Estados Financieros</a></li>
+            <li class="active">Origen y Aplicación</li>
+        </ol>
     </div>
-    <ol class="breadcrumb">
-        <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
-        <li><a href="@Url.Action("Index", "Modulo", new { modulo = "InformeFinanciero/Origen" })" class="breadcrumb-parent-pill"><i class="fa fa-file-text-o" style="margin-right: 4px;"></i> InformaciÃ³n Financiera</a></li>
-        <li class="active">Origen y Aplicaci&oacute;n</li>
-    </ol>
 </section>
 
-<section class="content">
-    <div class="row">
-        <div class="col-xs-12">
-            <div class="modern-filter-card" style="margin-bottom: 22px;">
-                <div class="modern-filter-toolbar">
-                    <div class="filter-item">
-                        <label for="IdEntidad"><i class="fa fa-university"></i> Entidad:</label>
-                        @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", @class = "form-control modern-select", style = "min-width: 220px; height: 38px; font-size: 13px;" })
+<section class="content er-body" style="padding: 10px 20px 30px 20px;">
+
+    <!-- Filtros de Navegación Dinámica -->
+    <div class="report-toolbar-card">
+        @using (Html.BeginForm("Origen", "InformeFinanciero", FormMethod.Get, new { id = "formFiltro", @class = "report-filter-form", style = "display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; width: 100%;" }))
+        {
+            <input type="hidden" name="TipoComparacion" id="inputTipoComparacion" value="@Model.TipoComparacion" />
+
+            <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
+
+                <!-- Grupo 1: Entidad -->
+                <div class="filter-param-item">
+                    <label class="filter-param-label"><i class="fa fa-university"></i> Entidad:</label>
+                    @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", @class = "form-control input-sm filter-param-select", onchange = "document.getElementById('formFiltro').submit();" })
+                </div>
+
+                <div class="toolbar-divider"></div>
+
+                <!-- Grupo 2: Período -->
+                <div class="filter-param-item">
+                    <label class="filter-param-label"><i class="fa fa-calendar"></i> Per&iacute;odo:</label>
+                    <div class="filter-param-date-group">
+                        <input type="text" name="Periodo" id="Periodo" class="form-control input-sm datecontrol filter-param-date"
+                               value="@fechaBaseStr"
+                               onchange="document.getElementById('formFiltro').submit();" />
                     </div>
-                    <div class="filter-item">
-                        <label for="Periodo1"><i class="fa fa-calendar"></i> Per&iacute;odo Inicial:</label>
-                        <div class="modern-input-wrapper">
-                            <input name="Periodo1" id="Periodo1" class="datecontrol form-control modern-date-input" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MM/yyyy")" style="min-width: 140px; height: 38px;" />
-                        </div>
-                    </div>
-                    <div class="filter-item">
-                        <label for="Periodo2"><i class="fa fa-calendar-o"></i> Per&iacute;odo Final:</label>
-                        <div class="modern-input-wrapper">
-                            <input name="Periodo2" id="Periodo2" class="datecontrol form-control modern-date-input" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MM/yyyy")" style="min-width: 140px; height: 38px;" />
-                        </div>
-                    </div>
-                    <div class="filter-item" style="margin-left: auto;">
-                        <button type="button" id="btn_buscar" class="btn-modern-filter" style="height: 38px; padding: 0 24px;">
-                            <i class="fa fa-search"></i> Generar informe
+                </div>
+
+                <div class="toolbar-divider"></div>
+
+                <!-- Grupo 3: Comparativo -->
+                <div class="filter-param-item">
+                    <label class="filter-param-label"><i class="fa fa-sliders"></i> Comparativo:</label>
+                    <div class="pill-group">
+                        <button type="button" class="pill-item @(Model.TipoComparacion.Equals("Trimestral", StringComparison.OrdinalIgnoreCase) ? "active" : "")"
+                                onclick="cambiarComparativo('Trimestral')">
+                            Trimestral
+                        </button>
+                        <button type="button" class="pill-item @(Model.TipoComparacion.Equals("Mensual", StringComparison.OrdinalIgnoreCase) ? "active" : "")"
+                                onclick="cambiarComparativo('Mensual')">
+                            Mensual
+                        </button>
+                        <button type="button" class="pill-item @(Model.TipoComparacion.Equals("Interanual", StringComparison.OrdinalIgnoreCase) ? "active" : "")"
+                                onclick="cambiarComparativo('Interanual')">
+                            Interanual
                         </button>
                     </div>
                 </div>
             </div>
+
+            <!-- Grupo 4: Acciones -->
+            <div style="display: flex; align-items: center; gap: 10px; margin-left: auto;">
+                <button type="submit" class="btn btn-report-download">
+                    <i class="fa fa-refresh"></i> Generar Reporte
+                </button>
+                <a href="@Url.Action("ExportarOrigenExcel", "InformeFinanciero", new { Entidades = Model.EntidadId, Periodo = fechaBaseStr, TipoComparacion = Model.TipoComparacion })"
+                   class="btn btn-ffc-excel"
+                   style="background-color: #f1f5f9 !important; color: #1e293b !important; border: 1px solid #cbd5e1 !important; font-weight: 600; font-size: 12.5px; padding: 6px 14px; border-radius: 6px; display: inline-flex; align-items: center; gap: 7px; text-decoration: none !important; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+                    <i class="fa fa-file-excel-o" style="color: #16a34a !important; font-size: 13.5px;"></i> <span style="color: #1e293b !important;">Exportar a Excel</span>
+                </a>
+            </div>
+        }
+    </div>
+
+    <!-- Membrete Institucional (Estándar RDL / SSRS) -->
+    <div class="report-paper-container" style="margin-bottom: 20px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+        <div class="report-header-banner" style="margin-bottom: 12px; padding-bottom: 14px;">
+            <div style="min-width: 150px;">
+                @if (!string.IsNullOrEmpty(Model.LogoUrl))
+                {
+                    <img src="@Model.LogoUrl" alt="Logo" class="report-header-logo" onerror="this.style.display='none';" />
+                }
+            </div>
+            <div class="report-header-titles">
+                <h2>FONDO DE FORTALECIMIENTO COOPERATIVO (FFC)</h2>
+                <h1>ESTADO DE ORIGEN Y APLICACIÓN DE FONDOS</h1>
+                <p class="entity-name">@Model.EntidadNombre.ToUpper()</p>
+                <p class="report-subtitle">Comparativo @Model.TipoComparacion &bull; Cifras expresadas en millones de colones sin céntimos</p>
+            </div>
+            <div class="report-header-meta">
+                <div><strong>Corte:</strong> @Model.FechaBase.ToString("MM/yyyy")</div>
+                <div><strong>Referencia:</strong> @Model.FechaComparacion.ToString("MM/yyyy")</div>
+                <div><strong>Moneda:</strong> CRC (Millones)</div>
+                <div style="margin-top: 4px;">
+                    @if (Math.Abs(Model.DiferenciaCuadre) < 0.01m)
+                    {
+                        <span class="badge-cuadrado-ffc">
+                            <i class="fa fa-check-circle"></i> Cuadrado
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="badge-descuadre-ffc" title="Diferencia contable detectada">
+                            <i class="fa fa-exclamation-triangle"></i> Descuadre
+                        </span>
+                    }
+                </div>
+            </div>
         </div>
     </div>
 
-    <div id="detail"></div>
-    @*@if (Session["TipoReporte"] != null)
-        {
-            <div class="box box-solid box-info">
-                <div class="box-body table-responsive">
-                    <div class="margin">
-                        <iframe src="~/Reportes/ReportView.aspx" width="1500" height="1500" style="border:none"></iframe>
+    <!-- KPI Cards de Resumen -->
+    <div class="row" style="margin-bottom: 20px;">
+        <div class="col-md-4 col-sm-6 col-xs-12">
+            <div class="kpi-card-origen">
+                <div class="kpi-title" style="font-size: 12px; font-weight: 700; color: #31859C; text-transform: uppercase;">
+                    <i class="fa fa-arrow-down"></i> Fuentes de Recursos (Origen)
+                </div>
+                <div class="kpi-val" style="color: #143750;">
+                    ¢ @Model.TotalOrigen.ToString("#,##0.00")
+                </div>
+                <div class="kpi-sub" style="font-size: 11px; color: #64748b; margin-top: 2px;">
+                    Disminución de activos y aumento de pasivo/patrimonio
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-6 col-xs-12">
+            <div class="kpi-card-aplicacion">
+                <div class="kpi-title" style="font-size: 12px; font-weight: 700; color: #ED7D31; text-transform: uppercase;">
+                    <i class="fa fa-arrow-up"></i> Usos de Recursos (Aplicación)
+                </div>
+                <div class="kpi-val" style="color: #143750;">
+                    ¢ @Model.TotalAplicacion.ToString("#,##0.00")
+                </div>
+                <div class="kpi-sub" style="font-size: 11px; color: #64748b; margin-top: 2px;">
+                    Aumento de activos y disminución de pasivo/patrimonio
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-12 col-xs-12">
+            <div class="kpi-card-cuadre">
+                <div class="kpi-title" style="font-size: 12px; font-weight: 700; color: #2F5597; text-transform: uppercase;">
+                    <i class="fa fa-balance-scale"></i> Cuadre Contable (Diferencia)
+                </div>
+                <div class="kpi-val" style="color: @(Math.Abs(Model.DiferenciaCuadre) < 0.01m ? "#16a34a" : "#ea580c");">
+                    ¢ @Model.DiferenciaCuadre.ToString("#,##0.00")
+                </div>
+                <div class="kpi-sub" style="font-size: 11px; color: #64748b; margin-top: 2px;">
+                    @(Math.Abs(Model.DiferenciaCuadre) < 0.01m ? "Balance cuadrado con exactitud contable" : "Descuadre contable detectado")
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pestañas de Vista en Tarjeta Unificada -->
+    <div class="modern-table-card" style="border: 1px solid #e2e8f0; border-radius: 12px; background: #ffffff; box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05); overflow: hidden; padding: 22px 24px; margin-bottom: 24px;">
+        <div class="nav-tabs-custom" style="box-shadow: none; margin-bottom: 0; background: #ffffff;">
+            <ul class="nav nav-tabs balance-modern-tabs" style="border-bottom: 2px solid #e2e8f0; margin-bottom: 22px; background: #ffffff;">
+                <li class="active">
+                    <a href="#tab_origen" data-toggle="tab">
+                        <i class="fa fa-exchange" style="color: #0284c7; margin-right: 7px;"></i> Origen y Aplicación de Fondos
+                    </a>
+                </li>
+                <li>
+                    <a href="#tab_balance" data-toggle="tab">
+                        <i class="fa fa-table" style="color: #059669; margin-right: 7px;"></i> Balance Comparativo Base
+                    </a>
+                </li>
+            </ul>
+
+            <div class="tab-content" style="padding: 0; background: #ffffff;">
+                <!-- CEJILLA 1: ORIGEN Y APLICACIÓN DE FONDOS -->
+                <div class="tab-pane active" id="tab_origen">
+                    <div class="row">
+                        <!-- Columna Izquierda: ORIGEN -->
+                        <div class="col-md-6 col-xs-12">
+                            <div style="border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; margin-bottom: 20px;">
+                                <div style="background: #31859C; color: #ffffff; padding: 12px 16px; font-weight: 700; font-size: 13px; display: flex; justify-content: space-between; align-items: center;">
+                                    <span><i class="fa fa-arrow-circle-down"></i> FUENTES DE RECURSOS (ORIGEN)</span>
+                                    <span class="badge" style="background: rgba(255,255,255,0.25); font-size: 11px;">@Model.ItemsOrigen.Count rubros</span>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table-rdl-balance" style="width: 100%;">
+                                        <thead>
+                                            <tr>
+                                                <th class="th-concept" style="text-align: left; background-color: #f1f5f9 !important; color: #143750 !important; font-weight: 700; border-bottom: 2.5px solid #2F5597; padding: 10px 12px;">Concepto / Rubro</th>
+                                                <th class="th-concept" style="width: 100px; text-align: center; background-color: #f1f5f9 !important; color: #143750 !important; font-weight: 700; border-bottom: 2.5px solid #2F5597; padding: 10px 12px;">Categoría</th>
+                                                <th class="th-period" style="width: 120px; text-align: right; background-color: #f8fafc !important; color: #143750 !important; font-weight: 700; border-bottom: 2.5px solid #2F5597; padding: 10px 12px;">Monto (¢)</th>
+                                                <th class="th-var" style="width: 80px; text-align: right; background-color: #e2e8f0 !important; color: #143750 !important; font-weight: 700; border-bottom: 2.5px solid #2F5597; padding: 10px 12px;">% Part.</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @if (Model.ItemsOrigen.Count == 0)
+                                            {
+                                                <tr>
+                                                    <td colspan="4" style="text-align: center; color: #94a3b8; padding: 20px;">
+                                                        No se generaron fuentes de recursos en el período analizado.
+                                                    </td>
+                                                </tr>
+                                            }
+                                            else
+                                            {
+                                                foreach (var it in Model.ItemsOrigen)
+                                                {
+                                                    <tr class="tr-rdl-detail">
+                                                        <td>
+                                                            <i class="fa fa-angle-right" style="color: #31859C; margin-right: 4px;"></i>
+                                                            @it.Concepto
+                                                        </td>
+                                                        <td style="text-align: center;">
+                                                            <span class="badge" style="background: #e2e8f0; color: #475569; font-size: 10px; font-weight: 600;">@it.Categoria</span>
+                                                        </td>
+                                                        <td class="col-amount" style="text-align: right; font-weight: 600; color: #143750;">
+                                                            @it.Monto.ToString("#,##0.00")
+                                                        </td>
+                                                        <td class="col-amount" style="text-align: right; color: #64748b;">
+                                                            @it.PorcentajeParticipacion.ToString("0.00")%
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            }
+                                        </tbody>
+                                        <tfoot>
+                                            <tr class="tr-rdl-section" style="background: #e6f3f7 !important;">
+                                                <td colspan="2" style="font-weight: 800 !important; color: #143750;">TOTAL FUENTES (ORIGEN)</td>
+                                                <td class="col-amount" style="text-align: right; font-weight: 800 !important; color: #143750; font-size: 12.5px !important;">
+                                                    ¢ @Model.TotalOrigen.ToString("#,##0.00")
+                                                </td>
+                                                <td class="col-amount" style="text-align: right; font-weight: 800 !important; color: #143750;">100.00%</td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Columna Derecha: APLICACIÓN -->
+                        <div class="col-md-6 col-xs-12">
+                            <div style="border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; margin-bottom: 20px;">
+                                <div style="background: #ED7D31; color: #ffffff; padding: 12px 16px; font-weight: 700; font-size: 13px; display: flex; justify-content: space-between; align-items: center;">
+                                    <span><i class="fa fa-arrow-circle-up"></i> USOS DE RECURSOS (APLICACIÓN)</span>
+                                    <span class="badge" style="background: rgba(255,255,255,0.25); font-size: 11px;">@Model.ItemsAplicacion.Count rubros</span>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table-rdl-balance" style="width: 100%;">
+                                        <thead>
+                                            <tr>
+                                                <th class="th-concept" style="text-align: left; background-color: #f1f5f9 !important; color: #143750 !important; font-weight: 700; border-bottom: 2.5px solid #2F5597; padding: 10px 12px;">Concepto / Rubro</th>
+                                                <th class="th-concept" style="width: 100px; text-align: center; background-color: #f1f5f9 !important; color: #143750 !important; font-weight: 700; border-bottom: 2.5px solid #2F5597; padding: 10px 12px;">Categoría</th>
+                                                <th class="th-period" style="width: 120px; text-align: right; background-color: #f8fafc !important; color: #143750 !important; font-weight: 700; border-bottom: 2.5px solid #2F5597; padding: 10px 12px;">Monto (¢)</th>
+                                                <th class="th-var" style="width: 80px; text-align: right; background-color: #e2e8f0 !important; color: #143750 !important; font-weight: 700; border-bottom: 2.5px solid #2F5597; padding: 10px 12px;">% Part.</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @if (Model.ItemsAplicacion.Count == 0)
+                                            {
+                                                <tr>
+                                                    <td colspan="4" style="text-align: center; color: #94a3b8; padding: 20px;">
+                                                        No se generaron aplicaciones de recursos en el período analizado.
+                                                    </td>
+                                                </tr>
+                                            }
+                                            else
+                                            {
+                                                foreach (var it in Model.ItemsAplicacion)
+                                                {
+                                                    <tr class="tr-rdl-detail">
+                                                        <td>
+                                                            <i class="fa fa-angle-right" style="color: #ED7D31; margin-right: 4px;"></i>
+                                                            @it.Concepto
+                                                        </td>
+                                                        <td style="text-align: center;">
+                                                            <span class="badge" style="background: #e2e8f0; color: #475569; font-size: 10px; font-weight: 600;">@it.Categoria</span>
+                                                        </td>
+                                                        <td class="col-amount" style="text-align: right; font-weight: 600; color: #143750;">
+                                                            @it.Monto.ToString("#,##0.00")
+                                                        </td>
+                                                        <td class="col-amount" style="text-align: right; color: #64748b;">
+                                                            @it.PorcentajeParticipacion.ToString("0.00")%
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            }
+                                        </tbody>
+                                        <tfoot>
+                                            <tr class="tr-rdl-section" style="background: #fdf2e9 !important;">
+                                                <td colspan="2" style="font-weight: 800 !important; color: #143750;">TOTAL USOS (APLICACIÓN)</td>
+                                                <td class="col-amount" style="text-align: right; font-weight: 800 !important; color: #143750; font-size: 12.5px !important;">
+                                                    ¢ @Model.TotalAplicacion.ToString("#,##0.00")
+                                                </td>
+                                                <td class="col-amount" style="text-align: right; font-weight: 800 !important; color: #143750;">100.00%</td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CEJILLA 2: BALANCE COMPARATIVO BASE -->
+                <div class="tab-pane" id="tab_balance">
+                    <div class="report-paper-container" style="padding: 0;">
+                        <div class="balance-table-scroll-wrapper" style="border: 1px solid #e2e8f0; border-radius: 8px; max-height: calc(100vh - 280px); min-height: 420px; overflow: auto; background: #ffffff;">
+                            <table class="table-rdl-balance" style="width: 100%;">
+                                <thead>
+                                    <tr>
+                                        <th class="th-concept" style="width: 100px; text-align: left; background-color: #f1f5f9 !important; color: #143750 !important; font-weight: 700; border-bottom: 2.5px solid #2F5597; padding: 10px 12px;">Código</th>
+                                        <th class="th-concept" style="text-align: left; background-color: #f1f5f9 !important; color: #143750 !important; font-weight: 700; border-bottom: 2.5px solid #2F5597; padding: 10px 12px;">Rubro / Concepto Contable</th>
+                                        <th class="th-period" style="width: 150px; text-align: right; background-color: #f8fafc !important; color: #143750 !important; font-weight: 700; border-bottom: 2.5px solid #2F5597; padding: 10px 12px;">Ref: @Model.FechaComparacion.ToString("MMM yyyy")</th>
+                                        <th class="th-period" style="width: 150px; text-align: right; background-color: #f8fafc !important; color: #143750 !important; font-weight: 700; border-bottom: 2.5px solid #2F5597; padding: 10px 12px;">Corte: @Model.FechaBase.ToString("MMM yyyy")</th>
+                                        <th class="th-var" style="width: 150px; text-align: right; background-color: #e2e8f0 !important; color: #143750 !important; font-weight: 700; border-bottom: 2.5px solid #2F5597; padding: 10px 12px;">Diferencia (¢)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var f in Model.FilasBalance)
+                                    {
+                                        string rowClass = f.Nivel == 0 ? "tr-rdl-section" :
+                                                          f.EsItalica ? "tr-rdl-subtotal-italic" :
+                                                          f.EsNegrita ? "tr-rdl-grupo" : "tr-rdl-detail";
+                                        <tr class="@rowClass">
+                                            <td class="col-cuenta" style="color: #64748b; font-size: 11px !important;">@f.CodigoContable</td>
+                                            <td style="padding-left: @(f.Nivel == 0 ? 12 : 12 + f.Nivel * 16)px !important;">
+                                                @f.Concepto
+                                            </td>
+                                            @if (f.SinMontos)
+                                            {
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                            }
+                                            else
+                                            {
+                                                <td class="col-amount" style="text-align: right;">@f.MontoReferencia.ToString("#,##0.00")</td>
+                                                <td class="col-amount" style="text-align: right;">@f.MontoBase.ToString("#,##0.00")</td>
+                                                <td class="col-amount" style="text-align: right;">
+                                                    @if (f.Diferencia > 0)
+                                                    {
+                                                        <span class="badge-var-pos">+@f.Diferencia.ToString("#,##0.00")</span>
+                                                    }
+                                                    else if (f.Diferencia < 0)
+                                                    {
+                                                        <span class="badge-var-neg">@f.Diferencia.ToString("#,##0.00")</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="badge-var-zero">0.00</span>
+                                                    }
+                                                </td>
+                                            }
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
-        }*@
+        </div>
+    </div>
 </section>
 
-<script type="text/javascript">
-
-    function refreshPage() {
-        $.ajax({
-            url: '@Url.Action("LoadOrigen", "InformeFinanciero")',
-                type: 'POST',
-                cache: false,
-                async: false,
-                data: {
-                'Entidades': $('#IdEntidad').val(),
-                'Periodo1': $('#Periodo1').val(),
-                'Periodo2': $('#Periodo2').val()
-            },
-            success: function (result) {
-                $('#detail').html(result);
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            // Asegurar que solo MonthPicker (Mes/Año) controle este campo y destruir datepicker si se hubiera adjuntado
+            if ($.fn.datepicker) {
+                try { $('#Periodo').datepicker('destroy'); } catch (e) { }
+            }
+            if ($.fn.MonthPicker) {
+                $('#Periodo').MonthPicker({
+                    Button: '<img src="https://www.ffc.co.cr/FFC/Content/images/calendar.png" />',
+                    OnAfterChooseMonth: function () {
+                        document.getElementById('formFiltro').submit();
+                    }
+                });
             }
         });
-    }
 
-      $(document).on('click', '#btn_buscar', function () {
-         refreshPage();
-      });
-
-</script>
+        function cambiarComparativo(tipo) {
+            document.getElementById('inputTipoComparacion').value = tipo;
+            document.getElementById('formFiltro').submit();
+        }
+    </script>
+}

@@ -26,7 +26,7 @@
     </div>
     <ol class="breadcrumb">
         <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
-        <li><a href="@Url.Action("Index", "Modulo", new { modulo = "Indicadores/FGA" })" class="breadcrumb-parent-pill"><i class="fa fa-file-text-o" style="margin-right: 4px;"></i> InformaciÃ³n Financiera</a></li>
+        <li><a href="@Url.Action("Index", "Modulo", new { modulo = "Indicadores/FGA" })" class="breadcrumb-parent-pill"><i class="fa fa-file-text-o" style="margin-right: 4px;"></i> Informaci&oacute;n Financiera</a></li>
         <li class="active">Indicadores FFC</li>
     </ol>
 </section>
@@ -93,26 +93,23 @@
                     <div class="tab-content" style="padding: 0;">
                         <!-- TAB 1: CARTERA -->
                         <div class="tab-pane active" id="tab_1">
-                            <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid #f1f5f9;">
-                                @if (Session["Logo"] != null)
-                                {
-                                    <img width="44" height="44" src="@Session["Logo"]" style="border-radius: 8px; background: #ffffff; padding: 3px; border: 1px solid #e2e8f0; object-fit: contain;" />
-                                }
+                            <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid #f1f5f9;">
+                                <img class="img-logo-entidad" width="44" height="44" src="@(Session["Logo"] ?? Url.Content("~/Content/images/FFC.jpg"))" onerror="this.onerror=null;this.src='@Url.Content("~/Content/images/FFC.jpg")';" style="border-radius: 8px; background: #ffffff; padding: 3px; border: 1px solid #e2e8f0; object-fit: contain;" />
                                 <div>
-                                    <h4 style="margin: 0; font-size: 16px; font-weight: 700; color: #143750;">Indicadores de Cartera</h4>
+                                    <h4 style="margin: 0; font-size: 16px; font-weight: 700; color: #143750;">Indicadores de Cartera - <span class="lblEntidadHeader">@(Session["NomEntidad"] ?? "")</span></h4>
                                     <p style="margin: 2px 0 0 0; font-size: 12px; color: #64748b;">Composici&oacute;n, morosidad y coberturas crediticias</p>
                                 </div>
                             </div>
                             <div class="table-responsive">
-                                <table id="tbCartera" class="table modern-data-table" style="width:100%">
+                                <table id="tbCartera" class="table table-striped modern-data-table" style="width:100%">
                                     <thead>
                                         <tr>
                                             <th>Id</th>
                                             <th class="text-left" style="text-align: left !important; padding-left: 16px;">Cuenta</th>
-                                            <th class="text-right" style="text-align: right !important;">@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MMMM yyyy"))</th>
-                                            <th class="text-right" style="text-align: right !important;">@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MMMM yyyy"))</th>
-                                            <th class="text-right" style="text-align: right !important;">@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MMMM yyyy")) (Promedio)</th>
-                                            <th class="text-right" style="text-align: right !important;">@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MMMM yyyy")) (Promedio)</th>
+                                            <th class="text-right" style="text-align: right !important; padding-right: 14px;">@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MMMM yyyy"))</th>
+                                            <th class="text-right" style="text-align: right !important; padding-right: 14px;">@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MMMM yyyy"))</th>
+                                            <th class="text-right" style="text-align: right !important; padding-right: 14px;">@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MMMM yyyy")) (Promedio)</th>
+                                            <th class="text-right" style="text-align: right !important; padding-right: 14px;">@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MMMM yyyy")) (Promedio)</th>
                                             <th class="text-center" style="width: 50px; text-align: center !important;"></th>
                                         </tr>
                                     </thead>
@@ -123,24 +120,21 @@
 
                         <!-- TAB 2: FINANCIERO -->
                         <div class="tab-pane" id="tab_2">
-                            <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid #f1f5f9;">
-                                @if (Session["Logo"] != null)
-                                {
-                                    <img width="44" height="44" src="@Session["Logo"]" style="border-radius: 8px; background: #ffffff; padding: 3px; border: 1px solid #e2e8f0; object-fit: contain;" />
-                                }
+                            <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid #f1f5f9;">
+                                <img class="img-logo-entidad" width="44" height="44" src="@(Session["Logo"] ?? Url.Content("~/Content/images/FFC.jpg"))" onerror="this.onerror=null;this.src='@Url.Content("~/Content/images/FFC.jpg")';" style="border-radius: 8px; background: #ffffff; padding: 3px; border: 1px solid #e2e8f0; object-fit: contain;" />
                                 <div>
-                                    <h4 style="margin: 0; font-size: 16px; font-weight: 700; color: #143750;">Indicadores Financieros</h4>
+                                    <h4 style="margin: 0; font-size: 16px; font-weight: 700; color: #143750;">Indicadores Financieros - <span class="lblEntidadHeader">@(Session["NomEntidad"] ?? "")</span></h4>
                                     <p style="margin: 2px 0 0 0; font-size: 12px; color: #64748b;">M&aacute;rgenes, rentabilidad, liquidez y solvencia</p>
                                 </div>
                             </div>
                             <div class="table-responsive">
-                                <table id="tbFinanciero" class="table modern-data-table" style="width:100%">
+                                <table id="tbFinanciero" class="table table-striped modern-data-table" style="width:100%">
                                     <thead>
                                         <tr>
                                             <th>Tipo</th>
                                             <th class="text-left" style="text-align: left !important; padding-left: 16px;">Indicador</th>
-                                            <th class="text-right" style="text-align: right !important;">@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MMMM yyyy"))</th>
-                                            <th class="text-right" style="text-align: right !important;">@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MMMM yyyy"))</th>
+                                            <th class="text-right" style="text-align: right !important; padding-right: 14px;">@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MMMM yyyy"))</th>
+                                            <th class="text-right" style="text-align: right !important; padding-right: 14px;">@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MMMM yyyy"))</th>
                                             <th class="text-center" style="width: 50px; text-align: center !important;"></th>
                                         </tr>
                                     </thead>
@@ -151,23 +145,20 @@
 
                         <!-- TAB 3: PERSONALIZADOS -->
                         <div class="tab-pane" id="tab_3">
-                            <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid #f1f5f9;">
-                                @if (Session["Logo"] != null)
-                                {
-                                    <img width="44" height="44" src="@Session["Logo"]" style="border-radius: 8px; background: #ffffff; padding: 3px; border: 1px solid #e2e8f0; object-fit: contain;" />
-                                }
+                            <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid #f1f5f9;">
+                                <img class="img-logo-entidad" width="44" height="44" src="@(Session["Logo"] ?? Url.Content("~/Content/images/FFC.jpg"))" onerror="this.onerror=null;this.src='@Url.Content("~/Content/images/FFC.jpg")';" style="border-radius: 8px; background: #ffffff; padding: 3px; border: 1px solid #e2e8f0; object-fit: contain;" />
                                 <div>
-                                    <h4 style="margin: 0; font-size: 16px; font-weight: 700; color: #143750;">Indicadores Personalizados</h4>
+                                    <h4 style="margin: 0; font-size: 16px; font-weight: 700; color: #143750;">Indicadores Personalizados - <span class="lblEntidadHeader">@(Session["NomEntidad"] ?? "")</span></h4>
                                     <p style="margin: 2px 0 0 0; font-size: 12px; color: #64748b;">F&oacute;rmulas calculadas seg&uacute;n criterios definidos por la entidad</p>
                                 </div>
                             </div>
                             <div class="table-responsive">
-                                <table id="tbPersonalizado" class="table modern-data-table" style="width:100%">
+                                <table id="tbPersonalizado" class="table table-striped modern-data-table" style="width:100%">
                                     <thead>
                                         <tr>
                                             <th class="text-left" style="text-align: left !important; padding-left: 16px;">Indicador</th>
-                                            <th class="text-right" style="text-align: right !important;">@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MMMM yyyy"))</th>
-                                            <th class="text-right" style="text-align: right !important;">@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MMMM yyyy"))</th>
+                                            <th class="text-right" style="text-align: right !important; padding-right: 14px;">@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MMMM yyyy"))</th>
+                                            <th class="text-right" style="text-align: right !important; padding-right: 14px;">@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MMMM yyyy"))</th>
                                             <th class="text-center" style="width: 50px; text-align: center !important;"></th>
                                         </tr>
                                     </thead>
@@ -175,6 +166,16 @@
                                 </table>
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Nota Informativa al pie de página idéntica a Estructura de Fondeo -->
+                <div class="modern-info-card" style="margin-top: 18px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 12px 18px; display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 28px; height: 28px; border-radius: 50%; background: #2F5597; color: #ffffff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-weight: 700; font-size: 13px;">
+                        <i class="fa fa-info"></i>
+                    </div>
+                    <div style="font-size: 12.5px; color: #1e3a8a;">
+                        <strong>Nota:</strong> Los c&aacute;lculos se realizan con base en la informaci&oacute;n financiera reportada por la entidad para los per&iacute;odos seleccionados.
                     </div>
                 </div>
 
@@ -198,91 +199,7 @@
     </div>
 </div>
 
-<style>
-    /* Estilos robustos de botones de grafico en filas de tablas */
-    table td a[href*="getGraph"],
-    .table td a[href*="getGraph"],
-    .modern-data-table td a[href*="getGraph"],
-    a.btn-indicador-chart {
-        width: 32px !important;
-        height: 32px !important;
-        min-width: 32px !important;
-        max-width: 32px !important;
-        padding: 0 !important;
-        margin: 0 auto !important;
-        border-radius: 8px !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        background: #e0f2fe !important;
-        color: #0284c7 !important;
-        border: 1px solid #bae6fd !important;
-        box-shadow: 0 1px 2px rgba(2, 132, 199, 0.08) !important;
-        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
-        text-decoration: none !important;
-        cursor: pointer !important;
-        vertical-align: middle !important;
-    }
 
-    table td a[href*="getGraph"]:hover,
-    .table td a[href*="getGraph"]:hover,
-    .modern-data-table td a[href*="getGraph"]:hover,
-    a.btn-indicador-chart:hover {
-        background: #0284c7 !important;
-        color: #ffffff !important;
-        border-color: #0284c7 !important;
-        transform: translateY(-1px) scale(1.06);
-        box-shadow: 0 4px 10px rgba(2, 132, 199, 0.3) !important;
-    }
-
-    table td a[href*="getGraph"] i,
-    table td a[href*="getGraph"] i.fa,
-    table td a[href*="getGraph"] i.btn,
-    .table td a[href*="getGraph"] i,
-    .modern-data-table td a[href*="getGraph"] i,
-    a.btn-indicador-chart i {
-        display: inline-flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        font-family: 'FontAwesome' !important;
-        font-style: normal !important;
-        font-weight: normal !important;
-        font-size: 14px !important;
-        line-height: 1 !important;
-        color: inherit !important;
-        background: transparent !important;
-        border: none !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        width: auto !important;
-        height: auto !important;
-        box-shadow: none !important;
-    }
-
-    table td a[href*="getGraph"] i::before,
-    table td a[href*="getGraph"] i.fa::before,
-    table td a[href*="getGraph"] i.fa-line-chart::before,
-    a.btn-indicador-chart i::before {
-        display: inline-block !important;
-        font-family: 'FontAwesome' !important;
-        font-style: normal !important;
-        font-weight: normal !important;
-        line-height: 1 !important;
-        content: "\f201" !important; /* fa-line-chart */
-        color: inherit !important;
-    }
-    /* Estilos de modales de graficos */
-    #graphModal .modal-body {
-        overflow: hidden !important;
-    }
-    #graphModal .highcharts-container {
-        overflow: visible !important;
-    }
-    #graphModal .highcharts-tooltip,
-    #graphModal .highcharts-tooltip * {
-        pointer-events: none !important;
-    }
-</style>
 
 <script type="text/javascript">
 
@@ -330,51 +247,80 @@
 
     $(document).ready(function () {
 
+        // Actualizar dinámicamente nombre de la entidad en encabezados al cambiar combo
+        $('#IdEntidad').on('change', function () {
+            var txt = $(this).find('option:selected').text();
+            $('.lblEntidadHeader').text(txt);
+        });
+
+        // Configuración de botones compartida
+        var exportButtons = [
+             { extend: 'copyHtml5', text: '<i class="fa fa-copy" style="color: #64748b;"></i> Copiar', exportOptions: { columns: ':visible' } }
+            ,{ extend: 'excelHtml5', text: '<i class="fa fa-file-excel-o" style="color: #16a34a;"></i> Excel', exportOptions: { columns: ':visible' } }
+            ,{ extend: 'csvHtml5', text: '<i class="fa fa-file-text-o" style="color: #0284c7;"></i> CSV', exportOptions: { columns: ':visible' } }
+            ,{ extend: 'print', text: '<i class="fa fa-print" style="color: #475569;"></i> Imprimir', exportOptions: { columns: ':visible' } }
+            ,{ extend: 'colvis', text: '<i class="fa fa-columns" style="color: #64748b;"></i> Columnas' }
+        ];
+
+        // Idioma en español compartido
+        var languageConfig = {
+            "lengthMenu": "Mostrar _MENU_ registros",
+            "zeroRecords": "No se encontraron registros",
+            "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
+            "infoEmpty": "Mostrando 0 a 0 de 0 registros",
+            "infoFiltered": "(filtrado de un total de _MAX_ registros)",
+            "search": "Buscar:",
+            "searchPlaceholder": "Filtrar indicadores...",
+            "paginate": {
+                "first": "Primero",
+                "last": "Último",
+                "next": "Siguiente",
+                "previous": "Anterior"
+            }
+        };
+
+        // TABLA PERSONALIZADOS
         $("#tbPersonalizado").dataTable({
             "bRetrieve": true,
             "bProcessing": true,
             "dom": 'lBfrtip',
             "sAjaxSource": "@Url.Content("~/Indicadores/GetGridIndicadorFormula")",
-            "buttons": [
-                 { extend: 'copyHtml5', exportOptions: { columns: ':visible' } }
-                ,{ extend: 'excelHtml5', exportOptions: { columns: ':visible' } }
-                ,{ extend: 'csvHtml5', exportOptions: { columns: ':visible' } }
-                ,{ extend: 'print', exportOptions: { columns: ':visible' } }
-                ,'colvis'
-            ],
+            "buttons": exportButtons,
             "columnDefs": [
                 { "targets": 0, "className": 'text-left font-weight-bold' },
                 { "targets": [1, 2], "className": 'text-right', "width": '160px' },
                 { "targets": 3, "className": 'text-center', "width": '50px', "orderable": false }
             ],
             "rowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+                $('td:eq(0)', nRow).css({ 'font-weight': '500', 'color': '#1e293b' });
                 for (var i = 1; i <= 2; i++){
                     var val = parseFloat(aData[i]) || 0;
                     var cell = $(nRow).find('td:eq(' + i + ')');
-                    if (val < 0)
-                        cell.css('color', '#dc2626').css('font-weight', '600');
-                    else
-                        cell.css('color', '#1e293b');
+                    cell.css('font-variant-numeric', 'tabular-nums');
+                    if (val < 0) {
+                        cell.css({ 'color': '#c2410c', 'font-weight': '600' });
+                    } else {
+                        cell.css({ 'color': '#1e293b', 'font-weight': '500' });
+                    }
                 }
+            },
+            "drawCallback": function (settings) {
+                $(this).find('[data-toggle="tooltip"]').tooltip();
             },
             "pageLength": -1,
             "order": [[ 0, "asc" ]],
-            "lengthMenu": [[5, 15, 25, 50, -1], [5, 15, 25, 50, "Todos"]],
-            "autoWidth": false
+            "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "Todos"]],
+            "autoWidth": false,
+            "language": languageConfig
         });
 
+        // TABLA CARTERA
         $("#tbCartera").dataTable({
             "bRetrieve": true,
             "bProcessing": true,
             "dom": 'lBfrtip',
             "sAjaxSource": "@Url.Content("~/Indicadores/GetGridIndicadorCartera")",
-            "buttons": [
-                 { extend: 'copyHtml5', exportOptions: { columns: ':visible' } }
-                ,{ extend: 'excelHtml5', exportOptions: { columns: ':visible' } }
-                ,{ extend: 'csvHtml5', exportOptions: { columns: ':visible' } }
-                ,{ extend: 'print', exportOptions: { columns: ':visible' } }
-                ,'colvis'
-            ],
+            "buttons": exportButtons,
             "columnDefs": [
                 { "targets": 0, "visible": false, "searchable": false },
                 { "targets": 1, "className": 'text-left font-weight-bold' },
@@ -382,21 +328,29 @@
                 { "targets": 6, "className": 'text-center', "width": '50px', "orderable": false }
             ],
             "rowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+                $('td:eq(0)', nRow).css({ 'font-weight': '500', 'color': '#1e293b' });
                 for (var i = 2; i <= 5; i++){
                     var val = parseFloat(aData[i]) || 0;
                     var cell = $(nRow).find('td:eq(' + (i - 1) + ')');
-                    if (val < 0)
-                        cell.css('color', '#dc2626').css('font-weight', '600');
-                    else
-                        cell.css('color', '#1e293b');
+                    cell.css('font-variant-numeric', 'tabular-nums');
+                    if (val < 0) {
+                        cell.css({ 'color': '#c2410c', 'font-weight': '600' });
+                    } else {
+                        cell.css({ 'color': '#1e293b', 'font-weight': '500' });
+                    }
                 }
+            },
+            "drawCallback": function (settings) {
+                $(this).find('[data-toggle="tooltip"]').tooltip();
             },
             "pageLength": -1,
             "order": [[ 0, "asc" ]],
-            "lengthMenu": [[5, 15, 25, 50, -1], [5, 15, 25, 50, "Todos"]],
-            "autoWidth": false
+            "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "Todos"]],
+            "autoWidth": false,
+            "language": languageConfig
         });
 
+        // TABLA FINANCIERO
         $("#tbFinanciero").dataTable({
             "bRetrieve": true,
             "bProcessing": true,
@@ -405,18 +359,12 @@
                 dataSrc: 0,
                 startRender: function (rows, group) {
                     return $('<tr class="group-header-row"/>')
-                        .append('<td style="font-size:13.5px !important; font-weight:700 !important; background:linear-gradient(135deg, #143750 0%, #1e4b6e 100%) !important; color:#ffffff !important; padding:10px 16px !important; letter-spacing:0.5px !important; text-transform:uppercase !important;" colspan="4"><i class="fa fa-folder-open" style="margin-right:8px; color:#88D1E2 !important;"></i> <span style="color:#ffffff !important;">' + group + '</span></td>');
+                        .append('<td style="font-size:13px !important; font-weight:700 !important; background:linear-gradient(135deg, #143750 0%, #1e4b6e 100%) !important; color:#ffffff !important; padding:9px 16px !important; letter-spacing:0.5px !important; text-transform:uppercase !important;" colspan="4"><i class="fa fa-folder-open" style="margin-right:8px; color:#88D1E2 !important;"></i> <span style="color:#ffffff !important;">' + group + '</span></td>');
                 },
                 enabled: true
             },
             "sAjaxSource": "@Url.Content("~/Indicadores/GetGridIndicadorF")",
-            "buttons": [
-                 { extend: 'copyHtml5', exportOptions: { columns: ':visible' } }
-                ,{ extend: 'excelHtml5', exportOptions: { columns: ':visible' } }
-                ,{ extend: 'csvHtml5', exportOptions: { columns: ':visible' } }
-                ,{ extend: 'print', exportOptions: { columns: ':visible' } }
-                ,'colvis'
-            ],
+            "buttons": exportButtons,
             "columnDefs": [
                 { "targets": 0, "visible": false, "searchable": false },
                 { "targets": 1, "className": 'text-left font-weight-bold' },
@@ -424,19 +372,26 @@
                 { "targets": 4, "className": 'text-center', "width": '50px', "orderable": false }
             ],
             "rowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+                $('td:eq(0)', nRow).css({ 'font-weight': '500', 'color': '#1e293b' });
                 for (var i = 2; i <= 3; i++){
                     var val = parseFloat(aData[i]) || 0;
                     var cell = $(nRow).find('td:eq(' + (i - 1) + ')');
-                    if (val < 0)
-                        cell.css('color', '#dc2626').css('font-weight', '600');
-                    else
-                        cell.css('color', '#1e293b');
+                    cell.css('font-variant-numeric', 'tabular-nums');
+                    if (val < 0) {
+                        cell.css({ 'color': '#c2410c', 'font-weight': '600' });
+                    } else {
+                        cell.css({ 'color': '#1e293b', 'font-weight': '500' });
+                    }
                 }
+            },
+            "drawCallback": function (settings) {
+                $(this).find('[data-toggle="tooltip"]').tooltip();
             },
             "pageLength": -1,
             "order": [[ 0, "asc" ]],
-            "lengthMenu": [[5, 15, 25, 50, -1], [5, 15, 25, 50, "Todos"]],
-            "autoWidth": false
+            "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "Todos"]],
+            "autoWidth": false,
+            "language": languageConfig
         });
 
         $('a[data-toggle="tab"]').on('shown.bs.tab', function () {

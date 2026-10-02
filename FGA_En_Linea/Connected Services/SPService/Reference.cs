@@ -492,6 +492,12 @@ namespace FGA_En_Linea.SPService {
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISP/FGA_Consultar_FacturacionFGD", ReplyAction="http://tempuri.org/ISP/FGA_Consultar_FacturacionFGDResponse")]
         System.Threading.Tasks.Task<Entities.Entities.Procedures.FGA_Consultar_FacturacionFGD_Result[]> FGA_Consultar_FacturacionFGDAsync(string idEntidad, int anno, int trimestre);
         
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISP/FGA_Consultar_FacturacionFFC", ReplyAction="http://tempuri.org/ISP/FGA_Consultar_FacturacionFFCResponse")]
+        Entities.Entities.Procedures.FGA_Consultar_FacturacionFFC_Result[] FGA_Consultar_FacturacionFFC(string idEntidad, int anno, int trimestre);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISP/FGA_Consultar_FacturacionFFC", ReplyAction="http://tempuri.org/ISP/FGA_Consultar_FacturacionFFCResponse")]
+        System.Threading.Tasks.Task<Entities.Entities.Procedures.FGA_Consultar_FacturacionFFC_Result[]> FGA_Consultar_FacturacionFFCAsync(string idEntidad, int anno, int trimestre);
+        
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISP/FGA_Consultar_Grafico_Oper_Categoria", ReplyAction="http://tempuri.org/ISP/FGA_Consultar_Grafico_Oper_CategoriaResponse")]
         Entities.Entities.Procedures.FGA_Consultar_Grafico_Oper_Categoria_Result[] FGA_Consultar_Grafico_Oper_Categoria(string iDENTIDAD, System.DateTime pERIODOI, System.DateTime pERIODOF);
         
@@ -545,6 +551,72 @@ namespace FGA_En_Linea.SPService {
 
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISP/FGA_Generar_Estructura_Fondeo", ReplyAction="http://tempuri.org/ISP/FGA_Generar_Estructura_FondeoResponse")]
         System.Threading.Tasks.Task<int> FGA_Generar_Estructura_FondeoAsync(string iDENTIDAD, System.Nullable<System.DateTime> pERIODO);
+
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISP/FGA_Rpt_Balance_General_5Periodos", ReplyAction="http://tempuri.org/ISP/FGA_Rpt_Balance_General_5PeriodosResponse")]
+        Entities.Entities.Procedures.FGA_Rpt_Balance_General_5Periodos_Result[] FGA_Rpt_Balance_General_5Periodos(string iDENTIDAD, System.Nullable<System.DateTime> pERIODO_REF, string tIPO_COMPARACION);
+
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISP/FGA_Rpt_Balance_General_5Periodos", ReplyAction="http://tempuri.org/ISP/FGA_Rpt_Balance_General_5PeriodosResponse")]
+        System.Threading.Tasks.Task<Entities.Entities.Procedures.FGA_Rpt_Balance_General_5Periodos_Result[]> FGA_Rpt_Balance_General_5PeriodosAsync(string iDENTIDAD, System.Nullable<System.DateTime> pERIODO_REF, string tIPO_COMPARACION);
+
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISP/FGA_Rpt_Balanza_Comprobacion_5Periodos", ReplyAction="http://tempuri.org/ISP/FGA_Rpt_Balanza_Comprobacion_5PeriodosResponse")]
+        Entities.Entities.Procedures.FGA_Rpt_Balanza_Comprobacion_5Periodos_Result[] FGA_Rpt_Balanza_Comprobacion_5Periodos(string iDENTIDAD, System.Nullable<System.DateTime> pERIODO_REF, string mODALIDAD, string tIPO_COMPARACION);
+
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISP/FGA_Rpt_Balanza_Comprobacion_5Periodos", ReplyAction="http://tempuri.org/ISP/FGA_Rpt_Balanza_Comprobacion_5PeriodosResponse")]
+        System.Threading.Tasks.Task<Entities.Entities.Procedures.FGA_Rpt_Balanza_Comprobacion_5Periodos_Result[]> FGA_Rpt_Balanza_Comprobacion_5PeriodosAsync(string iDENTIDAD, System.Nullable<System.DateTime> pERIODO_REF, string mODALIDAD, string tIPO_COMPARACION);
+
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISP/FGA_Rpt_Estado_Resultados_5Periodos", ReplyAction="http://tempuri.org/ISP/FGA_Rpt_Estado_Resultados_5PeriodosResponse")]
+        Entities.Entities.Procedures.FGA_Rpt_Estado_Resultados_5Periodos_Result[] FGA_Rpt_Estado_Resultados_5Periodos(string iDENTIDAD, System.Nullable<System.DateTime> pERIODO_REF, string mODALIDAD, string tIPO_COMPARACION);
+
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISP/FGA_Rpt_Estado_Resultados_5Periodos", ReplyAction="http://tempuri.org/ISP/FGA_Rpt_Estado_Resultados_5PeriodosResponse")]
+        System.Threading.Tasks.Task<Entities.Entities.Procedures.FGA_Rpt_Estado_Resultados_5Periodos_Result[]> FGA_Rpt_Estado_Resultados_5PeriodosAsync(string iDENTIDAD, System.Nullable<System.DateTime> pERIODO_REF, string mODALIDAD, string tIPO_COMPARACION);
+
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISP/FGA_Generar_Alertas_Variacion_Financiera", ReplyAction="http://tempuri.org/ISP/FGA_Generar_Alertas_Variacion_FinancieraResponse")]
+        Entities.Entities.Procedures.FGA_Obtener_Alertas_Financieras_Result[] FGA_Generar_Alertas_Variacion_Financiera(string iDENTIDAD, System.Nullable<System.DateTime> pERIODO, string mODALIDAD, string tIPO_COMPARACION);
+
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISP/FGA_Generar_Alertas_Variacion_Financiera", ReplyAction="http://tempuri.org/ISP/FGA_Generar_Alertas_Variacion_FinancieraResponse")]
+        System.Threading.Tasks.Task<Entities.Entities.Procedures.FGA_Obtener_Alertas_Financieras_Result[]> FGA_Generar_Alertas_Variacion_FinancieraAsync(string iDENTIDAD, System.Nullable<System.DateTime> pERIODO, string mODALIDAD, string tIPO_COMPARACION);
+
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISP/FGA_Obtener_Alertas_Financieras", ReplyAction="http://tempuri.org/ISP/FGA_Obtener_Alertas_FinancierasResponse")]
+        Entities.Entities.Procedures.FGA_Obtener_Alertas_Financieras_Result[] FGA_Obtener_Alertas_Financieras(string iDENTIDAD, System.Nullable<bool> sOLO_NO_LEIDAS, System.Nullable<int> tOP);
+
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISP/FGA_Obtener_Alertas_Financieras", ReplyAction="http://tempuri.org/ISP/FGA_Obtener_Alertas_FinancierasResponse")]
+        System.Threading.Tasks.Task<Entities.Entities.Procedures.FGA_Obtener_Alertas_Financieras_Result[]> FGA_Obtener_Alertas_FinancierasAsync(string iDENTIDAD, System.Nullable<bool> sOLO_NO_LEIDAS, System.Nullable<int> tOP);
+
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISP/FGA_Marcar_Alerta_Leida", ReplyAction="http://tempuri.org/ISP/FGA_Marcar_Alerta_LeidaResponse")]
+        int FGA_Marcar_Alerta_Leida(System.Nullable<int> aLERTA_ID, string iDENTIDAD, string uSUARIO);
+
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISP/FGA_Marcar_Alerta_Leida", ReplyAction="http://tempuri.org/ISP/FGA_Marcar_Alerta_LeidaResponse")]
+        System.Threading.Tasks.Task<int> FGA_Marcar_Alerta_LeidaAsync(System.Nullable<int> aLERTA_ID, string iDENTIDAD, string uSUARIO);
+
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISP/FGA_Obtener_Configuracion_Alerta_Entidad", ReplyAction="http://tempuri.org/ISP/FGA_Obtener_Configuracion_Alerta_EntidadResponse")]
+        Entities.Entities.Procedures.FGA_Configuracion_Alerta_Entidad_Result[] FGA_Obtener_Configuracion_Alerta_Entidad(string iDENTIDAD);
+
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISP/FGA_Obtener_Configuracion_Alerta_Entidad", ReplyAction="http://tempuri.org/ISP/FGA_Obtener_Configuracion_Alerta_EntidadResponse")]
+        System.Threading.Tasks.Task<Entities.Entities.Procedures.FGA_Configuracion_Alerta_Entidad_Result[]> FGA_Obtener_Configuracion_Alerta_EntidadAsync(string iDENTIDAD);
+
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISP/FGA_Guardar_Configuracion_Alerta_Entidad", ReplyAction="http://tempuri.org/ISP/FGA_Guardar_Configuracion_Alerta_EntidadResponse")]
+        Entities.Entities.Procedures.FGA_Configuracion_Alerta_Entidad_Result[] FGA_Guardar_Configuracion_Alerta_Entidad(string iDENTIDAD, System.Nullable<decimal> uMBRAL_PORC, System.Nullable<decimal> uMBRAL_MONTO, string mODO_MONITOREO, System.Nullable<bool> aCTIVO, string uSUARIO);
+
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISP/FGA_Guardar_Configuracion_Alerta_Entidad", ReplyAction="http://tempuri.org/ISP/FGA_Guardar_Configuracion_Alerta_EntidadResponse")]
+        System.Threading.Tasks.Task<Entities.Entities.Procedures.FGA_Configuracion_Alerta_Entidad_Result[]> FGA_Guardar_Configuracion_Alerta_EntidadAsync(string iDENTIDAD, System.Nullable<decimal> uMBRAL_PORC, System.Nullable<decimal> uMBRAL_MONTO, string mODO_MONITOREO, System.Nullable<bool> aCTIVO, string uSUARIO);
+
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISP/FGA_Obtener_Cuentas_Monitoreadas_Entidad", ReplyAction="http://tempuri.org/ISP/FGA_Obtener_Cuentas_Monitoreadas_EntidadResponse")]
+        Entities.Entities.Procedures.FGA_Cuenta_Monitoreada_Entidad_Result[] FGA_Obtener_Cuentas_Monitoreadas_Entidad(string iDENTIDAD, System.Nullable<bool> sOLO_ACTIVAS);
+
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISP/FGA_Obtener_Cuentas_Monitoreadas_Entidad", ReplyAction="http://tempuri.org/ISP/FGA_Obtener_Cuentas_Monitoreadas_EntidadResponse")]
+        System.Threading.Tasks.Task<Entities.Entities.Procedures.FGA_Cuenta_Monitoreada_Entidad_Result[]> FGA_Obtener_Cuentas_Monitoreadas_EntidadAsync(string iDENTIDAD, System.Nullable<bool> sOLO_ACTIVAS);
+
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISP/FGA_Guardar_Cuenta_Monitoreada_Entidad", ReplyAction="http://tempuri.org/ISP/FGA_Guardar_Cuenta_Monitoreada_EntidadResponse")]
+        Entities.Entities.Procedures.FGA_Cuenta_Monitoreada_Entidad_Result[] FGA_Guardar_Cuenta_Monitoreada_Entidad(string iDENTIDAD, string cUENTA, string nOMBRE_CUENTA, string tIPO_REGLA, System.Nullable<decimal> uMBRAL_PORC, System.Nullable<decimal> uMBRAL_MONTO, string uSUARIO);
+
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISP/FGA_Guardar_Cuenta_Monitoreada_Entidad", ReplyAction="http://tempuri.org/ISP/FGA_Guardar_Cuenta_Monitoreada_EntidadResponse")]
+        System.Threading.Tasks.Task<Entities.Entities.Procedures.FGA_Cuenta_Monitoreada_Entidad_Result[]> FGA_Guardar_Cuenta_Monitoreada_EntidadAsync(string iDENTIDAD, string cUENTA, string nOMBRE_CUENTA, string tIPO_REGLA, System.Nullable<decimal> uMBRAL_PORC, System.Nullable<decimal> uMBRAL_MONTO, string uSUARIO);
+
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISP/FGA_Eliminar_Cuenta_Monitoreada_Entidad", ReplyAction="http://tempuri.org/ISP/FGA_Eliminar_Cuenta_Monitoreada_EntidadResponse")]
+        int FGA_Eliminar_Cuenta_Monitoreada_Entidad(int iD, string iDENTIDAD, string uSUARIO);
+
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISP/FGA_Eliminar_Cuenta_Monitoreada_Entidad", ReplyAction="http://tempuri.org/ISP/FGA_Eliminar_Cuenta_Monitoreada_EntidadResponse")]
+        System.Threading.Tasks.Task<int> FGA_Eliminar_Cuenta_Monitoreada_EntidadAsync(int iD, string iDENTIDAD, string uSUARIO);
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
@@ -1600,6 +1672,14 @@ namespace FGA_En_Linea.SPService {
             return base.Channel.FGA_Consultar_FacturacionFGDAsync(idEntidad, anno, trimestre);
         }
         
+        public Entities.Entities.Procedures.FGA_Consultar_FacturacionFFC_Result[] FGA_Consultar_FacturacionFFC(string idEntidad, int anno, int trimestre) {
+            return base.Channel.FGA_Consultar_FacturacionFFC(idEntidad, anno, trimestre);
+        }
+        
+        public System.Threading.Tasks.Task<Entities.Entities.Procedures.FGA_Consultar_FacturacionFFC_Result[]> FGA_Consultar_FacturacionFFCAsync(string idEntidad, int anno, int trimestre) {
+            return base.Channel.FGA_Consultar_FacturacionFFCAsync(idEntidad, anno, trimestre);
+        }
+        
         public Entities.Entities.Procedures.FGA_Consultar_Grafico_Oper_Categoria_Result[] FGA_Consultar_Grafico_Oper_Categoria(string iDENTIDAD, System.DateTime pERIODOI, System.DateTime pERIODOF) {
             return base.Channel.FGA_Consultar_Grafico_Oper_Categoria(iDENTIDAD, pERIODOI, pERIODOF);
         }
@@ -1670,6 +1750,94 @@ namespace FGA_En_Linea.SPService {
 
         public System.Threading.Tasks.Task<int> FGA_Generar_Estructura_FondeoAsync(string iDENTIDAD, System.Nullable<System.DateTime> pERIODO) {
             return base.Channel.FGA_Generar_Estructura_FondeoAsync(iDENTIDAD, pERIODO);
+        }
+
+        public Entities.Entities.Procedures.FGA_Rpt_Balance_General_5Periodos_Result[] FGA_Rpt_Balance_General_5Periodos(string iDENTIDAD, System.Nullable<System.DateTime> pERIODO_REF, string tIPO_COMPARACION) {
+            return base.Channel.FGA_Rpt_Balance_General_5Periodos(iDENTIDAD, pERIODO_REF, tIPO_COMPARACION);
+        }
+
+        public System.Threading.Tasks.Task<Entities.Entities.Procedures.FGA_Rpt_Balance_General_5Periodos_Result[]> FGA_Rpt_Balance_General_5PeriodosAsync(string iDENTIDAD, System.Nullable<System.DateTime> pERIODO_REF, string tIPO_COMPARACION) {
+            return base.Channel.FGA_Rpt_Balance_General_5PeriodosAsync(iDENTIDAD, pERIODO_REF, tIPO_COMPARACION);
+        }
+
+        public Entities.Entities.Procedures.FGA_Rpt_Balanza_Comprobacion_5Periodos_Result[] FGA_Rpt_Balanza_Comprobacion_5Periodos(string iDENTIDAD, System.Nullable<System.DateTime> pERIODO_REF, string mODALIDAD, string tIPO_COMPARACION) {
+            return base.Channel.FGA_Rpt_Balanza_Comprobacion_5Periodos(iDENTIDAD, pERIODO_REF, mODALIDAD, tIPO_COMPARACION);
+        }
+
+        public System.Threading.Tasks.Task<Entities.Entities.Procedures.FGA_Rpt_Balanza_Comprobacion_5Periodos_Result[]> FGA_Rpt_Balanza_Comprobacion_5PeriodosAsync(string iDENTIDAD, System.Nullable<System.DateTime> pERIODO_REF, string mODALIDAD, string tIPO_COMPARACION) {
+            return base.Channel.FGA_Rpt_Balanza_Comprobacion_5PeriodosAsync(iDENTIDAD, pERIODO_REF, mODALIDAD, tIPO_COMPARACION);
+        }
+
+        public Entities.Entities.Procedures.FGA_Rpt_Estado_Resultados_5Periodos_Result[] FGA_Rpt_Estado_Resultados_5Periodos(string iDENTIDAD, System.Nullable<System.DateTime> pERIODO_REF, string mODALIDAD, string tIPO_COMPARACION) {
+            return base.Channel.FGA_Rpt_Estado_Resultados_5Periodos(iDENTIDAD, pERIODO_REF, mODALIDAD, tIPO_COMPARACION);
+        }
+
+        public System.Threading.Tasks.Task<Entities.Entities.Procedures.FGA_Rpt_Estado_Resultados_5Periodos_Result[]> FGA_Rpt_Estado_Resultados_5PeriodosAsync(string iDENTIDAD, System.Nullable<System.DateTime> pERIODO_REF, string mODALIDAD, string tIPO_COMPARACION) {
+            return base.Channel.FGA_Rpt_Estado_Resultados_5PeriodosAsync(iDENTIDAD, pERIODO_REF, mODALIDAD, tIPO_COMPARACION);
+        }
+
+        public Entities.Entities.Procedures.FGA_Obtener_Alertas_Financieras_Result[] FGA_Generar_Alertas_Variacion_Financiera(string iDENTIDAD, System.Nullable<System.DateTime> pERIODO, string mODALIDAD, string tIPO_COMPARACION) {
+            return base.Channel.FGA_Generar_Alertas_Variacion_Financiera(iDENTIDAD, pERIODO, mODALIDAD, tIPO_COMPARACION);
+        }
+
+        public System.Threading.Tasks.Task<Entities.Entities.Procedures.FGA_Obtener_Alertas_Financieras_Result[]> FGA_Generar_Alertas_Variacion_FinancieraAsync(string iDENTIDAD, System.Nullable<System.DateTime> pERIODO, string mODALIDAD, string tIPO_COMPARACION) {
+            return base.Channel.FGA_Generar_Alertas_Variacion_FinancieraAsync(iDENTIDAD, pERIODO, mODALIDAD, tIPO_COMPARACION);
+        }
+
+        public Entities.Entities.Procedures.FGA_Obtener_Alertas_Financieras_Result[] FGA_Obtener_Alertas_Financieras(string iDENTIDAD, System.Nullable<bool> sOLO_NO_LEIDAS, System.Nullable<int> tOP) {
+            return base.Channel.FGA_Obtener_Alertas_Financieras(iDENTIDAD, sOLO_NO_LEIDAS, tOP);
+        }
+
+        public System.Threading.Tasks.Task<Entities.Entities.Procedures.FGA_Obtener_Alertas_Financieras_Result[]> FGA_Obtener_Alertas_FinancierasAsync(string iDENTIDAD, System.Nullable<bool> sOLO_NO_LEIDAS, System.Nullable<int> tOP) {
+            return base.Channel.FGA_Obtener_Alertas_FinancierasAsync(iDENTIDAD, sOLO_NO_LEIDAS, tOP);
+        }
+
+        public int FGA_Marcar_Alerta_Leida(System.Nullable<int> aLERTA_ID, string iDENTIDAD, string uSUARIO) {
+            return base.Channel.FGA_Marcar_Alerta_Leida(aLERTA_ID, iDENTIDAD, uSUARIO);
+        }
+
+        public System.Threading.Tasks.Task<int> FGA_Marcar_Alerta_LeidaAsync(System.Nullable<int> aLERTA_ID, string iDENTIDAD, string uSUARIO) {
+            return base.Channel.FGA_Marcar_Alerta_LeidaAsync(aLERTA_ID, iDENTIDAD, uSUARIO);
+        }
+
+        public Entities.Entities.Procedures.FGA_Configuracion_Alerta_Entidad_Result[] FGA_Obtener_Configuracion_Alerta_Entidad(string iDENTIDAD) {
+            return base.Channel.FGA_Obtener_Configuracion_Alerta_Entidad(iDENTIDAD);
+        }
+
+        public System.Threading.Tasks.Task<Entities.Entities.Procedures.FGA_Configuracion_Alerta_Entidad_Result[]> FGA_Obtener_Configuracion_Alerta_EntidadAsync(string iDENTIDAD) {
+            return base.Channel.FGA_Obtener_Configuracion_Alerta_EntidadAsync(iDENTIDAD);
+        }
+
+        public Entities.Entities.Procedures.FGA_Configuracion_Alerta_Entidad_Result[] FGA_Guardar_Configuracion_Alerta_Entidad(string iDENTIDAD, System.Nullable<decimal> uMBRAL_PORC, System.Nullable<decimal> uMBRAL_MONTO, string mODO_MONITOREO, System.Nullable<bool> aCTIVO, string uSUARIO) {
+            return base.Channel.FGA_Guardar_Configuracion_Alerta_Entidad(iDENTIDAD, uMBRAL_PORC, uMBRAL_MONTO, mODO_MONITOREO, aCTIVO, uSUARIO);
+        }
+
+        public System.Threading.Tasks.Task<Entities.Entities.Procedures.FGA_Configuracion_Alerta_Entidad_Result[]> FGA_Guardar_Configuracion_Alerta_EntidadAsync(string iDENTIDAD, System.Nullable<decimal> uMBRAL_PORC, System.Nullable<decimal> uMBRAL_MONTO, string mODO_MONITOREO, System.Nullable<bool> aCTIVO, string uSUARIO) {
+            return base.Channel.FGA_Guardar_Configuracion_Alerta_EntidadAsync(iDENTIDAD, uMBRAL_PORC, uMBRAL_MONTO, mODO_MONITOREO, aCTIVO, uSUARIO);
+        }
+
+        public Entities.Entities.Procedures.FGA_Cuenta_Monitoreada_Entidad_Result[] FGA_Obtener_Cuentas_Monitoreadas_Entidad(string iDENTIDAD, System.Nullable<bool> sOLO_ACTIVAS) {
+            return base.Channel.FGA_Obtener_Cuentas_Monitoreadas_Entidad(iDENTIDAD, sOLO_ACTIVAS);
+        }
+
+        public System.Threading.Tasks.Task<Entities.Entities.Procedures.FGA_Cuenta_Monitoreada_Entidad_Result[]> FGA_Obtener_Cuentas_Monitoreadas_EntidadAsync(string iDENTIDAD, System.Nullable<bool> sOLO_ACTIVAS) {
+            return base.Channel.FGA_Obtener_Cuentas_Monitoreadas_EntidadAsync(iDENTIDAD, sOLO_ACTIVAS);
+        }
+
+        public Entities.Entities.Procedures.FGA_Cuenta_Monitoreada_Entidad_Result[] FGA_Guardar_Cuenta_Monitoreada_Entidad(string iDENTIDAD, string cUENTA, string nOMBRE_CUENTA, string tIPO_REGLA, System.Nullable<decimal> uMBRAL_PORC, System.Nullable<decimal> uMBRAL_MONTO, string uSUARIO) {
+            return base.Channel.FGA_Guardar_Cuenta_Monitoreada_Entidad(iDENTIDAD, cUENTA, nOMBRE_CUENTA, tIPO_REGLA, uMBRAL_PORC, uMBRAL_MONTO, uSUARIO);
+        }
+
+        public System.Threading.Tasks.Task<Entities.Entities.Procedures.FGA_Cuenta_Monitoreada_Entidad_Result[]> FGA_Guardar_Cuenta_Monitoreada_EntidadAsync(string iDENTIDAD, string cUENTA, string nOMBRE_CUENTA, string tIPO_REGLA, System.Nullable<decimal> uMBRAL_PORC, System.Nullable<decimal> uMBRAL_MONTO, string uSUARIO) {
+            return base.Channel.FGA_Guardar_Cuenta_Monitoreada_EntidadAsync(iDENTIDAD, cUENTA, nOMBRE_CUENTA, tIPO_REGLA, uMBRAL_PORC, uMBRAL_MONTO, uSUARIO);
+        }
+
+        public int FGA_Eliminar_Cuenta_Monitoreada_Entidad(int iD, string iDENTIDAD, string uSUARIO) {
+            return base.Channel.FGA_Eliminar_Cuenta_Monitoreada_Entidad(iD, iDENTIDAD, uSUARIO);
+        }
+
+        public System.Threading.Tasks.Task<int> FGA_Eliminar_Cuenta_Monitoreada_EntidadAsync(int iD, string iDENTIDAD, string uSUARIO) {
+            return base.Channel.FGA_Eliminar_Cuenta_Monitoreada_EntidadAsync(iD, iDENTIDAD, uSUARIO);
         }
     }
 }

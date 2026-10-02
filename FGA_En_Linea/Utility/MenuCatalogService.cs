@@ -111,13 +111,28 @@ namespace FGA.Utility
             },
             ["Evaluacion"] = new ModuloMeta
             {
-                Subtitulo = "Evaluaci\u00f3n y seguimiento de la Supervisi\u00f3n Basada en Riesgos (SBR)",
-                NotaPie = "Nota: Los resultados de autoevaluaci\u00f3n se procesan seg\u00fan la metodolog\u00eda SUGEF."
+                Subtitulo = "Autoevaluaci\u00f3n de los aspectos del Reglamento SUGEF 24-22",
+                NotaPie = "Nota: Los resultados y ponderaciones de la autoevaluaci\u00f3n se procesan conforme a las directrices del Reglamento SUGEF 24-22 para la Supervisi\u00f3n Basada en Riesgos."
             },
             ["Evaluación"] = new ModuloMeta
             {
-                Subtitulo = "Evaluaci\u00f3n y seguimiento de la Supervisi\u00f3n Basada en Riesgos (SBR)",
-                NotaPie = "Nota: Los resultados de autoevaluaci\u00f3n se procesan seg\u00fan la metodolog\u00eda SUGEF."
+                Subtitulo = "Autoevaluaci\u00f3n de los aspectos del Reglamento SUGEF 24-22",
+                NotaPie = "Nota: Los resultados y ponderaciones de la autoevaluaci\u00f3n se procesan conforme a las directrices del Reglamento SUGEF 24-22 para la Supervisi\u00f3n Basada en Riesgos."
+            },
+            ["Evaluación SBR"] = new ModuloMeta
+            {
+                Subtitulo = "Autoevaluaci\u00f3n de los aspectos del Reglamento SUGEF 24-22",
+                NotaPie = "Nota: Los resultados y ponderaciones de la autoevaluaci\u00f3n se procesan conforme a las directrices del Reglamento SUGEF 24-22 para la Supervisi\u00f3n Basada en Riesgos."
+            },
+            ["Evaluacion SBR"] = new ModuloMeta
+            {
+                Subtitulo = "Autoevaluaci\u00f3n de los aspectos del Reglamento SUGEF 24-22",
+                NotaPie = "Nota: Los resultados y ponderaciones de la autoevaluaci\u00f3n se procesan conforme a las directrices del Reglamento SUGEF 24-22 para la Supervisi\u00f3n Basada en Riesgos."
+            },
+            ["SBR"] = new ModuloMeta
+            {
+                Subtitulo = "Autoevaluaci\u00f3n de los aspectos del Reglamento SUGEF 24-22",
+                NotaPie = "Nota: Los resultados y ponderaciones de la autoevaluaci\u00f3n se procesan conforme a las directrices del Reglamento SUGEF 24-22 para la Supervisi\u00f3n Basada en Riesgos."
             },
             ["Mantenimientos"] = new ModuloMeta
             {
@@ -164,19 +179,138 @@ namespace FGA.Utility
         // Metadatos de tarjetas hijas (por coincidencia de URL o texto)
         private static readonly Dictionary<string, CardMeta> Tarjetas = new Dictionary<string, CardMeta>(StringComparer.OrdinalIgnoreCase)
         {
-            ["Role/Index"] = new CardMeta
+            ["Autoevaluación"] = new CardMeta
             {
-                Descripcion = "Gestión de perfiles de usuario y configuración de permisos de acceso al menú",
-                Icono = "fa fa-shield",
+                Descripcion = "Evalúe los aspectos que establece el Reglamento SUGEF 24-22 para la Supervisión Basada en Riesgos (SBR).",
+                Icono = "fa fa-clipboard",
+                ColorFondoIcono = "#ffedd5",
+                ColorIcono = "#ea580c"
+            },
+            ["Autoevaluacion"] = new CardMeta
+            {
+                Descripcion = "Evalúe los aspectos que establece el Reglamento SUGEF 24-22 para la Supervisión Basada en Riesgos (SBR).",
+                Icono = "fa fa-clipboard",
+                ColorFondoIcono = "#ffedd5",
+                ColorIcono = "#ea580c"
+            },
+            ["Evaluacion/Evaluacion"] = new CardMeta
+            {
+                Descripcion = "Evalúe los aspectos que establece el Reglamento SUGEF 24-22 para la Supervisión Basada en Riesgos (SBR).",
+                Icono = "fa fa-clipboard",
+                ColorFondoIcono = "#ffedd5",
+                ColorIcono = "#ea580c"
+            },
+            ["Avance SBR"] = new CardMeta
+            {
+                Descripcion = "Monitoreo del porcentaje de avance y nivel de respuestas completadas.",
+                Icono = "fa fa-tasks",
                 ColorFondoIcono = "#e0f2fe",
                 ColorIcono = "#0284c7"
             },
-            ["Roles"] = new CardMeta
+            ["Evaluacion/Avance"] = new CardMeta
             {
-                Descripcion = "Gestión de perfiles de usuario y configuración de permisos de acceso al menú",
-                Icono = "fa fa-shield",
+                Descripcion = "Monitoreo del porcentaje de avance y nivel de respuestas completadas.",
+                Icono = "fa fa-tasks",
                 ColorFondoIcono = "#e0f2fe",
                 ColorIcono = "#0284c7"
+            },
+            ["Historial SBR"] = new CardMeta
+            {
+                Descripcion = "Registro histórico de evaluaciones y calificaciones obtenidas.",
+                Icono = "fa fa-history",
+                ColorFondoIcono = "#fef3c7",
+                ColorIcono = "#d97706"
+            },
+            ["Evaluacion/Historial"] = new CardMeta
+            {
+                Descripcion = "Registro histórico de evaluaciones y calificaciones obtenidas.",
+                Icono = "fa fa-history",
+                ColorFondoIcono = "#fef3c7",
+                ColorIcono = "#d97706"
+            },
+            ["Resultados SBR"] = new CardMeta
+            {
+                Descripcion = "Informe de resultados consolidados y niveles de cumplimiento.",
+                Icono = "fa fa-check-square-o",
+                ColorFondoIcono = "#dcfce7",
+                ColorIcono = "#16a34a"
+            },
+            ["Evaluacion/Resultados"] = new CardMeta
+            {
+                Descripcion = "Informe de resultados consolidados y niveles de cumplimiento.",
+                Icono = "fa fa-check-square-o",
+                ColorFondoIcono = "#dcfce7",
+                ColorIcono = "#16a34a"
+            },
+            ["Configuración de Preguntas SBR"] = new CardMeta
+            {
+                Descripcion = "Mantenimiento y configuración del banco de preguntas, pesos y categorías SBR.",
+                Icono = "fa fa-list-alt",
+                ColorFondoIcono = "#f3e8ff",
+                ColorIcono = "#7e22ce"
+            },
+            ["Configuracion de Preguntas SBR"] = new CardMeta
+            {
+                Descripcion = "Mantenimiento y configuración del banco de preguntas, pesos y categorías SBR.",
+                Icono = "fa fa-list-alt",
+                ColorFondoIcono = "#f3e8ff",
+                ColorIcono = "#7e22ce"
+            },
+            ["Evaluacion/Index"] = new CardMeta
+            {
+                Descripcion = "Mantenimiento y configuración del banco de preguntas, pesos y categorías SBR.",
+                Icono = "fa fa-list-alt",
+                ColorFondoIcono = "#f3e8ff",
+                ColorIcono = "#7e22ce"
+            },
+            ["Evaluación SBR (Avance y Resultados)"] = new CardMeta
+            {
+                Descripcion = "Monitoreo del avance, bitácora histórica y resultados consolidados SBR 24-22.",
+                Icono = "fa fa-tasks",
+                ColorFondoIcono = "#e0f2fe",
+                ColorIcono = "#0284c7"
+            },
+            ["Role/Index"] = new CardMeta
+            {
+                Descripcion = "Gestión de roles y configuración de la matriz de permisos de menú",
+                Icono = "fa fa-key",
+                ColorFondoIcono = "#fef3c7",
+                ColorIcono = "#d97706"
+            },
+            ["Roles"] = new CardMeta
+            {
+                Descripcion = "Gestión de roles y configuración de la matriz de permisos de menú",
+                Icono = "fa fa-key",
+                ColorFondoIcono = "#fef3c7",
+                ColorIcono = "#d97706"
+            },
+            ["Menu/Index"] = new CardMeta
+            {
+                Descripcion = "Administración de opciones de menú, íconos y descripciones para las fichas del sistema",
+                Icono = "fa fa-sitemap",
+                ColorFondoIcono = "#f1f5f9",
+                ColorIcono = "#475569"
+            },
+            ["Menú del Sistema"] = new CardMeta
+            {
+                Descripcion = "Administración de opciones de menú, íconos y descripciones para las fichas del sistema",
+                Icono = "fa fa-sitemap",
+                ColorFondoIcono = "#f1f5f9",
+                ColorIcono = "#475569"
+            },
+            ["Menu del Sistema"] = new CardMeta
+            {
+                Descripcion = "Administración de opciones de menú, íconos y descripciones para las fichas del sistema",
+                Icono = "fa fa-sitemap",
+                ColorFondoIcono = "#f1f5f9",
+                ColorIcono = "#475569"
+            },
+            ["Menu Sistema"] = new CardMeta
+            {
+                Descripcion = "Administración de opciones de menú, íconos y descripciones para las fichas del sistema",
+                Icono = "fa fa-sitemap",
+                ColorFondoIcono = "#f1f5f9",
+                ColorIcono = "#475569"
             },
             // === ESTRUCTURA FINANCIERA (Maqueta original) ===
             ["Estados Financieros"] = new CardMeta
@@ -263,6 +397,41 @@ namespace FGA.Utility
                 ColorFondoIcono = "#dbeafe",
                 ColorIcono = "#2563eb"
             },
+            ["Proyección de Estados Financieros"] = new CardMeta
+            {
+                Descripcion = "Módulo de proyección de balances, estados de resultados, mora e indicadores.",
+                Icono = "fa fa-area-chart",
+                ColorFondoIcono = "#dbeafe",
+                ColorIcono = "#2563eb"
+            },
+            ["Proyecciones IRL"] = new CardMeta
+            {
+                Descripcion = "Cálculo y evaluación del índice de riesgo y brechas de liquidez proyectadas.",
+                Icono = "fa fa-tint",
+                ColorFondoIcono = "#e0f2fe",
+                ColorIcono = "#0284c7"
+            },
+            ["IRL"] = new CardMeta
+            {
+                Descripcion = "Cálculo y evaluación del índice de riesgo y brechas de liquidez proyectadas.",
+                Icono = "fa fa-tint",
+                ColorFondoIcono = "#e0f2fe",
+                ColorIcono = "#0284c7"
+            },
+            ["Simulación ISP"] = new CardMeta
+            {
+                Descripcion = "Simulación y proyección de adecuación patrimonial y suficiencia de capital.",
+                Icono = "fa fa-calculator",
+                ColorFondoIcono = "#f3e8ff",
+                ColorIcono = "#7c3aed"
+            },
+            ["SimulacionCapital"] = new CardMeta
+            {
+                Descripcion = "Simulación y proyección de adecuación patrimonial y suficiencia de capital.",
+                Icono = "fa fa-calculator",
+                ColorFondoIcono = "#f3e8ff",
+                ColorIcono = "#7c3aed"
+            },
 
             // === CARTERA DE CRÉDITO ===
             ["Cartera de Cr\u00e9dito"] = new CardMeta
@@ -278,6 +447,34 @@ namespace FGA.Utility
                 Icono = "fa fa-pie-chart",
                 ColorFondoIcono = "#e0e7ff",
                 ColorIcono = "#4338ca"
+            },
+            ["Riesgo de Crédito"] = new CardMeta
+            {
+                Descripcion = "Composición de mora, morosidad agrupada y análisis de riesgo según normativa 14-21.",
+                Icono = "fa fa-shield",
+                ColorFondoIcono = "#ffe4e6",
+                ColorIcono = "#e11d48"
+            },
+            ["Riesgo de Credito"] = new CardMeta
+            {
+                Descripcion = "Composición de mora, morosidad agrupada y análisis de riesgo según normativa 14-21.",
+                Icono = "fa fa-shield",
+                ColorFondoIcono = "#ffe4e6",
+                ColorIcono = "#e11d48"
+            },
+            ["Desempeño"] = new CardMeta
+            {
+                Descripcion = "Evolución de la cartera total, variaciones mensuales/interanuales, activos y cuentas liquidadas.",
+                Icono = "fa fa-line-chart",
+                ColorFondoIcono = "#dcfce7",
+                ColorIcono = "#16a34a"
+            },
+            ["Desempeno"] = new CardMeta
+            {
+                Descripcion = "Evolución de la cartera total, variaciones mensuales/interanuales, activos y cuentas liquidadas.",
+                Icono = "fa fa-line-chart",
+                ColorFondoIcono = "#dcfce7",
+                ColorIcono = "#16a34a"
             },
             ["Cartera 14-21"] = new CardMeta
             {

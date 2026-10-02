@@ -1,268 +1,1195 @@
-@model FGA.Model.Graficos_Financieros
+@model FGA.Model.BalanceGeneralViewModel
 
 @{
-    ViewBag.Title = "Balance General";
+    ViewBag.Title = "Balance General - " + Model.NombreEntidad;
 }
 
-<section class="content-header" style="padding: 24px 20px 14px 20px;">
+<link rel="stylesheet" href="~/Content/informe_financiero.css?v=@DateTime.Now.Ticks" />
+<style>
+    .pill-item.active, button.pill-item.active, a.pill-item.active {
+        background: #ffffff !important;
+        background-color: #ffffff !important;
+        color: #2F5597 !important;
+        border: 1px solid #cbd5e1 !important;
+        font-weight: 700 !important;
+    }
+</style>
+
+<section class="content-header" style="padding: 20px 20px 14px 20px;">
     <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
         <div>
             <h1 style="margin: 0; font-size: 21px; font-weight: 700; color: #143750; display: flex; align-items: center; gap: 10px;">
-                <i class="fa fa-university" style="color: #0284c7;"></i>
+                <i class="fa fa-university" style="color: #2F5597;"></i>
                 Balance General
             </h1>
             <p style="margin: 6px 0 0 0; font-size: 13px; color: #64748b;">
-                Consulta comparativa del balance general, an&aacute;lisis y composici&oacute;n patrimonial.
+                Consulta y análisis de la situación financiera y balance contable de la entidad.
             </p>
         </div>
     </div>
-    <ol class="breadcrumb">
+    <ol class="breadcrumb" style="top: 18px;">
         <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
-        <li><a href="@Url.Action("Index", "Modulo", new { modulo = "InformeFinanciero/Balance" })" class="breadcrumb-parent-pill"><i class="fa fa-file-text-o" style="margin-right: 4px;"></i> InformaciÃ³n Financiera</a></li>
+        <li><a href="@Url.Action("Index", "Modulo", new { modulo = "InformeFinanciero/Balance" })" class="breadcrumb-parent-pill"><i class="fa fa-file-text-o" style="margin-right: 4px;"></i> Información Financiera</a></li>
         <li class="active">Balance General</li>
     </ol>
 </section>
 
-<section class="content">
+<section class="content" style="padding: 0 20px 24px 20px;">
 
-    @using (Html.BeginForm("LoadBalance", "InformeFinanciero", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmInforme" }))
-    {
-        <div class="modern-filter-card" style="margin-bottom: 22px;">
-            <div class="modern-filter-toolbar">
-                <div class="filter-item">
-                    <label for="IdEntidad"><i class="fa fa-university"></i> Entidad:</label>
-                    @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", @class = "form-control modern-select", style = "min-width: 220px; height: 38px; font-size: 13px;" })
+    <!-- Barra de Herramientas y Filtros (Estándar FGA en Línea) -->
+    <div class="report-toolbar-card">
+        <form method="get" action="@Url.Action("Balance", "InformeFinanciero")" id="formFiltroBalance" class="report-filter-form" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; width: 100%;">
+            <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
+                <!-- Grupo 1: Entidad -->
+                <div class="filter-param-item">
+                    <label class="filter-param-label"><i class="fa fa-university"></i> Entidad:</label>
+                    @Html.DropDownList("Entidades", (SelectList)ViewBag.Entidades, new { @class = "form-control input-sm filter-param-select", onchange = "document.getElementById('formFiltroBalance').submit();" })
                 </div>
-                <div class="filter-item">
-                    <label for="Periodo1"><i class="fa fa-calendar"></i> Primer Per&iacute;odo:</label>
-                    <div class="modern-input-wrapper" style="min-width: 130px;">
-                        <input name="Periodo1" id="Periodo1" class="datecontrol form-control modern-date-input" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MM/yyyy")" style="width: 100%; height: 38px;" />
+
+                <div class="toolbar-divider"></div>
+
+                <!-- Grupo 2: Período -->
+                <div class="filter-param-item">
+                    <label class="filter-param-label"><i class="fa fa-calendar"></i> Per&iacute;odo:</label>
+                    <div class="filter-param-date-group">
+                        <input type="text" name="Periodo" id="Periodo" class="form-control input-sm datecontrol filter-param-date"
+                               value="@Model.PeriodoReferencia.ToString("MM/yyyy")"
+                               onchange="document.getElementById('formFiltroBalance').submit();" />
                     </div>
                 </div>
-                <div class="filter-item">
-                    <label for="Periodo2"><i class="fa fa-calendar"></i> Segundo Per&iacute;odo:</label>
-                    <div class="modern-input-wrapper" style="min-width: 130px;">
-                        <input name="Periodo2" id="Periodo2" class="datecontrol form-control modern-date-input" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MM/yyyy")" style="width: 100%; height: 38px;" />
+
+                <div class="toolbar-divider"></div>
+
+                <!-- Grupo 3: Comparativo -->
+                <div class="filter-param-item">
+                    <label class="filter-param-label"><i class="fa fa-sliders"></i> Comparativo:</label>
+                    <div class="pill-group">
+                        <a href="@Url.Action("Balance", "InformeFinanciero", new { Entidades = Model.EntidadId, Periodo = Model.PeriodoReferencia.ToString("MM/yyyy"), TipoComparacion = "Trimestral" })"
+                           class="pill-item @(Model.TipoComparacion.Equals("Trimestral", StringComparison.OrdinalIgnoreCase) ? "active" : "")">
+                            Trimestral
+                        </a>
+                        <a href="@Url.Action("Balance", "InformeFinanciero", new { Entidades = Model.EntidadId, Periodo = Model.PeriodoReferencia.ToString("MM/yyyy"), TipoComparacion = "Mensual" })"
+                           class="pill-item @(Model.TipoComparacion.Equals("Mensual", StringComparison.OrdinalIgnoreCase) ? "active" : "")">
+                            Mensual
+                        </a>
+                        <a href="@Url.Action("Balance", "InformeFinanciero", new { Entidades = Model.EntidadId, Periodo = Model.PeriodoReferencia.ToString("MM/yyyy"), TipoComparacion = "Interanual" })"
+                           class="pill-item @(Model.TipoComparacion.Equals("Interanual", StringComparison.OrdinalIgnoreCase) ? "active" : "")">
+                            Interanual
+                        </a>
                     </div>
                 </div>
-                <div class="filter-item">
-                    <label for="Periodo3"><i class="fa fa-calendar-o"></i> Tercer Per&iacute;odo:</label>
-                    <div class="modern-input-wrapper" style="min-width: 130px;">
-                        <input name="Periodo3" id="Periodo3" class="datecontrol form-control modern-date-input" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo3"].ToString()).ToString("MM/yyyy")" style="width: 100%; height: 38px;" />
+
+                <div class="toolbar-divider"></div>
+
+                <!-- Grupo 4: Toggle Vista: Resumido / Detallado -->
+                <div class="filter-param-item">
+                    <label class="filter-param-label"><i class="fa fa-eye"></i> Vista:</label>
+                    <div class="balance-view-toggle" id="balanceViewToggle">
+                        <button type="button" class="balance-view-toggle-btn active" id="btnViewDetail" onclick="setBalanceView('detail')">
+                            <i class="fa fa-list" style="margin-right: 4px;"></i> Detallada
+                        </button>
+                        <button type="button" class="balance-view-toggle-btn" id="btnViewCompact" onclick="setBalanceView('compact')">
+                            <i class="fa fa-compress" style="margin-right: 4px;"></i> Resumida
+                        </button>
                     </div>
                 </div>
-                <div class="filter-item" style="margin-left: auto;">
-                    <button id="btn_generar" type="submit" class="btn-modern-filter" style="height: 38px; padding: 0 24px;">
-                        <i class="fa fa-search"></i> Generar informe
+            </div>
+
+            <input type="hidden" name="TipoComparacion" value="@Model.TipoComparacion" />
+
+            <!-- Acciones y Estado de Cuadre -->
+            <div style="display: flex; align-items: center; gap: 10px; margin-left: auto;">
+                @if (Model.EstaBalanceCuadrado)
+                {
+                    <div class="status-indicator-pill status-pill-cuadrado" title="@Model.MensajeCuadre">
+                        <i class="fa fa-check-circle" style="color: #10b981; font-size: 13px;"></i>
+                        <span>Balance Cuadrado</span>
+                    </div>
+                }
+                else
+                {
+                    <div class="status-indicator-pill status-pill-descuadrado" title="@Model.MensajeCuadre">
+                        <i class="fa fa-exclamation-triangle" style="color: #c2410c; font-size: 13px;"></i>
+                        <span>Descuadre Contable</span>
+                    </div>
+                }
+
+                <!-- Botón Generar Reporte con Menú desplegable -->
+                <div class="btn-group">
+                    <button type="button" class="btn btn-report-download dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fa fa-download"></i> Generar Reporte <span class="caret" style="margin-left: 4px;"></span>
                     </button>
+                    <ul class="dropdown-menu dropdown-menu-right" style="border-radius: 6px; box-shadow: 0 4px 16px rgba(0,0,0,0.12); border: 1px solid #d1d5db; padding: 4px 0; min-width: 190px;">
+                        <li>
+                            <a href="@Url.Action("ExportarBalanceExcel", "InformeFinanciero", new { Entidades = Model.EntidadId, Periodo = Model.PeriodoReferencia.ToString("MM/yyyy"), TipoComparacion = Model.TipoComparacion })" style="padding: 8px 16px; font-size: 12.5px; font-weight: 500; color: #1e293b;">
+                                <i class="fa fa-file-excel-o text-success" style="margin-right: 8px;"></i> Exportar a Excel (.xlsx)
+                            </a>
+                        </li>
+                        <li>
+                            <a href="javascript:window.print();" style="padding: 8px 16px; font-size: 12.5px; font-weight: 500; color: #1e293b;">
+                                <i class="fa fa-print text-primary" style="margin-right: 8px;"></i> Imprimir / Guardar PDF
+                            </a>
+                        </li>
+                        <li role="separator" class="divider" style="margin: 3px 0;"></li>
+                        <li>
+                            <a href="javascript:void(0);" onclick="exportBalanceToCsv();" style="padding: 8px 16px; font-size: 12.5px; font-weight: 500; color: #1e293b;">
+                                <i class="fa fa-file-text-o text-info" style="margin-right: 8px;"></i> Exportar a CSV
+                            </a>
+                        </li>
+                    </ul>
                 </div>
             </div>
-        </div>
-    }
+        </form>
+    </div>
 
-    @if (Session["TipoReporte"] != null)
-    {
-        <div class="modern-table-card" style="border: 1px solid #e2e8f0; border-radius: 12px; background: #ffffff; box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05); overflow: hidden; padding: 22px; margin-bottom: 24px;">
-            <div class="nav-tabs-custom" style="box-shadow: none; margin-bottom: 0;">
-                <ul class="nav nav-tabs" style="border-bottom: 2px solid #e2e8f0; margin-bottom: 20px;">
-                    <li class="active">
-                        <a href="#tab_1" data-toggle="tab" style="font-weight: 700; font-size: 13px; color: #143750; border-radius: 8px 8px 0 0; padding: 10px 18px;">
-                            <i class="fa fa-file-text-o" style="color: #0284c7; margin-right: 6px;"></i> Balance General
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#tab_2" data-toggle="tab" style="font-weight: 700; font-size: 13px; color: #143750; border-radius: 8px 8px 0 0; padding: 10px 18px;">
-                            <i class="fa fa-line-chart" style="color: #059669; margin-right: 6px;"></i> An&aacute;lisis
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#tab_3" data-toggle="tab" style="font-weight: 700; font-size: 13px; color: #143750; border-radius: 8px 8px 0 0; padding: 10px 18px;">
-                            <i class="fa fa-pie-chart" style="color: #d97706; margin-right: 6px;"></i> Composici&oacute;n
-                        </a>
-                    </li>
-                </ul>
-                <div class="tab-content" style="padding: 0;">
-                    <div class="tab-pane active" id="tab_1">
-                        <div class="table-responsive" style="border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0;">
-                            <iframe src="~/Reportes/ReportView.aspx" width="100%" height="900" style="border:none; display: block; min-height: 800px;"></iframe>
-                        </div>
-                    </div>
-                    <div class="tab-pane" id="tab_2">
-                        <div class="table-responsive" style="border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0;">
-                            <iframe src="~/Reportes/ReportView2.aspx" width="100%" height="900" style="border:none; display: block; min-height: 800px;"></iframe>
-                        </div>
-                    </div>
-                    <div class="tab-pane" id="tab_3">
-                        <div class="row">
-                            <div class="col-md-6" style="margin-bottom: 20px;">
-                                <div class="modern-table-card" style="border: 1px solid #e2e8f0; border-radius: 10px; padding: 18px; background: #ffffff;">
-                                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9;">
-                                        @if (Session["Logo"] != null)
-                                        {
-                                            <img width="36" height="36" src="@Session["Logo"]" style="border-radius: 6px; border: 1px solid #e2e8f0; object-fit: contain;" />
-                                        }
-                                        <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: #143750;">
-                                            Composici&oacute;n del balance en millones
-                                        </h4>
-                                    </div>
-                                    <span id="found" class="label label-info"></span>
-                                    <div class="table-responsive">
-                                        <table id="tbBalance" class="table modern-data-table" style="width:100%; min-height: 300px;">
-                                            <thead>
-                                                <tr>
-                                                    <th></th>
-                                                    <th>
-                                                        @FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MMMM yyyy"))
-                                                    </th>
-                                                    <th>
-                                                        @FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MMMM yyyy"))
-                                                    </th>
-                                                    <th id="tercerPeriodo">
-                                                        @FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo3"].ToString()).ToString("MMMM yyyy"))
-                                                    </th>
-                                                </tr>
-                                            </thead>
-                                            <tbody></tbody>
-                                        </table>
-                                    </div>
-                                    <div id="summary"><div></div></div>
-                                </div>
+    <!-- Tarjeta Principal Unificada para Navegación de Cejillas y Contenido con Fondo Blanco Institucional -->
+    <div class="modern-table-card" style="border: 1px solid #e2e8f0; border-radius: 12px; background: #ffffff; box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05); overflow: hidden; padding: 22px 24px; margin-bottom: 24px;">
+        <div class="nav-tabs-custom" style="box-shadow: none; margin-bottom: 0; background: #ffffff;">
+            <ul class="nav nav-tabs balance-modern-tabs" style="border-bottom: 2px solid #e2e8f0; margin-bottom: 22px; background: #ffffff;">
+                <li class="active">
+                    <a href="#tab_balance" data-toggle="tab">
+                        <i class="fa fa-balance-scale" style="color: #0284c7; margin-right: 7px;"></i> Balance General
+                    </a>
+                </li>
+                <li>
+                    <a href="#tab_analisis" data-toggle="tab">
+                        <i class="fa fa-line-chart" style="color: #059669; margin-right: 7px;"></i> An&aacute;lisis
+                    </a>
+                </li>
+                <li>
+                    <a href="#tab_composicion" data-toggle="tab">
+                        <i class="fa fa-pie-chart" style="color: #d97706; margin-right: 7px;"></i> Composici&oacute;n
+                    </a>
+                </li>
+            </ul>
+
+            <div class="tab-content" style="padding: 0; background: #ffffff;">
+
+                <!-- ======================================================== -->
+                <!-- CEJILLA 1: BALANCE GENERAL (TABLA RDL A 5 PERÍODOS)      -->
+                <!-- ======================================================== -->
+                <div class="tab-pane active" id="tab_balance">
+                    <div class="report-paper-container">
+
+                        <!-- Membrete Formal de Reporte Financiero (Idéntico a SSRS) -->
+                        <div class="report-header-banner">
+                            <div style="min-width: 150px;">
+                                @if (!string.IsNullOrEmpty(Model.LogoUrl))
+                                {
+                                    <img src="@Model.LogoUrl" alt="Logo Entidad" class="report-header-logo" onerror="this.style.display='none';" />
+                                }
                             </div>
-                            <div class="col-md-6" style="margin-bottom: 20px;">
-                                <div class="modern-table-card" style="border: 1px solid #e2e8f0; border-radius: 10px; padding: 18px; background: #ffffff;">
-                                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9;">
-                                        @if (Session["Logo"] != null)
-                                        {
-                                            <img width="36" height="36" src="@Session["Logo"]" style="border-radius: 6px; border: 1px solid #e2e8f0; object-fit: contain;" />
-                                        }
-                                        <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: #143750;">
-                                            Composici&oacute;n del balance
-                                        </h4>
-                                    </div>
-                                    <div>
-                                        @(Model.composicionBalance)
-                                    </div>
+
+                            <div class="report-header-titles">
+                                <h1>BALANCE GENERAL</h1>
+                                <p class="entity-name">@Model.NombreEntidad.ToUpper()</p>
+                                <p class="report-subtitle">@Model.ComparacionTitulo &bull; Cifras expresadas en millones de colones</p>
+                            </div>
+
+                            <div class="report-header-meta">
+                                <div><strong>Corte:</strong> @Model.PeriodoReferencia.ToString("MM/yyyy")</div>
+                                <div><strong>Moneda:</strong> CRC (Millones)</div>
+                                @{
+                                    var filaPruebaGlobal = Model.Filas.FirstOrDefault(x => x.EsPrueba);
+                                    bool balanceEstaCuadrado = filaPruebaGlobal != null && filaPruebaGlobal.Periodos.All(p => Math.Abs(p) < 0.05m);
+                                }
+                                <div style="margin-top: 4px;">
+                                    @if (balanceEstaCuadrado)
+                                    {
+                                        <span class="badge-cuadrado-ffc">
+                                            <i class="fa fa-check-circle"></i> Balance Cuadrado
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge-descuadre-ffc" title="Existe diferencia entre Total Activos y Total Pasivo + Patrimonio">
+                                            <i class="fa fa-exclamation-triangle"></i> Descuadre Detectado
+                                        </span>
+                                    }
                                 </div>
                             </div>
                         </div>
 
-                        <div class="row">
-                            <div class="col-md-6" style="margin-bottom: 20px;">
-                                <div class="modern-table-card" style="border: 1px solid #e2e8f0; border-radius: 10px; padding: 18px; background: #ffffff;">
-                                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9;">
-                                        @if (Session["Logo"] != null)
+                        <!-- Tabla Contable RDL -->
+                        <div class="balance-table-scroll-wrapper" id="balanceTableWrapper">
+                            <table id="tbBalanceNativo" class="table-rdl-balance">
+                                <thead>
+                                    <tr>
+                                        <th class="th-concept" style="min-width: 290px; text-align: left; background-color: #f1f5f9 !important; color: #143750 !important; border-top: 1px solid #cbd5e1 !important; border-bottom: 2.5px solid #2F5597 !important; border-left: 1px solid #cbd5e1 !important;">Concepto / Cuenta</th>
+                                        @for (int i = 0; i < 5; i++)
                                         {
-                                            <img width="36" height="36" src="@Session["Logo"]" style="border-radius: 6px; border: 1px solid #e2e8f0; object-fit: contain;" />
+                                            <th class="th-period" style="min-width: 105px; text-align: right; background-color: #f8fafc !important; color: #143750 !important; border-top: 1px solid #cbd5e1 !important; border-bottom: 2.5px solid #2F5597 !important; border-left: 1px solid #cbd5e1 !important;">@Model.EncabezadosPeriodos[i]</th>
                                         }
-                                        <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: #143750;">
-                                            Activo
-                                        </h4>
-                                    </div>
-                                    <div>
-                                        @(Model.composicionActivoPorc)
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6" style="margin-bottom: 20px;">
-                                <div class="modern-table-card" style="border: 1px solid #e2e8f0; border-radius: 10px; padding: 18px; background: #ffffff;">
-                                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9;">
-                                        @if (Session["Logo"] != null)
+                                        <th class="th-var" style="min-width: 115px; text-align: right; background-color: #e2e8f0 !important; color: #143750 !important; border-top: 1px solid #cbd5e1 !important; border-bottom: 2.5px solid #2F5597 !important; border-left: 1px solid #cbd5e1 !important;">Var. Absoluta</th>
+                                        <th class="th-var" style="min-width: 105px; text-align: right; background-color: #e2e8f0 !important; color: #143750 !important; border-top: 1px solid #cbd5e1 !important; border-bottom: 2.5px solid #2F5597 !important; border-left: 1px solid #cbd5e1 !important; border-right: 1px solid #cbd5e1 !important;">Var. Relativa</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        string seccionActual = "";
+                                        string seccionSlug = "";
+                                    }
+                                    @foreach (var fila in Model.Filas)
+                                    {
+                                        // Determinar sección actual para data-parent-section
+                                        if (fila.EsSeccion)
                                         {
-                                            <img width="36" height="36" src="@Session["Logo"]" style="border-radius: 6px; border: 1px solid #e2e8f0; object-fit: contain;" />
+                                            seccionActual = fila.Seccion ?? "";
+                                            seccionSlug = seccionActual.ToLowerInvariant().Replace(" ", "-");
                                         }
-                                        <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: #143750;">
-                                            Composici&oacute;n del activo productivo en millones
-                                        </h4>
-                                    </div>
-                                    <div>
-                                        @(Model.composicionActivoMonto)
-                                    </div>
-                                </div>
-                            </div>
+
+                                        // Determinar clases de fila
+                                        string rowClass = "tr-rdl-detail tr-balance-collapsible";
+                                        string dataParent = !fila.EsSeccion && !fila.EsPrueba ? $" data-parent-section=\"{seccionSlug}\"" : "";
+                                        string tdStyle = "";
+
+                                        // Determinar si la fila va al modo resumido (ocultar en compact):
+                                        // Se muestran solo: secciones, gran-totales, total-doble, prueba
+                                        // Se ocultan: detalle (Nivel 1-2), SinMontos (cat-no-amount), subtotal-italica
+                                        bool esFilaDetalle = false;
+
+                                        if (fila.EsSeccion)
+                                        {
+                                            rowClass = "tr-rdl-section";
+                                            dataParent = "";
+                                        }
+                                        else if (fila.SinMontos)
+                                        {
+                                            rowClass = "tr-rdl-cat-no-amount tr-balance-collapsible tr-balance-detail-row";
+                                            esFilaDetalle = true;
+                                        }
+                                        else if (fila.Concepto != null && fila.Concepto.Trim().Equals("Total pasivos y patrimonio", StringComparison.OrdinalIgnoreCase))
+                                        {
+                                            rowClass = "tr-rdl-total-double tr-balance-collapsible";
+                                        }
+                                        else if (fila.EsGranTotal)
+                                        {
+                                            rowClass = "tr-rdl-grand-total tr-balance-collapsible";
+                                        }
+                                        else if (fila.EsSubtotalItalica)
+                                        {
+                                            rowClass = "tr-rdl-subtotal-italic tr-balance-collapsible tr-balance-detail-row";
+                                            esFilaDetalle = true;
+                                        }
+                                        else if (fila.EsPrueba)
+                                        {
+                                            bool filaCuadrada = fila.Periodos.All(p => Math.Abs(p) < 0.05m);
+                                            rowClass = (filaCuadrada ? "tr-rdl-prueba" : "tr-rdl-prueba tr-rdl-descuadre");
+                                            dataParent = "";
+                                        }
+                                        else
+                                        {
+                                            // Cuentas de detalle (Nivel 1 y 2)
+                                            rowClass = "tr-rdl-detail tr-balance-collapsible tr-balance-detail-row";
+                                            esFilaDetalle = true;
+                                        }
+
+                                        string dataParentAttr = !string.IsNullOrEmpty(dataParent) ? dataParent : (fila.EsSeccion || fila.EsPrueba ? "" : $" data-parent-section=\"{seccionSlug}\"");
+                                        <tr class="@rowClass"@Html.Raw(dataParentAttr)>
+                                            <td style="@tdStyle">
+                                                @if (fila.EsSeccion)
+                                                {
+                                                    <!-- Fila de Sección con botón de colapso -->
+                                                    <button class="btn-section-collapse"
+                                                            data-section="@seccionSlug"
+                                                            onclick="toggleSection('@seccionSlug', this)"
+                                                            title="Colapsar/Expandir @fila.Concepto.Trim()">
+                                                        <i class="fa fa-chevron-down"></i>
+                                                    </button>
+                                                    <span class="balance-concepto indent-0">@fila.Concepto.Trim()</span>
+                                                }
+                                                else if (fila.EsPrueba)
+                                                {
+                                                    bool filaCuadrada = fila.Periodos.All(p => Math.Abs(p) < 0.05m);
+                                                    if (filaCuadrada)
+                                                    {
+                                                        <span class="balance-concepto indent-0 text-success" style="display: inline-flex; align-items: center; gap: 6px;">
+                                                            <i class="fa fa-check-circle" style="color: #16a34a;"></i>
+                                                            <strong>@fila.Concepto (Comprobaci&oacute;n: Activo - Pasivo y Patrimonio = 0)</strong>
+                                                        </span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="balance-concepto indent-0 text-danger" style="display: inline-flex; align-items: center; gap: 6px; color: #dc2626;">
+                                                            <i class="fa fa-times-circle" style="color: #dc2626;"></i>
+                                                            <strong>@fila.Concepto (Descuadre Detectado: Activo - Pasivo y Patrimonio)</strong>
+                                                        </span>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <span class="balance-concepto indent-@fila.Nivel">@fila.Concepto.Trim()</span>
+                                                }
+                                            </td>
+
+                                            @if (fila.SinMontos)
+                                            {
+                                                for (int c = 0; c < 7; c++)
+                                                {
+                                                    <td style="@tdStyle"></td>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                for (int i = 0; i < 5; i++)
+                                                {
+                                                    <td class="text-right col-amount" style="@tdStyle text-align: right;">
+                                                        @fila.Periodos[i].ToString("N2")
+                                                    </td>
+                                                }
+
+                                                <!-- Variación Absoluta -->
+                                                <td class="text-right col-amount" style="@tdStyle text-align: right;">
+                                                    @if (fila.VariacionAbsoluta > 0)
+                                                    {
+                                                        <span class="badge-var-pos">+@fila.VariacionAbsoluta.ToString("N2")</span>
+                                                    }
+                                                    else if (fila.VariacionAbsoluta < 0)
+                                                    {
+                                                        <span class="badge-var-neg">@fila.VariacionAbsoluta.ToString("N2")</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="badge-var-zero">0.00</span>
+                                                    }
+                                                </td>
+
+                                                <!-- Variación Relativa -->
+                                                <td class="text-right col-amount" style="@tdStyle text-align: right;">
+                                                    @if (fila.VariacionRelativa > 0)
+                                                    {
+                                                        <span class="badge-var-pos">+@(fila.VariacionRelativa.ToString("0.00"))%</span>
+                                                    }
+                                                    else if (fila.VariacionRelativa < 0)
+                                                    {
+                                                        <span class="badge-var-neg">@(fila.VariacionRelativa.ToString("0.00"))%</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="badge-var-zero">0.00%</span>
+                                                    }
+                                                </td>
+                                            }
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
                         </div>
 
-                        <div class="row">
-                            <div class="col-md-6" style="margin-bottom: 20px;">
-                                <div class="modern-table-card" style="border: 1px solid #e2e8f0; border-radius: 10px; padding: 18px; background: #ffffff;">
-                                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9;">
-                                        @if (Session["Logo"] != null)
-                                        {
-                                            <img width="36" height="36" src="@Session["Logo"]" style="border-radius: 6px; border: 1px solid #e2e8f0; object-fit: contain;" />
-                                        }
-                                        <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: #143750;">
-                                            Pasivo
-                                        </h4>
-                                    </div>
-                                    <div>
-                                        @(Model.composicionPasivoPorc)
-                                    </div>
-                                </div>
+                        <!-- Pie de página formal estilo RDL -->
+                        <div style="margin-top: 14px; padding-top: 10px; border-top: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between; font-size: 11px; color: #64748b;">
+                            <div>
+                                <i class="fa fa-file-text-o"></i> Estado Financiero emitido con base en las cuentas oficiales de la Superintendencia General de Entidades Financieras (SUGEF).
                             </div>
-                            <div class="col-md-6" style="margin-bottom: 20px;">
-                                <div class="modern-table-card" style="border: 1px solid #e2e8f0; border-radius: 10px; padding: 18px; background: #ffffff;">
-                                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9;">
-                                        @if (Session["Logo"] != null)
-                                        {
-                                            <img width="36" height="36" src="@Session["Logo"]" style="border-radius: 6px; border: 1px solid #e2e8f0; object-fit: contain;" />
-                                        }
-                                        <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: #143750;">
-                                            Composici&oacute;n del pasivo con costo en millones
-                                        </h4>
-                                    </div>
-                                    <div>
-                                        @(Model.composicionPasivoMonto)
-                                    </div>
-                                </div>
+                            <div>
+                                Generado el @DateTime.Now.ToString("dd/MM/yyyy HH:mm")
                             </div>
                         </div>
 
                     </div>
                 </div>
+
+        <!-- ======================================================== -->
+        <!-- CEJILLA 2: ANÁLISIS (ESTRUCTURA REPORT_BALANCE_ANALISIS) -->
+        <!-- ======================================================== -->
+        <div class="tab-pane" id="tab_analisis">
+            <div class="report-paper-container">
+
+                <div class="report-header-banner">
+                    <div style="min-width: 150px;">
+                        @if (!string.IsNullOrEmpty(Model.LogoUrl))
+                        {
+                            <img src="@Model.LogoUrl" alt="Logo Entidad" class="report-header-logo" onerror="this.style.display='none';" />
+                        }
+                    </div>
+
+                    <div class="report-header-titles">
+                        <h1>AN&Aacute;LISIS DEL BALANCE GENERAL</h1>
+                        <p class="entity-name">@Model.NombreEntidad.ToUpper()</p>
+                        <p class="report-subtitle">An&aacute;lisis Vertical (% Representa) y Horizontal (Variaciones)</p>
+                    </div>
+
+                    <div class="report-header-meta">
+                        <div><strong>Corte:</strong> @Model.PeriodoReferencia.ToString("MM/yyyy")</div>
+                        <div><strong>Moneda:</strong> CRC (Millones)</div>
+                    </div>
+                </div>
+
+                <div class="balance-table-scroll-wrapper" id="analisisTableWrapper">
+                    <table id="tbAnalisisNativo" class="table-rdl-balance">
+                        <thead>
+                            <tr class="tr-header-group">
+                                <th rowspan="2" class="th-concept th-span-full" style="min-width: 290px;">Concepto / Cuenta</th>
+                                @for (int i = 0; i < 5; i++)
+                                {
+                                    <th colspan="2" class="th-period-group">
+                                        @Model.EncabezadosPeriodos[i]
+                                    </th>
+                                }
+                                <th rowspan="2" class="th-var th-span-full" style="min-width: 105px;">Var. Absoluta</th>
+                                <th rowspan="2" class="th-var th-span-full" style="min-width: 100px;">Var. Relativa</th>
+                            </tr>
+                            <tr class="tr-header-sub">
+                                @for (int i = 0; i < 5; i++)
+                                {
+                                    <th class="th-sub-monto">Monto</th>
+                                    <th class="th-sub-rep">% Rep.</th>
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                string seccionAnalisisActual = "";
+                                string seccionAnalisisSlug = "";
+                            }
+                            @foreach (var fila in Model.Filas)
+                            {
+                                if (fila.EsPrueba) { continue; }
+
+                                if (fila.EsSeccion)
+                                {
+                                    seccionAnalisisActual = fila.Seccion ?? "";
+                                    seccionAnalisisSlug = seccionAnalisisActual.ToLowerInvariant().Replace(" ", "-");
+                                }
+
+                                string rowClass = "tr-rdl-detail tr-balance-collapsible";
+                                string dataParent = !fila.EsSeccion ? $" data-parent-section=\"{seccionAnalisisSlug}\"" : "";
+                                string tdStyle = "";
+
+                                if (fila.EsSeccion)
+                                {
+                                    rowClass = "tr-rdl-section";
+                                    dataParent = "";
+                                }
+                                else if (fila.SinMontos)
+                                {
+                                    rowClass = "tr-rdl-cat-no-amount tr-balance-collapsible tr-balance-detail-row";
+                                }
+                                else if (fila.Concepto != null && fila.Concepto.Trim().Equals("Total pasivos y patrimonio", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    rowClass = "tr-rdl-total-double tr-balance-collapsible";
+                                }
+                                else if (fila.EsGranTotal)
+                                {
+                                    rowClass = "tr-rdl-grand-total tr-balance-collapsible";
+                                }
+                                else if (fila.EsSubtotalItalica)
+                                {
+                                    rowClass = "tr-rdl-subtotal-italic tr-balance-collapsible tr-balance-detail-row";
+                                }
+                                else
+                                {
+                                    rowClass = "tr-rdl-detail tr-balance-collapsible tr-balance-detail-row";
+                                }
+
+                                string dataParentAttr = !string.IsNullOrEmpty(dataParent) ? dataParent : (fila.EsSeccion ? "" : $" data-parent-section=\"{seccionAnalisisSlug}\"");
+
+                                <tr class="@rowClass"@Html.Raw(dataParentAttr)>
+                                    <td style="@tdStyle">
+                                        @if (fila.EsSeccion)
+                                        {
+                                            <button class="btn-section-collapse"
+                                                    data-section="@seccionAnalisisSlug"
+                                                    onclick="toggleSection('@seccionAnalisisSlug', this)"
+                                                    title="Colapsar/Expandir @fila.Concepto.Trim()">
+                                                <i class="fa fa-chevron-down"></i>
+                                            </button>
+                                            <span class="balance-concepto indent-0">@fila.Concepto.Trim()</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="balance-concepto indent-@fila.Nivel">@fila.Concepto.Trim()</span>
+                                        }
+                                    </td>
+
+                                    @if (fila.SinMontos)
+                                    {
+                                        for (int col = 0; col < 12; col++)
+                                        {
+                                            <td style="@tdStyle"></td>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        for (int i = 0; i < 5; i++)
+                                        {
+                                            <td class="text-right" style="@tdStyle text-align: right; border-left: 1px solid #f1f5f9 !important;">
+                                                @fila.Periodos[i].ToString("N2")
+                                            </td>
+                                            <td class="text-right col-rep" style="@(fila.EsGranTotal || fila.EsSubtotalItalica || fila.EsSeccion ? tdStyle : "background-color: #f0f9ff; font-weight: 600; color: #0284c7; border-bottom: 1px solid #e0f2fe !important;") text-align: right;">
+                                                @(fila.PorcentajesRepresenta[i].ToString("0.0"))%
+                                            </td>
+                                        }
+
+                                        <!-- Variación Absoluta -->
+                                        <td class="text-right" style="@tdStyle text-align: right; border-left: 1px solid #cbd5e1 !important;">
+                                            @if (fila.VariacionAbsoluta > 0)
+                                            {
+                                                <span class="badge-var-pos">+@fila.VariacionAbsoluta.ToString("N2")</span>
+                                            }
+                                            else if (fila.VariacionAbsoluta < 0)
+                                            {
+                                                <span class="badge-var-neg">@fila.VariacionAbsoluta.ToString("N2")</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge-var-zero">0.00</span>
+                                            }
+                                        </td>
+
+                                        <!-- Variación Relativa -->
+                                        <td class="text-right" style="@tdStyle text-align: right;">
+                                            @if (fila.VariacionRelativa > 0)
+                                            {
+                                                <span class="badge-var-pos">+@(fila.VariacionRelativa.ToString("0.00"))%</span>
+                                            }
+                                            else if (fila.VariacionRelativa < 0)
+                                            {
+                                                <span class="badge-var-neg">@(fila.VariacionRelativa.ToString("0.00"))%</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge-var-zero">0.00%</span>
+                                            }
+                                        </td>
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <div style="margin-top: 14px; padding-top: 10px; border-top: 1px solid #e2e8f0; font-size: 11px; color: #64748b;">
+                    * El valor <strong>% Rep.</strong> (% Representa) refleja la proporción vertical sobre el Total de Activos (en cuentas de activo) o sobre el Total de Pasivo y Patrimonio (en pasivo y patrimonio).
+                </div>
+
             </div>
         </div>
-    }
+
+        <!-- ======================================================== -->
+        <!-- CEJILLA 3: COMPOSICIÓN (DASHBOARD EJECUTIVO 6 TARJETAS)  -->
+        <!-- ======================================================== -->
+        <div class="tab-pane" id="tab_composicion">
+            @{
+                var comp = Model.DatosComposicion ?? new FGA.Model.ComposicionBalanceDTO();
+            }
+
+            <!-- Fila 1: Composición Pasivo/Patrimonio y Composición del Activo -->
+            <div class="row">
+                <!-- Tarjeta 1: Composición del pasivo y patrimonio -->
+                <div class="col-md-6" style="margin-bottom: 20px;">
+                    <div class="dash-card">
+                        <div class="dash-card-header">
+                            <div class="dash-card-bar"></div>
+                            <div>
+                                <h4 class="dash-card-title">Composici&oacute;n del pasivo y patrimonio</h4>
+                                <p class="dash-card-subtitle">Porcentaje sobre el total de pasivos y patrimonio</p>
+                            </div>
+                        </div>
+                        <div id="chartComposicionPasivoPatri" style="height: 320px; width: 100%;"></div>
+                    </div>
+                </div>
+
+                <!-- Tarjeta 2: Composición del activo -->
+                <div class="col-md-6" style="margin-bottom: 20px;">
+                    <div class="dash-card">
+                        <div class="dash-card-header">
+                            <div class="dash-card-bar"></div>
+                            <div>
+                                <h4 class="dash-card-title">Composici&oacute;n del activo</h4>
+                                <p class="dash-card-subtitle">Monto en millones de colones y porcentaje sobre el total de activos - @comp.PeriodoUltimoLabel</p>
+                            </div>
+                        </div>
+                        <div class="row" style="margin: 0; align-items: center; display: flex; flex-wrap: wrap;">
+                            <div class="col-xs-12 col-sm-5" style="padding: 0;">
+                                <div id="chartActivoDonut" style="height: 290px; width: 100%;"></div>
+                            </div>
+                            <div class="col-xs-12 col-sm-7" style="padding-left: 10px; padding-right: 0;">
+                                <table class="table" style="font-size: 11.5px; margin-bottom: 6px; width: 100%;">
+                                    <thead>
+                                        <tr style="border-bottom: 1.5px solid #e2e8f0; color: #475569; font-size: 11px;">
+                                            <th style="padding: 6px 4px; font-weight: 700;">Cuenta</th>
+                                            <th style="padding: 6px 4px; font-weight: 700; text-align: right;">Monto</th>
+                                            <th style="padding: 6px 4px; font-weight: 700; text-align: right;">%</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr style="border-bottom: 1px solid #f1f5f9;">
+                                            <td style="padding: 7px 4px; color: #334155;">
+                                                <span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#2F5597;margin-right:6px;"></span> Cartera de cr&eacute;dito
+                                            </td>
+                                            <td style="padding: 7px 4px; text-align: right; font-weight: 600; color: #1e293b;">@comp.CarteraUltimo.ToString("N2")</td>
+                                            <td style="padding: 7px 4px; text-align: right; color: #475569;">@comp.PorcCarteraUltimo.ToString("0.00")%</td>
+                                        </tr>
+                                        <tr style="border-bottom: 1px solid #f1f5f9;">
+                                            <td style="padding: 7px 4px; color: #334155;">
+                                                <span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#0284c7;margin-right:6px;"></span> Inv. en instrumentos financieros
+                                            </td>
+                                            <td style="padding: 7px 4px; text-align: right; font-weight: 600; color: #1e293b;">@comp.InversionesUltimo.ToString("N2")</td>
+                                            <td style="padding: 7px 4px; text-align: right; color: #475569;">@comp.PorcInversionesUltimo.ToString("0.00")%</td>
+                                        </tr>
+                                        <tr style="border-bottom: 1px solid #f1f5f9;">
+                                            <td style="padding: 7px 4px; color: #334155;">
+                                                <span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#5DADE2;margin-right:6px;"></span> Disponibilidades
+                                            </td>
+                                            <td style="padding: 7px 4px; text-align: right; font-weight: 600; color: #1e293b;">@comp.DisponibilidadesUltimo.ToString("N2")</td>
+                                            <td style="padding: 7px 4px; text-align: right; color: #475569;">@comp.PorcDisponibilidadesUltimo.ToString("0.00")%</td>
+                                        </tr>
+                                        <tr style="border-bottom: 1px solid #f1f5f9;">
+                                            <td style="padding: 7px 4px; color: #334155;">
+                                                <span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#94A3B8;margin-right:6px;"></span> Otros activos
+                                            </td>
+                                            <td style="padding: 7px 4px; text-align: right; font-weight: 600; color: #1e293b;">@comp.OtrosActivosUltimo.ToString("N2")</td>
+                                            <td style="padding: 7px 4px; text-align: right; color: #475569;">@comp.PorcOtrosActivosUltimo.ToString("0.00")%</td>
+                                        </tr>
+                                        <tr style="border-top: 1.5px solid #cbd5e1; font-weight: 700;">
+                                            <td style="padding: 9px 4px; color: #0f172a;">Total de activos</td>
+                                            <td style="padding: 9px 4px; text-align: right; color: #0f172a;">@comp.TotalActivoUltimo.ToString("N2")</td>
+                                            <td style="padding: 9px 4px; text-align: right; color: #0f172a;">100,00%</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div style="text-align: right; font-size: 10px; color: #94a3b8; font-style: italic; margin-top: 4px;">
+                                    Cifras en millones de colones
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fila 2: Principales variaciones del activo y Variación del total de pasivos -->
+            <div class="row">
+                <!-- Tarjeta 3: Principales variaciones del activo -->
+                <div class="col-md-6" style="margin-bottom: 20px;">
+                    <div class="dash-card">
+                        <div class="dash-card-header">
+                            <div class="dash-card-bar"></div>
+                            <div>
+                                <h4 class="dash-card-title">Principales variaciones del activo</h4>
+                                <p class="dash-card-subtitle">Variaci&oacute;n absoluta entre per&iacute;odos - &#8353; millones</p>
+                            </div>
+                        </div>
+                        <div id="chartVarActivo" style="height: 320px; width: 100%;"></div>
+                    </div>
+                </div>
+
+                <!-- Tarjeta 4: Variación del total de pasivos (Waterfall) -->
+                <div class="col-md-6" style="margin-bottom: 20px;">
+                    <div class="dash-card">
+                        <div class="dash-card-header">
+                            <div class="dash-card-bar"></div>
+                            <div>
+                                <h4 class="dash-card-title">Variaci&oacute;n del total de pasivos</h4>
+                                <p class="dash-card-subtitle">Variaci&oacute;n absoluta entre per&iacute;odos - &#8353; millones</p>
+                            </div>
+                        </div>
+                        <div id="chartVarPasivos" style="height: 290px; width: 100%;"></div>
+                        <div style="display: flex; justify-content: center; gap: 18px; margin-top: 6px; font-size: 11px; color: #475569;">
+                            <span><span style="display:inline-block;width:10px;height:10px;background:#0071AD;margin-right:5px;border-radius:2px;"></span> Saldo inicial / final</span>
+                            <span><span style="display:inline-block;width:10px;height:10px;background:#6DB5CB;margin-right:5px;border-radius:2px;"></span> Aumento</span>
+                            <span><span style="display:inline-block;width:10px;height:10px;background:#FE7235;margin-right:5px;border-radius:2px;"></span> Disminuci&oacute;n</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fila 3: Principales variaciones del pasivo con costo y Variación del patrimonio -->
+            <div class="row">
+                <!-- Tarjeta 5: Principales variaciones del pasivo con costo -->
+                <div class="col-md-6" style="margin-bottom: 20px;">
+                    <div class="dash-card">
+                        <div class="dash-card-header">
+                            <div class="dash-card-bar"></div>
+                            <div>
+                                <h4 class="dash-card-title">Principales variaciones del pasivo con costo</h4>
+                                <p class="dash-card-subtitle">Variaci&oacute;n absoluta entre per&iacute;odos - &#8353; millones</p>
+                            </div>
+                        </div>
+                        <div id="chartVarPasivoCosto" style="height: 290px; width: 100%;"></div>
+                        <div style="display: flex; justify-content: center; gap: 18px; margin-top: 6px; font-size: 11px; color: #475569;">
+                            <span><span style="display:inline-block;width:10px;height:10px;background:#6DB5CB;margin-right:5px;border-radius:2px;"></span> Aumento</span>
+                            <span><span style="display:inline-block;width:10px;height:10px;background:#FE7235;margin-right:5px;border-radius:2px;"></span> Disminuci&oacute;n</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tarjeta 6: Variación del patrimonio -->
+                <div class="col-md-6" style="margin-bottom: 20px;">
+                    <div class="dash-card">
+                        <div class="dash-card-header">
+                            <div class="dash-card-bar"></div>
+                            <div>
+                                <h4 class="dash-card-title">Variaci&oacute;n del patrimonio</h4>
+                                <p class="dash-card-subtitle">Variaci&oacute;n absoluta entre per&iacute;odos - &#8353; millones</p>
+                            </div>
+                        </div>
+                        <div id="chartVarPatrimonio" style="height: 290px; width: 100%;"></div>
+                        <div style="display: flex; justify-content: center; gap: 18px; margin-top: 6px; font-size: 11px; color: #475569;">
+                            <span><span style="display:inline-block;width:10px;height:10px;background:#6DB5CB;margin-right:5px;border-radius:2px;"></span> Aumento</span>
+                            <span><span style="display:inline-block;width:10px;height:10px;background:#FE7235;margin-right:5px;border-radius:2px;"></span> Disminuci&oacute;n</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Banner Informativo Inferior (Exacto a Maqueta) -->
+            <div style="background-color: #f0f9ff; border: 1px solid #bae6fd; border-radius: 8px; padding: 12px 18px; display: flex; align-items: center; gap: 12px; margin-top: 6px; margin-bottom: 24px;">
+                <div style="width: 22px; height: 22px; border-radius: 50%; background-color: #0284c7; color: #ffffff; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; flex-shrink: 0;">
+                    i
+                </div>
+                <div style="font-size: 12.5px; color: #0369a1; font-weight: 500;">
+                    <strong>Nota:</strong> Toda la informaci&oacute;n se presenta en millones de colones y corresponde al per&iacute;odo de referencia seleccionado.
+                </div>
+            </div>
+
+        </div>
+
+            </div><!-- /.tab-content -->
+        </div><!-- /.nav-tabs-custom -->
+    </div><!-- /.modern-table-card -->
 </section>
 
+<script src="https://code.highcharts.com/highcharts-more.js"></script>
 <script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+        // Configuración Global de Highcharts conforme al Estándar Gráfico FGA
+        if (typeof Highcharts !== 'undefined') {
+            Highcharts.setOptions({
+                chart: {
+                    style: {
+                        fontFamily: '"Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", Arial, sans-serif'
+                    }
+                },
+                plotOptions: {
+                    series: {
+                        borderWidth: 0,
+                        dataLabels: {
+                            style: {
+                                textOutline: 'none'
+                            }
+                        }
+                    },
+                    column: {
+                        borderWidth: 0,
+                        borderRadius: 3,
+                        minPointLength: 8,
+                        maxPointWidth: 48
+                    },
+                    pie: {
+                        borderWidth: 0
+                    },
+                    waterfall: {
+                        borderWidth: 0,
+                        minPointLength: 18,
+                        pointWidth: 46,
+                        connectorColor: '#cbd5e1',
+                        connectorWidth: 1.5
+                    }
+                },
+                xAxis: {
+                    lineColor: '#e2e8f0',
+                    tickColor: '#e2e8f0',
+                    gridLineColor: '#f8fafc'
+                },
+                yAxis: {
+                    gridLineColor: '#f1f5f9',
+                    lineColor: '#e2e8f0'
+                }
+            });
+        }
 
-    $(document).ready(function () {
-        oTableBalance = $("#tbBalance").dataTable({
-            "rowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-                if (parseInt(aData[3]) == 0) {
-                    $(nRow).find('td:eq(3)').addClass('hidden');
+        function capitalizeLabel(str) {
+            if (!str) return '';
+            str = str.trim();
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+
+        var catPeriodosRaw = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.DatosComposicion.PeriodosCategorias));
+        var catPeriodos = (catPeriodosRaw || []).map(function(s) { return capitalizeLabel(s); });
+        var catComparaciones = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.DatosComposicion.PeriodosComparacion));
+
+        var totPasivos = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.DatosComposicion.TotalPasivos));
+        var totPatrimonio = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.DatosComposicion.TotalPatrimonio));
+
+        var varCartera = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.DatosComposicion.VarCartera));
+        var varInversiones = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.DatosComposicion.VarInversiones));
+        var varDisponibilidades = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.DatosComposicion.VarDisponibilidades));
+        var varOtrosActivos = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.DatosComposicion.VarOtrosActivos));
+
+        var mCarteraUlt = @Model.DatosComposicion.CarteraUltimo.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        var mInvUlt = @Model.DatosComposicion.InversionesUltimo.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        var mDispUlt = @Model.DatosComposicion.DisponibilidadesUltimo.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        var mOtrosUlt = @Model.DatosComposicion.OtrosActivosUltimo.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        var totalActivoUlt = @Model.DatosComposicion.TotalActivoUltimo.ToString(System.Globalization.CultureInfo.InvariantCulture);
+
+        var saldoIniPasivos = @Model.DatosComposicion.SaldoInicialPasivos.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        var varTotalPas = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.DatosComposicion.VarTotalPasivos));
+        var saldoFinPasivos = @Model.DatosComposicion.SaldoFinalPasivos.ToString(System.Globalization.CultureInfo.InvariantCulture);
+
+        var varPasCosto = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.DatosComposicion.VarPasivoConCosto));
+        var varPatri = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.DatosComposicion.VarPatrimonio));
+
+        var composicionChartsInited = false;
+        function renderComposicionCharts() {
+            if (composicionChartsInited) return;
+            composicionChartsInited = true;
+
+            // 1. Composición del pasivo y patrimonio (100% Stacked)
+            Highcharts.chart('chartComposicionPasivoPatri', {
+            chart: { type: 'column', spacingTop: 20 },
+            title: { text: null },
+            xAxis: { categories: catPeriodos, labels: { style: { fontSize: '11px', color: '#475569' } } },
+            yAxis: {
+                min: 0,
+                max: 100,
+                title: { text: null },
+                labels: { format: '{value}%' },
+                gridLineColor: '#f1f5f9'
+            },
+            legend: {
+                align: 'center',
+                verticalAlign: 'bottom',
+                layout: 'horizontal',
+                itemStyle: { fontSize: '11px', color: '#475569' }
+            },
+            tooltip: {
+                pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>{point.percentage:.2f}%</b> (₡{point.y:,.2f} M)<br/>'
+            },
+            plotOptions: {
+                column: {
+                    stacking: 'percent',
+                    borderWidth: 0,
+                    dataLabels: {
+                        enabled: true,
+                        format: '{point.percentage:.2f}%',
+                        style: { fontSize: '10.5px', fontWeight: 'bold', color: '#ffffff', textOutline: 'none' }
+                    }
                 }
             },
-            "bRetrieve": true,
-            "bProcessing": true,
-            "bPaginate": false,
-            "bFilter": false,
-            "bInfo": false,
-            "dom": 'lBfrtip',
-            "sAjaxSource": "@Url.Content("~/Composicion/GetGridBalance")",
-            "buttons": [
-                { extend: 'copyHtml5', exportOptions: { columns: ':visible' } }
-                , { extend: 'excelHtml5', exportOptions: { columns: ':visible' } }
-                , { extend: 'csvHtml5', exportOptions: { columns: ':visible' } }
-                , { extend: 'print', exportOptions: { columns: ':visible' } }
-                , 'colvis'
+            series: [
+                { name: 'Pasivo', data: totPasivos, color: '#2F5597' },
+                { name: 'Patrimonio', data: totPatrimonio, color: '#6DB5CB' }
             ],
-            columnDefs: [
-                {
-                    className: 'text-right', targets: [1, 2, 3]
-                },
-            ],
-            "aoColumns": [
-                {}, {}, {}, {}
-            ]
+            credits: { enabled: false }
         });
+
+        // 2. Composición del activo (Donut)
+        Highcharts.chart('chartActivoDonut', {
+            chart: { type: 'pie', spacing: [0, 0, 0, 0] },
+            title: {
+                text: '<span style="font-size:13.5px;font-weight:700;color:#0f172a;">₡' + Highcharts.numberFormat(totalActivoUlt, 2, ',', '.') + '</span><br><span style="font-size:10.5px;color:#64748b;font-weight:normal;">millones</span>',
+                align: 'center',
+                verticalAlign: 'middle',
+                y: 4
+            },
+            tooltip: {
+                pointFormat: '<b>{point.percentage:.2f}%</b> (₡{point.y:,.2f} M)'
+            },
+            plotOptions: {
+                pie: {
+                    innerSize: '68%',
+                    borderWidth: 0,
+                    dataLabels: {
+                        enabled: true,
+                        format: '{point.percentage:.2f}%',
+                        distance: 12,
+                        style: { fontSize: '10px', fontWeight: 'bold', color: '#334155', textOutline: 'none' }
+                    }
+                }
+            },
+            series: [{
+                name: 'Composición',
+                data: [
+                    { name: 'Cartera de crédito', y: mCarteraUlt, color: '#2F5597' },
+                    { name: 'Inv. en instrumentos financieros', y: mInvUlt, color: '#0284c7' },
+                    { name: 'Disponibilidades', y: mDispUlt, color: '#5DADE2' },
+                    { name: 'Otros activos', y: mOtrosUlt, color: '#94A3B8' }
+                ]
+            }],
+            credits: { enabled: false }
+        });
+
+        // 3. Principales variaciones del activo
+        Highcharts.chart('chartVarActivo', {
+            chart: { type: 'column', spacingTop: 20 },
+            title: { text: null },
+            xAxis: { categories: catComparaciones, labels: { style: { fontSize: '10.5px', color: '#475569' } }, lineColor: '#e2e8f0' },
+            yAxis: {
+                title: { text: null },
+                labels: { format: '{value:,.0f}' },
+                gridLineColor: '#f1f5f9'
+            },
+            legend: {
+                align: 'center',
+                verticalAlign: 'bottom',
+                layout: 'horizontal',
+                itemStyle: { fontSize: '11px', color: '#475569' }
+            },
+            tooltip: {
+                pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>{point.y:,.2f}</b> ₡ M<br/>'
+            },
+            plotOptions: {
+                column: {
+                    borderWidth: 0,
+                    dataLabels: {
+                        enabled: true,
+                        formatter: function() {
+                            return Highcharts.numberFormat(this.y, 0, ',', '.');
+                        },
+                        style: { fontSize: '9px', fontWeight: 'bold', textOutline: 'none' }
+                    }
+                }
+            },
+            series: [
+                { name: 'Cartera de crédito', data: varCartera, color: '#0071AD' },
+                { name: 'Inv. en instr. financieros', data: varInversiones, color: '#6DB5CB' },
+                { name: 'Disponibilidades', data: varDisponibilidades, color: '#B7D8DF' },
+                { name: 'Otros activos', data: varOtrosActivos, color: '#565656' }
+            ],
+            credits: { enabled: false }
+        });
+
+        // 4. Variación del total de pasivos (Waterfall)
+        Highcharts.chart('chartVarPasivos', {
+            chart: { type: 'waterfall', spacingTop: 20 },
+            title: { text: null },
+            xAxis: {
+                type: 'category',
+                labels: { style: { fontSize: '10.5px', color: '#475569' } },
+                lineColor: '#e2e8f0'
+            },
+            yAxis: {
+                title: { text: null },
+                labels: { format: '{value:,.0f}' },
+                gridLineColor: '#f1f5f9'
+            },
+            legend: { enabled: false },
+            tooltip: {
+                pointFormat: '<b>{point.y:,.2f}</b> ₡ millones'
+            },
+            series: [{
+                upColor: '#6DB5CB',
+                color: '#FE7235',
+                borderWidth: 0,
+                minPointLength: 20,
+                pointWidth: 46,
+                connectorColor: '#cbd5e1',
+                connectorWidth: 1.5,
+                data: [
+                    { name: catPeriodos[0], y: saldoIniPasivos, color: '#0071AD' },
+                    { name: catComparaciones[0], y: varTotalPas[0], color: varTotalPas[0] >= 0 ? '#6DB5CB' : '#FE7235' },
+                    { name: catComparaciones[1], y: varTotalPas[1], color: varTotalPas[1] >= 0 ? '#6DB5CB' : '#FE7235' },
+                    { name: catComparaciones[2], y: varTotalPas[2], color: varTotalPas[2] >= 0 ? '#6DB5CB' : '#FE7235' },
+                    { name: catComparaciones[3], y: varTotalPas[3], color: varTotalPas[3] >= 0 ? '#6DB5CB' : '#FE7235' },
+                    { name: catPeriodos[4], isSum: true, color: '#0071AD' }
+                ],
+                dataLabels: {
+                    enabled: true,
+                    inside: false,
+                    crop: false,
+                    overflow: 'none',
+                    formatter: function() {
+                        if (this.point.isSum) {
+                            return Highcharts.numberFormat(this.y, 0, ',', '.');
+                        }
+                        var prefix = this.y > 0 ? '+' : '';
+                        return prefix + Highcharts.numberFormat(this.y, 0, ',', '.');
+                    },
+                    style: { fontSize: '10px', fontWeight: 'bold', color: '#1e293b', textOutline: '2px #ffffff' }
+                }
+            }],
+            credits: { enabled: false }
+        });
+
+        // 5. Principales variaciones del pasivo con costo
+        Highcharts.chart('chartVarPasivoCosto', {
+            chart: { type: 'column', spacingTop: 20 },
+            title: { text: null },
+            xAxis: { categories: catComparaciones, labels: { style: { fontSize: '10.5px', color: '#475569' } }, lineColor: '#e2e8f0' },
+            yAxis: {
+                title: { text: null },
+                labels: { format: '{value:,.0f}' },
+                gridLineColor: '#f1f5f9'
+            },
+            legend: { enabled: false },
+            tooltip: {
+                pointFormat: '<b>{point.y:,.2f}</b> ₡ millones'
+            },
+            series: [{
+                name: 'Variación',
+                borderWidth: 0,
+                data: [
+                    { y: varPasCosto[0], color: varPasCosto[0] >= 0 ? '#6DB5CB' : '#FE7235' },
+                    { y: varPasCosto[1], color: varPasCosto[1] >= 0 ? '#6DB5CB' : '#FE7235' },
+                    { y: varPasCosto[2], color: varPasCosto[2] >= 0 ? '#6DB5CB' : '#FE7235' },
+                    { y: varPasCosto[3], color: varPasCosto[3] >= 0 ? '#6DB5CB' : '#FE7235' }
+                ],
+                dataLabels: {
+                    enabled: true,
+                    crop: false,
+                    overflow: 'none',
+                    formatter: function() {
+                        var prefix = this.y > 0 ? '+' : '';
+                        return prefix + Highcharts.numberFormat(this.y, 0, ',', '.');
+                    },
+                    style: { fontSize: '10px', fontWeight: 'bold', color: '#1e293b', textOutline: '2px #ffffff' }
+                }
+            }],
+            credits: { enabled: false }
+        });
+
+        // 6. Variación del patrimonio
+        Highcharts.chart('chartVarPatrimonio', {
+            chart: { type: 'column', spacingTop: 20 },
+            title: { text: null },
+            xAxis: { categories: catComparaciones, labels: { style: { fontSize: '10.5px', color: '#475569' } }, lineColor: '#e2e8f0' },
+            yAxis: {
+                title: { text: null },
+                labels: { format: '{value:,.0f}' },
+                gridLineColor: '#f1f5f9'
+            },
+            legend: { enabled: false },
+            tooltip: {
+                pointFormat: '<b>{point.y:,.2f}</b> ₡ millones'
+            },
+            series: [{
+                name: 'Variación',
+                borderWidth: 0,
+                data: [
+                    { y: varPatri[0], color: varPatri[0] >= 0 ? '#6DB5CB' : '#FE7235' },
+                    { y: varPatri[1], color: varPatri[1] >= 0 ? '#6DB5CB' : '#FE7235' },
+                    { y: varPatri[2], color: varPatri[2] >= 0 ? '#6DB5CB' : '#FE7235' },
+                    { y: varPatri[3], color: varPatri[3] >= 0 ? '#6DB5CB' : '#FE7235' }
+                ],
+                dataLabels: {
+                    enabled: true,
+                    crop: false,
+                    overflow: 'none',
+                    formatter: function() {
+                        var prefix = this.y > 0 ? '+' : '';
+                        return prefix + Highcharts.numberFormat(this.y, 0, ',', '.');
+                    },
+                    style: { fontSize: '10px', fontWeight: 'bold', color: '#1e293b', textOutline: '2px #ffffff' }
+                }
+            }],
+            credits: { enabled: false }
+        });
+        } // Fin de renderComposicionCharts
+
+        // Renderizado diferido al activar la pestaña Composición (no bloquea la carga de la tabla de Balance)
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+            if ($(e.target).attr('href') === '#tab_composicion') {
+                renderComposicionCharts();
+                $(window).trigger('resize');
+                if (typeof Highcharts !== 'undefined') {
+                    Highcharts.charts.forEach(function(chart) {
+                        if (chart) chart.reflow();
+                    });
+                }
+            }
+        });
+
+        // Si la URL ya venía con el hash de composición, inicializar de inmediato
+        if (window.location.hash === '#tab_composicion') {
+            $('.balance-modern-tabs a[href="#tab_composicion"]').tab('show');
+            renderComposicionCharts();
+        } else if (window.location.hash) {
+            $('.balance-modern-tabs a[href="' + window.location.hash + '"]').tab('show');
+        } else {
+            // Inicializar en segundo plano durante tiempo ocioso para que al dar clic responda al instante
+            setTimeout(function() {
+                if (!composicionChartsInited && typeof Highcharts !== 'undefined') {
+                    renderComposicionCharts();
+                }
+            }, 800);
+        }
+
+        // --- Inicializar modo de vista y estado de secciones colapsadas ---
+        var savedViewMode = sessionStorage.getItem('balanceViewMode') || 'detail';
+        setBalanceView(savedViewMode);
+        restoreSectionState();
     });
 
-    function formatMillion() {
-        return this.value;
+    function exportBalanceToCsv() {
+        var csv = [];
+        var rows = document.querySelectorAll("#tbBalanceNativo tr");
+        for (var i = 0; i < rows.length; i++) {
+            var row = [], cols = rows[i].querySelectorAll("td, th");
+            for (var j = 0; j < cols.length; j++) {
+                var data = cols[j].innerText.replace(/(\r\n|\n|\r)/gm, "").replace(/(\s\s+)/gm, " ").trim();
+                data = data.replace(/"/g, '""');
+                row.push('"' + data + '"');
+            }
+            csv.push(row.join(";"));
+        }
+        var csvFile = new Blob(["\uFEFF" + csv.join("\r\n")], { type: "text/csv;charset=utf-8;" });
+        var downloadLink = document.createElement("a");
+        downloadLink.download = "Balance_General_@Model.NombreEntidad.Replace(" ", "_")" + ".csv";
+        downloadLink.href = window.URL.createObjectURL(csvFile);
+        downloadLink.style.display = "none";
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
     }
 
-    function formatPercent() {
-        return this.value + ' %';
+    /* ============================================================
+       BALANCE — Secciones Colapsables + Modo Vista Resumida
+    ============================================================ */
+
+    function toggleSection(sectionSlug, btn) {
+        var $rows = $('[data-parent-section="' + sectionSlug + '"]');
+        var $buttons = $('[data-section="' + sectionSlug + '"]');
+        var isCollapsed = $(btn).hasClass('collapsed');
+
+        if (isCollapsed) {
+            // Expandir
+            $rows.removeClass('tr-section-hidden');
+            $buttons.removeClass('collapsed');
+        } else {
+            // Colapsar
+            $rows.addClass('tr-section-hidden');
+            $buttons.addClass('collapsed');
+        }
+
+        // Persistir estado en sessionStorage
+        var state = getSectionState();
+        state[sectionSlug] = !isCollapsed; // true = colapsado
+        sessionStorage.setItem('balanceSectionState', JSON.stringify(state));
+    }
+
+    function getSectionState() {
+        try {
+            return JSON.parse(sessionStorage.getItem('balanceSectionState') || '{}');
+        } catch(e) { return {}; }
+    }
+
+    // Restaurar estado de secciones al cargar la página
+    function restoreSectionState() {
+        var state = getSectionState();
+        Object.keys(state).forEach(function(slug) {
+            if (state[slug]) { // colapsado
+                var btn = $('[data-section="' + slug + '"]');
+                if (btn.length) {
+                    toggleSection(slug, btn[0]);
+                }
+            }
+        });
+    }
+
+    // --- Modo Vista Resumida / Detallada ---
+    function setBalanceView(mode) {
+        sessionStorage.setItem('balanceViewMode', mode);
+
+        if (mode === 'compact') {
+            $('.tr-balance-detail-row').addClass('tr-compact-hidden');
+            $('#btnViewDetail').removeClass('active');
+            $('#btnViewCompact').addClass('active');
+        } else {
+            $('.tr-balance-detail-row').removeClass('tr-compact-hidden');
+            $('#btnViewDetail').addClass('active');
+            $('#btnViewCompact').removeClass('active');
+        }
     }
 
 </script>

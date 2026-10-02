@@ -9,7 +9,7 @@ namespace FGA.Controllers
 {
     public class IndEconomicoController : BaseController
     {
-        private void Init()
+        private void Init(object selectedValue = null)
         {
             this.Load();
             var indicadores = tipos.GetAll()
@@ -23,7 +23,8 @@ namespace FGA.Controllers
                 Nombre = "Todos"
             });
 
-            ViewBag.Indicadores = new SelectList(indicadores, "Id", "Nombre");
+            var sel = selectedValue ?? Session["Indicador"] ?? -1;
+            ViewBag.Indicadores = new SelectList(indicadores, "Id", "Nombre", sel);
         }
 
 
@@ -46,11 +47,11 @@ namespace FGA.Controllers
 
         private void LoadBuscar(int codIndicador)
         {
-            Init();
             if (codIndicador == -1)
                 Session["Indicador"] = null;
             else
                 Session["Indicador"] = codIndicador;
+            Init(codIndicador);
         }
 
         [AllowAnonymous]

@@ -1,25 +1,33 @@
 @{
-    ViewBag.Title = "Composici&oacute;n de Cartera";
+    ViewBag.Title = "Riesgo de Crédito";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<section class="content-header">
-    <h1 class="modern-page-title">
-        <i class="fa fa-pie-chart" style="color: #0284c7;"></i>
-        Composici&oacute;n de Cartera
-        <small>Informaci&oacute;n de la cartera seg&uacute;n c&aacute;lculos de la normativa 14-21</small>
-    </h1>
-    <ol class="breadcrumb">
+
+
+<section class="content-header" style="padding: 10px 20px 6px 20px;">
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+        <div>
+            <h1 class="modern-page-title" style="margin: 0; font-size: 18px; font-weight: 700; color: #143750; display: flex; align-items: center; gap: 8px;">
+                <i class="fa fa-shield" style="color: #0284c7;"></i>
+                Riesgo de Cr&eacute;dito
+            </h1>
+            <p style="margin: 2px 0 0 0; font-size: 12px; color: #64748b;">
+                Composici&oacute;n de mora, morosidad agrupada y an&aacute;lisis de riesgo seg&uacute;n normativa 14-21
+            </p>
+        </div>
+    </div>
+    <ol class="breadcrumb" style="top: 8px;">
         <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
-        <li><a href="@Url.Action("Index", "Modulo", new { modulo = "Cartera" })" class="breadcrumb-parent-pill" title="Volver al menÃÂº de Cartera"><i class="fa fa-pie-chart" style="margin-right: 4px;"></i> Cartera</a></li>
-        <li class="active">Normativa 14-21</li>
+        <li><a href="@Url.Action("Index", "Modulo", new { modulo = "Cartera de Crédito" })" class="breadcrumb-parent-pill" title="Volver al menú de Cartera de Crédito"><i class="fa fa-pie-chart" style="margin-right: 4px;"></i> Cartera de Cr&eacute;dito</a></li>
+        <li class="active">Riesgo de Cr&eacute;dito</li>
     </ol>
 </section>
 
-<section class="content">
+<section class="content" style="padding: 0 20px 14px 20px;">
     <div class="row">
         <div class="col-xs-12">
-            <div class="modern-filter-card">
+            <div class="modern-filter-card" style="margin-bottom: 12px; padding: 14px 20px;">
                 <div class="modern-filter-toolbar">
                     <div class="filter-item">
                         <label for="IdEntidad"><i class="fa fa-university"></i> Entidad:</label>
@@ -29,7 +37,7 @@
                         <label for="Grafico"><i class="fa fa-bar-chart"></i> Gr&aacute;fico:</label>
                         @Html.DropDownList("Grafico", null, new { @id = "Grafico", @class = "form-control modern-select", style = "min-width: 250px;" })
                     </div>
-                    <div class="filter-item">
+                    <div class="filter-item" id="cont_fecInicial">
                         <label for="PeriodoI" id="lbl_fecInicial"><i class="fa fa-calendar"></i> Inicial:</label>
                         <div class="modern-input-wrapper" id="txt_fecInicial">
                             <input name="PeriodoI" id="PeriodoI" class="datecontrol form-control modern-date-input" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MM/yyyy")" style="min-width: 130px;" />
@@ -43,7 +51,7 @@
                     </div>
                     <div class="filter-item" style="margin-left: auto;">
                         <button type="button" id="btn_buscar" class="btn-modern-filter">
-                            <i class="fa fa-search"></i> Generar
+                            <i class="fa fa-search"></i> Generar Reporte
                         </button>
                     </div>
                 </div>
@@ -52,7 +60,7 @@
     </div>
     <div class="row">
         <div class="col-xs-12">
-            <div id="grafica">
+            <div id="grafica" style="width: 100%; max-width: 100%; overflow: hidden;">
             </div>
         </div>
     </div>
@@ -60,11 +68,11 @@
     <!-- Nota Informativa al pie de página -->
     <div class="row">
         <div class="col-xs-12">
-            <div class="modern-info-card" style="margin-top: 15px; margin-bottom: 20px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 14px 18px; display: flex; align-items: center; gap: 12px;">
-                <div style="width: 32px; height: 32px; border-radius: 50%; background: #2563eb; color: #ffffff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-weight: 700; font-size: 14px;">
+            <div class="modern-info-card" style="margin-top: 8px; margin-bottom: 12px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 8px 14px; display: flex; align-items: center; gap: 10px;">
+                <div style="width: 24px; height: 24px; border-radius: 50%; background: #2563eb; color: #ffffff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-weight: 700; font-size: 12px;">
                     i
                 </div>
-                <div style="font-size: 13px; color: #1e3a8a;">
+                <div style="font-size: 12px; color: #1e3a8a;">
                     <strong>Nota:</strong> Toda la información se presenta en millones de colones y corresponde al período de referencia seleccionado.
                 </div>
             </div>
@@ -74,23 +82,34 @@
 
 <script type="text/javascript">
 
-    $("#Grafico").change(function () {
+    function togglePeriodoInicial() {
         if ($("#Grafico").val() != 10) {
-            $("#txt_fecInicial").removeClass("hidden");
-            $("#lbl_fecInicial").removeClass("hidden");
-        }       
-        else {
-            $("#txt_fecInicial").addClass("hidden");
-            $("#lbl_fecInicial").addClass("hidden");
-        }       
+            $("#cont_fecInicial").removeClass("hidden").show();
+        } else {
+            $("#cont_fecInicial").addClass("hidden").hide();
+        }
+    }
+
+    $(document).ready(function () {
+        togglePeriodoInicial();
+        refreshGraph();
+    });
+
+    $("#Grafico").change(function () {
+        togglePeriodoInicial();
+        refreshGraph();
+    });
+
+    $("#IdEntidad").change(function () {
+        refreshGraph();
     });
 
     function refreshGraph() {
+         $('#grafica').html('<div style="text-align: center; padding: 40px 0; color: #64748b;"><i class="fa fa-spinner fa-spin fa-2x"></i><p style="margin-top: 10px; font-size: 13px;">Cargando gráfico...</p></div>');
          $.ajax({
             url: '@Url.Action("GraficaDetalle", "Cartera14_21")',
             type: 'POST',
             cache: false,
-            async: false,
             data: {
                  'Entidades': $('#IdEntidad').val(),
                  'Grafico': $('#Grafico').val(),
@@ -99,8 +118,25 @@
             },
              success: function (result) {
                  $('#grafica').html(result);
-                 $("#entidad").text($("#Grafico :selected").text());
-                 $("#pEntidad").text($("#Grafico :selected").text());
+                 var entText = $("#IdEntidad :selected").text() || '';
+                 var grafText = $("#Grafico :selected").text() || '';
+                 $("#entidad").text(grafText);
+                 $("#pEntidad").text(grafText);
+                 if (entText) {
+                     $("#pSubEntidad").text(entText);
+                 }
+                 setTimeout(function () {
+                     if (typeof Highcharts !== 'undefined' && Highcharts.charts) {
+                         Highcharts.charts.forEach(function (c) {
+                             if (c && c.renderTo && $(c.renderTo).closest('#grafica').length) {
+                                 try { c.reflow(); } catch (e) {}
+                             }
+                         });
+                     }
+                 }, 60);
+            },
+            error: function () {
+                $('#grafica').html('<div class="alert alert-danger" style="margin: 20px;">Ocurrió un error al cargar el gráfico.</div>');
             }
          });
     }
@@ -109,13 +145,38 @@
         refreshGraph();
     });
 
+    $(window).on('resize', function () {
+        if (typeof Highcharts !== 'undefined' && Highcharts.charts) {
+            Highcharts.charts.forEach(function (c) {
+                if (c && c.renderTo && $(c.renderTo).closest('#grafica').length) {
+                    try { c.reflow(); } catch (e) {}
+                }
+            });
+        }
+    });
+
     function formatMillion() {
-        $("#entidad").text($("#Grafico :selected").text());
-        $("#pEntidad").text($("#Grafico :selected").text());
+        if ($("#Grafico").length && $("#Grafico :selected").length) {
+            var entText = $("#IdEntidad :selected").text() || '';
+            var grafText = $("#Grafico :selected").text() + " en millones";
+            $("#entidad").text(grafText);
+            $("#pEntidad").text(grafText);
+            if (entText) {
+                $("#pSubEntidad").text(entText);
+            }
+        }
+        if (typeof Highcharts !== 'undefined' && Highcharts.numberFormat) {
+            var decimals = (this.value % 1 !== 0) ? 2 : 0;
+            return Highcharts.numberFormat(this.value, decimals, '.', ',');
+        }
         return this.value;
     }
 
     function formatPercent() {
+        if (typeof Highcharts !== 'undefined' && Highcharts.numberFormat) {
+            var decimals = (this.value % 1 !== 0) ? 2 : 0;
+            return Highcharts.numberFormat(this.value, decimals, '.', ',') + ' %';
+        }
         return this.value + " %";
     }
 

@@ -334,6 +334,10 @@ public interface ISP
 
     [OperationContract]
     [ReferencePreservingDataContractFormat]
+    List<FGA_Consultar_FacturacionFFC_Result> FGA_Consultar_FacturacionFFC(string idEntidad, int anno, int trimestre);
+
+    [OperationContract]
+    [ReferencePreservingDataContractFormat]
     List<FGA_Consultar_Grafico_Oper_Categoria_Result> FGA_Consultar_Grafico_Oper_Categoria(string iDENTIDAD, DateTime pERIODOI, DateTime pERIODOF);
 
     [OperationContract]
@@ -367,5 +371,49 @@ public interface ISP
     [OperationContract]
     [ReferencePreservingDataContractFormat]
     int FGA_Generar_Estructura_Fondeo(string iDENTIDAD, DateTime? pERIODO);
+
+    [OperationContract]
+    [ReferencePreservingDataContractFormat]
+    List<FGA_Rpt_Balance_General_5Periodos_Result> FGA_Rpt_Balance_General_5Periodos(string iDENTIDAD, DateTime? pERIODO_REF, string tIPO_COMPARACION);
+
+    [OperationContract]
+    [ReferencePreservingDataContractFormat]
+    List<FGA_Rpt_Balanza_Comprobacion_5Periodos_Result> FGA_Rpt_Balanza_Comprobacion_5Periodos(string iDENTIDAD, DateTime? pERIODO_REF, string mODALIDAD, string tIPO_COMPARACION);
+
+    [OperationContract]
+    [ReferencePreservingDataContractFormat]
+    List<FGA_Rpt_Estado_Resultados_5Periodos_Result> FGA_Rpt_Estado_Resultados_5Periodos(string iDENTIDAD, DateTime? pERIODO_REF, string mODALIDAD, string tIPO_COMPARACION);
+
+    [OperationContract]
+    [ReferencePreservingDataContractFormat]
+    List<FGA_Obtener_Alertas_Financieras_Result> FGA_Generar_Alertas_Variacion_Financiera(string iDENTIDAD, DateTime? pERIODO, string mODALIDAD, string tIPO_COMPARACION);
+
+    [OperationContract]
+    [ReferencePreservingDataContractFormat]
+    List<FGA_Obtener_Alertas_Financieras_Result> FGA_Obtener_Alertas_Financieras(string iDENTIDAD, bool? sOLO_NO_LEIDAS, int? tOP);
+
+    [OperationContract]
+    [ReferencePreservingDataContractFormat]
+    int FGA_Marcar_Alerta_Leida(int? aLERTA_ID, string iDENTIDAD, string uSUARIO);
+
+    [OperationContract]
+    [ReferencePreservingDataContractFormat]
+    List<FGA_Configuracion_Alerta_Entidad_Result> FGA_Obtener_Configuracion_Alerta_Entidad(string iDENTIDAD);
+
+    [OperationContract]
+    [ReferencePreservingDataContractFormat]
+    List<FGA_Configuracion_Alerta_Entidad_Result> FGA_Guardar_Configuracion_Alerta_Entidad(string iDENTIDAD, decimal? uMBRAL_PORC, decimal? uMBRAL_MONTO, string mODO_MONITOREO, bool? aCTIVO, string uSUARIO);
+
+    [OperationContract]
+    [ReferencePreservingDataContractFormat]
+    List<FGA_Cuenta_Monitoreada_Entidad_Result> FGA_Obtener_Cuentas_Monitoreadas_Entidad(string iDENTIDAD, bool? sOLO_ACTIVAS);
+
+    [OperationContract]
+    [ReferencePreservingDataContractFormat]
+    List<FGA_Cuenta_Monitoreada_Entidad_Result> FGA_Guardar_Cuenta_Monitoreada_Entidad(string iDENTIDAD, string cUENTA, string nOMBRE_CUENTA, string tIPO_REGLA, decimal? uMBRAL_PORC, decimal? uMBRAL_MONTO, string uSUARIO);
+
+    [OperationContract]
+    [ReferencePreservingDataContractFormat]
+    int FGA_Eliminar_Cuenta_Monitoreada_Entidad(int iD, string iDENTIDAD, string uSUARIO);
 
 }

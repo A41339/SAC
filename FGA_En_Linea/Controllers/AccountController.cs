@@ -338,7 +338,11 @@ namespace FGA.Controllers
             }
         }
 
-        public ActionResult Unauthorized => View();
+        [HttpGet]
+        public ActionResult Unauthorized()
+        {
+            return View();
+        }
 
         protected override void Dispose(bool disposing)
         {

@@ -1,0 +1,1542 @@
+/**
+ * ==============================================================================
+ * FGA EN LÍNEA - MÓDULO DE INFORMACIÓN FINANCIERA
+ * Archivo: Content/informe_financiero.css
+ * Descripción: Estilos compartidos y específicos para los reportes ejecutivos:
+ *   - Balanza de Comprobación (Index.cshtml)
+ *   - Balance General (Balance.cshtml)
+ *   - Estado de Resultados (ER.cshtml)
+ *   - Origen y Aplicación de Fondos (Origen.cshtml)
+ * 
+ * Normas de diseño:
+ *   - Estilo institucional SSRS / RDL de alta definición y contraste.
+ *   - Tablas contables con cabeceras fijas (sticky headers) y números tabulares.
+ *   - Tipografía unificada Segoe UI / sistema sin interferir con FontAwesome.
+ *   - Soporte integral para impresión (@media print).
+ * ==============================================================================
+ */
+
+/* ==============================================================================
+   1. TIPOGRAFÍA UNIFICADA Y PROTECCIÓN DE ICONOS
+   ============================================================================== */
+.report-paper-container,
+.table-rdl-balance,
+.tbl-eeff,
+.modern-filter-card,
+.report-toolbar-card,
+.membrete-card,
+.dash-card,
+.er-body,
+.balance-nav-tabs,
+.balance-modern-tabs,
+.er-nav-tabs {
+    font-family: "Segoe UI", Calibri, -apple-system, BlinkMacSystemFont, Arial, sans-serif !important;
+}
+
+/* Blindaje estricto de FontAwesome para evitar sobreescritura tipográfica */
+i.fa, .fa, [class*="fa-"] {
+    font-family: FontAwesome !important;
+    font-style: normal !important;
+    font-weight: normal !important;
+    line-height: inherit;
+}
+
+/* ==============================================================================
+   2. HOJA DE REPORTE Y MEMBRETE INSTITUCIONAL (ESTILO SSRS / RDL)
+   ============================================================================== */
+.report-paper-container {
+    background: #ffffff;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 4px 0 10px 0;
+    margin-bottom: 0;
+    position: relative;
+}
+
+.report-header-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 2px solid #2F5597;
+    padding-bottom: 16px;
+    margin-bottom: 20px;
+    gap: 20px;
+}
+
+.report-header-logo {
+    max-height: 58px;
+    max-width: 170px;
+    object-fit: contain;
+}
+
+.report-header-titles {
+    text-align: center;
+    flex: 1;
+}
+
+.report-header-titles h2 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 800;
+    color: #143750;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.report-header-titles h1 {
+    margin: 4px 0 2px 0;
+    font-size: 18px;
+    font-weight: 800;
+    color: #2F5597;
+    letter-spacing: 0.8px;
+}
+
+.report-header-titles .entity-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: #334155;
+    margin: 0;
+}
+
+.report-header-titles .report-subtitle {
+    font-size: 12px;
+    color: #64748b;
+    font-style: italic;
+    margin: 3px 0 0 0;
+}
+
+.report-header-meta {
+    font-size: 11.5px;
+    color: #475569;
+    text-align: right;
+    line-height: 1.5;
+    min-width: 160px;
+    background: #f8fafc;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
+}
+
+/* Membrete formal específico para Origen y Aplicación */
+.membrete-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+}
+
+.membrete-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #2F5597;
+    padding-bottom: 14px;
+    margin-bottom: 12px;
+}
+
+.membrete-titles h2 {
+    margin: 0;
+    font-size: 18px !important;
+    font-weight: 800 !important;
+    color: #143750;
+}
+
+.membrete-titles h3 {
+    margin: 4px 0 0 0;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    color: #2F5597;
+}
+
+/* ==============================================================================
+   3. BARRA DE HERRAMIENTAS, FILTROS Y CONTROLES DE NAVEGACIÓN
+   ============================================================================== */
+.report-toolbar-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 12px 18px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.modern-filter-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 12px 18px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.btn-report-download {
+    background: #2F5597;
+    color: #ffffff !important;
+    font-weight: 600;
+    font-size: 13px;
+    padding: 7px 16px;
+    border-radius: 6px;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    text-decoration: none !important;
+    cursor: pointer;
+}
+
+.btn-report-download:hover,
+.btn-report-download:focus {
+    background: #24437a;
+    color: #ffffff !important;
+}
+
+/* Píldoras de Selección */
+.pill-group {
+    display: inline-flex;
+    background: #f1f5f9;
+    border-radius: 6px;
+    padding: 3px;
+    border: 1px solid #e2e8f0;
+    gap: 3px;
+}
+
+.pill-item {
+    padding: 5px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 5px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: #475569;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-decoration: none !important;
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+}
+
+.pill-item:hover {
+    color: #1e293b;
+    background: #e2e8f0;
+}
+
+.pill-item.active,
+.pill-item.active-modalidad,
+button.pill-item.active,
+a.pill-item.active {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    color: #2F5597 !important;
+    border: 1px solid #cbd5e1 !important;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08) !important;
+    font-weight: 700 !important;
+}
+
+.pill-item.active:hover,
+button.pill-item.active:hover,
+a.pill-item.active:hover {
+    background: #ffffff !important;
+    color: #1e3a8a !important;
+    border-color: #94a3b8 !important;
+}
+
+.toolbar-divider {
+    width: 1px;
+    height: 24px;
+    background: #e2e8f0;
+    flex-shrink: 0;
+}
+
+/* ==============================================================================
+   PARÁMETROS Y FILTROS MEJORADOS
+   ============================================================================== */
+.report-filter-form {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin: 0;
+    width: 100%;
+}
+
+.filter-param-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.filter-param-label {
+    margin: 0;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #334155;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+.filter-param-label i {
+    color: #2F5597;
+    font-size: 13px;
+}
+
+.filter-param-select {
+    font-size: 12.5px !important;
+    height: 33px !important;
+    font-weight: 500 !important;
+    min-width: 220px !important;
+    border-radius: 6px !important;
+    border: 1px solid #cbd5e1 !important;
+    background-color: #f8fafc !important;
+    color: #1e293b !important;
+    padding: 4px 10px !important;
+    transition: all 0.2s ease !important;
+}
+
+.filter-param-select:focus {
+    border-color: #2F5597 !important;
+    box-shadow: 0 0 0 3px rgba(47, 85, 151, 0.15) !important;
+    background-color: #ffffff !important;
+}
+
+.filter-param-date-group {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+.filter-param-date {
+    font-size: 12.5px !important;
+    height: 33px !important;
+    width: 95px !important;
+    border-radius: 6px !important;
+    border: 1px solid #cbd5e1 !important;
+    background-color: #f8fafc !important;
+    color: #1e293b !important;
+    text-align: center !important;
+    font-weight: 600 !important;
+    transition: all 0.2s ease !important;
+}
+
+.filter-param-date:focus {
+    border-color: #2F5597 !important;
+    box-shadow: 0 0 0 3px rgba(47, 85, 151, 0.15) !important;
+    background-color: #ffffff !important;
+}
+
+/* Buscador Rápido */
+.quick-search-box {
+    position: relative;
+    min-width: 260px;
+    display: inline-flex;
+    align-items: center;
+}
+
+.quick-search-box input {
+    height: 34px !important;
+    font-size: 12.5px !important;
+    padding-left: 36px !important;
+    padding-right: 14px !important;
+    border-radius: 6px !important;
+    border: 1px solid #cbd5e1 !important;
+    background-color: #ffffff !important;
+    color: #1e293b !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    transition: all 0.15s ease !important;
+}
+
+.quick-search-box input::placeholder {
+    color: #94a3b8 !important;
+    opacity: 1 !important;
+}
+
+.quick-search-box input:focus {
+    border-color: #0284c7 !important;
+    outline: none !important;
+    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15) !important;
+}
+
+.quick-search-box i {
+    position: absolute !important;
+    left: 12px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    font-size: 13px !important;
+    color: #64748b !important;
+    pointer-events: none !important;
+    z-index: 5 !important;
+}
+
+/* Toggle de Vista: Resumido / Detallado */
+.balance-view-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: #f1f5f9;
+    border-radius: 6px;
+    padding: 3px;
+    border: 1px solid #e2e8f0;
+}
+
+.balance-view-toggle-btn {
+    padding: 4px 11px;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 4px;
+    border: none;
+    background: transparent;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+}
+
+.balance-view-toggle-btn.active {
+    background: #ffffff;
+    color: #2F5597;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+}
+
+.balance-view-toggle-btn:hover:not(.active) {
+    color: #334155;
+    background: rgba(255,255,255,0.5);
+}
+
+/* ==============================================================================
+   4. PESTAÑAS EJECUTIVAS (TABS)
+   ============================================================================== */
+.balance-nav-tabs,
+.er-nav-tabs {
+    border-bottom: 2px solid #e2e8f0;
+    margin-bottom: 18px;
+}
+
+.balance-nav-tabs > li > a,
+.er-nav-tabs > li > a {
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    color: #475569 !important;
+    border-radius: 6px 6px 0 0 !important;
+    padding: 9px 18px !important;
+    border: 1px solid transparent !important;
+    border-bottom: none !important;
+    transition: all 0.15s ease;
+}
+
+.balance-nav-tabs > li.active > a,
+.balance-nav-tabs > li.active > a:focus,
+.balance-nav-tabs > li.active > a:hover,
+.er-nav-tabs > li.active > a,
+.er-nav-tabs > li.active > a:focus,
+.er-nav-tabs > li.active > a:hover {
+    color: #143750 !important;
+    background: #ffffff !important;
+    border: 1px solid #d1d5db !important;
+    border-bottom: 3px solid #2F5597 !important;
+}
+
+.balance-modern-tabs {
+    border-bottom: 2px solid #e2e8f0 !important;
+    margin-bottom: 22px !important;
+    background: #ffffff !important;
+}
+
+.balance-modern-tabs > li > a {
+    border: none !important;
+    background: #ffffff !important;
+    color: #475569 !important;
+    font-size: 13.5px !important;
+    font-weight: 600 !important;
+    padding: 11px 22px !important;
+    border-radius: 8px 8px 0 0 !important;
+    position: relative;
+    border-bottom: 3px solid transparent !important;
+    transition: all 0.2s ease;
+}
+
+.balance-modern-tabs > li > a:hover {
+    color: #0284c7 !important;
+    background: #f8fafc !important;
+    border-bottom: 3px solid #cbd5e1 !important;
+}
+
+.balance-modern-tabs > li.active > a,
+.balance-modern-tabs > li.active > a:hover,
+.balance-modern-tabs > li.active > a:focus {
+    color: #143750 !important;
+    font-weight: 700 !important;
+    border-bottom: 3px solid #0284c7 !important;
+    background: #ffffff !important;
+}
+
+.nav-tabs-custom > .nav-tabs > li.active > a {
+    border-top-color: #2F5597 !important;
+    font-weight: 700 !important;
+    color: #143750 !important;
+}
+
+.nav-tabs-custom > .nav-tabs > li > a {
+    font-weight: 600 !important;
+    color: #64748b;
+    font-size: 13px !important;
+}
+
+/* ==============================================================================
+   5. TABLA CONTABLE PRINCIPAL (.table-rdl-balance) Y SCROLL WRAPPER
+   ============================================================================== */
+.balance-table-scroll-wrapper {
+    max-height: calc(100vh - 280px);
+    min-height: 380px;
+    overflow-y: auto;
+    overflow-x: auto;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.04);
+    position: relative;
+}
+
+.table-rdl-balance {
+    width: 100% !important;
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    font-size: 11.5px !important;
+    color: #1e293b;
+    background: #ffffff;
+    border: none !important;
+}
+
+/* Encabezados Sticky Estandarizados (Gris Institucional FFC) */
+.table-rdl-balance thead th,
+.balance-table-scroll-wrapper thead th,
+.balance-table-scroll-wrapper .table-rdl-balance thead th,
+#tbERNativo thead th,
+#tbBalanceNativo thead th,
+#tbBalanzaNativo thead th,
+#tbAnalisisNativo thead th {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 10 !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    font-style: normal !important;
+    line-height: 1.3 !important;
+    padding: 8px 10px !important;
+    vertical-align: middle !important;
+    border: none !important;
+    border-top: 1px solid #cbd5e1 !important;
+    border-bottom: 2.5px solid #2F5597 !important;
+    border-left: 1px solid #cbd5e1 !important;
+    background-color: #f8fafc !important;
+    color: #143750 !important;
+    font-variant-numeric: tabular-nums !important;
+    font-feature-settings: "tnum" !important;
+    box-shadow: 0 2px 4px rgba(15, 23, 42, 0.05) !important;
+    white-space: nowrap !important;
+}
+
+.table-rdl-balance thead th:last-child,
+#tbERNativo thead th:last-child,
+#tbBalanceNativo thead th:last-child,
+#tbBalanzaNativo thead th:last-child,
+#tbAnalisisNativo thead th:last-child {
+    border-right: 1px solid #cbd5e1 !important;
+}
+
+.table-rdl-balance thead th.th-concept,
+#tbERNativo thead th.th-concept,
+#tbBalanceNativo thead th.th-concept,
+#tbBalanzaNativo thead th.th-concept,
+#tbAnalisisNativo thead th.th-concept {
+    text-align: left !important;
+    background-color: #f1f5f9 !important;
+    color: #143750 !important;
+    border-left: 1px solid #cbd5e1 !important;
+}
+
+.table-rdl-balance thead th.th-period,
+#tbERNativo thead th.th-period,
+#tbBalanceNativo thead th.th-period,
+#tbBalanzaNativo thead th.th-period,
+#tbAnalisisNativo thead th.th-period,
+#tbAnalisisNativo thead th.th-period-group {
+    text-align: right !important;
+    background-color: #f8fafc !important;
+    color: #143750 !important;
+    border-left: 1px solid #cbd5e1 !important;
+}
+
+.table-rdl-balance thead th.th-var,
+#tbERNativo thead th.th-var,
+#tbBalanceNativo thead th.th-var,
+#tbBalanzaNativo thead th.th-var,
+#tbAnalisisNativo thead th.th-var {
+    text-align: right !important;
+    background-color: #e2e8f0 !important;
+    color: #143750 !important;
+    border-left: 1px solid #cbd5e1 !important;
+}
+
+/* Filas y Celdas de Datos */
+.table-rdl-balance tbody td {
+    font-size: 11.5px !important;
+    padding: 5.5px 10px;
+    line-height: 1.35;
+    border: none;
+    border-bottom: 1px solid #edf2f7;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.table-rdl-balance tbody tr:hover td {
+    background-color: #f0f7ff !important;
+}
+
+/* Alineaciones Numéricas y Formatos de Celda */
+.col-cuenta {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+}
+
+.col-amount,
+.table-rdl-balance td.col-amount {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+    letter-spacing: -0.2px;
+    text-align: right;
+}
+
+.col-rep {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+    color: #0284c7;
+    background-color: #f0f9ff;
+    border-bottom: 1px solid #e0f2fe !important;
+    text-align: right;
+}
+
+tr.tr-rdl-section .col-rep,
+tr.tr-rdl-grand-total .col-rep,
+tr.tr-rdl-subtotal-italic .col-rep {
+    background-color: inherit !important;
+    border-bottom: inherit !important;
+}
+
+/* Indicadores de Variación Positiva / Negativa */
+.val-positive, td.val-positive {
+    color: #16a34a !important;
+    font-weight: 600 !important;
+}
+
+.val-negative, td.val-negative {
+    color: #ea580c !important;
+    font-weight: 600 !important;
+}
+
+/* ==============================================================================
+   6. JERARQUÍA CONTABLE Y ESTILIZACIÓN DE FILAS
+   ============================================================================== */
+
+/* Balanza de Comprobación: Clases, Grupos, Subgrupos, Detalle */
+tr.tr-rdl-clase td {
+    font-size: 11.5px !important;
+    font-weight: 800 !important;
+    font-style: normal !important;
+    color: #143750 !important;
+    background-color: #f1f5f9 !important;
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+    border-top: 1.5px solid #2F5597 !important;
+    border-bottom: 1px solid #cbd5e1 !important;
+}
+
+tr.tr-rdl-clase td:first-child {
+    border-left: 4px solid #2F5597 !important;
+}
+
+tr.tr-rdl-grupo td {
+    font-size: 11.5px !important;
+    font-weight: 700 !important;
+    font-style: normal !important;
+    color: #1e293b !important;
+    background-color: #ffffff !important;
+    padding-top: 7px !important;
+    padding-bottom: 6px !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+}
+
+tr.tr-rdl-subgrupo td {
+    font-size: 11.5px !important;
+    font-weight: 700 !important;
+    font-style: italic !important;
+    color: #334155 !important;
+    background-color: #f8fafc !important;
+    padding-top: 6px !important;
+    padding-bottom: 6px !important;
+    border-bottom: 1px solid #edf2f7 !important;
+}
+
+tr.tr-rdl-detalle td {
+    font-size: 11.5px !important;
+    font-weight: 400 !important;
+    font-style: normal !important;
+    color: #334155 !important;
+    background-color: #ffffff !important;
+    padding: 5.5px 10px;
+    border-bottom: 1px solid #edf2f7;
+}
+
+/* Balance General y Estado de Resultados: Secciones y Totales */
+tr.tr-rdl-section td {
+    font-size: 11.5px !important;
+    font-weight: 800 !important;
+    font-style: normal !important;
+    color: #143750 !important;
+    background-color: #f1f5f9 !important;
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+    border-top: 1.5px solid #2F5597 !important;
+    border-bottom: 1px solid #cbd5e1 !important;
+}
+
+tr.tr-rdl-section td:first-child {
+    border-left: 4px solid #2F5597 !important;
+}
+
+tr.tr-rdl-cat-no-amount td {
+    font-size: 11.5px !important;
+    font-weight: 700 !important;
+    font-style: normal !important;
+    color: #143750 !important;
+    background-color: #ffffff !important;
+    padding-top: 8px !important;
+    padding-bottom: 4px !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+}
+
+tr.tr-rdl-detail td {
+    font-size: 11.5px !important;
+    font-weight: 400 !important;
+    font-style: normal !important;
+    color: #334155 !important;
+    background-color: #ffffff;
+    padding: 5.5px 10px;
+    border-bottom: 1px solid #edf2f7;
+    transition: background-color 0.15s ease;
+}
+
+tr.tr-rdl-subtotal-italic td {
+    font-size: 11.5px !important;
+    font-weight: 700 !important;
+    font-style: italic !important;
+    color: #1e293b !important;
+    background-color: #f8fafc !important;
+    padding-top: 7px !important;
+    padding-bottom: 7px !important;
+    border-top: 1px solid #cbd5e1 !important;
+    border-bottom: 1px solid #cbd5e1 !important;
+}
+
+tr.tr-rdl-grand-total td {
+    font-size: 11.5px !important;
+    font-weight: 800 !important;
+    font-style: normal !important;
+    color: #143750 !important;
+    background-color: #f1f5f9 !important;
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+    border-top: 1.5px solid #2F5597 !important;
+    border-bottom: 4px double #2F5597 !important;
+}
+
+tr.tr-rdl-total-double td {
+    font-size: 11.5px !important;
+    font-weight: 800 !important;
+    font-style: normal !important;
+    color: #143750 !important;
+    background-color: #f1f5f9 !important;
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+    border-top: 1.5px solid #2F5597 !important;
+    border-bottom: 4px double #2F5597 !important;
+}
+
+/* Fila de comprobación / cuadre contable */
+tr.tr-rdl-prueba td {
+    background-color: #ecfdf5 !important;
+    font-weight: 700 !important;
+    font-style: normal !important;
+    font-size: 11.5px !important;
+    border-top: 1px dashed #10b981 !important;
+    border-bottom: 1px dashed #10b981 !important;
+    color: #047857 !important;
+    padding: 7px 10px !important;
+}
+
+tr.tr-rdl-descuadre td {
+    background-color: #fef2f2 !important;
+    border-top: 1px dashed #ef4444 !important;
+    border-bottom: 1px dashed #ef4444 !important;
+    color: #b91c1c !important;
+}
+
+/* ==============================================================================
+   7. INDENTACIÓN CONTABLE ESTANDARIZADA
+   ============================================================================== */
+.balanza-indent-1 { font-size: 11.5px !important; font-weight: 800 !important; font-style: normal !important; padding-left: 4px !important; }
+.balanza-indent-2 { font-size: 11.5px !important; font-weight: 700 !important; font-style: normal !important; padding-left: 20px !important; }
+.balanza-indent-3 { font-size: 11.5px !important; font-weight: 700 !important; font-style: italic !important; padding-left: 36px !important; }
+.balanza-indent-4 { font-size: 11.5px !important; font-weight: 400 !important; font-style: normal !important; padding-left: 52px !important; color: #475569; }
+
+.balance-concepto,
+.er-concepto {
+    display: inline-block;
+    white-space: nowrap;
+    font-size: 11.5px !important;
+}
+
+.balance-concepto.indent-0,
+.er-concepto.indent-0 {
+    padding-left: 0px !important;
+    font-weight: 800 !important;
+    font-style: normal !important;
+}
+
+.balance-concepto.indent-1,
+.er-concepto.indent-1 {
+    padding-left: 18px !important;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.balance-concepto.indent-2,
+.er-concepto.indent-2 {
+    padding-left: 36px !important;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.balance-concepto.indent-3,
+.er-concepto.indent-3 {
+    padding-left: 0px !important;
+    font-weight: 700 !important;
+    font-style: italic !important;
+}
+
+/* ==============================================================================
+   8. CABECERAS JERÁRQUICAS DE 2 NIVELES (#tbAnalisisNativo)
+   ============================================================================== */
+#tbAnalisisNativo thead th {
+    box-shadow: none !important;
+}
+
+#tbAnalisisNativo thead tr.tr-header-group th {
+    position: sticky;
+    top: 0;
+    z-index: 22;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    font-style: normal !important;
+}
+
+#tbAnalisisNativo thead tr.tr-header-group th.th-period-group {
+    border: none !important;
+    border-left: 1px solid #cbd5e1 !important;
+    border-bottom: 1px solid #cbd5e1 !important;
+    text-align: center !important;
+    background-color: #f8fafc !important;
+    color: #143750 !important;
+    padding: 7px 8px !important;
+}
+
+#tbAnalisisNativo thead tr.tr-header-group th.th-span-full {
+    vertical-align: middle !important;
+    border: none !important;
+    border-bottom: 2.5px solid #2F5597 !important;
+    z-index: 24 !important;
+    background-color: #f1f5f9 !important;
+    color: #143750 !important;
+}
+
+#tbAnalisisNativo thead tr.tr-header-group th.th-concept {
+    background-color: #f1f5f9 !important;
+    color: #143750 !important;
+    text-align: left !important;
+    padding: 10px 12px !important;
+}
+
+#tbAnalisisNativo thead tr.tr-header-group th.th-var {
+    background-color: #e2e8f0 !important;
+    color: #143750 !important;
+    text-align: right !important;
+    padding: 8px 10px !important;
+    border-left: 1px solid #cbd5e1 !important;
+}
+
+#tbAnalisisNativo thead tr.tr-header-sub th {
+    position: sticky;
+    top: 31px;
+    z-index: 21;
+    border: none !important;
+    border-bottom: 2.5px solid #2F5597 !important;
+    padding: 6px 8px !important;
+    font-size: 10.5px !important;
+    font-style: normal !important;
+}
+
+#tbAnalisisNativo thead tr.tr-header-sub th.th-sub-monto {
+    background-color: #f8fafc !important;
+    color: #475569 !important;
+    font-weight: 600 !important;
+    text-align: right !important;
+    border-left: 1px solid #cbd5e1 !important;
+}
+
+#tbAnalisisNativo thead tr.tr-header-sub th.th-sub-rep {
+    background-color: #f0f9ff !important;
+    color: #0284c7 !important;
+    font-weight: 700 !important;
+    text-align: right !important;
+    border-left: 1px solid #e0f2fe !important;
+}
+
+/* ==============================================================================
+   9. COLAPSO DE SECCIONES Y MODOS DE VISTA
+   ============================================================================== */
+.btn-section-collapse {
+    background: transparent;
+    border: none;
+    padding: 2px 6px;
+    margin-right: 4px;
+    border-radius: 3px;
+    cursor: pointer;
+    color: #2F5597;
+    font-size: 11px;
+    line-height: 1;
+    vertical-align: middle;
+    transition: all 0.18s ease;
+    opacity: 0.8;
+}
+
+.btn-section-collapse:hover {
+    background-color: #e2e8f0;
+    color: #0f172a;
+    opacity: 1;
+}
+
+.btn-section-collapse i {
+    transition: transform 0.2s ease;
+}
+
+.btn-section-collapse.collapsed i {
+    transform: rotate(-90deg);
+}
+
+tr.tr-section-hidden,
+tr.tr-balance-collapsible.tr-section-hidden,
+tr.tr-balance-detail-row.tr-compact-hidden {
+    display: none !important;
+}
+
+tr.tr-balance-collapsible {
+    transition: opacity 0.15s ease;
+}
+
+/* ==============================================================================
+   10. INDICADORES DE ESTADO, PÍLDORAS Y BADGES
+   ============================================================================== */
+.status-indicator-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    height: 34px;
+    padding: 0 14px;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 20px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+    user-select: none;
+    letter-spacing: 0.2px;
+}
+
+.status-pill-cuadrado {
+    background-color: #ecfdf5;
+    color: #065f46;
+    border: 1px solid #a7f3d0;
+}
+
+.status-pill-descuadrado {
+    background-color: #ffedd5;
+    color: #c2410c;
+    border: 1px solid #fed7aa;
+    animation: pulseAlertOrange 2s infinite;
+}
+
+@keyframes pulseAlertOrange {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(194, 65, 12, 0.4); }
+    50% { box-shadow: 0 0 0 5px rgba(194, 65, 12, 0); }
+}
+
+/* Insignias de Estado de Cuadre Institucional FFC */
+.badge-cuadrado-ffc {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    padding: 3px 10px !important;
+    font-size: 11.5px !important;
+    font-weight: 700 !important;
+    border-radius: 20px !important;
+    background-color: #dcfce7 !important;
+    color: #15803d !important;
+    border: 1px solid #86efac !important;
+    box-shadow: 0 1px 2px rgba(22, 163, 74, 0.12) !important;
+    white-space: nowrap !important;
+    line-height: 1.4 !important;
+}
+
+.badge-cuadrado-ffc i {
+    color: #16a34a !important;
+    font-size: 12px !important;
+}
+
+.badge-descuadre-ffc {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    padding: 3px 10px !important;
+    font-size: 11.5px !important;
+    font-weight: 700 !important;
+    border-radius: 20px !important;
+    background-color: #ffedd5 !important;
+    color: #c2410c !important;
+    border: 1px solid #fdba74 !important;
+    box-shadow: 0 1px 2px rgba(234, 88, 12, 0.12) !important;
+    white-space: nowrap !important;
+    line-height: 1.4 !important;
+}
+
+.badge-descuadre-ffc i {
+    color: #ea580c !important;
+    font-size: 12px !important;
+}
+
+/* Botón Exportar a Excel - Gris Claro Institucional FFC */
+.btn-ffc-excel,
+a.btn-ffc-excel,
+a.btn.btn-ffc-excel,
+button.btn-ffc-excel,
+.btn-ffc-excel:link,
+.btn-ffc-excel:visited {
+    background-color: #f1f5f9 !important;
+    color: #1e293b !important;
+    border: 1px solid #cbd5e1 !important;
+    font-weight: 600 !important;
+    font-size: 12.5px !important;
+    padding: 6px 14px !important;
+    border-radius: 6px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 7px !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+    transition: all 0.15s ease !important;
+    text-decoration: none !important;
+    cursor: pointer;
+}
+
+.btn-ffc-excel *,
+a.btn-ffc-excel span,
+.btn.btn-ffc-excel span {
+    color: #1e293b !important;
+}
+
+.btn-ffc-excel:hover,
+.btn-ffc-excel:focus,
+a.btn-ffc-excel:hover,
+a.btn-ffc-excel:focus,
+a.btn.btn-ffc-excel:hover,
+a.btn.btn-ffc-excel:focus {
+    background-color: #e2e8f0 !important;
+    color: #0f172a !important;
+    border-color: #94a3b8 !important;
+    text-decoration: none !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08) !important;
+}
+
+.btn-ffc-excel:hover *,
+a.btn-ffc-excel:hover span,
+.btn.btn-ffc-excel:hover span {
+    color: #0f172a !important;
+}
+
+.btn-ffc-excel .fa-file-excel-o,
+a.btn-ffc-excel .fa-file-excel-o {
+    color: #16a34a !important;
+    font-size: 13.5px !important;
+}
+
+/* Badges de Variación para Reportes Financieros */
+.badge-var-pos {
+    display: inline-block;
+    padding: 2px 7px;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    border-radius: 4px;
+    background-color: #dbeafe !important;
+    color: #1e40af !important;
+    border: 1px solid #bfdbfe !important;
+}
+
+.badge-var-neg {
+    display: inline-block;
+    padding: 2px 7px;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    border-radius: 4px;
+    background-color: #ffedd5 !important;
+    color: #c2410c !important;
+    border: 1px solid #fed7aa !important;
+}
+
+.badge-pill-positive {
+    background-color: #dbeafe !important;
+    color: #1e40af !important;
+    font-weight: 700 !important;
+}
+
+.badge-pill-negative {
+    background-color: #ffedd5 !important;
+    color: #c2410c !important;
+    font-weight: 700 !important;
+}
+
+.badge-var-zero {
+    display: inline-block;
+    padding: 2px 7px;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    border-radius: 4px;
+    background-color: #f1f5f9;
+    color: #64748b;
+}
+
+/* Soporte directo para textos o celdas con clase val-positive / val-negative */
+.val-positive,
+td.val-positive {
+    color: #1e40af !important;
+    font-weight: 700;
+}
+
+.val-negative,
+td.val-negative {
+    color: #c2410c !important;
+    font-weight: 700;
+}
+
+/* ==============================================================================
+   11. TARJETAS DE DASHBOARD Y KPI
+   ============================================================================== */
+.dash-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+    min-height: 385px;
+    position: relative;
+}
+
+.dash-card-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.dash-card-bar {
+    width: 4px;
+    height: 32px;
+    background-color: #2F5597;
+    border-radius: 2px;
+    flex-shrink: 0;
+}
+
+.dash-card-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #143750;
+    margin: 0;
+    line-height: 1.3;
+}
+
+.dash-card-subtitle {
+    font-size: 11.5px;
+    color: #64748b;
+    margin: 2px 0 0 0;
+}
+
+.btn-chart-expand {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    background: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    padding: 5px 10px;
+    color: #475569;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.btn-chart-expand:hover {
+    background: #2F5597;
+    color: #ffffff;
+    border-color: #2F5597;
+}
+
+/* Tarjetas KPI de Origen y Aplicación de Fondos */
+.kpi-card-origen {
+    background: #ffffff;
+    border-radius: 8px;
+    border-left: 5px solid #31859C;
+    padding: 16px 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+    border-top: 1px solid #e2e8f0;
+    border-right: 1px solid #e2e8f0;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.kpi-card-aplicacion {
+    background: #ffffff;
+    border-radius: 8px;
+    border-left: 5px solid #ED7D31;
+    padding: 16px 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+    border-top: 1px solid #e2e8f0;
+    border-right: 1px solid #e2e8f0;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.kpi-card-cuadre {
+    background: #ffffff;
+    border-radius: 8px;
+    border-left: 5px solid #2F5597;
+    padding: 16px 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+    border-top: 1px solid #e2e8f0;
+    border-right: 1px solid #e2e8f0;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.kpi-val {
+    font-size: 20px !important;
+    font-weight: 800 !important;
+    font-variant-numeric: tabular-nums;
+    margin-top: 4px;
+}
+
+/* Tabla EEFF de Origen y Aplicación */
+.tbl-eeff {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: #ffffff;
+    font-size: 11.5px !important;
+}
+
+.tbl-eeff thead th {
+    background: #143750 !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    font-size: 11px !important;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 9px 12px !important;
+    border: none !important;
+    vertical-align: middle;
+}
+
+.tbl-eeff tbody td {
+    font-size: 11.5px !important;
+    padding: 6px 12px !important;
+    line-height: 1.35;
+    border-top: 1px solid #eef2f6;
+    vertical-align: middle;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+}
+
+.tbl-eeff tbody tr:hover td {
+    background-color: #f8fafc !important;
+}
+
+.row-nivel-0 td {
+    background: #eef5f9 !important;
+    font-weight: 800 !important;
+    color: #143750 !important;
+    border-top: 2px solid #cbd5e1 !important;
+}
+
+.row-nivel-1 td {
+    font-weight: 700 !important;
+    color: #1e293b !important;
+}
+
+.row-nivel-subtotal td {
+    font-weight: 700 !important;
+    font-style: italic !important;
+    color: #0f172a !important;
+    background-color: #f8fafc !important;
+    border-top: 1px dashed #cbd5e1 !important;
+}
+
+.row-nivel-2 td {
+    font-weight: 400 !important;
+    color: #334155 !important;
+}
+
+/* ==============================================================================
+   12. INTEGRACIÓN CON DATATABLES
+   ============================================================================== */
+.dt-buttons {
+    display: none !important;
+}
+
+.dataTables_wrapper .dataTables_filter {
+    margin-bottom: 12px;
+}
+
+.dataTables_wrapper .dataTables_filter input {
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 6px !important;
+    padding: 5px 12px !important;
+    font-size: 12px !important;
+    outline: none;
+}
+
+/* ==============================================================================
+   13. ESTILOS DE IMPRESIÓN (@media print)
+   ============================================================================== */
+@media print {
+    body {
+        background: #ffffff !important;
+        padding: 0 !important;
+    }
+
+    .main-header,
+    .main-sidebar,
+    .content-header,
+    .report-toolbar-card,
+    .modern-filter-card,
+    .balance-nav-tabs,
+    .balance-modern-tabs,
+    .er-nav-tabs,
+    .btn,
+    .breadcrumb,
+    footer {
+        display: none !important;
+    }
+
+    .content {
+        padding: 0 !important;
+    }
+
+    .report-paper-container,
+    .dash-card,
+    .membrete-card {
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    .balance-table-scroll-wrapper {
+        max-height: none !important;
+        overflow: visible !important;
+        border: none !important;
+    }
+
+    tr.tr-balance-collapsible.tr-section-hidden,
+    tr.tr-balance-detail-row.tr-compact-hidden,
+    tr.tr-section-hidden {
+        display: table-row !important;
+    }
+
+    .table-rdl-balance,
+    .tbl-eeff {
+        font-size: 10px !important;
+    }
+
+    .table-rdl-balance thead th,
+    .tbl-eeff thead th {
+        font-size: 9.5px !important;
+        padding: 4px 6px !important;
+        position: static !important;
+    }
+
+    .table-rdl-balance tbody td,
+    .tbl-eeff tbody td {
+        padding: 4px 6px !important;
+    }
+}
+
+/* ==============================================================================
+   10. PESTAÑA COMPOSICIÓN - ESTADO DE RESULTADOS (DONUT + EVOLUCIÓN)
+   ============================================================================== */
+.er-comp-card {
+    background: #ffffff;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    padding: 22px 24px;
+    margin-bottom: 20px;
+}
+.er-comp-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+.er-comp-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+.er-comp-icon-blue {
+    background: #eef2ff;
+    color: #2F5597;
+    border: 1px solid #bfdbfe;
+}
+.er-comp-icon-orange {
+    background: #fff7ed;
+    color: #ea580c;
+    border: 1px solid #fed7aa;
+}
+.er-comp-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: #143750;
+    margin: 0 0 2px 0;
+    line-height: 1.2;
+}
+.er-comp-subtitle {
+    font-size: 13px;
+    font-weight: 600;
+    color: #475569;
+    margin: 0;
+}
+.er-comp-desc {
+    font-size: 12px;
+    color: #94a3b8;
+    margin: 0;
+}
+.er-comp-donut-col {
+    border-right: 1px solid #f1f5f9;
+    padding-right: 25px;
+}
+.er-comp-evol-col {
+    padding-left: 25px;
+}
+@media (max-width: 991px) {
+    .er-comp-donut-col {
+        border-right: none;
+        border-bottom: 1px solid #f1f5f9;
+        padding-right: 15px;
+        padding-bottom: 20px;
+        margin-bottom: 20px;
+    }
+    .er-comp-evol-col {
+        padding-left: 15px;
+    }
+}
+.er-comp-note {
+    background: #f0f9ff;
+    border: 1px solid #bae6fd;
+    border-radius: 8px;
+    padding: 12px 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* ==============================================================================
+   11. BADGE CENTRAL DONUTS Y TABLAS DE DATOS EXPORTADAS (HIGHCHARTS)
+   ============================================================================== */
+.er-donut-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.er-donut-center-badge {
+    position: absolute;
+    left: 30%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    pointer-events: none;
+    z-index: 5;
+    line-height: 1.25;
+    width: 140px;
+    max-width: 140px;
+}
+
+.er-donut-center-title {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 2px;
+}
+
+.er-donut-center-amount {
+    font-size: 17px;
+    font-weight: 700;
+    color: #143750;
+    white-space: nowrap;
+}
+
+.er-donut-center-unit {
+    font-size: 11px;
+    font-weight: 500;
+    color: #94a3b8;
+    margin-top: 1px;
+}
+
+/* Contenedor y diseño corporativo de las tablas de datos exportadas */
+.er-comp-donut-col .highcharts-data-table,
+.er-comp-evol-col .highcharts-data-table {
+    margin-top: 15px !important;
+    margin-bottom: 12px !important;
+    width: 100% !important;
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 8px !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+    overflow-x: auto !important;
+}
+
+.er-comp-donut-col .highcharts-data-table table,
+.er-comp-evol-col .highcharts-data-table table {
+    width: 100% !important;
+    min-width: 100% !important;
+    font-size: 12px !important;
+}
+
+

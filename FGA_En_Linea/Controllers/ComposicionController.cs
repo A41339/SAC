@@ -9,6 +9,7 @@ using DotNet.Highcharts.Helpers;
 using DotNet.Highcharts.Options;
 using Entities.Entities.Procedures;
 using FGA.Model;
+using FGA.Models;
 using static FGA.Utility.Utilitarios;
 
 namespace FGA.Controllers
@@ -34,8 +35,16 @@ namespace FGA.Controllers
             if (Session["Periodo1"] is null || (tipoComp.Equals("Interanual", StringComparison.OrdinalIgnoreCase) && ConvertirAFecha(Session["Periodo1"].ToString()) >= p2.AddMonths(-2)))
                 Session["Periodo1"] = p2.AddYears(-1).ToShortDateString();
 
-            Session["TipoReporte"] = enum_tipoGrafico.variacionCarteraMensual;
-            ViewBag.Grafico = new SelectList(gr.GetAll().Where(o=>o.Ind_FGA == true).OrderByDescending(o => o.Nombre), "Id", "Nombre", Session["TipoReporte"].ToString());
+            Session["TipoReporte"] = (int)enum_tipoGrafico.carteraTotal;
+            var listaDesempeno = new List<Rpt_Graph>
+            {
+                new Rpt_Graph { Id = (int)enum_tipoGrafico.carteraTotal, Nombre = "Cartera de crédito total" },
+                new Rpt_Graph { Id = (int)enum_tipoGrafico.variacionCarteraMensual, Nombre = "Variación cartera mensual e interanual" },
+                new Rpt_Graph { Id = (int)enum_tipoGrafico.comparacionRecuperacionLiquidadas, Nombre = "Activos liquidados y recuperación mensual" },
+                new Rpt_Graph { Id = (int)enum_tipoGrafico.cuentasLiquidadas, Nombre = "Cuentas liquidadas por mes" },
+                new Rpt_Graph { Id = 201, Nombre = "Tipo de segmento" }
+            };
+            ViewBag.Grafico = new SelectList(listaDesempeno, "Id", "Nombre", Session["TipoReporte"].ToString());
 
             Composicion_cartera model = new Composicion_cartera();
             model.listaTiposCartera = tipCar.GetAll().OrderBy(o => o.Nombre).ToList();
@@ -102,22 +111,26 @@ namespace FGA.Controllers
             }
             else if ((enum_tipoGrafico)Grafico == enum_tipoGrafico.variacionCartera || (enum_tipoGrafico)Grafico == enum_tipoGrafico.variacionCarteraMensual)
             {
-                int meses = (enum_tipoGrafico)Grafico == enum_tipoGrafico.variacionCarteraMensual ? 1 : 12;
-                var tak = sp.FGA_Consultar_CarteraTotal(Entidades, PeriodoI, PeriodoF, meses);
-                if (tak.Count() > 0)
-                {                 
-                    string[] Fechas = new string[tak.Count()];
-                    object[] CarteraTotalNeta = new object[tak.Count()];
-                    object[] CarteraTotalBruta = new object[tak.Count()];
-                    int i = 0;
+                // Requerimiento Fase II: Variación cartera mensual e interanual en un único gráfico
+                var takMensual = sp.FGA_Consultar_CarteraTotal(Entidades, PeriodoI, PeriodoF, 1).ToList();
+                var takInteranual = sp.FGA_Consultar_CarteraTotal(Entidades, PeriodoI, PeriodoF, 12).ToList();
 
-                    foreach (FGA_Consultar_CarteraTotal_Result detalle in tak)
+                if (takMensual.Count > 0 || takInteranual.Count > 0)
+                {
+                    var baseList = takMensual.Count > 0 ? takMensual : takInteranual;
+                    int n = baseList.Count;
+                    string[] Fechas = new string[n];
+                    object[] VarMensualNeta = new object[n];
+                    object[] VarInteranualNeta = new object[n];
+
+                    for (int i = 0; i < n; i++)
                     {
-                        Fechas[i] = detalle.PERIODO.Value.Month.ToString() + "-" + detalle.PERIODO.Value.Year.ToString();
-                        CarteraTotalNeta[i] = detalle.VARIACIONNETA;
-                        CarteraTotalBruta[i] = detalle.VARIACIONBRUTA;
-                        i += 1;
-                      
+                        var itemM = takMensual.ElementAtOrDefault(i);
+                        var itemA = takInteranual.ElementAtOrDefault(i);
+                        DateTime? p = itemM?.PERIODO ?? itemA?.PERIODO;
+                        Fechas[i] = p.HasValue ? (p.Value.Month.ToString() + "-" + p.Value.Year.ToString()) : "";
+                        VarMensualNeta[i] = itemM?.VARIACIONNETA ?? 0m;
+                        VarInteranualNeta[i] = itemA?.VARIACIONNETA ?? 0m;
                     }
 
                     gp.SetXAxis(HighChart.GetXAxis(Fechas));
@@ -129,22 +142,86 @@ namespace FGA.Controllers
                     gp.SetPlotOptions(HighChart.getLabelPercent());
                     pGp.SetPlotOptions(HighChart.getLabelPercent());
 
-                    var series =
-                    new Series[]
+                    var series = new Series[]
                     {
-                        new Series{
-                            Name = meses == 1 ? "Variación mensual neta" : "Variación interanual neta",
-                            Data = new Data(CarteraTotalNeta),
-                            Color = HighChart.GetColor(0),
+                        new Series {
+                            Name = "Variación mensual neta",
+                            Data = new Data(VarMensualNeta),
+                            Color = ColorTranslator.FromHtml("#31859C"),
                             PlotOptionsLine = HighChart.getLinePercent()
                         },
-                         new Series{
-                            Name = meses == 1 ? "Variación mensual bruta" : "Variación interanual bruta",
-                            Data = new Data(CarteraTotalBruta),
-                            Color = HighChart.GetColor(1),
+                        new Series {
+                            Name = "Variación interanual neta",
+                            Data = new Data(VarInteranualNeta),
+                            Color = ColorTranslator.FromHtml("#ED7D31"),
                             PlotOptionsLine = HighChart.getLinePercent()
                         }
                     };
+
+                    gp.SetSeries(series);
+                    pGp.SetSeries(series);
+                }
+            }
+            else if (Grafico == 201)
+            {
+                var tak = sp.FGA_Consultar_Grafico_Oper_Segmento(Entidades, PeriodoI, PeriodoF);
+                if (tak.Count() > 0)
+                {
+                    int numPeriodos = tak.Select(l => l.Periodo).Distinct().Count();
+                    int i = 0;
+                    List<string> listaTipos = tak.Select(l => l.Nombre).Distinct().ToList();
+                    List<Serie> listaSeries = new List<Serie>();
+                    string[] fechas = new string[numPeriodos];
+                    string periodo = string.Empty, periodoActual = string.Empty;
+
+                    for (int j = 0; j < listaTipos.Count(); j++)
+                        listaSeries.Add(new Serie(numPeriodos, listaTipos[j]));
+
+                    foreach (FGA_Consultar_Grafico_Oper_Segmento_Result detalle in tak)
+                    {
+                        periodoActual = detalle.Periodo.Value.Month.ToString() + "-" + detalle.Periodo.Value.Year.ToString();
+                        if (string.IsNullOrEmpty(periodo))
+                            periodo = fechas[i] = periodoActual;
+                        else if (periodo != periodoActual)
+                        {
+                            i += 1;
+                            periodo = periodoActual;
+                            fechas[i] = periodo;
+                        }
+
+                        for (int j = 0; j < listaTipos.Count(); j++)
+                        {
+                            if (listaSeries[j].nombre == detalle.Nombre)
+                            {
+                                listaSeries[j].valores[i] = detalle.PorcentajeSaldo.Value;
+                                listaSeries[j].total += detalle.PorcentajeSaldo.Value;
+                                break;
+                            }
+                        }
+                    }
+
+                    gp.SetXAxis(HighChart.GetXAxis(fechas));
+                    pGp.SetXAxis(HighChart.GetXAxis(fechas));
+
+                    gp.SetYAxis(HighChart.GetYAxis(0, 100, "formatPercent"));
+                    pGp.SetYAxis(HighChart.GetYAxis(0, 100, "formatPercent"));
+
+                    gp.SetPlotOptions(HighChart.getLabelStackingPercent());
+                    pGp.SetPlotOptions(HighChart.getLabelStackingPercent());
+
+                    Series[] series = new Series[listaSeries.Count()];
+                    int sIdx = 0;
+                    foreach (Serie detalle in listaSeries.OrderByDescending(o => o.total))
+                    {
+                        series[sIdx] = new Series
+                        {
+                            Type = ChartTypes.Column,
+                            Name = detalle.nombre,
+                            Data = new Data(detalle.valores),
+                            Color = HighChart.GetColor(sIdx),
+                        };
+                        sIdx++;
+                    }
 
                     gp.SetSeries(series);
                     pGp.SetSeries(series);

@@ -2,17 +2,6 @@
     ViewBag.Title = "Suficiencia";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<section class="content-header">
-    <h1>
-        <i class="fa fa-shield"></i> Suficiencia Patrimonial
-        <small>Monitoreo de indicadores de solvencia patrimonial y cumplimiento regulatorio.</small>
-    </h1>
-    <ol class="breadcrumb">
-        <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
-        <li><a href="@Url.Action("Index", "Modulo", new { modulo = "Indicadores/Suficiencia" })" class="breadcrumb-parent-pill"><i class="fa fa-file-text-o" style="margin-right: 4px;"></i> InformaciÃ³n Financiera</a></li>
-        <li class="active">Suficiencia Patrimonial</li>
-    </ol>
-</section>
 
 @section ScriptsOrCss
 {
@@ -22,138 +11,188 @@
     <script type="text/javascript" src="~/Content/multiselect/dist/js/bootstrap-multiselect.js"></script>
 }
 
+<section class="content-header" style="padding: 24px 20px 14px 20px;">
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+        <div>
+            <h1 style="margin: 0; font-size: 21px; font-weight: 700; color: #143750; display: flex; align-items: center; gap: 10px;">
+                <i class="fa fa-shield" style="color: #0284c7;"></i>
+                Suficiencia Patrimonial
+            </h1>
+            <p style="margin: 6px 0 0 0; font-size: 13px; color: #64748b;">
+                Monitoreo de solvencia patrimonial, suficiencia y an&aacute;lisis de cumplimiento normativo.
+            </p>
+        </div>
+    </div>
+    <ol class="breadcrumb">
+        <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
+        <li><a href="@Url.Action("Index", "Modulo", new { modulo = "Indicadores/Suficiencia" })" class="breadcrumb-parent-pill"><i class="fa fa-file-text-o" style="margin-right: 4px;"></i> Informaci&oacute;n Financiera</a></li>
+        <li class="active">Suficiencia Patrimonial</li>
+    </ol>
+</section>
 
 <section class="content">
-    <div class="box box-solid box-info">
-        <div class="box-body table-responsive">
-            @using (Html.BeginForm("BuscarSuficiencia", "Indicadores", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmSuficiencia" }))
-            {
-                @Html.AntiForgeryToken()
-                <div style="background:#f8fafc; padding:16px 20px; border-radius:8px; margin-bottom:10px; border:1px solid #e2e8f0;">
-                    <div style="display:flex; flex-wrap:wrap; gap:16px; align-items:flex-end;">
-                        <div style="display:flex; flex-direction:column; gap:4px;">
-                            <label style="font-weight:600; font-size:12px; color:#475569; margin:0;">Entidad</label>
-                            @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", @class = "form-control input-sm", style = "min-width: 220px; height:34px;" })
+
+    @using (Html.BeginForm("BuscarSuficiencia", "Indicadores", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmSuficiencia" }))
+    {
+        @Html.AntiForgeryToken()
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="modern-filter-card" style="margin-bottom: 22px;">
+                    <div class="modern-filter-toolbar">
+                        <div class="filter-item">
+                            <label for="IdEntidad"><i class="fa fa-building-o"></i> Entidad:</label>
+                            @Html.DropDownList("Entidades", null, new { @id = "IdEntidad", @class = "form-control modern-select", style = "min-width: 220px; height: 38px; font-size: 13px;" })
                         </div>
-                        <div style="display:flex; flex-direction:column; gap:4px;">
-                            <label style="font-weight:600; font-size:12px; color:#475569; margin:0;">Periodo</label>
-                            <input name="PeriodoI" id="PeriodoI" class="datecontrol form-control input-sm" style="width: 150px; height:34px;" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MM/yyyy")" />
+                        <div class="filter-item">
+                            <label for="PeriodoI"><i class="fa fa-calendar"></i> Per&iacute;odo:</label>
+                            <div class="modern-input-wrapper">
+                                <input name="PeriodoI" id="PeriodoI" class="datecontrol form-control modern-date-input" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MM/yyyy")" style="min-width: 130px; height: 38px;" />
+                            </div>
                         </div>
-                        <div style="display:flex; flex-direction:column; gap:4px;">
-                            <label style="font-weight:600; font-size:12px; color:#475569; margin:0;">Comparar con</label>
-                            <input name="PeriodoF" id="PeriodoF" class="datecontrol form-control input-sm" style="width: 150px; height:34px;" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MM/yyyy")" />
+                        <div class="filter-item">
+                            <label for="PeriodoF"><i class="fa fa-calendar-o"></i> Comparar con:</label>
+                            <div class="modern-input-wrapper">
+                                <input name="PeriodoF" id="PeriodoF" class="datecontrol form-control modern-date-input" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MM/yyyy")" style="min-width: 130px; height: 38px;" />
+                            </div>
                         </div>
-                        <div>
-                            <button type="submit" class="btn btn-primary" style="height:34px; padding:0 20px; font-weight:600; display:inline-flex; align-items:center; gap:6px;">
-                                <i class="fa fa-search"></i> Generar
+                        <div class="filter-item" style="margin-left: auto;">
+                            <button type="submit" class="btn-modern-filter" style="height: 38px; padding: 0 24px;">
+                                <i class="fa fa-search"></i> Generar informe
                             </button>
                         </div>
                     </div>
                 </div>
-            }
+            </div>
         </div>
-    </div>
+    }
 
     <div class="row">
         <div class="col-xs-12">
-            <div class="box box-solid box-info">
-                <div class="box-body table-responsive">
-                    <div class="margin">
-                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 12px;">
-                            @if (Session["Logo"] != null)
-                            {
-                                <img width="50" height="50" src="@Session["Logo"]" style="object-fit: contain;" />
-                            }
-                            <h4 style="margin: 0; font-weight: 700; color: #1e293b;">Suficiencia</h4>
-                        </div>
-                        <div class="streaming-table">
-                            <span id="found" class="label label-info"></span>
-                            <table id="tbError" class="table table-striped table-bordered" style="width:100%">
-                                <thead>
-                                    <tr>
-                                        <th> Id </th>
-                                        <th> Cuenta </th>
-                                        <th> @FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MMMM yyyy")) </th>
-                                        <th> @FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MMMM yyyy")) </th>
-                                        <th style="width: 50px;"></th>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
-                            <div id="summary">
-                                <div>
-                                </div>
-                            </div>
-                        </div>
+            <div class="modern-table-card" style="border: 1px solid #e2e8f0; border-radius: 12px; background: #ffffff; box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05); overflow: hidden; padding: 22px; margin-bottom: 24px;">
+                <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid #f1f5f9;">
+                    <img class="img-logo-entidad" width="44" height="44" src="@(Session["Logo"] ?? Url.Content("~/Content/images/FFC.jpg"))" onerror="this.onerror=null;this.src='@Url.Content("~/Content/images/FFC.jpg")';" style="border-radius: 8px; background: #ffffff; padding: 3px; border: 1px solid #e2e8f0; object-fit: contain;" />
+                    <div>
+                        <h4 style="margin: 0; font-size: 16px; font-weight: 700; color: #143750;">Indicadores de Suficiencia Patrimonial - <span class="lblEntidadHeader">@(Session["NomEntidad"] ?? "")</span></h4>
+                        <p style="margin: 2px 0 0 0; font-size: 12px; color: #64748b;">Monitoreo de solvencia patrimonial y cumplimiento regulatorio</p>
                     </div>
                 </div>
+
+                <div class="table-responsive">
+                    <table id="tbError" class="table table-striped modern-data-table" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th class="text-left" style="text-align: left !important; padding-left: 16px;">Cuenta</th>
+                                <th class="text-right" style="text-align: right !important; padding-right: 14px;">@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MMMM yyyy"))</th>
+                                <th class="text-right" style="text-align: right !important; padding-right: 14px;">@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MMMM yyyy"))</th>
+                                <th class="text-center" style="width: 50px; text-align: center !important;"></th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+
+                <div class="modern-info-card" style="margin-top: 18px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 12px 18px; display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 28px; height: 28px; border-radius: 50%; background: #2F5597; color: #ffffff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-weight: 700; font-size: 13px;">
+                        <i class="fa fa-info"></i>
+                    </div>
+                    <div style="font-size: 12.5px; color: #1e3a8a;">
+                        <strong>Nota:</strong> Informaci&oacute;n procesada con base en los reportes de suficiencia patrimonial de la entidad.
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
-
-    <div class="modal fade" id="graphModal" tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div id="grafica">
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
 </section>
 
+<!-- Modal Grafico Detalle -->
+<div class="modal fade" id="graphModal" tabindex="-1" role="dialog" aria-labelledby="graphModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-chart-xl" style="max-width: 1300px; width: 95%; margin: 25px auto;">
+        <div class="modal-content" style="border-radius: 14px; overflow: hidden; border: none; box-shadow: 0 16px 40px rgba(0,0,0,0.25);">
+            <div id="grafica"></div>
+            <div class="modal-footer" style="background: #f8fafc; border-top: 1px solid #e2e8f0; padding: 12px 20px; display: flex; justify-content: flex-end;">
+                <button type="button" class="btn-modern-filter" data-dismiss="modal" style="padding: 8px 22px; border-radius: 8px; background: #64748b;">
+                    <i class="fa fa-times"></i> Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
 <script type="text/javascript">
-
     function getGraph(id, estilo) {
-
         var tipo = 1;
         if (estilo == 'S')
             tipo = 0;
 
         $.ajax({
-        url: '@Url.Action("GraficaDetalle", "Indicadores")',
-        type: 'POST',
-        cache: false,
-        async: false,
-        data: {
+            url: '@Url.Action("GraficaDetalle", "Indicadores")',
+            type: 'POST',
+            cache: false,
+            async: true,
+            data: {
                 'Entidades': $('#IdEntidad').val(),
-                'PeriodoI':  $('#PeriodoI').val(),
-                'PeriodoF':  $('#PeriodoF').val(),
-                'cmb_indicadores': 'S' + id,
+                'PeriodoI': $('#PeriodoI').val(),
+                'PeriodoF': $('#PeriodoF').val(),
+                'cmb_indicadores': id,
                 'cmb_estilo': tipo
-        },
+            },
             success: function (result) {
-            $('#grafica').html(result);
-        }
+                $('#grafica').html(result);
+                $('#graphModal').modal('show');
+            }
         });
-
-        $('#graphModal').modal('show');
     }
 
-    function formatMillion() {
-        return this.value;
-    }
-
-    function formatPercent() {
-        return this.value + " %";
-    }
+    $('#graphModal').on('shown.bs.modal', function () {
+        if (typeof Highcharts !== 'undefined' && Highcharts.charts) {
+            Highcharts.charts.forEach(function (c) {
+                if (c) {
+                    try { c.reflow(); } catch (e) { }
+                }
+            });
+        }
+    });
 
     $(document).ready(function () {
+        $('#IdEntidad').on('change', function () {
+            var txt = $(this).find('option:selected').text();
+            $('.lblEntidadHeader').text(txt);
+        });
+
+        var exportButtons = [
+            { extend: 'copyHtml5', text: '<i class="fa fa-copy" style="color: #64748b;"></i> Copiar', exportOptions: { columns: ':visible' } },
+            { extend: 'excelHtml5', text: '<i class="fa fa-file-excel-o" style="color: #16a34a;"></i> Excel', exportOptions: { columns: ':visible' } },
+            { extend: 'csvHtml5', text: '<i class="fa fa-file-text-o" style="color: #0284c7;"></i> CSV', exportOptions: { columns: ':visible' } },
+            { extend: 'print', text: '<i class="fa fa-print" style="color: #475569;"></i> Imprimir', exportOptions: { columns: ':visible' } },
+            { extend: 'colvis', text: '<i class="fa fa-columns" style="color: #64748b;"></i> Columnas' }
+        ];
+
+        var languageConfig = {
+            "lengthMenu": "Mostrar _MENU_ registros",
+            "zeroRecords": "No se encontraron registros",
+            "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
+            "infoEmpty": "Mostrando 0 a 0 de 0 registros",
+            "infoFiltered": "(filtrado de un total de _MAX_ registros)",
+            "search": "Buscar:",
+            "searchPlaceholder": "Filtrar indicadores...",
+            "paginate": {
+                "first": "Primero",
+                "last": "Último",
+                "next": "Siguiente",
+                "previous": "Anterior"
+            }
+        };
+
         $("#tbError").dataTable({
             "bRetrieve": true,
             "bProcessing": true,
             "dom": 'lBfrtip',
             "sAjaxSource": "@Url.Content("~/Indicadores/GetGridSuficiencia")",
-            "buttons": [
-                { extend: 'copyHtml5', exportOptions: { columns: ':visible' } },
-                { extend: 'excelHtml5', exportOptions: { columns: ':visible' } },
-                { extend: 'csvHtml5', exportOptions: { columns: ':visible' } },
-                { extend: 'print', exportOptions: { columns: ':visible' } },
-                'colvis'
-            ],
+            "buttons": exportButtons,
             "columnDefs": [
                 { "targets": 0, "visible": false, "searchable": false },
                 { "targets": 1, "className": 'text-left font-weight-bold' },
@@ -161,19 +200,26 @@
                 { "targets": 4, "className": 'text-center', "width": '50px', "orderable": false }
             ],
             "rowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                $('td:eq(0)', nRow).css({ 'font-weight': '500', 'color': '#1e293b' });
                 for (var i = 2; i <= 3; i++) {
                     var val = parseFloat(aData[i]) || 0;
                     var cell = $(nRow).find('td:eq(' + (i - 1) + ')');
-                    if (val < 0)
-                        cell.css('color', '#dc2626').css('font-weight', '600');
-                    else
-                        cell.css('color', '#1e293b');
+                    cell.css('font-variant-numeric', 'tabular-nums');
+                    if (val < 0) {
+                        cell.css({ 'color': '#c2410c', 'font-weight': '600' });
+                    } else {
+                        cell.css({ 'color': '#1e293b', 'font-weight': '500' });
+                    }
                 }
+            },
+            "drawCallback": function (settings) {
+                $(this).find('[data-toggle="tooltip"]').tooltip();
             },
             "pageLength": -1,
             "order": [[ 0, "asc" ]],
-            "lengthMenu": [[5, 15, 25, 50, -1], [5, 15, 25, 50, "Todos"]],
-            "autoWidth": false
+            "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "Todos"]],
+            "autoWidth": false,
+            "language": languageConfig
         });
     });
 </script>

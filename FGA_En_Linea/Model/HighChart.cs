@@ -864,33 +864,33 @@ namespace FGA.Model
             switch (i)
             {
                 case 0:
-                    return ColorTranslator.FromHtml("#2F5597"); // Azul Institucional (ancla)
+                    return ColorTranslator.FromHtml("#0071AD"); // Azul principal FFC (primario)
                 case 1:
-                    return ColorTranslator.FromHtml("#6B9FD4"); // Azul Cielo Pastel
+                    return ColorTranslator.FromHtml("#959595"); // Gris auxiliar FFC (tono medio/claro elegante)
                 case 2:
-                    return ColorTranslator.FromHtml("#94A3B8"); // Gris Slate Profesional
+                    return ColorTranslator.FromHtml("#6DB5CB"); // Celeste medio FFC
                 case 3:
-                    return ColorTranslator.FromHtml("#F4A261"); // Naranja Durazno Suave
+                    return ColorTranslator.FromHtml("#FE7235"); // Naranja FFC
                 case 4:
-                    return ColorTranslator.FromHtml("#52B788"); // Verde Salvia Suave
+                    return ColorTranslator.FromHtml("#B7D8DF"); // Celeste claro FFC
                 case 5:
-                    return ColorTranslator.FromHtml("#64748B"); // Gris Acero Oscuro
+                    return ColorTranslator.FromHtml("#565656"); // Gris principal FFC
                 case 6:
-                    return ColorTranslator.FromHtml("#A78BFA"); // Lavanda / Violeta Pastel
+                    return ColorTranslator.FromHtml("#CFCFCF"); // Gris claro FFC
                 case 7:
-                    return ColorTranslator.FromHtml("#FCD34D"); // Ámbar Dorado Suave
+                    return ColorTranslator.FromHtml("#003F6B"); // Azul oscuro (derivado FFC)
                 case 8:
-                    return ColorTranslator.FromHtml("#5DADE2"); // Azul Claro / Cielo
+                    return ColorTranslator.FromHtml("#0099D6"); // Azul medio (derivado FFC)
                 case 9:
-                    return ColorTranslator.FromHtml("#F08080"); // Coral Rosado Suave
+                    return ColorTranslator.FromHtml("#FFB347"); // Naranja claro (derivado FFC)
                 case 10:
-                    return ColorTranslator.FromHtml("#81B3A8"); // Teal Grisáceo Suave
+                    return ColorTranslator.FromHtml("#FF4500"); // Naranja rojo (alerta/mora)
                 case 11:
-                    return ColorTranslator.FromHtml("#E11D48"); // Rojo Alerta (mora >180 días)
+                    return ColorTranslator.FromHtml("#8B0000"); // Rojo oscuro (mora grave)
                 case 12:
-                    return ColorTranslator.FromHtml("#7B5EA7"); // Púrpura Institucional Suave
+                    return ColorTranslator.FromHtml("#004E7C"); // Azul profundo FFC
                 default:
-                    return ColorTranslator.FromHtml("#143750"); // Azul Marino Institucional
+                    return ColorTranslator.FromHtml("#0071AD"); // Azul principal FFC (fallback)
             }
         }
 

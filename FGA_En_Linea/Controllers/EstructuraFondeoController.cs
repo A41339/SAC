@@ -328,6 +328,7 @@ namespace FGA.Controllers
 
                 var indicadores = ObtenerIndicadoresCalculados(idEnt, p1, p2);
 
+                ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
                 using (var package = new ExcelPackage())
                 {
                     var ws = package.Workbook.Worksheets.Add("Indicadores de Fondeo");
@@ -477,6 +478,7 @@ namespace FGA.Controllers
 
                 GraficoFondeoData data = ConstruirDatosGrafico(idEnt, tipoGrafico, pIni, pFin);
 
+                ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
                 using (var package = new ExcelPackage())
                 {
                     var ws = package.Workbook.Worksheets.Add("Datos Gráfico");
@@ -1108,10 +1110,10 @@ namespace FGA.Controllers
                     data.ApiladoTipo = "percent";
                     data.TipoGraficoHighcharts = "column";
 
-                    var seriePub = new GraficoFondeoSerie { Name = "Obligaciones con el público", Type = "column", Stack = "finan", Color = "#2F5597", TooltipSuffix = "%", YAxis = 0, EnableDataLabels = true, DataLabelFormat = "{point.y:.1f}%" };
-                    var serieEnt = new GraficoFondeoSerie { Name = "Obligaciones con entidades", Type = "column", Stack = "finan", Color = "#6B9FD4", TooltipSuffix = "%", YAxis = 0, EnableDataLabels = true, DataLabelFormat = "{point.y:.1f}%" };
-                    var serieCap = new GraficoFondeoSerie { Name = "Capital social", Type = "column", Stack = "finan", Color = "#94A3B8", TooltipSuffix = "%", YAxis = 0, EnableDataLabels = true, DataLabelFormat = "{point.y:.1f}%" };
-                    var serieTotal = new GraficoFondeoSerie { Name = "Monto total de Financiamiento", Type = "spline", Color = "#F4A261", TooltipSuffix = " M", YAxis = 1, EnableDataLabels = true, DataLabelFormat = "₡{point.y:,.0f}M" };
+                    var seriePub = new GraficoFondeoSerie { Name = "Obligaciones con el público", Type = "column", Stack = "finan", Color = "#0071AD", TooltipSuffix = "%", YAxis = 0, EnableDataLabels = true, DataLabelFormat = "{point.y:.1f}%" };
+                    var serieEnt = new GraficoFondeoSerie { Name = "Obligaciones con entidades", Type = "column", Stack = "finan", Color = "#959595", TooltipSuffix = "%", YAxis = 0, EnableDataLabels = true, DataLabelFormat = "{point.y:.1f}%" };
+                    var serieCap = new GraficoFondeoSerie { Name = "Capital social", Type = "column", Stack = "finan", Color = "#6DB5CB", TooltipSuffix = "%", YAxis = 0, EnableDataLabels = true, DataLabelFormat = "{point.y:.1f}%" };
+                    var serieTotal = new GraficoFondeoSerie { Name = "Monto total de Financiamiento", Type = "spline", Color = "#FE7235", TooltipSuffix = " M", YAxis = 1, EnableDataLabels = true, DataLabelFormat = "₡{point.y:,.0f}M" };
 
                     var saldosG1 = ObtenerSaldosPorCuentaRango(entidad, periodos);
 
@@ -1159,9 +1161,9 @@ namespace FGA.Controllers
                     data.EjeYDerechoTitulo = "Variación Obligaciones con Entidades (%)";
                     data.TipoGraficoHighcharts = "spline";
 
-                    var serieVarPub = new GraficoFondeoSerie { Name = "Obligaciones con el público", Type = "spline", Color = "#2F5597", TooltipSuffix = "%", YAxis = 0, EnableDataLabels = true, DataLabelFormat = "{point.y:.2f}%" };
-                    var serieVarCap = new GraficoFondeoSerie { Name = "Capital social", Type = "spline", Color = "#94A3B8", TooltipSuffix = "%", YAxis = 0, EnableDataLabels = true, DataLabelFormat = "{point.y:.2f}%" };
-                    var serieVarEnt = new GraficoFondeoSerie { Name = "Obligaciones con entidades", Type = "spline", Color = "#F4A261", TooltipSuffix = "%", YAxis = 1, EnableDataLabels = true, DataLabelFormat = "{point.y:.2f}%" };
+                    var serieVarPub = new GraficoFondeoSerie { Name = "Obligaciones con el público", Type = "spline", Color = "#0071AD", TooltipSuffix = "%", YAxis = 0, EnableDataLabels = true, DataLabelFormat = "{point.y:.2f}%" };
+                    var serieVarCap = new GraficoFondeoSerie { Name = "Capital social", Type = "spline", Color = "#B7D8DF", TooltipSuffix = "%", YAxis = 0, EnableDataLabels = true, DataLabelFormat = "{point.y:.2f}%" };
+                    var serieVarEnt = new GraficoFondeoSerie { Name = "Obligaciones con entidades", Type = "spline", Color = "#FE7235", TooltipSuffix = "%", YAxis = 1, EnableDataLabels = true, DataLabelFormat = "{point.y:.2f}%" };
 
                     var saldosG2 = ObtenerSaldosPorCuentaRango(entidad, periodos);
 
@@ -1215,11 +1217,11 @@ namespace FGA.Controllers
                     data.ApiladoTipo = "percent";
                     data.TipoGraficoHighcharts = "column";
 
-                    var serieCapPlazo = new GraficoFondeoSerie { Name = "Captaciones a plazo", Type = "column", Stack = "capt", Color = "#2F5597", TooltipSuffix = "%", YAxis = 0, EnableDataLabels = true, DataLabelFormat = "{point.y:.1f}%" };
-                    var serieCapVista = new GraficoFondeoSerie { Name = "Captaciones a la vista", Type = "column", Stack = "capt", Color = "#6B9FD4", TooltipSuffix = "%", YAxis = 0, EnableDataLabels = true, DataLabelFormat = "{point.y:.1f}%" };
-                    var serieCargos = new GraficoFondeoSerie { Name = "Cargos de obligaciones", Type = "column", Stack = "capt", Color = "#94A3B8", TooltipSuffix = "%", YAxis = 0, EnableDataLabels = true, DataLabelFormat = "{point.y:.1f}%" };
-                    var serieVarCP = new GraficoFondeoSerie { Name = "Variación interanual CP", Type = "spline", Color = "#F4A261", TooltipSuffix = "%", YAxis = 1, EnableDataLabels = true, DataLabelFormat = "{point.y:.2f}%" };
-                    var serieVarAH = new GraficoFondeoSerie { Name = "Variación interanual AH", Type = "spline", Color = "#52B788", TooltipSuffix = "%", YAxis = 1, EnableDataLabels = true, DataLabelFormat = "{point.y:.2f}%" };
+                    var serieCapPlazo = new GraficoFondeoSerie { Name = "Captaciones a plazo", Type = "column", Stack = "capt", Color = "#0071AD", TooltipSuffix = "%", YAxis = 0, EnableDataLabels = true, DataLabelFormat = "{point.y:.1f}%" };
+                    var serieCapVista = new GraficoFondeoSerie { Name = "Captaciones a la vista", Type = "column", Stack = "capt", Color = "#6DB5CB", TooltipSuffix = "%", YAxis = 0, EnableDataLabels = true, DataLabelFormat = "{point.y:.1f}%" };
+                    var serieCargos = new GraficoFondeoSerie { Name = "Cargos de obligaciones", Type = "column", Stack = "capt", Color = "#B7D8DF", TooltipSuffix = "%", YAxis = 0, EnableDataLabels = true, DataLabelFormat = "{point.y:.1f}%" };
+                    var serieVarCP = new GraficoFondeoSerie { Name = "Variación interanual CP", Type = "spline", Color = "#FE7235", TooltipSuffix = "%", YAxis = 1, EnableDataLabels = true, DataLabelFormat = "{point.y:.2f}%" };
+                    var serieVarAH = new GraficoFondeoSerie { Name = "Variación interanual AH", Type = "spline", Color = "#565656", TooltipSuffix = "%", YAxis = 1, EnableDataLabels = true, DataLabelFormat = "{point.y:.2f}%" };
 
                     var saldosG3 = ObtenerSaldosPorCuentaRango(entidad, periodos);
 
@@ -1279,8 +1281,8 @@ namespace FGA.Controllers
                     data.EjeYIzquierdoTitulo = "Concentración (%)";
                     data.TipoGraficoHighcharts = "column";
 
-                    var serieTop10 = new GraficoFondeoSerie { Name = "10 mayores ahorrantes", Type = "column", Color = "#2F5597", TooltipSuffix = "%", EnableDataLabels = true, DataLabelFormat = "{point.y:.1f}%" };
-                    var serieTop20 = new GraficoFondeoSerie { Name = "20 mayores ahorrantes", Type = "column", Color = "#94A3B8", TooltipSuffix = "%", EnableDataLabels = true, DataLabelFormat = "{point.y:.1f}%" };
+                    var serieTop10 = new GraficoFondeoSerie { Name = "10 mayores ahorrantes", Type = "column", Color = "#0071AD", TooltipSuffix = "%", EnableDataLabels = true, DataLabelFormat = "{point.y:.1f}%" };
+                    var serieTop20 = new GraficoFondeoSerie { Name = "20 mayores ahorrantes", Type = "column", Color = "#959595", TooltipSuffix = "%", EnableDataLabels = true, DataLabelFormat = "{point.y:.1f}%" };
 
                     var clientG4 = GetSPClient();
                     var dictAhorrantes = new Dictionary<string, Entities.Entities.Procedures.FGA_Consultar_Concentracion_Ahorrantes_Result>();
@@ -1340,13 +1342,13 @@ namespace FGA.Controllers
                     var ultimosPeriodos = periodos.Skip(periodos.Count - mesesAMostrar).ToList();
                     data.Categorias = ultimosPeriodos.Select(u => u.ToString("MMM-yy", new CultureInfo("es-ES"))).ToList();
 
-                    var sVista = new GraficoFondeoSerie { Name = "A la vista", Type = "bar", Stack = "venc", Color = "#2F5597", TooltipSuffix = "%", EnableDataLabels = true, DataLabelFormat = "{point.y:.2f}%" };
-                    var s1a90 = new GraficoFondeoSerie { Name = "De 1 a 90 días", Type = "bar", Stack = "venc", Color = "#94A3B8", TooltipSuffix = "%", EnableDataLabels = true, DataLabelFormat = "{point.y:.2f}%" };
-                    var s91a180 = new GraficoFondeoSerie { Name = "De 91 a 180 días", Type = "bar", Stack = "venc", Color = "#6B9FD4", TooltipSuffix = "%", EnableDataLabels = true, DataLabelFormat = "{point.y:.2f}%" };
-                    var s181a270 = new GraficoFondeoSerie { Name = "De 181 a 270 días", Type = "bar", Stack = "venc", Color = "#4A7BB0", TooltipSuffix = "%", EnableDataLabels = true, DataLabelFormat = "{point.y:.2f}%" };
-                    var s271a360 = new GraficoFondeoSerie { Name = "De 271 a 360 días", Type = "bar", Stack = "venc", Color = "#52B788", TooltipSuffix = "%", EnableDataLabels = true, DataLabelFormat = "{point.y:.2f}%" };
-                    var s1a3A = new GraficoFondeoSerie { Name = "De 1 a 3 años", Type = "bar", Stack = "venc", Color = "#E09F67", TooltipSuffix = "%", EnableDataLabels = true, DataLabelFormat = "{point.y:.2f}%" };
-                    var sMas3A = new GraficoFondeoSerie { Name = "De 3 años en adelante", Type = "bar", Stack = "venc", Color = "#64748B", TooltipSuffix = "%", EnableDataLabels = true, DataLabelFormat = "{point.y:.2f}%" };
+                    var sVista   = new GraficoFondeoSerie { Name = "A la vista",             Type = "bar", Stack = "venc", Color = "#0071AD", TooltipSuffix = "%", EnableDataLabels = true, DataLabelFormat = "{point.y:.2f}%" };
+                    var s1a90   = new GraficoFondeoSerie { Name = "De 1 a 90 días",          Type = "bar", Stack = "venc", Color = "#003F6B", TooltipSuffix = "%", EnableDataLabels = true, DataLabelFormat = "{point.y:.2f}%" };
+                    var s91a180  = new GraficoFondeoSerie { Name = "De 91 a 180 días",        Type = "bar", Stack = "venc", Color = "#6DB5CB", TooltipSuffix = "%", EnableDataLabels = true, DataLabelFormat = "{point.y:.2f}%" };
+                    var s181a270 = new GraficoFondeoSerie { Name = "De 181 a 270 días",       Type = "bar", Stack = "venc", Color = "#B7D8DF", TooltipSuffix = "%", EnableDataLabels = true, DataLabelFormat = "{point.y:.2f}%" };
+                    var s271a360 = new GraficoFondeoSerie { Name = "De 271 a 360 días",       Type = "bar", Stack = "venc", Color = "#FE7235", TooltipSuffix = "%", EnableDataLabels = true, DataLabelFormat = "{point.y:.2f}%" };
+                    var s1a3A    = new GraficoFondeoSerie { Name = "De 1 a 3 años",           Type = "bar", Stack = "venc", Color = "#565656", TooltipSuffix = "%", EnableDataLabels = true, DataLabelFormat = "{point.y:.2f}%" };
+                    var sMas3A   = new GraficoFondeoSerie { Name = "De 3 años en adelante",   Type = "bar", Stack = "venc", Color = "#959595", TooltipSuffix = "%", EnableDataLabels = true, DataLabelFormat = "{point.y:.2f}%" };
 
                     var clientG5 = GetSPClient();
                     var dictVenc = new Dictionary<string, Entities.Entities.Procedures.FGA_Consultar_Concentracion_Vencimiento_Result>();
@@ -1424,8 +1426,8 @@ namespace FGA.Controllers
                     data.ApiladoTipo = "normal";
                     data.EjeYIzquierdoTitulo = "Cantidad de Personas";
 
-                    var serieAsoc = new GraficoFondeoSerie { Name = "Asociados activos", Type = "column", Stack = "personas", Color = "#2F5597", TooltipSuffix = " personas", EnableDataLabels = true, DataLabelFormat = "{point.y:,.0f}" };
-                    var serieAhorr = new GraficoFondeoSerie { Name = "Ahorrantes", Type = "column", Stack = "personas", Color = "#6B9FD4", TooltipSuffix = " personas", EnableDataLabels = true, DataLabelFormat = "{point.y:,.0f}" };
+                    var serieAsoc  = new GraficoFondeoSerie { Name = "Asociados activos", Type = "column", Stack = "personas", Color = "#0071AD", TooltipSuffix = " personas", EnableDataLabels = true, DataLabelFormat = "{point.y:,.0f}" };
+                    var serieAhorr = new GraficoFondeoSerie { Name = "Ahorrantes",        Type = "column", Stack = "personas", Color = "#959595", TooltipSuffix = " personas", EnableDataLabels = true, DataLabelFormat = "{point.y:,.0f}" };
 
                     var clientG6 = GetSPClient();
                     var dictAsocAhorr = new Dictionary<string, Entities.Entities.Procedures.FGA_Consultar_Cantidad_Asociados_Ahorrantes_Result>();

@@ -9,13 +9,13 @@
     <style>
 
         .badge-pill-positive {
-            background-color: #dcfce7 !important;
-            color: #15803d !important;
+            background-color: #dbeafe !important;
+            color: #1e40af !important;
         }
 
         .badge-pill-negative {
-            background-color: #fee2e2 !important;
-            color: #b91c1c !important;
+            background-color: #ffedd5 !important;
+            color: #c2410c !important;
         }
 
         /* Estilos de tabla e indicadores idénticos a la oficial */
@@ -348,9 +348,9 @@
             border: 1px solid #fde68a;
         }
         .badge-atencion {
-            background: #fee2e2;
-            color: #b91c1c;
-            border: 1px solid #fca5a5;
+            background: #ffedd5;
+            color: #c2410c;
+            border: 1px solid #fed7aa;
         }
 
         /* Grid de métricas técnicas */
@@ -900,9 +900,8 @@
                         if (dtIndicadores) {
                             dtIndicadores.clear();
                             $.each(res.indicadores, function (idx, item) {
-                                var badgeStyle = item.EsPositiva ? 'background-color: #dcfce7; color: #15803d;' : 'background-color: #fee2e2; color: #b91c1c;';
-                                var formulaHtml = item.Formula ? '<span style="display: block; font-size: 12px; font-weight: 400; color: #64748b; margin-top: 3px;"><i class="fa fa-calculator" style="margin-right: 4px; color: #94a3b8;"></i> ' + item.Formula + '</span>' : '';
-                                var colCuenta = '<span style="font-weight: 500; color: #1e293b; font-size: 13.5px;">' + item.Nombre + '</span>' + formulaHtml;
+                                var badgeStyle = item.EsPositiva ? 'background-color: #dbeafe; color: #1e40af;' : 'background-color: #ffedd5; color: #c2410c;';
+                                var colCuenta = '<span style="font-weight: 500; color: #1e293b; font-size: 13.5px;">' + item.Nombre + '</span>';
                                 var colP1 = '<span style="font-weight: 500; color: #1e293b; font-size: 13.5px;">' + item.ValorP1Str + '</span>';
                                 var colP2 = '<span style="font-weight: 500; color: #1e293b; font-size: 13.5px;">' + item.ValorP2Str + '</span>';
                                 var colBadge = '<span class="badge" style="' + badgeStyle + ' font-size: 12px; font-weight: 700; padding: 5px 9px; border-radius: 6px; display: inline-block; min-width: 80px; text-align: center;">' + item.VariacionStr + '</span>';
@@ -973,7 +972,7 @@
             var decimals = isPersonas ? 0 : 2;
 
             var isPos = diff >= 0;
-            var badgeBg = isPos ? 'background-color: #dcfce7; color: #15803d;' : 'background-color: #fee2e2; color: #b91c1c;';
+            var badgeBg = isPos ? 'background-color: #dbeafe; color: #1e40af;' : 'background-color: #ffedd5; color: #c2410c;';
             var sign = isPos ? '+' : '';
 
             var formatNum = function (n) {
@@ -1370,7 +1369,7 @@
                         }
                     }
                 },
-                colors: ['#2F5597', '#94A3B8', '#6B9FD4', '#4A7BB0', '#52B788', '#E09F67', '#64748B'],
+                colors: ['#0071AD', '#959595', '#6DB5CB', '#FE7235', '#B7D8DF', '#565656', '#003F6B', '#0099D6'],
                 title: { text: null },
                 credits: { enabled: false },
                 xAxis: {

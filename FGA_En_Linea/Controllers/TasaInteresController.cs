@@ -36,8 +36,8 @@ namespace FGA.Controllers
                 {
                     try
                     {
-                        HighChart.ConfigChart(ref m.tasaPonderadaSegmento, "Segmento", null, 720);
-                        HighChart.ConfigChart(ref m.pTasaPonderadaSegmento, "pSegmento", null, 720);
+                        HighChart.ConfigChart(ref m.tasaPonderadaSegmento, "Segmento", null, 420, 55);
+                        HighChart.ConfigChart(ref m.pTasaPonderadaSegmento, "pSegmento", null, 480, 55);
 
                         int numPeriodos = takSegmento.Select(l => l.Periodo).Distinct().Count();
                         List<string> listaTipos = takSegmento.Select(l => l.Nombre).Distinct().ToList();
@@ -100,16 +100,44 @@ namespace FGA.Controllers
                         Series serie;
                         i = 0;
 
+                        // Paleta ejecutiva armónica FFC para segmentos de crédito
+                        string[] paletaArmonica = new string[]
+                        {
+                            "#1e3a8a", // Azul marino profundo
+                            "#2563eb", // Azul cobalto
+                            "#0284c7", // Celeste corporativo
+                            "#0f766e", // Teal / esmeralda financiero
+                            "#3b82f6", // Azul medio
+                            "#475569", // Slate corporativo
+                            "#0369a1", // Azul zafiro
+                            "#64748b", // Gris pizarra medio
+                            "#94a3b8", // Slate suave
+                            "#4338ca"  // Índigo corporativo
+                        };
+                        int colorSegmentoIdx = 0;
+
                         foreach (Serie detalle in listaSeries)
                         {
                             if (detalle.mostrar)
                             {
+                                Color colorSerie;
+                                if (detalle.nombre != null && detalle.nombre.Trim().ToLower().Contains("tasa ponderada total"))
+                                {
+                                    // Destacado con Naranja Institucional FFC para la referencia global
+                                    colorSerie = ColorTranslator.FromHtml("#ea580c");
+                                }
+                                else
+                                {
+                                    colorSerie = ColorTranslator.FromHtml(paletaArmonica[colorSegmentoIdx % paletaArmonica.Length]);
+                                    colorSegmentoIdx++;
+                                }
+
                                 serie = new Series
                                 {
                                     Type = ChartTypes.Column,
                                     Name = detalle.nombre,
                                     Data = new Data(detalle.valores),
-                                    Color = HighChart.GetColor(i),
+                                    Color = colorSerie,
                                 };
 
                                 series[i] = serie;
@@ -132,8 +160,8 @@ namespace FGA.Controllers
                 {
                     try
                     {
-                        HighChart.ConfigChart(ref m.tasaPonderada, "Ponderada", null, 720);
-                        HighChart.ConfigChart(ref m.pTasaPonderada, "pPonderada", null, 720);
+                        HighChart.ConfigChart(ref m.tasaPonderada, "Ponderada", null, 420, 55);
+                        HighChart.ConfigChart(ref m.pTasaPonderada, "pPonderada", null, 480, 55);
 
                         string[] Fechas = new string[tasaPonderada.Count()];
                         object[] Variacion = new object[tasaPonderada.Count()];
@@ -236,8 +264,8 @@ namespace FGA.Controllers
                         /*TASA ACTIVA*/
                         #region TasaActiva
 
-                        HighChart.ConfigChart(ref m.tasaActiva, "TasaActiva", null, 720);
-                        HighChart.ConfigChart(ref m.pTasaActiva, "pTasaActiva", null, 720);
+                        HighChart.ConfigChart(ref m.tasaActiva, "TasaActiva", null, 420, 55);
+                        HighChart.ConfigChart(ref m.pTasaActiva, "pTasaActiva", null, 480, 55);
 
                         m.tasaActiva.SetXAxis(HighChart.GetXAxis(Fechas));
                         m.pTasaActiva.SetXAxis(HighChart.GetXAxis(Fechas));
@@ -280,8 +308,8 @@ namespace FGA.Controllers
 
                         /*MARGEN FINANCIERO TASAS*/
                         #region margenFinancieroTasas
-                        HighChart.ConfigChart(ref m.margenFinancieroTasas, "MargenTasas", null, 720);
-                        HighChart.ConfigChart(ref m.pMargenFinancieroTasas, "pMargenTasas", null, 720);
+                        HighChart.ConfigChart(ref m.margenFinancieroTasas, "MargenTasas", null, 420, 55);
+                        HighChart.ConfigChart(ref m.pMargenFinancieroTasas, "pMargenTasas", null, 480, 55);
 
                         m.margenFinancieroTasas.SetXAxis(HighChart.GetXAxis(Fechas));
                         m.pMargenFinancieroTasas.SetXAxis(HighChart.GetXAxis(Fechas));
@@ -380,8 +408,8 @@ namespace FGA.Controllers
                         /*TASA PASIVA*/
                         #region TasaPasiva
 
-                        HighChart.ConfigChart(ref m.tasaPasiva, "TasaPasiva", null, 720);
-                        HighChart.ConfigChart(ref m.pTasaPasiva, "pTasaPasiva", null, 720);
+                        HighChart.ConfigChart(ref m.tasaPasiva, "TasaPasiva", null, 420, 55);
+                        HighChart.ConfigChart(ref m.pTasaPasiva, "pTasaPasiva", null, 480, 55);
 
                         m.tasaPasiva.SetXAxis(HighChart.GetXAxis(Fechas));
                         m.pTasaPasiva.SetXAxis(HighChart.GetXAxis(Fechas));
@@ -422,8 +450,8 @@ namespace FGA.Controllers
                         /*DIFERENCIAL TASAS*/
                         #region MargenTasas
 
-                        HighChart.ConfigChart(ref m.diferencialTasas, "Margen", null, 720);
-                        HighChart.ConfigChart(ref m.pDiferencialTasas, "pMargen", null, 720);
+                        HighChart.ConfigChart(ref m.diferencialTasas, "Margen", null, 420, 55);
+                        HighChart.ConfigChart(ref m.pDiferencialTasas, "pMargen", null, 480, 55);
 
                         m.diferencialTasas.SetXAxis(HighChart.GetXAxis(Fechas));
                         m.pDiferencialTasas.SetXAxis(HighChart.GetXAxis(Fechas));

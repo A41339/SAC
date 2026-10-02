@@ -53,59 +53,107 @@
         pointer-events: none !important;
     }
 
-    /* AnimaciÃÂ³n de alerta pulsante para valores e indicadores en rojo */
-    @@keyframes alertGlowPulse {
+    /* Animación de alerta pulsante para valores e indicadores en naranja */
+    @@keyframes alertGlowPulseOrange {
         0%, 100% {
-            border-color: #fca5a5;
-            box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.35), 0 1px 3px rgba(239, 68, 68, 0.15);
+            border-color: #fed7aa;
+            box-shadow: 0 0 0 1px rgba(234, 88, 12, 0.25), 0 1px 3px rgba(234, 88, 12, 0.1);
         }
         50% {
-            border-color: #ef4444;
-            box-shadow: 0 0 0 3.5px rgba(239, 68, 68, 0.35), 0 0 14px rgba(239, 68, 68, 0.7), inset 0 0 4px rgba(239, 68, 68, 0.2);
+            border-color: #f97316;
+            box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.25), 0 0 8px rgba(234, 88, 12, 0.35);
         }
     }
 
     .indicator-var-pill.negative,
     span.indicator-var-pill.negative {
-        background-color: #fef2f2 !important;
-        color: #dc2626 !important;
-        border: 1px solid #fca5a5 !important;
-        animation: alertGlowPulse 1.8s infinite ease-in-out !important;
+        background-color: #ffedd5 !important;
+        color: #c2410c !important;
+        border: 1px solid #fed7aa !important;
+        animation: alertGlowPulseOrange 1.8s infinite ease-in-out !important;
         will-change: box-shadow, border-color;
     }
 
     .kpi-trend-pill.negative,
     span.kpi-trend-pill.negative {
-        background-color: #fee2e2 !important;
-        color: #b91c1c !important;
-        border: 1px solid #fca5a5 !important;
-        animation: alertGlowPulse 1.8s infinite ease-in-out !important;
+        background-color: #ffedd5 !important;
+        color: #c2410c !important;
+        border: 1px solid #fed7aa !important;
+        animation: alertGlowPulseOrange 1.8s infinite ease-in-out !important;
         will-change: box-shadow, border-color;
+    }
+
+    .kpi-trend-pill.negative i,
+    .kpi-trend-pill.negative .fa-caret-down {
+        color: #c2410c !important;
     }
 
     .semaphore-badge.status-danger,
     .semaphore-badge.danger,
     .semaphore-badge.alert {
-        background-color: #fee2e2 !important;
-        color: #b91c1c !important;
-        border: 1px solid #fca5a5 !important;
-        animation: alertGlowPulse 1.8s infinite ease-in-out !important;
+        background-color: #ffedd5 !important;
+        color: #c2410c !important;
+        border: 1px solid #fed7aa !important;
+        animation: alertGlowPulseOrange 1.8s infinite ease-in-out !important;
         will-change: box-shadow, border-color;
     }
 
     .subtable-col.badge-cell.negative,
     div.subtable-col.badge-cell.negative {
-        background-color: #fee2e2 !important;
-        border-color: #fca5a5 !important;
-        animation: alertGlowPulse 1.8s infinite ease-in-out !important;
+        background-color: #ffedd5 !important;
+        border-color: #fed7aa !important;
+        animation: alertGlowPulseOrange 1.8s infinite ease-in-out !important;
         will-change: box-shadow, border-color;
     }
 
+    .subtable-col.badge-cell.negative span,
+    div.subtable-col.badge-cell.negative span {
+        color: #c2410c !important;
+    }
+
+    .subtable-col.val-negative span {
+        color: #c2410c !important;
+    }
+
     .subtable-col.val-negative {
-        background-color: #fff5f5 !important;
-        border-color: #fca5a5 !important;
-        animation: alertGlowPulse 1.8s infinite ease-in-out !important;
+        background-color: #fff7ed !important;
+        border-color: #fed7aa !important;
+        animation: alertGlowPulseOrange 1.8s infinite ease-in-out !important;
         will-change: box-shadow, border-color;
+    }
+
+    .indicator-var-pill.positive,
+    span.indicator-var-pill.positive {
+        background-color: #dbeafe !important;
+        color: #1e40af !important;
+        border: 1px solid #bfdbfe !important;
+    }
+
+    .kpi-trend-pill.positive,
+    span.kpi-trend-pill.positive {
+        background-color: #dbeafe !important;
+        color: #1e40af !important;
+        border: 1px solid #bfdbfe !important;
+    }
+
+    .kpi-trend-pill.positive i,
+    .kpi-trend-pill.positive .fa-caret-up {
+        color: #1e40af !important;
+    }
+
+    .subtable-col.badge-cell.positive,
+    div.subtable-col.badge-cell.positive {
+        background-color: #dbeafe !important;
+        border-color: #bfdbfe !important;
+    }
+
+    .subtable-col.badge-cell.positive span,
+    div.subtable-col.badge-cell.positive span {
+        color: #1e40af !important;
+    }
+
+    .subtable-col.val-positive span {
+        color: #1e40af !important;
     }
 </style>
 
@@ -500,13 +548,13 @@
                                     var v = modelData.PerdidaEsperadaTabla.VarMensualMonto;
                                     if (v > 0)
                                     {
-                                        <span style="display: inline-flex; align-items: center; justify-content: center; gap: 3px; color: #16a34a; font-weight: 700;">
+                                        <span style="display: inline-flex; align-items: center; justify-content: center; gap: 3px; color: #1e40af; font-weight: 700;">
                                             <i class="fa fa-caret-up" style="font-size: 14px;"></i> +@v.ToString("N3")
                                         </span>
                                     }
                                     else if (v < 0)
                                     {
-                                        <span style="display: inline-flex; align-items: center; justify-content: center; gap: 3px; color: #dc2626; font-weight: 700;">
+                                        <span style="display: inline-flex; align-items: center; justify-content: center; gap: 3px; color: #c2410c; font-weight: 700;">
                                             <i class="fa fa-caret-down" style="font-size: 14px;"></i> @v.ToString("N3")
                                         </span>
                                     }
@@ -530,13 +578,13 @@
                                     var p = modelData.PerdidaEsperadaTabla.VarMensualPct;
                                     if (p > 0)
                                     {
-                                        <span style="display: inline-flex; align-items: center; justify-content: center; gap: 3px; color: #15803d; background: #dcfce7; border: 1px solid #bbf7d0; padding: 2px 7px; border-radius: 10px; font-weight: 700;">
+                                        <span style="display: inline-flex; align-items: center; justify-content: center; gap: 3px; color: #1e40af; background: #dbeafe; border: 1px solid #bfdbfe; padding: 2px 7px; border-radius: 10px; font-weight: 700;">
                                             <i class="fa fa-caret-up" style="font-size: 12px;"></i> +@p.ToString("N1")%
                                         </span>
                                     }
                                     else if (p < 0)
                                     {
-                                        <span style="display: inline-flex; align-items: center; justify-content: center; gap: 3px; color: #b91c1c; background: #fee2e2; border: 1px solid #fecaca; padding: 2px 7px; border-radius: 10px; font-weight: 700;">
+                                        <span style="display: inline-flex; align-items: center; justify-content: center; gap: 3px; color: #c2410c; background: #ffedd5; border: 1px solid #fed7aa; padding: 2px 7px; border-radius: 10px; font-weight: 700;">
                                             <i class="fa fa-caret-down" style="font-size: 12px;"></i> @p.ToString("N1")%
                                         </span>
                                     }
@@ -560,13 +608,13 @@
                                     var v = modelData.PerdidaEsperadaTabla.VarInteranualMonto;
                                     if (v > 0)
                                     {
-                                        <span style="display: inline-flex; align-items: center; justify-content: center; gap: 3px; color: #16a34a; font-weight: 700;">
+                                        <span style="display: inline-flex; align-items: center; justify-content: center; gap: 3px; color: #1e40af; font-weight: 700;">
                                             <i class="fa fa-caret-up" style="font-size: 14px;"></i> +@v.ToString("N3")
                                         </span>
                                     }
                                     else if (v < 0)
                                     {
-                                        <span style="display: inline-flex; align-items: center; justify-content: center; gap: 3px; color: #dc2626; font-weight: 700;">
+                                        <span style="display: inline-flex; align-items: center; justify-content: center; gap: 3px; color: #c2410c; font-weight: 700;">
                                             <i class="fa fa-caret-down" style="font-size: 14px;"></i> @v.ToString("N3")
                                         </span>
                                     }
@@ -590,13 +638,13 @@
                                     var p = modelData.PerdidaEsperadaTabla.VarInteranualPct;
                                     if (p > 0)
                                     {
-                                        <span style="display: inline-flex; align-items: center; justify-content: center; gap: 3px; color: #15803d; background: #dcfce7; border: 1px solid #bbf7d0; padding: 2px 7px; border-radius: 10px; font-weight: 700;">
+                                        <span style="display: inline-flex; align-items: center; justify-content: center; gap: 3px; color: #1e40af; background: #dbeafe; border: 1px solid #bfdbfe; padding: 2px 7px; border-radius: 10px; font-weight: 700;">
                                             <i class="fa fa-caret-up" style="font-size: 12px;"></i> +@p.ToString("N1")%
                                         </span>
                                     }
                                     else if (p < 0)
                                     {
-                                        <span style="display: inline-flex; align-items: center; justify-content: center; gap: 3px; color: #b91c1c; background: #fee2e2; border: 1px solid #fecaca; padding: 2px 7px; border-radius: 10px; font-weight: 700;">
+                                        <span style="display: inline-flex; align-items: center; justify-content: center; gap: 3px; color: #c2410c; background: #ffedd5; border: 1px solid #fed7aa; padding: 2px 7px; border-radius: 10px; font-weight: 700;">
                                             <i class="fa fa-caret-down" style="font-size: 12px;"></i> @p.ToString("N1")%
                                         </span>
                                     }
@@ -752,8 +800,10 @@
             <div class="modal-body">
                 <p id="definicion"></p>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+            <div class="modal-footer" style="background: #f8fafc; border-top: 1px solid #e2e8f0; padding: 12px 20px; display: flex; justify-content: flex-end;">
+                <button type="button" class="btn btn-default" data-dismiss="modal" style="padding: 8px 22px; border-radius: 8px; font-weight: 600;">
+                    <i class="fa fa-times"></i> Cerrar
+                </button>
             </div>
         </div>
     </div>
@@ -971,7 +1021,7 @@
                 var maxVal = Math.max.apply(null, rawData);
 
                 var isPos = diff >= 0;
-                var badgeBg = isPos ? 'background-color: #dcfce7; color: #15803d;' : 'background-color: #fee2e2; color: #b91c1c;';
+                var badgeBg = isPos ? 'background-color: #dbeafe; color: #1e40af;' : 'background-color: #ffedd5; color: #c2410c;';
                 var sign = isPos ? '+' : '';
 
                 var formatNum = function (n) {

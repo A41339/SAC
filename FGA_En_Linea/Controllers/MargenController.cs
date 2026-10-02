@@ -56,8 +56,8 @@ namespace FGA.Controllers
             if (tak.Count() > 0)
             {
                 #region MargenFinaciero
-                HighChart.ConfigChart(ref m.margenFinanciero, "MargenFinanciero", null, 720);
-                HighChart.ConfigChart(ref m.pMargenFinanciero, "pMargenFinanciero", null, 720);
+                HighChart.ConfigChart(ref m.margenFinanciero, "MargenFinanciero", null, 420, 55);
+                HighChart.ConfigChart(ref m.pMargenFinanciero, "pMargenFinanciero", null, 480, 55);
 
                 int i = 0;
                 object[] ROA = new object[tak.Count()];
@@ -167,8 +167,8 @@ namespace FGA.Controllers
                 #endregion
 
                 #region CoberturaMargenes
-                HighChart.ConfigChart(ref m.coberturaMargenes, "CoberturaMargenes", null, 720);
-                HighChart.ConfigChart(ref m.pCoberturaMargenes, "pCoberturaMargenes", null, 720);
+                HighChart.ConfigChart(ref m.coberturaMargenes, "CoberturaMargenes", null, 420, 55);
+                HighChart.ConfigChart(ref m.pCoberturaMargenes, "pCoberturaMargenes", null, 480, 55);
 
                 m.coberturaMargenes.SetXAxis(HighChart.GetXAxis(Fechas));
                 m.pCoberturaMargenes.SetXAxis(HighChart.GetXAxis(Fechas));
@@ -231,8 +231,8 @@ namespace FGA.Controllers
                 #endregion
 
                 #region IndicadoresRentabilidad
-                HighChart.ConfigChart(ref m.indicadoresRentabilidad, "IndicadoresRentabilidad", null, 720);
-                HighChart.ConfigChart(ref m.pIndicadoresRentabilidad, "pIndicadoresRentabilidad", null, 720);
+                HighChart.ConfigChart(ref m.indicadoresRentabilidad, "IndicadoresRentabilidad", null, 420, 55);
+                HighChart.ConfigChart(ref m.pIndicadoresRentabilidad, "pIndicadoresRentabilidad", null, 480, 55);
 
                 m.indicadoresRentabilidad.SetXAxis(HighChart.GetXAxis(Fechas));
                 m.pIndicadoresRentabilidad.SetXAxis(HighChart.GetXAxis(Fechas));

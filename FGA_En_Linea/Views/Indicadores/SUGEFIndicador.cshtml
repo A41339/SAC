@@ -2,17 +2,6 @@
     ViewBag.Title = "Sugef - Indicador";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<section class="content-header">
-    <h1>
-        <i class="fa fa-line-chart"></i> SUGEF - Indicadores de Cartera
-        <small>Evaluaci&oacute;n y seguimiento de indicadores prudenciales de cartera crediticia.</small>
-    </h1>
-    <ol class="breadcrumb">
-        <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
-        <li><a href="@Url.Action("Index", "Modulo", new { modulo = "Indicadores/SUGEFIndicador" })" class="breadcrumb-parent-pill"><i class="fa fa-file-text-o" style="margin-right: 4px;"></i> InformaciÃ³n Financiera</a></li>
-        <li class="active">Detalle SUGEF</li>
-    </ol>
-</section>
 
 @section ScriptsOrCss
 {
@@ -22,65 +11,98 @@
     <script type="text/javascript" src="~/Content/multiselect/dist/js/bootstrap-multiselect.js"></script>
 }
 
+<section class="content-header" style="padding: 24px 20px 14px 20px;">
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+        <div>
+            <h1 style="margin: 0; font-size: 21px; font-weight: 700; color: #143750; display: flex; align-items: center; gap: 10px;">
+                <i class="fa fa-line-chart" style="color: #0284c7;"></i>
+                SUGEF - Indicadores de Cartera
+            </h1>
+            <p style="margin: 6px 0 0 0; font-size: 13px; color: #64748b;">
+                Evaluaci&oacute;n y seguimiento de indicadores prudenciales de cartera crediticia.
+            </p>
+        </div>
+    </div>
+    <ol class="breadcrumb">
+        <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
+        <li><a href="@Url.Action("Index", "Modulo", new { modulo = "Indicadores/SUGEFIndicador" })" class="breadcrumb-parent-pill"><i class="fa fa-file-text-o" style="margin-right: 4px;"></i> Informaci&oacute;n Financiera</a></li>
+        <li class="active">Detalle SUGEF</li>
+    </ol>
+</section>
+
 <section class="content">
-    <div class="box box-solid box-info">
-        <div class="box-body table-responsive">
-            @using (Html.BeginForm("BuscarSugefIndicador", "Indicadores", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmSuficiencia" }))
-            {
-                @Html.AntiForgeryToken()
-                <div style="background:#f8fafc; padding:16px 20px; border-radius:8px; margin-bottom:10px; border:1px solid #e2e8f0;">
-                    <div style="display:flex; flex-wrap:wrap; gap:16px; align-items:flex-end;">
-                        <div style="display:flex; flex-direction:column; gap:4px;">
-                            <label style="font-weight:600; font-size:12px; color:#475569; margin:0;">Periodo</label>
-                            <input name="PeriodoI" id="PeriodoI" class="datecontrol form-control input-sm" style="width: 150px; height:34px;" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MM/yyyy")" />
+
+    @using (Html.BeginForm("BuscarSugefIndicador", "Indicadores", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmSuficiencia" }))
+    {
+        @Html.AntiForgeryToken()
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="modern-filter-card" style="margin-bottom: 22px;">
+                    <div class="modern-filter-toolbar">
+                        <div class="filter-item">
+                            <label for="PeriodoI"><i class="fa fa-calendar"></i> Per&iacute;odo:</label>
+                            <div class="modern-input-wrapper">
+                                <input name="PeriodoI" id="PeriodoI" class="datecontrol form-control modern-date-input" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MM/yyyy")" style="min-width: 140px; height: 38px;" />
+                            </div>
                         </div>
-                        <div style="display:flex; flex-direction:column; gap:4px;">
-                            <label style="font-weight:600; font-size:12px; color:#475569; margin:0;">Graficar hasta</label>
-                            <input name="PeriodoF" id="PeriodoF" class="datecontrol form-control input-sm" style="width: 150px; height:34px;" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MM/yyyy")" />
+                        <div class="filter-item">
+                            <label for="PeriodoF"><i class="fa fa-calendar-o"></i> Graficar hasta:</label>
+                            <div class="modern-input-wrapper">
+                                <input name="PeriodoF" id="PeriodoF" class="datecontrol form-control modern-date-input" value="@FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MM/yyyy")" style="min-width: 140px; height: 38px;" />
+                            </div>
                         </div>
-                        <div>
-                            <button type="submit" class="btn btn-primary" style="height:34px; padding:0 20px; font-weight:600; display:inline-flex; align-items:center; gap:6px;">
-                                <i class="fa fa-search"></i> Generar
+                        <div class="filter-item" style="margin-left: auto;">
+                            <button type="submit" class="btn-modern-filter" style="height: 38px; padding: 0 24px;">
+                                <i class="fa fa-search"></i> Generar informe
                             </button>
                         </div>
                     </div>
                 </div>
-            }
+            </div>
         </div>
-    </div>
+    }
 
     <div class="row">
         <div class="col-xs-12">
-            <div class="box box-solid box-info">
-                <div class="box-body table-responsive">
-                    <div class="margin">
-                        <div class="streaming-table">
-                            <span id="found" class="label label-info"></span>
-                            <table id="tbError" class="table table-striped table-bordered" style="width:100%">
-                                <thead>
-                                    <tr>
-                                        <th> Id </th>
-                                        <th> Indicador </th>
-                                        <th> Bancos comerciales del estado </th>
-                                        <th> Bancos creados por leyes especiales </th>
-                                        <th> Bancos privados y cooperativos </th>
-                                        <th> Empresas financieras no bancarias </th>
-                                        <th> Otras entidades financieras </th>
-                                        <th> Organizaciones cooperativas de ahorro y cr&eacute;dito </th>
-                                        <th> Entidades autorizadas sistema financiero nacional vivienda </th>
-                                        <th> Total </th>
-                                        <th style="width: 50px;"></th>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
-                            <div id="summary">
-                                <div>
-                                </div>
-                            </div>
-                        </div>
+            <div class="modern-table-card" style="border: 1px solid #e2e8f0; border-radius: 12px; background: #ffffff; box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05); overflow: hidden; padding: 22px; margin-bottom: 24px;">
+                <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid #f1f5f9;">
+                    <img class="img-logo-entidad" width="44" height="44" src="@(Session["Logo"] ?? Url.Content("~/Content/images/FFC.jpg"))" onerror="this.onerror=null;this.src='@Url.Content("~/Content/images/FFC.jpg")';" style="border-radius: 8px; background: #ffffff; padding: 3px; border: 1px solid #e2e8f0; object-fit: contain;" />
+                    <div>
+                        <h4 style="margin: 0; font-size: 16px; font-weight: 700; color: #143750;">Indicadores de Cartera SUGEF - <span class="lblEntidadHeader">@(Session["NomEntidad"] ?? "")</span></h4>
+                        <p style="margin: 2px 0 0 0; font-size: 12px; color: #64748b;">Comportamiento hist&oacute;rico por per&iacute;odos comparativos</p>
                     </div>
                 </div>
+
+                <div class="table-responsive">
+                    <table id="tbError" class="table table-striped modern-data-table" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th class="text-left" style="text-align: left !important; padding-left: 16px;">Cuenta</th>
+                                <th class="text-right" style="text-align: right !important; padding-right: 14px;">1</th>
+                                <th class="text-right" style="text-align: right !important; padding-right: 14px;">2</th>
+                                <th class="text-right" style="text-align: right !important; padding-right: 14px;">3</th>
+                                <th class="text-right" style="text-align: right !important; padding-right: 14px;">4</th>
+                                <th class="text-right" style="text-align: right !important; padding-right: 14px;">5</th>
+                                <th class="text-right" style="text-align: right !important; padding-right: 14px;">6</th>
+                                <th class="text-right" style="text-align: right !important; padding-right: 14px;">7</th>
+                                <th class="text-right" style="text-align: right !important; padding-right: 14px;">8</th>
+                                <th class="text-center" style="width: 50px; text-align: center !important;"></th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+
+                <div class="modern-info-card" style="margin-top: 18px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 12px 18px; display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 28px; height: 28px; border-radius: 50%; background: #2F5597; color: #ffffff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-weight: 700; font-size: 13px;">
+                        <i class="fa fa-info"></i>
+                    </div>
+                    <div style="font-size: 12.5px; color: #1e3a8a;">
+                        <strong>Nota:</strong> Los datos reflejan el historial y evoluci&oacute;n de los indicadores de cartera requeridos por la normativa SUGEF.
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
@@ -101,31 +123,196 @@
 </div>
 
 <style>
-    /* Prevenir parpadeo en graficos dentro de modales */
-    #graphModal .modal-body {
-        overflow: hidden !important;
+    #tbError {
+        border-collapse: separate !important;
+        border-spacing: 0 !important;
+        width: 100% !important;
     }
-    #graphModal .highcharts-container {
-        overflow: visible !important;
+
+    #tbError thead th {
+        font-size: 13px !important;
+        font-weight: 600 !important;
+        color: #2F5597 !important;
+        border-bottom: 2px solid #88D1E2 !important;
+        border-top: none !important;
+        padding: 10px 14px !important;
+        background-color: #ffffff !important;
+        white-space: nowrap !important;
+        letter-spacing: 0.2px !important;
     }
-    #graphModal .highcharts-tooltip,
-    #graphModal .highcharts-tooltip * {
-        pointer-events: none !important;
+
+    #tbError tbody td {
+        font-size: 13px !important;
+        font-weight: 400 !important;
+        color: #334155 !important;
+        line-height: 1.4 !important;
+        vertical-align: middle !important;
+        border-top: 1px solid #f1f5f9 !important;
+        border-bottom: none !important;
+        padding: 10px 14px !important;
+    }
+
+    #tbError.table-striped > tbody > tr:nth-of-type(odd),
+    #tbError tbody tr.odd {
+        background-color: #f8fafc !important;
+    }
+
+    #tbError.table-striped > tbody > tr:nth-of-type(even),
+    #tbError tbody tr.even {
+        background-color: #ffffff !important;
+    }
+
+    #tbError tbody tr:hover,
+    #tbError tbody tr.odd:hover,
+    #tbError tbody tr.even:hover {
+        background-color: #eef2f6 !important;
+    }
+
+    .modern-table-card .dt-buttons {
+        display: inline-flex !important;
+        gap: 6px !important;
+        margin-bottom: 14px !important;
+        flex-wrap: wrap !important;
+    }
+
+    .modern-table-card .dt-buttons .dt-button {
+        height: 32px !important;
+        padding: 0 14px !important;
+        font-size: 12px !important;
+        font-weight: 600 !important;
+        border-radius: 6px !important;
+        background: #ffffff !important;
+        border: 1px solid #cbd5e1 !important;
+        color: #334155 !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+        transition: all 0.2s ease !important;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.04) !important;
+        margin-right: 4px !important;
+        cursor: pointer !important;
+    }
+
+    .modern-table-card .dt-buttons .dt-button:hover {
+        background: #f8fafc !important;
+        border-color: #2F5597 !important;
+        color: #2F5597 !important;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 6px rgba(47, 85, 151, 0.15) !important;
+    }
+
+    .modern-table-card .dt-buttons .buttons-excel {
+        color: #15803d !important;
+        border-color: #bbf7d0 !important;
+    }
+
+    .modern-table-card .dt-buttons .buttons-excel:hover {
+        background: #f0fdf4 !important;
+        border-color: #16a34a !important;
+        color: #15803d !important;
+    }
+
+    .modern-table-card .dataTables_wrapper .dataTables_filter {
+        float: right !important;
+        margin-bottom: 14px !important;
+    }
+
+    .modern-table-card .dataTables_wrapper .dataTables_filter input {
+        height: 32px !important;
+        border: 1px solid #cbd5e1 !important;
+        border-radius: 6px !important;
+        padding: 4px 12px !important;
+        font-size: 12.5px !important;
+        color: #1e293b !important;
+        background: #ffffff !important;
+        outline: none !important;
+        width: 220px !important;
+    }
+
+    .modern-table-card .dataTables_wrapper .dataTables_length {
+        float: left !important;
+        margin-right: 16px !important;
+        margin-bottom: 14px !important;
+    }
+
+    .modern-table-card .dataTables_wrapper .dataTables_length select {
+        height: 32px !important;
+        border: 1px solid #cbd5e1 !important;
+        border-radius: 6px !important;
+        padding: 2px 8px !important;
+        font-size: 12.5px !important;
+        color: #334155 !important;
+        background: #ffffff !important;
+        outline: none !important;
+    }
+
+    .modern-table-card .dataTables_paginate .paginate_button {
+        border-radius: 6px !important;
+        border: 1px solid #e2e8f0 !important;
+        background: #ffffff !important;
+        color: #475569 !important;
+        margin: 0 2px !important;
+        padding: 4px 10px !important;
+        font-size: 12px !important;
+        font-weight: 500 !important;
+    }
+
+    .modern-table-card .dataTables_paginate .paginate_button.current,
+    .modern-table-card .dataTables_paginate .paginate_button.current:hover {
+        background: #2F5597 !important;
+        border-color: #2F5597 !important;
+        color: #ffffff !important;
+    }
+
+    table td a[href*="getGraph"],
+    .modern-data-table td a[href*="getGraph"],
+    a.btn-indicador-chart {
+        width: 30px !important;
+        height: 30px !important;
+        min-width: 30px !important;
+        max-width: 30px !important;
+        padding: 0 !important;
+        margin: 0 auto !important;
+        border-radius: 6px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        background: #e0f2fe !important;
+        color: #0284c7 !important;
+        border: 1px solid #bae6fd !important;
+        box-shadow: 0 1px 2px rgba(2, 132, 199, 0.08) !important;
+        transition: all 0.2s ease !important;
+        text-decoration: none !important;
+        cursor: pointer !important;
+    }
+
+    table td a[href*="getGraph"]:hover,
+    .modern-data-table td a[href*="getGraph"]:hover,
+    a.btn-indicador-chart:hover {
+        background: #0284c7 !important;
+        color: #ffffff !important;
+        border-color: #0284c7 !important;
+        transform: translateY(-1px) scale(1.06);
     }
 </style>
 
 <script type="text/javascript">
+    function getGraph(id, estilo) {
+        var tipo = 1;
+        if (estilo == 'S')
+            tipo = 0;
 
-     function getGraph(id, estilo) {
         $.ajax({
-            url: '@Url.Action("GraficaDetalleSugef", "Indicadores")',
+            url: '@Url.Action("GraficaDetalle", "Indicadores")',
             type: 'POST',
             cache: false,
             async: true,
             data: {
-                'PeriodoI':  $('#PeriodoI').val(),
-                'PeriodoF':  $('#PeriodoF').val(),
-                'Id': id
+                'Entidades': '@Session["IdEntidad"]',
+                'PeriodoI': $('#PeriodoI').val(),
+                'PeriodoF': $('#PeriodoF').val(),
+                'cmb_indicadores': id,
+                'cmb_estilo': tipo
             },
             success: function (result) {
                 $('#grafica').html(result);
@@ -138,33 +325,43 @@
         if (typeof Highcharts !== 'undefined' && Highcharts.charts) {
             Highcharts.charts.forEach(function (c) {
                 if (c) {
-                    try { c.reflow(); } catch (e) {}
+                    try { c.reflow(); } catch (e) { }
                 }
             });
         }
     });
 
-    function formatMillion() {
-        return this.value;
-    }
-
-    function formatPercent() {
-        return this.value + " %";
-    }
-
     $(document).ready(function () {
+        var exportButtons = [
+            { extend: 'copyHtml5', text: '<i class="fa fa-copy" style="color: #64748b;"></i> Copiar', exportOptions: { columns: ':visible' } },
+            { extend: 'excelHtml5', text: '<i class="fa fa-file-excel-o" style="color: #16a34a;"></i> Excel', exportOptions: { columns: ':visible' } },
+            { extend: 'csvHtml5', text: '<i class="fa fa-file-text-o" style="color: #0284c7;"></i> CSV', exportOptions: { columns: ':visible' } },
+            { extend: 'print', text: '<i class="fa fa-print" style="color: #475569;"></i> Imprimir', exportOptions: { columns: ':visible' } },
+            { extend: 'colvis', text: '<i class="fa fa-columns" style="color: #64748b;"></i> Columnas' }
+        ];
+
+        var languageConfig = {
+            "lengthMenu": "Mostrar _MENU_ registros",
+            "zeroRecords": "No se encontraron registros",
+            "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
+            "infoEmpty": "Mostrando 0 a 0 de 0 registros",
+            "infoFiltered": "(filtrado de un total de _MAX_ registros)",
+            "search": "Buscar:",
+            "searchPlaceholder": "Filtrar indicadores...",
+            "paginate": {
+                "first": "Primero",
+                "last": "Último",
+                "next": "Siguiente",
+                "previous": "Anterior"
+            }
+        };
+
         $("#tbError").dataTable({
             "bRetrieve": true,
             "bProcessing": true,
             "dom": 'lBfrtip',
             "sAjaxSource": "@Url.Content("~/Indicadores/GetGridSugefIndicador")",
-            "buttons": [
-                { extend: 'copyHtml5', exportOptions: { columns: ':visible' } },
-                { extend: 'excelHtml5', exportOptions: { columns: ':visible' } },
-                { extend: 'csvHtml5', exportOptions: { columns: ':visible' } },
-                { extend: 'print', exportOptions: { columns: ':visible' } },
-                'colvis'
-            ],
+            "buttons": exportButtons,
             "columnDefs": [
                 { "targets": 0, "visible": false, "searchable": false },
                 { "targets": 1, "className": 'text-left font-weight-bold' },
@@ -172,19 +369,26 @@
                 { "targets": 10, "className": 'text-center', "width": '50px', "orderable": false }
             ],
             "rowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                $('td:eq(0)', nRow).css({ 'font-weight': '500', 'color': '#1e293b' });
                 for (var i = 2; i <= 9; i++) {
                     var val = parseFloat(aData[i]) || 0;
                     var cell = $(nRow).find('td:eq(' + (i - 1) + ')');
-                    if (val < 0)
-                        cell.css('color', '#dc2626').css('font-weight', '600');
-                    else
-                        cell.css('color', '#1e293b');
+                    cell.css('font-variant-numeric', 'tabular-nums');
+                    if (val < 0) {
+                        cell.css({ 'color': '#c2410c', 'font-weight': '600' });
+                    } else {
+                        cell.css({ 'color': '#1e293b', 'font-weight': '500' });
+                    }
                 }
+            },
+            "drawCallback": function (settings) {
+                $(this).find('[data-toggle="tooltip"]').tooltip();
             },
             "pageLength": -1,
             "order": [[ 0, "asc" ]],
-            "lengthMenu": [[5, 15, 25, 50, -1], [5, 15, 25, 50, "Todos"]],
-            "autoWidth": false
+            "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "Todos"]],
+            "autoWidth": false,
+            "language": languageConfig
         });
     });
 </script>

@@ -1,31 +1,35 @@
 @model FGA.Models.EstatusCarga
 
 @{
-    ViewBag.Title = "Consultar Archivos";
+    ViewBag.Title = "Estatus y Archivos Cargados";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var totalArchivos = Model != null && Model.listaArchivos != null ? Model.listaArchivos.Count : 0;
+    var aceptados = Model != null && Model.listaArchivos != null ? Model.listaArchivos.Count(o => o.XML_ID == FGA.Utility.Utilitarios.archivoAceptado) : 0;
+    var pendientes = Model != null && Model.listaArchivos != null ? Model.listaArchivos.Count(o => o.XML_ID == FGA.Utility.Utilitarios.archivoPendiente) : 0;
+    var conErrores = Model != null && Model.listaArchivos != null ? Model.listaArchivos.Count(o => o.XML_ID == FGA.Utility.Utilitarios.archivoErrores) : 0;
+    var procesando = Model != null && Model.listaArchivos != null ? Model.listaArchivos.Count(o => o.XML_ID == FGA.Utility.Utilitarios.archivoCargado) : 0;
 }
 
-<style>
-    #tbRole th:nth-child(n+2),
-    #tbRole td:nth-child(n+2) {
-        text-align: center !important;
-    }
-</style>
 
-<section class="content-header">
-    <h1>
-        <i class="fa fa-check-square-o"></i> Estatus de la Carga
-        <small>Monitoreo y verificaci&oacute;n del estado de cierres mensuales y archivos de entidades.</small>
+
+<section class="content-header" style="padding: 20px 20px 10px 20px;">
+    <h1 class="modern-page-title" style="margin: 0; font-size: 21px; font-weight: 700; color: #143750; display: flex; align-items: center; gap: 10px;">
+        <i class="fa fa-check-circle" style="color: #0284c7;"></i>
+        Estatus y Archivos Cargados
+        <small style="font-size: 13px; color: #64748b; font-weight: normal; margin-left: 8px;">Monitoreo, estado de avance de cierres mensuales y detalle de archivos XML</small>
     </h1>
-    <ol class="breadcrumb">
+    <ol class="breadcrumb" style="margin-top: 8px;">
         <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
         <li><a href="@Url.Action("Index", "Modulo", new { modulo = "Cierre/Index" })" class="breadcrumb-parent-pill"><i class="fa fa-database" style="margin-right: 4px;"></i> Carga de Datos</a></li>
-        <li class="active">Estatus de Carga</li>
+        <li class="active">Estatus y Archivos Cargados</li>
     </ol>
 </section>
-<section class="content contenedor">
+
+<section class="content contenedor" style="padding-top: 8px;">
     @using (Html.BeginForm("Buscar", "Cierre", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmArchivo" }))
     {
-        <div class="modern-filter-card">
+        <div class="modern-filter-card" style="margin-bottom: 16px;">
             <div class="modern-filter-toolbar">
                 <div class="filter-item">
                     <label><i class="fa fa-building"></i> Entidad</label>
@@ -46,139 +50,230 @@
         </div>
     }
 
-    <div class="row" style="margin-top: 18px;">
-        <!-- Tarjeta del indicador de avance -->
-        <div class="col-xs-12 col-lg-4">
-            <div class="modern-table-card" style="padding: 20px; text-align: center;">
-                <h4 style="margin: 0 0 14px 0; font-size: 15px; font-weight: 700; color: #0f172a; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                    <i class="fa fa-pie-chart" style="color: #0284c7;"></i> Avance General de Carga
-                </h4>
+    <div class="nav-tabs-custom" style="border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); border: 1px solid #e2e8f0; overflow: hidden; background: #ffffff;">
+        <ul class="nav nav-tabs cierre-tab-nav" id="cierreTabs">
+            <li class="active">
+                <a href="#tab_estatus" data-toggle="tab">
+                    <i class="fa fa-pie-chart" style="color: #0284c7; margin-right: 6px;"></i> Estatus de la Carga
+                </a>
+            </li>
+            <li>
+                <a href="#tab_archivos" data-toggle="tab">
+                    <i class="fa fa-list-alt" style="color: #0284c7; margin-right: 6px;"></i> Archivos Cargados (@totalArchivos)
+                </a>
+            </li>
+        </ul>
 
-                <div class="circular-cierre-gauge" style="--gauge-pct: @(Model.porcentajeCarga)%;">
-                    <div class="circular-cierre-inner">
-                        <span class="cierre-gauge-value">@Model.porcentajeCarga</span>
-                        <span class="cierre-gauge-symbol">%</span>
+        <div class="tab-content" style="padding: 10px 20px 20px 20px;">
+            <!-- ============================================================= -->
+            <!-- CEJILLA 1: ESTATUS GENERAL DE LA CARGA                        -->
+            <!-- ============================================================= -->
+            <div class="tab-pane active" id="tab_estatus">
+                <div class="row">
+                    <!-- Gauge circular -->
+                    <div class="col-xs-12 col-md-5 col-lg-4" style="margin-bottom: 20px;">
+                        <div class="modern-table-card" style="padding: 24px 20px; text-align: center; border: 1px solid #e2e8f0; border-radius: 10px; background: #ffffff;">
+                            <h4 style="margin: 0 0 16px 0; font-size: 15px; font-weight: 700; color: #0f172a; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                                <i class="fa fa-pie-chart" style="color: #0284c7;"></i> Avance General del Cierre
+                            </h4>
+
+                            <div class="circular-cierre-gauge" style="--gauge-pct: @(Model.porcentajeCarga)%;">
+                                <div class="circular-cierre-inner">
+                                    <span class="cierre-gauge-value">@Model.porcentajeCarga</span>
+                                    <span class="cierre-gauge-symbol">%</span>
+                                </div>
+                            </div>
+
+                            <div style="margin-top: 18px;">
+                                <span class="file-status-badge @(Model.pendientes == 0 ? "status-success" : "status-pending")" style="font-size: 13px; padding: 7px 16px; border-radius: 8px;">
+                                    <i class="fa @(Model.pendientes == 0 ? "fa-check-circle" : "fa-clock-o")"></i>
+                                    Archivos pendientes: <strong>@Model.pendientes</strong>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Resumen por tarjetas métricas -->
+                    <div class="col-xs-12 col-md-7 col-lg-8">
+                        <div class="row" style="margin-bottom: 14px;">
+                            <div class="col-sm-6" style="margin-bottom: 14px;">
+                                <div class="kpi-stat-card">
+                                    <div style="width: 44px; height: 44px; border-radius: 10px; background: #e0f2fe; color: #0284c7; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;">
+                                        <i class="fa fa-files-o"></i>
+                                    </div>
+                                    <div>
+                                        <span style="font-size: 12px; color: #64748b; font-weight: 600; display: block; text-transform: uppercase;">Total Requeridos</span>
+                                        <span style="font-size: 20px; font-weight: 700; color: #0f172a;">@totalArchivos</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6" style="margin-bottom: 14px;">
+                                <div class="kpi-stat-card">
+                                    <div style="width: 44px; height: 44px; border-radius: 10px; background: #dcfce7; color: #16a34a; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;">
+                                        <i class="fa fa-check-circle"></i>
+                                    </div>
+                                    <div>
+                                        <span style="font-size: 12px; color: #64748b; font-weight: 600; display: block; text-transform: uppercase;">Archivos Aceptados</span>
+                                        <span style="font-size: 20px; font-weight: 700; color: #16a34a;">@aceptados</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6" style="margin-bottom: 14px;">
+                                <div class="kpi-stat-card">
+                                    <div style="width: 44px; height: 44px; border-radius: 10px; background: #fef3c7; color: #d97706; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;">
+                                        <i class="fa fa-clock-o"></i>
+                                    </div>
+                                    <div>
+                                        <span style="font-size: 12px; color: #64748b; font-weight: 600; display: block; text-transform: uppercase;">Archivos Pendientes</span>
+                                        <span style="font-size: 20px; font-weight: 700; color: #d97706;">@pendientes</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6" style="margin-bottom: 14px;">
+                                <div class="kpi-stat-card">
+                                    <div style="width: 44px; height: 44px; border-radius: 10px; background: #ffedd5; color: #c2410c; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;">
+                                        <i class="fa fa-exclamation-triangle"></i>
+                                    </div>
+                                    <div>
+                                        <span style="font-size: 12px; color: #64748b; font-weight: 600; display: block; text-transform: uppercase;">Con Errores</span>
+                                        <span style="font-size: 20px; font-weight: 700; color: #c2410c;">@conErrores</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modern-table-card" style="padding: 16px 20px; border: 1px solid #e2e8f0; border-radius: 10px; background: #f8fafc;">
+                            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <i class="fa fa-info-circle" style="color: #0284c7; font-size: 20px;"></i>
+                                    <span style="font-size: 13px; color: #334155;">
+                                        Para consultar el detalle de cada archivo individual, fecha de recepción y registros, acceda a la pestaña <strong>Archivos Cargados</strong>.
+                                    </span>
+                                </div>
+                                <button type="button" class="btn btn-default" onclick="$('#cierreTabs a[href=\'#tab_archivos\']').tab('show');" style="border-radius: 8px; font-size: 12.5px; font-weight: 600; padding: 6px 16px;">
+                                    Ver Detalle <i class="fa fa-arrow-right" style="margin-left: 4px;"></i>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
-
-                <div style="margin-top: 14px;">
-                    <span class="file-status-badge @(Model.pendientes == 0 ? "status-success" : "status-pending")" style="font-size: 12px; padding: 6px 14px;">
-                        <i class="fa @(Model.pendientes == 0 ? "fa-check-circle" : "fa-clock-o")"></i>
-                        Archivos pendientes: <strong>@Model.pendientes</strong>
-                    </span>
-                </div>
             </div>
-        </div>
 
-        <!-- Tarjeta de la tabla de archivos -->
-        <div class="col-xs-12 col-lg-8">
-            <div class="modern-table-card">
-                <div style="padding: 16px 22px; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between; background: #ffffff;">
-                    <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: #0f172a; display: flex; align-items: center; gap: 8px;">
-                        <i class="fa fa-list-alt" style="color: #0284c7;"></i> Detalle de Archivos Requeridos
-                    </h4>
-                </div>
+            <!-- ============================================================= -->
+            <!-- CEJILLA 2: DETALLE DE ARCHIVOS CARGADOS                       -->
+            <!-- ============================================================= -->
+            <div class="tab-pane" id="tab_archivos">
+                <div class="modern-table-card" style="border: 1px solid #e2e8f0; border-radius: 10px; background: #ffffff; overflow: hidden;">
+                    <div style="padding: 14px 20px; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between; background: #f8fafc;">
+                        <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: #0f172a; display: flex; align-items: center; gap: 8px;">
+                            <i class="fa fa-list-alt" style="color: #0284c7;"></i> Detalle de Archivos Requeridos para el Cierre
+                        </h4>
+                        <span style="font-size: 12.5px; color: #64748b; font-weight: 600;">
+                            Período: @Session["Periodo"]
+                        </span>
+                    </div>
 
-                <div class="table-responsive" style="padding: 0;">
-                    <table id="tbRole" class="table" style="width: 100%; margin-bottom: 0;">
-                        <thead>
-                            <tr style="background: #f8fafc; border-bottom: 2px solid #e2e8f0;">
-                                <th style="padding: 12px 16px; font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: .03em;">Archivo XML</th>
-                                <th style="padding: 12px 16px; font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: .03em;" class="mobile">Per&iacute;odo</th>
-                                <th style="padding: 12px 16px; font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: .03em;">Estado</th>
-                                <th style="padding: 12px 16px; font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: .03em;" class="mobile">Usuario Responsable</th>
-                                <th style="padding: 12px 16px; font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: .03em;" class="mobile">Fecha de Carga</th>
-                                <th style="padding: 12px 16px; font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: .03em;" class="mobile">Registros</th>
-                                <th style="padding: 12px 16px; font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: .03em;">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody style="font-size: 13px;">
-                            @if (Model != null && Model.listaArchivos != null)
-                            {
-                                foreach (var item in Model.listaArchivos)
+                    <div class="table-responsive" style="padding: 0;">
+                        <table id="tbRole" class="table table-striped modern-data-table" style="width: 100%; margin-bottom: 0;">
+                            <thead>
+                                <tr style="background: #f8fafc; border-bottom: 2px solid #e2e8f0;">
+                                    <th style="padding: 12px 16px; font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: .03em;">Archivo XML</th>
+                                    <th style="padding: 12px 16px; font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: .03em;" class="mobile">Per&iacute;odo</th>
+                                    <th style="padding: 12px 16px; font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: .03em;">Estado</th>
+                                    <th style="padding: 12px 16px; font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: .03em;" class="mobile">Usuario Responsable</th>
+                                    <th style="padding: 12px 16px; font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: .03em;" class="mobile">Fecha de Carga</th>
+                                    <th style="padding: 12px 16px; font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: .03em;" class="mobile">Registros</th>
+                                    <th style="padding: 12px 16px; font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: .03em;">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody style="font-size: 13px;">
+                                @if (Model != null && Model.listaArchivos != null)
                                 {
-                                    <tr style="border-bottom: 1px solid #f1f5f9; transition: background 0.15s ease;">
-                                        <td style="padding: 12px 16px; vertical-align: middle;">
-                                            @Html.HiddenFor(modelItem => item.ID_ENCABEZADO)
-                                            <div style="display: flex; align-items: center; gap: 8px;">
-                                                <i class="fa fa-file-code-o" style="color: #0284c7; font-size: 15px;"></i>
-                                                <span style="font-weight: 600; color: #1e293b;">@Html.DisplayFor(modelItem => item.NOMBRE_XML)</span>
-                                            </div>
-                                        </td>
-                                        <td class="mobile" style="padding: 12px 16px; vertical-align: middle; color: #64748b;">
-                                            @Html.DisplayFor(modelItem => item.PERIODO)
-                                        </td>
-                                        <td style="padding: 12px 16px; vertical-align: middle;">
-                                            @if (item.XML_ID == FGA.Utility.Utilitarios.archivoCargado)
-                                            {
-                                                <span class="file-status-badge status-processing"><i class="fa fa-refresh fa-spin"></i> Procesando</span>
-                                            }
-                                            else if (item.XML_ID == FGA.Utility.Utilitarios.archivoAceptado)
-                                            {
-                                                <span class="file-status-badge status-success"><i class="fa fa-check-circle"></i> Aceptado</span>
-                                            }
-                                            else if (item.XML_ID == FGA.Utility.Utilitarios.archivoPendiente)
-                                            {
-                                                <span class="file-status-badge status-pending"><i class="fa fa-clock-o"></i> Pendiente</span>
-                                            }
-                                            else
-                                            {
-                                                <span class="file-status-badge status-error"><i class="fa fa-times-circle"></i> Con Errores</span>
-                                            }
-                                        </td>
-                                        <td class="mobile" style="padding: 12px 16px; vertical-align: middle; color: #475569; font-weight: 500;">
-                                            @Html.DisplayFor(modelItem => item.USUARIO)
-                                        </td>
-                                        <td class="mobile" style="padding: 12px 16px; vertical-align: middle; color: #64748b;">
-                                            @if (item.XML_ID == FGA.Utility.Utilitarios.archivoPendiente)
-                                            {
-                                                <span style="color: #94a3b8; font-style: italic;">Pendiente</span>
-                                            }
-                                            else
-                                            {
-                                                @Html.DisplayFor(modelItem => item.FECHACARGA)
-                                            }
-                                        </td>
-                                        <td class="mobile" style="padding: 12px 16px; vertical-align: middle; font-weight: 600; color: #334155;">
-                                            @if (item.XML_ID == FGA.Utility.Utilitarios.archivoAceptado && item.CANTIDAD == 0)
-                                            {
-                                                <span style="color: #94a3b8; font-weight: 400;">No Aplica</span>
-                                            }
-                                            else
-                                            {
-                                                @Html.DisplayFor(modelItem => item.CANTIDAD)
-                                            }
-                                        </td>
-                                        <td style="padding: 12px 16px; vertical-align: middle;">
-                                            @if (item.XML_ID != FGA.Utility.Utilitarios.archivoPendiente && item.XML_ID != FGA.Utility.Utilitarios.archivoCargado)
-                                            {
-                                                <div style="display: inline-flex; align-items: center; gap: 6px; justify-content: center;">
-                                                    @if (Session["IsFGA"] != null && Session["IsFGA"].ToString() == "1" && item.XML_ID == FGA.Utility.Utilitarios.archivoAceptado)
-                                                    {
-                                                        <a href="@Url.Action("Eliminar", "Cierre", new { id = item.ID_ENCABEZADO })" class="btn btn-xs btn-danger" style="border-radius: 6px; padding: 4px 10px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">
-                                                            <i class="fa fa-trash"></i> Borrar
-                                                        </a>
-                                                    }
-                                                    @if (Session["IsFGA"] != null && Session["IsFGA"].ToString() == "1" && item.XML_ID != FGA.Utility.Utilitarios.archivoAceptado)
-                                                    {
-                                                        <a href="@Url.Action("AceptarArchivo", "Cierre", new { id = item.ID_ENCABEZADO })" class="btn btn-xs btn-success" style="border-radius: 6px; padding: 4px 10px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">
-                                                            <i class="fa fa-check"></i> Aceptar
-                                                        </a>
-                                                    }
-                                                    @if (item.XML_ID == FGA.Utility.Utilitarios.archivoErrores)
-                                                    {
-                                                        <a href="@Url.Action("Details", "Cierre", new { id = item.ID_ENCABEZADO })" class="btn btn-xs btn-danger" style="border-radius: 6px; padding: 4px 10px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">
-                                                            <i class="fa fa-exclamation-triangle"></i> Ver Errores
-                                                        </a>
-                                                    }
+                                    foreach (var item in Model.listaArchivos)
+                                    {
+                                        <tr style="border-bottom: 1px solid #f1f5f9; transition: background 0.15s ease;">
+                                            <td style="padding: 12px 16px; vertical-align: middle;">
+                                                @Html.HiddenFor(modelItem => item.ID_ENCABEZADO)
+                                                <div style="display: flex; align-items: center; gap: 8px;">
+                                                    <i class="fa fa-file-code-o" style="color: #0284c7; font-size: 15px;"></i>
+                                                    <span style="font-weight: 600; color: #1e293b;">@Html.DisplayFor(modelItem => item.NOMBRE_XML)</span>
                                                 </div>
-                                            }
-                                        </td>
-                                    </tr>
+                                            </td>
+                                            <td class="mobile" style="padding: 12px 16px; vertical-align: middle; color: #64748b;">
+                                                @Html.DisplayFor(modelItem => item.PERIODO)
+                                            </td>
+                                            <td style="padding: 12px 16px; vertical-align: middle;">
+                                                @if (item.XML_ID == FGA.Utility.Utilitarios.archivoCargado)
+                                                {
+                                                    <span class="file-status-badge status-processing"><i class="fa fa-refresh fa-spin"></i> Procesando</span>
+                                                }
+                                                else if (item.XML_ID == FGA.Utility.Utilitarios.archivoAceptado)
+                                                {
+                                                    <span class="file-status-badge status-success"><i class="fa fa-check-circle"></i> Aceptado</span>
+                                                }
+                                                else if (item.XML_ID == FGA.Utility.Utilitarios.archivoPendiente)
+                                                {
+                                                    <span class="file-status-badge status-pending"><i class="fa fa-clock-o"></i> Pendiente</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="file-status-badge status-error" style="background: #ffedd5; color: #c2410c; border: 1px solid #fed7aa;"><i class="fa fa-times-circle"></i> Con Errores</span>
+                                                }
+                                            </td>
+                                            <td class="mobile" style="padding: 12px 16px; vertical-align: middle; color: #475569; font-weight: 500;">
+                                                @Html.DisplayFor(modelItem => item.USUARIO)
+                                            </td>
+                                            <td class="mobile" style="padding: 12px 16px; vertical-align: middle; color: #64748b;">
+                                                @if (item.XML_ID == FGA.Utility.Utilitarios.archivoPendiente)
+                                                {
+                                                    <span style="color: #94a3b8; font-style: italic;">Pendiente</span>
+                                                }
+                                                else
+                                                {
+                                                    @Html.DisplayFor(modelItem => item.FECHACARGA)
+                                                }
+                                            </td>
+                                            <td class="mobile" style="padding: 12px 16px; vertical-align: middle; font-weight: 600; color: #334155;">
+                                                @if (item.XML_ID == FGA.Utility.Utilitarios.archivoAceptado && item.CANTIDAD == 0)
+                                                {
+                                                    <span style="color: #94a3b8; font-weight: 400;">No Aplica</span>
+                                                }
+                                                else
+                                                {
+                                                    @Html.DisplayFor(modelItem => item.CANTIDAD)
+                                                }
+                                            </td>
+                                            <td style="padding: 12px 16px; vertical-align: middle;">
+                                                @if (item.XML_ID != FGA.Utility.Utilitarios.archivoPendiente && item.XML_ID != FGA.Utility.Utilitarios.archivoCargado)
+                                                {
+                                                    <div style="display: inline-flex; align-items: center; gap: 6px; justify-content: center;">
+                                                        @if (Session["IsFGA"] != null && Session["IsFGA"].ToString() == "1" && item.XML_ID == FGA.Utility.Utilitarios.archivoAceptado)
+                                                        {
+                                                            <a href="@Url.Action("Eliminar", "Cierre", new { id = item.ID_ENCABEZADO })" class="btn btn-xs btn-default" style="border-radius: 6px; padding: 4px 10px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; color: #dc2626; border-color: #fecaca;">
+                                                                <i class="fa fa-trash"></i> Borrar
+                                                            </a>
+                                                        }
+                                                        @if (Session["IsFGA"] != null && Session["IsFGA"].ToString() == "1" && item.XML_ID != FGA.Utility.Utilitarios.archivoAceptado)
+                                                        {
+                                                            <a href="@Url.Action("AceptarArchivo", "Cierre", new { id = item.ID_ENCABEZADO })" class="btn btn-xs btn-success" style="border-radius: 6px; padding: 4px 10px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">
+                                                                <i class="fa fa-check"></i> Aceptar
+                                                            </a>
+                                                        }
+                                                        @if (item.XML_ID == FGA.Utility.Utilitarios.archivoErrores)
+                                                        {
+                                                            <a href="@Url.Action("Details", "Cierre", new { id = item.ID_ENCABEZADO })" class="btn btn-xs btn-default" style="border-radius: 6px; padding: 4px 10px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; color: #c2410c; border-color: #fed7aa; background: #fff7ed;">
+                                                                <i class="fa fa-exclamation-triangle"></i> Ver Errores
+                                                            </a>
+                                                        }
+                                                    </div>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
                                 }
-                            }
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -225,5 +320,11 @@
             setTimeout(posicionarCalendario, 60);
             setTimeout(posicionarCalendario, 180);
         });
+
+        // Soportar hash directo a pestaña
+        var urlHash = window.location.hash;
+        if (urlHash) {
+            $('.cierre-tab-nav a[href="' + urlHash + '"]').tab('show');
+        }
     });
 </script>

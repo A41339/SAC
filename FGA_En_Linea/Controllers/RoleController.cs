@@ -220,8 +220,6 @@ namespace FGA.Controllers
                 allMenus = menuClient.GetAll();
             }
 
-            // Excluir opción de autoevaluación si aplica
-            allMenus = allMenus.Where(m => m.Id != Utilitarios.opcionEvaluacion).ToArray();
 
             // Obtener permisos configurados para este rol
             FGA.Models.MenuPermission[] rolePerms;

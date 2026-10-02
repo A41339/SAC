@@ -58,6 +58,20 @@ namespace FGA.Controllers
                 if (Session["Periodo2"] is null)
                     Session["Periodo2"] = fechaCierre.AddMonths(-1).ToShortDateString();
 
+                if (Session["Periodo3"] != null && Session["Periodo2"] != null)
+                {
+                    try
+                    {
+                        DateTime f3 = Utility.Utilitarios.ConvertirAFecha(Session["Periodo3"].ToString());
+                        DateTime f2 = Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString());
+                        if (f3 > f2)
+                        {
+                            Session["Periodo2"] = f3.ToShortDateString();
+                        }
+                    }
+                    catch { }
+                }
+
                 DateTime p2 = Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString());
                 string tipoComp = Session["TipoComparacion"]?.ToString() ?? "Interanual";
                 if (Session["TipoComparacion"] is null)
@@ -172,8 +186,17 @@ namespace FGA.Controllers
                             CheckAccessOfPageAction(context, actionName, checkControllerActionRoleUserId);
                         else
                         {
-                            if (checkControllerActionRoleUserId.IsRead == false || checkControllerActionRoleUserId.IsDelete == false || checkControllerActionRoleUserId.IsCreate == false || checkControllerActionRoleUserId.IsUpdate == false)//if userid !=null && Check Crud
-                                UnAuthoRedirect(context);
+                            bool isReadRequest = context.HttpContext.Request.HttpMethod.Equals("GET", StringComparison.OrdinalIgnoreCase);
+                            if (isReadRequest)
+                            {
+                                if (checkControllerActionRoleUserId.IsRead == false)
+                                    UnAuthoRedirect(context);
+                            }
+                            else
+                            {
+                                if (checkControllerActionRoleUserId.IsRead == false || checkControllerActionRoleUserId.IsDelete == false || checkControllerActionRoleUserId.IsCreate == false || checkControllerActionRoleUserId.IsUpdate == false)//if userid !=null && Check Crud
+                                    UnAuthoRedirect(context);
+                            }
                         }
                     }
                     else
@@ -185,8 +208,17 @@ namespace FGA.Controllers
                                 CheckAccessOfPageAction(context, actionName, checkControllerActionRole);
                             else
                             {
-                                if (checkControllerActionRole.IsRead == false || checkControllerActionRole.IsDelete == false || checkControllerActionRole.IsCreate == false || checkControllerActionRole.IsUpdate == false)//if userid !=null && Check Crud
-                                    UnAuthoRedirect(context);
+                                bool isReadRequest = context.HttpContext.Request.HttpMethod.Equals("GET", StringComparison.OrdinalIgnoreCase);
+                                if (isReadRequest)
+                                {
+                                    if (checkControllerActionRole.IsRead == false)
+                                        UnAuthoRedirect(context);
+                                }
+                                else
+                                {
+                                    if (checkControllerActionRole.IsRead == false || checkControllerActionRole.IsDelete == false || checkControllerActionRole.IsCreate == false || checkControllerActionRole.IsUpdate == false)//if userid !=null && Check Crud
+                                        UnAuthoRedirect(context);
+                                }
                             }
                         }
                         else
@@ -207,21 +239,16 @@ namespace FGA.Controllers
             switch (actionName)
             {
                 case "create":
-                    ActionIsCrud = true;
-                    break;
                 case "index":
-                    ActionIsCrud = true;
-                    break;
                 case "details":
-                    ActionIsCrud = true;
-                    break;
                 case "edit":
-                    ActionIsCrud = true;
-                    break;
                 case "multiviewindex":
-                    ActionIsCrud = true;
-                    break;
                 case "delete":
+                case "consulta":
+                case "buscarinformes":
+                case "informe":
+                case "notificacion":
+                case "requisites":
                     ActionIsCrud = true;
                     break;
                 default:
@@ -241,17 +268,16 @@ namespace FGA.Controllers
                         UnAuthoRedirect(context);
                     break;
                 case "index":
-                    if (checkRoleUrlCrud.IsRead == false)//Check Crud
-                        UnAuthoRedirect(context);
-                    break;
                 case "details":
+                case "consulta":
+                case "buscarinformes":
+                case "informe":
+                case "notificacion":
+                case "requisites":
                     if (checkRoleUrlCrud.IsRead == false)//Check Crud
                         UnAuthoRedirect(context);
                     break;
                 case "edit":
-                    if (checkRoleUrlCrud.IsUpdate == false)//Check Crud
-                        UnAuthoRedirect(context);
-                    break;
                 case "multiviewindex":
                     if (checkRoleUrlCrud.IsUpdate == false)//Check Crud
                         UnAuthoRedirect(context);

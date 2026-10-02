@@ -121,7 +121,7 @@
         <div>
             <h1 class="eval-header-title">
                 <i class="fa fa-clipboard" style="color: #0284c7;"></i>
-                Mantenimiento de Evaluaciones
+                Configuraci&oacute;n de Preguntas SBR
             </h1>
             <p class="eval-header-subtitle">
                 Gesti&oacute;n de categor&iacute;as, formularios y par&aacute;metros de evaluaci&oacute;n institucional
@@ -136,8 +136,8 @@
 
     <ol class="breadcrumb">
         <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
-        <li><a href="@Url.Action("Index", "Modulo", new { modulo = "Evaluacion/Index" })" class="breadcrumb-parent-pill" title="Volver al menú de Mantenimientos"><i class="fa fa-wrench" style="margin-right: 4px;"></i> Mantenimientos</a></li>
-        <li class="active">Evaluaciones</li>
+        <li><a href="@Url.Action("Index", "Modulo", new { modulo = "Evaluacion/Index" })" class="breadcrumb-parent-pill" title="Volver al menú de Administración"><i class="fa fa-wrench" style="margin-right: 4px;"></i> Administraci&oacute;n</a></li>
+        <li class="active">Configuraci&oacute;n de Preguntas SBR</li>
     </ol>
 </section>
 
@@ -158,8 +158,9 @@
                     <table id="tbEvaluacion" class="table modern-data-table" style="width: 100%;">
                         <thead>
                             <tr>
-                                <th style="width: 120px;">Acci&oacute;n</th>
+                                <th style="width: 110px; text-align: center;">Acci&oacute;n</th>
                                 <th class="hidden">C&oacute;digo</th>
+                                <th style="width: 80px; text-align: center;">Imagen</th>
                                 <th>T&iacute;tulo</th>
                                 <th style="width: 110px; text-align: center;">Opciones</th>
                             </tr>
@@ -465,6 +466,21 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="form-group-cat" style="margin-top: 14px; margin-bottom: 0;">
+                        <label for="categoriaFile" style="font-weight: 600; color: #1e293b; display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
+                            <i class="fa fa-image" style="color: #0284c7;"></i>
+                            Imagen / Logo (.jpg, .png)
+                        </label>
+                        <input type="file" id="categoriaFile" name="file" accept="image/jpeg,image/png" class="form-control" style="padding: 6px; font-size: 13px;" />
+                        <div id="previewImagenContainer" style="margin-top: 10px; display: none; align-items: center; gap: 14px; background: #f8fafc; padding: 10px 14px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                            <img id="previewImagen" src="" alt="Vista previa" style="max-height: 70px; max-width: 100px; border-radius: 6px; border: 1px solid #cbd5e1; box-shadow: 0 2px 4px rgba(0,0,0,0.06); object-fit: contain; background: #ffffff;" />
+                            <div>
+                                <div id="previewImagenLabel" style="font-size: 13px; font-weight: 600; color: #1e293b;">Imagen actual</div>
+                                <div style="font-size: 11px; color: #64748b;">Formatos admitidos: JPG o PNG.</div>
+                            </div>
+                        </div>
+                    </div>
                 </form>
             </div>
             <div class="modal-footer" style="background: #ffffff; border-top: 1px solid #e2e8f0; padding: 12px 22px; display: flex; justify-content: flex-end; align-items: center; gap: 8px;">
@@ -720,7 +736,9 @@
             ],
             columnDefs: [
                 { targets: [1], visible: false },
-                { targets: [3], width: 110 }
+                { targets: [0], width: 110, className: "text-center", orderable: false },
+                { targets: [2], width: 80, className: "text-center", orderable: false },
+                { targets: [4], width: 110, className: "text-center", orderable: false }
             ],
             "pageLength": 10,
             "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "Todos"]],
@@ -732,12 +750,29 @@
                         buttons += '<i class="fa fa-cog" style="margin-right:4px;"></i> Acci&oacute;n <span class="caret"></span></button>';
                         buttons += '<ul class="dropdown-menu pull-left" role="menu" style="border-radius:8px; box-shadow:0 8px 24px rgba(0,0,0,0.12); border:1px solid #e2e8f0; min-width:140px; padding:4px 0;">';
                         buttons += '<li><a href="javascript:void(0);" class="btn-edit-categoria" data-id="' + row[0] + '" style="padding:7px 14px; font-size:13px; color:#1e293b; display:flex; align-items:center; gap:8px;"><i class="fa fa-edit" style="color:#0284c7; width:16px;"></i> Modificar</a></li>';
-                        buttons += '<li><a href="javascript:void(0);" class="btn-delete-categoria" data-id="' + row[0] + '" data-nombre="' + escape(row[2]) + '" style="padding:7px 14px; font-size:13px; color:#ef4444; display:flex; align-items:center; gap:8px;"><i class="fa fa-trash" style="color:#ef4444; width:16px;"></i> Borrar</a></li>';
+                        buttons += '<li><a href="javascript:void(0);" class="btn-delete-categoria" data-id="' + row[0] + '" data-nombre="' + escape(row[3]) + '" style="padding:7px 14px; font-size:13px; color:#ef4444; display:flex; align-items:center; gap:8px;"><i class="fa fa-trash" style="color:#ef4444; width:16px;"></i> Borrar</a></li>';
                         buttons += '</ul></div></div>';
                         return buttons;
                     }
                 },
-                {}, {}, {}
+                {},
+                {
+                    "mRender": function (oObj, type, row) {
+                        var imgName = row[2] || 'Logo';
+                        var remoteSrc = 'https://www.ffc.co.cr/img/secciones/categoria/' + encodeURIComponent(imgName) + '.jpg';
+                        var fallbackSrc = '@Url.Content("~/Content/images/FFC.jpg")';
+                        return '<div style="display:flex; justify-content:center; align-items:center;">'
+                            + '<img src="' + remoteSrc + '" onerror="this.onerror=null; this.src=\'' + fallbackSrc + '\';" '
+                            + 'alt="Categor&iacute;a" style="width:48px; height:48px; object-fit:contain; border-radius:8px; border:1px solid #e2e8f0; background:#f8fafc; padding:3px; box-shadow:0 1px 3px rgba(0,0,0,0.08);" />'
+                            + '</div>';
+                    }
+                },
+                {
+                    "mRender": function (oObj, type, row) {
+                        return '<span style="font-weight:600; color:#1e293b; font-size:13.5px;">' + (row[3] || '') + '</span>';
+                    }
+                },
+                {}
             ]
         });
 
@@ -753,6 +788,9 @@
             $('#categoriaPuntosB').val('0');
             $('#categoriaPuntosC').val('0');
             $('#categoriaPuntosD').val('0');
+            $('#categoriaFile').val('');
+            $('#previewImagenContainer').hide();
+            $('#previewImagen').attr('src', '');
             $('#modalCategoriaError').hide();
             $('#modalCategoria').modal('show');
             setTimeout(function () { $('#categoriaTitulo').focus(); }, 400);
@@ -777,6 +815,19 @@
                     $('#categoriaPuntosB').val(c.puntosOpcionB != null ? c.puntosOpcionB : '0');
                     $('#categoriaPuntosC').val(c.puntosOpcionC != null ? c.puntosOpcionC : '0');
                     $('#categoriaPuntosD').val(c.puntosOpcionD != null ? c.puntosOpcionD : '0');
+                    $('#categoriaFile').val('');
+
+                    if (c.imagen) {
+                        var remoteSrc = 'https://www.ffc.co.cr/img/secciones/categoria/' + c.imagen + '.jpg';
+                        var fallbackSrc = '@Url.Content("~/Content/images/FFC.jpg")';
+                        $('#previewImagen').attr('src', remoteSrc).off('error').on('error', function () {
+                            $(this).attr('src', fallbackSrc);
+                        });
+                        $('#previewImagenLabel').text('Imagen actual: ' + c.imagen + '.jpg');
+                        $('#previewImagenContainer').css('display', 'flex');
+                    } else {
+                        $('#previewImagenContainer').hide();
+                    }
 
                     $('#modalCategoria').modal('show');
                     setTimeout(function () { $('#categoriaTitulo').focus(); }, 400);
@@ -786,6 +837,20 @@
             }).fail(function () {
                 window.mostrarToastError('Error al consultar la categoría en el servidor.');
             });
+        });
+
+        // ── Preview de imagen al seleccionar archivo ────────────────
+        $('#categoriaFile').on('change', function () {
+            var input = this;
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#previewImagen').attr('src', e.target.result);
+                    $('#previewImagenLabel').text('Nueva imagen: ' + input.files[0].name);
+                    $('#previewImagenContainer').css('display', 'flex');
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
         });
 
         // ── Guardar Categoría (Crear / Editar) ─────────────────────

@@ -1,4 +1,4 @@
-﻿-- ===================================================================================================
+-- ===================================================================================================
 -- SCRIPT DE RESTRUCTURACIÓN INTEGRAL DE MENÚ Y PERMISOS DEL SISTEMA
 -- Base de Datos: FGA / SAC
 -- Características: Idempotente, Transaccional, No destructivo (Preserva opciones existentes sin pérdidas)
@@ -19,8 +19,9 @@ BEGIN TRY
 
     PRINT '>> [2/4] Sincronizando catálogo de Menú (dbo.Menu)...';
 
-    -- Habilitar IDENTITY_INSERT para permitir preservar explícitamente los IDs definidos en el catálogo
-    SET IDENTITY_INSERT dbo.Menu ON;
+    -- Habilitar IDENTITY_INSERT solo si la tabla tiene columna IDENTITY
+    IF OBJECTPROPERTY(OBJECT_ID('dbo.Menu'), 'TableHasIdentity') = 1
+        SET IDENTITY_INSERT dbo.Menu ON;
     -- Inserción / Actualización de ítems de Menú
     -- Se utiliza MERGE / IF EXISTS para actualizar registros existentes o insertarlos con su ID exacto.
 
@@ -744,12 +745,14 @@ BEGIN TRY
         VALUES (13002, N'Estructura de Fondeo', N'EstructuraFondeo/Index', 1500, 1, N'<i class="fa fa-database"></i>', N'Analice la composición de las fuentes de fondeo de la entidad.');
     END
 
-    SET IDENTITY_INSERT dbo.Menu OFF;
+    IF OBJECTPROPERTY(OBJECT_ID('dbo.Menu'), 'TableHasIdentity') = 1
+        SET IDENTITY_INSERT dbo.Menu OFF;
     PRINT '   -> Menús procesados exitosamente (' + CAST(60 AS VARCHAR) + ' registros).';
 
     PRINT '>> [3/4] Sincronizando matriz de Permisos por Rol (dbo.MenuPermission)...';
 
-    SET IDENTITY_INSERT dbo.MenuPermission ON;
+    IF OBJECTPROPERTY(OBJECT_ID('dbo.MenuPermission'), 'TableHasIdentity') = 1
+        SET IDENTITY_INSERT dbo.MenuPermission ON;
     -- Inserción / Actualización de permisos de rol
 
     IF EXISTS (SELECT 1 FROM dbo.MenuPermission WHERE Id = 1298)
@@ -3944,7 +3947,8 @@ BEGIN TRY
         VALUES (1920, 13002, 7, 1, 1, 1, 1, 1);
     END
 
-    SET IDENTITY_INSERT dbo.MenuPermission OFF;
+    IF OBJECTPROPERTY(OBJECT_ID('dbo.MenuPermission'), 'TableHasIdentity') = 1
+        SET IDENTITY_INSERT dbo.MenuPermission OFF;
     PRINT '   -> Permisos procesados exitosamente (' + CAST(266 AS VARCHAR) + ' registros).';
 
     PRINT '>> [4/4] Reactivando y validando integridad de constraints...';

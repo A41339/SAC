@@ -137,7 +137,7 @@
                     <button class="action next btn btn-primary" style="border-radius: 6px; font-weight: 600; background: #0284c7; border-color: #0284c7;" @(Model.evaluaciones[0].OpcionSeleccionada == 0 ? "disabled" : "")>
                         Siguiente <i class="fa fa-chevron-right"></i>
                     </button>
-                    <button class="action submit btn btn-success" style="display: none; border-radius: 6px; font-weight: 600; background: #10b981; border-color: #10b981;">
+                    <button class="action submit btn btn-primary" style="display: none; border-radius: 6px; font-weight: 600; background: #2F5597; border-color: #2F5597;">
                         <i class="fa fa-paper-plane"></i> Enviar
                     </button>
                 }
@@ -162,7 +162,7 @@
     }
 
     $('.action.submit').click(function () {
-        if (confirm("ÃÂ¿EstÃÂ¡s seguro de enviar la evaluaciÃÂ³n? No podrÃÂ¡s ingresar nuevamente.")) {
+        if (confirm("\u00bfEst\u00e1 seguro de enviar la evaluaci\u00f3n? No podr\u00e1 ingresar nuevamente.")) {
             var evalIdCategoriaId = @Model.evaluaciones[0].IdCategoria;
             var evalIdSubCategoriaId = @Model.evaluaciones[0].IdSubCategoria;
             $.ajax({
@@ -176,6 +176,9 @@
                     $('.action.back').prop('disabled', true);
                     $('#alert').addClass('hidden');
                     $('#success').removeClass('hidden');
+                    if (window.mostrarToast) {
+                        mostrarToast('Evaluación enviada con éxito. Se ha enviado la notificación por correo.', 'success');
+                    }
                 }
             });
         }

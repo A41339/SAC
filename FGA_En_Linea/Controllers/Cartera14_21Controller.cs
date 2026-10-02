@@ -30,21 +30,22 @@ namespace FGA.Controllers
             if (Session["Periodo2"] is null)
                 Session["Periodo2"] = fechaEntidad.ToShortDateString();
 
-            Session["TipoReporte"] = enum_Grafico14_21.TipoDeSegmento;
+            Session["TipoReporte"] = 101;
 
             var tiposGrafico = new List<Rpt_Graph>
             {
-                new Rpt_Graph { Id = 1, Nombre = "Tipo de segmento" },
+                new Rpt_Graph { Id = 101, Nombre = "Composición de mora" },
+                new Rpt_Graph { Id = 102, Nombre = "Composición de mora agrupada" },
                 new Rpt_Graph { Id = 2, Nombre = "Tipo de categoría riesgo" },
-                new Rpt_Graph { Id = 3, Nombre = "Saldo por etapa del crédito" },
-                new Rpt_Graph { Id = 4, Nombre = "Cantidad de operaciones por etapa" },
-                new Rpt_Graph { Id = 5, Nombre = "Saldo Pérdida Esperada vrs EAD" },
                 new Rpt_Graph { Id = 6, Nombre = "Variación mensual pérdida esperada vrs saldo estimaciones" },
+                new Rpt_Graph { Id = 3, Nombre = "Saldo por etapa del crédito" },
+                new Rpt_Graph { Id = 5, Nombre = "Saldo Pérdida Esperada vrs EAD" },
                 new Rpt_Graph { Id = 7, Nombre = "Pérdida esperada por tipo de segmento" },
-                new Rpt_Graph { Id = 8, Nombre = "Pérdida esperada por categoría de riesgo" }
+                new Rpt_Graph { Id = 8, Nombre = "Pérdida esperada por categoría de riesgo" },
+                new Rpt_Graph { Id = 4, Nombre = "Cantidad de operaciones por etapa" }
             };
 
-            ViewBag.Grafico = new SelectList(tiposGrafico.OrderByDescending(o => o.Nombre), "Id", "Nombre", Session["TipoReporte"].ToString());
+            ViewBag.Grafico = new SelectList(tiposGrafico, "Id", "Nombre", Session["TipoReporte"].ToString());
             return View();
         }
 
@@ -60,10 +61,164 @@ namespace FGA.Controllers
             Load();
             FGA.Model.Grafico model = new Grafico();
 
-            HighChart.ConfigChart(ref gp, "Graph", null, 720);
+            HighChart.ConfigChart(ref gp, "Graph", null, 420, 60);
             HighChart.ConfigChart(ref pGp, "pGraph", null);
 
-            if ((enum_Grafico14_21)Grafico == Utility.Utilitarios.enum_Grafico14_21.TipoDeSegmento)
+            if (Grafico == 101)
+            {
+                var tak = sp.FGA_Consultar_Grafico_Mora_Cartera(Entidades, PeriodoI, PeriodoF).ToList();
+                if (tak.Count() > 0)
+                {
+                    int numPeriodos = tak.Count();
+                    string[] fechas = new string[numPeriodos];
+                    object[] MoraMayor90Dias = new object[numPeriodos];
+
+                    List<Serie> listaSeries = new List<Serie>();
+                    listaSeries.Add(new Serie(numPeriodos, "Al día"));
+                    listaSeries.Add(new Serie(numPeriodos, "1 - 30 días"));
+                    listaSeries.Add(new Serie(numPeriodos, "31 - 60 días"));
+                    listaSeries.Add(new Serie(numPeriodos, "61 - 90 días"));
+
+                    for (int j = 0; j < numPeriodos; j++)
+                    {
+                        fechas[j] = tak[j].PERIODO.Value.Month.ToString() + "-" + tak[j].PERIODO.Value.Year.ToString();
+                        MoraMayor90Dias[j] = tak[j].HASTA180 + tak[j].MAS180 + tak[j].CJ;
+                        listaSeries[0].valores[j] = tak[j].ALDIA;
+                        listaSeries[1].valores[j] = tak[j].HASTA30;
+                        listaSeries[2].valores[j] = tak[j].HASTA60;
+                        listaSeries[3].valores[j] = tak[j].HASTA90;
+                    }
+
+                    gp.SetXAxis(HighChart.GetXAxis(fechas));
+                    pGp.SetXAxis(HighChart.GetXAxis(fechas));
+
+                    List<YAxis> yAsis = new List<YAxis>()
+                    {
+                        new YAxis()
+                        {
+                            Id = "Concentracion",
+                            GridLineWidth = 0,
+                            Title = new YAxisTitle()
+                            {
+                                Text = "Concentración",
+                                Style = "fontSize: '12px', color: 'black'",
+                            },
+                            Labels = new YAxisLabels()
+                            {
+                                Formatter = "formatPercent",
+                                Style = "fontSize: '12px', color: 'black'",
+                            },
+                            Opposite = true
+                        },
+                        new YAxis()
+                        {
+                            Id = "Mayor90Dias",
+                            GridLineWidth = 0,
+                            Title = new YAxisTitle()
+                            {
+                                Text = "Mora mayor a 90 días",
+                                Style = "fontSize: '0px', color: 'black'",
+                            },
+                            Labels = new YAxisLabels()
+                            {
+                                Style = "fontSize: '0px', color: 'black'",
+                            },
+                        }
+                    };
+
+                    gp.SetYAxis(yAsis.ToArray());
+                    pGp.SetYAxis(yAsis.ToArray());
+
+                    gp.SetPlotOptions(HighChart.getLabelStackingNormal());
+                    pGp.SetPlotOptions(HighChart.getLabelStackingNormal());
+
+                    Series[] series = new Series[listaSeries.Count() + 1];
+                    Series serie;
+                    int i = 0;
+
+                    foreach (Serie detalle in listaSeries.OrderByDescending(o => o.total))
+                    {
+                        serie = new Series
+                        {
+                            Type = ChartTypes.Column,
+                            Name = detalle.nombre,
+                            Data = new Data(detalle.valores),
+                            Color = HighChart.GetColor(i),
+                            YAxis = "Concentracion",
+                        };
+
+                        series[i] = serie;
+                        i += 1;
+                    }
+
+                    serie = new Series
+                    {
+                        Type = ChartTypes.Line,
+                        Name = "Mora mayor a 90 días",
+                        Data = new Data(MoraMayor90Dias),
+                        Color = HighChart.GetColor(1),
+                        YAxis = "Mayor90Dias",
+                        PlotOptionsLine = HighChart.getLinePercent()
+                    };
+
+                    series[i] = serie;
+                    gp.SetSeries(series);
+                    pGp.SetSeries(series);
+                }
+            }
+            else if (Grafico == 102)
+            {
+                var tak = sp.FGA_Consultar_Grafico_Mora_Cartera(Entidades, PeriodoI, PeriodoF).ToList();
+                if (tak.Count() > 0)
+                {
+                    int numPeriodos = tak.Count();
+                    string[] fechas = new string[numPeriodos];
+
+                    List<Serie> listaSeries = new List<Serie>();
+                    listaSeries.Add(new Serie(numPeriodos, "Al día"));
+                    listaSeries.Add(new Serie(numPeriodos, "Mora Temprana"));
+                    listaSeries.Add(new Serie(numPeriodos, "Mora mayor a 90 días"));
+
+                    for (int j = 0; j < numPeriodos; j++)
+                    {
+                        fechas[j] = tak[j].PERIODO.Value.Month.ToString() + "-" + tak[j].PERIODO.Value.Year.ToString();
+                        listaSeries[0].valores[j] = tak[j].ALDIA;
+                        listaSeries[1].valores[j] = tak[j].HASTA30 + tak[j].HASTA60 + tak[j].HASTA90;
+                        listaSeries[2].valores[j] = tak[j].HASTA180 + tak[j].MAS180 + tak[j].CJ;
+                    }
+
+                    gp.SetXAxis(HighChart.GetXAxis(fechas));
+                    pGp.SetXAxis(HighChart.GetXAxis(fechas));
+
+                    gp.SetYAxis(HighChart.GetYAxis(null, null, "formatPercent", AxisTypes.Logarithmic));
+                    pGp.SetYAxis(HighChart.GetYAxis(null, null, "formatPercent", AxisTypes.Logarithmic));
+
+                    gp.SetPlotOptions(HighChart.getLabelStackingNormal());
+                    pGp.SetPlotOptions(HighChart.getLabelStackingNormal());
+
+                    Series[] series = new Series[listaSeries.Count()];
+                    Series serie;
+                    int i = 0;
+
+                    foreach (Serie detalle in listaSeries.OrderByDescending(o => o.total))
+                    {
+                        serie = new Series
+                        {
+                            Type = ChartTypes.Column,
+                            Name = detalle.nombre,
+                            Data = new Data(detalle.valores),
+                            Color = HighChart.GetColor(i),
+                        };
+
+                        series[i] = serie;
+                        i += 1;
+                    }
+
+                    gp.SetSeries(series);
+                    pGp.SetSeries(series);
+                }
+            }
+            else if ((enum_Grafico14_21)Grafico == Utility.Utilitarios.enum_Grafico14_21.TipoDeSegmento)
             {
                 var tak = sp.FGA_Consultar_Grafico_Oper_Segmento(Entidades, PeriodoI, PeriodoF);
                 decimal porcentajeMaximo = 0, porcentajeActual = 0;
