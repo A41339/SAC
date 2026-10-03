@@ -145,9 +145,7 @@
         </div>
     }
 
-    @if (esSbr && Model.Tarjetas != null && Model.Tarjetas.Count == 1)
-    {
-        var tarjetaSBR = Model.Tarjetas[0];
+    @{
         var entidadNombre = "Entidad";
         if (Model.Entidades != null)
         {
@@ -159,109 +157,70 @@
                 entidadNombre = item.Text;
             }
         }
+    }
 
-        <!-- HUB SIMPLIFICADO: AUTOEVALUACIÓN SBR -->
-        <div class="sbr-simple-card">
-            <div class="sbr-simple-header">
-                <div class="sbr-simple-badge">
-                    <i class="fa fa-shield"></i> SUGEF 24-22 &bull; Supervisi&oacute;n Basada en Riesgos
-                </div>
-                <h2 class="sbr-simple-title">
-                    Autoevaluaci&oacute;n de Aspectos Normativos
-                </h2>
-                <p class="sbr-simple-desc">
-                    M&oacute;dulo oficial de autodiagn&oacute;stico institucional para examinar de manera confidencial los componentes evaluados por el Supervisor, anticipar brechas y optimizar la mitigaci&oacute;n de riesgos acorde con las directrices del <strong>Reglamento SUGEF 24-22</strong>.
-                </p>
-            </div>
+    <!-- SECCIÓN DE CONSULTAS DISPONIBLES EN CONTENEDOR BOX (ESTÁNDAR UNIFICADO) -->
+    <div class="hub-section-card" style="position: relative; z-index: 1;">
+        <div class="hub-section-title">
+            <div class="hub-section-bar"></div>
+            <span class="hub-section-text">@(esSbr ? "Seleccione la opción que desea consultar" : "Seleccione la consulta que desea visualizar")</span>
+        </div>
 
-            <div class="sbr-simple-body">
-                <div class="sbr-simple-info-row">
-                    <div class="sbr-simple-info-item">
-                        <i class="fa fa-university text-primary" style="color: #2F5597;"></i>
-                        <div>
-                            <span class="sbr-label">Entidad a evaluar</span>
-                            <strong class="sbr-val" id="lblSbrEntidadNombre">@entidadNombre</strong>
-                        </div>
-                    </div>
-                    <div class="sbr-simple-info-item">
-                        <i class="fa fa-list-ol text-info" style="color: #0284c7;"></i>
-                        <div>
-                            <span class="sbr-label">Estructura</span>
-                            <strong class="sbr-val">166 criterios normativos</strong>
-                        </div>
-                    </div>
-                    <div class="sbr-simple-info-item">
-                        <i class="fa fa-lock text-success" style="color: #10b981;"></i>
-                        <div>
-                            <span class="sbr-label">Seguridad</span>
-                            <strong class="sbr-val">Confidencialidad FFC</strong>
-                        </div>
-                    </div>
-                </div>
+        <!-- GRID DE TARJETAS -->
+        <div class="hub-cards-grid @(esSbr ? "sbr-cards-grid" : "")">
+            @if (Model.Tarjetas != null && Model.Tarjetas.Count > 0)
+            {
+                foreach (var tarjeta in Model.Tarjetas)
+                {
+                    <a href="@tarjeta.Url" class="hub-card" style="--card-color: @tarjeta.ColorIcono; --card-bg: @tarjeta.ColorFondoIcono;" draggable="false">
+                        <div class="hub-card-accent"></div>
+                        <i class="@tarjeta.Icono hub-card-watermark"></i>
 
-                <div class="sbr-simple-action-area">
-                    <a href="@tarjetaSBR.Url" class="btn btn-sbr-action hub-card" id="btnSbrHeroCta">
-                        <i class="fa fa-pencil-square-o"></i>
-                        <span>Ingresar a la Autoevaluaci&oacute;n</span>
-                        <i class="fa fa-arrow-right"></i>
+                        <div class="hub-card-top">
+                            <div class="hub-card-icon-badge">
+                                <i class="@tarjeta.Icono"></i>
+                            </div>
+                            <div class="hub-card-title-area">
+                                <div class="hub-card-title">@tarjeta.Titulo</div>
+                                @if (tarjeta.EsSubModulo)
+                                {
+                                    <span class="hub-card-subbadge">
+                                        <i class="fa fa-folder-open-o"></i> Subm&oacute;dulo@(tarjeta.CantidadOpciones > 0 ? " (" + tarjeta.CantidadOpciones + ")" : "")
+                                    </span>
+                                }
+                            </div>
+                            <div class="hub-card-action-btn">
+                                <i class="fa fa-chevron-right"></i>
+                            </div>
+                        </div>
+
+                        <div class="hub-card-body">
+                            <p class="hub-card-desc">@tarjeta.Descripcion</p>
+                            @if (esSbr)
+                            {
+                                <div class="hub-card-sbr-extra">
+                                    <span class="sbr-entidad-label">
+                                        <i class="fa fa-university"></i>
+                                        <strong id="lblSbrEntidadNombre">@entidadNombre</strong>
+                                    </span>
+                                    <span class="sbr-normativa-badge">
+                                        <i class="fa fa-shield"></i> SUGEF 24-22
+                                    </span>
+                                </div>
+                            }
+                        </div>
                     </a>
+                }
+            }
+            else
+            {
+                <div style="grid-column: 1 / -1; padding: 40px; text-align: center; background: #ffffff; border-radius: 16px; border: 1px dashed #cbd5e1; color: #64748b;">
+                    <i class="fa fa-folder-open-o" style="font-size: 38px; margin-bottom: 12px; color: #94a3b8;"></i>
+                    <p style="margin: 0; font-size: 14.5px; font-weight: 500;">No hay opciones disponibles en este m&oacute;dulo para su rol actual.</p>
                 </div>
-            </div>
+            }
         </div>
-    }
-    else
-    {
-        <!-- SECCIÓN DE CONSULTAS DISPONIBLES EN CONTENEDOR BOX (MULTITARJETAS O ESTÁNDAR) -->
-        <div class="hub-section-card" style="position: relative; z-index: 1;">
-            <div class="hub-section-title">
-                <div class="hub-section-bar"></div>
-                <span class="hub-section-text">@(esSbr ? "Seleccione la opción que desea consultar" : "Seleccione la consulta que desea visualizar")</span>
-            </div>
-
-            <!-- GRID DE TARJETAS -->
-            <div class="hub-cards-grid @(esSbr ? "sbr-cards-grid" : "")">
-                @if (Model.Tarjetas != null && Model.Tarjetas.Count > 0)
-                {
-                    foreach (var tarjeta in Model.Tarjetas)
-                    {
-                        <a href="@tarjeta.Url" class="hub-card" style="--card-color: @tarjeta.ColorIcono; --card-bg: @tarjeta.ColorFondoIcono;" draggable="false">
-                            <div class="hub-card-accent"></div>
-                            <i class="@tarjeta.Icono hub-card-watermark"></i>
-
-                            <div class="hub-card-top">
-                                <div class="hub-card-icon-badge">
-                                    <i class="@tarjeta.Icono"></i>
-                                </div>
-                                <div class="hub-card-title-area">
-                                    <div class="hub-card-title">@tarjeta.Titulo</div>
-                                    @if (tarjeta.EsSubModulo)
-                                    {
-                                        <span class="hub-card-subbadge">
-                                            <i class="fa fa-folder-open-o"></i> Subm&oacute;dulo@(tarjeta.CantidadOpciones > 0 ? " (" + tarjeta.CantidadOpciones + ")" : "")
-                                        </span>
-                                    }
-                                </div>
-                                <div class="hub-card-action-btn">
-                                    <i class="fa fa-chevron-right"></i>
-                                </div>
-                            </div>
-
-                            <div class="hub-card-body">
-                                <p class="hub-card-desc">@tarjeta.Descripcion</p>
-                            </div>
-                        </a>
-                    }
-                }
-                else
-                {
-                    <div style="grid-column: 1 / -1; padding: 40px; text-align: center; background: #ffffff; border-radius: 16px; border: 1px dashed #cbd5e1; color: #64748b;">
-                        <i class="fa fa-folder-open-o" style="font-size: 38px; margin-bottom: 12px; color: #94a3b8;"></i>
-                        <p style="margin: 0; font-size: 14.5px; font-weight: 500;">No hay opciones disponibles en este m&oacute;dulo para su rol actual.</p>
-                    </div>
-                }
-            </div>
-        </div>
-    }
+    </div>
 
     <!-- NOTA AL PIE -->
     @if (!string.IsNullOrEmpty(Model.NotaPie) || esSbr)
