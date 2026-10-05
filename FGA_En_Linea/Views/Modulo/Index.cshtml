@@ -146,13 +146,13 @@
     }
 
     @{
-        var entidadNombre = "Entidad";
+        var entidadNombre = !string.IsNullOrWhiteSpace(Model.NomEntidad) ? Model.NomEntidad : "Entidad";
         if (Model.Entidades != null)
         {
-            var item = Model.Entidades.FirstOrDefault(x => x.Value == Model.IdEntidad)
-                    ?? Model.Entidades.FirstOrDefault(x => x.Selected)
-                    ?? Model.Entidades.FirstOrDefault();
-            if (item != null)
+            var idEnt = (Model.IdEntidad ?? "").Trim();
+            var item = Model.Entidades.FirstOrDefault(x => x.Value != null && (x.Value.Trim() == idEnt || (int.TryParse(x.Value, out int v1) && int.TryParse(idEnt, out int v2) && v1 == v2)))
+                    ?? Model.Entidades.FirstOrDefault(x => x.Selected);
+            if (item != null && !string.IsNullOrWhiteSpace(item.Text))
             {
                 entidadNombre = item.Text;
             }
@@ -236,6 +236,12 @@
 <script>
     $(function () {
         if ($('#hubEntidad').length) {
+            // Sincronizar inmediatamente al cargar la pantalla con el texto seleccionado actualmente en el combo
+            var nombreInicial = $('#hubEntidad option:selected').text();
+            if (nombreInicial && $('#lblSbrEntidadNombre').length) {
+                $('#lblSbrEntidadNombre').text(nombreInicial.trim());
+            }
+
             var urlActualizarFiltros = '@Url.Action("ActualizarFiltros", "Modulo")';
 
             function actualizarFiltrosHub(recargarFechaCierre) {

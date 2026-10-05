@@ -1227,6 +1227,20 @@ namespace FGA.Controllers
 
                 bool mostrarFiltros = (!esAdministracion && string.Equals(rootMenuUrl, "filter", StringComparison.OrdinalIgnoreCase)) || esSbr;
 
+                string idEntidadSesion = Session["IdEntidad"]?.ToString() ?? "";
+                string nomEntidadSesion = Session["NomEntidad"]?.ToString() ?? "";
+                var entidadesSelectList = ViewBag.Entidades as SelectList;
+
+                if (string.IsNullOrEmpty(nomEntidadSesion) && entidadesSelectList != null)
+                {
+                    var matching = entidadesSelectList.FirstOrDefault(x => x.Value != null && (x.Value.Trim() == idEntidadSesion.Trim() || (int.TryParse(x.Value, out int v1) && int.TryParse(idEntidadSesion, out int v2) && v1 == v2)))
+                                ?? entidadesSelectList.FirstOrDefault(x => x.Selected);
+                    if (matching != null)
+                    {
+                        nomEntidadSesion = matching.Text;
+                    }
+                }
+
                 var model = new ModuloHubViewModel
                 {
                     MenuId = rootId,
@@ -1237,10 +1251,11 @@ namespace FGA.Controllers
                     ParentMenuTitulo = parentMenuTitulo,
                     MenuURL = rootMenuUrl,
                     MostrarFiltros = mostrarFiltros,
-                    IdEntidad = Session["IdEntidad"]?.ToString() ?? "",
+                    IdEntidad = idEntidadSesion,
+                    NomEntidad = nomEntidadSesion,
                     PeriodoReferencia = formattedPeriodo,
                     TipoComparacion = Session["TipoComparacion"]?.ToString() ?? "Interanual",
-                    Entidades = ViewBag.Entidades as SelectList,
+                    Entidades = entidadesSelectList,
                     Tarjetas = tarjetas
                 };
 

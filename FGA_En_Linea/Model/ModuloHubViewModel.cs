@@ -16,6 +16,7 @@ namespace FGA.Models
         public bool MostrarFiltros { get; set; }
         public string MenuURL { get; set; } = "";
         public string IdEntidad { get; set; } = "";
+        public string NomEntidad { get; set; } = "";
         public string PeriodoReferencia { get; set; } = "";
         public string TipoComparacion { get; set; } = "Interanual"; // Mensual, Trimestral, Interanual
         public SelectList Entidades { get; set; }
