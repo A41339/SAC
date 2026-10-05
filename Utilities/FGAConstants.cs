@@ -125,6 +125,8 @@ namespace FGA.Utility
             public const string RojoPeligro = "#dc2626";
             public const string Purpura = "#8b5cf6";
             public const string Cian = "#06b6d4";
+            public const string GrisAuxiliar = "#959595";
+            public const string GrisPrincipal = "#565656";
             public const string GrisBorde = "#cbd5e1";
             public const string GrisTexto = "#64748b";
             public const string GrisOscuro = "#1e293b";

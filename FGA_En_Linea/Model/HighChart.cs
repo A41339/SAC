@@ -865,23 +865,23 @@ namespace FGA.Model
             switch (i)
             {
                 case 0:
-                    return ColorTranslator.FromHtml(FGAConstants.Colores.AzulCorporativo); // #2F5597
+                    return ColorTranslator.FromHtml(FGAConstants.Colores.AzulCorporativo); // #2F5597 (Azul primario FFC)
                 case 1:
-                    return ColorTranslator.FromHtml(FGAConstants.Colores.AzulClaro);       // #0284c7
+                    return ColorTranslator.FromHtml(FGAConstants.Colores.GrisAuxiliar);     // #959595 (Gris auxiliar FFC para series comparativas)
                 case 2:
-                    return ColorTranslator.FromHtml(FGAConstants.Colores.VerdeExito);      // #10b981
+                    return ColorTranslator.FromHtml(FGAConstants.Colores.AzulClaro);       // #0284c7 (Azul acento FFC)
                 case 3:
                     return ColorTranslator.FromHtml(FGAConstants.Colores.NaranjaInstitucional); // #ea580c
                 case 4:
                     return ColorTranslator.FromHtml(FGAConstants.Colores.AmbarAlerta);     // #f59e0b
                 case 5:
-                    return ColorTranslator.FromHtml(FGAConstants.Colores.Purpura);         // #8b5cf6
+                    return ColorTranslator.FromHtml(FGAConstants.Colores.VerdeExito);      // #10b981
                 case 6:
-                    return ColorTranslator.FromHtml(FGAConstants.Colores.Cian);            // #06b6d4
+                    return ColorTranslator.FromHtml(FGAConstants.Colores.Purpura);         // #8b5cf6
                 case 7:
-                    return ColorTranslator.FromHtml(FGAConstants.Colores.AzulOscuro);      // #143750
+                    return ColorTranslator.FromHtml(FGAConstants.Colores.Cian);            // #06b6d4
                 case 8:
-                    return ColorTranslator.FromHtml(FGAConstants.Colores.VerdeOscuro);     // #059669
+                    return ColorTranslator.FromHtml(FGAConstants.Colores.AzulOscuro);      // #143750
                 case 9:
                     return ColorTranslator.FromHtml(FGAConstants.Colores.RojoPeligro);     // #dc2626
                 default:

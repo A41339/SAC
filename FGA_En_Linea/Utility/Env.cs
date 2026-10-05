@@ -208,6 +208,11 @@ namespace FGA
                         p.Menu_MenuId.MenuURL = "filter";
                         p.Menu_MenuId.MenuIcon = "<i class=\"fa fa-tasks\"></i>";
                     }
+                    else if (p.Menu_MenuId.Id == 9000 || string.Equals(p.Menu_MenuId.MenuText, "Administración", StringComparison.OrdinalIgnoreCase) || string.Equals(p.Menu_MenuId.MenuText, "Administracion", StringComparison.OrdinalIgnoreCase))
+                    {
+                        p.Menu_MenuId.ParentId = null;
+                        p.Menu_MenuId.MenuURL = "root";
+                    }
                 }
 
                 // Asegurar que el submódulo 9300 esté bajo Administración (9000)

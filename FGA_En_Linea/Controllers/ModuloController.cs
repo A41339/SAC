@@ -148,14 +148,15 @@ namespace FGA.Controllers
                         rootPerm = allPermitted.FirstOrDefault(p => p.Menu_MenuId != null && p.Menu_MenuId.Id == parsedId);
                     }
 
-                    // 1. Coincidencia exacta o parcial por MenuURL (ej. "Facturacion/Index", "Facturacion", "Role/Index", "Explorer/Notificacion", "Evaluacion/Historial")
-                    if (rootPerm == null)
+                    // 1. Coincidencia por alias históricos de módulos
+                    if (modClean.IndexOf("Accesos", StringComparison.OrdinalIgnoreCase) >= 0)
                     {
-                        string cleanPath = modClean.Trim().Trim('/');
-                        rootPerm = allPermitted.FirstOrDefault(p => p.Menu_MenuId != null && p.Menu_MenuId.MenuURL != null &&
-                            (string.Equals(p.Menu_MenuId.MenuURL.Trim().Trim('/'), cleanPath, StringComparison.OrdinalIgnoreCase) ||
-                             p.Menu_MenuId.MenuURL.Trim().Trim('/').StartsWith(cleanPath + "/", StringComparison.OrdinalIgnoreCase) ||
-                             cleanPath.StartsWith(p.Menu_MenuId.MenuURL.Trim().Trim('/') + "/", StringComparison.OrdinalIgnoreCase)));
+                        rootPerm = allPermitted.FirstOrDefault(p => p.Menu_MenuId != null && p.Menu_MenuId.Id == 9000);
+                    }
+                    else if (modClean.IndexOf("Mantenimiento", StringComparison.OrdinalIgnoreCase) >= 0)
+                    {
+                        rootPerm = allPermitted.FirstOrDefault(p => p.Menu_MenuId != null && p.Menu_MenuId.Id == 9200)
+                                ?? allPermitted.FirstOrDefault(p => p.Menu_MenuId != null && p.Menu_MenuId.Id == 9000);
                     }
 
                     // 2. Coincidencia exacta por nombre de menú (MenuText)
@@ -165,7 +166,7 @@ namespace FGA.Controllers
                             string.Equals(p.Menu_MenuId.MenuText.Trim(), modClean, StringComparison.OrdinalIgnoreCase));
                     }
 
-                    // 3. Coincidencia normalizada sin tildes ni mayúsculas
+                    // 3. Coincidencia normalizada sin tildes ni mayúsculas por nombre de menú
                     if (rootPerm == null)
                     {
                         string modNorm = NormalizarTexto(modClean);
@@ -173,6 +174,34 @@ namespace FGA.Controllers
                             (NormalizarTexto(p.Menu_MenuId.MenuText) == modNorm ||
                              NormalizarTexto(p.Menu_MenuId.MenuText).Contains(modNorm) ||
                              modNorm.Contains(NormalizarTexto(p.Menu_MenuId.MenuText))));
+                    }
+
+                    // 4. Coincidencia por MenuURL (ej. "InformeFinanciero/Index", "Calendario/Index", etc.)
+                    // Si una vista hija pasa su URL de acción como parámetro modulo, resolvemos a su módulo padre contenedor
+                    if (rootPerm == null)
+                    {
+                        string cleanPath = modClean.Trim().Trim('/');
+                        var leafPerm = allPermitted.FirstOrDefault(p => p.Menu_MenuId != null && p.Menu_MenuId.MenuURL != null &&
+                            (string.Equals(p.Menu_MenuId.MenuURL.Trim().Trim('/'), cleanPath, StringComparison.OrdinalIgnoreCase) ||
+                             p.Menu_MenuId.MenuURL.Trim().Trim('/').StartsWith(cleanPath + "/", StringComparison.OrdinalIgnoreCase) ||
+                             cleanPath.StartsWith(p.Menu_MenuId.MenuURL.Trim().Trim('/') + "/", StringComparison.OrdinalIgnoreCase)));
+
+                        if (leafPerm != null && leafPerm.Menu_MenuId != null)
+                        {
+                            string leafUrl = (leafPerm.Menu_MenuId.MenuURL ?? "").Trim();
+                            bool isHub = leafUrl.Equals("root", StringComparison.OrdinalIgnoreCase) ||
+                                         leafUrl.Equals("filter", StringComparison.OrdinalIgnoreCase) ||
+                                         leafUrl == "#";
+
+                            if (!isHub && leafPerm.Menu_MenuId.ParentId.HasValue)
+                            {
+                                rootPerm = allPermitted.FirstOrDefault(p => p.Menu_MenuId != null && p.Menu_MenuId.Id == leafPerm.Menu_MenuId.ParentId.Value) ?? leafPerm;
+                            }
+                            else
+                            {
+                                rootPerm = leafPerm;
+                            }
+                        }
                     }
                 }
 
@@ -305,11 +334,22 @@ namespace FGA.Controllers
                     rootPerm.Menu_MenuId.ParentId = 9000;
                     rootPerm.Menu_MenuId.MenuText = "Evaluación SBR";
                     rootPerm.Menu_MenuId.MenuIcon = "<i class=\"fa fa-tasks\"></i>";
+                    rootPerm.Menu_MenuId.MenuURL = "filter";
+                }
+                else if (rootPerm.Menu_MenuId.Id == 9000)
+                {
+                    rootPerm.Menu_MenuId.ParentId = null;
+                    rootPerm.Menu_MenuId.MenuText = "Administración";
+                    rootPerm.Menu_MenuId.MenuURL = "root";
+                    rootPerm.Menu_MenuId.MenuIcon = "<i class=\"fa fa-cogs\"></i>";
                 }
 
                 int rootId = rootPerm.Menu_MenuId.Id;
                 string rootUrl = (rootPerm.Menu_MenuId.MenuURL ?? "").Trim();
-                if (!string.IsNullOrEmpty(rootUrl) && !rootUrl.Equals("root", StringComparison.OrdinalIgnoreCase) && !rootUrl.Equals("filter", StringComparison.OrdinalIgnoreCase) && rootUrl != "#")
+                bool esContenedorHub = rootId == 9000 || rootId == 9200 || rootId == 9300 || rootId == 7000 || rootId == 11000 ||
+                                       rootId == 1000 || rootId == 1500 || rootId == 2000 || rootId == 4000 || rootId == 5000 || rootId == 6000;
+
+                if (!esContenedorHub && !string.IsNullOrEmpty(rootUrl) && !rootUrl.Equals("root", StringComparison.OrdinalIgnoreCase) && !rootUrl.Equals("filter", StringComparison.OrdinalIgnoreCase) && rootUrl != "#")
                 {
                     return Redirect("~/" + rootUrl.TrimStart('~', '/'));
                 }

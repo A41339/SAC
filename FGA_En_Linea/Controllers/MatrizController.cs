@@ -391,14 +391,14 @@ namespace FGA.Controllers
                         Type = ChartTypes.Column,
                         Name = "Estimaciones (13900000)",
                         Data = new Data(Estimaciones),
-                        Color = HighChart.GetColor(1),
+                        Color = HighChart.GetColor(2), // Azul acento (#0284c7)
                         YAxis = "Millones"
                     },
                     new Series{
                         Type = ChartTypes.Column,
                         Name = "Pérdida esperada",
                         Data = new Data(PerdidaC),
-                        Color = HighChart.GetColor(2),
+                        Color = HighChart.GetColor(1), // Gris auxiliar (#959595)
                         YAxis = "Millones"
                     }
                 };
