@@ -572,7 +572,9 @@ namespace FGA.Controllers
                                 new Claim(ClaimTypes.Surname, usuarioActualizado.Entidad_Usuario.Nombre),
                                 new Claim(ClaimTypes.Gender, usuarioActualizado.Sexo_Usuario_Id.ToString()),
                                 new Claim("CambiarClave", Utility.Utilitarios.No),
-                                new Claim("Evaluacion", usuarioActualizado.Entidad_Usuario.Ind_Evaluacion ? "S" : "N")
+                                new Claim("Evaluacion", usuarioActualizado.Entidad_Usuario.Ind_Evaluacion ? "S" : "N"),
+                                new Claim("identidad", usuarioActualizado.Entidad_Usuario_Id ?? ""),
+                                new Claim("EsEntidad", usuarioActualizado.Role_Usuario.EsEntidad ? "1" : "0")
                             };
 
                             try

@@ -387,30 +387,117 @@ namespace FGA.Controllers
         }
 
         /// <summary>
-        /// Determina si el usuario autenticado posee rol con privilegios de administrador institucional
+        /// Determina si el usuario autenticado posee rol con privilegios de administrador institucional FFC
+        /// Si el usuario pertenece a una entidad o cooperativa (su Entidad_Usuario_Id != "0" o Session["IsFGA"] == 0),
+        /// SIEMPRE retorna false para garantizar aislamiento estricto de datos.
         /// </summary>
-        protected bool IsCurrentUserAdmin => FGAConstants.Roles.EsAdministrador(CurrentRoleId);
+        protected bool IsCurrentUserAdmin
+        {
+            get
+            {
+                // 1. Si Session["IsFGA"] indica explícitamente 0, es usuario de entidad
+                if (Session != null && Session["IsFGA"] != null && Session["IsFGA"].ToString() == "0")
+                {
+                    return false;
+                }
+
+                // 2. Si el claim "EsEntidad" indica que es entidad
+                string esEntidadClaim = Env.GetUserInfo("esentidad");
+                if (esEntidadClaim == "1")
+                {
+                    return false;
+                }
+
+                // 3. Si el usuario logueado tiene una Entidad_Usuario_Id asignada diferente de "0" (Administradora FFC)
+                Usuario usrObj = Session?["CurrentUserObj"] as Usuario;
+                if (usrObj == null && Session != null)
+                {
+                    try
+                    {
+                        string uid = Env.GetUserInfo("userid");
+                        if (!string.IsNullOrEmpty(uid))
+                        {
+                            usrObj = usr.Get(uid);
+                            Session["CurrentUserObj"] = usrObj;
+                        }
+                    }
+                    catch { }
+                }
+
+                if (usrObj != null && !string.IsNullOrEmpty(usrObj.Entidad_Usuario_Id) &&
+                    usrObj.Entidad_Usuario_Id != Utility.Utilitarios.entidadAdministradora)
+                {
+                    return false;
+                }
+
+                int roleId = CurrentRoleId;
+                if (roleId != 0 && !FGAConstants.Roles.EsAdministrador(roleId))
+                {
+                    return false;
+                }
+
+                return IsFGA() || FGAConstants.Roles.EsAdministrador(roleId);
+            }
+        }
 
         /// <summary>
         /// Resuelve la entidad contable activa para el usuario y contexto actual.
-        /// Si el usuario no es administrador, fuerza la entidad asignada a su perfil.
+        /// Si el usuario no es administrador institucional FFC, FUERZA de manera inmutable la entidad asignada a su perfil.
         /// </summary>
         protected string ResolveCurrentEntity(string entidadParam, out bool esAdmin)
         {
             esAdmin = IsCurrentUserAdmin;
-            string idEntidadSession = Session?[FGAConstants.Sesion.IdEntidad]?.ToString();
-            string idEntidadUsuario = Env.GetUserInfo(FGAConstants.Sesion.Entidad);
 
+            // Obtener el ID de entidad del usuario
+            string idEntidadUsuario = null;
+            Usuario usrObj = Session?["CurrentUserObj"] as Usuario;
+            if (usrObj == null && Session != null)
+            {
+                try
+                {
+                    string uid = Env.GetUserInfo("userid");
+                    if (!string.IsNullOrEmpty(uid))
+                    {
+                        usrObj = usr.Get(uid);
+                        Session["CurrentUserObj"] = usrObj;
+                    }
+                }
+                catch { }
+            }
+
+            if (usrObj != null && !string.IsNullOrEmpty(usrObj.Entidad_Usuario_Id))
+            {
+                idEntidadUsuario = usrObj.Entidad_Usuario_Id;
+            }
+            if (string.IsNullOrEmpty(idEntidadUsuario))
+            {
+                idEntidadUsuario = Env.GetUserInfo("identidad");
+            }
+            if (string.IsNullOrEmpty(idEntidadUsuario) && Session != null && Session["IdEntidad"] != null)
+            {
+                idEntidadUsuario = Session["IdEntidad"].ToString();
+            }
+
+            // AISLAMIENTO MULTI-TENANT ESTRICTO:
+            // Si el usuario no es administrador, NUNCA puede consultar otra entidad ni "TODAS"
+            if (!esAdmin)
+            {
+                string idForzada = (!string.IsNullOrEmpty(idEntidadUsuario) && idEntidadUsuario != FGAConstants.Entidades.Todas && idEntidadUsuario != FGAConstants.Entidades.Administradora)
+                    ? idEntidadUsuario
+                    : (Session?[FGAConstants.Sesion.IdEntidad]?.ToString() ?? "2");
+
+                if (Session != null)
+                {
+                    Session[FGAConstants.Sesion.IdEntidad] = idForzada;
+                }
+                return idForzada;
+            }
+
+            // Administrador institucional FFC: permite alternar entre "TODAS" (-1) o una entidad específica
+            string idEntidadSession = Session?[FGAConstants.Sesion.IdEntidad]?.ToString();
             string idEntidad = string.IsNullOrEmpty(entidadParam)
                 ? (string.IsNullOrEmpty(idEntidadSession) ? FGAConstants.Entidades.Todas : idEntidadSession)
                 : entidadParam;
-
-            if (!esAdmin && !string.IsNullOrEmpty(idEntidadUsuario) &&
-                idEntidadUsuario != FGAConstants.Entidades.Todas &&
-                idEntidadUsuario != FGAConstants.Entidades.Administradora)
-            {
-                idEntidad = idEntidadUsuario;
-            }
 
             if (Session != null)
             {

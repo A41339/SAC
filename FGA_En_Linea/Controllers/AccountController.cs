@@ -125,7 +125,9 @@ namespace FGA.Controllers
                             new Claim(ClaimTypes.Surname, login.Entidad_Usuario.Nombre),
                             new Claim(ClaimTypes.Gender, login.Sexo_Usuario_Id.ToString()),
                             new Claim("CambiarClave", login.CambiarClave),
-                            new Claim("Evaluacion", login.Entidad_Usuario.Ind_Evaluacion ? "S" : "N")
+                            new Claim("Evaluacion", login.Entidad_Usuario.Ind_Evaluacion ? "S" : "N"),
+                            new Claim("identidad", login.Entidad_Usuario_Id ?? ""),
+                            new Claim("EsEntidad", login.Role_Usuario.EsEntidad ? "1" : "0")
                         };
 
                     Session["Usuario"] = login;

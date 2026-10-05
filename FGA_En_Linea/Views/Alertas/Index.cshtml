@@ -108,19 +108,29 @@
                             <i class="fa fa-university"></i> Entidad:
                         </span>
                         <div class="param-select-wrapper">
-                            <select id="selectEntidad" name="entidad" class="param-modern-select" onchange="$('#formFiltroAlertas').submit();">
-                                <option value="-1" @(ViewBag.EntidadSeleccionada == "-1" || string.IsNullOrEmpty(ViewBag.EntidadSeleccionada) ? "selected" : "")>TODAS LAS COOPERATIVAS</option>
-                                @if (ViewBag.EntidadesList != null)
-                                {
-                                    foreach (var ent in (List<FGA.Models.Entidad>)ViewBag.EntidadesList)
+                            @if (ViewBag.EsAdmin != null && (bool)ViewBag.EsAdmin)
+                            {
+                                <select id="selectEntidad" name="entidad" class="param-modern-select" onchange="$('#formFiltroAlertas').submit();">
+                                    <option value="-1" @(ViewBag.EntidadSeleccionada == "-1" || string.IsNullOrEmpty(ViewBag.EntidadSeleccionada) ? "selected" : "")>TODAS LAS COOPERATIVAS</option>
+                                    @if (ViewBag.EntidadesList != null)
                                     {
-                                        if (ent.Id != "-1" && ent.Id != "99" && !ent.Nombre.Trim().Equals("TODAS LAS COOPERATIVAS", StringComparison.OrdinalIgnoreCase))
+                                        foreach (var ent in (List<FGA.Models.Entidad>)ViewBag.EntidadesList)
                                         {
-                                            <option value="@ent.Id" @(ViewBag.EntidadSeleccionada == ent.Id ? "selected" : "")>@ent.Nombre</option>
+                                            if (ent.Id != "-1" && ent.Id != "99" && !ent.Nombre.Trim().Equals("TODAS LAS COOPERATIVAS", StringComparison.OrdinalIgnoreCase))
+                                            {
+                                                <option value="@ent.Id" @(ViewBag.EntidadSeleccionada == ent.Id ? "selected" : "")>@ent.Nombre</option>
+                                            }
                                         }
                                     }
-                                }
-                            </select>
+                                </select>
+                            }
+                            else
+                            {
+                                <span class="param-entidad-badge-fixed" style="display: inline-flex; align-items: center; gap: 8px; font-weight: 600; color: #0071AD; padding: 6px 14px; background: #f0f7fb; border-radius: 6px; border: 1px solid #d0e4f1; font-size: 13px;">
+                                    <i class="fa fa-university text-primary"></i> @(Session["NomEntidad"] ?? "Mi Cooperativa")
+                                </span>
+                                <input type="hidden" id="selectEntidad" name="entidad" value="@ViewBag.EntidadSeleccionada" />
+                            }
                         </div>
                     </div>
 
@@ -687,7 +697,7 @@
             entidadNombre = $('#selectEntidad option:selected').text();
         } else {
             entidadId = (idEntidadUsuario > 0) ? idEntidadUsuario : parseInt(selectVal, 10);
-            entidadNombre = $('#selectEntidad option:selected').text() || 'Mi Entidad';
+            entidadNombre = '@(Session["NomEntidad"] ?? "Mi Cooperativa")';
         }
 
         currentConfigEntidadId = entidadId;

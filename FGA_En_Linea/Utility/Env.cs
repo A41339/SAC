@@ -79,6 +79,31 @@ namespace FGA
                     case "evaluacion":
                         ReturnVal = identity.Claims.Where(c => c.Type == "Evaluacion").Select(c => c.Value).SingleOrDefault();
                         break;
+                    case "identidad":
+                        ReturnVal = identity.Claims.Where(c => c.Type == "identidad").Select(c => c.Value).SingleOrDefault();
+                        if (string.IsNullOrEmpty(ReturnVal) && HttpContext.Current?.Session != null)
+                        {
+                            var usrObj = (HttpContext.Current.Session["CurrentUserObj"] ?? HttpContext.Current.Session["Usuario"]) as FGA.Models.Usuario;
+                            if (usrObj != null && !string.IsNullOrEmpty(usrObj.Entidad_Usuario_Id))
+                            {
+                                ReturnVal = usrObj.Entidad_Usuario_Id;
+                            }
+                            else if (HttpContext.Current.Session["IdEntidad"] != null)
+                            {
+                                ReturnVal = HttpContext.Current.Session["IdEntidad"].ToString();
+                            }
+                        }
+                        break;
+                    case "esentidad":
+                        ReturnVal = identity.Claims.Where(c => c.Type == "EsEntidad").Select(c => c.Value).SingleOrDefault();
+                        if (string.IsNullOrEmpty(ReturnVal) && HttpContext.Current?.Session != null)
+                        {
+                            if (HttpContext.Current.Session["IsFGA"] != null)
+                            {
+                                ReturnVal = HttpContext.Current.Session["IsFGA"].ToString() == "0" ? "1" : "0";
+                            }
+                        }
+                        break;
                     default:
                         ReturnVal = "";
                         break;

@@ -25,6 +25,12 @@ namespace FGA.Controllers
                 string idEntidad = ResolveCurrentEntity(entidad, out bool esAdmin);
                 var idEntidadUsuario = Env.GetUserInfo("identidad");
 
+                // Si no es administrador institucional FFC, forzar estrictamente su propia entidad
+                if (!esAdmin && !string.IsNullOrEmpty(idEntidadUsuario))
+                {
+                    idEntidad = idEntidadUsuario;
+                }
+
                 ObtenerUmbralesEfectivos(idEntidad, out decimal umbralPorc, out decimal umbralMonto, out string modoMonitoreo, out bool esPersonalizado);
                 ViewBag.UmbralPorc = umbralPorc;
                 ViewBag.UmbralMonto = umbralMonto;
@@ -32,7 +38,7 @@ namespace FGA.Controllers
                 ViewBag.EsPersonalizado = esPersonalizado;
                 ViewBag.EsAdmin = esAdmin;
                 int idEntParsed = -1;
-                int.TryParse(idEntidadUsuario, out idEntParsed);
+                int.TryParse(idEntidad, out idEntParsed);
                 ViewBag.IdEntidadUsuario = idEntParsed;
 
                 FGA_Obtener_Alertas_Financieras_Result[] rawAlertas = null;
@@ -58,38 +64,54 @@ namespace FGA.Controllers
                     spClient.SafeClose();
                 }
 
+                // DEFENSA EN PROFUNDIDAD MULTI-TENANT:
+                // Si el usuario es de una entidad (no admin), asegurar que bajo ninguna circunstancia se presenten alertas de otra entidad
+                var alertasBase = (rawAlertas ?? new FGA_Obtener_Alertas_Financieras_Result[0]);
+                if (!esAdmin && !string.IsNullOrEmpty(idEntidad) && idEntidad != "-1")
+                {
+                    alertasBase = alertasBase.Where(a => a.IdEntidad == idEntidad).ToArray();
+                }
+
                 // Filtrar estrictamente por los umbrales vigentes configurados en Parámetros
-                    var todos = (rawAlertas ?? new FGA_Obtener_Alertas_Financieras_Result[0])
-                        .Where(a => Math.Abs(a.VariacionPorcentaje) >= umbralPorc && Math.Abs(a.VariacionMonto) >= umbralMonto)
-                        .ToList();
+                var todos = alertasBase
+                    .Where(a => Math.Abs(a.VariacionPorcentaje) >= umbralPorc && Math.Abs(a.VariacionMonto) >= umbralMonto)
+                    .ToList();
 
-                    var listAlertas = todos.ToList();
+                var listAlertas = todos.ToList();
 
-                    // Aplicar filtros de vista
-                    if (!string.IsNullOrEmpty(tipoAlerta) && !tipoAlerta.Equals("TODAS", StringComparison.OrdinalIgnoreCase))
-                    {
-                        listAlertas = listAlertas.Where(a => a.TipoAlerta != null && a.TipoAlerta.Equals(tipoAlerta, StringComparison.OrdinalIgnoreCase)).ToList();
-                    }
+                // Aplicar filtros de vista
+                if (!string.IsNullOrEmpty(tipoAlerta) && !tipoAlerta.Equals("TODAS", StringComparison.OrdinalIgnoreCase))
+                {
+                    listAlertas = listAlertas.Where(a => a.TipoAlerta != null && a.TipoAlerta.Equals(tipoAlerta, StringComparison.OrdinalIgnoreCase)).ToList();
+                }
 
-                    if (soloNoLeidas.HasValue && soloNoLeidas.Value)
-                    {
-                        listAlertas = listAlertas.Where(a => !a.Leido).ToList();
-                    }
+                if (soloNoLeidas.HasValue && soloNoLeidas.Value)
+                {
+                    listAlertas = listAlertas.Where(a => !a.Leido).ToList();
+                }
 
-                    ViewBag.EntidadSeleccionada = idEntidad;
-                    ViewBag.TipoAlertaSeleccionado = tipoAlerta ?? "TODAS";
-                    ViewBag.SoloNoLeidas = soloNoLeidas ?? false;
+                ViewBag.EntidadSeleccionada = idEntidad;
+                ViewBag.TipoAlertaSeleccionado = tipoAlerta ?? "TODAS";
+                ViewBag.SoloNoLeidas = soloNoLeidas ?? false;
 
-                    // Estadísticas para las tarjetas KPI superiores
-                    ViewBag.TotalAlertas = todos.Count;
-                    ViewBag.TotalNoLeidas = todos.Count(a => !a.Leido);
-                    ViewBag.TotalCriticas = todos.Count(a => a.TipoAlerta != null && a.TipoAlerta.Equals("CRITICA", StringComparison.OrdinalIgnoreCase));
-                    ViewBag.TotalAdvertencias = todos.Count(a => a.TipoAlerta != null && a.TipoAlerta.Equals("ADVERTENCIA", StringComparison.OrdinalIgnoreCase));
+                // Estadísticas para las tarjetas KPI superiores
+                ViewBag.TotalAlertas = todos.Count;
+                ViewBag.TotalNoLeidas = todos.Count(a => !a.Leido);
+                ViewBag.TotalCriticas = todos.Count(a => a.TipoAlerta != null && a.TipoAlerta.Equals("CRITICA", StringComparison.OrdinalIgnoreCase));
+                ViewBag.TotalAdvertencias = todos.Count(a => a.TipoAlerta != null && a.TipoAlerta.Equals("ADVERTENCIA", StringComparison.OrdinalIgnoreCase));
 
-                    // Cargar entidades para el selector mediante helper centralizado con caché
+                // Cargar entidades para el selector mediante helper centralizado con caché
+                if (esAdmin)
+                {
                     ViewBag.EntidadesList = GetEntidadesCombo();
+                }
+                else
+                {
+                    var combo = GetEntidadesCombo();
+                    ViewBag.EntidadesList = combo != null ? combo.Where(e => e.Id == idEntidad).ToList() : new List<FGA.Models.Entidad>();
+                }
 
-                    return View(listAlertas);
+                return View(listAlertas);
             }
             catch (Exception ex)
             {
@@ -98,7 +120,7 @@ namespace FGA.Controllers
                 ViewBag.TotalCriticas = 0;
                 ViewBag.TotalAdvertencias = 0;
                 ViewBag.EntidadesList = new List<FGA.Models.Entidad>();
-                ViewBag.EsAdmin = true;
+                ViewBag.EsAdmin = IsCurrentUserAdmin;
                 ViewBag.IdEntidadUsuario = -1;
                 ViewBag.EsPersonalizado = false;
                 ViewBag.ModoMonitoreo = FGAConstants.Alertas.ModoTodas;
@@ -117,7 +139,11 @@ namespace FGA.Controllers
         {
             try
             {
-                string idEntidad = GetSessionString(FGAConstants.Sesion.IdEntidad, Env.GetUserInfo("identidad") ?? "-1");
+                string idEntidad = ResolveCurrentEntity(null, out bool esAdmin);
+                if (!esAdmin && string.IsNullOrEmpty(idEntidad))
+                {
+                    idEntidad = Env.GetUserInfo("identidad");
+                }
                 if (string.IsNullOrEmpty(idEntidad)) idEntidad = "-1";
 
                 ObtenerUmbralesConfigurados(out decimal umbralPorc, out decimal umbralMonto);
@@ -145,7 +171,13 @@ namespace FGA.Controllers
                     spClient.SafeClose();
                 }
 
-                var list = (rawAlertas ?? new FGA_Obtener_Alertas_Financieras_Result[0])
+                var listRaw = (rawAlertas ?? new FGA_Obtener_Alertas_Financieras_Result[0]);
+                if (!esAdmin && !string.IsNullOrEmpty(idEntidad) && idEntidad != "-1")
+                {
+                    listRaw = listRaw.Where(a => a.IdEntidad == idEntidad).ToArray();
+                }
+
+                var list = listRaw
                     .Where(a => Math.Abs(a.VariacionPorcentaje) >= umbralPorc && Math.Abs(a.VariacionMonto) >= umbralMonto)
                     .ToList();
                 int noLeidas = list.Count(a => !a.Leido);
@@ -215,7 +247,11 @@ namespace FGA.Controllers
         {
             try
             {
-                string idEntidad = GetSessionString(FGAConstants.Sesion.IdEntidad, Env.GetUserInfo("identidad") ?? "-1");
+                string idEntidad = ResolveCurrentEntity(null, out bool esAdmin);
+                if (!esAdmin && string.IsNullOrEmpty(idEntidad))
+                {
+                    idEntidad = Env.GetUserInfo("identidad");
+                }
                 if (string.IsNullOrEmpty(idEntidad)) idEntidad = "-1";
                 string usuario = Env.GetUserInfo("name") ?? "SYSTEM";
 
@@ -245,7 +281,7 @@ namespace FGA.Controllers
         {
             try
             {
-                string idEnt = string.IsNullOrEmpty(entidadId) ? GetSessionString("IdEntidad", "-1") : entidadId;
+                string idEnt = ResolveCurrentEntity(entidadId, out bool esAdmin);
                 DateTime? fecha = null;
                 if (!string.IsNullOrEmpty(periodo))
                 {
@@ -428,10 +464,7 @@ namespace FGA.Controllers
             try
             {
                 string idEntidad = ResolverEntidadAutorizada(entidadId);
-                var roleId = 0;
-                int.TryParse(Env.GetUserInfo("roleid"), out roleId);
-                var idEntidadUsuario = Env.GetUserInfo("identidad");
-                bool esAdmin = roleId == 1 || string.IsNullOrEmpty(idEntidadUsuario) || idEntidadUsuario == "-1" || idEntidadUsuario == "0";
+                bool esAdmin = IsCurrentUserAdmin;
 
                 ObtenerUmbralesEfectivos(idEntidad, out decimal umbralPorc, out decimal umbralMonto, out string modoMonitoreo, out bool esPersonalizado, out decimal globalPorc, out decimal globalMonto, out DateTime? fechaModif, out string usuarioModif);
 
@@ -920,14 +953,10 @@ namespace FGA.Controllers
 
         private string ResolverEntidadAutorizada(string entidadId)
         {
-            var roleId = 0;
-            int.TryParse(Env.GetUserInfo("roleid"), out roleId);
-            var idEntidadUsuario = Env.GetUserInfo("identidad");
-            bool esAdmin = roleId == 1 || string.IsNullOrEmpty(idEntidadUsuario) || idEntidadUsuario == "-1" || idEntidadUsuario == "0";
-
-            if (!esAdmin && !string.IsNullOrEmpty(idEntidadUsuario) && idEntidadUsuario != "-1" && idEntidadUsuario != "0")
+            string idEntidad = ResolveCurrentEntity(entidadId, out bool esAdmin);
+            if (!esAdmin)
             {
-                return idEntidadUsuario;
+                return idEntidad;
             }
 
             if (!string.IsNullOrEmpty(entidadId) && entidadId != "-1" && entidadId != "0" && entidadId != "99")
@@ -935,12 +964,7 @@ namespace FGA.Controllers
                 return entidadId;
             }
 
-            if (!string.IsNullOrEmpty(idEntidadUsuario) && idEntidadUsuario != "-1" && idEntidadUsuario != "0")
-            {
-                return idEntidadUsuario;
-            }
-
-            return "13";
+            return idEntidad;
         }
 
         private static string _cachedConnString = null;
