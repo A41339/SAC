@@ -345,7 +345,7 @@ namespace FGA.Controllers
                 int rootId = rootPerm.Menu_MenuId.Id;
                 string rootUrl = (rootPerm.Menu_MenuId.MenuURL ?? "").Trim();
                 bool esContenedorHub = rootId == 9000 || rootId == 9200 || rootId == 9300 || rootId == 7000 || rootId == 11000 ||
-                                       rootId == 1000 || rootId == 1500 || rootId == 2000 || rootId == 4000 || rootId == 5000 || rootId == 6000;
+                                       rootId == 1000 || rootId == 1500 || rootId == 2000 || rootId == 2100 || rootId == 4000 || rootId == 5000 || rootId == 6000;
 
                 if (!esContenedorHub && !string.IsNullOrEmpty(rootUrl) && !rootUrl.Equals("root", StringComparison.OrdinalIgnoreCase) && !rootUrl.Equals("filter", StringComparison.OrdinalIgnoreCase) && rootUrl != "#")
                 {
