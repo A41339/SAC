@@ -871,19 +871,19 @@ namespace FGA.Model
                 case 2:
                     return ColorTranslator.FromHtml(FGAConstants.Colores.AzulClaro);       // #0284c7 (Azul acento FFC)
                 case 3:
-                    return ColorTranslator.FromHtml(FGAConstants.Colores.NaranjaInstitucional); // #ea580c
+                    return ColorTranslator.FromHtml(FGAConstants.Colores.NaranjaInstitucional); // #ea580c (Naranja FFC)
                 case 4:
-                    return ColorTranslator.FromHtml(FGAConstants.Colores.AmbarAlerta);     // #f59e0b
+                    return ColorTranslator.FromHtml(FGAConstants.Colores.GrisPrincipal);   // #565656 (Gris principal FFC)
                 case 5:
-                    return ColorTranslator.FromHtml(FGAConstants.Colores.VerdeExito);      // #10b981
+                    return ColorTranslator.FromHtml("#6DB5CB");                            // Celeste medio FFC (sin verde)
                 case 6:
-                    return ColorTranslator.FromHtml(FGAConstants.Colores.Purpura);         // #8b5cf6
+                    return ColorTranslator.FromHtml(FGAConstants.Colores.AzulOscuro);      // #143750 (Azul oscuro FFC)
                 case 7:
-                    return ColorTranslator.FromHtml(FGAConstants.Colores.Cian);            // #06b6d4
+                    return ColorTranslator.FromHtml("#B7D8DF");                            // Celeste claro FFC
                 case 8:
-                    return ColorTranslator.FromHtml(FGAConstants.Colores.AzulOscuro);      // #143750
+                    return ColorTranslator.FromHtml(FGAConstants.Colores.GrisBorde);       // #cbd5e1 (Gris suave FFC)
                 case 9:
-                    return ColorTranslator.FromHtml(FGAConstants.Colores.RojoPeligro);     // #dc2626
+                    return ColorTranslator.FromHtml(FGAConstants.Colores.AmbarAlerta);     // #f59e0b (Ámbar acento FFC)
                 default:
                     return ColorTranslator.FromHtml(FGAConstants.Colores.AzulCorporativo);
             }
@@ -893,13 +893,13 @@ namespace FGA.Model
         {
             switch (tramo)
             {
-                case 0: return ColorTranslator.FromHtml(FGAConstants.Colores.VerdeExito);  // 1 - 30 días: Verde (#10b981)
-                case 1: return ColorTranslator.FromHtml(FGAConstants.Colores.Cian);        // 31 - 60 días: Cian (#06b6d4)
-                case 2: return ColorTranslator.FromHtml(FGAConstants.Colores.AmbarAlerta); // 61 - 90 días: Ámbar (#f59e0b)
+                case 0: return ColorTranslator.FromHtml(FGAConstants.Colores.AzulCorporativo); // 1 - 30 días: Azul Corporativo FFC (#2F5597, sin verde)
+                case 1: return ColorTranslator.FromHtml(FGAConstants.Colores.AzulClaro);       // 31 - 60 días: Celeste / Azul claro (#0284c7)
+                case 2: return ColorTranslator.FromHtml(FGAConstants.Colores.GrisAuxiliar);     // 61 - 90 días: Gris (#959595)
                 case 3: return ColorTranslator.FromHtml(FGAConstants.Colores.NaranjaInstitucional); // 91 - 180 días: Naranja (#ea580c)
-                case 4: return ColorTranslator.FromHtml(FGAConstants.Colores.RojoPeligro); // > 180 días: Rojo (#dc2626)
-                case 5: return ColorTranslator.FromHtml("#991b1b"); // Cobro Judicial: Borgoña
-                default: return ColorTranslator.FromHtml(FGAConstants.Colores.RojoPeligro);
+                case 4: return ColorTranslator.FromHtml(FGAConstants.Colores.GrisPrincipal);   // > 180 días: Gris oscuro (#565656)
+                case 5: return ColorTranslator.FromHtml(FGAConstants.Colores.AzulOscuro);      // Cobro Judicial: Azul Oscuro (#143750)
+                default: return ColorTranslator.FromHtml(FGAConstants.Colores.AzulCorporativo);
             }
         }
     }

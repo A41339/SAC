@@ -128,9 +128,7 @@ namespace FGA.Controllers
             int roleId = 0;
             int.TryParse(Env.GetUserInfo("roleid"), out roleId);
 
-            using (var men = new FGA_En_Linea.MenuPermissionService.MenuPermissionServiceClient())
-            {
-                var allPermitted = (men.GetMenu(roleId) ?? new MenuPermission[0]).ToList();
+            var allPermitted = Env.GetRoleMenuPermissions(roleId).ToList();
 
                 MenuPermission rootPerm = null;
                 if (id.HasValue)
@@ -1300,7 +1298,6 @@ namespace FGA.Controllers
                 };
 
                 return View(model);
-            }
         }
 
         [HttpPost]
@@ -1397,9 +1394,7 @@ namespace FGA.Controllers
                 int roleId = 0;
                 int.TryParse(Env.GetUserInfo("roleid"), out roleId);
 
-                using (var men = new FGA_En_Linea.MenuPermissionService.MenuPermissionServiceClient())
-                {
-                    var allPermitted = (men.GetMenu(roleId) ?? new MenuPermission[0]).ToArray();
+                var allPermitted = Env.GetRoleMenuPermissions(roleId);
 
                     var list = new List<object>();
 
@@ -1453,7 +1448,6 @@ namespace FGA.Controllers
                     }
 
                     return Json(list, JsonRequestBehavior.AllowGet);
-                }
             }
             catch
             {

@@ -180,8 +180,10 @@ namespace FGA.Controllers
                         globle = MenuBarCache(cacheItemKey, globle, "shortcache");
                 }
 
-               // if (globle == null)//if cashe is null
-                globle = MenuBarCache(cacheItemKey, globle, "60mincache");//make cache from db
+                if (globle == null)
+                {
+                    globle = MenuBarCache(cacheItemKey, globle, "60mincache");
+                }
                 var menuaccess = (MenuOfRole[])globle;
                 string menuUrl = AreaName + controllerName + "/" + actionName;
 

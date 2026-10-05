@@ -22,10 +22,43 @@ namespace FGA.Controllers
         private readonly FGA_En_Linea.SPService.SPClient sp = new FGA_En_Linea.SPService.SPClient();
         private readonly FGA_En_Linea.UsuarioService.UsuarioServiceClient usr = new FGA_En_Linea.UsuarioService.UsuarioServiceClient();
 
-        public ActionResult Index()
+        public ActionResult Index(string Entidades = null, string Periodo = null, string TipoComparacion = null)
         {
+            if (!string.IsNullOrWhiteSpace(Entidades))
+            {
+                Session["IdEntidad"] = Entidades;
+            }
+
             Load();
-            DateTime fechaEntidad = sp.FGA_Consultar_FechaCierre(Session["IdEntidad"].ToString()).AddMonths(-1);
+
+            string currentEntidad = Session["IdEntidad"]?.ToString() ?? "2";
+            DateTime fechaEntidad;
+            try
+            {
+                fechaEntidad = sp.FGA_Consultar_FechaCierre(currentEntidad).AddMonths(-1);
+            }
+            catch
+            {
+                fechaEntidad = DateTime.Today.AddMonths(-1);
+            }
+
+            if (!string.IsNullOrWhiteSpace(Periodo))
+            {
+                try
+                {
+                    DateTime fechaRef = Utilitarios.ConvertirAFecha(Periodo);
+                    Session["Periodo2"] = fechaRef.ToShortDateString();
+                    if (string.Equals(TipoComparacion, "Interanual", StringComparison.OrdinalIgnoreCase))
+                    {
+                        Session["Periodo1"] = fechaRef.AddYears(-1).ToShortDateString();
+                    }
+                    else
+                    {
+                        Session["Periodo1"] = new DateTime(fechaRef.AddMonths(-4).Year, fechaRef.AddMonths(-4).Month, 1).ToShortDateString();
+                    }
+                }
+                catch { }
+            }
 
             if (Session["Periodo1"] is null)
                 Session["Periodo1"] = new DateTime(fechaEntidad.AddMonths(-4).Year, fechaEntidad.AddMonths(-4).Month, 1).ToShortDateString();
