@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -191,8 +191,8 @@ namespace FGA.Controllers
                                                              Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()));
                 var result = from c in tak
                              select new string[] { c.TIPO, c.NOMBRE,
-                                                   Utility.Utilitarios.ConvertirAString(c.RESULTADO.Value) + (c.IND_PORCENTAJE != true ? string.Empty : "%"),
-                                                   Utility.Utilitarios.ConvertirAString(c.RESULTADO_COMPARAR.Value) + (c.IND_PORCENTAJE != true ? string.Empty : "%"),
+                                                   (c.RESULTADO.HasValue ? Utility.Utilitarios.ConvertirAString(c.RESULTADO.Value) : "0.00") + (c.IND_PORCENTAJE != true ? string.Empty : "%"),
+                                                   (c.RESULTADO_COMPARAR.HasValue ? Utility.Utilitarios.ConvertirAString(c.RESULTADO_COMPARAR.Value) : "0.00") + (c.IND_PORCENTAJE != true ? string.Empty : "%"),
                                                    "<a data-toggle=\"tooltip\" data-placement=\"top\" title=\"Ver gr\u00E1fico\" class=\"btn btn-xs btn-info btn-indicador-chart\" href=\"javascript:getGraph('F" + c.ID + "', '" + (c.IND_PORCENTAJE == true ? "S" : "N")  + "')\"><i class=\"fa fa-line-chart\"></i></a>"
                                                   };
 
@@ -237,8 +237,8 @@ namespace FGA.Controllers
                                                              Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()),
                                                              Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()));
                 var result = from c in tak
-                             select new string[] { c.NOMBRE, Utility.Utilitarios.ConvertirAString(c.RESULTADO.Value) + (c.IND_PORCENTAJE != true ? string.Empty : "%"),
-                                                   Utility.Utilitarios.ConvertirAString(c.RESULTADO_COMPARAR.Value) + (c.IND_PORCENTAJE != true ? string.Empty : "%"),
+                             select new string[] { c.NOMBRE, (c.RESULTADO.HasValue ? Utility.Utilitarios.ConvertirAString(c.RESULTADO.Value) : "0.00") + (c.IND_PORCENTAJE != true ? string.Empty : "%"),
+                                                   (c.RESULTADO_COMPARAR.HasValue ? Utility.Utilitarios.ConvertirAString(c.RESULTADO_COMPARAR.Value) : "0.00") + (c.IND_PORCENTAJE != true ? string.Empty : "%"),
                                                    "<a data-toggle=\"tooltip\" data-placement=\"top\" title=\"Ver gr\u00E1fico\" class=\"btn btn-xs btn-info btn-indicador-chart\" href=\"javascript:getGraph('P" + c.ID + "', '" + (c.IND_PORCENTAJE == true ? "S" : "N") + "')\"><i class=\"fa fa-line-chart\"></i></a>"
                                                   };
 

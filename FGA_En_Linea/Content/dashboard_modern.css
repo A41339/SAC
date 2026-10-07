@@ -3573,6 +3573,13 @@ div.dt-buttons .btn:hover {
     color: #10b981 !important;
     font-size: 12px !important;
 }
+.dt-buttons .buttons-csv::before,
+.dt-button.buttons-csv::before {
+    content: "\f0f6" !important;
+    font-family: FontAwesome !important;
+    color: #0284c7 !important;
+    font-size: 12px !important;
+}
 .dt-buttons .buttons-pdf::before,
 .dt-button.buttons-pdf::before {
     content: "\f1c1" !important;
@@ -3588,11 +3595,20 @@ div.dt-buttons .btn:hover {
     font-size: 12px !important;
 }
 .dt-buttons .buttons-collection::before,
+.dt-buttons .buttons-colvis::before,
 .dt-button.buttons-colvis::before {
-    content: "\f06e" !important;
+    content: "\f0db" !important;
     font-family: FontAwesome !important;
     color: #8b5cf6 !important;
     font-size: 12px !important;
+}
+
+/* Prevenir íconos duplicados si el botón contiene tags <i> inline */
+.dt-buttons .dt-button:has(i)::before,
+.dt-button:has(i)::before,
+div.dt-buttons .btn:has(i)::before {
+    content: none !important;
+    display: none !important;
 }
 
 .dt-buttons .dt-button:hover::before,
@@ -5196,14 +5212,19 @@ table.dataTable tbody tr.group-header-row td,
 .dataTables_wrapper table.dataTable tbody tr.group-header-row td,
 .streaming-table table tbody tr.group-header-row td,
 .streaming-table table tbody tr.dtrg-group td {
-    background: linear-gradient(135deg, #2F5597 0%, #204880 100%) !important;
-    background-color: #2F5597 !important;
-    color: #ffffff !important;
+    background: #eef6fb !important;
+    background-color: #eef6fb !important;
+    color: #003F6B !important;
     font-weight: 700 !important;
-    font-size: 13.5px !important;
-    letter-spacing: 0.5px !important;
-    border: none !important;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4) !important;
+    font-size: 12.5px !important;
+    letter-spacing: 0.6px !important;
+    text-transform: uppercase !important;
+    border-top: 1px solid #d0e2f0 !important;
+    border-bottom: 1px solid #d0e2f0 !important;
+    border-left: 4px solid #0071AD !important;
+    border-right: none !important;
+    text-shadow: none !important;
+    padding: 8px 14px !important;
 }
 
 table.dataTable tr.dtrg-group td *,
@@ -5216,7 +5237,14 @@ table.dataTable tbody tr.group-header-row td *,
 .dataTables_wrapper table.dataTable tbody tr.dtrg-start td *,
 .dataTables_wrapper table.dataTable tbody tr.group-header-row td *,
 .streaming-table table tbody tr.group-header-row td * {
-    color: #ffffff !important;
+    color: #003F6B !important;
+    text-shadow: none !important;
+}
+
+table.dataTable tr.dtrg-group td i,
+table.dataTable tbody tr.dtrg-group td i {
+    color: #0071AD !important;
+    margin-right: 6px !important;
 }
 
 /* Soporte para alertas pulsantes en Modo PresentaciÃ³n Oscuro */

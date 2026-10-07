@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace FGA.Utility
@@ -956,6 +956,20 @@ namespace FGA.Utility
                 Icono = "fa fa-university",
                 ColorFondoIcono = "#fff1eb",
                 ColorIcono = "#FE7235"
+            },
+            ["Indicadores/Sugef"] = new CardMeta
+            {
+                Descripcion = "Monitoreo de solvencia patrimonial, suficiencia y análisis de indicadores normativos.",
+                Icono = "fa fa-line-chart",
+                ColorFondoIcono = "#fff1eb",
+                ColorIcono = "#FE7235"
+            },
+            ["Indicadores/FGA"] = new CardMeta
+            {
+                Descripcion = "Consulte y compare la evolución de los indicadores de cartera, financieros y personalizados.",
+                Icono = "fa fa-pie-chart",
+                ColorFondoIcono = "#e0e7ff",
+                ColorIcono = "#4338ca"
             },
             ["Econ\u00f3micos"] = new CardMeta
             {

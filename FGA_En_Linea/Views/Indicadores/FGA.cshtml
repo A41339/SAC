@@ -1,5 +1,5 @@
 @{
-    ViewBag.Title = "Indicadores FFC";
+    ViewBag.Title = "Indicadores";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -9,7 +9,7 @@
     <script type="text/javascript" src="~/Content/multiselect/docs/js/prettify.min.js"></script>
     <link rel="stylesheet" href="~/Content/multiselect/dist/css/bootstrap-multiselect.css" type="text/css">
     <script type="text/javascript" src="~/Content/multiselect/dist/js/bootstrap-multiselect.js"></script>
-    <script src="https://cdn.datatables.net/rowgroup/1.2.0/js/dataTables.rowGroup.min.js"></script>
+    
 }
 
 <section class="content-header" style="padding: 24px 20px 14px 20px;">
@@ -17,7 +17,7 @@
         <div>
             <h1 style="margin: 0; font-size: 21px; font-weight: 700; color: #143750; display: flex; align-items: center; gap: 10px;">
                 <i class="fa fa-line-chart" style="color: #0284c7;"></i>
-                Indicadores Financieros FFC
+                Indicadores
             </h1>
             <p style="margin: 6px 0 0 0; font-size: 13px; color: #64748b;">
                 Consulte y compare la evoluci&oacute;n de los indicadores de cartera, financieros y personalizados.
@@ -26,8 +26,8 @@
     </div>
     <ol class="breadcrumb">
         <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
-        <li><a href="@Url.Action("Index", "Modulo", new { id = 1500 })" class="breadcrumb-parent-pill" title="Volver a Información Financiera"><i class="fa fa-file-text-o" style="margin-right: 4px;"></i> Informaci&oacute;n Financiera</a></li>
-        <li class="active">Indicadores FFC</li>
+        <li><a href="@Url.Action("Index", "Modulo", new { id = 4000 })" class="breadcrumb-parent-pill" title="Volver a Cartera de Crédito"><i class="fa fa-pie-chart" style="margin-right: 4px;"></i> Cartera de Cr&eacute;dito</a></li>
+        <li class="active">Indicadores</li>
     </ol>
 </section>
 
@@ -123,18 +123,20 @@
                             <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid #f1f5f9;">
                                 <img class="img-logo-entidad" width="44" height="44" src="@(Session["Logo"] ?? Url.Content("~/Content/images/FFC.jpg"))" onerror="this.onerror=null;this.src='@Url.Content("~/Content/images/FFC.jpg")';" style="border-radius: 8px; background: #ffffff; padding: 3px; border: 1px solid #e2e8f0; object-fit: contain;" />
                                 <div>
-                                    <h4 style="margin: 0; font-size: 16px; font-weight: 700; color: #143750;">Indicadores Financieros - <span class="lblEntidadHeader">@(Session["NomEntidad"] ?? "")</span></h4>
-                                    <p style="margin: 2px 0 0 0; font-size: 12px; color: #64748b;">M&aacute;rgenes, rentabilidad, liquidez y solvencia</p>
+                                    <h4 style="margin: 0; font-size: 16px; font-weight: 700; color: #143750;">Indicadores Normativos CAMEL - <span class="lblEntidadHeader">@(Session["NomEntidad"] ?? "")</span></h4>
+                                    <p style="margin: 2px 0 0 0; font-size: 12px; color: #64748b;">Indicadores del acuerdo CAMEL y supervisi&oacute;n SUGEF</p>
                                 </div>
                             </div>
                             <div class="table-responsive">
-                                <table id="tbFinanciero" class="table table-striped modern-data-table" style="width:100%">
+                                <table id="tbCAMEL" class="table table-striped modern-data-table" style="width:100%">
                                     <thead>
                                         <tr>
-                                            <th>Tipo</th>
-                                            <th class="text-left" style="text-align: left !important; padding-left: 16px;">Indicador</th>
+                                            <th>Id</th>
+                                            <th class="text-left" style="text-align: left !important; padding-left: 16px;">Cuenta</th>
                                             <th class="text-right" style="text-align: right !important; padding-right: 14px;">@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MMMM yyyy"))</th>
                                             <th class="text-right" style="text-align: right !important; padding-right: 14px;">@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MMMM yyyy"))</th>
+                                            <th class="text-right" style="text-align: right !important; padding-right: 14px;">@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MMMM yyyy")) (Promedio)</th>
+                                            <th class="text-right" style="text-align: right !important; padding-right: 14px;">@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MMMM yyyy")) (Promedio)</th>
                                             <th class="text-center" style="width: 50px; text-align: center !important;"></th>
                                         </tr>
                                     </thead>
@@ -255,11 +257,11 @@
 
         // Configuración de botones compartida
         var exportButtons = [
-             { extend: 'copyHtml5', text: '<i class="fa fa-copy" style="color: #64748b;"></i> Copiar', exportOptions: { columns: ':visible' } }
-            ,{ extend: 'excelHtml5', text: '<i class="fa fa-file-excel-o" style="color: #16a34a;"></i> Excel', exportOptions: { columns: ':visible' } }
-            ,{ extend: 'csvHtml5', text: '<i class="fa fa-file-text-o" style="color: #0284c7;"></i> CSV', exportOptions: { columns: ':visible' } }
-            ,{ extend: 'print', text: '<i class="fa fa-print" style="color: #475569;"></i> Imprimir', exportOptions: { columns: ':visible' } }
-            ,{ extend: 'colvis', text: '<i class="fa fa-columns" style="color: #64748b;"></i> Columnas' }
+             { extend: 'copyHtml5', text: 'Copiar', exportOptions: { columns: ':visible' } }
+            ,{ extend: 'excelHtml5', text: 'Excel', exportOptions: { columns: ':visible' } }
+            ,{ extend: 'csvHtml5', text: 'CSV', exportOptions: { columns: ':visible' } }
+            ,{ extend: 'print', text: 'Imprimir', exportOptions: { columns: ':visible' } }
+            ,{ extend: 'colvis', text: 'Columnas' }
         ];
 
         // Idioma en español compartido
@@ -350,30 +352,22 @@
             "language": languageConfig
         });
 
-        // TABLA FINANCIERO
-        $("#tbFinanciero").dataTable({
+        // TABLA CAMEL
+        $("#tbCAMEL").dataTable({
             "bRetrieve": true,
             "bProcessing": true,
             "dom": 'lBfrtip',
-            "rowGroup": {
-                dataSrc: 0,
-                startRender: function (rows, group) {
-                    return $('<tr class="group-header-row"/>')
-                        .append('<td style="font-size:13px !important; font-weight:700 !important; background:linear-gradient(135deg, #143750 0%, #1e4b6e 100%) !important; color:#ffffff !important; padding:9px 16px !important; letter-spacing:0.5px !important; text-transform:uppercase !important;" colspan="4"><i class="fa fa-folder-open" style="margin-right:8px; color:#88D1E2 !important;"></i> <span style="color:#ffffff !important;">' + group + '</span></td>');
-                },
-                enabled: true
-            },
-            "sAjaxSource": "@Url.Content("~/Indicadores/GetGridIndicadorF")",
+            "sAjaxSource": "@Url.Content("~/Indicadores/GetGridCAMEL")",
             "buttons": exportButtons,
             "columnDefs": [
                 { "targets": 0, "visible": false, "searchable": false },
                 { "targets": 1, "className": 'text-left font-weight-bold' },
-                { "targets": [2, 3], "className": 'text-right', "width": '160px' },
-                { "targets": 4, "className": 'text-center', "width": '50px', "orderable": false }
+                { "targets": [2, 3, 4, 5], "className": 'text-right', "width": '140px' },
+                { "targets": 6, "className": 'text-center', "width": '50px', "orderable": false }
             ],
             "rowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
                 $('td:eq(0)', nRow).css({ 'font-weight': '500', 'color': '#1e293b' });
-                for (var i = 2; i <= 3; i++){
+                for (var i = 2; i <= 5; i++) {
                     var val = parseFloat(aData[i]) || 0;
                     var cell = $(nRow).find('td:eq(' + (i - 1) + ')');
                     cell.css('font-variant-numeric', 'tabular-nums');
@@ -393,6 +387,7 @@
             "autoWidth": false,
             "language": languageConfig
         });
+
 
         $('a[data-toggle="tab"]').on('shown.bs.tab', function () {
             $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
