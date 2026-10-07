@@ -112,7 +112,7 @@
                 </div>
             </div>
         </div>
-        <div class="kpi-stat-card kpi-green">
+        <div class="kpi-stat-card kpi-blue">
             <div class="kpi-stat-icon">
                 <i class="fa fa-pie-chart"></i>
             </div>
@@ -155,15 +155,6 @@
                                         <p style="margin: 2px 0 0 0; font-size: 12px; color: #64748b;">M&aacute;rgenes, rentabilidad, liquidez y solvencia</p>
                                     </div>
                                 </div>
-                            </div>
-
-                            <!-- Chips de Filtrado Rápido por Categoría -->
-                            <div class="category-filter-chips" id="sugefCategoryChips">
-                                <button type="button" class="category-chip active" data-category=""><i class="fa fa-th-large"></i> Todos</button>
-                                <button type="button" class="category-chip" data-category="ACTIVOS"><i class="fa fa-briefcase"></i> Activos</button>
-                                <button type="button" class="category-chip" data-category="CAPITAL"><i class="fa fa-university"></i> Capital</button>
-                                <button type="button" class="category-chip" data-category="LIQUIDEZ"><i class="fa fa-tint"></i> Liquidez</button>
-                                <button type="button" class="category-chip" data-category="RENDIMIENTO"><i class="fa fa-line-chart"></i> Rendimiento</button>
                             </div>
 
                             <div class="table-responsive">
@@ -747,19 +738,6 @@
             "autoWidth": false,
             "language": languageConfig
         });
-
-        // Evento de clic en chips de categoría
-        $('#sugefCategoryChips .category-chip').on('click', function () {
-            $('#sugefCategoryChips .category-chip').removeClass('active');
-            $(this).addClass('active');
-            var cat = $(this).data('category');
-            if (cat) {
-                tableFinanciero.column(0).search('^' + cat + '$', true, false).draw();
-            } else {
-                tableFinanciero.column(0).search('').draw();
-            }
-        });
-
 
         function renderSuficienciaDelta(data, type, row) {
             var v1 = parseFloat(String(row[2] || '').replace(/%/g, '').replace(/\s/g, '').replace(',', '.')) || 0;

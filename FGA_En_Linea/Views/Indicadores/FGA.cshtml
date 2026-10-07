@@ -100,16 +100,6 @@
                                     <p style="margin: 2px 0 0 0; font-size: 12px; color: #64748b;">Composici&oacute;n, morosidad y coberturas crediticias</p>
                                 </div>
                             </div>
-                            <!-- Chips de Filtrado Rápido Cartera -->
-                            <div class="category-filter-chips" id="carteraChips" style="margin-bottom: 14px;">
-                                <span style="font-size: 12px; font-weight: 700; color: #475569; display: inline-flex; align-items: center; gap: 5px; margin-right: 4px;">
-                                    <i class="fa fa-filter" style="color: #0071AD;"></i> Filtro:
-                                </span>
-                                <button type="button" class="category-chip active" data-filter="">Todos</button>
-                                <button type="button" class="category-chip" data-filter="mora">Morosidad</button>
-                                <button type="button" class="category-chip" data-filter="cobertura">Coberturas</button>
-                                <button type="button" class="category-chip" data-filter="cartera">Cartera</button>
-                            </div>
 
                             <div class="table-responsive">
                                 <table id="tbCartera" class="table table-striped modern-data-table" style="width:100%">
@@ -138,19 +128,6 @@
                                     <h4 style="margin: 0; font-size: 16px; font-weight: 700; color: #143750;">Indicadores Normativos CAMEL - <span class="lblEntidadHeader">@(Session["NomEntidad"] ?? "")</span></h4>
                                     <p style="margin: 2px 0 0 0; font-size: 12px; color: #64748b;">Indicadores del acuerdo CAMEL y supervisi&oacute;n SUGEF</p>
                                 </div>
-                            </div>
-
-                            <!-- Chips de Filtrado Rápido CAMEL -->
-                            <div class="category-filter-chips" id="camelChips" style="margin-bottom: 14px;">
-                                <span style="font-size: 12px; font-weight: 700; color: #475569; display: inline-flex; align-items: center; gap: 5px; margin-right: 4px;">
-                                    <i class="fa fa-filter" style="color: #0071AD;"></i> Filtro:
-                                </span>
-                                <button type="button" class="category-chip active" data-filter="">Todos</button>
-                                <button type="button" class="category-chip" data-filter="capital">Capital</button>
-                                <button type="button" class="category-chip" data-filter="activo">Activos</button>
-                                <button type="button" class="category-chip" data-filter="manejo">Manejo</button>
-                                <button type="button" class="category-chip" data-filter="rendimiento">Rendimiento</button>
-                                <button type="button" class="category-chip" data-filter="liquidez">Liquidez</button>
                             </div>
 
                             <div class="table-responsive">
@@ -416,14 +393,6 @@
             "language": languageConfig
         });
 
-        // Evento chips Cartera
-        $('#carteraChips .category-chip').on('click', function () {
-            $('#carteraChips .category-chip').removeClass('active');
-            $(this).addClass('active');
-            var filter = $(this).data('filter');
-            tableCartera.search(filter).draw();
-        });
-
         // TABLA CAMEL
         var tableCAMEL = $("#tbCAMEL").DataTable({
             "bRetrieve": true,
@@ -465,14 +434,6 @@
             "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "Todos"]],
             "autoWidth": false,
             "language": languageConfig
-        });
-
-        // Evento chips CAMEL
-        $('#camelChips .category-chip').on('click', function () {
-            $('#camelChips .category-chip').removeClass('active');
-            $(this).addClass('active');
-            var filter = $(this).data('filter');
-            tableCAMEL.search(filter).draw();
         });
 
         // Persistencia de pestaña activa en FGA
