@@ -78,13 +78,14 @@
                 </div>
 
                 <div class="table-responsive">
-                    <table id="tbError" class="table table-striped modern-data-table" style="width:100%">
+                    <table id="tbSuficienciaReport" class="table table-striped modern-data-table" style="width:100%">
                         <thead>
                             <tr>
                                 <th>Id</th>
                                 <th class="text-left" style="text-align: left !important; padding-left: 16px;">Cuenta</th>
                                 <th class="text-right" style="text-align: right !important; padding-right: 14px;">@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MMMM yyyy"))</th>
                                 <th class="text-right" style="text-align: right !important; padding-right: 14px;">@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MMMM yyyy"))</th>
+                                <th class="text-center" style="width: 120px; text-align: center !important;">Variaci&oacute;n (&Delta;)</th>
                                 <th class="text-center" style="width: 50px; text-align: center !important;"></th>
                             </tr>
                         </thead>
@@ -119,8 +120,6 @@
         </div>
     </div>
 </div>
-
-
 
 <script type="text/javascript">
     function getGraph(id, estilo) {
@@ -187,20 +186,48 @@
             }
         };
 
-        $("#tbError").dataTable({
+        $("#tbSuficienciaReport").dataTable({
             "bRetrieve": true,
             "bProcessing": true,
             "dom": 'lBfrtip',
-            "sAjaxSource": "@Url.Content("~/Indicadores/GetGridSuficiencia")",
+            "sAjaxSource": "@Url.Content("~/Indicadores/GetSuficiencia")",
             "buttons": exportButtons,
             "columnDefs": [
                 { "targets": 0, "visible": false, "searchable": false },
                 { "targets": 1, "className": 'text-left font-weight-bold' },
-                { "targets": [2, 3], "className": 'text-right', "width": '160px' },
-                { "targets": 4, "className": 'text-center', "width": '50px', "orderable": false }
+                { "targets": [2, 3], "className": 'text-right', "width": '140px' },
+                {
+                    "targets": 4,
+                    "className": 'text-center',
+                    "width": '120px',
+                    "orderable": false,
+                    "render": function(data, type, row) {
+                        var v1 = parseFloat(String(row[2] || '').replace(/%/g, '').replace(/\s/g, '').replace(',', '.')) || 0;
+                        var v2 = parseFloat(String(row[3] || '').replace(/%/g, '').replace(/\s/g, '').replace(',', '.')) || 0;
+                        if (isNaN(v1) && isNaN(v2)) return '<span class="text-muted">-</span>';
+                        var delta = v2 - v1;
+                        if (Math.abs(delta) < 0.0001) return '<span class="delta-badge neutral">0.00%</span>';
+                        var sign = delta > 0 ? '+' : '';
+                        var arrow = delta > 0 ? '▲' : '▼';
+                        var badgeClass = delta > 0 ? 'positive' : 'negative';
+                        return '<span class="delta-badge ' + badgeClass + '">' + arrow + ' ' + sign + delta.toFixed(2) + '%</span>';
+                    }
+                },
+                { "targets": 5, "className": 'text-center', "width": '50px', "orderable": false }
             ],
             "rowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-                $('td:eq(0)', nRow).css({ 'font-weight': '500', 'color': '#1e293b' });
+                var cuenta = (aData[1] || '').trim();
+                var v2 = parseFloat(String(aData[3] || '').replace(/%/g, '').replace(/\s/g, '').replace(',', '.')) || 0;
+
+                if (cuenta.toLowerCase().indexOf('suficiencia') !== -1) {
+                    var normClass = v2 >= 10.0 ? 'success' : (v2 >= 8.0 ? 'warning' : 'danger');
+                    var normLabel = v2 >= 10.0 ? 'Normalidad (&ge;10%)' : (v2 >= 8.0 ? 'Inestabilidad' : 'Irregularidad');
+                    var normHtml = ' <span class="norm-badge ' + normClass + '" style="margin-left: 8px;"><i class="fa fa-shield"></i> ' + normLabel + '</span>';
+                    $('td:eq(0)', nRow).html(cuenta + normHtml);
+                } else {
+                    $('td:eq(0)', nRow).css({ 'font-weight': '500', 'color': '#1e293b' });
+                }
+
                 for (var i = 2; i <= 3; i++) {
                     var val = parseFloat(aData[i]) || 0;
                     var cell = $(nRow).find('td:eq(' + (i - 1) + ')');

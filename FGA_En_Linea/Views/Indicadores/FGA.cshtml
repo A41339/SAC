@@ -100,6 +100,17 @@
                                     <p style="margin: 2px 0 0 0; font-size: 12px; color: #64748b;">Composici&oacute;n, morosidad y coberturas crediticias</p>
                                 </div>
                             </div>
+                            <!-- Chips de Filtrado Rápido Cartera -->
+                            <div class="category-filter-chips" id="carteraChips" style="margin-bottom: 14px;">
+                                <span style="font-size: 12px; font-weight: 700; color: #475569; display: inline-flex; align-items: center; gap: 5px; margin-right: 4px;">
+                                    <i class="fa fa-filter" style="color: #0071AD;"></i> Filtro:
+                                </span>
+                                <button type="button" class="category-chip active" data-filter="">Todos</button>
+                                <button type="button" class="category-chip" data-filter="mora">Morosidad</button>
+                                <button type="button" class="category-chip" data-filter="cobertura">Coberturas</button>
+                                <button type="button" class="category-chip" data-filter="cartera">Cartera</button>
+                            </div>
+
                             <div class="table-responsive">
                                 <table id="tbCartera" class="table table-striped modern-data-table" style="width:100%">
                                     <thead>
@@ -108,6 +119,7 @@
                                             <th class="text-left" style="text-align: left !important; padding-left: 16px;">Cuenta</th>
                                             <th class="text-right" style="text-align: right !important; padding-right: 14px;">@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MMMM yyyy"))</th>
                                             <th class="text-right" style="text-align: right !important; padding-right: 14px;">@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MMMM yyyy"))</th>
+                                            <th class="text-center" style="width: 110px; text-align: center !important;">Variaci&oacute;n (&Delta;)</th>
                                             <th class="text-right" style="text-align: right !important; padding-right: 14px;">@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MMMM yyyy")) (Promedio)</th>
                                             <th class="text-right" style="text-align: right !important; padding-right: 14px;">@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MMMM yyyy")) (Promedio)</th>
                                             <th class="text-center" style="width: 50px; text-align: center !important;"></th>
@@ -127,6 +139,20 @@
                                     <p style="margin: 2px 0 0 0; font-size: 12px; color: #64748b;">Indicadores del acuerdo CAMEL y supervisi&oacute;n SUGEF</p>
                                 </div>
                             </div>
+
+                            <!-- Chips de Filtrado Rápido CAMEL -->
+                            <div class="category-filter-chips" id="camelChips" style="margin-bottom: 14px;">
+                                <span style="font-size: 12px; font-weight: 700; color: #475569; display: inline-flex; align-items: center; gap: 5px; margin-right: 4px;">
+                                    <i class="fa fa-filter" style="color: #0071AD;"></i> Filtro:
+                                </span>
+                                <button type="button" class="category-chip active" data-filter="">Todos</button>
+                                <button type="button" class="category-chip" data-filter="capital">Capital</button>
+                                <button type="button" class="category-chip" data-filter="activo">Activos</button>
+                                <button type="button" class="category-chip" data-filter="manejo">Manejo</button>
+                                <button type="button" class="category-chip" data-filter="rendimiento">Rendimiento</button>
+                                <button type="button" class="category-chip" data-filter="liquidez">Liquidez</button>
+                            </div>
+
                             <div class="table-responsive">
                                 <table id="tbCAMEL" class="table table-striped modern-data-table" style="width:100%">
                                     <thead>
@@ -135,6 +161,7 @@
                                             <th class="text-left" style="text-align: left !important; padding-left: 16px;">Cuenta</th>
                                             <th class="text-right" style="text-align: right !important; padding-right: 14px;">@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MMMM yyyy"))</th>
                                             <th class="text-right" style="text-align: right !important; padding-right: 14px;">@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MMMM yyyy"))</th>
+                                            <th class="text-center" style="width: 110px; text-align: center !important;">Variaci&oacute;n (&Delta;)</th>
                                             <th class="text-right" style="text-align: right !important; padding-right: 14px;">@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MMMM yyyy")) (Promedio)</th>
                                             <th class="text-right" style="text-align: right !important; padding-right: 14px;">@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MMMM yyyy")) (Promedio)</th>
                                             <th class="text-center" style="width: 50px; text-align: center !important;"></th>
@@ -161,6 +188,7 @@
                                             <th class="text-left" style="text-align: left !important; padding-left: 16px;">Indicador</th>
                                             <th class="text-right" style="text-align: right !important; padding-right: 14px;">@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MMMM yyyy"))</th>
                                             <th class="text-right" style="text-align: right !important; padding-right: 14px;">@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MMMM yyyy"))</th>
+                                            <th class="text-center" style="width: 110px; text-align: center !important;">Variaci&oacute;n (&Delta;)</th>
                                             <th class="text-center" style="width: 50px; text-align: center !important;"></th>
                                         </tr>
                                     </thead>
@@ -281,24 +309,53 @@
             }
         };
 
+        function renderDeltaBadge(raw1, raw2, name) {
+            var v1 = parseFloat(String(raw1 || '').replace(/%/g, '').replace(/\s/g, '').replace(',', '.')) || 0;
+            var v2 = parseFloat(String(raw2 || '').replace(/%/g, '').replace(/\s/g, '').replace(',', '.')) || 0;
+            if (isNaN(v1) && isNaN(v2)) return '<span class="text-muted">-</span>';
+            var delta = v2 - v1;
+            if (Math.abs(delta) < 0.0001) return '<span class="delta-badge neutral">0.00%</span>';
+
+            var nom = String(name || '').toLowerCase();
+            var isRisk = nom.indexOf('vencid') !== -1 || nom.indexOf('improductiv') !== -1 || nom.indexOf('gasto') !== -1 || nom.indexOf('mora') !== -1 || nom.indexOf('deterioro') !== -1;
+
+            var sign = delta > 0 ? '+' : '';
+            var arrow = delta > 0 ? '▲' : '▼';
+            var dStr = sign + delta.toFixed(2) + '%';
+
+            var badgeClass = '';
+            if (isRisk) {
+                badgeClass = delta > 0 ? 'negative' : 'positive';
+            } else {
+                badgeClass = delta > 0 ? 'positive' : 'negative';
+            }
+
+            return '<span class="delta-badge ' + badgeClass + '">' + arrow + ' ' + dStr + '</span>';
+        }
+
         // TABLA PERSONALIZADOS
-        $("#tbPersonalizado").dataTable({
+        var tablePersonalizado = $("#tbPersonalizado").DataTable({
             "bRetrieve": true,
             "bProcessing": true,
             "dom": 'lBfrtip',
             "sAjaxSource": "@Url.Content("~/Indicadores/GetGridIndicadorFormula")",
             "buttons": exportButtons,
             "columnDefs": [
-                { "targets": 0, "className": 'text-left font-weight-bold' },
-                { "targets": [1, 2], "className": 'text-right', "width": '160px' },
-                { "targets": 3, "className": 'text-center', "width": '50px', "orderable": false }
+                { "targets": 0, "className": 'text-left font-weight-bold', "render": function(d,t,r){ return r[0]; } },
+                { "targets": 1, "className": 'text-right', "width": '140px', "render": function(d,t,r){ return r[1]; } },
+                { "targets": 2, "className": 'text-right', "width": '140px', "render": function(d,t,r){ return r[2]; } },
+                { "targets": 3, "className": 'text-center', "width": '110px', "orderable": false, "render": function(d,t,r){ return renderDeltaBadge(r[1], r[2], r[0]); } },
+                { "targets": 4, "className": 'text-center', "width": '50px', "orderable": false, "render": function(d,t,r){ return r[3]; } }
             ],
             "rowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
                 $('td:eq(0)', nRow).css({ 'font-weight': '500', 'color': '#1e293b' });
-                for (var i = 1; i <= 2; i++){
-                    var val = parseFloat(aData[i]) || 0;
-                    var cell = $(nRow).find('td:eq(' + i + ')');
+                var numericCells = [1, 2];
+                for (var k = 0; k < numericCells.length; k++) {
+                    var cellIdx = numericCells[k];
+                    var cell = $(nRow).find('td:eq(' + cellIdx + ')');
                     cell.css('font-variant-numeric', 'tabular-nums');
+                    var textVal = cell.text().trim();
+                    var val = parseFloat(textVal.replace('%', '').replace(/,/g, '')) || 0;
                     if (val < 0) {
                         cell.css({ 'color': '#c2410c', 'font-weight': '600' });
                     } else {
@@ -317,7 +374,7 @@
         });
 
         // TABLA CARTERA
-        $("#tbCartera").dataTable({
+        var tableCartera = $("#tbCartera").DataTable({
             "bRetrieve": true,
             "bProcessing": true,
             "dom": 'lBfrtip',
@@ -325,16 +382,23 @@
             "buttons": exportButtons,
             "columnDefs": [
                 { "targets": 0, "visible": false, "searchable": false },
-                { "targets": 1, "className": 'text-left font-weight-bold' },
-                { "targets": [2, 3, 4, 5], "className": 'text-right', "width": '140px' },
-                { "targets": 6, "className": 'text-center', "width": '50px', "orderable": false }
+                { "targets": 1, "className": 'text-left font-weight-bold', "render": function(d,t,r){ return r[1]; } },
+                { "targets": 2, "className": 'text-right', "width": '120px', "render": function(d,t,r){ return r[2]; } },
+                { "targets": 3, "className": 'text-right', "width": '120px', "render": function(d,t,r){ return r[3]; } },
+                { "targets": 4, "className": 'text-center', "width": '110px', "orderable": false, "render": function(d,t,r){ return renderDeltaBadge(r[2], r[3], r[1]); } },
+                { "targets": 5, "className": 'text-right', "width": '120px', "render": function(d,t,r){ return r[4]; } },
+                { "targets": 6, "className": 'text-right', "width": '120px', "render": function(d,t,r){ return r[5]; } },
+                { "targets": 7, "className": 'text-center', "width": '50px', "orderable": false, "render": function(d,t,r){ return r[6]; } }
             ],
             "rowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
                 $('td:eq(0)', nRow).css({ 'font-weight': '500', 'color': '#1e293b' });
-                for (var i = 2; i <= 5; i++){
-                    var val = parseFloat(aData[i]) || 0;
-                    var cell = $(nRow).find('td:eq(' + (i - 1) + ')');
+                var numericCells = [1, 2, 4, 5];
+                for (var k = 0; k < numericCells.length; k++) {
+                    var cellIdx = numericCells[k];
+                    var cell = $(nRow).find('td:eq(' + cellIdx + ')');
                     cell.css('font-variant-numeric', 'tabular-nums');
+                    var textVal = cell.text().trim();
+                    var val = parseFloat(textVal.replace('%', '').replace(/,/g, '')) || 0;
                     if (val < 0) {
                         cell.css({ 'color': '#c2410c', 'font-weight': '600' });
                     } else {
@@ -352,8 +416,16 @@
             "language": languageConfig
         });
 
+        // Evento chips Cartera
+        $('#carteraChips .category-chip').on('click', function () {
+            $('#carteraChips .category-chip').removeClass('active');
+            $(this).addClass('active');
+            var filter = $(this).data('filter');
+            tableCartera.search(filter).draw();
+        });
+
         // TABLA CAMEL
-        $("#tbCAMEL").dataTable({
+        var tableCAMEL = $("#tbCAMEL").DataTable({
             "bRetrieve": true,
             "bProcessing": true,
             "dom": 'lBfrtip',
@@ -361,16 +433,23 @@
             "buttons": exportButtons,
             "columnDefs": [
                 { "targets": 0, "visible": false, "searchable": false },
-                { "targets": 1, "className": 'text-left font-weight-bold' },
-                { "targets": [2, 3, 4, 5], "className": 'text-right', "width": '140px' },
-                { "targets": 6, "className": 'text-center', "width": '50px', "orderable": false }
+                { "targets": 1, "className": 'text-left font-weight-bold', "render": function(d,t,r){ return r[1]; } },
+                { "targets": 2, "className": 'text-right', "width": '120px', "render": function(d,t,r){ return r[2]; } },
+                { "targets": 3, "className": 'text-right', "width": '120px', "render": function(d,t,r){ return r[3]; } },
+                { "targets": 4, "className": 'text-center', "width": '110px', "orderable": false, "render": function(d,t,r){ return renderDeltaBadge(r[2], r[3], r[1]); } },
+                { "targets": 5, "className": 'text-right', "width": '120px', "render": function(d,t,r){ return r[4]; } },
+                { "targets": 6, "className": 'text-right', "width": '120px', "render": function(d,t,r){ return r[5]; } },
+                { "targets": 7, "className": 'text-center', "width": '50px', "orderable": false, "render": function(d,t,r){ return r[6]; } }
             ],
             "rowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
                 $('td:eq(0)', nRow).css({ 'font-weight': '500', 'color': '#1e293b' });
-                for (var i = 2; i <= 5; i++) {
-                    var val = parseFloat(aData[i]) || 0;
-                    var cell = $(nRow).find('td:eq(' + (i - 1) + ')');
+                var numericCells = [1, 2, 4, 5];
+                for (var k = 0; k < numericCells.length; k++) {
+                    var cellIdx = numericCells[k];
+                    var cell = $(nRow).find('td:eq(' + cellIdx + ')');
                     cell.css('font-variant-numeric', 'tabular-nums');
+                    var textVal = cell.text().trim();
+                    var val = parseFloat(textVal.replace('%', '').replace(/,/g, '')) || 0;
                     if (val < 0) {
                         cell.css({ 'color': '#c2410c', 'font-weight': '600' });
                     } else {
@@ -388,8 +467,24 @@
             "language": languageConfig
         });
 
+        // Evento chips CAMEL
+        $('#camelChips .category-chip').on('click', function () {
+            $('#camelChips .category-chip').removeClass('active');
+            $(this).addClass('active');
+            var filter = $(this).data('filter');
+            tableCAMEL.search(filter).draw();
+        });
 
-        $('a[data-toggle="tab"]').on('shown.bs.tab', function () {
+        // Persistencia de pestaña activa en FGA
+        var activeFgaTab = localStorage.getItem('ffc_active_tab_fga');
+        if (activeFgaTab) {
+            $('.nav-tabs a[href="' + activeFgaTab + '"]').tab('show');
+        }
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+            var target = $(e.target).attr("href");
+            if (target && target.startsWith("#")) {
+                localStorage.setItem('ffc_active_tab_fga', target);
+            }
             $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
         });
 

@@ -74,6 +74,58 @@
         </div>
     }
 
+    <!-- PANEL RESUMEN EJECUTIVO (KPI HIGHLIGHT CARDS) -->
+    <div class="kpi-stat-grid" id="sugefKpiGrid">
+        <div class="kpi-stat-card kpi-blue">
+            <div class="kpi-stat-icon">
+                <i class="fa fa-shield"></i>
+            </div>
+            <div class="kpi-stat-content">
+                <div class="kpi-stat-label">Suficiencia Patrimonial</div>
+                <div class="kpi-stat-value" id="kpiSuficienciaVal">--%</div>
+                <div class="kpi-stat-sub">
+                    <span class="norm-badge success" id="kpiSuficienciaBadge"><i class="fa fa-check-circle"></i> Cumple SUGEF (&gt;10%)</span>
+                </div>
+            </div>
+        </div>
+        <div class="kpi-stat-card kpi-amber">
+            <div class="kpi-stat-icon">
+                <i class="fa fa-exclamation-triangle"></i>
+            </div>
+            <div class="kpi-stat-content">
+                <div class="kpi-stat-label">Mora Cartera &gt; 30 D&iacute;as</div>
+                <div class="kpi-stat-value" id="kpiMoraVal">--%</div>
+                <div class="kpi-stat-sub">
+                    <span id="kpiMoraDelta" class="delta-badge neutral">--</span>
+                </div>
+            </div>
+        </div>
+        <div class="kpi-stat-card kpi-purple">
+            <div class="kpi-stat-icon">
+                <i class="fa fa-cubes"></i>
+            </div>
+            <div class="kpi-stat-content">
+                <div class="kpi-stat-label">Activo Improductivo</div>
+                <div class="kpi-stat-value" id="kpiImproductivoVal">--%</div>
+                <div class="kpi-stat-sub">
+                    <span id="kpiImproductivoDelta" class="delta-badge neutral">--</span>
+                </div>
+            </div>
+        </div>
+        <div class="kpi-stat-card kpi-green">
+            <div class="kpi-stat-icon">
+                <i class="fa fa-pie-chart"></i>
+            </div>
+            <div class="kpi-stat-content">
+                <div class="kpi-stat-label">Cobertura de Cartera</div>
+                <div class="kpi-stat-value" id="kpiCoberturaVal">--%</div>
+                <div class="kpi-stat-sub">
+                    <span id="kpiCoberturaDelta" class="delta-badge neutral">--</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row">
         <div class="col-xs-12">
             <div class="modern-table-card" style="border: 1px solid #e2e8f0; border-radius: 12px; background: #ffffff; box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05); overflow: hidden; padding: 22px; margin-bottom: 24px;">
@@ -95,13 +147,25 @@
                     <div class="tab-content" style="padding: 0;">
                         <!-- TAB 1: INDICADORES FINANCIEROS -->
                         <div class="tab-pane" id="tab_1">
-                            <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid #f1f5f9;">
-                                <img class="img-logo-entidad" width="44" height="44" src="@(Session["Logo"] ?? Url.Content("~/Content/images/FFC.jpg"))" onerror="this.onerror=null;this.src='@Url.Content("~/Content/images/FFC.jpg")';" style="border-radius: 8px; background: #ffffff; padding: 3px; border: 1px solid #e2e8f0; object-fit: contain;" />
-                                <div>
-                                    <h4 style="margin: 0; font-size: 16px; font-weight: 700; color: #143750;">Indicadores Financieros - <span class="lblEntidadHeader">@(Session["NomEntidad"] ?? "")</span></h4>
-                                    <p style="margin: 2px 0 0 0; font-size: 12px; color: #64748b;">M&aacute;rgenes, rentabilidad, liquidez y solvencia</p>
+                            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #f1f5f9;">
+                                <div style="display: flex; align-items: center; gap: 14px;">
+                                    <img class="img-logo-entidad" width="44" height="44" src="@(Session["Logo"] ?? Url.Content("~/Content/images/FFC.jpg"))" onerror="this.onerror=null;this.src='@Url.Content("~/Content/images/FFC.jpg")';" style="border-radius: 8px; background: #ffffff; padding: 3px; border: 1px solid #e2e8f0; object-fit: contain;" />
+                                    <div>
+                                        <h4 style="margin: 0; font-size: 16px; font-weight: 700; color: #143750;">Indicadores Financieros - <span class="lblEntidadHeader">@(Session["NomEntidad"] ?? "")</span></h4>
+                                        <p style="margin: 2px 0 0 0; font-size: 12px; color: #64748b;">M&aacute;rgenes, rentabilidad, liquidez y solvencia</p>
+                                    </div>
                                 </div>
                             </div>
+
+                            <!-- Chips de Filtrado Rápido por Categoría -->
+                            <div class="category-filter-chips" id="sugefCategoryChips">
+                                <button type="button" class="category-chip active" data-category=""><i class="fa fa-th-large"></i> Todos</button>
+                                <button type="button" class="category-chip" data-category="ACTIVOS"><i class="fa fa-briefcase"></i> Activos</button>
+                                <button type="button" class="category-chip" data-category="CAPITAL"><i class="fa fa-university"></i> Capital</button>
+                                <button type="button" class="category-chip" data-category="LIQUIDEZ"><i class="fa fa-tint"></i> Liquidez</button>
+                                <button type="button" class="category-chip" data-category="RENDIMIENTO"><i class="fa fa-line-chart"></i> Rendimiento</button>
+                            </div>
+
                             <div class="table-responsive">
                                 <table id="tbFinancieroSugef" class="table table-striped modern-data-table" style="width:100%">
                                     <thead>
@@ -110,6 +174,7 @@
                                             <th class="text-left" style="text-align: left !important; padding-left: 16px;">Indicador</th>
                                             <th class="text-right" style="text-align: right !important; padding-right: 14px;">@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MMMM yyyy"))</th>
                                             <th class="text-right" style="text-align: right !important; padding-right: 14px;">@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MMMM yyyy"))</th>
+                                            <th class="text-center" style="width: 125px; text-align: center !important;">Variaci&oacute;n (&Delta;)</th>
                                             <th class="text-center" style="width: 50px; text-align: center !important;"></th>
                                         </tr>
                                     </thead>
@@ -147,6 +212,7 @@
                                                 <th class="text-left" style="text-align: left !important; padding-left: 16px;">Cuenta</th>
                                                 <th class="text-right" style="text-align: right !important; padding-right: 14px;">@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MMMM yyyy"))</th>
                                                 <th class="text-right" style="text-align: right !important; padding-right: 14px;">@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MMMM yyyy"))</th>
+                                                <th class="text-center" style="width: 120px; text-align: center !important;">Variaci&oacute;n (&Delta;)</th>
                                                 <th class="text-center" style="width: 50px; text-align: center !important;"></th>
                                             </tr>
                                         </thead>
@@ -176,6 +242,7 @@
                                                 <th class="text-left" style="text-align: left !important; padding-left: 16px;">Cuenta</th>
                                                 <th class="text-right" style="text-align: right !important; padding-right: 14px;">@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MMMM yyyy"))</th>
                                                 <th class="text-right" style="text-align: right !important; padding-right: 14px;">@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MMMM yyyy"))</th>
+                                                <th class="text-center" style="width: 120px; text-align: center !important;">Variaci&oacute;n (&Delta;)</th>
                                                 <th class="text-center" style="width: 50px; text-align: center !important;"></th>
                                             </tr>
                                         </thead>
@@ -572,25 +639,61 @@
             }
         };
 
-        // TABLA INDICADORES FINANCIEROS (con rowGroup por tipo)
-        $("#tbFinancieroSugef").dataTable({
+        // TABLA INDICADORES FINANCIEROS (con rowGroup por tipo y variación dinámica)
+        var tableFinanciero = $("#tbFinancieroSugef").DataTable({
             "bRetrieve": true,
             "bProcessing": true,
             "dom": 'lBfrtip',
             "rowGroup": {
                 dataSrc: 0,
                 startRender: function (rows, group) {
-                    return $('<tr class="group-header-row"/>').append('<td style="font-size:12.5px !important; font-weight:700 !important; background:#eef6fb !important; background-color:#eef6fb !important; color:#003F6B !important; padding:8px 14px !important; letter-spacing:0.6px !important; text-transform:uppercase !important; border-top:1px solid #d0e2f0 !important; border-bottom:1px solid #d0e2f0 !important; border-left:4px solid #0071AD !important; border-right:none !important;" colspan="4"><i class="fa fa-folder-open" style="margin-right:8px; color:#0071AD !important;"></i> <span style="color:#003F6B !important;">' + group + '</span></td>');
+                    return $('<tr class="group-header-row"/>').append('<td style="font-size:12.5px !important; font-weight:700 !important; background:#eef6fb !important; background-color:#eef6fb !important; color:#003F6B !important; padding:8px 14px !important; letter-spacing:0.6px !important; text-transform:uppercase !important; border-top:1px solid #d0e2f0 !important; border-bottom:1px solid #d0e2f0 !important; border-left:4px solid #0071AD !important; border-right:none !important;" colspan="5"><i class="fa fa-folder-open" style="margin-right:8px; color:#0071AD !important;"></i> <span style="color:#003F6B !important;">' + group + '</span></td>');
                 },
                 enabled: true
             },
             "sAjaxSource": "@Url.Content("~/Indicadores/GetGridIndicadorF")",
             "buttons": exportButtons,
             "columnDefs": [
-                { "targets": 0, "visible": false, "searchable": false },
+                { "targets": 0, "visible": false, "searchable": true },
                 { "targets": 1, "className": 'text-left font-weight-bold' },
-                { "targets": [2, 3], "className": 'text-right', "width": '160px' },
-                { "targets": 4, "className": 'text-center', "width": '50px', "orderable": false }
+                { "targets": [2, 3], "className": 'text-right', "width": '140px' },
+                {
+                    "targets": 4,
+                    "className": 'text-center',
+                    "width": '125px',
+                    "orderable": false,
+                    "render": function (data, type, row) {
+                        var v1Raw = (row[2] || '').toString().replace('%', '').replace(/,/g, '').trim();
+                        var v2Raw = (row[3] || '').toString().replace('%', '').replace(/,/g, '').trim();
+                        var val1 = parseFloat(v1Raw);
+                        var val2 = parseFloat(v2Raw);
+                        if (isNaN(val1) || isNaN(val2)) {
+                            return '<span class="delta-badge neutral">0.00%</span>';
+                        }
+                        var delta = val2 - val1;
+                        var isPercent = (row[2] || '').indexOf('%') !== -1 || (row[3] || '').indexOf('%') !== -1;
+                        var nombre = (row[1] || '').toLowerCase();
+                        var esRiesgo = nombre.indexOf('vencid') !== -1 || nombre.indexOf('improductiv') !== -1 || nombre.indexOf('gasto') !== -1 || nombre.indexOf('mora') !== -1;
+
+                        if (Math.abs(delta) < 0.0001) {
+                            return '<span class="delta-badge neutral">0.00' + (isPercent ? '%' : '') + '</span>';
+                        }
+
+                        var sign = delta > 0 ? '+' : '';
+                        var arrow = delta > 0 ? '▲' : '▼';
+                        var deltaStr = sign + delta.toFixed(2) + (isPercent ? '%' : '');
+
+                        var badgeClass = '';
+                        if (esRiesgo) {
+                            badgeClass = delta > 0 ? 'negative' : 'positive';
+                        } else {
+                            badgeClass = delta > 0 ? 'positive' : 'negative';
+                        }
+
+                        return '<span class="delta-badge ' + badgeClass + '">' + arrow + ' ' + deltaStr + '</span>';
+                    }
+                },
+                { "targets": 5, "className": 'text-center', "width": '50px', "orderable": false }
             ],
             "rowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
                 $('td:eq(0)', nRow).css({ 'font-weight': '500', 'color': '#1e293b' });
@@ -607,6 +710,36 @@
             },
             "drawCallback": function (settings) {
                 $(this).find('[data-toggle="tooltip"]').tooltip();
+
+                // Actualizar KPI Cards buscando en los datos de la tabla
+                var api = this.api();
+                api.rows().every(function () {
+                    var d = this.data();
+                    if (!d) return;
+                    var nom = (d[1] || '').toLowerCase();
+                    var v1 = parseFloat((d[2] || '').replace('%', '').replace(/,/g, '')) || 0;
+                    var v2 = parseFloat((d[3] || '').replace('%', '').replace(/,/g, '')) || 0;
+                    var delta = v2 - v1;
+                    var sign = delta > 0 ? '+' : '';
+                    var dStr = sign + delta.toFixed(2) + '%';
+
+                    if (nom.indexOf('vencida mayor de 30') !== -1 || nom.indexOf('vencida mayor a 30') !== -1) {
+                        $('#kpiMoraVal').text(d[3] || '--');
+                        $('#kpiMoraDelta').removeClass('positive negative neutral')
+                            .addClass(delta > 0 ? 'negative' : 'positive')
+                            .text((delta > 0 ? '▲ ' : '▼ ') + dStr);
+                    } else if (nom.indexOf('improductivo') !== -1) {
+                        $('#kpiImproductivoVal').text(d[3] || '--');
+                        $('#kpiImproductivoDelta').removeClass('positive negative neutral')
+                            .addClass(delta > 0 ? 'negative' : 'positive')
+                            .text((delta > 0 ? '▲ ' : '▼ ') + dStr);
+                    } else if (nom.indexOf('capital social') !== -1 && nom.indexOf('vencida') !== -1) {
+                        $('#kpiCoberturaVal').text(d[3] || '--');
+                        $('#kpiCoberturaDelta').removeClass('positive negative neutral')
+                            .addClass(delta > 0 ? 'positive' : 'negative')
+                            .text((delta > 0 ? '▲ ' : '▼ ') + dStr);
+                    }
+                });
             },
             "pageLength": -1,
             "order": [[ 0, "asc" ]],
@@ -615,6 +748,44 @@
             "language": languageConfig
         });
 
+        // Evento de clic en chips de categoría
+        $('#sugefCategoryChips .category-chip').on('click', function () {
+            $('#sugefCategoryChips .category-chip').removeClass('active');
+            $(this).addClass('active');
+            var cat = $(this).data('category');
+            if (cat) {
+                tableFinanciero.column(0).search('^' + cat + '$', true, false).draw();
+            } else {
+                tableFinanciero.column(0).search('').draw();
+            }
+        });
+
+
+        function renderSuficienciaDelta(data, type, row) {
+            var v1 = parseFloat(String(row[2] || '').replace(/%/g, '').replace(/\s/g, '').replace(',', '.')) || 0;
+            var v2 = parseFloat(String(row[3] || '').replace(/%/g, '').replace(/\s/g, '').replace(',', '.')) || 0;
+            if (isNaN(v1) && isNaN(v2)) return '<span class="text-muted">-</span>';
+            var delta = v2 - v1;
+            var sign = delta > 0 ? '+' : '';
+            var arrow = delta > 0 ? '▲' : '▼';
+            var dStr = sign + delta.toFixed(2) + '%';
+            if (Math.abs(delta) < 0.0001) return '<span class="delta-badge neutral">0.00%</span>';
+            var badgeClass = delta > 0 ? 'positive' : 'negative';
+            return '<span class="delta-badge ' + badgeClass + '">' + arrow + ' ' + dStr + '</span>';
+        }
+
+        function updateKpiSuficiencia(sufVal) {
+            if (sufVal === null || sufVal === undefined || isNaN(sufVal)) return;
+            $('#kpiSuficienciaVal').text(sufVal.toFixed(2) + '%');
+            var $badge = $('#kpiSuficienciaBadge');
+            if (sufVal >= 10.0) {
+                $badge.attr('class', 'norm-badge success').html('<i class="fa fa-check-circle"></i> Normalidad (&ge;10%)');
+            } else if (sufVal >= 8.0) {
+                $badge.attr('class', 'norm-badge warning').html('<i class="fa fa-exclamation-triangle"></i> Inestabilidad (8-10%)');
+            } else {
+                $badge.attr('class', 'norm-badge danger').html('<i class="fa fa-times-circle"></i> Irregularidad (<8%)');
+            }
+        }
 
         // TABLA SUFICIENCIA HISTÓRICA
         $("#tbSuficiencia").dataTable({
@@ -626,11 +797,30 @@
             "columnDefs": [
                 { "targets": 0, "visible": false, "searchable": false },
                 { "targets": 1, "className": 'text-left font-weight-bold' },
-                { "targets": [2, 3], "className": 'text-right', "width": '160px' },
-                { "targets": 4, "className": 'text-center', "width": '50px', "orderable": false }
+                { "targets": [2, 3], "className": 'text-right', "width": '140px' },
+                {
+                    "targets": 4,
+                    "className": 'text-center',
+                    "width": '120px',
+                    "orderable": false,
+                    "render": renderSuficienciaDelta
+                },
+                { "targets": 5, "className": 'text-center', "width": '50px', "orderable": false }
             ],
             "rowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-                $('td:eq(0)', nRow).css({ 'font-weight': '500', 'color': '#1e293b' });
+                var cuenta = (aData[1] || '').trim();
+                var v2 = parseFloat(String(aData[3] || '').replace(/%/g, '').replace(/\s/g, '').replace(',', '.')) || 0;
+
+                if (cuenta.toLowerCase().indexOf('suficiencia') !== -1) {
+                    var normClass = v2 >= 10.0 ? 'success' : (v2 >= 8.0 ? 'warning' : 'danger');
+                    var normLabel = v2 >= 10.0 ? 'Normalidad (&ge;10%)' : (v2 >= 8.0 ? 'Inestabilidad' : 'Irregularidad');
+                    var normHtml = ' <span class="norm-badge ' + normClass + '" style="margin-left: 8px;"><i class="fa fa-shield"></i> ' + normLabel + '</span>';
+                    $('td:eq(0)', nRow).html(cuenta + normHtml);
+                    updateKpiSuficiencia(v2);
+                } else {
+                    $('td:eq(0)', nRow).css({ 'font-weight': '500', 'color': '#1e293b' });
+                }
+
                 for (var i = 2; i <= 3; i++) {
                     var val = parseFloat(aData[i]) || 0;
                     var cell = $(nRow).find('td:eq(' + (i - 1) + ')');
@@ -664,21 +854,35 @@
             "columnDefs": [
                 { "targets": 0, "visible": false, "searchable": false },
                 { "targets": 1, "className": 'text-left font-weight-bold' },
-                { "targets": [2, 3], "className": 'text-right', "width": '160px' },
-                { "targets": 4, "className": 'text-center', "width": '50px', "orderable": false }
+                { "targets": [2, 3], "className": 'text-right', "width": '140px' },
+                {
+                    "targets": 4,
+                    "className": 'text-center',
+                    "width": '120px',
+                    "orderable": false,
+                    "render": renderSuficienciaDelta
+                },
+                { "targets": 5, "className": 'text-center', "width": '50px', "orderable": false }
             ],
             "rowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
                 var cuenta = aData[1].trim();
-                var valor1 = parseFloat(aData[2].replace(',', '.')) || 0;
-                var valor2 = parseFloat(aData[3].replace(',', '.')) || 0;
+                var valor1 = parseFloat(String(aData[2] || '').replace(/%/g, '').replace(/\s/g, '').replace(',', '.')) || 0;
+                var valor2 = parseFloat(String(aData[3] || '').replace(/%/g, '').replace(/\s/g, '').replace(',', '.')) || 0;
 
                 if (cuenta === "Suficiencia Patrimonial") {
                     valoresFilas["Suficiencia"] = { v1: valor1, v2: valor2 };
+                    var normClass = valor2 >= 10.0 ? 'success' : (valor2 >= 8.0 ? 'warning' : 'danger');
+                    var normLabel = valor2 >= 10.0 ? 'Normalidad (&ge;10%)' : (valor2 >= 8.0 ? 'Inestabilidad' : 'Irregularidad');
+                    var normHtml = ' <span class="norm-badge ' + normClass + '" style="margin-left: 8px;"><i class="fa fa-shield"></i> ' + normLabel + '</span>';
+                    $('td:eq(0)', nRow).html(cuenta + normHtml);
+                    updateKpiSuficiencia(valor2);
                 } else if (cuenta === "Suficiencia Patrimonial (Calculado)") {
                     valoresFilas["Calculado"] = { v1: valor1, v2: valor2 };
+                    $('td:eq(0)', nRow).css({ 'font-weight': '500', 'color': '#1e293b' });
+                } else {
+                    $('td:eq(0)', nRow).css({ 'font-weight': '500', 'color': '#1e293b' });
                 }
 
-                $('td:eq(0)', nRow).css({ 'font-weight': '500', 'color': '#1e293b' });
                 for (var i = 2; i <= 3; i++) {
                     var val = parseFloat(aData[i]) || 0;
                     var cell = $(nRow).find('td:eq(' + (i - 1) + ')');
@@ -692,6 +896,9 @@
             },
             "drawCallback": function (settings) {
                 $(this).find('[data-toggle="tooltip"]').tooltip();
+                if (valoresFilas["Suficiencia"]) {
+                    updateKpiSuficiencia(valoresFilas["Suficiencia"].v2);
+                }
                 if (valoresFilas["Suficiencia"] && valoresFilas["Calculado"]) {
                     var diff1 = Math.abs(valoresFilas["Suficiencia"].v1 - valoresFilas["Calculado"].v1);
                     var diff2 = Math.abs(valoresFilas["Suficiencia"].v2 - valoresFilas["Calculado"].v2);
@@ -713,7 +920,16 @@
             "language": languageConfig
         });
 
-        $('a[data-toggle="tab"]').on('shown.bs.tab', function () {
+        // Persistencia de pestaña activa en SUGEF
+        var lastTabSugef = localStorage.getItem('ffc_active_tab_sugef');
+        if (lastTabSugef) {
+            $('.nav-tabs a[href="' + lastTabSugef + '"]').tab('show');
+        }
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+            var target = $(e.target).attr("href");
+            if (target && target.startsWith("#")) {
+                localStorage.setItem('ffc_active_tab_sugef', target);
+            }
             $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
         });
 

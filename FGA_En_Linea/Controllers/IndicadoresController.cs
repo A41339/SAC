@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -426,6 +426,10 @@ namespace FGA.Controllers
             }
         }
 
+        public ActionResult GetGridSuficiencia()
+        {
+            return GetSuficiencia();
+        }
 
         public ActionResult GetGridSugefIndicador()
         {
