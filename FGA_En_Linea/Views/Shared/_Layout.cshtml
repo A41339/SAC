@@ -79,9 +79,34 @@
         button.pill-item.active:hover,
         a.pill-item.active:hover {
             background: #ffffff !important;
-            background-color: #ffffff !important;
             color: #1e3a8a !important;
             border-color: #94a3b8 !important;
+        }
+        #btnMarcarTodasNavbar,
+        .fga-btn-mark-all {
+            background-color: #2F5597 !important;
+            background: #2F5597 !important;
+            color: #ffffff !important;
+            border: 1px solid #1e3a8a !important;
+            border-radius: 6px !important;
+            font-weight: 600 !important;
+            font-size: 11px !important;
+            padding: 4px 10px !important;
+            cursor: pointer !important;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.08) !important;
+        }
+        #btnMarcarTodasNavbar i,
+        .fga-btn-mark-all i {
+            color: #ffffff !important;
+        }
+        #btnMarcarTodasNavbar:hover,
+        #btnMarcarTodasNavbar:focus,
+        .fga-btn-mark-all:hover,
+        .fga-btn-mark-all:focus {
+            background-color: #1e3a8a !important;
+            background: #1e3a8a !important;
+            color: #ffffff !important;
+            border-color: #0f172a !important;
         }
     </style>
     @Scripts.Render("~/bundles/javascript")
@@ -1528,8 +1553,8 @@
                                         </div>
                                     </div>
                                     <div class="fga-alerts-header-right">
-                                        <button type="button" class="btn btn-xs fga-btn-mark-all" id="btnMarcarTodasNavbar" title="Marcar todas como leídas">
-                                            <i class="fa fa-check-circle-o"></i> Marcar leídas
+                                        <button type="button" class="btn btn-xs fga-btn-mark-all" id="btnMarcarTodasNavbar" title="Marcar todas como leídas" style="background-color: #2F5597 !important; background: #2F5597 !important; color: #ffffff !important; border: 1px solid #1e3a8a !important; font-size: 11px !important; font-weight: 600 !important; padding: 4px 10px !important; border-radius: 6px !important; box-shadow: 0 1px 2px rgba(0,0,0,0.08) !important; cursor: pointer !important;">
+                                            <i class="fa fa-check-circle-o" style="color: #ffffff !important; margin-right: 3px;"></i> Marcar leídas
                                         </button>
                                     </div>
                                 </li>
@@ -2630,7 +2655,7 @@
             if (headerBackName && headerBackUrl && !isHomePage) {
                 var $header = $('.content-header').first();
                 if ($header.length > 0 && $header.find('.header-back-link').length === 0 && $header.find('.hub-header').length === 0) {
-                    var $titleEl = $header.find('h1, .modern-page-title, .alertas-title-box, .cuenta-header-title').first();
+                    var $titleEl = $header.find('.alertas-header-top-row, .modern-page-title, .cuenta-header-title, h1').first();
                     var backHtml = '<div class="header-back-container" style="margin-bottom: 6px;">' +
                         '<a href="' + headerBackUrl + '" class="breadcrumb-back-btn header-back-link" title="Volver a ' + headerBackName + '" style="display: inline-flex; align-items: center; gap: 6px; font-size: 13.5px; font-weight: 600; color: #0284c7; text-decoration: none; transition: all 0.2s ease;">' +
                         '<i class="fa fa-arrow-left" style="font-size: 12px;"></i> Volver a ' + headerBackName +

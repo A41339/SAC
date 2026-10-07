@@ -2,11 +2,18 @@
 @{
     ViewBag.Title = "Bandeja de Alertas Financieras";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    var crCulture = new System.Globalization.CultureInfo("es-CR");
+    var crCulture = (System.Globalization.CultureInfo)System.Globalization.CultureInfo.GetCultureInfo("es-CR").Clone();
+    crCulture.NumberFormat.NumberGroupSeparator = "\u00A0";
+    crCulture.NumberFormat.CurrencyGroupSeparator = "\u00A0";
 }
 
 <!-- ENCABEZADO ESTÁNDAR FFC -->
 <section class="content-header alertas-content-header">
+    <div class="header-back-container" style="margin-bottom: 10px;">
+        <a href="@Url.Action("Index", "Modulo", new { id = 1500 })" class="breadcrumb-back-btn header-back-link" title="Volver a Estructura Financiera" style="display: inline-flex; align-items: center; gap: 6px; font-size: 13.5px; font-weight: 600; color: #0284c7; text-decoration: none; transition: all 0.2s ease;">
+            <i class="fa fa-arrow-left" style="font-size: 12px;"></i> Volver a Estructura Financiera
+        </a>
+    </div>
     <div class="alertas-header-top-row">
         <div class="alertas-title-box">
             <div class="alertas-title-icon">
@@ -260,15 +267,15 @@
                 <table class="table table-modern-alertas" id="tablaAlertasFinancieras">
                     <thead>
                         <tr>
-                            <th style="width: 105px; min-width: 105px; white-space: nowrap;">Criticidad</th>
-                            <th style="min-width: 135px; white-space: nowrap;">Entidad</th>
-                            <th style="max-width: 280px; min-width: 190px;">Cuenta Contable</th>
-                            <th style="width: 145px; min-width: 140px; text-align: center; white-space: nowrap;">Períodos Comparados</th>
-                            <th style="width: 140px; min-width: 130px; text-align: right; white-space: nowrap;">Saldo Anterior</th>
-                            <th style="width: 140px; min-width: 130px; text-align: right; white-space: nowrap;">Saldo Actual</th>
-                            <th style="width: 155px; min-width: 145px; text-align: right; white-space: nowrap;">Variación Monto</th>
-                            <th style="width: 110px; min-width: 100px; text-align: right; white-space: nowrap;">Variación %</th>
-                            <th style="width: 100px; min-width: 95px; text-align: center; white-space: nowrap;">Acción</th>
+                            <th class="col-criticidad" style="width: 110px; min-width: 110px; white-space: nowrap !important;">Criticidad</th>
+                            <th class="col-entidad" style="min-width: 140px; white-space: nowrap !important;">Entidad</th>
+                            <th class="col-cuenta" style="min-width: 220px; max-width: 320px;">Cuenta Contable</th>
+                            <th class="col-periodos" style="width: 160px; min-width: 155px; text-align: center; white-space: nowrap !important;">Períodos Comparados</th>
+                            <th class="col-monto" style="width: 180px; min-width: 175px; text-align: right; white-space: nowrap !important;">Saldo Anterior</th>
+                            <th class="col-monto" style="width: 180px; min-width: 175px; text-align: right; white-space: nowrap !important;">Saldo Actual</th>
+                            <th class="col-var-monto" style="width: 200px; min-width: 195px; text-align: right; white-space: nowrap !important;">Variación Monto</th>
+                            <th class="col-var-porc" style="width: 125px; min-width: 120px; text-align: right; white-space: nowrap !important;">Variación %</th>
+                            <th class="col-accion" style="width: 105px; min-width: 100px; text-align: center; white-space: nowrap !important;">Acción</th>
                         </tr>
                     </thead>
                     <tbody id="tbodyAlertas">
@@ -300,27 +307,27 @@
                                     data-entidad="@item.NombreEntidad"
                                     data-tipo="@item.TipoAlerta"
                                     data-leido="@(item.Leido ? "1" : "0")">
-                                    <td style="white-space: nowrap;">
+                                    <td class="col-criticidad" style="white-space: nowrap !important;">
                                         @if (esCritica)
                                         {
-                                            <span class="badge-severidad-pill sev-pill-critica" style="white-space: nowrap;">
+                                            <span class="badge-severidad-pill sev-pill-critica" style="white-space: nowrap !important;">
                                                 <i class="fa fa-exclamation-triangle"></i> Crítica
                                             </span>
                                         }
                                         else
                                         {
-                                            <span class="badge-severidad-pill sev-pill-advertencia" style="white-space: nowrap;">
+                                            <span class="badge-severidad-pill sev-pill-advertencia" style="white-space: nowrap !important;">
                                                 <i class="fa fa-bell-o"></i> Advertencia
                                             </span>
                                         }
                                     </td>
-                                    <td style="white-space: nowrap;">
-                                        <div style="font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 6px; white-space: nowrap;">
+                                    <td class="col-entidad" style="white-space: nowrap !important;">
+                                        <div style="font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 6px; white-space: nowrap !important;">
                                             <i class="fa fa-university" style="color: #64748b; font-size: 12px;"></i>
                                             @item.NombreEntidad
                                         </div>
                                     </td>
-                                    <td style="max-width: 280px;">
+                                    <td class="col-cuenta" style="max-width: 320px; min-width: 220px; white-space: normal !important;">
                                         <div>
                                             <span class="badge-account-code">@item.Cuenta</span>
                                         </div>
@@ -328,40 +335,42 @@
                                             @item.NombreCuenta
                                         </div>
                                     </td>
-                                    <td style="text-align: center; white-space: nowrap;">
-                                        <span style="font-size: 12px; color: #475569; background: #f8fafc; border: 1px solid #e2e8f0; padding: 3px 8px; border-radius: 6px; white-space: nowrap;">
+                                    <td class="col-periodos" style="text-align: center; white-space: nowrap !important;">
+                                        <span style="font-size: 12px; color: #475569; background: #f8fafc; border: 1px solid #e2e8f0; padding: 3px 8px; border-radius: 6px; white-space: nowrap !important; display: inline-block;">
                                             @item.PeriodoAnterior.ToString("MM/yyyy") &rarr; @item.PeriodoActual.ToString("MM/yyyy")
                                         </span>
                                     </td>
-                                    <td style="text-align: right; font-family: Consolas, 'Courier New', monospace; font-size: 13px; color: #475569; white-space: nowrap;">
-                                        ₡ @item.SaldoAnterior.ToString("#,##0.00", crCulture)
+                                    <td class="col-monto" style="text-align: right; font-family: Consolas, 'Courier New', monospace; font-size: 13px; color: #475569; white-space: nowrap !important;">
+                                        <span class="monto-cell-val" style="white-space: nowrap !important;">₡&nbsp;@item.SaldoAnterior.ToString("#,##0.00", crCulture)</span>
                                     </td>
-                                    <td style="text-align: right; font-family: Consolas, 'Courier New', monospace; font-size: 13px; font-weight: 600; color: #0f172a; white-space: nowrap;">
-                                        ₡ @item.SaldoActual.ToString("#,##0.00", crCulture)
+                                    <td class="col-monto" style="text-align: right; font-family: Consolas, 'Courier New', monospace; font-size: 13px; font-weight: 600; color: #0f172a; white-space: nowrap !important;">
+                                        <span class="monto-cell-val" style="white-space: nowrap !important; font-weight: 600; color: #0f172a;">₡&nbsp;@item.SaldoActual.ToString("#,##0.00", crCulture)</span>
                                     </td>
-                                    <td style="text-align: right; white-space: nowrap;">
-                                        <!-- En fondo azul como los indicadores del tablero para positivos -->
-                                        <span class="@(esPositivo ? "monto-positive" : "monto-negative")" style="white-space: nowrap;">
-                                            @(esPositivo ? "+" : "")₡ @item.VariacionMonto.ToString("#,##0.00", crCulture)
+                                    <td class="col-var-monto" style="text-align: right; white-space: nowrap !important;">
+                                        @{
+                                            string signoVar = esPositivo ? "+₡ " : "-₡ ";
+                                            string montoAbsStr = Math.Abs(item.VariacionMonto).ToString("#,##0.00", crCulture);
+                                        }
+                                        <span class="@(esPositivo ? "monto-positive" : "monto-negative")" style="white-space: nowrap !important; display: inline-block;">
+                                            @(signoVar)@montoAbsStr
                                         </span>
                                     </td>
-                                    <td style="text-align: right; white-space: nowrap;">
-                                        <!-- Variación Porcentual con badge azul para aumento -->
-                                        <span class="@(esPositivo ? "badge-var-positive" : "badge-var-negative")" style="white-space: nowrap;">
+                                    <td class="col-var-porc" style="text-align: right; white-space: nowrap !important;">
+                                        <span class="@(esPositivo ? "badge-var-positive" : "badge-var-negative")" style="white-space: nowrap !important; display: inline-flex;">
                                             <i class="fa fa-arrow-@(esPositivo ? "up" : "down")"></i>
                                             @(esPositivo ? "+" : "")@item.VariacionPorcentaje.ToString("N1", crCulture)%
                                         </span>
                                     </td>
-                                    <td style="text-align: center; white-space: nowrap;" id="action-cell-@item.Id">
+                                    <td class="col-accion" style="text-align: center; white-space: nowrap !important;" id="action-cell-@item.Id">
                                         @if (!item.Leido)
                                         {
-                                            <button type="button" class="btn-al-mark" onclick="marcarAlertaLeida(@item.Id, this);" title="Marcar como atendida y leída">
+                                            <button type="button" class="btn-al-mark" onclick="marcarAlertaLeida(@item.Id, this);" title="Marcar como atendida y leída" style="white-space: nowrap !important;">
                                                 <i class="fa fa-check"></i> Atender
                                             </button>
                                         }
                                         else
                                         {
-                                            <span class="badge-al-read">
+                                            <span class="badge-al-read" style="white-space: nowrap !important;">
                                                 <i class="fa fa-check-circle"></i> Leída
                                             </span>
                                         }

@@ -35,6 +35,11 @@
         position: relative;
         padding: 18px 24px 12px 24px;
     }
+    .alertas-content-header .header-back-container {
+        margin-bottom: 12px;
+        display: block;
+        width: 100%;
+    }
     .alertas-header-top-row {
         display: flex;
         align-items: center;
@@ -619,6 +624,7 @@
         border-collapse: separate;
         border-spacing: 0;
     }
+    .table-responsive > .table.table-modern-alertas tr th,
     .table-modern-alertas th {
         background: #f8fafc;
         color: #143750;
@@ -629,8 +635,9 @@
         padding: 13px 16px;
         border-bottom: 2.5px solid #2F5597;
         border-top: none;
-        white-space: nowrap;
+        white-space: nowrap !important;
     }
+    .table-responsive > .table.table-modern-alertas tr td,
     .table-modern-alertas td {
         padding: 14px 16px;
         vertical-align: middle;
@@ -638,6 +645,47 @@
         font-size: 13px;
         color: #334155;
         transition: background-color 0.2s ease;
+        white-space: nowrap !important;
+    }
+    .table-responsive > .table.table-modern-alertas tr td.col-cuenta,
+    .table-modern-alertas td.col-cuenta {
+        white-space: normal !important;
+        min-width: 220px !important;
+        max-width: 320px !important;
+    }
+    .table-responsive > .table.table-modern-alertas tr td.col-monto,
+    .table-modern-alertas td.col-monto,
+    .table-modern-alertas .col-monto {
+        white-space: nowrap !important;
+        text-align: right !important;
+        min-width: 175px !important;
+        font-family: Consolas, "Courier New", monospace !important;
+        font-size: 13px !important;
+        font-variant-numeric: tabular-nums !important;
+    }
+    .table-responsive > .table.table-modern-alertas tr td.col-var-monto,
+    .table-modern-alertas td.col-var-monto,
+    .table-modern-alertas .col-var-monto {
+        white-space: nowrap !important;
+        text-align: right !important;
+        min-width: 195px !important;
+        font-family: Consolas, "Courier New", monospace !important;
+        font-size: 13px !important;
+        font-variant-numeric: tabular-nums !important;
+    }
+    .table-responsive > .table.table-modern-alertas tr td.col-var-porc,
+    .table-modern-alertas td.col-var-porc,
+    .table-modern-alertas .col-var-porc {
+        white-space: nowrap !important;
+        text-align: right !important;
+        min-width: 120px !important;
+    }
+    .table-responsive > .table.table-modern-alertas tr td.col-periodos,
+    .table-modern-alertas td.col-periodos,
+    .table-modern-alertas .col-periodos {
+        white-space: nowrap !important;
+        text-align: center !important;
+        min-width: 155px !important;
     }
     .table-modern-alertas tbody tr {
         transition: background-color 0.2s ease, transform 0.2s ease;
@@ -730,12 +778,20 @@
         color: #0071AD;
         font-family: Consolas, "Courier New", monospace;
         white-space: nowrap !important;
+        display: inline-block;
     }
     .monto-negative {
         font-weight: 700;
         color: #FE7235;
         font-family: Consolas, "Courier New", monospace;
         white-space: nowrap !important;
+        display: inline-block;
+    }
+    .monto-cell-val {
+        white-space: nowrap !important;
+        display: inline-block;
+        font-family: Consolas, "Courier New", monospace;
+        font-variant-numeric: tabular-nums;
     }
 
     /* Action Buttons in Row */
