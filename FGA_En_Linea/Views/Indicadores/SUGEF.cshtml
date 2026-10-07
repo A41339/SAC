@@ -177,16 +177,16 @@
                         <!-- TAB 2: SUFICIENCIA PATRIMONIAL -->
                         <div class="tab-pane active" id="tab_2">
                             
-                            <!-- Subcard 1: Suficiencia a partir de enero 2025 -->
-                            <div class="modern-table-card" style="border: 1px solid #e2e8f0; border-radius: 10px; background: #ffffff; padding: 18px 20px; margin-bottom: 22px;">
+                            <!-- Suficiencia Patrimonial (Acuerdo SUGEF 3-06) -->
+                            <div class="modern-table-card" style="border: 1px solid #e2e8f0; border-radius: 10px; background: #ffffff; padding: 18px 20px; margin-bottom: 10px;">
                                 <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9;">
                                     <img class="img-logo-entidad" width="38" height="38" src="@(Session["Logo"] ?? Url.Content("~/Content/images/FFC.jpg"))" onerror="this.onerror=null;this.src='@Url.Content("~/Content/images/FFC.jpg")';" style="border-radius: 8px; background: #ffffff; padding: 2px; border: 1px solid #e2e8f0; object-fit: contain;" />
                                     <div>
                                         <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: #143750;">
-                                            <i class="fa fa-calendar-check-o" style="color: #0284c7; margin-right: 6px;"></i>
-                                            Suficiencia Patrimonial a partir de enero 2025 &mdash; <span class="lblEntidadHeader">@(Session["NomEntidad"] ?? "")</span>
+                                            <i class="fa fa-shield" style="color: #2F5597; margin-right: 6px;"></i>
+                                            Suficiencia Patrimonial (Acuerdo SUGEF 3-06) &mdash; <span class="lblEntidadHeader">@(Session["NomEntidad"] ?? "")</span>
                                         </h4>
-                                        <p style="margin: 2px 0 0 0; font-size: 11.5px; color: #64748b;">Conforme a la nueva normativa SUGEF 3-06</p>
+                                        <p style="margin: 2px 0 0 0; font-size: 11.5px; color: #64748b;">Conforme a la normativa SUGEF 3-06</p>
                                     </div>
                                 </div>
 
@@ -197,36 +197,6 @@
 
                                 <div class="table-responsive">
                                     <table id="tbSuficiencia306" class="table table-striped modern-data-table" style="width:100%">
-                                        <thead>
-                                            <tr>
-                                                <th>Id</th>
-                                                <th class="text-left" style="text-align: left !important; padding-left: 16px;">Cuenta</th>
-                                                <th class="text-right" style="text-align: right !important; padding-right: 14px;">@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MMMM yyyy"))</th>
-                                                <th class="text-right" style="text-align: right !important; padding-right: 14px;">@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MMMM yyyy"))</th>
-                                                <th class="text-center" style="width: 120px; text-align: center !important;">Variaci&oacute;n (&Delta;)</th>
-                                                <th class="text-center" style="width: 50px; text-align: center !important;"></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody></tbody>
-                                    </table>
-                                </div>
-                            </div>
-
-                            <!-- Subcard 2: Suficiencia antes de enero 2025 -->
-                            <div class="modern-table-card" style="border: 1px solid #e2e8f0; border-radius: 10px; background: #ffffff; padding: 18px 20px; margin-bottom: 10px;">
-                                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9;">
-                                    <img class="img-logo-entidad" width="38" height="38" src="@(Session["Logo"] ?? Url.Content("~/Content/images/FFC.jpg"))" onerror="this.onerror=null;this.src='@Url.Content("~/Content/images/FFC.jpg")';" style="border-radius: 8px; background: #ffffff; padding: 2px; border: 1px solid #e2e8f0; object-fit: contain;" />
-                                    <div>
-                                        <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: #143750;">
-                                            <i class="fa fa-history" style="color: #64748b; margin-right: 6px;"></i>
-                                            Suficiencia Patrimonial hist&oacute;rica (anterior a enero 2025) &mdash; <span class="lblEntidadHeader">@(Session["NomEntidad"] ?? "")</span>
-                                        </h4>
-                                        <p style="margin: 2px 0 0 0; font-size: 11.5px; color: #64748b;">C&aacute;lculos normativos precedentes</p>
-                                    </div>
-                                </div>
-
-                                <div class="table-responsive">
-                                    <table id="tbSuficiencia" class="table table-striped modern-data-table" style="width:100%">
                                         <thead>
                                             <tr>
                                                 <th>Id</th>
@@ -280,15 +250,14 @@
     /* ==============================================================================
        ESTILOS DE TABLAS E INDICADORES SUGEF (BASADOS EN ESTRUCTURA DE FONDEO)
        ============================================================================== */
-    #tbFinancieroSugef, #tbSuficiencia306, #tbSuficiencia {
+    #tbFinancieroSugef, #tbSuficiencia306 {
         border-collapse: separate !important;
         border-spacing: 0 !important;
         width: 100% !important;
     }
 
     #tbFinancieroSugef thead th,
-    #tbSuficiencia306 thead th,
-    #tbSuficiencia thead th {
+    #tbSuficiencia306 thead th {
         font-size: 13px !important;
         font-weight: 600 !important;
         color: #2F5597 !important;
@@ -301,8 +270,7 @@
     }
 
     #tbFinancieroSugef tbody td,
-    #tbSuficiencia306 tbody td,
-    #tbSuficiencia tbody td {
+    #tbSuficiencia306 tbody td {
         font-size: 13px !important;
         font-weight: 400 !important;
         color: #334155 !important;
@@ -317,18 +285,14 @@
     #tbFinancieroSugef.table-striped > tbody > tr:nth-of-type(odd),
     #tbFinancieroSugef tbody tr.odd,
     #tbSuficiencia306.table-striped > tbody > tr:nth-of-type(odd),
-    #tbSuficiencia306 tbody tr.odd,
-    #tbSuficiencia.table-striped > tbody > tr:nth-of-type(odd),
-    #tbSuficiencia tbody tr.odd {
+    #tbSuficiencia306 tbody tr.odd {
         background-color: #f8fafc !important;
     }
 
     #tbFinancieroSugef.table-striped > tbody > tr:nth-of-type(even),
     #tbFinancieroSugef tbody tr.even,
     #tbSuficiencia306.table-striped > tbody > tr:nth-of-type(even),
-    #tbSuficiencia306 tbody tr.even,
-    #tbSuficiencia.table-striped > tbody > tr:nth-of-type(even),
-    #tbSuficiencia tbody tr.even {
+    #tbSuficiencia306 tbody tr.even {
         background-color: #ffffff !important;
     }
 
@@ -338,10 +302,7 @@
     #tbFinancieroSugef tbody tr.even:hover,
     #tbSuficiencia306 tbody tr:hover,
     #tbSuficiencia306 tbody tr.odd:hover,
-    #tbSuficiencia306 tbody tr.even:hover,
-    #tbSuficiencia tbody tr:hover,
-    #tbSuficiencia tbody tr.odd:hover,
-    #tbSuficiencia tbody tr.even:hover {
+    #tbSuficiencia306 tbody tr.even:hover {
         background-color: #eef2f6 !important;
     }
 
@@ -684,7 +645,7 @@
                         return '<span class="delta-badge ' + badgeClass + '">' + arrow + ' ' + deltaStr + '</span>';
                     }
                 },
-                { "targets": 5, "className": 'text-center', "width": '50px', "orderable": false }
+                { "targets": 5, "className": 'text-center', "width": '50px', "orderable": false, "render": function (data, type, row) { return row[4]; } }
             ],
             "rowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
                 $('td:eq(0)', nRow).css({ 'font-weight': '500', 'color': '#1e293b' });
@@ -754,6 +715,9 @@
 
         function updateKpiSuficiencia(sufVal) {
             if (sufVal === null || sufVal === undefined || isNaN(sufVal)) return;
+            if (sufVal <= 0 && $('#kpiSuficienciaVal').text().indexOf('--') === -1 && $('#kpiSuficienciaVal').text() !== '0.00%') {
+                return;
+            }
             $('#kpiSuficienciaVal').text(sufVal.toFixed(2) + '%');
             var $badge = $('#kpiSuficienciaBadge');
             if (sufVal >= 10.0) {
@@ -764,61 +728,6 @@
                 $badge.attr('class', 'norm-badge danger').html('<i class="fa fa-times-circle"></i> Irregularidad (<8%)');
             }
         }
-
-        // TABLA SUFICIENCIA HISTÓRICA
-        $("#tbSuficiencia").dataTable({
-            "bRetrieve": true,
-            "bProcessing": true,
-            "dom": 'lBfrtip',
-            "sAjaxSource": "@Url.Content("~/Indicadores/GetSuficiencia")",
-            "buttons": exportButtons,
-            "columnDefs": [
-                { "targets": 0, "visible": false, "searchable": false },
-                { "targets": 1, "className": 'text-left font-weight-bold' },
-                { "targets": [2, 3], "className": 'text-right', "width": '140px' },
-                {
-                    "targets": 4,
-                    "className": 'text-center',
-                    "width": '120px',
-                    "orderable": false,
-                    "render": renderSuficienciaDelta
-                },
-                { "targets": 5, "className": 'text-center', "width": '50px', "orderable": false }
-            ],
-            "rowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-                var cuenta = (aData[1] || '').trim();
-                var v2 = parseFloat(String(aData[3] || '').replace(/%/g, '').replace(/\s/g, '').replace(',', '.')) || 0;
-
-                if (cuenta.toLowerCase().indexOf('suficiencia') !== -1) {
-                    var normClass = v2 >= 10.0 ? 'success' : (v2 >= 8.0 ? 'warning' : 'danger');
-                    var normLabel = v2 >= 10.0 ? 'Normalidad (&ge;10%)' : (v2 >= 8.0 ? 'Inestabilidad' : 'Irregularidad');
-                    var normHtml = ' <span class="norm-badge ' + normClass + '" style="margin-left: 8px;"><i class="fa fa-shield"></i> ' + normLabel + '</span>';
-                    $('td:eq(0)', nRow).html(cuenta + normHtml);
-                    updateKpiSuficiencia(v2);
-                } else {
-                    $('td:eq(0)', nRow).css({ 'font-weight': '500', 'color': '#1e293b' });
-                }
-
-                for (var i = 2; i <= 3; i++) {
-                    var val = parseFloat(aData[i]) || 0;
-                    var cell = $(nRow).find('td:eq(' + (i - 1) + ')');
-                    cell.css('font-variant-numeric', 'tabular-nums');
-                    if (val < 0) {
-                        cell.css({ 'color': '#c2410c', 'font-weight': '600' });
-                    } else {
-                        cell.css({ 'color': '#1e293b', 'font-weight': '500' });
-                    }
-                }
-            },
-            "drawCallback": function (settings) {
-                $(this).find('[data-toggle="tooltip"]').tooltip();
-            },
-            "pageLength": -1,
-            "order": [[ 0, "asc" ]],
-            "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "Todos"]],
-            "autoWidth": false,
-            "language": languageConfig
-        });
 
         var valoresFilas = {};
 
@@ -831,8 +740,9 @@
             "buttons": exportButtons,
             "columnDefs": [
                 { "targets": 0, "visible": false, "searchable": false },
-                { "targets": 1, "className": 'text-left font-weight-bold' },
-                { "targets": [2, 3], "className": 'text-right', "width": '140px' },
+                { "targets": 1, "className": 'text-left font-weight-bold', "render": function (data, type, row) { return row[1]; } },
+                { "targets": 2, "className": 'text-right', "width": '140px', "render": function (data, type, row) { return row[2]; } },
+                { "targets": 3, "className": 'text-right', "width": '140px', "render": function (data, type, row) { return row[3]; } },
                 {
                     "targets": 4,
                     "className": 'text-center',
@@ -840,21 +750,26 @@
                     "orderable": false,
                     "render": renderSuficienciaDelta
                 },
-                { "targets": 5, "className": 'text-center', "width": '50px', "orderable": false }
+                { "targets": 5, "className": 'text-center', "width": '50px', "orderable": false, "render": function (data, type, row) { return row[4]; } }
             ],
             "rowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-                var cuenta = aData[1].trim();
+                var rawNom = (aData[1] || '').trim();
+                var cleanNom = rawNom.replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim().toLowerCase();
                 var valor1 = parseFloat(String(aData[2] || '').replace(/%/g, '').replace(/\s/g, '').replace(',', '.')) || 0;
                 var valor2 = parseFloat(String(aData[3] || '').replace(/%/g, '').replace(/\s/g, '').replace(',', '.')) || 0;
 
-                if (cuenta === "Suficiencia Patrimonial") {
+                var isCalculado = cleanNom.indexOf('calculad') !== -1;
+                var isSuficiencia = cleanNom.indexOf('suficiencia') !== -1 && !isCalculado;
+
+                if (isSuficiencia) {
                     valoresFilas["Suficiencia"] = { v1: valor1, v2: valor2 };
-                    var normClass = valor2 >= 10.0 ? 'success' : (valor2 >= 8.0 ? 'warning' : 'danger');
-                    var normLabel = valor2 >= 10.0 ? 'Normalidad (&ge;10%)' : (valor2 >= 8.0 ? 'Inestabilidad' : 'Irregularidad');
+                    var sufVal = valor2 > 0 ? valor2 : valor1;
+                    updateKpiSuficiencia(sufVal);
+                    var normClass = sufVal >= 10.0 ? 'success' : (sufVal >= 8.0 ? 'warning' : 'danger');
+                    var normLabel = sufVal >= 10.0 ? 'Normalidad (&ge;10%)' : (sufVal >= 8.0 ? 'Inestabilidad' : 'Irregularidad');
                     var normHtml = ' <span class="norm-badge ' + normClass + '" style="margin-left: 8px;"><i class="fa fa-shield"></i> ' + normLabel + '</span>';
-                    $('td:eq(0)', nRow).html(cuenta + normHtml);
-                    updateKpiSuficiencia(valor2);
-                } else if (cuenta === "Suficiencia Patrimonial (Calculado)") {
+                    $('td:eq(0)', nRow).html(rawNom + normHtml);
+                } else if (isCalculado) {
                     valoresFilas["Calculado"] = { v1: valor1, v2: valor2 };
                     $('td:eq(0)', nRow).css({ 'font-weight': '500', 'color': '#1e293b' });
                 } else {
@@ -875,7 +790,8 @@
             "drawCallback": function (settings) {
                 $(this).find('[data-toggle="tooltip"]').tooltip();
                 if (valoresFilas["Suficiencia"]) {
-                    updateKpiSuficiencia(valoresFilas["Suficiencia"].v2);
+                    var sufVal = valoresFilas["Suficiencia"].v2 > 0 ? valoresFilas["Suficiencia"].v2 : valoresFilas["Suficiencia"].v1;
+                    updateKpiSuficiencia(sufVal);
                 }
                 if (valoresFilas["Suficiencia"] && valoresFilas["Calculado"]) {
                     var diff1 = Math.abs(valoresFilas["Suficiencia"].v1 - valoresFilas["Calculado"].v1);
