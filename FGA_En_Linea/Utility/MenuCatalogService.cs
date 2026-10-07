@@ -7,8 +7,8 @@ namespace FGA.Utility
     {
         public string Descripcion { get; set; } = "";
         public string Icono { get; set; } = "fa fa-file-text-o";
-        public string ColorFondoIcono { get; set; } = "#e0f2fe";
-        public string ColorIcono { get; set; } = "#0284c7";
+        public string ColorFondoIcono { get; set; } = "#e6f1f8";
+        public string ColorIcono { get; set; } = "#0071AD";
     }
 
     public class ModuloMeta
@@ -25,21 +25,21 @@ namespace FGA.Utility
 
     public static class MenuCatalogService
     {
-        // Paleta dinámica de 12 colores modernos (fondo pastel suave + ícono saturado)
+        // Paleta dinámica de 12 colores institucionales FFC (fondo pastel suave + ícono saturado)
         public static readonly ColorPair[] Palette = new[]
         {
-            new ColorPair { Fondo = "#e0f2fe", Icono = "#0284c7" }, // Celeste
-            new ColorPair { Fondo = "#ffedd5", Icono = "#ea580c" }, // Naranja
-            new ColorPair { Fondo = "#dcfce7", Icono = "#16a34a" }, // Esmeralda / Verde
-            new ColorPair { Fondo = "#f3e8ff", Icono = "#7c3aed" }, // Violeta / Púrpura
-            new ColorPair { Fondo = "#ffe4e6", Icono = "#e11d48" }, // Rosa / Coral
-            new ColorPair { Fondo = "#ccfbf1", Icono = "#0d9488" }, // Teal / Verde azulado
-            new ColorPair { Fondo = "#e0e7ff", Icono = "#4338ca" }, // Índigo
-            new ColorPair { Fondo = "#fef3c7", Icono = "#d97706" }, // Ámbar
-            new ColorPair { Fondo = "#dbeafe", Icono = "#2563eb" }, // Azul
-            new ColorPair { Fondo = "#fae8ff", Icono = "#a21caf" }, // Fucsia
-            new ColorPair { Fondo = "#ecfeff", Icono = "#0891b2" }, // Cyan
-            new ColorPair { Fondo = "#fef9c3", Icono = "#ca8a04" }  // Dorado
+            new ColorPair { Fondo = "#e6f1f8", Icono = "#0071AD" }, // Azul Corporativo FFC
+            new ColorPair { Fondo = "#fff1eb", Icono = "#FE7235" }, // Naranja Institucional FFC
+            new ColorPair { Fondo = "#ebf6f9", Icono = "#6DB5CB" }, // Celeste Medio FFC
+            new ColorPair { Fondo = "#e6ecf1", Icono = "#003F6B" }, // Azul Oscuro FFC
+            new ColorPair { Fondo = "#fff7ec", Icono = "#FFB347" }, // Ámbar Suave FFC
+            new ColorPair { Fondo = "#e6f6fc", Icono = "#0099D6" }, // Azul Brillante FFC
+            new ColorPair { Fondo = "#f3f3f3", Icono = "#959595" }, // Gris Auxiliar FFC
+            new ColorPair { Fondo = "#f0f7f9", Icono = "#0071AD" }, // Celeste Claro FFC
+            new ColorPair { Fondo = "#e6f1f8", Icono = "#003F6B" }, // Azul Profundo FFC
+            new ColorPair { Fondo = "#fff1eb", Icono = "#FE7235" }, // Naranja FFC
+            new ColorPair { Fondo = "#ebf6f9", Icono = "#6DB5CB" }, // Celeste FFC
+            new ColorPair { Fondo = "#fff7ec", Icono = "#FFB347" }  // Ámbar FFC
         };
 
         public static ColorPair GetPaletteColor(string key, int index = 0)
@@ -183,106 +183,106 @@ namespace FGA.Utility
             {
                 Descripcion = "Evalúe los aspectos que establece el Reglamento SUGEF 24-22 para la Supervisión Basada en Riesgos (SBR).",
                 Icono = "fa fa-clipboard",
-                ColorFondoIcono = "#ffedd5",
-                ColorIcono = "#ea580c"
+                ColorFondoIcono = "#fff1eb",
+                ColorIcono = "#FE7235"
             },
             ["Autoevaluacion"] = new CardMeta
             {
                 Descripcion = "Evalúe los aspectos que establece el Reglamento SUGEF 24-22 para la Supervisión Basada en Riesgos (SBR).",
                 Icono = "fa fa-clipboard",
-                ColorFondoIcono = "#ffedd5",
-                ColorIcono = "#ea580c"
+                ColorFondoIcono = "#fff1eb",
+                ColorIcono = "#FE7235"
             },
             ["Evaluacion/Evaluacion"] = new CardMeta
             {
                 Descripcion = "Evalúe los aspectos que establece el Reglamento SUGEF 24-22 para la Supervisión Basada en Riesgos (SBR).",
                 Icono = "fa fa-clipboard",
-                ColorFondoIcono = "#ffedd5",
-                ColorIcono = "#ea580c"
+                ColorFondoIcono = "#fff1eb",
+                ColorIcono = "#FE7235"
             },
             ["Avance SBR"] = new CardMeta
             {
                 Descripcion = "Monitoreo del porcentaje de avance y nivel de respuestas completadas.",
                 Icono = "fa fa-tasks",
-                ColorFondoIcono = "#e0f2fe",
-                ColorIcono = "#0284c7"
+                ColorFondoIcono = "#e6f1f8",
+                ColorIcono = "#0071AD"
             },
             ["Evaluacion/Avance"] = new CardMeta
             {
                 Descripcion = "Monitoreo del porcentaje de avance y nivel de respuestas completadas.",
                 Icono = "fa fa-tasks",
-                ColorFondoIcono = "#e0f2fe",
-                ColorIcono = "#0284c7"
+                ColorFondoIcono = "#e6f1f8",
+                ColorIcono = "#0071AD"
             },
             ["Historial SBR"] = new CardMeta
             {
                 Descripcion = "Registro histórico de evaluaciones y calificaciones obtenidas.",
                 Icono = "fa fa-history",
-                ColorFondoIcono = "#fef3c7",
-                ColorIcono = "#d97706"
+                ColorFondoIcono = "#fff7ec",
+                ColorIcono = "#FFB347"
             },
             ["Evaluacion/Historial"] = new CardMeta
             {
                 Descripcion = "Registro histórico de evaluaciones y calificaciones obtenidas.",
                 Icono = "fa fa-history",
-                ColorFondoIcono = "#fef3c7",
-                ColorIcono = "#d97706"
+                ColorFondoIcono = "#fff7ec",
+                ColorIcono = "#FFB347"
             },
             ["Resultados SBR"] = new CardMeta
             {
                 Descripcion = "Informe de resultados consolidados y niveles de cumplimiento.",
                 Icono = "fa fa-check-square-o",
-                ColorFondoIcono = "#dcfce7",
-                ColorIcono = "#16a34a"
+                ColorFondoIcono = "#e6f6fc",
+                ColorIcono = "#0099D6"
             },
             ["Evaluacion/Resultados"] = new CardMeta
             {
                 Descripcion = "Informe de resultados consolidados y niveles de cumplimiento.",
                 Icono = "fa fa-check-square-o",
-                ColorFondoIcono = "#dcfce7",
-                ColorIcono = "#16a34a"
+                ColorFondoIcono = "#e6f6fc",
+                ColorIcono = "#0099D6"
             },
             ["Configuración de Preguntas SBR"] = new CardMeta
             {
                 Descripcion = "Mantenimiento y configuración del banco de preguntas, pesos y categorías SBR.",
                 Icono = "fa fa-list-alt",
-                ColorFondoIcono = "#f3e8ff",
-                ColorIcono = "#7e22ce"
+                ColorFondoIcono = "#e6ecf1",
+                ColorIcono = "#003F6B"
             },
             ["Configuracion de Preguntas SBR"] = new CardMeta
             {
                 Descripcion = "Mantenimiento y configuración del banco de preguntas, pesos y categorías SBR.",
                 Icono = "fa fa-list-alt",
-                ColorFondoIcono = "#f3e8ff",
-                ColorIcono = "#7e22ce"
+                ColorFondoIcono = "#e6ecf1",
+                ColorIcono = "#003F6B"
             },
             ["Evaluacion/Index"] = new CardMeta
             {
                 Descripcion = "Mantenimiento y configuración del banco de preguntas, pesos y categorías SBR.",
                 Icono = "fa fa-list-alt",
-                ColorFondoIcono = "#f3e8ff",
-                ColorIcono = "#7e22ce"
+                ColorFondoIcono = "#e6ecf1",
+                ColorIcono = "#003F6B"
             },
             ["Evaluación SBR (Avance y Resultados)"] = new CardMeta
             {
                 Descripcion = "Monitoreo del avance, bitácora histórica y resultados consolidados SBR 24-22.",
                 Icono = "fa fa-tasks",
-                ColorFondoIcono = "#e0f2fe",
-                ColorIcono = "#0284c7"
+                ColorFondoIcono = "#e6f1f8",
+                ColorIcono = "#0071AD"
             },
             ["Role/Index"] = new CardMeta
             {
                 Descripcion = "Gestión de roles y configuración de la matriz de permisos de menú",
                 Icono = "fa fa-key",
-                ColorFondoIcono = "#fef3c7",
-                ColorIcono = "#d97706"
+                ColorFondoIcono = "#fff7ec",
+                ColorIcono = "#FFB347"
             },
             ["Roles"] = new CardMeta
             {
                 Descripcion = "Gestión de roles y configuración de la matriz de permisos de menú",
                 Icono = "fa fa-key",
-                ColorFondoIcono = "#fef3c7",
-                ColorIcono = "#d97706"
+                ColorFondoIcono = "#fff7ec",
+                ColorIcono = "#FFB347"
             },
             ["Menu/Index"] = new CardMeta
             {
@@ -317,57 +317,57 @@ namespace FGA.Utility
             {
                 Descripcion = "Consulte la situaci\u00f3n financiera, los resultados y el movimiento de fondos de la entidad.",
                 Icono = "fa fa-file-text-o",
-                ColorFondoIcono = "#e0f2fe", // Celeste suave
-                ColorIcono = "#0284c7"
+                ColorFondoIcono = "#e6f1f8", // Celeste suave
+                ColorIcono = "#0071AD"
             },
             ["InformeFinanciero"] = new CardMeta
             {
                 Descripcion = "Consulte la situaci\u00f3n financiera, los resultados y el movimiento de fondos de la entidad.",
                 Icono = "fa fa-file-text-o",
-                ColorFondoIcono = "#e0f2fe",
-                ColorIcono = "#0284c7"
+                ColorFondoIcono = "#e6f1f8",
+                ColorIcono = "#0071AD"
             },
             ["Estructura de Fondeo"] = new CardMeta
             {
                 Descripcion = "Analice la composici\u00f3n de las fuentes de fondeo de la entidad.",
                 Icono = "fa fa-database",
-                ColorFondoIcono = "#ffedd5", // Naranja suave
-                ColorIcono = "#ea580c"
+                ColorFondoIcono = "#fff1eb", // Naranja suave
+                ColorIcono = "#FE7235"
             },
             ["Composicion"] = new CardMeta
             {
                 Descripcion = "Analice la composici\u00f3n de las fuentes de fondeo de la entidad.",
                 Icono = "fa fa-database",
-                ColorFondoIcono = "#ffedd5",
-                ColorIcono = "#ea580c"
+                ColorFondoIcono = "#fff1eb",
+                ColorIcono = "#FE7235"
             },
             ["Indicadores Financieros"] = new CardMeta
             {
                 Descripcion = "Analice los principales indicadores financieros de la entidad.",
                 Icono = "fa fa-line-chart",
-                ColorFondoIcono = "#ffe4e6", // Coral/rosa suave
-                ColorIcono = "#e11d48"
+                ColorFondoIcono = "#fff1eb", // Coral/rosa suave
+                ColorIcono = "#FE7235"
             },
             ["Indicadores"] = new CardMeta
             {
                 Descripcion = "Analice los principales indicadores financieros de la entidad.",
                 Icono = "fa fa-line-chart",
-                ColorFondoIcono = "#ffe4e6",
-                ColorIcono = "#e11d48"
+                ColorFondoIcono = "#fff1eb",
+                ColorIcono = "#FE7235"
             },
             ["M\u00e1rgenes"] = new CardMeta
             {
                 Descripcion = "Revise los m\u00e1rgenes financieros y operativos.",
                 Icono = "fa fa-percent",
-                ColorFondoIcono = "#fef3c7", // Ámbar suave
-                ColorIcono = "#d97706"
+                ColorFondoIcono = "#fff7ec", // Ámbar suave
+                ColorIcono = "#FFB347"
             },
             ["Margen"] = new CardMeta
             {
                 Descripcion = "Revise los m\u00e1rgenes financieros y operativos.",
                 Icono = "fa fa-percent",
-                ColorFondoIcono = "#fef3c7",
-                ColorIcono = "#d97706"
+                ColorFondoIcono = "#fff7ec",
+                ColorIcono = "#FFB347"
             },
             ["Tablas Impl\u00edcitas"] = new CardMeta
             {
@@ -408,29 +408,29 @@ namespace FGA.Utility
             {
                 Descripcion = "Cálculo y evaluación del índice de riesgo y brechas de liquidez proyectadas.",
                 Icono = "fa fa-tint",
-                ColorFondoIcono = "#e0f2fe",
-                ColorIcono = "#0284c7"
+                ColorFondoIcono = "#e6f1f8",
+                ColorIcono = "#0071AD"
             },
             ["IRL"] = new CardMeta
             {
                 Descripcion = "Cálculo y evaluación del índice de riesgo y brechas de liquidez proyectadas.",
                 Icono = "fa fa-tint",
-                ColorFondoIcono = "#e0f2fe",
-                ColorIcono = "#0284c7"
+                ColorFondoIcono = "#e6f1f8",
+                ColorIcono = "#0071AD"
             },
             ["Simulación ISP"] = new CardMeta
             {
                 Descripcion = "Simulación y proyección de adecuación patrimonial y suficiencia de capital.",
                 Icono = "fa fa-calculator",
-                ColorFondoIcono = "#f3e8ff",
-                ColorIcono = "#7c3aed"
+                ColorFondoIcono = "#e6ecf1",
+                ColorIcono = "#003F6B"
             },
             ["SimulacionCapital"] = new CardMeta
             {
                 Descripcion = "Simulación y proyección de adecuación patrimonial y suficiencia de capital.",
                 Icono = "fa fa-calculator",
-                ColorFondoIcono = "#f3e8ff",
-                ColorIcono = "#7c3aed"
+                ColorFondoIcono = "#e6ecf1",
+                ColorIcono = "#003F6B"
             },
 
             // === CARTERA DE CRÉDITO ===
@@ -452,64 +452,64 @@ namespace FGA.Utility
             {
                 Descripcion = "Composición de mora, morosidad agrupada y análisis de riesgo según normativa 14-21.",
                 Icono = "fa fa-shield",
-                ColorFondoIcono = "#ffe4e6",
-                ColorIcono = "#e11d48"
+                ColorFondoIcono = "#fff1eb",
+                ColorIcono = "#FE7235"
             },
             ["Riesgo de Credito"] = new CardMeta
             {
                 Descripcion = "Composición de mora, morosidad agrupada y análisis de riesgo según normativa 14-21.",
                 Icono = "fa fa-shield",
-                ColorFondoIcono = "#ffe4e6",
-                ColorIcono = "#e11d48"
+                ColorFondoIcono = "#fff1eb",
+                ColorIcono = "#FE7235"
             },
             ["Desempeño"] = new CardMeta
             {
                 Descripcion = "Evolución de la cartera total, variaciones mensuales/interanuales, activos y cuentas liquidadas.",
                 Icono = "fa fa-line-chart",
-                ColorFondoIcono = "#dcfce7",
-                ColorIcono = "#16a34a"
+                ColorFondoIcono = "#e6f6fc",
+                ColorIcono = "#0099D6"
             },
             ["Desempeno"] = new CardMeta
             {
                 Descripcion = "Evolución de la cartera total, variaciones mensuales/interanuales, activos y cuentas liquidadas.",
                 Icono = "fa fa-line-chart",
-                ColorFondoIcono = "#dcfce7",
-                ColorIcono = "#16a34a"
+                ColorFondoIcono = "#e6f6fc",
+                ColorIcono = "#0099D6"
             },
             ["Cartera 14-21"] = new CardMeta
             {
                 Descripcion = "Monitoreo de saldos de cartera seg\u00fan acuerdo SUGEF 14-21.",
                 Icono = "fa fa-pie-chart",
-                ColorFondoIcono = "#dcfce7", // Verde suave
-                ColorIcono = "#16a34a"
+                ColorFondoIcono = "#e6f6fc", // Verde suave
+                ColorIcono = "#0099D6"
             },
             ["Cartera14_21"] = new CardMeta
             {
                 Descripcion = "Monitoreo de saldos de cartera seg\u00fan acuerdo SUGEF 14-21.",
                 Icono = "fa fa-pie-chart",
-                ColorFondoIcono = "#dcfce7",
-                ColorIcono = "#16a34a"
+                ColorFondoIcono = "#e6f6fc",
+                ColorIcono = "#0099D6"
             },
             ["Matrices de Mora"] = new CardMeta
             {
                 Descripcion = "An\u00e1lisis de transici\u00f3n de mora y deterioro de cr\u00e9ditos.",
                 Icono = "fa fa-th",
-                ColorFondoIcono = "#ffe4e6", // Coral suave
-                ColorIcono = "#e11d48"
+                ColorFondoIcono = "#fff1eb", // Coral suave
+                ColorIcono = "#FE7235"
             },
             ["Matriz"] = new CardMeta
             {
                 Descripcion = "An\u00e1lisis de transici\u00f3n de mora y deterioro de cr\u00e9ditos.",
                 Icono = "fa fa-th",
-                ColorFondoIcono = "#ffe4e6",
-                ColorIcono = "#e11d48"
+                ColorFondoIcono = "#fff1eb",
+                ColorIcono = "#FE7235"
             },
             ["IRL"] = new CardMeta
             {
                 Descripcion = "C\u00e1lculo e insumos del Indicador de Riesgo de Liquidez.",
                 Icono = "fa fa-tint",
-                ColorFondoIcono = "#e0f2fe", // Celeste suave
-                ColorIcono = "#0284c7"
+                ColorFondoIcono = "#e6f1f8", // Celeste suave
+                ColorIcono = "#0071AD"
             },
 
             // === ADMINISTRACIÓN (Captura de pantalla del usuario) ===
@@ -559,15 +559,15 @@ namespace FGA.Utility
             {
                 Descripcion = "Gesti\u00f3n de formularios, par\u00e1metros de supervisi\u00f3n y autoevaluaciones.",
                 Icono = "fa fa-check-square-o",
-                ColorFondoIcono = "#fef3c7", // Ámbar suave
-                ColorIcono = "#d97706"
+                ColorFondoIcono = "#fff7ec", // Ámbar suave
+                ColorIcono = "#FFB347"
             },
             ["Evaluacion"] = new CardMeta
             {
                 Descripcion = "Gesti\u00f3n de formularios, par\u00e1metros de supervisi\u00f3n y autoevaluaciones.",
                 Icono = "fa fa-check-square-o",
-                ColorFondoIcono = "#fef3c7",
-                ColorIcono = "#d97706"
+                ColorFondoIcono = "#fff7ec",
+                ColorIcono = "#FFB347"
             },
             ["Usuarios"] = new CardMeta
             {
@@ -587,99 +587,99 @@ namespace FGA.Utility
             {
                 Descripcion = "Cat\u00e1logo de entidades participantes y par\u00e1metros generales.",
                 Icono = "fa fa-building-o",
-                ColorFondoIcono = "#dcfce7", // Verde suave
-                ColorIcono = "#16a34a"
+                ColorFondoIcono = "#e6f6fc", // Verde suave
+                ColorIcono = "#0099D6"
             },
             ["Entidad"] = new CardMeta
             {
                 Descripcion = "Cat\u00e1logo de entidades participantes y par\u00e1metros generales.",
                 Icono = "fa fa-building-o",
-                ColorFondoIcono = "#dcfce7",
-                ColorIcono = "#16a34a"
+                ColorFondoIcono = "#e6f6fc",
+                ColorIcono = "#0099D6"
             },
             ["Par\u00e1metros"] = new CardMeta
             {
                 Descripcion = "Configuraci\u00f3n de variables operativas y par\u00e1metros globales del sistema.",
                 Icono = "fa fa-sliders",
-                ColorFondoIcono = "#ffedd5", // Naranja suave
-                ColorIcono = "#ea580c"
+                ColorFondoIcono = "#fff1eb", // Naranja suave
+                ColorIcono = "#FE7235"
             },
             ["Parametros"] = new CardMeta
             {
                 Descripcion = "Configuraci\u00f3n de variables operativas y par\u00e1metros globales del sistema.",
                 Icono = "fa fa-sliders",
-                ColorFondoIcono = "#ffedd5",
-                ColorIcono = "#ea580c"
+                ColorFondoIcono = "#fff1eb",
+                ColorIcono = "#FE7235"
             },
             ["Cierres"] = new CardMeta
             {
                 Descripcion = "Monitoreo y administraci\u00f3n de fechas de corte y cierres contables.",
                 Icono = "fa fa-calendar-check-o",
-                ColorFondoIcono = "#f3e8ff", // Púrpura suave
-                ColorIcono = "#7c3aed"
+                ColorFondoIcono = "#e6ecf1", // Púrpura suave
+                ColorIcono = "#003F6B"
             },
             ["Cierre"] = new CardMeta
             {
                 Descripcion = "Monitoreo y administraci\u00f3n de fechas de corte y cierres contables.",
                 Icono = "fa fa-calendar-check-o",
-                ColorFondoIcono = "#f3e8ff",
-                ColorIcono = "#7c3aed"
+                ColorFondoIcono = "#e6ecf1",
+                ColorIcono = "#003F6B"
             },
             ["Estatus"] = new CardMeta
             {
                 Descripcion = "Monitoreo en tiempo real del estado de cierres contables y procesos de carga.",
                 Icono = "fa fa-tachometer",
-                ColorFondoIcono = "#f3e8ff", // Violeta suave
-                ColorIcono = "#7c3aed"
+                ColorFondoIcono = "#e6ecf1", // Violeta suave
+                ColorIcono = "#003F6B"
             },
             ["Cierre/Monitor"] = new CardMeta
             {
                 Descripcion = "Monitoreo en tiempo real del estado de cierres contables y procesos de carga.",
                 Icono = "fa fa-tachometer",
-                ColorFondoIcono = "#f3e8ff",
-                ColorIcono = "#7c3aed"
+                ColorFondoIcono = "#e6ecf1",
+                ColorIcono = "#003F6B"
             },
             ["Archivos Cargados"] = new CardMeta
             {
                 Descripcion = "Consulta, descarga y auditor\u00eda de archivos y reportes procesados.",
                 Icono = "fa fa-folder-open-o",
-                ColorFondoIcono = "#dcfce7", // Verde suave
-                ColorIcono = "#16a34a"
+                ColorFondoIcono = "#e6f6fc", // Verde suave
+                ColorIcono = "#0099D6"
             },
             ["Consultar Archivos"] = new CardMeta
             {
                 Descripcion = "Consulta, descarga y auditor\u00eda de archivos y reportes procesados.",
                 Icono = "fa fa-folder-open-o",
-                ColorFondoIcono = "#dcfce7",
-                ColorIcono = "#16a34a"
+                ColorFondoIcono = "#e6f6fc",
+                ColorIcono = "#0099D6"
             },
             ["F\u00f3rmulas"] = new CardMeta
             {
                 Descripcion = "Definici\u00f3n y f\u00f3rmulas de c\u00e1lculo de indicadores financieros y normativos.",
                 Icono = "fa fa-calculator",
-                ColorFondoIcono = "#fae8ff", // Fucsia suave
-                ColorIcono = "#a21caf"
+                ColorFondoIcono = "#ebf6f9", // Fucsia suave
+                ColorIcono = "#6DB5CB"
             },
             ["Formula"] = new CardMeta
             {
                 Descripcion = "Definici\u00f3n y f\u00f3rmulas de c\u00e1lculo de indicadores financieros y normativos.",
                 Icono = "fa fa-calculator",
-                ColorFondoIcono = "#fae8ff",
-                ColorIcono = "#a21caf"
+                ColorFondoIcono = "#ebf6f9",
+                ColorIcono = "#6DB5CB"
             },
             ["Noticias"] = new CardMeta
             {
                 Descripcion = "Publicaci\u00f3n de boletines y comunicados informativos para las entidades.",
                 Icono = "fa fa-newspaper-o",
-                ColorFondoIcono = "#e0f2fe", // Celeste suave
-                ColorIcono = "#0284c7"
+                ColorFondoIcono = "#e6f1f8", // Celeste suave
+                ColorIcono = "#0071AD"
             },
             ["Noticia"] = new CardMeta
             {
                 Descripcion = "Publicaci\u00f3n de boletines y comunicados informativos para las entidades.",
                 Icono = "fa fa-newspaper-o",
-                ColorFondoIcono = "#e0f2fe",
-                ColorIcono = "#0284c7"
+                ColorFondoIcono = "#e6f1f8",
+                ColorIcono = "#0071AD"
             },
             ["Calendario"] = new CardMeta
             {
@@ -692,14 +692,14 @@ namespace FGA.Utility
             {
                 Descripcion = "Gesti\u00f3n de facturaci\u00f3n y cuotas de mantenimiento de la plataforma.",
                 Icono = "fa fa-credit-card",
-                ColorFondoIcono = "#dcfce7", // Verde suave
+                ColorFondoIcono = "#e6f6fc", // Verde suave
                 ColorIcono = "#15803d"
             },
             ["Facturacion"] = new CardMeta
             {
                 Descripcion = "Gesti\u00f3n de facturaci\u00f3n y cuotas de mantenimiento de la plataforma.",
                 Icono = "fa fa-credit-card",
-                ColorFondoIcono = "#dcfce7",
+                ColorFondoIcono = "#e6f6fc",
                 ColorIcono = "#15803d"
             },
             ["Archivos"] = new CardMeta
@@ -720,15 +720,15 @@ namespace FGA.Utility
             {
                 Descripcion = "Historial de conexiones, sesiones activas y registro de auditor\u00eda.",
                 Icono = "fa fa-history",
-                ColorFondoIcono = "#ffe4e6", // Coral suave
-                ColorIcono = "#e11d48"
+                ColorFondoIcono = "#fff1eb", // Coral suave
+                ColorIcono = "#FE7235"
             },
             ["Seguridad"] = new CardMeta
             {
                 Descripcion = "Historial de conexiones, sesiones activas y registro de auditor\u00eda.",
                 Icono = "fa fa-lock",
-                ColorFondoIcono = "#ffe4e6",
-                ColorIcono = "#e11d48"
+                ColorFondoIcono = "#fff1eb",
+                ColorIcono = "#FE7235"
             },
 
             // === MERCADO DE CRÉDITOS ===
@@ -736,8 +736,8 @@ namespace FGA.Utility
             {
                 Descripcion = "Consulte las ofertas y solicitudes de cr\u00e9ditos vigentes.",
                 Icono = "fa fa-university",
-                ColorFondoIcono = "#dcfce7",
-                ColorIcono = "#16a34a"
+                ColorFondoIcono = "#e6f6fc",
+                ColorIcono = "#0099D6"
             },
             ["Mis Solicitudes"] = new CardMeta
             {
@@ -757,8 +757,8 @@ namespace FGA.Utility
             {
                 Descripcion = "Administre las ofertas y solicitudes recibidas de otras entidades.",
                 Icono = "fa fa-tasks",
-                ColorFondoIcono = "#f3e8ff",
-                ColorIcono = "#7c3aed"
+                ColorFondoIcono = "#e6ecf1",
+                ColorIcono = "#003F6B"
             },
 
             // === GOBIERNO CORPORATIVO Y EVALUACIÓN ===
@@ -766,64 +766,64 @@ namespace FGA.Utility
             {
                 Descripcion = "Formularios de autoevaluaci\u00f3n de supervisi\u00f3n basada en riesgos.",
                 Icono = "fa fa-pencil-square-o",
-                ColorFondoIcono = "#e0f2fe",
-                ColorIcono = "#0284c7"
+                ColorFondoIcono = "#e6f1f8",
+                ColorIcono = "#0071AD"
             },
             ["Autoevaluacion"] = new CardMeta
             {
                 Descripcion = "Formularios de autoevaluaci\u00f3n de supervisi\u00f3n basada en riesgos.",
                 Icono = "fa fa-pencil-square-o",
-                ColorFondoIcono = "#e0f2fe",
-                ColorIcono = "#0284c7"
+                ColorFondoIcono = "#e6f1f8",
+                ColorIcono = "#0071AD"
             },
             ["Autoevaluaci\u00f3n SBR"] = new CardMeta
             {
                 Descripcion = "Formularios de autoevaluaci\u00f3n de supervisi\u00f3n basada en riesgos.",
                 Icono = "fa fa-pencil-square-o",
-                ColorFondoIcono = "#e0f2fe",
-                ColorIcono = "#0284c7"
+                ColorFondoIcono = "#e6f1f8",
+                ColorIcono = "#0071AD"
             },
             ["Avance"] = new CardMeta
             {
                 Descripcion = "Monitoreo del porcentaje de avance y nivel de respuestas completadas.",
                 Icono = "fa fa-line-chart",
-                ColorFondoIcono = "#ffedd5",
-                ColorIcono = "#ea580c"
+                ColorFondoIcono = "#fff1eb",
+                ColorIcono = "#FE7235"
             },
             ["Avance de Evaluaci\u00f3n"] = new CardMeta
             {
                 Descripcion = "Monitoreo del porcentaje de avance y nivel de respuestas completadas.",
                 Icono = "fa fa-line-chart",
-                ColorFondoIcono = "#ffedd5",
-                ColorIcono = "#ea580c"
+                ColorFondoIcono = "#fff1eb",
+                ColorIcono = "#FE7235"
             },
             ["Historial"] = new CardMeta
             {
                 Descripcion = "Consulta de autoevaluaciones concluidas y registros de per\u00edodos anteriores.",
                 Icono = "fa fa-history",
-                ColorFondoIcono = "#f3e8ff",
-                ColorIcono = "#7c3aed"
+                ColorFondoIcono = "#e6ecf1",
+                ColorIcono = "#003F6B"
             },
             ["Historial de Evaluaci\u00f3n"] = new CardMeta
             {
                 Descripcion = "Consulta de autoevaluaciones concluidas y registros de per\u00edodos anteriores.",
                 Icono = "fa fa-history",
-                ColorFondoIcono = "#f3e8ff",
-                ColorIcono = "#7c3aed"
+                ColorFondoIcono = "#e6ecf1",
+                ColorIcono = "#003F6B"
             },
             ["Resultados"] = new CardMeta
             {
                 Descripcion = "Visualizaci\u00f3n de calificaciones globales y reportes consolidados.",
                 Icono = "fa fa-pie-chart",
-                ColorFondoIcono = "#dcfce7",
-                ColorIcono = "#16a34a"
+                ColorFondoIcono = "#e6f6fc",
+                ColorIcono = "#0099D6"
             },
             ["Resultados de Evaluaci\u00f3n"] = new CardMeta
             {
                 Descripcion = "Visualizaci\u00f3n de calificaciones globales y reportes consolidados.",
                 Icono = "fa fa-pie-chart",
-                ColorFondoIcono = "#dcfce7",
-                ColorIcono = "#16a34a"
+                ColorFondoIcono = "#e6f6fc",
+                ColorIcono = "#0099D6"
             },
 
             // === PERFILES Y CONTROL DE ACCESOS ===
@@ -845,15 +845,15 @@ namespace FGA.Utility
             {
                 Descripcion = "Actualizaci\u00f3n de clave de acceso personal y par\u00e1metros de seguridad de la cuenta.",
                 Icono = "fa fa-key",
-                ColorFondoIcono = "#fef3c7",
-                ColorIcono = "#d97706"
+                ColorFondoIcono = "#fff7ec",
+                ColorIcono = "#FFB347"
             },
             ["Cambiar contrasena"] = new CardMeta
             {
                 Descripcion = "Actualizaci\u00f3n de clave de acceso personal y par\u00e1metros de seguridad de la cuenta.",
                 Icono = "fa fa-key",
-                ColorFondoIcono = "#fef3c7",
-                ColorIcono = "#d97706"
+                ColorFondoIcono = "#fff7ec",
+                ColorIcono = "#FFB347"
             },
 
             // === OTROS MÓDULOS DEL SISTEMA ===
@@ -861,15 +861,15 @@ namespace FGA.Utility
             {
                 Descripcion = "Modelado de escenarios de estr\u00e9s y suficiencia patrimonial.",
                 Icono = "fa fa-cubes",
-                ColorFondoIcono = "#ffedd5",
-                ColorIcono = "#ea580c"
+                ColorFondoIcono = "#fff1eb",
+                ColorIcono = "#FE7235"
             },
             ["SimulacionCapital"] = new CardMeta
             {
                 Descripcion = "Modelado de escenarios de estr\u00e9s y suficiencia patrimonial.",
                 Icono = "fa fa-cubes",
-                ColorFondoIcono = "#ffedd5",
-                ColorIcono = "#ea580c"
+                ColorFondoIcono = "#fff1eb",
+                ColorIcono = "#FE7235"
             },
             ["Indicadores Econ\u00f3micos"] = new CardMeta
             {
@@ -917,29 +917,29 @@ namespace FGA.Utility
             {
                 Descripcion = "Administraci\u00f3n y categorizaci\u00f3n de tipos de informes del sistema.",
                 Icono = "fa fa-file-text-o",
-                ColorFondoIcono = "#fae8ff",
-                ColorIcono = "#a21caf"
+                ColorFondoIcono = "#ebf6f9",
+                ColorIcono = "#6DB5CB"
             },
             ["TipoInforme"] = new CardMeta
             {
                 Descripcion = "Administraci\u00f3n y categorizaci\u00f3n de tipos de informes del sistema.",
                 Icono = "fa fa-file-text-o",
-                ColorFondoIcono = "#fae8ff",
-                ColorIcono = "#a21caf"
+                ColorFondoIcono = "#ebf6f9",
+                ColorIcono = "#6DB5CB"
             },
             ["Solicitudes de Cambio"] = new CardMeta
             {
                 Descripcion = "Gesti\u00f3n y aprobaci\u00f3n de solicitudes de modificaci\u00f3n de informaci\u00f3n.",
                 Icono = "fa fa-exchange",
-                ColorFondoIcono = "#fef3c7",
-                ColorIcono = "#d97706"
+                ColorFondoIcono = "#fff7ec",
+                ColorIcono = "#FFB347"
             },
             ["SolicitudCambio"] = new CardMeta
             {
                 Descripcion = "Gesti\u00f3n y aprobaci\u00f3n de solicitudes de modificaci\u00f3n de informaci\u00f3n.",
                 Icono = "fa fa-exchange",
-                ColorFondoIcono = "#fef3c7",
-                ColorIcono = "#d97706"
+                ColorFondoIcono = "#fff7ec",
+                ColorIcono = "#FFB347"
             },
 
             // === GRÁFICOS E INDICADORES (Opciones Hijas Específicas) ===
@@ -947,15 +947,15 @@ namespace FGA.Utility
             {
                 Descripcion = "Consulte y analice los principales indicadores financieros normativos seg\u00fan regulaci\u00f3n SUGEF.",
                 Icono = "fa fa-line-chart",
-                ColorFondoIcono = "#ffe4e6",
-                ColorIcono = "#e11d48"
+                ColorFondoIcono = "#fff1eb",
+                ColorIcono = "#FE7235"
             },
             ["FFC"] = new CardMeta
             {
                 Descripcion = "Analice los indicadores y estad\u00edsticas del Fondo de Financiamiento para la Competitividad.",
                 Icono = "fa fa-university",
-                ColorFondoIcono = "#ffedd5",
-                ColorIcono = "#ea580c"
+                ColorFondoIcono = "#fff1eb",
+                ColorIcono = "#FE7235"
             },
             ["Econ\u00f3micos"] = new CardMeta
             {
@@ -975,43 +975,43 @@ namespace FGA.Utility
             {
                 Descripcion = "Configure y consulte indicadores financieros personalizados seg\u00fan sus criterios de evaluaci\u00f3n.",
                 Icono = "fa fa-sliders",
-                ColorFondoIcono = "#f3e8ff",
-                ColorIcono = "#7c3aed"
+                ColorFondoIcono = "#e6ecf1",
+                ColorIcono = "#003F6B"
             },
             ["Personalizado"] = new CardMeta
             {
                 Descripcion = "Configure y consulte indicadores financieros personalizados seg\u00fan sus criterios de evaluaci\u00f3n.",
                 Icono = "fa fa-sliders",
-                ColorFondoIcono = "#f3e8ff",
-                ColorIcono = "#7c3aed"
+                ColorFondoIcono = "#e6ecf1",
+                ColorIcono = "#003F6B"
             },
             ["Notificaciones"] = new CardMeta
             {
                 Descripcion = "Monitoreo y consulta de alertas, boletines y notificaciones institucionales.",
                 Icono = "fa fa-bell-o",
-                ColorFondoIcono = "#fef3c7",
-                ColorIcono = "#d97706"
+                ColorFondoIcono = "#fff7ec",
+                ColorIcono = "#FFB347"
             },
             ["Notificacion"] = new CardMeta
             {
                 Descripcion = "Monitoreo y consulta de alertas, boletines y notificaciones institucionales.",
                 Icono = "fa fa-bell-o",
-                ColorFondoIcono = "#fef3c7",
-                ColorIcono = "#d97706"
+                ColorFondoIcono = "#fff7ec",
+                ColorIcono = "#FFB347"
             },
             ["Requisitos"] = new CardMeta
             {
                 Descripcion = "Verificaci\u00f3n y estado de cumplimiento de requisitos regulatorios.",
                 Icono = "fa fa-check-square-o",
-                ColorFondoIcono = "#dcfce7",
-                ColorIcono = "#16a34a"
+                ColorFondoIcono = "#e6f6fc",
+                ColorIcono = "#0099D6"
             },
             ["Requisites"] = new CardMeta
             {
                 Descripcion = "Verificaci\u00f3n y estado de cumplimiento de requisitos regulatorios.",
                 Icono = "fa fa-check-square-o",
-                ColorFondoIcono = "#dcfce7",
-                ColorIcono = "#16a34a"
+                ColorFondoIcono = "#e6f6fc",
+                ColorIcono = "#0099D6"
             },
             ["Informes"] = new CardMeta
             {
@@ -1031,15 +1031,15 @@ namespace FGA.Utility
             {
                 Descripcion = "Consultas avanzadas y an\u00e1lisis din\u00e1mico de informaci\u00f3n consolidada.",
                 Icono = "fa fa-search",
-                ColorFondoIcono = "#fae8ff",
-                ColorIcono = "#a21caf"
+                ColorFondoIcono = "#ebf6f9",
+                ColorIcono = "#6DB5CB"
             },
             ["Consulta"] = new CardMeta
             {
                 Descripcion = "Consultas avanzadas y an\u00e1lisis din\u00e1mico de informaci\u00f3n consolidada.",
                 Icono = "fa fa-search",
-                ColorFondoIcono = "#fae8ff",
-                ColorIcono = "#a21caf"
+                ColorFondoIcono = "#ebf6f9",
+                ColorIcono = "#6DB5CB"
             }
         };
 
