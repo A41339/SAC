@@ -471,7 +471,7 @@ namespace FGA.Controllers
                 var response = new AlertaConfiguracionResponse
                 {
                     Success = true,
-                    Message = "Configuración obtenida correctamente.",
+                    Message = FGAConstants.Alertas.MsgConfiguracionObtenida,
                     EsAdmin = esAdmin,
                     EntidadId = idEntidad,
                     GlobalUmbralPorc = globalPorc,
@@ -486,7 +486,7 @@ namespace FGA.Controllers
                         Activo = esPersonalizado,
                         GlobalPorc = globalPorc,
                         GlobalMonto = globalMonto,
-                        FechaModificacion = fechaModif.HasValue ? fechaModif.Value.ToString("dd/MM/yyyy HH:mm") : null,
+                        FechaModificacion = fechaModif.HasValue ? fechaModif.Value.ToString(FGAConstants.Formatos.FechaCorta + " HH:mm") : null,
                         UsuarioModificacion = usuarioModif
                     }
                 };
@@ -507,25 +507,62 @@ namespace FGA.Controllers
         /// Guarda los umbrales y modo de monitoreo propios de una cooperativa
         /// </summary>
         [HttpPost]
-        public ActionResult GuardarConfiguracionEntidad(string entidadId, decimal? umbralPorc, decimal? umbralMonto, string modoMonitoreo, bool? usarGlobales)
+        public ActionResult GuardarConfiguracionEntidad(
+            string entidadId,
+            decimal? umbralPorc = null,
+            decimal? umbralPorcentaje = null,
+            decimal? umbralMonto = null,
+            string modoMonitoreo = null,
+            bool? activo = null,
+            bool? usarGlobales = null)
         {
             try
             {
                 string idEntidad = ResolverEntidadAutorizada(entidadId);
-                string usuario = Env.GetUserInfo("name") ?? "SYSTEM";
-                bool activo = !(usarGlobales.HasValue && usarGlobales.Value);
-
-                if (!activo)
+                if (string.IsNullOrEmpty(idEntidad) || idEntidad == FGAConstants.Entidades.Todas || idEntidad == FGAConstants.Entidades.Administradora)
                 {
-                    umbralPorc = null;
-                    umbralMonto = null;
-                    modoMonitoreo = "TODAS";
+                    string idSesion = Session?[FGAConstants.Sesion.IdEntidad]?.ToString();
+                    if (!string.IsNullOrEmpty(idSesion) && idSesion != FGAConstants.Entidades.Todas && idSesion != FGAConstants.Entidades.Administradora)
+                    {
+                        idEntidad = idSesion;
+                    }
+                    else
+                    {
+                        var usrObj = Session?[FGAConstants.Sesion.CurrentUserObj] as Usuario;
+                        idEntidad = usrObj?.Entidad_Usuario_Id ?? Env.GetUserInfo(FGAConstants.Sesion.Entidad);
+                    }
+                }
+
+                if (string.IsNullOrEmpty(idEntidad) || idEntidad == FGAConstants.Entidades.Todas || idEntidad == FGAConstants.Entidades.Administradora)
+                {
+                    return Json(new AlertaOperacionResponse
+                    {
+                        Success = false,
+                        Message = FGAConstants.Alertas.MsgErrorEntidadRequerida
+                    });
+                }
+
+                string usuario = Env.GetUserInfo(FGAConstants.Sesion.Nombre) ?? FGAConstants.Alertas.UsuarioDefecto;
+                bool esActivo = activo.HasValue ? activo.Value : !(usarGlobales.HasValue && usarGlobales.Value);
+
+                decimal? porcFinal = umbralPorc ?? umbralPorcentaje;
+                decimal? montoFinal = umbralMonto;
+                string modoFinal = string.IsNullOrEmpty(modoMonitoreo) ? FGAConstants.Alertas.ModoTodas : modoMonitoreo.Trim().ToUpperInvariant();
+
+                if (!esActivo)
+                {
+                    porcFinal = null;
+                    montoFinal = null;
+                    modoFinal = FGAConstants.Alertas.ModoTodas;
                 }
                 else
                 {
-                    if (!umbralPorc.HasValue || umbralPorc.Value <= 0) umbralPorc = 15.0m;
-                    if (!umbralMonto.HasValue || umbralMonto.Value <= 0) umbralMonto = 10000000.0m;
-                    if (string.IsNullOrEmpty(modoMonitoreo)) modoMonitoreo = "TODAS";
+                    if (!porcFinal.HasValue || porcFinal.Value <= 0) porcFinal = FGAConstants.Alertas.UmbralVariacionPorcGlobal;
+                    if (!montoFinal.HasValue || montoFinal.Value <= 0) montoFinal = FGAConstants.Alertas.UmbralVariacionMontoGlobal;
+                    if (modoFinal != FGAConstants.Alertas.ModoTodas && modoFinal != FGAConstants.Alertas.ModoSoloWatchlist && modoFinal != FGAConstants.Alertas.ModoExcluirBlacklist)
+                    {
+                        modoFinal = FGAConstants.Alertas.ModoTodas;
+                    }
                 }
 
                 // 1. Intentar mediante el servicio WCF SPClient
@@ -535,7 +572,7 @@ namespace FGA.Controllers
                     var spClient = new FGA_En_Linea.SPService.SPClient();
                     try
                     {
-                        var resSp = spClient.FGA_Guardar_Configuracion_Alerta_Entidad(idEntidad, umbralPorc, umbralMonto, modoMonitoreo, activo, usuario);
+                        var resSp = spClient.FGA_Guardar_Configuracion_Alerta_Entidad(idEntidad, porcFinal, montoFinal, modoFinal, esActivo, usuario);
                         if (resSp != null)
                         {
                             guardado = true;
@@ -567,10 +604,10 @@ namespace FGA.Controllers
                             {
                                 cmd.CommandType = CommandType.StoredProcedure;
                                 cmd.Parameters.AddWithValue("@IDENTIDAD", idEntidad);
-                                cmd.Parameters.AddWithValue("@UMBRAL_PORC", (object)umbralPorc ?? DBNull.Value);
-                                cmd.Parameters.AddWithValue("@UMBRAL_MONTO", (object)umbralMonto ?? DBNull.Value);
-                                cmd.Parameters.AddWithValue("@MODO_MONITOREO", modoMonitoreo);
-                                cmd.Parameters.AddWithValue("@ACTIVO", activo);
+                                cmd.Parameters.AddWithValue("@UMBRAL_PORC", (object)porcFinal ?? DBNull.Value);
+                                cmd.Parameters.AddWithValue("@UMBRAL_MONTO", (object)montoFinal ?? DBNull.Value);
+                                cmd.Parameters.AddWithValue("@MODO_MONITOREO", modoFinal);
+                                cmd.Parameters.AddWithValue("@ACTIVO", esActivo);
                                 cmd.Parameters.AddWithValue("@USUARIO", usuario);
 
                                 cmd.ExecuteNonQuery();
@@ -605,10 +642,10 @@ namespace FGA.Controllers
                             using (var cmd = new SqlCommand(upsertSql, conn))
                             {
                                 cmd.Parameters.AddWithValue("@idEntidad", idEntidad);
-                                cmd.Parameters.AddWithValue("@umbralPorc", (object)umbralPorc ?? DBNull.Value);
-                                cmd.Parameters.AddWithValue("@umbralMonto", (object)umbralMonto ?? DBNull.Value);
-                                cmd.Parameters.AddWithValue("@modoMonitoreo", modoMonitoreo);
-                                cmd.Parameters.AddWithValue("@activo", activo);
+                                cmd.Parameters.AddWithValue("@umbralPorc", (object)porcFinal ?? DBNull.Value);
+                                cmd.Parameters.AddWithValue("@umbralMonto", (object)montoFinal ?? DBNull.Value);
+                                cmd.Parameters.AddWithValue("@modoMonitoreo", modoFinal);
+                                cmd.Parameters.AddWithValue("@activo", esActivo);
                                 cmd.Parameters.AddWithValue("@usuario", usuario);
                                 cmd.ExecuteNonQuery();
                             }
@@ -616,12 +653,14 @@ namespace FGA.Controllers
                     }
                 }
 
+                string msg = esActivo
+                    ? FGAConstants.Alertas.MsgConfiguracionGuardada
+                    : FGAConstants.Alertas.MsgConfiguracionGlobalRestablecida;
+
                 return Json(new AlertaOperacionResponse
                 {
                     Success = true,
-                    Message = activo
-                        ? "Parámetros de alerta personalizados guardados exitosamente para su entidad."
-                        : "Se restablecieron los parámetros globales de la FFC exitosamente."
+                    Message = msg
                 });
             }
             catch (Exception ex)
@@ -991,19 +1030,44 @@ namespace FGA.Controllers
             try
             {
                 string idEntidad = ResolverEntidadAutorizada(entidadId);
+                if (string.IsNullOrEmpty(idEntidad) || idEntidad == FGAConstants.Entidades.Todas || idEntidad == FGAConstants.Entidades.Administradora)
+                {
+                    string idSesion = Session?[FGAConstants.Sesion.IdEntidad]?.ToString();
+                    if (!string.IsNullOrEmpty(idSesion) && idSesion != FGAConstants.Entidades.Todas && idSesion != FGAConstants.Entidades.Administradora)
+                    {
+                        idEntidad = idSesion;
+                    }
+                    else
+                    {
+                        var usrObj = Session?[FGAConstants.Sesion.CurrentUserObj] as Usuario;
+                        idEntidad = usrObj?.Entidad_Usuario_Id ?? Env.GetUserInfo(FGAConstants.Sesion.Entidad);
+                    }
+                }
+
+                if (string.IsNullOrEmpty(idEntidad) || idEntidad == FGAConstants.Entidades.Todas || idEntidad == FGAConstants.Entidades.Administradora)
+                {
+                    return Json(new AlertaOperacionResponse
+                    {
+                        Success = false,
+                        Message = FGAConstants.Alertas.MsgErrorEntidadRequerida
+                    });
+                }
+
                 string codCuenta = (cuentaContable ?? cuenta ?? "").Trim();
                 if (string.IsNullOrWhiteSpace(codCuenta))
                 {
                     return Json(new AlertaOperacionResponse
                     {
                         Success = false,
-                        Message = "Debe especificar el código de la cuenta contable."
+                        Message = FGAConstants.Alertas.MsgErrorCuentaRequerida
                     });
                 }
 
-                string usuario = Env.GetUserInfo("name") ?? "SYSTEM";
-                string rawTipo = (tipoMonitoreo ?? tipoRegla ?? "WATCHLIST").Trim().ToUpperInvariant();
-                string regla = (rawTipo == "BLACKLIST" || rawTipo == "IGNORAR") ? "IGNORAR" : "MONITOREAR";
+                string usuario = Env.GetUserInfo(FGAConstants.Sesion.Nombre) ?? FGAConstants.Alertas.UsuarioDefecto;
+                string rawTipo = (tipoMonitoreo ?? tipoRegla ?? FGAConstants.Alertas.ReglaWatchlist).Trim().ToUpperInvariant();
+                string regla = (rawTipo == FGAConstants.Alertas.ReglaBlacklist || rawTipo == FGAConstants.Alertas.ReglaIgnorar)
+                    ? FGAConstants.Alertas.ReglaIgnorar
+                    : FGAConstants.Alertas.ReglaMonitorear;
 
                 if (string.IsNullOrWhiteSpace(nombreCuenta))
                 {
@@ -1101,7 +1165,7 @@ namespace FGA.Controllers
                 return Json(new AlertaOperacionResponse
                 {
                     Success = true,
-                    Message = "Cuenta registrada correctamente en la lista de monitoreo."
+                    Message = FGAConstants.Alertas.MsgCuentaRegistrada
                 });
             }
             catch (Exception ex)
@@ -1123,7 +1187,7 @@ namespace FGA.Controllers
             try
             {
                 string idEntidad = ResolverEntidadAutorizada(entidadId);
-                string usuario = Env.GetUserInfo("name") ?? "SYSTEM";
+                string usuario = Env.GetUserInfo(FGAConstants.Sesion.Nombre) ?? FGAConstants.Alertas.UsuarioDefecto;
 
                 // 1. Intentar mediante WCF SPClient
                 bool eliminado = false;
@@ -1188,7 +1252,7 @@ namespace FGA.Controllers
                 return Json(new AlertaOperacionResponse
                 {
                     Success = true,
-                    Message = "Cuenta retirada de la lista de monitoreo exitosamente."
+                    Message = FGAConstants.Alertas.MsgCuentaRemovida
                 });
             }
             catch (Exception ex)

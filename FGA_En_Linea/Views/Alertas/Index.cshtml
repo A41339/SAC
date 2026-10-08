@@ -682,18 +682,18 @@
     // ==========================================================================
     // CONFIGURACIÓN DE PARÁMETROS Y CUENTAS POR ENTIDAD (MODAL AJAX)
     // ==========================================================================
-    var currentConfigEntidadId = -1;
+    var currentConfigEntidadId = "-1";
     var searchCuentaTimeout = null;
 
     function abrirModalConfigEntidad() {
         var selectVal = $('#selectEntidad').val();
         var esAdmin = @((ViewBag.EsAdmin != null && (bool)ViewBag.EsAdmin) ? "true" : "false");
-        var idEntidadUsuario = parseInt('@(ViewBag.IdEntidadUsuario != null ? ViewBag.IdEntidadUsuario.ToString() : "-1")', 10) || -1;
-        var entidadId = -1;
+        var idEntidadUsuario = '@(ViewBag.IdEntidadUsuario != null ? ViewBag.IdEntidadUsuario.ToString() : "")';
+        var entidadId = "-1";
         var entidadNombre = "";
 
         if (esAdmin) {
-            if (!selectVal || selectVal === "-1") {
+            if (!selectVal || selectVal === "-1" || selectVal === "0") {
                 if (window.mostrarToast) {
                     window.mostrarToast('Por favor seleccione una cooperativa o entidad en el filtro superior para configurar sus parámetros específicos.', 'info', 'Seleccione una Entidad', 4500);
                 } else {
@@ -702,10 +702,10 @@
                 $('#selectEntidad').focus();
                 return;
             }
-            entidadId = parseInt(selectVal, 10);
+            entidadId = String(selectVal).trim();
             entidadNombre = $('#selectEntidad option:selected').text();
         } else {
-            entidadId = (idEntidadUsuario > 0) ? idEntidadUsuario : parseInt(selectVal, 10);
+            entidadId = (idEntidadUsuario && idEntidadUsuario !== "-1" && idEntidadUsuario !== "0") ? String(idEntidadUsuario).trim() : (selectVal ? String(selectVal).trim() : "2");
             entidadNombre = '@(Session["NomEntidad"] ?? "Mi Cooperativa")';
         }
 
@@ -761,19 +761,28 @@
         $.getJSON('@Url.Action("GetConfiguracionEntidad", "Alertas")', { entidadId: entidadId }, function(res) {
             $('#btnGuardarConfigUmbrales').prop('disabled', false).html('<i class="fa fa-floppy-o"></i> Guardar Parámetros de Entidad');
 
-            if (res && res.success && res.config) {
-                var c = res.config;
-                $('#chkUsarPersonalizado').prop('checked', c.Activo);
-                toggleModoPersonalizado(c.Activo);
+            var isOk = res && (res.success === true || res.Success === true);
+            var cfg = res ? (res.config || res.Config) : null;
+            if (isOk && cfg) {
+                var c = cfg;
+                var act = (c.Activo !== undefined) ? c.Activo : ((c.activo !== undefined) ? c.activo : c.EsPersonalizado);
+                $('#chkUsarPersonalizado').prop('checked', !!act);
+                toggleModoPersonalizado(!!act);
 
-                $('#txtCfgUmbralPorc').val(c.UmbralVariacionPorcentaje || res.globalUmbralPorc || 15.0);
-                $('#txtCfgUmbralMonto').val(c.UmbralVariacionMonto || res.globalUmbralMonto || 10000000.0);
-                seleccionarModoMonitoreo(c.ModoMonitoreo || 'TODAS');
+                var uPorc = c.UmbralVariacionPorcentaje || c.UmbralPorc || c.umbralVariacionPorcentaje || c.umbralPorc || res.globalUmbralPorc || res.GlobalUmbralPorc || 15.0;
+                var uMonto = c.UmbralVariacionMonto || c.UmbralMonto || c.umbralVariacionMonto || c.umbralMonto || res.globalUmbralMonto || res.GlobalUmbralMonto || 10000000.0;
+                var modo = c.ModoMonitoreo || c.modoMonitoreo || 'TODAS';
+
+                $('#txtCfgUmbralPorc').val(uPorc);
+                $('#txtCfgUmbralMonto').val(uMonto);
+                seleccionarModoMonitoreo(modo);
             } else {
                 $('#chkUsarPersonalizado').prop('checked', false);
                 toggleModoPersonalizado(false);
-                $('#txtCfgUmbralPorc').val((res && res.globalUmbralPorc) ? res.globalUmbralPorc : 15.0);
-                $('#txtCfgUmbralMonto').val((res && res.globalUmbralMonto) ? res.globalUmbralMonto : 10000000.0);
+                var gPorc = (res && (res.globalUmbralPorc || res.GlobalUmbralPorc)) ? (res.globalUmbralPorc || res.GlobalUmbralPorc) : 15.0;
+                var gMonto = (res && (res.globalUmbralMonto || res.GlobalUmbralMonto)) ? (res.globalUmbralMonto || res.GlobalUmbralMonto) : 10000000.0;
+                $('#txtCfgUmbralPorc').val(gPorc);
+                $('#txtCfgUmbralMonto').val(gMonto);
                 seleccionarModoMonitoreo('TODAS');
             }
         }).fail(function() {
@@ -806,16 +815,20 @@
         $.post('@Url.Action("GuardarConfiguracionEntidad", "Alertas")', {
             entidadId: currentConfigEntidadId,
             activo: activo,
+            usarGlobales: !activo,
+            umbralPorc: isNaN(umbralPorc) ? 15.0 : umbralPorc,
             umbralPorcentaje: isNaN(umbralPorc) ? 15.0 : umbralPorc,
             umbralMonto: isNaN(umbralMonto) ? 10000000.0 : umbralMonto,
             modoMonitoreo: modoMonitoreo
         }, function(res) {
             $btn.prop('disabled', false).html('<i class="fa fa-floppy-o"></i> Guardar Parámetros de Entidad');
-            if (res && res.success) {
+            var isOk = res && (res.success === true || res.Success === true);
+            var msg = (res && (res.message || res.Message)) || 'Configuración guardada exitosamente.';
+            if (isOk) {
                 if (window.mostrarToast) {
-                    window.mostrarToast(res.message || 'Configuración guardada exitosamente.', 'success', 'Parámetros Actualizados', 4000);
+                    window.mostrarToast(msg, 'success', 'Parámetros Actualizados', 4000);
                 } else {
-                    alert(res.message || 'Configuración guardada exitosamente.');
+                    alert(msg);
                 }
 
                 // Actualizar chips de la barra de resumen en tiempo real
@@ -840,9 +853,9 @@
                 $('#modalConfigAlertaEntidad').modal('hide');
             } else {
                 if (window.mostrarToast) {
-                    window.mostrarToast((res && res.message) ? res.message : 'Error al guardar los parámetros.', 'error', 'Error');
+                    window.mostrarToast(msg || 'Error al guardar los parámetros.', 'error', 'Error');
                 } else {
-                    alert((res && res.message) ? res.message : 'Error al guardar los parámetros.');
+                    alert(msg || 'Error al guardar los parámetros.');
                 }
             }
         }).fail(function() {

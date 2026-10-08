@@ -86,6 +86,27 @@ namespace FGA.Utility
             public const string ComparacionInteranual = "Interanual";
             public const string ComparacionMesAnterior = "MesAnterior";
             public const string ComparacionDiciembreAnterior = "DiciembreAnterior";
+
+            public const string ReglaMonitorear = "MONITOREAR";
+            public const string ReglaIgnorar = "IGNORAR";
+            public const string ReglaWatchlist = "WATCHLIST";
+            public const string ReglaBlacklist = "BLACKLIST";
+
+            public const string UsuarioDefecto = "SYSTEM";
+            public const string EntidadDefecto = "2";
+
+            public const string ParametroPorc = "ALERTA_VARIACION_PORC";
+            public const string ParametroMonto = "ALERTA_VARIACION_MONTO";
+
+            public const string MsgConfiguracionGuardada = "Parámetros de alerta personalizados guardados exitosamente para su entidad.";
+            public const string MsgConfiguracionGlobalRestablecida = "Se restablecieron los parámetros globales de la FFC exitosamente.";
+            public const string MsgConfiguracionObtenida = "Configuración obtenida correctamente.";
+            public const string MsgCuentaRegistrada = "Cuenta registrada correctamente en la lista de monitoreo.";
+            public const string MsgCuentaRemovida = "Cuenta retirada de la lista de monitoreo exitosamente.";
+            public const string MsgCuentasObtenidas = "Cuentas obtenidas correctamente.";
+            public const string MsgCatalogoObtenido = "Búsqueda en catálogo completada.";
+            public const string MsgErrorEntidadRequerida = "Debe seleccionar una cooperativa o entidad específica para guardar sus parámetros.";
+            public const string MsgErrorCuentaRequerida = "Debe especificar el código de la cuenta contable.";
         }
         #endregion
 
