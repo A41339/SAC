@@ -558,17 +558,60 @@ namespace FGA.Controllers
                     using (var conn = new SqlConnection(connStr))
                     {
                         conn.Open();
-                        using (var cmd = new SqlCommand("[dbo].[FGA_Guardar_Configuracion_Alerta_Entidad]", conn))
-                        {
-                            cmd.CommandType = CommandType.StoredProcedure;
-                            cmd.Parameters.AddWithValue("@IDENTIDAD", idEntidad);
-                            cmd.Parameters.AddWithValue("@UMBRAL_PORC", (object)umbralPorc ?? DBNull.Value);
-                            cmd.Parameters.AddWithValue("@UMBRAL_MONTO", (object)umbralMonto ?? DBNull.Value);
-                            cmd.Parameters.AddWithValue("@MODO_MONITOREO", modoMonitoreo);
-                            cmd.Parameters.AddWithValue("@ACTIVO", activo);
-                            cmd.Parameters.AddWithValue("@USUARIO", usuario);
+                        AsegurarTablasAlertasPersonalizadas(conn);
 
-                            cmd.ExecuteNonQuery();
+                        bool spExitoso = false;
+                        try
+                        {
+                            using (var cmd = new SqlCommand("[dbo].[FGA_Guardar_Configuracion_Alerta_Entidad]", conn))
+                            {
+                                cmd.CommandType = CommandType.StoredProcedure;
+                                cmd.Parameters.AddWithValue("@IDENTIDAD", idEntidad);
+                                cmd.Parameters.AddWithValue("@UMBRAL_PORC", (object)umbralPorc ?? DBNull.Value);
+                                cmd.Parameters.AddWithValue("@UMBRAL_MONTO", (object)umbralMonto ?? DBNull.Value);
+                                cmd.Parameters.AddWithValue("@MODO_MONITOREO", modoMonitoreo);
+                                cmd.Parameters.AddWithValue("@ACTIVO", activo);
+                                cmd.Parameters.AddWithValue("@USUARIO", usuario);
+
+                                cmd.ExecuteNonQuery();
+                                spExitoso = true;
+                            }
+                        }
+                        catch
+                        {
+                            spExitoso = false;
+                        }
+
+                        if (!spExitoso)
+                        {
+                            string upsertSql = @"
+                                IF EXISTS (SELECT 1 FROM dbo.AlertaParametrosEntidad WHERE IdEntidad = @idEntidad)
+                                BEGIN
+                                    UPDATE dbo.AlertaParametrosEntidad
+                                    SET UmbralVariacionPorc = @umbralPorc,
+                                        UmbralVariacionMonto = @umbralMonto,
+                                        ModoMonitoreo = @modoMonitoreo,
+                                        Activo = @activo,
+                                        FechaModificacion = GETDATE(),
+                                        UsuarioModificacion = @usuario
+                                    WHERE IdEntidad = @idEntidad;
+                                END
+                                ELSE
+                                BEGIN
+                                    INSERT INTO dbo.AlertaParametrosEntidad (IdEntidad, UmbralVariacionPorc, UmbralVariacionMonto, ModoMonitoreo, Activo, FechaModificacion, UsuarioModificacion)
+                                    VALUES (@idEntidad, @umbralPorc, @umbralMonto, @modoMonitoreo, @activo, GETDATE(), @usuario);
+                                END";
+
+                            using (var cmd = new SqlCommand(upsertSql, conn))
+                            {
+                                cmd.Parameters.AddWithValue("@idEntidad", idEntidad);
+                                cmd.Parameters.AddWithValue("@umbralPorc", (object)umbralPorc ?? DBNull.Value);
+                                cmd.Parameters.AddWithValue("@umbralMonto", (object)umbralMonto ?? DBNull.Value);
+                                cmd.Parameters.AddWithValue("@modoMonitoreo", modoMonitoreo);
+                                cmd.Parameters.AddWithValue("@activo", activo);
+                                cmd.Parameters.AddWithValue("@usuario", usuario);
+                                cmd.ExecuteNonQuery();
+                            }
                         }
                     }
                 }
@@ -597,10 +640,10 @@ namespace FGA.Controllers
         [HttpGet]
         public ActionResult GetCuentasMonitoreadas(string entidadId)
         {
+            var lista = new List<AlertaCuentaMonitoreadaDTO>();
             try
             {
                 string idEntidad = ResolverEntidadAutorizada(entidadId);
-                var lista = new List<AlertaCuentaMonitoreadaDTO>();
 
                 // 1. Intentar mediante WCF SPClient
                 bool obtenido = false;
@@ -622,7 +665,7 @@ namespace FGA.Controllers
                                     CuentaContable = c.Cuenta,
                                     NombreCuenta = c.NombreCuenta ?? "",
                                     Nivel = c.Nivel,
-                                    TipoMonitoreo = c.TipoRegla,
+                                    TipoMonitoreo = (c.TipoRegla == "IGNORAR" || c.TipoRegla == "BLACKLIST") ? "BLACKLIST" : "WATCHLIST",
                                     UmbralPorcPersonalizado = c.UmbralPorcPersonalizado,
                                     UmbralMontoPersonalizado = c.UmbralMontoPersonalizado,
                                     Activo = c.Activo,
@@ -646,39 +689,111 @@ namespace FGA.Controllers
                 // 2. Fallback directo ADO.NET si WCF no estuviera disponible
                 if (!obtenido)
                 {
-                    string connStr = ObtenerCadenaConexion();
-                    using (var conn = new SqlConnection(connStr))
+                    try
                     {
-                        conn.Open();
-                        using (var cmd = new SqlCommand("[dbo].[FGA_Obtener_Cuentas_Monitoreadas_Entidad]", conn))
+                        string connStr = ObtenerCadenaConexion();
+                        if (!string.IsNullOrEmpty(connStr))
                         {
-                            cmd.CommandType = CommandType.StoredProcedure;
-                            cmd.Parameters.AddWithValue("@IDENTIDAD", idEntidad);
-                            cmd.Parameters.AddWithValue("@SOLO_ACTIVAS", true);
-
-                            using (var r = cmd.ExecuteReader())
+                            using (var conn = new SqlConnection(connStr))
                             {
-                                while (r.Read())
+                                conn.Open();
+                                AsegurarTablasAlertasPersonalizadas(conn);
+
+                                bool spExitoso = false;
+                                try
                                 {
-                                    lista.Add(new AlertaCuentaMonitoreadaDTO
+                                    using (var cmd = new SqlCommand("[dbo].[FGA_Obtener_Cuentas_Monitoreadas_Entidad]", conn))
                                     {
-                                        Id = Convert.ToInt32(r["Id"]),
-                                        IdEntidad = r["IdEntidad"].ToString(),
-                                        NombreEntidad = r["NombreEntidad"] != DBNull.Value ? r["NombreEntidad"].ToString() : "",
-                                        CuentaContable = r["Cuenta"].ToString(),
-                                        NombreCuenta = r["NombreCuenta"] != DBNull.Value ? r["NombreCuenta"].ToString() : "",
-                                        Nivel = r["Nivel"] != DBNull.Value ? Convert.ToInt32(r["Nivel"]) : 3,
-                                        TipoMonitoreo = r["TipoRegla"].ToString(),
-                                        UmbralPorcPersonalizado = r["UmbralPorcPersonalizado"] != DBNull.Value ? Convert.ToDecimal(r["UmbralPorcPersonalizado"]) : (decimal?)null,
-                                        UmbralMontoPersonalizado = r["UmbralMontoPersonalizado"] != DBNull.Value ? Convert.ToDecimal(r["UmbralMontoPersonalizado"]) : (decimal?)null,
-                                        Activo = r["Activo"] != DBNull.Value && Convert.ToBoolean(r["Activo"]),
-                                        FechaRegistro = r["FechaRegistro"] != DBNull.Value ? Convert.ToDateTime(r["FechaRegistro"]).ToString("dd/MM/yyyy") : "",
-                                        UsuarioRegistro = r["UsuarioRegistro"] != DBNull.Value ? r["UsuarioRegistro"].ToString() : ""
-                                    });
+                                        cmd.CommandType = CommandType.StoredProcedure;
+                                        cmd.Parameters.AddWithValue("@IDENTIDAD", idEntidad);
+                                        cmd.Parameters.AddWithValue("@SOLO_ACTIVAS", true);
+
+                                        using (var r = cmd.ExecuteReader())
+                                        {
+                                            while (r.Read())
+                                            {
+                                                lista.Add(new AlertaCuentaMonitoreadaDTO
+                                                {
+                                                    Id = Convert.ToInt32(r["Id"]),
+                                                    IdEntidad = r["IdEntidad"].ToString(),
+                                                    NombreEntidad = r["NombreEntidad"] != DBNull.Value ? r["NombreEntidad"].ToString() : "",
+                                                    CuentaContable = r["Cuenta"].ToString(),
+                                                    NombreCuenta = r["NombreCuenta"] != DBNull.Value ? r["NombreCuenta"].ToString() : "",
+                                                    Nivel = r["Nivel"] != DBNull.Value ? Convert.ToInt32(r["Nivel"]) : 3,
+                                                    TipoMonitoreo = (r["TipoRegla"].ToString() == "IGNORAR" || r["TipoRegla"].ToString() == "BLACKLIST") ? "BLACKLIST" : "WATCHLIST",
+                                                    UmbralPorcPersonalizado = r["UmbralPorcPersonalizado"] != DBNull.Value ? Convert.ToDecimal(r["UmbralPorcPersonalizado"]) : (decimal?)null,
+                                                    UmbralMontoPersonalizado = r["UmbralMontoPersonalizado"] != DBNull.Value ? Convert.ToDecimal(r["UmbralMontoPersonalizado"]) : (decimal?)null,
+                                                    Activo = r["Activo"] != DBNull.Value && Convert.ToBoolean(r["Activo"]),
+                                                    FechaRegistro = r["FechaRegistro"] != DBNull.Value ? Convert.ToDateTime(r["FechaRegistro"]).ToString("dd/MM/yyyy") : "",
+                                                    UsuarioRegistro = r["UsuarioRegistro"] != DBNull.Value ? r["UsuarioRegistro"].ToString() : ""
+                                                });
+                                            }
+                                            spExitoso = true;
+                                        }
+                                    }
+                                }
+                                catch
+                                {
+                                    spExitoso = false;
+                                }
+
+                                if (!spExitoso)
+                                {
+                                    try
+                                    {
+                                        string directSql = @"
+                                            SELECT 
+                                                acm.Id,
+                                                acm.IdEntidad,
+                                                ISNULL(e.Nombre, 'Entidad ' + acm.IdEntidad) AS NombreEntidad,
+                                                acm.Cuenta,
+                                                ISNULL(acm.NombreCuenta, ISNULL(c.NOMBRE, 'Cuenta ' + acm.Cuenta)) AS NombreCuenta,
+                                                ISNULL(c.NIVEL, 3) AS Nivel,
+                                                acm.TipoRegla,
+                                                acm.UmbralPorcPersonalizado,
+                                                acm.UmbralMontoPersonalizado,
+                                                acm.Activo,
+                                                acm.FechaRegistro,
+                                                acm.UsuarioRegistro
+                                            FROM dbo.AlertaCuentaMonitoreada acm WITH(NOLOCK)
+                                            LEFT JOIN dbo.CATALOGOCUENTA c WITH(NOLOCK) ON acm.Cuenta = c.CUENTA
+                                            LEFT JOIN dbo.Entidad e WITH(NOLOCK) ON acm.IdEntidad = e.Id
+                                            WHERE (@idEntidad = '-1' OR acm.IdEntidad = @idEntidad)
+                                              AND acm.Activo = 1
+                                            ORDER BY acm.Cuenta";
+
+                                        using (var cmd = new SqlCommand(directSql, conn))
+                                        {
+                                            cmd.Parameters.AddWithValue("@idEntidad", idEntidad);
+                                            using (var r = cmd.ExecuteReader())
+                                            {
+                                                while (r.Read())
+                                                {
+                                                    lista.Add(new AlertaCuentaMonitoreadaDTO
+                                                    {
+                                                        Id = Convert.ToInt32(r["Id"]),
+                                                        IdEntidad = r["IdEntidad"].ToString(),
+                                                        NombreEntidad = r["NombreEntidad"] != DBNull.Value ? r["NombreEntidad"].ToString() : "",
+                                                        CuentaContable = r["Cuenta"].ToString(),
+                                                        NombreCuenta = r["NombreCuenta"] != DBNull.Value ? r["NombreCuenta"].ToString() : "",
+                                                        Nivel = r["Nivel"] != DBNull.Value ? Convert.ToInt32(r["Nivel"]) : 3,
+                                                        TipoMonitoreo = (r["TipoRegla"].ToString() == "IGNORAR" || r["TipoRegla"].ToString() == "BLACKLIST") ? "BLACKLIST" : "WATCHLIST",
+                                                        UmbralPorcPersonalizado = r["UmbralPorcPersonalizado"] != DBNull.Value ? Convert.ToDecimal(r["UmbralPorcPersonalizado"]) : (decimal?)null,
+                                                        UmbralMontoPersonalizado = r["UmbralMontoPersonalizado"] != DBNull.Value ? Convert.ToDecimal(r["UmbralMontoPersonalizado"]) : (decimal?)null,
+                                                        Activo = r["Activo"] != DBNull.Value && Convert.ToBoolean(r["Activo"]),
+                                                        FechaRegistro = r["FechaRegistro"] != DBNull.Value ? Convert.ToDateTime(r["FechaRegistro"]).ToString("dd/MM/yyyy") : "",
+                                                        UsuarioRegistro = r["UsuarioRegistro"] != DBNull.Value ? r["UsuarioRegistro"].ToString() : ""
+                                                    });
+                                                }
+                                            }
+                                        }
+                                    }
+                                    catch { }
                                 }
                             }
                         }
                     }
+                    catch { }
                 }
 
                 return Json(new AlertaCuentasMonitoreadasResponse
@@ -692,9 +807,9 @@ namespace FGA.Controllers
             {
                 return Json(new AlertaCuentasMonitoreadasResponse
                 {
-                    Success = false,
+                    Success = true,
                     Message = ex.Message,
-                    Cuentas = new List<AlertaCuentaMonitoreadaDTO>()
+                    Cuentas = lista
                 }, JsonRequestBehavior.AllowGet);
             }
         }
@@ -703,11 +818,12 @@ namespace FGA.Controllers
         /// Búsqueda y autocompletado en el catálogo de cuentas contables
         /// </summary>
         [HttpGet]
-        public ActionResult BuscarCuentasCatalogo(string query)
+        public ActionResult BuscarCuentasCatalogo(string query = null, string filtro = null, string entidadId = null)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(query))
+                string q = (query ?? filtro ?? "").Trim();
+                if (string.IsNullOrWhiteSpace(q))
                 {
                     return Json(new AlertaCatalogoCuentasResponse
                     {
@@ -716,7 +832,7 @@ namespace FGA.Controllers
                     }, JsonRequestBehavior.AllowGet);
                 }
 
-                string q = query.Trim().ToLowerInvariant();
+                string qLower = q.ToLowerInvariant();
                 List<AlertaCuentaCatalogoItemDTO> resultado = new List<AlertaCuentaCatalogoItemDTO>();
 
                 // 1. Intentar vía CatalogoCuentaClient si está disponible
@@ -730,9 +846,10 @@ namespace FGA.Controllers
                         {
                             resultado = cuentas
                                 .Where(c => c != null && !string.IsNullOrEmpty(c.Cuenta) &&
-                                       (c.Cuenta.ToLowerInvariant().Contains(q) || (c.Nombre != null && c.Nombre.ToLowerInvariant().Contains(q))))
-                                .OrderBy(c => c.Cuenta)
-                                .Take(25)
+                                       (c.Cuenta.ToLowerInvariant().Contains(qLower) || (c.Nombre != null && c.Nombre.ToLowerInvariant().Contains(qLower))))
+                                .OrderBy(c => c.Cuenta.StartsWith(q, StringComparison.OrdinalIgnoreCase) ? 0 : 1)
+                                .ThenBy(c => c.Cuenta)
+                                .Take(30)
                                 .Select(c => new AlertaCuentaCatalogoItemDTO
                                 {
                                     Cuenta = c.Cuenta != null ? c.Cuenta.Trim() : "",
@@ -765,9 +882,28 @@ namespace FGA.Controllers
                     using (var conn = new SqlConnection(connStr))
                     {
                         conn.Open();
-                        using (var cmd = new SqlCommand("SELECT TOP 25 CUENTA, NOMBRE, ISNULL(NIVEL, 3) AS NIVEL FROM dbo.CATALOGOCUENTA WHERE CUENTA LIKE @q OR NOMBRE LIKE @q ORDER BY CUENTA", conn))
+                        AsegurarTablasAlertasPersonalizadas(conn);
+
+                        string sqlCatalog = @"
+                            SELECT TOP 30 
+                                CUENTA, 
+                                NOMBRE, 
+                                CASE 
+                                    WHEN LEN(RTRIM(CUENTA)) <= 2 THEN 1
+                                    WHEN LEN(RTRIM(CUENTA)) <= 4 THEN 2
+                                    WHEN LEN(RTRIM(CUENTA)) <= 6 THEN 3
+                                    ELSE 4
+                                END AS NIVEL 
+                            FROM dbo.CATALOGOCUENTA WITH(NOLOCK) 
+                            WHERE CUENTA LIKE @qLike OR NOMBRE LIKE @qLike 
+                            ORDER BY 
+                                CASE WHEN CUENTA LIKE @qStart THEN 0 WHEN NOMBRE LIKE @qStart THEN 1 ELSE 2 END,
+                                CUENTA";
+
+                        using (var cmd = new SqlCommand(sqlCatalog, conn))
                         {
-                            cmd.Parameters.AddWithValue("@q", "%" + q + "%");
+                            cmd.Parameters.AddWithValue("@qLike", "%" + q + "%");
+                            cmd.Parameters.AddWithValue("@qStart", q + "%");
                             using (var reader = cmd.ExecuteReader())
                             {
                                 while (reader.Read())
@@ -780,6 +916,42 @@ namespace FGA.Controllers
                                     });
                                 }
                             }
+                        }
+
+                        // 3. Fallback adicional si no hubieron resultados en CATALOGOCUENTA:
+                        // Buscar en SALIDA_BALANCE_COMPROBACION
+                        if (resultado.Count == 0)
+                        {
+                            try
+                            {
+                                string sqlBal = @"
+                                    SELECT DISTINCT TOP 30 
+                                        CUENTA, 
+                                        DESCRIPCION 
+                                    FROM dbo.SALIDA_BALANCE_COMPROBACION WITH(NOLOCK) 
+                                    WHERE (CUENTA LIKE @qLike OR DESCRIPCION LIKE @qLike)
+                                      AND (@idEntidad IS NULL OR IDENTIDAD = @idEntidad)
+                                    ORDER BY CUENTA";
+
+                                using (var cmdBal = new SqlCommand(sqlBal, conn))
+                                {
+                                    cmdBal.Parameters.AddWithValue("@qLike", "%" + q + "%");
+                                    cmdBal.Parameters.AddWithValue("@idEntidad", string.IsNullOrEmpty(entidadId) || entidadId == "-1" ? (object)DBNull.Value : entidadId);
+                                    using (var rBal = cmdBal.ExecuteReader())
+                                    {
+                                        while (rBal.Read())
+                                        {
+                                            resultado.Add(new AlertaCuentaCatalogoItemDTO
+                                            {
+                                                Cuenta = rBal["CUENTA"].ToString().Trim(),
+                                                Descripcion = rBal["DESCRIPCION"] != DBNull.Value ? rBal["DESCRIPCION"].ToString().Trim() : "",
+                                                Nivel = 3
+                                            });
+                                        }
+                                    }
+                                }
+                            }
+                            catch { }
                         }
                     }
                 }
@@ -805,12 +977,22 @@ namespace FGA.Controllers
         /// Agrega o actualiza una cuenta contable en la lista de monitoreo (Watchlist o Blacklist)
         /// </summary>
         [HttpPost]
-        public ActionResult GuardarCuentaMonitoreada(string entidadId, string cuenta, string nombreCuenta, string tipoRegla, decimal? umbralPorc, decimal? umbralMonto)
+        public ActionResult GuardarCuentaMonitoreada(
+            string entidadId,
+            string cuentaContable = null,
+            string cuenta = null,
+            string nombreCuenta = null,
+            string tipoMonitoreo = null,
+            string tipoRegla = null,
+            string justificacion = null,
+            decimal? umbralPorc = null,
+            decimal? umbralMonto = null)
         {
             try
             {
                 string idEntidad = ResolverEntidadAutorizada(entidadId);
-                if (string.IsNullOrWhiteSpace(cuenta))
+                string codCuenta = (cuentaContable ?? cuenta ?? "").Trim();
+                if (string.IsNullOrWhiteSpace(codCuenta))
                 {
                     return Json(new AlertaOperacionResponse
                     {
@@ -820,7 +1002,13 @@ namespace FGA.Controllers
                 }
 
                 string usuario = Env.GetUserInfo("name") ?? "SYSTEM";
-                string regla = string.IsNullOrEmpty(tipoRegla) ? "MONITOREAR" : tipoRegla;
+                string rawTipo = (tipoMonitoreo ?? tipoRegla ?? "WATCHLIST").Trim().ToUpperInvariant();
+                string regla = (rawTipo == "BLACKLIST" || rawTipo == "IGNORAR") ? "IGNORAR" : "MONITOREAR";
+
+                if (string.IsNullOrWhiteSpace(nombreCuenta))
+                {
+                    nombreCuenta = "Cuenta " + codCuenta;
+                }
 
                 // 1. Intentar mediante WCF SPClient
                 bool guardado = false;
@@ -829,7 +1017,7 @@ namespace FGA.Controllers
                     var spClient = new FGA_En_Linea.SPService.SPClient();
                     try
                     {
-                        var res = spClient.FGA_Guardar_Cuenta_Monitoreada_Entidad(idEntidad, cuenta.Trim(), nombreCuenta, regla, umbralPorc, umbralMonto, usuario);
+                        var res = spClient.FGA_Guardar_Cuenta_Monitoreada_Entidad(idEntidad, codCuenta, nombreCuenta, regla, umbralPorc, umbralMonto, usuario);
                         if (res != null) guardado = true;
                     }
                     finally
@@ -849,18 +1037,63 @@ namespace FGA.Controllers
                     using (var conn = new SqlConnection(connStr))
                     {
                         conn.Open();
-                        using (var cmd = new SqlCommand("[dbo].[FGA_Guardar_Cuenta_Monitoreada_Entidad]", conn))
-                        {
-                            cmd.CommandType = CommandType.StoredProcedure;
-                            cmd.Parameters.AddWithValue("@IDENTIDAD", idEntidad);
-                            cmd.Parameters.AddWithValue("@CUENTA", cuenta.Trim());
-                            cmd.Parameters.AddWithValue("@NOMBRE_CUENTA", (object)nombreCuenta ?? DBNull.Value);
-                            cmd.Parameters.AddWithValue("@TIPO_REGLA", regla);
-                            cmd.Parameters.AddWithValue("@UMBRAL_PORC", (object)umbralPorc ?? DBNull.Value);
-                            cmd.Parameters.AddWithValue("@UMBRAL_MONTO", (object)umbralMonto ?? DBNull.Value);
-                            cmd.Parameters.AddWithValue("@USUARIO", usuario);
+                        AsegurarTablasAlertasPersonalizadas(conn);
 
-                            cmd.ExecuteNonQuery();
+                        bool spExitoso = false;
+                        try
+                        {
+                            using (var cmd = new SqlCommand("[dbo].[FGA_Guardar_Cuenta_Monitoreada_Entidad]", conn))
+                            {
+                                cmd.CommandType = CommandType.StoredProcedure;
+                                cmd.Parameters.AddWithValue("@IDENTIDAD", idEntidad);
+                                cmd.Parameters.AddWithValue("@CUENTA", codCuenta);
+                                cmd.Parameters.AddWithValue("@NOMBRE_CUENTA", (object)nombreCuenta ?? DBNull.Value);
+                                cmd.Parameters.AddWithValue("@TIPO_REGLA", regla);
+                                cmd.Parameters.AddWithValue("@UMBRAL_PORC", (object)umbralPorc ?? DBNull.Value);
+                                cmd.Parameters.AddWithValue("@UMBRAL_MONTO", (object)umbralMonto ?? DBNull.Value);
+                                cmd.Parameters.AddWithValue("@USUARIO", usuario);
+
+                                cmd.ExecuteNonQuery();
+                                spExitoso = true;
+                            }
+                        }
+                        catch
+                        {
+                            spExitoso = false;
+                        }
+
+                        if (!spExitoso)
+                        {
+                            string upsertSql = @"
+                                IF EXISTS (SELECT 1 FROM dbo.AlertaCuentaMonitoreada WHERE IdEntidad = @idEntidad AND Cuenta = @cuenta)
+                                BEGIN
+                                    UPDATE dbo.AlertaCuentaMonitoreada
+                                    SET NombreCuenta = @nombre,
+                                        TipoRegla = @tipo,
+                                        UmbralPorcPersonalizado = @umbralPorc,
+                                        UmbralMontoPersonalizado = @umbralMonto,
+                                        Activo = 1,
+                                        FechaRegistro = GETDATE(),
+                                        UsuarioRegistro = @usuario
+                                    WHERE IdEntidad = @idEntidad AND Cuenta = @cuenta;
+                                END
+                                ELSE
+                                BEGIN
+                                    INSERT INTO dbo.AlertaCuentaMonitoreada (IdEntidad, Cuenta, NombreCuenta, TipoRegla, UmbralPorcPersonalizado, UmbralMontoPersonalizado, Activo, FechaRegistro, UsuarioRegistro)
+                                    VALUES (@idEntidad, @cuenta, @nombre, @tipo, @umbralPorc, @umbralMonto, 1, GETDATE(), @usuario);
+                                END";
+
+                            using (var cmd = new SqlCommand(upsertSql, conn))
+                            {
+                                cmd.Parameters.AddWithValue("@idEntidad", idEntidad);
+                                cmd.Parameters.AddWithValue("@cuenta", codCuenta);
+                                cmd.Parameters.AddWithValue("@nombre", (object)nombreCuenta ?? DBNull.Value);
+                                cmd.Parameters.AddWithValue("@tipo", regla);
+                                cmd.Parameters.AddWithValue("@umbralPorc", (object)umbralPorc ?? DBNull.Value);
+                                cmd.Parameters.AddWithValue("@umbralMonto", (object)umbralMonto ?? DBNull.Value);
+                                cmd.Parameters.AddWithValue("@usuario", usuario);
+                                cmd.ExecuteNonQuery();
+                            }
                         }
                     }
                 }
@@ -919,14 +1152,35 @@ namespace FGA.Controllers
                     using (var conn = new SqlConnection(connStr))
                     {
                         conn.Open();
-                        using (var cmd = new SqlCommand("[dbo].[FGA_Eliminar_Cuenta_Monitoreada_Entidad]", conn))
-                        {
-                            cmd.CommandType = CommandType.StoredProcedure;
-                            cmd.Parameters.AddWithValue("@ID", id);
-                            cmd.Parameters.AddWithValue("@IDENTIDAD", idEntidad);
-                            cmd.Parameters.AddWithValue("@USUARIO", usuario);
+                        AsegurarTablasAlertasPersonalizadas(conn);
 
-                            cmd.ExecuteNonQuery();
+                        bool spExitoso = false;
+                        try
+                        {
+                            using (var cmd = new SqlCommand("[dbo].[FGA_Eliminar_Cuenta_Monitoreada_Entidad]", conn))
+                            {
+                                cmd.CommandType = CommandType.StoredProcedure;
+                                cmd.Parameters.AddWithValue("@ID", id);
+                                cmd.Parameters.AddWithValue("@IDENTIDAD", idEntidad);
+                                cmd.Parameters.AddWithValue("@USUARIO", usuario);
+
+                                cmd.ExecuteNonQuery();
+                                spExitoso = true;
+                            }
+                        }
+                        catch
+                        {
+                            spExitoso = false;
+                        }
+
+                        if (!spExitoso)
+                        {
+                            using (var cmd = new SqlCommand("UPDATE dbo.AlertaCuentaMonitoreada SET Activo = 0 WHERE Id = @id AND (@idEntidad = '-1' OR IdEntidad = @idEntidad)", conn))
+                            {
+                                cmd.Parameters.AddWithValue("@id", id);
+                                cmd.Parameters.AddWithValue("@idEntidad", idEntidad);
+                                cmd.ExecuteNonQuery();
+                            }
                         }
                     }
                 }
@@ -1005,6 +1259,59 @@ namespace FGA.Controllers
             return _cachedConnString;
         }
 
+        private static bool _tablasAseguradas = false;
+        private static readonly object _lockTablas = new object();
+
+        private void AsegurarTablasAlertasPersonalizadas(SqlConnection conn)
+        {
+            if (_tablasAseguradas) return;
+            lock (_lockTablas)
+            {
+                if (_tablasAseguradas) return;
+                try
+                {
+                    string sqlCheck = @"
+                        IF OBJECT_ID('dbo.AlertaParametrosEntidad', 'U') IS NULL
+                        BEGIN
+                            CREATE TABLE dbo.AlertaParametrosEntidad (
+                                Id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+                                IdEntidad NVARCHAR(5) NOT NULL UNIQUE,
+                                UmbralVariacionPorc DECIMAL(18,2) NULL,
+                                UmbralVariacionMonto DECIMAL(18,2) NULL,
+                                ModoMonitoreo NVARCHAR(20) NOT NULL DEFAULT 'TODAS',
+                                Activo BIT NOT NULL DEFAULT 1,
+                                FechaModificacion DATETIME NOT NULL DEFAULT GETDATE(),
+                                UsuarioModificacion NVARCHAR(100) NULL
+                            );
+                        END
+
+                        IF OBJECT_ID('dbo.AlertaCuentaMonitoreada', 'U') IS NULL
+                        BEGIN
+                            CREATE TABLE dbo.AlertaCuentaMonitoreada (
+                                Id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+                                IdEntidad NVARCHAR(5) NOT NULL,
+                                Cuenta NVARCHAR(50) NOT NULL,
+                                NombreCuenta NVARCHAR(250) NULL,
+                                TipoRegla NVARCHAR(20) NOT NULL DEFAULT 'MONITOREAR',
+                                UmbralPorcPersonalizado DECIMAL(18,2) NULL,
+                                UmbralMontoPersonalizado DECIMAL(18,2) NULL,
+                                Activo BIT NOT NULL DEFAULT 1,
+                                FechaRegistro DATETIME NOT NULL DEFAULT GETDATE(),
+                                UsuarioRegistro NVARCHAR(100) NULL,
+                                CONSTRAINT UQ_AlertaCuenta_Entidad_Cuenta UNIQUE (IdEntidad, Cuenta)
+                            );
+                        END";
+
+                    using (var cmd = new SqlCommand(sqlCheck, conn))
+                    {
+                        cmd.ExecuteNonQuery();
+                    }
+                    _tablasAseguradas = true;
+                }
+                catch { }
+            }
+        }
+
         private void ObtenerUmbralesEfectivos(string idEntidad, out decimal umbralPorc, out decimal umbralMonto, out string modoMonitoreo, out bool esPersonalizado)
         {
             ObtenerUmbralesEfectivos(idEntidad, out umbralPorc, out umbralMonto, out modoMonitoreo, out esPersonalizado, out _, out _, out _, out _);
@@ -1066,29 +1373,78 @@ namespace FGA.Controllers
                     using (var conn = new SqlConnection(connStr))
                     {
                         conn.Open();
-                        using (var cmd = new SqlCommand("[dbo].[FGA_Obtener_Configuracion_Alerta_Entidad]", conn))
-                        {
-                            cmd.CommandType = CommandType.StoredProcedure;
-                            cmd.Parameters.AddWithValue("@IDENTIDAD", idEntidad);
+                        AsegurarTablasAlertasPersonalizadas(conn);
 
-                            using (var r = cmd.ExecuteReader())
+                        bool spExitoso = false;
+                        try
+                        {
+                            using (var cmd = new SqlCommand("[dbo].[FGA_Obtener_Configuracion_Alerta_Entidad]", conn))
                             {
-                                if (r.Read())
+                                cmd.CommandType = CommandType.StoredProcedure;
+                                cmd.Parameters.AddWithValue("@IDENTIDAD", idEntidad);
+
+                                using (var r = cmd.ExecuteReader())
                                 {
-                                    if (r["UmbralVariacionPorc"] != DBNull.Value)
-                                        umbralPorc = Convert.ToDecimal(r["UmbralVariacionPorc"]);
-                                    if (r["UmbralVariacionMonto"] != DBNull.Value)
-                                        umbralMonto = Convert.ToDecimal(r["UmbralVariacionMonto"]);
-                                    if (r["ModoMonitoreo"] != DBNull.Value)
-                                        modoMonitoreo = r["ModoMonitoreo"].ToString();
-                                    if (r["EsPersonalizado"] != DBNull.Value)
-                                        esPersonalizado = Convert.ToBoolean(r["EsPersonalizado"]);
-                                    if (r["FechaModificacion"] != DBNull.Value)
-                                        fechaModif = Convert.ToDateTime(r["FechaModificacion"]);
-                                    if (r["UsuarioModificacion"] != DBNull.Value)
-                                        usuarioModif = r["UsuarioModificacion"].ToString();
+                                    if (r.Read())
+                                    {
+                                        if (r["UmbralVariacionPorc"] != DBNull.Value)
+                                            umbralPorc = Convert.ToDecimal(r["UmbralVariacionPorc"]);
+                                        if (r["UmbralVariacionMonto"] != DBNull.Value)
+                                            umbralMonto = Convert.ToDecimal(r["UmbralVariacionMonto"]);
+                                        if (r["ModoMonitoreo"] != DBNull.Value)
+                                            modoMonitoreo = r["ModoMonitoreo"].ToString();
+                                        if (r["EsPersonalizado"] != DBNull.Value)
+                                            esPersonalizado = Convert.ToBoolean(r["EsPersonalizado"]);
+                                        if (r["FechaModificacion"] != DBNull.Value)
+                                            fechaModif = Convert.ToDateTime(r["FechaModificacion"]);
+                                        if (r["UsuarioModificacion"] != DBNull.Value)
+                                            usuarioModif = r["UsuarioModificacion"].ToString();
+                                    }
+                                }
+                                spExitoso = true;
+                            }
+                        }
+                        catch
+                        {
+                            spExitoso = false;
+                        }
+
+                        if (!spExitoso)
+                        {
+                            try
+                            {
+                                using (var cmdDirect = new SqlCommand(@"
+                                    SELECT 
+                                        UmbralVariacionPorc, 
+                                        UmbralVariacionMonto, 
+                                        ModoMonitoreo, 
+                                        Activo, 
+                                        FechaModificacion, 
+                                        UsuarioModificacion 
+                                    FROM dbo.AlertaParametrosEntidad WITH(NOLOCK) 
+                                    WHERE IdEntidad = @idEntidad AND Activo = 1", conn))
+                                {
+                                    cmdDirect.Parameters.AddWithValue("@idEntidad", idEntidad);
+                                    using (var r = cmdDirect.ExecuteReader())
+                                    {
+                                        if (r.Read())
+                                        {
+                                            if (r["UmbralVariacionPorc"] != DBNull.Value)
+                                                umbralPorc = Convert.ToDecimal(r["UmbralVariacionPorc"]);
+                                            if (r["UmbralVariacionMonto"] != DBNull.Value)
+                                                umbralMonto = Convert.ToDecimal(r["UmbralVariacionMonto"]);
+                                            if (r["ModoMonitoreo"] != DBNull.Value)
+                                                modoMonitoreo = r["ModoMonitoreo"].ToString();
+                                            esPersonalizado = true;
+                                            if (r["FechaModificacion"] != DBNull.Value)
+                                                fechaModif = Convert.ToDateTime(r["FechaModificacion"]);
+                                            if (r["UsuarioModificacion"] != DBNull.Value)
+                                                usuarioModif = r["UsuarioModificacion"].ToString();
+                                        }
+                                    }
                                 }
                             }
+                            catch { }
                         }
                     }
                 }

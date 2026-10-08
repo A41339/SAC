@@ -870,7 +870,7 @@
                 var html = '';
                 for (var i = 0; i < cuentas.length; i++) {
                     var c = cuentas[i];
-                    var isWatchlist = (c.TipoMonitoreo === 'WATCHLIST');
+                    var isWatchlist = (c.TipoMonitoreo === 'WATCHLIST' || c.TipoMonitoreo === 'MONITOREAR');
                     var badgeHtml = isWatchlist
                         ? '<span class="badge-tipo-watchlist"><i class="fa fa-star"></i> Prioritaria</span>'
                         : '<span class="badge-tipo-blacklist"><i class="fa fa-ban"></i> Excluida</span>';
@@ -903,6 +903,14 @@
         var justificacion = $('#txtJustificacionCuenta').val();
 
         if (!cuenta) {
+            var valDirecto = $('#txtBuscarCuentaCatalogo').val().trim();
+            if (valDirecto.length > 0) {
+                cuenta = valDirecto;
+                nombre = 'Cuenta ' + valDirecto;
+            }
+        }
+
+        if (!cuenta) {
             alert('Por favor busque y seleccione una cuenta contable del catálogo.');
             $('#txtBuscarCuentaCatalogo').focus();
             return;
@@ -914,14 +922,18 @@
         $.post('@Url.Action("GuardarCuentaMonitoreada", "Alertas")', {
             entidadId: currentConfigEntidadId,
             cuentaContable: cuenta,
+            cuenta: cuenta,
             nombreCuenta: nombre,
             tipoMonitoreo: tipo,
+            tipoRegla: tipo,
             justificacion: justificacion
         }, function(res) {
             $btn.prop('disabled', false).html('<i class="fa fa-plus"></i> Agregar Cuenta');
             if (res && res.success) {
                 if (window.mostrarToast) {
                     window.mostrarToast(res.message || 'Cuenta agregada exitosamente a la lista.', 'success', 'Cuenta Registrada');
+                } else if (window.mostrarToastExito) {
+                    window.mostrarToastExito(res.message || 'Cuenta agregada exitosamente a la lista.', 'Cuenta Registrada');
                 }
                 limpiarCuentaSeleccionada();
                 $('#txtJustificacionCuenta').val('');
@@ -1126,7 +1138,7 @@
 
             clearTimeout(searchCuentaTimeout);
 
-            if (val.length < 2) {
+            if (val.length < 1) {
                 $dropdown.hide().empty();
                 $spin.hide();
                 return;
@@ -1136,6 +1148,7 @@
             searchCuentaTimeout = setTimeout(function() {
                 $.getJSON('@Url.Action("BuscarCuentasCatalogo", "Alertas")', {
                     filtro: val,
+                    query: val,
                     entidadId: currentConfigEntidadId
                 }, function(res) {
                     $spin.hide();
@@ -1158,7 +1171,16 @@
                     $spin.hide();
                     $dropdown.hide().empty();
                 });
-            }, 250);
+            }, 200);
+        }).on('keydown', function(e) {
+            if (e.which === 13) {
+                e.preventDefault();
+                var $firstItem = $('#dropdownResultadosCuentas .autocomplete-item').first();
+                if ($firstItem.length > 0) {
+                    $firstItem.trigger('click');
+                }
+                return false;
+            }
         });
 
         // Cerrar dropdown de cuentas al hacer clic fuera del control
