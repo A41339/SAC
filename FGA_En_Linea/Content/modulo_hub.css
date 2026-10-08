@@ -235,17 +235,11 @@
     letter-spacing: -0.015em;
 }
 
-/* Grid de tarjetas */
+/* Grid de tarjetas homologado (estilo compacto ejecutivo) */
 .hub-cards-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(auto-fill, minmax(320px, 420px));
     gap: 26px;
-}
-
-@media (max-width: 1200px) {
-    .hub-cards-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
 }
 
 @media (max-width: 768px) {
@@ -448,6 +442,10 @@
     position: relative;
     z-index: 2;
     margin-top: 14px;
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    justify-content: space-between;
 }
 
 .hub-card-desc {
@@ -576,25 +574,28 @@
 }
 
 /* ========================================================
-   SBR Hub - Homologación a Tarjeta Estándar
+   Homologación de Tarjetas Hub (Estilo Ejecutivo Institucional)
    ======================================================== */
-.sbr-cards-grid {
+.sbr-cards-grid,
+.hub-cards-grid {
     display: grid !important;
     grid-template-columns: repeat(auto-fill, minmax(320px, 420px)) !important;
-    gap: 26px;
+    gap: 26px !important;
 }
 
-/* Detalle extra para la tarjeta SBR */
+/* Detalle extra homologado para todas las tarjetas */
+.hub-card-footer-extra,
 .hub-card-sbr-extra {
     margin-top: 14px;
     padding-top: 12px;
-    border-top: 1px dashed #e2e8f0;
+    border-top: 1px dotted #cbd5e1;
     display: flex;
     align-items: center;
     justify-content: space-between;
     font-size: 12px;
 }
 
+.hub-card-footer-extra .hub-card-entidad-label,
 .hub-card-sbr-extra .sbr-entidad-label {
     color: #64748b;
     font-weight: 500;
@@ -607,26 +608,31 @@
     max-width: 250px;
 }
 
+.hub-card-footer-extra .hub-card-entidad-label i,
 .hub-card-sbr-extra .sbr-entidad-label i {
     color: #2F5597;
     font-size: 13px;
 }
 
+.hub-card-footer-extra .hub-card-entidad-label strong,
 .hub-card-sbr-extra .sbr-entidad-label strong {
-    color: #1e293b;
-    font-weight: 600;
+    color: #0f2d4a;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.2px;
 }
 
+.hub-card-footer-extra .hub-card-normativa-badge,
 .hub-card-sbr-extra .sbr-normativa-badge {
     background-color: #e0f2fe;
     color: #0284c7;
     font-weight: 600;
     font-size: 11px;
-    padding: 3px 8px;
-    border-radius: 4px;
+    padding: 3px 9px;
+    border-radius: 6px;
     display: inline-flex;
     align-items: center;
-    gap: 4px;
+    gap: 5px;
     white-space: nowrap;
 }
 

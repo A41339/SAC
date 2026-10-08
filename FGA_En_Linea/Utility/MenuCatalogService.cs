@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace FGA.Utility
@@ -28,18 +28,18 @@ namespace FGA.Utility
         // Paleta dinámica de 12 colores institucionales FFC (fondo pastel suave + ícono saturado)
         public static readonly ColorPair[] Palette = new[]
         {
-            new ColorPair { Fondo = "#e6f1f8", Icono = "#0071AD" }, // Azul Corporativo FFC
+            new ColorPair { Fondo = "#e0f2fe", Icono = "#0071AD" }, // Azul Corporativo FFC
             new ColorPair { Fondo = "#fff1eb", Icono = "#FE7235" }, // Naranja Institucional FFC
             new ColorPair { Fondo = "#ebf6f9", Icono = "#6DB5CB" }, // Celeste Medio FFC
             new ColorPair { Fondo = "#e6ecf1", Icono = "#003F6B" }, // Azul Oscuro FFC
-            new ColorPair { Fondo = "#fff7ec", Icono = "#FFB347" }, // Ámbar Suave FFC
-            new ColorPair { Fondo = "#e6f6fc", Icono = "#0099D6" }, // Azul Brillante FFC
-            new ColorPair { Fondo = "#f3f3f3", Icono = "#959595" }, // Gris Auxiliar FFC
+            new ColorPair { Fondo = "#eef3f9", Icono = "#2F5597" }, // Azul Marino Institucional FFC
+            new ColorPair { Fondo = "#e0f2fe", Icono = "#0284c7" }, // Celeste Primario FFC
+            new ColorPair { Fondo = "#e8eef8", Icono = "#1e40af" }, // Azul Royal FFC
             new ColorPair { Fondo = "#f0f7f9", Icono = "#0071AD" }, // Celeste Claro FFC
-            new ColorPair { Fondo = "#e6f1f8", Icono = "#003F6B" }, // Azul Profundo FFC
+            new ColorPair { Fondo = "#eef3f9", Icono = "#2F5597" }, // Azul Profundo FFC
             new ColorPair { Fondo = "#fff1eb", Icono = "#FE7235" }, // Naranja FFC
             new ColorPair { Fondo = "#ebf6f9", Icono = "#6DB5CB" }, // Celeste FFC
-            new ColorPair { Fondo = "#fff7ec", Icono = "#FFB347" }  // Ámbar FFC
+            new ColorPair { Fondo = "#e0f2fe", Icono = "#0284c7" }  // Celeste FFC
         };
 
         public static ColorPair GetPaletteColor(string key, int index = 0)

@@ -163,15 +163,94 @@
     <div class="hub-section-card" style="position: relative; z-index: 1;">
         <div class="hub-section-title">
             <div class="hub-section-bar"></div>
-            <span class="hub-section-text">@(esSbr ? "Seleccione la opción que desea consultar" : "Seleccione la consulta que desea visualizar")</span>
+            <span class="hub-section-text">Seleccione la opci&oacute;n que desea consultar</span>
         </div>
 
-        <!-- GRID DE TARJETAS -->
-        <div class="hub-cards-grid @(esSbr ? "sbr-cards-grid" : "")">
+        <!-- GRID DE TARJETAS (HOMOLOGADO AL DISEÑO EJECUTIVO SBR) -->
+        <div class="hub-cards-grid sbr-cards-grid">
             @if (Model.Tarjetas != null && Model.Tarjetas.Count > 0)
             {
                 foreach (var tarjeta in Model.Tarjetas)
                 {
+                    string badgeText = "Consulta";
+                    string badgeIcon = "fa-check-circle-o";
+
+                    if (tarjeta.EsSubModulo)
+                    {
+                        badgeText = "Submódulo" + (tarjeta.CantidadOpciones > 0 ? " (" + tarjeta.CantidadOpciones + ")" : "");
+                        badgeIcon = "fa-folder-open-o";
+                    }
+                    else if (esSbr || (tarjeta.Titulo != null && (tarjeta.Titulo.IndexOf("SBR", StringComparison.OrdinalIgnoreCase) >= 0 || tarjeta.Titulo.IndexOf("Autoevaluac", StringComparison.OrdinalIgnoreCase) >= 0)) || (tarjeta.Descripcion != null && tarjeta.Descripcion.IndexOf("24-22", StringComparison.OrdinalIgnoreCase) >= 0))
+                    {
+                        badgeText = "SUGEF 24-22";
+                        badgeIcon = "fa-shield";
+                    }
+                    else if (tarjeta.Titulo != null && tarjeta.Titulo.IndexOf("SUGEF", StringComparison.OrdinalIgnoreCase) >= 0)
+                    {
+                        badgeText = "SUGEF";
+                        badgeIcon = "fa-shield";
+                    }
+                    else if (tarjeta.Titulo != null && (tarjeta.Titulo.IndexOf("Balance", StringComparison.OrdinalIgnoreCase) >= 0 || tarjeta.Titulo.IndexOf("Resultado", StringComparison.OrdinalIgnoreCase) >= 0 || tarjeta.Titulo.IndexOf("Financier", StringComparison.OrdinalIgnoreCase) >= 0 || tarjeta.Titulo.IndexOf("Estado", StringComparison.OrdinalIgnoreCase) >= 0))
+                    {
+                        badgeText = "Financiero";
+                        badgeIcon = "fa-line-chart";
+                    }
+                    else if (tarjeta.Titulo != null && tarjeta.Titulo.IndexOf("Indicador", StringComparison.OrdinalIgnoreCase) >= 0)
+                    {
+                        badgeText = "Indicadores";
+                        badgeIcon = "fa-tachometer";
+                    }
+                    else if (tarjeta.Titulo != null && (tarjeta.Titulo.IndexOf("Cartera", StringComparison.OrdinalIgnoreCase) >= 0 || tarjeta.Titulo.IndexOf("Crédito", StringComparison.OrdinalIgnoreCase) >= 0 || tarjeta.Titulo.IndexOf("Credito", StringComparison.OrdinalIgnoreCase) >= 0 || tarjeta.Titulo.IndexOf("Deudor", StringComparison.OrdinalIgnoreCase) >= 0))
+                    {
+                        badgeText = "Cartera";
+                        badgeIcon = "fa-pie-chart";
+                    }
+                    else if (tarjeta.Titulo != null && tarjeta.Titulo.IndexOf("Mora", StringComparison.OrdinalIgnoreCase) >= 0)
+                    {
+                        badgeText = "Morosidad";
+                        badgeIcon = "fa-exclamation-triangle";
+                    }
+                    else if (tarjeta.Titulo != null && (tarjeta.Titulo.IndexOf("Riesgo", StringComparison.OrdinalIgnoreCase) >= 0 || tarjeta.Titulo.IndexOf("IRL", StringComparison.OrdinalIgnoreCase) >= 0 || tarjeta.Titulo.IndexOf("Liquidez", StringComparison.OrdinalIgnoreCase) >= 0))
+                    {
+                        badgeText = "Riesgos";
+                        badgeIcon = "fa-shield";
+                    }
+                    else if (tarjeta.Titulo != null && (tarjeta.Titulo.IndexOf("Fondeo", StringComparison.OrdinalIgnoreCase) >= 0 || tarjeta.Titulo.IndexOf("Composic", StringComparison.OrdinalIgnoreCase) >= 0))
+                    {
+                        badgeText = "Fondeo";
+                        badgeIcon = "fa-database";
+                    }
+                    else if (tarjeta.Titulo != null && (tarjeta.Titulo.IndexOf("Margen", StringComparison.OrdinalIgnoreCase) >= 0 || tarjeta.Titulo.IndexOf("Márgen", StringComparison.OrdinalIgnoreCase) >= 0 || tarjeta.Titulo.IndexOf("Tasa", StringComparison.OrdinalIgnoreCase) >= 0))
+                    {
+                        badgeText = "Tasas & Márgenes";
+                        badgeIcon = "fa-percent";
+                    }
+                    else if (tarjeta.Titulo != null && (tarjeta.Titulo.IndexOf("Proyecc", StringComparison.OrdinalIgnoreCase) >= 0 || tarjeta.Titulo.IndexOf("Simulac", StringComparison.OrdinalIgnoreCase) >= 0))
+                    {
+                        badgeText = "Proyecciones";
+                        badgeIcon = "fa-area-chart";
+                    }
+                    else if (tarjeta.Titulo != null && (tarjeta.Titulo.IndexOf("Usuario", StringComparison.OrdinalIgnoreCase) >= 0 || tarjeta.Titulo.IndexOf("Rol", StringComparison.OrdinalIgnoreCase) >= 0 || tarjeta.Titulo.IndexOf("Seguridad", StringComparison.OrdinalIgnoreCase) >= 0 || tarjeta.Titulo.IndexOf("Acceso", StringComparison.OrdinalIgnoreCase) >= 0))
+                    {
+                        badgeText = "Seguridad";
+                        badgeIcon = "fa-lock";
+                    }
+                    else if (tarjeta.Titulo != null && (tarjeta.Titulo.IndexOf("Catálogo", StringComparison.OrdinalIgnoreCase) >= 0 || tarjeta.Titulo.IndexOf("Catalogo", StringComparison.OrdinalIgnoreCase) >= 0 || tarjeta.Titulo.IndexOf("Parámetr", StringComparison.OrdinalIgnoreCase) >= 0 || tarjeta.Titulo.IndexOf("Parametr", StringComparison.OrdinalIgnoreCase) >= 0 || tarjeta.Titulo.IndexOf("Fórmula", StringComparison.OrdinalIgnoreCase) >= 0 || tarjeta.Titulo.IndexOf("Formula", StringComparison.OrdinalIgnoreCase) >= 0 || tarjeta.Titulo.IndexOf("Mantenim", StringComparison.OrdinalIgnoreCase) >= 0))
+                    {
+                        badgeText = "Configuración";
+                        badgeIcon = "fa-sliders";
+                    }
+                    else if (tarjeta.Titulo != null && (tarjeta.Titulo.IndexOf("Cierre", StringComparison.OrdinalIgnoreCase) >= 0 || tarjeta.Titulo.IndexOf("Perfil", StringComparison.OrdinalIgnoreCase) >= 0))
+                    {
+                        badgeText = "Cierre";
+                        badgeIcon = "fa-calendar-check-o";
+                    }
+                    else if (!string.IsNullOrWhiteSpace(Model.Titulo))
+                    {
+                        badgeText = Model.Titulo.Length > 16 ? Model.Titulo.Substring(0, 16) + "..." : Model.Titulo;
+                        badgeIcon = "fa-check-circle-o";
+                    }
+
                     <a href="@tarjeta.Url" class="hub-card" style="--card-color: @tarjeta.ColorIcono; --card-bg: @tarjeta.ColorFondoIcono;" draggable="false">
                         <div class="hub-card-accent"></div>
                         <i class="@tarjeta.Icono hub-card-watermark"></i>
@@ -196,18 +275,15 @@
 
                         <div class="hub-card-body">
                             <p class="hub-card-desc">@tarjeta.Descripcion</p>
-                            @if (esSbr)
-                            {
-                                <div class="hub-card-sbr-extra">
-                                    <span class="sbr-entidad-label">
-                                        <i class="fa fa-university"></i>
-                                        <strong id="lblSbrEntidadNombre">@entidadNombre</strong>
-                                    </span>
-                                    <span class="sbr-normativa-badge">
-                                        <i class="fa fa-shield"></i> SUGEF 24-22
-                                    </span>
-                                </div>
-                            }
+                            <div class="hub-card-footer-extra">
+                                <span class="hub-card-entidad-label" title="@entidadNombre">
+                                    <i class="fa fa-university"></i>
+                                    <strong class="lbl-card-entidad-nombre" id="lblSbrEntidadNombre">@entidadNombre</strong>
+                                </span>
+                                <span class="hub-card-normativa-badge">
+                                    <i class="fa @badgeIcon"></i> @badgeText
+                                </span>
+                            </div>
                         </div>
                     </a>
                 }
@@ -238,8 +314,8 @@
         if ($('#hubEntidad').length) {
             // Sincronizar inmediatamente al cargar la pantalla con el texto seleccionado actualmente en el combo
             var nombreInicial = $('#hubEntidad option:selected').text();
-            if (nombreInicial && $('#lblSbrEntidadNombre').length) {
-                $('#lblSbrEntidadNombre').text(nombreInicial.trim());
+            if (nombreInicial && $('.lbl-card-entidad-nombre, #lblSbrEntidadNombre').length) {
+                $('.lbl-card-entidad-nombre, #lblSbrEntidadNombre').text(nombreInicial.trim());
             }
 
             var urlActualizarFiltros = '@Url.Action("ActualizarFiltros", "Modulo")';
@@ -273,8 +349,8 @@
             // Al cambiar la Entidad
             $('#hubEntidad').on('change', function () {
                 var nombreSeleccionado = $('#hubEntidad option:selected').text();
-                if (nombreSeleccionado && $('#lblSbrEntidadNombre').length) {
-                    $('#lblSbrEntidadNombre').text(nombreSeleccionado);
+                if (nombreSeleccionado && $('.lbl-card-entidad-nombre, #lblSbrEntidadNombre').length) {
+                    $('.lbl-card-entidad-nombre, #lblSbrEntidadNombre').text(nombreSeleccionado.trim());
                 }
                 actualizarFiltrosHub(true);
             });
