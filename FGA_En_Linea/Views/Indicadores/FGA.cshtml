@@ -110,8 +110,6 @@
                                             <th class="text-right" style="text-align: right !important; padding-right: 14px;">@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MMMM yyyy"))</th>
                                             <th class="text-right" style="text-align: right !important; padding-right: 14px;">@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MMMM yyyy"))</th>
                                             <th class="text-center" style="width: 110px; text-align: center !important;">Variaci&oacute;n (&Delta;)</th>
-                                            <th class="text-right" style="text-align: right !important; padding-right: 14px;">@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MMMM yyyy")) (Promedio)</th>
-                                            <th class="text-right" style="text-align: right !important; padding-right: 14px;">@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MMMM yyyy")) (Promedio)</th>
                                             <th class="text-center" style="width: 50px; text-align: center !important;"></th>
                                         </tr>
                                     </thead>
@@ -139,8 +137,6 @@
                                             <th class="text-right" style="text-align: right !important; padding-right: 14px;">@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MMMM yyyy"))</th>
                                             <th class="text-right" style="text-align: right !important; padding-right: 14px;">@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MMMM yyyy"))</th>
                                             <th class="text-center" style="width: 110px; text-align: center !important;">Variaci&oacute;n (&Delta;)</th>
-                                            <th class="text-right" style="text-align: right !important; padding-right: 14px;">@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo1"].ToString()).ToString("MMMM yyyy")) (Promedio)</th>
-                                            <th class="text-right" style="text-align: right !important; padding-right: 14px;">@FGA.Utility.Utilitarios.toUpperFirstLetter(FGA.Utility.Utilitarios.ConvertirAFecha(Session["Periodo2"].ToString()).ToString("MMMM yyyy")) (Promedio)</th>
                                             <th class="text-center" style="width: 50px; text-align: center !important;"></th>
                                         </tr>
                                     </thead>
@@ -360,16 +356,14 @@
             "columnDefs": [
                 { "targets": 0, "visible": false, "searchable": false },
                 { "targets": 1, "className": 'text-left font-weight-bold', "render": function(d,t,r){ return r[1]; } },
-                { "targets": 2, "className": 'text-right', "width": '120px', "render": function(d,t,r){ return r[2]; } },
-                { "targets": 3, "className": 'text-right', "width": '120px', "render": function(d,t,r){ return r[3]; } },
+                { "targets": 2, "className": 'text-right', "width": '140px', "render": function(d,t,r){ return r[2]; } },
+                { "targets": 3, "className": 'text-right', "width": '140px', "render": function(d,t,r){ return r[3]; } },
                 { "targets": 4, "className": 'text-center', "width": '110px', "orderable": false, "render": function(d,t,r){ return renderDeltaBadge(r[2], r[3], r[1]); } },
-                { "targets": 5, "className": 'text-right', "width": '120px', "render": function(d,t,r){ return r[4]; } },
-                { "targets": 6, "className": 'text-right', "width": '120px', "render": function(d,t,r){ return r[5]; } },
-                { "targets": 7, "className": 'text-center', "width": '50px', "orderable": false, "render": function(d,t,r){ return r[6]; } }
+                { "targets": 5, "className": 'text-center', "width": '50px', "orderable": false, "render": function(d,t,r){ return r[r.length - 1]; } }
             ],
             "rowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
                 $('td:eq(0)', nRow).css({ 'font-weight': '500', 'color': '#1e293b' });
-                var numericCells = [1, 2, 4, 5];
+                var numericCells = [1, 2];
                 for (var k = 0; k < numericCells.length; k++) {
                     var cellIdx = numericCells[k];
                     var cell = $(nRow).find('td:eq(' + cellIdx + ')');
@@ -403,16 +397,14 @@
             "columnDefs": [
                 { "targets": 0, "visible": false, "searchable": false },
                 { "targets": 1, "className": 'text-left font-weight-bold', "render": function(d,t,r){ return r[1]; } },
-                { "targets": 2, "className": 'text-right', "width": '120px', "render": function(d,t,r){ return r[2]; } },
-                { "targets": 3, "className": 'text-right', "width": '120px', "render": function(d,t,r){ return r[3]; } },
+                { "targets": 2, "className": 'text-right', "width": '140px', "render": function(d,t,r){ return r[2]; } },
+                { "targets": 3, "className": 'text-right', "width": '140px', "render": function(d,t,r){ return r[3]; } },
                 { "targets": 4, "className": 'text-center', "width": '110px', "orderable": false, "render": function(d,t,r){ return renderDeltaBadge(r[2], r[3], r[1]); } },
-                { "targets": 5, "className": 'text-right', "width": '120px', "render": function(d,t,r){ return r[4]; } },
-                { "targets": 6, "className": 'text-right', "width": '120px', "render": function(d,t,r){ return r[5]; } },
-                { "targets": 7, "className": 'text-center', "width": '50px', "orderable": false, "render": function(d,t,r){ return r[6]; } }
+                { "targets": 5, "className": 'text-center', "width": '50px', "orderable": false, "render": function(d,t,r){ return r[r.length - 1]; } }
             ],
             "rowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
                 $('td:eq(0)', nRow).css({ 'font-weight': '500', 'color': '#1e293b' });
-                var numericCells = [1, 2, 4, 5];
+                var numericCells = [1, 2];
                 for (var k = 0; k < numericCells.length; k++) {
                     var cellIdx = numericCells[k];
                     var cell = $(nRow).find('td:eq(' + cellIdx + ')');
