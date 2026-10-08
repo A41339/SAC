@@ -235,17 +235,25 @@
     letter-spacing: -0.015em;
 }
 
-/* Grid de tarjetas homologado (adaptable a 100% sin espacios vacíos) */
+/* Grid de tarjetas homologado (cuadrícula amplia balanceada) */
 .hub-cards-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 22px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
     width: 100%;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 991px) and (min-width: 641px) {
+    .hub-cards-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 20px;
+    }
+}
+
+@media (max-width: 640px) {
     .hub-cards-grid {
         grid-template-columns: 1fr;
+        gap: 16px;
     }
 }
 
@@ -256,7 +264,7 @@
     background: #ffffff;
     border: 1px solid #e2e8f0;
     border-radius: 16px;
-    padding: 22px 24px;
+    padding: 24px 26px;
     display: flex;
     flex-direction: column;
     text-decoration: none !important;
@@ -264,7 +272,7 @@
     transition: all 0.32s cubic-bezier(0.16, 1, 0.3, 1);
     position: relative;
     cursor: pointer;
-    min-height: 150px;
+    min-height: 155px;
     overflow: hidden;
 }
 
@@ -390,11 +398,11 @@
 }
 
 .hub-card-title {
-    font-size: var(--font-lg, 15px);
+    font-size: 16px;
     font-weight: 700;
     color: #0f2d4a;
     margin: 0;
-    line-height: 1.28;
+    line-height: 1.35;
     letter-spacing: -0.015em;
     transition: color 0.22s ease;
     word-break: break-word;
@@ -450,8 +458,8 @@
 }
 
 .hub-card-desc {
-    font-size: var(--font-base, 12px);
-    line-height: 1.5;
+    font-size: 13px;
+    line-height: 1.55;
     color: #475569;
     margin: 0;
     display: -webkit-box;
@@ -576,19 +584,63 @@
 
 /* ========================================================
    Homologación de Tarjetas Hub (Estilo Ejecutivo Institucional)
+   Cuadrícula Balanceada de 3 Columnas (3x3 en 9 tarjetas)
    ======================================================== */
 .sbr-cards-grid,
 .hub-cards-grid {
     display: grid !important;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)) !important;
-    gap: 22px !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 24px !important;
     width: 100% !important;
 }
 
-/* Cuando solo hay 1 tarjeta en el módulo (ej. SBR / Autoevaluación) se preserva su proporción ejecutiva */
+/* Casos adaptativos según cantidad de tarjetas */
+.hub-cards-grid[data-count="4"],
+.sbr-cards-grid[data-count="4"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+}
+
+.hub-cards-grid[data-count="2"],
+.sbr-cards-grid[data-count="2"] {
+    grid-template-columns: repeat(2, minmax(320px, 520px)) !important;
+}
+
+/* Cuando solo hay 1 tarjeta en el módulo (ej. SBR / Autoevaluación) */
 .hub-cards-grid.hub-cards-single,
-.sbr-cards-grid.hub-cards-single {
-    grid-template-columns: minmax(320px, 440px) !important;
+.sbr-cards-grid.hub-cards-single,
+.hub-cards-grid[data-count="1"],
+.sbr-cards-grid[data-count="1"] {
+    grid-template-columns: minmax(320px, 460px) !important;
+}
+
+/* Tablets (991px a 641px): 2 Columnas */
+@media (max-width: 991px) and (min-width: 641px) {
+    .sbr-cards-grid,
+    .hub-cards-grid,
+    .hub-cards-grid[data-count="4"],
+    .sbr-cards-grid[data-count="4"],
+    .hub-cards-grid[data-count="2"],
+    .sbr-cards-grid[data-count="2"] {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 20px !important;
+    }
+}
+
+/* Móviles (<= 640px): 1 Columna */
+@media (max-width: 640px) {
+    .sbr-cards-grid,
+    .hub-cards-grid,
+    .hub-cards-grid[data-count="4"],
+    .sbr-cards-grid[data-count="4"],
+    .hub-cards-grid[data-count="2"],
+    .sbr-cards-grid[data-count="2"],
+    .hub-cards-grid.hub-cards-single,
+    .sbr-cards-grid.hub-cards-single,
+    .hub-cards-grid[data-count="1"],
+    .sbr-cards-grid[data-count="1"] {
+        grid-template-columns: 1fr !important;
+        gap: 16px !important;
+    }
 }
 
 /* Detalle extra homologado para todas las tarjetas */
