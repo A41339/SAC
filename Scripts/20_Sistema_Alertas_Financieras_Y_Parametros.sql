@@ -286,6 +286,14 @@ BEGIN
         WHERE ABS(v.VariacionPorcentaje) >= @UMBRAL_PORC
           AND ABS(v.VariacionMonto) >= @UMBRAL_MONTO
     )
+    -- Guardar resultados calculados en tabla temporal para evitar alcance inválido de CTE
+    SELECT 
+        ad.IdEntidad, ad.PeriodoActual, ad.PeriodoAnterior, ad.Cuenta, ad.NombreCuenta,
+        ad.SaldoActual, ad.SaldoAnterior, ad.VariacionMonto, ad.VariacionPorcentaje,
+        ad.TipoAlerta, ad.Titulo, ad.Mensaje
+    INTO #AlertasDetectadas
+    FROM AlertasDetectadas ad;
+
     -- Limpiar alertas existentes para el período y entidad evaluada para reflejar fielmente los nuevos umbrales
     DELETE FROM dbo.AlertaFinanciera
     WHERE (@IDENTIDAD = '-1' OR IdEntidad = @IDENTIDAD)
@@ -301,7 +309,9 @@ BEGIN
         ad.IdEntidad, ad.PeriodoActual, ad.PeriodoAnterior, ad.Cuenta, ad.NombreCuenta,
         ad.SaldoActual, ad.SaldoAnterior, ad.VariacionMonto, ad.VariacionPorcentaje,
         ad.TipoAlerta, ad.Titulo, ad.Mensaje, GETDATE(), 0, 'ACTIVA'
-    FROM AlertasDetectadas ad;
+    FROM #AlertasDetectadas ad;
+
+    DROP TABLE IF EXISTS #AlertasDetectadas;
 
     -- Retornar el resumen de alertas para el período consultado
     EXEC dbo.FGA_Obtener_Alertas_Financieras 

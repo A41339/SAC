@@ -191,5 +191,8 @@ namespace Entities.Entities.Procedures
 
         public int? AffectedId { get; set; }
         public int? affectedId { get => AffectedId; set => AffectedId = value; }
+
+        public int? TotalGeneradas { get; set; }
+        public int? totalGeneradas { get => TotalGeneradas; set => TotalGeneradas = value; }
     }
 }

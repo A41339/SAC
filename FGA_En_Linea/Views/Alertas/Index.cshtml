@@ -1087,20 +1087,22 @@
                 tipoComparacion: 'Interanual'
             }, function(res) {
                 $btn.prop('disabled', false).html('<i class="fa fa-refresh"></i> Reevaluar Cuentas');
-                if (res && res.success) {
+                var isOk = res && (res.success === true || res.Success === true);
+                var msg = (res && (res.message || res.Message)) || 'Evaluación de variaciones completada exitosamente.';
+                if (isOk) {
                     if (window.mostrarToast) {
-                        window.mostrarToast(res.message || 'Evaluación de variaciones completada exitosamente.', 'success', 'Proceso Exitoso', 4000);
+                        window.mostrarToast(msg, 'success', 'Proceso Exitoso', 4000);
                     } else if (window.mostrarToastExito) {
-                        window.mostrarToastExito(res.message || 'Evaluación de variaciones completada exitosamente.', 'Proceso Exitoso');
+                        window.mostrarToastExito(msg, 'Proceso Exitoso');
                     }
                     setTimeout(function() {
                         location.reload();
                     }, 1200);
                 } else {
                     if (window.mostrarToast) {
-                        window.mostrarToast((res && res.message) ? res.message : 'Error al procesar la evaluación.', 'error', 'Error');
+                        window.mostrarToast(msg || 'Error al procesar la evaluación.', 'error', 'Error');
                     } else if (window.mostrarToastError) {
-                        window.mostrarToastError((res && res.message) ? res.message : 'Error al procesar la evaluación.', 'Error');
+                        window.mostrarToastError(msg || 'Error al procesar la evaluación.', 'Error');
                     }
                 }
             }).fail(function() {

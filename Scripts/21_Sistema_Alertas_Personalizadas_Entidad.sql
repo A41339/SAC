@@ -367,11 +367,15 @@ CREATE OR ALTER PROCEDURE [dbo].[FGA_Generar_Alertas_Variacion_Financiera]
     @IDENTIDAD NVARCHAR(5) = '-1',
     @PERIODO DATETIME = NULL,
     @MODALIDAD NVARCHAR(20) = 'Acumulado',        -- 'Acumulado' o 'Mensual'
-    @TIPO_COMPARACION NVARCHAR(20) = 'Interanual'  -- 'Interanual' o 'Mensual'
+    @TIPO_COMPARACION NVARCHAR(20) = 'Interanual', -- 'Interanual' o 'Mensual'
+    @FECHA DATETIME = NULL                        -- Alias retrocompatible
 AS
 BEGIN
     SET NOCOUNT ON;
     SET FMTONLY OFF;
+
+    IF @PERIODO IS NULL AND @FECHA IS NOT NULL
+        SET @PERIODO = @FECHA;
 
     IF @IDENTIDAD = '99' SET @IDENTIDAD = '13';
 
@@ -570,6 +574,14 @@ BEGIN
         WHERE ABS(vf.VariacionPorcentaje) >= vf.UmbralPorcEfectivo
           AND ABS(vf.VariacionMonto) >= vf.UmbralMontoEfectivo
     )
+    -- Guardar resultados calculados en tabla temporal para evitar alcance inválido de CTE
+    SELECT 
+        ad.IdEntidad, ad.PeriodoActual, ad.PeriodoAnterior, ad.Cuenta, ad.NombreCuenta,
+        ad.SaldoActual, ad.SaldoAnterior, ad.VariacionMonto, ad.VariacionPorcentaje,
+        ad.TipoAlerta, ad.Titulo, ad.Mensaje
+    INTO #AlertasDetectadas
+    FROM AlertasDetectadas ad;
+
     -- Limpiar alertas existentes para el período y entidad evaluada para reflejar fielmente los nuevos umbrales
     DELETE FROM dbo.AlertaFinanciera
     WHERE (@IDENTIDAD = '-1' OR IdEntidad = @IDENTIDAD)
@@ -585,7 +597,9 @@ BEGIN
         ad.IdEntidad, ad.PeriodoActual, ad.PeriodoAnterior, ad.Cuenta, ad.NombreCuenta,
         ad.SaldoActual, ad.SaldoAnterior, ad.VariacionMonto, ad.VariacionPorcentaje,
         ad.TipoAlerta, ad.Titulo, ad.Mensaje, GETDATE(), 0, 'ACTIVA'
-    FROM AlertasDetectadas ad;
+    FROM #AlertasDetectadas ad;
+
+    DROP TABLE IF EXISTS #AlertasDetectadas;
 
     -- Retornar el resumen de alertas para el período consultado
     EXEC dbo.FGA_Obtener_Alertas_Financieras 

@@ -310,11 +310,21 @@ namespace FGA.Controllers
 
                 int total = filtradas.Count;
                 string descModo = modoMonitoreo == "SOLO_WATCHLIST" ? " [Modo: Lista de Seguimiento]" : (modoMonitoreo == "EXCLUIR_BLACKLIST" ? " [Modo: Exclusión de Cuentas]" : "");
-                return Json(new { success = true, totalGeneradas = total, message = string.Format("Se evaluaron las cuentas contables con los umbrales configurados (Variación ≥ {0:N1}%, Monto ≥ ₡{1:N0}){2}. Total de alertas vigentes: {3}", umbralPorc, umbralMonto, descModo, total) });
+                var response = new AlertaOperacionResponse
+                {
+                    Success = true,
+                    TotalGeneradas = total,
+                    Message = string.Format("Se evaluaron las cuentas contables con los umbrales configurados (Variación ≥ {0:N1}%, Monto ≥ ₡{1:N0}){2}. Total de alertas vigentes: {3}", umbralPorc, umbralMonto, descModo, total)
+                };
+                return Json(response);
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = ex.Message });
+                return Json(new AlertaOperacionResponse
+                {
+                    Success = false,
+                    Message = FGAConstants.Alertas.MsgErrorEvaluacion + ": " + ex.Message
+                });
             }
         }
 

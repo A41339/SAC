@@ -107,6 +107,8 @@ namespace FGA.Utility
             public const string MsgCatalogoObtenido = "Búsqueda en catálogo completada.";
             public const string MsgErrorEntidadRequerida = "Debe seleccionar una cooperativa o entidad específica para guardar sus parámetros.";
             public const string MsgErrorCuentaRequerida = "Debe especificar el código de la cuenta contable.";
+            public const string MsgEvaluacionExitosa = "Evaluación de variaciones completada exitosamente.";
+            public const string MsgErrorEvaluacion = "Error al procesar la evaluación de variaciones contables.";
         }
         #endregion
 
