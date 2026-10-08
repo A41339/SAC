@@ -167,7 +167,7 @@
         </div>
 
         <!-- GRID DE TARJETAS (HOMOLOGADO AL DISEÑO EJECUTIVO SBR) -->
-        <div class="hub-cards-grid sbr-cards-grid">
+        <div class="hub-cards-grid sbr-cards-grid @(esSbr || (Model.Tarjetas != null && Model.Tarjetas.Count == 1) ? "hub-cards-single" : "")">
             @if (Model.Tarjetas != null && Model.Tarjetas.Count > 0)
             {
                 foreach (var tarjeta in Model.Tarjetas)

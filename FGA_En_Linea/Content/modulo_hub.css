@@ -235,11 +235,12 @@
     letter-spacing: -0.015em;
 }
 
-/* Grid de tarjetas homologado (estilo compacto ejecutivo) */
+/* Grid de tarjetas homologado (adaptable a 100% sin espacios vacíos) */
 .hub-cards-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 420px));
-    gap: 26px;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 22px;
+    width: 100%;
 }
 
 @media (max-width: 768px) {
@@ -579,8 +580,15 @@
 .sbr-cards-grid,
 .hub-cards-grid {
     display: grid !important;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 420px)) !important;
-    gap: 26px !important;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)) !important;
+    gap: 22px !important;
+    width: 100% !important;
+}
+
+/* Cuando solo hay 1 tarjeta en el módulo (ej. SBR / Autoevaluación) se preserva su proporción ejecutiva */
+.hub-cards-grid.hub-cards-single,
+.sbr-cards-grid.hub-cards-single {
+    grid-template-columns: minmax(320px, 440px) !important;
 }
 
 /* Detalle extra homologado para todas las tarjetas */
