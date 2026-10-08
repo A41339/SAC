@@ -177,7 +177,7 @@
 
                     if (tarjeta.EsSubModulo)
                     {
-                        badgeText = "Submódulo" + (tarjeta.CantidadOpciones > 0 ? " (" + tarjeta.CantidadOpciones + ")" : "");
+                        badgeText = !string.IsNullOrWhiteSpace(Model.Titulo) ? Model.Titulo : "Módulo";
                         badgeIcon = "fa-folder-open-o";
                     }
                     else if (esSbr || (tarjeta.Titulo != null && (tarjeta.Titulo.IndexOf("SBR", StringComparison.OrdinalIgnoreCase) >= 0 || tarjeta.Titulo.IndexOf("Autoevaluac", StringComparison.OrdinalIgnoreCase) >= 0)) || (tarjeta.Descripcion != null && tarjeta.Descripcion.IndexOf("24-22", StringComparison.OrdinalIgnoreCase) >= 0))
@@ -230,7 +230,7 @@
                         badgeText = "Proyecciones";
                         badgeIcon = "fa-area-chart";
                     }
-                    else if (tarjeta.Titulo != null && (tarjeta.Titulo.IndexOf("Usuario", StringComparison.OrdinalIgnoreCase) >= 0 || tarjeta.Titulo.IndexOf("Rol", StringComparison.OrdinalIgnoreCase) >= 0 || tarjeta.Titulo.IndexOf("Seguridad", StringComparison.OrdinalIgnoreCase) >= 0 || tarjeta.Titulo.IndexOf("Acceso", StringComparison.OrdinalIgnoreCase) >= 0))
+                    else if (tarjeta.Titulo != null && (tarjeta.Titulo.IndexOf("Usuario", StringComparison.OrdinalIgnoreCase) >= 0 || tarjeta.Titulo.IndexOf("Rol", StringComparison.OrdinalIgnoreCase) >= 0 || tarjeta.Titulo.IndexOf("Perfil", StringComparison.OrdinalIgnoreCase) >= 0 || tarjeta.Titulo.IndexOf("Contrase", StringComparison.OrdinalIgnoreCase) >= 0 || tarjeta.Titulo.IndexOf("Seguridad", StringComparison.OrdinalIgnoreCase) >= 0 || tarjeta.Titulo.IndexOf("Acceso", StringComparison.OrdinalIgnoreCase) >= 0))
                     {
                         badgeText = "Seguridad";
                         badgeIcon = "fa-lock";
@@ -240,7 +240,7 @@
                         badgeText = "Configuración";
                         badgeIcon = "fa-sliders";
                     }
-                    else if (tarjeta.Titulo != null && (tarjeta.Titulo.IndexOf("Cierre", StringComparison.OrdinalIgnoreCase) >= 0 || tarjeta.Titulo.IndexOf("Perfil", StringComparison.OrdinalIgnoreCase) >= 0))
+                    else if (tarjeta.Titulo != null && tarjeta.Titulo.IndexOf("Cierre", StringComparison.OrdinalIgnoreCase) >= 0)
                     {
                         badgeText = "Cierre";
                         badgeIcon = "fa-calendar-check-o";
