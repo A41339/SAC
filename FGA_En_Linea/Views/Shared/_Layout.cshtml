@@ -2633,6 +2633,23 @@
                 $parentPill = $('.breadcrumb li:not(:first-child):not(.active) a').last();
             }
 
+            // Sincronización proactiva con el módulo raíz activo de la base de datos (menú lateral)
+            if (parentModuleName && parentModuleUrl && $parentPill.length > 0) {
+                var totalBcItems = $('.breadcrumb li').length;
+                // En rutas estándar (Inicio > Padre > Actual), si el texto de la píldora difiere del módulo de BD, manda la BD
+                if (totalBcItems <= 3) {
+                    var currentPillNorm = normalizar($parentPill.text());
+                    var dbParentNorm = normalizar(parentModuleName);
+                    if (currentPillNorm !== dbParentNorm) {
+                        var $pIcon = $parentPill.find('i').first();
+                        var pIconHtml = $pIcon.length ? $pIcon.prop('outerHTML') + ' ' : '<i class="' + parentModuleIcon + '" style="margin-right: 4px;"></i> ';
+                        $parentPill.html(pIconHtml + parentModuleName);
+                        $parentPill.attr('href', parentModuleUrl);
+                        $parentPill.attr('title', 'Volver al menú de ' + parentModuleName);
+                    }
+                }
+            }
+
             var headerBackUrl = null;
             var headerBackName = null;
 
@@ -2772,14 +2789,33 @@
                                             $bcActive.text(officialTitle);
                                         }
 
-                                        // C. Actualizar breadcrumb del padre
+                                        // C. Actualizar breadcrumb del padre y botón de retorno con la jerarquía viva de BD
                                         if (matchItem.parent) {
+                                            var parentItem = null;
+                                            var pNorm = normalizar(matchItem.parent);
+                                            for (var p = 0; p < data.length; p++) {
+                                                if (data[p] && data[p].title && normalizar(data[p].title) === pNorm) {
+                                                    parentItem = data[p];
+                                                    break;
+                                                }
+                                            }
+
+                                            var parentTargetUrl = (parentItem && parentItem.url) ? parentItem.url : resolverUrlModulo(matchItem.parent);
+
                                             var $bcParent = $('.breadcrumb .breadcrumb-parent-pill').first();
                                             if ($bcParent.length > 0) {
                                                 var $pIcon = $bcParent.find('i').first();
                                                 var pIconHtml = $pIcon.length ? $pIcon.prop('outerHTML') + ' ' : '';
                                                 $bcParent.html(pIconHtml + matchItem.parent);
+                                                $bcParent.attr('href', parentTargetUrl);
                                                 $bcParent.attr('title', 'Volver al menú de ' + matchItem.parent);
+                                            }
+
+                                            var $headerBack = $('.header-back-link');
+                                            if ($headerBack.length > 0) {
+                                                $headerBack.attr('href', parentTargetUrl);
+                                                $headerBack.attr('title', 'Volver a ' + matchItem.parent);
+                                                $headerBack.html('<i class="fa fa-arrow-left" style="font-size: 12px;"></i> Volver a ' + matchItem.parent);
                                             }
                                         }
 
