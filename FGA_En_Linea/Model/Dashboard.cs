@@ -60,11 +60,22 @@ namespace FGA.Models
         public int idEstimacionesMora = 8109;
         public int idRentabilidad = 8112;
 
+        // Nuevos Indicadores Requerimiento Fase I (FFC-112)
+        public int idMargenActivos = 8045;
+        public int idMargenPromedio = 8038;
+        public int idConcentracion20 = 8020;
+        public int idDisponibilidadesVista = 8053;
+
         public decimal[] Deudores100 = new decimal[cantidad];
         public decimal[] InversionesTitulos = new decimal[cantidad];
         public decimal[] CaptacionesPlazo = new decimal[cantidad];
         public decimal[] EstimacionesMora = new decimal[cantidad];
         public decimal[] Rentabilidad = new decimal[cantidad];
+
+        public decimal[] MargenActivos = new decimal[cantidad];
+        public decimal[] MargenPromedio = new decimal[cantidad];
+        public decimal[] Concentracion20 = new decimal[cantidad];
+        public decimal[] DisponibilidadesVista = new decimal[cantidad];
 
         public Highcharts BrechaLiquidez;
         public Highcharts DiferencialTasas;

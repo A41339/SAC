@@ -226,6 +226,12 @@ namespace FGA.Controllers
                                     SetDashboardValue(view.CaptacionesPlazo, result, view.idCaptacionesPlazo);
                                     SetDashboardValue(view.EstimacionesMora, result, view.idEstimacionesMora);
                                     SetDashboardValue(view.Rentabilidad, result, view.idRentabilidad);
+
+                                    // 4 Indicadores Fase I (FFC-112)
+                                    SetDashboardValue(view.MargenActivos, result, view.idMargenActivos);
+                                    SetDashboardValue(view.MargenPromedio, result, view.idMargenPromedio);
+                                    SetDashboardValue(view.Concentracion20, result, view.idConcentracion20);
+                                    SetDashboardValue(view.DisponibilidadesVista, result, view.idDisponibilidadesVista);
                                 }
                                 catch { }
                             }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -436,17 +436,17 @@ namespace FGA
                     if (hasDirectUrl)
                     {
                         // Enlace directo configurado en la base de datos (ej. Evaluacion/Evaluacion, Home/Index)
-                        sb.Append("<li class=\"" + itemStyle + "\"> <a draggable=\"false\" style=\"font-size:13px;\" href=\"" + MicrosoftHelper.MSHelper.GetSiteRoot() + "/" + itemUrl.TrimStart('~', '/') + "\">" + menuIcon + "  <span style=\"font-size:13px;\">" + item.Menu_MenuId.MenuText + "</span> <span class=\"pull-right-container\"></span></a></li>");
+                        sb.Append("<li class=\"" + itemStyle + "\"> <a draggable=\"false\" href=\"" + MicrosoftHelper.MSHelper.GetSiteRoot() + "/" + itemUrl.TrimStart('~', '/') + "\">" + menuIcon + "  <span>" + item.Menu_MenuId.MenuText + "</span> <span class=\"pull-right-container\"></span></a></li>");
                     }
                     else if (hasChildren)
                     {
                         // Enlace directo al Hub del módulo raíz contenedor
-                        sb.Append("<li class=\"" + itemStyle + "\"> <a draggable=\"false\" style=\"font-size:13px;\" href=\"" + MicrosoftHelper.MSHelper.GetSiteRoot() + "/Modulo/Index/" + item.Menu_MenuId.Id + "\">" + menuIcon + "  <span style=\"font-size:13px;\">" + item.Menu_MenuId.MenuText + "</span> <span class=\"pull-right-container\"></span></a></li>");
+                        sb.Append("<li class=\"" + itemStyle + "\"> <a draggable=\"false\" href=\"" + MicrosoftHelper.MSHelper.GetSiteRoot() + "/Modulo/Index/" + item.Menu_MenuId.Id + "\">" + menuIcon + "  <span>" + item.Menu_MenuId.MenuText + "</span> <span class=\"pull-right-container\"></span></a></li>");
                     }
                     else
                     {
                         // Opción raíz sin hijos
-                        sb.Append("<li class=\"" + itemStyle + "\"> <a draggable=\"false\" style=\"font-size:13px;\" href=\"" + MicrosoftHelper.MSHelper.GetSiteRoot() + "/" + itemUrl + "\">" + menuIcon + "  <span style=\"font-size:13px;\">" + item.Menu_MenuId.MenuText + "</span> <span class=\"pull-right-container\"></span></a></li>");
+                        sb.Append("<li class=\"" + itemStyle + "\"> <a draggable=\"false\" href=\"" + MicrosoftHelper.MSHelper.GetSiteRoot() + "/" + itemUrl + "\">" + menuIcon + "  <span>" + item.Menu_MenuId.MenuText + "</span> <span class=\"pull-right-container\"></span></a></li>");
                     }
                 }
                 sb.Append("</ul>");

@@ -29,49 +29,62 @@
     <div class="row">
         <div class="col-xs-12">
             <div class="modern-filter-card" style="margin-bottom: 8px; padding: 7px 14px; background: #ffffff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;">
-                <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
-                    <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
-                        <!-- Entidad -->
-                        <div style="display: flex; align-items: center; gap: 6px;">
-                            <label for="ddlEntidad" style="margin: 0; font-size: 12px; font-weight: 700; color: #1e3a8a; display: flex; align-items: center; gap: 5px; white-space: nowrap;">
-                                <i class="fa fa-university" style="color: #2F5597;"></i> Entidad:
-                            </label>
-                            <div style="min-width: 230px;">
-                                @Html.DropDownList("Entidades", null, new { @id = "ddlEntidad", @class = "form-control modern-select", style = "width: 100%; height: 32px; font-size: 12.5px; font-weight: 500; border-radius: 6px; border: 1px solid #cbd5e1; padding: 4px 8px;" })
-                            </div>
-                        </div>
-
-                        <!-- Periodo inicial y final (se mantienen siempre en ambos tabs) -->
-                        <div id="secPeriodos" style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
-                            <div style="display: flex; align-items: center; gap: 6px;">
-                                <label for="Periodo1" style="margin: 0; font-size: 12px; font-weight: 600; color: #475569; white-space: nowrap;">
-                                    <i class="fa fa-calendar" style="color: #2F5597; margin-right: 3px;"></i> Inicio:
-                                </label>
-                                <div class="modern-input-wrapper">
-                                    <input name="Periodo1" id="Periodo1" class="datecontrol form-control modern-date-input" value="@Model.Periodo1" style="min-width: 110px; height: 32px; font-size: 12.5px; padding: 4px 8px;" />
-                                </div>
-                            </div>
-
-                            <div style="display: flex; align-items: center; gap: 6px;">
-                                <label for="Periodo2" style="margin: 0; font-size: 12px; font-weight: 600; color: #475569; white-space: nowrap;">
-                                    <i class="fa fa-calendar-check-o" style="color: #2F5597; margin-right: 3px;"></i> Fin:
-                                </label>
-                                <div class="modern-input-wrapper">
-                                    <input name="Periodo2" id="Periodo2" class="datecontrol form-control modern-date-input" value="@Model.Periodo2" style="min-width: 110px; height: 32px; font-size: 12.5px; padding: 4px 8px;" />
-                                </div>
-                            </div>
+                <div class="modern-filter-toolbar" style="display: flex; align-items: center; justify-content: flex-start; flex-wrap: wrap; gap: 14px;">
+                    <!-- Entidad -->
+                    <div class="filter-item" style="display: flex; flex-direction: column; gap: 4px;">
+                        <label for="ddlEntidad" style="margin: 0; font-size: 12px; font-weight: 700; color: #1e3a8a; display: flex; align-items: center; gap: 5px; white-space: nowrap;">
+                            <i class="fa fa-university" style="color: #2F5597;"></i> Entidad:
+                        </label>
+                        <div style="min-width: 220px;">
+                            @Html.DropDownList("Entidades", null, new { @id = "ddlEntidad", @class = "form-control modern-select", style = "width: 100%; height: 34px; font-size: 12.5px; font-weight: 500; border-radius: 6px; border: 1px solid #cbd5e1; padding: 4px 8px;" })
                         </div>
                     </div>
 
-                    <!-- Botones de Acción -->
-                    <div id="secBotonesToolbar" style="display: flex; align-items: center; gap: 8px;">
-                        <button type="button" id="btnGenerarIndicadores" class="btn-modern-filter" style="height: 32px; padding: 0 15px; font-size: 12px; background: linear-gradient(135deg, #3d6cb9 0%, #2F5597 50%, #204880 100%) !important; color: #ffffff !important; border: 1px solid #204880 !important; box-shadow: 0 2px 6px rgba(47, 85, 151, 0.25) !important;">
-                            <i class="fa fa-search"></i> Generar
-                        </button>
-                        <div id="secExportarIndicadores">
-                            <button type="button" id="btnExportarIndicadores" class="btn-modern-filter" style="height: 32px; padding: 0 12px; background: #ffffff; color: #15803d; border: 1px solid #bbf7d0; font-weight: 600; font-size: 12px; border-radius: 6px; display: flex; align-items: center; gap: 6px; cursor: pointer;">
-                                <i class="fa fa-file-excel-o" style="color: #16a34a;"></i> Exportar Excel
+                    <!-- Periodo Inicial -->
+                    <div class="filter-item" style="display: flex; flex-direction: column; gap: 4px;">
+                        <label for="Periodo1" style="margin: 0; font-size: 12px; font-weight: 600; color: #475569; display: flex; align-items: center; gap: 4px; white-space: nowrap;">
+                            <i class="fa fa-calendar" style="color: #2F5597;"></i> Periodo Inicial:
+                        </label>
+                        <div class="modern-input-wrapper">
+                            <input name="Periodo1" id="Periodo1" class="datecontrol form-control modern-date-input" value="@Model.Periodo1" style="min-width: 120px; height: 34px; font-size: 12.5px; padding: 4px 8px;" />
+                        </div>
+                    </div>
+
+                    <!-- Periodo Final -->
+                    <div class="filter-item" style="display: flex; flex-direction: column; gap: 4px;">
+                        <label for="Periodo2" style="margin: 0; font-size: 12px; font-weight: 600; color: #475569; display: flex; align-items: center; gap: 4px; white-space: nowrap;">
+                            <i class="fa fa-calendar-check-o" style="color: #2F5597;"></i> Periodo Final:
+                        </label>
+                        <div class="modern-input-wrapper">
+                            <input name="Periodo2" id="Periodo2" class="datecontrol form-control modern-date-input" value="@Model.Periodo2" style="min-width: 120px; height: 34px; font-size: 12.5px; padding: 4px 8px;" />
+                        </div>
+                    </div>
+
+                    <!-- Acceso Rápido de Periodos (Mes, Trimestre, YTD, 12 Meses) -->
+                    <div class="filter-item" style="display: flex; flex-direction: column; gap: 4px;">
+                        <label style="margin: 0; font-size: 12px; font-weight: 600; color: #475569; display: flex; align-items: center; gap: 4px; white-space: nowrap;">
+                            <i class="fa fa-clock-o" style="color: #2F5597;"></i> Acceso R&aacute;pido:
+                        </label>
+                        <div class="quick-period-group" style="display: flex; flex-direction: row; align-items: center; gap: 4px;">
+                            <button type="button" class="btn-quick-period" onclick="setQuickPeriodFondeo('month')" title="&Uacute;ltimo Mes">Mes</button>
+                            <button type="button" class="btn-quick-period" onclick="setQuickPeriodFondeo('quarter')" title="Trimestre Actual">Trimestre</button>
+                            <button type="button" class="btn-quick-period" onclick="setQuickPeriodFondeo('ytd')" title="A&ntilde;o a la Fecha">YTD</button>
+                            <button type="button" class="btn-quick-period" onclick="setQuickPeriodFondeo('year')" title="&Uacute;ltimos 12 Meses">12 Meses</button>
+                        </div>
+                    </div>
+
+                    <!-- Grupo de Botones de Acción Alineados a la Derecha -->
+                    <div class="filter-item" style="margin-left: auto; align-self: flex-end; padding-bottom: 1px;">
+                        <div id="secBotonesToolbar" style="display: inline-flex; align-items: center; gap: 8px;">
+                            <button type="button" id="btnGenerarIndicadores" class="btn-modern-generate" style="height: 34px; padding: 0 18px; font-size: 12.5px; white-space: nowrap;">
+                                <i class="fa fa-search"></i> Generar
                             </button>
+
+                            <div id="secExportarIndicadores" style="display: inline-block;">
+                                <button type="button" id="btnExportarIndicadores" class="btn-modern-filter" style="height: 34px; padding: 0 14px; background: #ffffff; color: #15803d; border: 1px solid #86efac; font-weight: 600; font-size: 12.5px; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; white-space: nowrap; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
+                                    <i class="fa fa-file-excel-o" style="color: #16a34a; font-size: 14px;"></i> Exportar Excel
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -247,6 +260,46 @@
                     cargarIndicadores();
                 }
             });
+
+            window.setQuickPeriodFondeo = function(type) {
+                function pad(n) { return (n < 10 ? '0' : '') + n; }
+                var p2Val = $('#Periodo2').val();
+                var endMonth, endYear;
+
+                if (p2Val && p2Val.indexOf('/') !== -1) {
+                    var parts = p2Val.split('/');
+                    endMonth = parseInt(parts[0], 10);
+                    endYear = parseInt(parts[1], 10);
+                }
+
+                if (!endMonth || isNaN(endMonth) || !endYear || isNaN(endYear)) {
+                    var now = new Date();
+                    var endDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+                    endYear = endDate.getFullYear();
+                    endMonth = endDate.getMonth() + 1;
+                    $('#Periodo2').val(pad(endMonth) + '/' + endYear);
+                }
+
+                var p1 = '';
+                if (type === 'month') {
+                    var startM = endMonth - 1;
+                    var startY = endYear;
+                    if (startM <= 0) { startM += 12; startY--; }
+                    p1 = pad(startM) + '/' + startY;
+                } else if (type === 'quarter') {
+                    var startM = endMonth - 3;
+                    var startY = endYear;
+                    if (startM <= 0) { startM += 12; startY--; }
+                    p1 = pad(startM) + '/' + startY;
+                } else if (type === 'ytd') {
+                    p1 = '01/' + endYear;
+                } else if (type === 'year') {
+                    p1 = pad(endMonth) + '/' + (endYear - 1);
+                }
+
+                $('#Periodo1').val(p1);
+                $('#btnGenerarIndicadores').trigger('click');
+            };
 
             // Cambio de entidad actualiza logo y datos del tab activo
             $('#ddlEntidad').on('change', function () {

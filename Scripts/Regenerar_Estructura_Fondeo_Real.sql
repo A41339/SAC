@@ -179,13 +179,11 @@ BEGIN
     DECLARE @PorcTop10 DECIMAL(18, 6) = CASE WHEN @MontoTotalAhorrantes > 0 THEN (@MontoTop10 / @MontoTotalAhorrantes) * 100.0 ELSE 0 END;
     DECLARE @PorcTop20 DECIMAL(18, 6) = CASE WHEN @MontoTotalAhorrantes > 0 THEN (@MontoTop20 / @MontoTotalAhorrantes) * 100.0 ELSE 0 END;
 
-    IF @MontoTotalAhorrantes > 0 OR @TotalAhorrantes > 0
-    BEGIN
-        INSERT INTO [dbo].[Salida_Concentracion_Ahorrantes]
-            (IdEntidad, Periodo, MontoTop10, MontoTop20, MontoTotal, PorcTop10, PorcTop20, CantidadAhorrantes, FechaGeneracion)
-        VALUES
-            (@IDENTIDAD, @PERIODO, @MontoTop10, @MontoTop20, @MontoTotalAhorrantes, @PorcTop10, @PorcTop20, @TotalAhorrantes, GETDATE());
-    END
+    -- Siempre insertar fila en Salida_Concentracion_Ahorrantes para registrar el período (incluso si montos son 0)
+    INSERT INTO [dbo].[Salida_Concentracion_Ahorrantes]
+        (IdEntidad, Periodo, MontoTop10, MontoTop20, MontoTotal, PorcTop10, PorcTop20, CantidadAhorrantes, FechaGeneracion)
+    VALUES
+        (@IDENTIDAD, @PERIODO, @MontoTop10, @MontoTop20, @MontoTotalAhorrantes, @PorcTop10, @PorcTop20, @TotalAhorrantes, GETDATE());
 
     -- 4. CÁLCULO DE CONCENTRACIÓN DE SALDOS POR VENCIMIENTO (7 TRAMOS REALES)
     DECLARE @Tramo1 DECIMAL(25, 2) = 0;
@@ -208,13 +206,11 @@ BEGIN
 
     DECLARE @TotalVenc DECIMAL(25, 2) = @Tramo1 + @Tramo2 + @Tramo3 + @Tramo4 + @Tramo5 + @Tramo6 + @Tramo7;
 
-    IF @TotalVenc > 0
-    BEGIN
-        INSERT INTO [dbo].[Salida_Concentracion_Vencimiento]
-            (IdEntidad, Periodo, Tramo1_Vista, Tramo2_1a90Dias, Tramo3_91a180Dias, Tramo4_181a270Dias, Tramo5_271a360Dias, Tramo6_1a3Anios, Tramo7_Mas3Anios, TotalPrincipal, FechaGeneracion)
-        VALUES
-            (@IDENTIDAD, @PERIODO, @Tramo1, @Tramo2, @Tramo3, @Tramo4, @Tramo5, @Tramo6, @Tramo7, @TotalVenc, GETDATE());
-    END
+    -- Siempre insertar fila en Salida_Concentracion_Vencimiento para registrar el período (incluso si montos son 0)
+    INSERT INTO [dbo].[Salida_Concentracion_Vencimiento]
+        (IdEntidad, Periodo, Tramo1_Vista, Tramo2_1a90Dias, Tramo3_91a180Dias, Tramo4_181a270Dias, Tramo5_271a360Dias, Tramo6_1a3Anios, Tramo7_Mas3Anios, TotalPrincipal, FechaGeneracion)
+    VALUES
+        (@IDENTIDAD, @PERIODO, @Tramo1, @Tramo2, @Tramo3, @Tramo4, @Tramo5, @Tramo6, @Tramo7, @TotalVenc, GETDATE());
 
     -- 5. OBTENER ASOCIADOS ACTIVOS DE DATOS ADICIONALES (CUENTA 20026)
     DECLARE @CantidadAsociados INT = 0;

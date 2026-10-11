@@ -487,9 +487,6 @@
                     <span style="display: inline-block; width: 6px; height: 18px; background: #0284c7; border-radius: 2px;"></span>
                     <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: #1e3a8a;">P&eacute;rdidas esperadas de la cartera de cr&eacute;dito</h4>
                 </div>
-                <a href="@Url.Action("Index", "Matriz")" class="btn btn-xs btn-default" style="border-radius: 6px; border: 1px solid #cbd5e1; font-size: 11px; padding: 3px 10px; color: #0284c7; font-weight: 600; text-decoration: none;" title="Ver gr&aacute;ficos en matrices">
-                    <i class="fa fa-line-chart" style="margin-right: 4px;"></i> Ver en Matrices
-                </a>
             </div>
 
             <div class="table-responsive" style="margin-bottom: 0;">
@@ -668,35 +665,30 @@
 
     </div>
 
-    <!-- Right 3 columns: Indicadores Panel -->
+    <!-- Right 3 columns: Indicadores Panel (11 Indicadores Requerimiento Fase I FFC-112) -->
     <div class="side-indicators-wrapper">
         <div class="modern-indicators-panel">
             <div class="indicators-panel-title">Indicadores</div>
             
+            <!-- 1. Margen financiero / Activos -->
             <div class="indicator-item">
-                <span class="indicator-name">Gastos De Administraci&oacute;n / Utilidad Operacional Bruta</span>
+                <span class="indicator-name">Margen financiero / Activos</span>
                 <div class="indicator-val-group">
-                    <span class="indicator-main-val">@FormatVal(modelData.CostoAdmin, 1, "N2", "%")</span>
-                    @IndicatorTrendBadge(costoVal, costoPrev, "N2", "%", true)
+                    <span class="indicator-main-val">@FormatVal(modelData.MargenActivos, 1, "N2", "%")</span>
+                    @IndicatorTrendBadge(GetVal(modelData.MargenActivos, 1), GetVal(modelData.MargenActivos, 0), "N2", "%", false)
                 </div>
             </div>
 
+            <!-- 2. Margen Financiero Promedio -->
             <div class="indicator-item">
-                <span class="indicator-name">Cartera con morosidad mayor a 90 d&iacute;as / Cartera Directa</span>
+                <span class="indicator-name">Margen Financiero Promedio</span>
                 <div class="indicator-val-group">
-                    <span class="indicator-main-val">@FormatVal(modelData.Morosidad, 1, "N2", "%")</span>
-                    @IndicatorTrendBadge(morosidadVal, morosidadPrev, "N2", "%", true)
+                    <span class="indicator-main-val">@FormatVal(modelData.MargenPromedio, 1, "N2", "%")</span>
+                    @IndicatorTrendBadge(GetVal(modelData.MargenPromedio, 1), GetVal(modelData.MargenPromedio, 0), "N2", "%", false)
                 </div>
             </div>
 
-            <div class="indicator-item">
-                <span class="indicator-name">Riesgo por tasas de inter&eacute;s colones</span>
-                <div class="indicator-val-group">
-                    <span class="indicator-main-val">@FormatVal(modelData.Riesgo, 1, "N2", "%")</span>
-                    @IndicatorTrendBadge(riesgoVal, riesgoPrev, "N2", "%", true)
-                </div>
-            </div>
-
+            <!-- 3. Rentabilidad nominal / Patrimonio promedio -->
             <div class="indicator-item">
                 <span class="indicator-name">Rentabilidad nominal / Patrimonio promedio</span>
                 <div class="indicator-val-group">
@@ -705,46 +697,16 @@
                 </div>
             </div>
 
+            <!-- 4. Utilidad o pérdida acumulada trimestral -->
             <div class="indicator-item">
-                <span class="indicator-name">Estimaciones sobre cartera / Mora mayor a 90 d&iacute;as y cobro judicial</span>
-                <div class="indicator-val-group">
-                    <span class="indicator-main-val">@FormatVal(modelData.EstimacionesMora, 1, "N2", "%")</span>
-                    @IndicatorTrendBadge(GetVal(modelData.EstimacionesMora, 1), GetVal(modelData.EstimacionesMora, 0), "N2", "%", false)
-                </div>
-            </div>
-
-            <div class="indicator-item">
-                <span class="indicator-name">P&eacute;rdida Esperada Cartera Total / Cartera Total</span>
-                <div class="indicator-val-group">
-                    <span class="indicator-main-val">@FormatVal(modelData.PerdidaEsperada, 1, "N2", "%")</span>
-                    @IndicatorTrendBadge(GetVal(modelData.PerdidaEsperada, 1), GetVal(modelData.PerdidaEsperada, 0), "N2", "%", true)
-                </div>
-            </div>
-
-            <div class="indicator-item">
-                <span class="indicator-name">Utilidad Acumulada / Patrimonio Promedio Trimestral</span>
+                <span class="indicator-name">Utilidad o p&eacute;rdida acumulada trimestral</span>
                 <div class="indicator-val-group">
                     <span class="indicator-main-val">@FormatVal(modelData.PerdidaAcumulada, 1, "N2", "%")</span>
                     @IndicatorTrendBadge(GetVal(modelData.PerdidaAcumulada, 1), GetVal(modelData.PerdidaAcumulada, 0), "N2", "%", false)
                 </div>
             </div>
 
-            <div class="indicator-item">
-                <span class="indicator-name">ICL colones</span>
-                <div class="indicator-val-group">
-                    <span class="indicator-main-val">@FormatVal(modelData.ICL, 1, "N2", "%")</span>
-                    @IndicatorTrendBadge(GetVal(modelData.ICL, 1), GetVal(modelData.ICL, 0), "N2", "%", false)
-                </div>
-            </div>
-
-            <div class="indicator-item">
-                <span class="indicator-name">I-H de los 100 deudores m&aacute;s representativos</span>
-                <div class="indicator-val-group">
-                    <span class="indicator-main-val">@FormatVal(modelData.Deudores100, 1, "N2", "")</span>
-                    @IndicatorTrendBadge(GetVal(modelData.Deudores100, 1), GetVal(modelData.Deudores100, 0), "N2", "", true)
-                </div>
-            </div>
-
+            <!-- 5. Inversiones en títulos valores / Activo productivo -->
             <div class="indicator-item">
                 <span class="indicator-name">Inversiones en t&iacute;tulos valores / Activo productivo</span>
                 <div class="indicator-val-group">
@@ -753,11 +715,57 @@
                 </div>
             </div>
 
+            <!-- 6. Captaciones a plazo con el público / Pasivo con costo -->
             <div class="indicator-item">
                 <span class="indicator-name">Captaciones a plazo con el p&uacute;blico / Pasivo con costo</span>
                 <div class="indicator-val-group">
                     <span class="indicator-main-val">@FormatVal(modelData.CaptacionesPlazo, 1, "N2", "%")</span>
                     @IndicatorTrendBadge(GetVal(modelData.CaptacionesPlazo, 1), GetVal(modelData.CaptacionesPlazo, 0), "N2", "%", false)
+                </div>
+            </div>
+
+            <!-- 7. Concentración de los 20 inversionistas -->
+            <div class="indicator-item">
+                <span class="indicator-name">Concentraci&oacute;n de los 20 inversionistas</span>
+                <div class="indicator-val-group">
+                    <span class="indicator-main-val">@FormatVal(modelData.Concentracion20, 1, "N2", "%")</span>
+                    @IndicatorTrendBadge(GetVal(modelData.Concentracion20, 1), GetVal(modelData.Concentracion20, 0), "N2", "%", true)
+                </div>
+            </div>
+
+            <!-- 8. Estimaciones sobre cartera de créditos / Cartera con mora mayor a 90 días y cobro judicial -->
+            <div class="indicator-item">
+                <span class="indicator-name">Estimaciones sobre cartera de cr&eacute;ditos / Cartera con mora mayor a 90 d&iacute;as y cobro judicial</span>
+                <div class="indicator-val-group">
+                    <span class="indicator-main-val">@((GetVal(modelData.EstimacionesMora, 1) / 100m).ToString("N2"))x</span>
+                    @IndicatorTrendBadge(GetVal(modelData.EstimacionesMora, 1), GetVal(modelData.EstimacionesMora, 0), "N2", "%", false)
+                </div>
+            </div>
+
+            <!-- 9. Pérdida Esperada Cartera Total / Estimación por deterioro de cartera -->
+            <div class="indicator-item">
+                <span class="indicator-name">P&eacute;rdida Esperada Cartera Total / Estimaci&oacute;n por deterioro de cartera</span>
+                <div class="indicator-val-group">
+                    <span class="indicator-main-val">@FormatVal(modelData.PerdidaEsperada, 1, "N2", "%")</span>
+                    @IndicatorTrendBadge(GetVal(modelData.PerdidaEsperada, 1), GetVal(modelData.PerdidaEsperada, 0), "N2", "%", true)
+                </div>
+            </div>
+
+            <!-- 10. Índice de Cobertura de Liquidez (ICL) -->
+            <div class="indicator-item">
+                <span class="indicator-name">&Iacute;ndice de Cobertura de Liquidez (ICL)</span>
+                <div class="indicator-val-group">
+                    <span class="indicator-main-val">@FormatVal(modelData.ICL, 1, "N2", "")</span>
+                    @IndicatorTrendBadge(GetVal(modelData.ICL, 1), GetVal(modelData.ICL, 0), "N2", "", false)
+                </div>
+            </div>
+
+            <!-- 11. Disponibilidades / Captaciones a la vista -->
+            <div class="indicator-item">
+                <span class="indicator-name">Disponibilidades / Captaciones a la vista</span>
+                <div class="indicator-val-group">
+                    <span class="indicator-main-val">@FormatVal(modelData.DisponibilidadesVista, 1, "N2", "%")</span>
+                    @IndicatorTrendBadge(GetVal(modelData.DisponibilidadesVista, 1), GetVal(modelData.DisponibilidadesVista, 0), "N2", "%", false)
                 </div>
             </div>
 
