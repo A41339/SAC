@@ -1673,6 +1673,11 @@
         <div id="fgaToastContainer" class="fga-toast-container"></div>
 
         @Html.Action("Index", "ParameterPartial")
+
+        @if (FGA.Env.IsChatbotEnabled())
+        {
+            @Html.Partial("_ChatbotWidget")
+        }
     </div>
 
     <!-- Integración Automática de Mensajes del Servidor (TempData / Alerts) -->

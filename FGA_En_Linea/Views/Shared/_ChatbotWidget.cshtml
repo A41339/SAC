@@ -1,0 +1,225 @@
+@* ==========================================================================
+   WIDGET FLOTANTE: ASISTENTE VIRTUAL INTELIGENTE (COPILOT SAC / FFC)
+   Renderizado condicional controlado por Env.IsChatbotEnabled()
+   ========================================================================== *@
+@{
+    string nombreEntidad = FGA.Env.GetUserInfo("entidad");
+    string nombreUsuario = FGA.Env.GetUserInfo("name");
+}
+
+<!-- Botón Flotante Disparador (Launcher) -->
+<div id="sacChatbotLauncher" class="sac-chatbot-launcher" title="Asistente Virtual Financiero SAC">
+    <div class="sac-launcher-inner">
+        <i class="fa fa-comments-o sac-launcher-icon"></i>
+        <span class="sac-launcher-badge"><i class="fa fa-sparkles"></i> IA</span>
+    </div>
+</div>
+
+<!-- Ventana de Diálogo Flotante (Chat Window) -->
+<div id="sacChatbotWindow" class="sac-chatbot-window" style="display: none;">
+    <!-- Cabecera Corporativa FFC -->
+    <div class="sac-chatbot-header">
+        <div class="sac-chatbot-header-info">
+            <div class="sac-chatbot-avatar">
+                <i class="fa fa-shield"></i>
+            </div>
+            <div class="sac-chatbot-titles">
+                <span class="sac-chatbot-title">Copilot Financiero SAC</span>
+                <span class="sac-chatbot-subtitle">
+                    <span class="sac-status-dot"></span>
+                    @(string.IsNullOrWhiteSpace(nombreEntidad) ? "Asistente FFC" : nombreEntidad)
+                </span>
+            </div>
+        </div>
+        <div class="sac-chatbot-header-actions">
+            <button type="button" id="btnSacChatbotMinimizar" class="sac-btn-header" title="Minimizar">
+                <i class="fa fa-minus"></i>
+            </button>
+            <button type="button" id="btnSacChatbotCerrar" class="sac-btn-header" title="Cerrar">
+                <i class="fa fa-times"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Área de Mensajes -->
+    <div id="sacChatbotMessages" class="sac-chatbot-messages">
+        <!-- Mensaje de Bienvenida Inicial -->
+        <div class="sac-msg sac-msg-bot">
+            <div class="sac-msg-avatar"><i class="fa fa-shield"></i></div>
+            <div class="sac-msg-bubble">
+                <p>¡Hola <strong>@(string.IsNullOrWhiteSpace(nombreUsuario) ? "" : nombreUsuario)</strong>! 👋 Soy tu <strong>Asistente Virtual Financiero del SAC</strong>.</p>
+                <p>Tengo acceso al contexto de <strong>@(string.IsNullOrWhiteSpace(nombreEntidad) ? "tu entidad" : nombreEntidad)</strong>. Puedes preguntarme sobre tus 11 indicadores, alertas activas, pérdidas esperadas o la metodología SBR.</p>
+                
+                <div class="sac-quick-prompts">
+                    <span class="sac-quick-title"><i class="fa fa-bolt"></i> Consultas sugeridas:</span>
+                    <button type="button" class="sac-quick-btn" data-pregunta="¿Cómo cerró mi suficiencia patrimonial y qué significa?">
+                        📊 Suficiencia Patrimonial
+                    </button>
+                    <button type="button" class="sac-quick-btn" data-pregunta="¿Tengo alertas financieras activas o desviaciones contables?">
+                        🔔 Mis Alertas Activas
+                    </button>
+                    <button type="button" class="sac-quick-btn" data-pregunta="¿Cómo se calcula el Margen de Intermediación en el tablero?">
+                        📈 Margen Financiero
+                    </button>
+                    <button type="button" class="sac-quick-btn" data-pregunta="¿Qué es el Plan de Remediación en Evaluación SBR?">
+                        🛡️ Metodología SBR
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Indicador Animado de 'Escribiendo...' -->
+    <div id="sacChatbotTyping" class="sac-chatbot-typing" style="display: none;">
+        <div class="sac-typing-dots">
+            <span></span><span></span><span></span>
+        </div>
+        <span class="sac-typing-text">Analizando datos de la entidad...</span>
+    </div>
+
+    <!-- Formulario / Caja de Entrada -->
+    <div class="sac-chatbot-footer">
+        <form id="sacChatbotForm" class="sac-chatbot-form" onsubmit="return false;">
+            <div class="sac-input-wrapper">
+                <input type="text" id="sacChatbotInput" class="sac-chatbot-input" placeholder="Pregunta sobre tus indicadores, alertas o SBR..." autocomplete="off" />
+                <button type="button" id="btnSacChatbotEnviar" class="sac-btn-enviar" title="Enviar consulta">
+                    <i class="fa fa-paper-plane"></i>
+                </button>
+            </div>
+            <div class="sac-chatbot-disclaimer">
+                <span><i class="fa fa-lock"></i> Datos confidenciales de la entidad activa. Respaldado por FFC.</span>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Script del Asistente Virtual -->
+<script type="text/javascript">
+    (function () {
+        var $launcher = $('#sacChatbotLauncher');
+        var $window = $('#sacChatbotWindow');
+        var $messages = $('#sacChatbotMessages');
+        var $input = $('#sacChatbotInput');
+        var $btnEnviar = $('#btnSacChatbotEnviar');
+        var $typing = $('#sacChatbotTyping');
+        var historial = [];
+
+        // Abrir / Cerrar ventana
+        $launcher.on('click', function () {
+            $window.fadeToggle(200, function () {
+                if ($window.is(':visible')) {
+                    $input.focus();
+                    scrollAbajo();
+                }
+            });
+        });
+
+        $('#btnSacChatbotCerrar, #btnSacChatbotMinimizar').on('click', function () {
+            $window.fadeOut(200);
+        });
+
+        // Enviar al pulsar Enter o el botón Enviar
+        $input.on('keypress', function (e) {
+            if (e.which === 13) {
+                e.preventDefault();
+                enviarPregunta();
+            }
+        });
+
+        $btnEnviar.on('click', function () {
+            enviarPregunta();
+        });
+
+        // Clic en chips de preguntas rápidas
+        $(document).on('click', '.sac-quick-btn', function () {
+            var pregunta = $(this).attr('data-pregunta') || $(this).text().trim();
+            $input.val(pregunta);
+            enviarPregunta();
+        });
+
+        function enviarPregunta() {
+            var texto = $input.val().trim();
+            if (!texto) return;
+
+            // Renderizar mensaje del usuario
+            agregarMensaje('usuario', texto);
+            $input.val('');
+
+            // Mostrar animación de pensando
+            $typing.fadeIn(150);
+            scrollAbajo();
+
+            // Detectar si la pantalla activa tiene un selector de fecha/periodo (#Periodo2, #Periodo, [name='Periodo2'], etc.)
+            var periodoActivo = '';
+            var $p2 = $('#Periodo2, input[name="Periodo2"], #Periodo, input[name="Periodo"]').first();
+            if ($p2.length && $p2.val()) {
+                periodoActivo = $p2.val().trim();
+            }
+
+            // Petición AJAX al controlador ChatbotController
+            $.ajax({
+                url: '@Url.Action("Preguntar", "Chatbot")',
+                type: 'POST',
+                data: {
+                    mensaje: texto,
+                    historial: historial.slice(-6).join('\n'),
+                    periodoContexto: periodoActivo
+                },
+                dataType: 'json',
+                success: function (res) {
+                    $typing.hide();
+                    if (res && res.success) {
+                        agregarMensaje('bot', res.respuesta);
+                        historial.push('Usuario: ' + texto);
+                        historial.push('Copilot: ' + res.respuesta);
+                    } else {
+                        var err = (res && res.respuesta) ? res.respuesta : 'No fue posible obtener una respuesta en este momento.';
+                        agregarMensaje('bot', err);
+                    }
+                },
+                error: function () {
+                    $typing.hide();
+                    agregarMensaje('bot', 'Hubo un error de conexión con el servidor del Asistente. Por favor intenta de nuevo.');
+                }
+            });
+        }
+
+        function agregarMensaje(tipo, contenido) {
+            var esBot = tipo === 'bot';
+            var htmlFormatted = formatearMarkdown(contenido);
+
+            var $msg = $('<div class="sac-msg ' + (esBot ? 'sac-msg-bot' : 'sac-msg-user') + '">' +
+                (esBot ? '<div class="sac-msg-avatar"><i class="fa fa-shield"></i></div>' : '') +
+                '<div class="sac-msg-bubble">' + htmlFormatted + '</div>' +
+                (!esBot ? '<div class="sac-msg-avatar user-av"><i class="fa fa-user"></i></div>' : '') +
+                '</div>');
+
+            $messages.append($msg);
+            scrollAbajo();
+        }
+
+        function scrollAbajo() {
+            $messages.scrollTop($messages[0].scrollHeight);
+        }
+
+        function formatearMarkdown(txt) {
+            if (!txt) return '';
+            // Escapar HTML básico
+            var safe = $('<div>').text(txt).html();
+
+            // Negritas: **texto**
+            safe = safe.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+            // Cursivas: *texto*
+            safe = safe.replace(/\*(.*?)\*/g, '<em>$1</em>');
+
+            // Viñetas: líneas que empiezan con - o *
+            safe = safe.replace(/(?:^|\n)[-\*]\s+(.+)/g, '<br/>• $1');
+
+            // Saltos de línea
+            safe = safe.replace(/\n/g, '<br/>');
+
+            return safe;
+        }
+    })();
+</script>
