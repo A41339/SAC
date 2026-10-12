@@ -149,11 +149,18 @@
             $typing.fadeIn(150);
             scrollAbajo();
 
-            // Detectar si la pantalla activa tiene un selector de fecha/periodo (#Periodo2, #Periodo, [name='Periodo2'], etc.)
+            // Detectar si la pantalla activa tiene un selector de fecha/periodo (#Periodo2, #Periodo, #PeriodoF, etc.)
             var periodoActivo = '';
-            var $p2 = $('#Periodo2, input[name="Periodo2"], #Periodo, input[name="Periodo"]').first();
-            if ($p2.length && $p2.val()) {
-                periodoActivo = $p2.val().trim();
+            var $p = $('#Periodo2, input[name="Periodo2"], #Periodo, input[name="Periodo"], #PeriodoF, input[name="PeriodoF"]').first();
+            if ($p.length && $p.val()) {
+                periodoActivo = $p.val().trim();
+            }
+
+            // Detectar si la pantalla activa tiene selector de entidad (#IdEntidad, select[name="IdEntidad"], select[name="Entidades"], etc.)
+            var entidadActiva = '';
+            var $e = $('#IdEntidad, select[name="IdEntidad"], select[name="Entidades"]').first();
+            if ($e.length && $e.val()) {
+                entidadActiva = $e.val().trim();
             }
 
             // Petición AJAX al controlador ChatbotController
@@ -163,7 +170,8 @@
                 data: {
                     mensaje: texto,
                     historial: historial.slice(-6).join('\n'),
-                    periodoContexto: periodoActivo
+                    periodoContexto: periodoActivo,
+                    entidadContexto: entidadActiva
                 },
                 dataType: 'json',
                 success: function (res) {

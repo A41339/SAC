@@ -1,7 +1,9 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using FGA.Services.Chatbot;
+using FGA_En_Linea.EntidadService;
 
 namespace FGA.Controllers
 {
@@ -20,7 +22,7 @@ namespace FGA.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> Preguntar(string mensaje, string historial, string periodoContexto = null)
+        public async Task<JsonResult> Preguntar(string mensaje, string historial, string periodoContexto = null, string entidadContexto = null)
         {
             try
             {
@@ -44,14 +46,73 @@ namespace FGA.Controllers
                     });
                 }
 
-                // 3. Extracción de contexto de sesión seguro
-                string entidadId = Env.GetUserInfo("identidad");
-                if (string.IsNullOrEmpty(entidadId) && Session["IdEntidad"] != null)
+                // 3. Extracción de contexto de entidad seguro (Aislamiento de Cooperativa / Admin FFC)
+                string entidadId = null;
+
+                if (!string.IsNullOrWhiteSpace(entidadContexto) && entidadContexto != "0" && entidadContexto != "-1")
                 {
-                    entidadId = Session["IdEntidad"].ToString();
+                    entidadId = entidadContexto.Trim();
                 }
 
-                string entidadNombre = Env.GetUserInfo("entidad");
+                if (string.IsNullOrWhiteSpace(entidadId) && Session["IdEntidad"] != null)
+                {
+                    string sId = Session["IdEntidad"].ToString().Trim();
+                    if (!string.IsNullOrWhiteSpace(sId) && sId != "0" && sId != "-1")
+                    {
+                        entidadId = sId;
+                    }
+                }
+
+                if (string.IsNullOrWhiteSpace(entidadId))
+                {
+                    string uEnt = Env.GetUserInfo("identidad");
+                    if (!string.IsNullOrWhiteSpace(uEnt) && uEnt != "0" && uEnt != "-1")
+                    {
+                        entidadId = uEnt.Trim();
+                    }
+                }
+
+                // Si es un usuario Administrador FFC o no hay cooperativa fija en sesión, obtener la primera entidad activa válida
+                if (string.IsNullOrWhiteSpace(entidadId) || entidadId == "0" || entidadId == "-1")
+                {
+                    try
+                    {
+                        var listaEnt = Utility.WcfHelper.Execute<EntidadServiceClient, FGA.Models.Entidad[]>(
+                            c => c.GetAll()
+                        );
+                        var primera = listaEnt?.FirstOrDefault(e => e.Id != "0" && e.Id != "-1" && e.Activo == true);
+                        entidadId = primera != null ? primera.Id : "2";
+                    }
+                    catch
+                    {
+                        entidadId = "2";
+                    }
+                }
+
+                Session["IdEntidad"] = entidadId;
+
+                // Nombre de la Entidad
+                string entidadNombre = Session["NomEntidad"]?.ToString();
+                if (string.IsNullOrWhiteSpace(entidadNombre) || entidadNombre.Equals("FGA", StringComparison.OrdinalIgnoreCase) || entidadNombre.Equals("FFC", StringComparison.OrdinalIgnoreCase))
+                {
+                    try
+                    {
+                        var entObj = Utility.WcfHelper.Execute<EntidadServiceClient, FGA.Models.Entidad>(
+                            c => c.Get(entidadId)
+                        );
+                        if (entObj != null && !string.IsNullOrWhiteSpace(entObj.Nombre))
+                        {
+                            entidadNombre = entObj.Nombre;
+                            Session["NomEntidad"] = entidadNombre;
+                        }
+                    }
+                    catch { }
+                }
+                if (string.IsNullOrWhiteSpace(entidadNombre))
+                {
+                    entidadNombre = Env.GetUserInfo("entidad") ?? "Entidad Cooperativa";
+                }
+
                 string usuario = Env.GetUserInfo("name");
 
                 // Periodo prioritario: enviado explícitamente desde la UI de la pantalla activa
@@ -65,28 +126,44 @@ namespace FGA.Controllers
                            ?? "";
                 }
 
-                // Si aún no hay periodo o si la entidad está identificada, consultar su fecha de cierre oficial vía DBService
-                if (!string.IsNullOrEmpty(entidadId))
+                // Consultar fecha de cierre oficial de la entidad vía DBService para anclar a datos contables existentes
+                DateTime maxFechaDatos = DateTime.MinValue;
+                try
                 {
-                    try
+                    var fc = Utility.WcfHelper.Execute<FGA_En_Linea.SPService.SPClient, DateTime>(
+                        c => c.FGA_Consultar_FechaCierre(entidadId)
+                    );
+                    if (fc > new DateTime(2000, 1, 1))
                     {
-                        var fc = Utility.WcfHelper.Execute<FGA_En_Linea.SPService.SPClient, DateTime>(
-                            c => c.FGA_Consultar_FechaCierre(entidadId)
-                        );
-                        if (fc > new DateTime(2000, 1, 1))
+                        // FGA_Consultar_FechaCierre retorna DATEADD(MONTH, 1, MAX(PERIODO)), por lo que el último mes cerrado con datos es fc.AddMonths(-1)
+                        DateTime mesCorte = fc.AddMonths(-1);
+                        int uDia = DateTime.DaysInMonth(mesCorte.Year, mesCorte.Month);
+                        maxFechaDatos = new DateTime(mesCorte.Year, mesCorte.Month, uDia);
+                    }
+                }
+                catch { }
+
+                // Si no hay periodo, o si el periodo recibido excede la fecha máxima con datos, o es del año actual desfasado (>= 2025)
+                if (maxFechaDatos > DateTime.MinValue)
+                {
+                    if (string.IsNullOrEmpty(periodo))
+                    {
+                        periodo = maxFechaDatos.ToString("dd/MM/yyyy");
+                    }
+                    else if (DateTime.TryParse(periodo, out DateTime dtP))
+                    {
+                        if (dtP > maxFechaDatos || (dtP.Year >= 2025 && maxFechaDatos.Year < 2025))
                         {
-                            // Si el periodo actual de sesión no existe o es mayor que el último cierre real con datos, anclar al cierre real
-                            if (string.IsNullOrEmpty(periodo))
-                            {
-                                periodo = fc.ToShortDateString();
-                            }
-                            else if (DateTime.TryParse(periodo, out DateTime dtP) && dtP > fc)
-                            {
-                                periodo = fc.ToShortDateString();
-                            }
+                            periodo = maxFechaDatos.ToString("dd/MM/yyyy");
                         }
                     }
-                    catch { }
+                }
+                else
+                {
+                    if (string.IsNullOrEmpty(periodo) || (DateTime.TryParse(periodo, out DateTime dtFallback) && dtFallback.Year >= 2025))
+                    {
+                        periodo = "31/12/2024";
+                    }
                 }
 
                 // 4. Construcción del Prompt de Sistema con contexto dinámico de fecha e indicadores

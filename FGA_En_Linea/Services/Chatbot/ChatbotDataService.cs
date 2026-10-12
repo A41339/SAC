@@ -164,7 +164,7 @@ namespace FGA.Services.Chatbot
             DateTime? fechaCierreReal = null;
 
             // 1. Consultar fecha de cierre contable oficial de la entidad vía DBService
-            if (!string.IsNullOrWhiteSpace(idEntidad))
+            if (!string.IsNullOrWhiteSpace(idEntidad) && idEntidad != "0" && idEntidad != "-1")
             {
                 try
                 {
@@ -173,7 +173,11 @@ namespace FGA.Services.Chatbot
                     );
                     if (fc > new DateTime(2000, 1, 1))
                     {
-                        fechaCierreReal = fc;
+                        // FGA_Consultar_FechaCierre retorna DATEADD(MONTH, 1, MAX(PERIODO))
+                        // Por lo tanto, el último corte contable cerrado con datos reales es fc.AddMonths(-1)
+                        DateTime mesCorte = fc.AddMonths(-1);
+                        int uDia = DateTime.DaysInMonth(mesCorte.Year, mesCorte.Month);
+                        fechaCierreReal = new DateTime(mesCorte.Year, mesCorte.Month, uDia);
                     }
                 }
                 catch { }
@@ -197,16 +201,20 @@ namespace FGA.Services.Chatbot
                 }
             }
 
-            // 3. Si no hay periodo válido, tomar el cierre real o fecha actual
+            // 3. Si no hay periodo válido, tomar el cierre real o corte seguro con datos históricos
             if (refDate == DateTime.MinValue)
             {
-                refDate = fechaCierreReal.HasValue ? fechaCierreReal.Value : DateTime.Today;
+                refDate = fechaCierreReal.HasValue ? fechaCierreReal.Value : new DateTime(2024, 12, 31);
             }
 
-            // 4. Protección contra fechas futuras o desfasadas (si la fecha es mayor que el cierre real con datos)
-            if (fechaCierreReal.HasValue && refDate > fechaCierreReal.Value)
+            // 4. Protección contra fechas futuras o desfasadas (si la fecha supera el cierre real con datos o es del reloj local >= 2025)
+            if (fechaCierreReal.HasValue && (refDate > fechaCierreReal.Value || (refDate.Year >= 2025 && fechaCierreReal.Value.Year < 2025)))
             {
                 refDate = fechaCierreReal.Value;
+            }
+            else if (!fechaCierreReal.HasValue && refDate.Year >= 2025)
+            {
+                refDate = new DateTime(2024, 12, 31);
             }
 
             // Ajustar al último día del mes
@@ -246,12 +254,19 @@ namespace FGA.Services.Chatbot
                             c => c.FGA_Consultar_Dashboard(idEntidad, compMesAnt, corte)
                         );
 
+                        // Suficiencia Patrimonial con soporte multi-fuente (FGA_Consultar_Dashboard / FGA_Consultar_Grafico_Suficiencia / CAMEL)
+                        AgregarSuficienciaConFallback(sb, dashMes, idEntidad, compMesAnt, corte);
+
                         if (dashMes != null && dashMes.Length > 0)
                         {
-                            // 3 KPIs Principales
-                            AgregarIndicadorDashboard(sb, dashMes, 8001, "Suficiencia Patrimonial", true);
+                            // Eficiencia y Mora
                             AgregarIndicadorDashboard(sb, dashMes, 8118, "Eficiencia Operativa (Costo Administrativo)", true);
                             AgregarIndicadorDashboard(sb, dashMes, 8022, "Morosidad mayor a 90 días", true);
+
+                            // Indicadores SUGEF 3-06 (Perfil 2 / Cooperativas no prudenciales)
+                            AgregarIndicadorDashboard(sb, dashMes, 9100, "Apalancamiento (SUGEF 3-06)", true);
+                            AgregarIndicadorDashboard(sb, dashMes, 8991, "Capital Nivel 1 - CN1", true);
+                            AgregarIndicadorDashboard(sb, dashMes, 8992, "Capital Común Nivel 1 - CCN1", true);
 
                             // 3 Cuentas Principales (en Millones)
                             AgregarIndicadorDashboard(sb, dashMes, 8400, "Resultado del período acumulado", false);
@@ -290,13 +305,21 @@ namespace FGA.Services.Chatbot
                     c => c.FGA_Consultar_Dashboard(idEntidad, rango.FechaComparar, rango.FechaCorte)
                 );
 
+                sb.AppendLine("--- [1. INDICADORES DEL TABLERO PRINCIPAL] ---");
+
+                // Suficiencia Patrimonial con respaldo multi-fuente
+                AgregarSuficienciaConFallback(sb, dashResults, idEntidad, rango.FechaComparar, rango.FechaCorte);
+
                 if (dashResults != null && dashResults.Length > 0)
                 {
-                    sb.AppendLine("--- [1. INDICADORES DEL TABLERO PRINCIPAL] ---");
-                    // 3 KPIs Principales
-                    AgregarIndicadorDashboard(sb, dashResults, 8001, "Suficiencia Patrimonial", true);
+                    // Eficiencia y Mora
                     AgregarIndicadorDashboard(sb, dashResults, 8118, "Eficiencia Operativa (Costo Administrativo)", true);
                     AgregarIndicadorDashboard(sb, dashResults, 8022, "Morosidad mayor a 90 días", true);
+
+                    // Indicadores SUGEF 3-06
+                    AgregarIndicadorDashboard(sb, dashResults, 9100, "Apalancamiento (SUGEF 3-06)", true);
+                    AgregarIndicadorDashboard(sb, dashResults, 8991, "Capital Nivel 1 - CN1", true);
+                    AgregarIndicadorDashboard(sb, dashResults, 8992, "Capital Común Nivel 1 - CCN1", true);
 
                     // 3 Cuentas Principales (en Millones)
                     AgregarIndicadorDashboard(sb, dashResults, 8400, "Resultado del período acumulado", false);
@@ -393,6 +416,101 @@ namespace FGA.Services.Chatbot
             }
 
             return sb.ToString();
+        }
+
+        private static void AgregarSuficienciaConFallback(StringBuilder sb, FGA_Consultar_Dashboard_Result[] results, string idEntidad, DateTime compMesAnt, DateTime corte)
+        {
+            decimal valActual = 0;
+            decimal valComp = 0;
+            bool encontradoEnDashboard = false;
+
+            if (results != null)
+            {
+                var matches = results.Where(r => r.ID == 8001).ToList();
+                if (matches.Count > 1)
+                {
+                    var ordenados = matches.Where(r => r.PERIODO.HasValue).OrderBy(r => r.PERIODO).ToList();
+                    valComp = ordenados.Count > 0 ? (ordenados.First().MONTO ?? 0) : (matches.First().MONTO ?? 0);
+                    valActual = ordenados.Count > 0 ? (ordenados.Last().MONTO ?? 0) : (matches.Last().MONTO ?? 0);
+                    if (valActual > 0) encontradoEnDashboard = true;
+                }
+                else if (matches.Count == 1)
+                {
+                    valActual = matches[0].MONTO ?? 0;
+                    valComp = matches[0].CALIFICACION ?? valActual;
+                    if (valActual > 0) encontradoEnDashboard = true;
+                }
+            }
+
+            // Si FGA_Consultar_Dashboard arrojó 0 o no lo encontró, consultar vía FGA_Consultar_Grafico_Suficiencia
+            if (!encontradoEnDashboard && !string.IsNullOrWhiteSpace(idEntidad))
+            {
+                try
+                {
+                    var takSuf = WcfHelper.Execute<FGA_En_Linea.SPService.SPClient, FGA_Consultar_Grafico_Suficiencia_Result[]>(
+                        c => c.FGA_Consultar_Grafico_Suficiencia(idEntidad, compMesAnt, corte)
+                    );
+                    if (takSuf != null && takSuf.Length > 0)
+                    {
+                        var matchActual = takSuf.FirstOrDefault(s => s.Nombre != null && s.Nombre.Trim().Equals("Suficiencia", StringComparison.OrdinalIgnoreCase) && s.Monto.HasValue && s.Monto.Value > 0);
+                        if (matchActual != null)
+                        {
+                            valActual = matchActual.Monto.Value;
+                            valComp = valActual;
+                            encontradoEnDashboard = true;
+                        }
+                    }
+                }
+                catch { }
+            }
+
+            // Si aún da 0, consultar FGA_Consultar_CAMEL (ID 1 o nombre Suficiencia)
+            if (!encontradoEnDashboard && !string.IsNullOrWhiteSpace(idEntidad))
+            {
+                try
+                {
+                    var camel = WcfHelper.Execute<FGA_En_Linea.SPService.SPClient, FGA_Consultar_CAMEL_Result[]>(
+                        c => c.FGA_Consultar_CAMEL(idEntidad, compMesAnt, corte, DateTime.Now, "S")
+                    );
+                    if (camel != null && camel.Length > 0)
+                    {
+                        var matchCamel = camel.FirstOrDefault(cm => (cm.IDRPT_CAMEL == 1 || (cm.NOMBRE != null && cm.NOMBRE.IndexOf("SUFICIENCIA", StringComparison.OrdinalIgnoreCase) >= 0)) && cm.MONTO_2 > 0);
+                        if (matchCamel != null)
+                        {
+                            valActual = matchCamel.MONTO_2;
+                            valComp = matchCamel.MONTO_1 > 0 ? matchCamel.MONTO_1 : valActual;
+                            encontradoEnDashboard = true;
+                        }
+                    }
+                }
+                catch { }
+            }
+
+            // Si aún da 0, consultar FGA_Consultar_Indicadores_Formulas
+            if (!encontradoEnDashboard && !string.IsNullOrWhiteSpace(idEntidad))
+            {
+                try
+                {
+                    var formulas = WcfHelper.Execute<FGA_En_Linea.SPService.SPClient, FGA_Consultar_Indicadores_Formulas_Result[]>(
+                        c => c.FGA_Consultar_Indicadores_Formulas(idEntidad, corte, compMesAnt)
+                    );
+                    if (formulas != null && formulas.Length > 0)
+                    {
+                        var matchForm = formulas.FirstOrDefault(f => f.NOMBRE != null && f.NOMBRE.IndexOf("SUFICIENCIA", StringComparison.OrdinalIgnoreCase) >= 0 && f.RESULTADO.HasValue && f.RESULTADO.Value > 0);
+                        if (matchForm != null)
+                        {
+                            valActual = matchForm.RESULTADO.Value;
+                            valComp = matchForm.RESULTADO_COMPARAR ?? valActual;
+                            encontradoEnDashboard = true;
+                        }
+                    }
+                }
+                catch { }
+            }
+
+            string sActual = string.Format("{0:N2}%", valActual);
+            string sComp = string.Format("{0:N2}%", valComp);
+            sb.AppendLine(string.Format("  • Suficiencia Patrimonial: {0} (Comparativo mes ant: {1})", sActual, sComp));
         }
 
         private static void AgregarIndicadorDashboard(StringBuilder sb, FGA_Consultar_Dashboard_Result[] results, int id, string nombre, bool esPorcentaje)
