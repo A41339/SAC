@@ -178,7 +178,8 @@ namespace FGA.Services.Chatbot
                 if (p.Contains("roe")) matchingLines.AddRange(lines.Where(l => l.IndexOf("ROE", StringComparison.OrdinalIgnoreCase) >= 0));
                 if (p.Contains("cartera")) matchingLines.AddRange(lines.Where(l => l.IndexOf("Cartera", StringComparison.OrdinalIgnoreCase) >= 0));
                 if (p.Contains("activo")) matchingLines.AddRange(lines.Where(l => l.IndexOf("Activo", StringComparison.OrdinalIgnoreCase) >= 0));
-                if (p.Contains("depósito") || p.Contains("deposito") || p.Contains("captaci")) matchingLines.AddRange(lines.Where(l => l.IndexOf("Depósitos", StringComparison.OrdinalIgnoreCase) >= 0));
+                if (p.Contains("obligacion") || p.Contains("público") || p.Contains("publico") || p.Contains("depósito") || p.Contains("deposito") || p.Contains("captaci")) matchingLines.AddRange(lines.Where(l => l.IndexOf("Obligaciones", StringComparison.OrdinalIgnoreCase) >= 0));
+                if (p.Contains("resultado") && !p.Contains("excedente")) matchingLines.AddRange(lines.Where(l => l.IndexOf("Resultado", StringComparison.OrdinalIgnoreCase) >= 0));
                 if (p.Contains("mora") || p.Contains("vencid")) matchingLines.AddRange(lines.Where(l => l.IndexOf("Mora", StringComparison.OrdinalIgnoreCase) >= 0 || l.IndexOf("Vencida", StringComparison.OrdinalIgnoreCase) >= 0));
                 if (p.Contains("margen")) matchingLines.AddRange(lines.Where(l => l.IndexOf("Margen", StringComparison.OrdinalIgnoreCase) >= 0));
                 if (p.Contains("capital")) matchingLines.AddRange(lines.Where(l => l.IndexOf("Capital Social", StringComparison.OrdinalIgnoreCase) >= 0));

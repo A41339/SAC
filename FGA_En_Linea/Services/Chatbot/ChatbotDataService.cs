@@ -159,6 +159,27 @@ namespace FGA.Services.Chatbot
             return 0;
         }
 
+        public static DateTime ParsearFechaPeriodoSegura(string texto)
+        {
+            if (string.IsNullOrWhiteSpace(texto)) return DateTime.MinValue;
+            string limpia = texto.Trim();
+
+            if (DateTime.TryParseExact(limpia, new[] { "MM/yyyy", "M/yyyy", "MM-yyyy", "M-yyyy", "dd/MM/yyyy", "d/M/yyyy", "yyyy-MM-dd", "yyyy/MM/dd", "yyyyMM" },
+                CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dtExact))
+            {
+                int uDia = DateTime.DaysInMonth(dtExact.Year, dtExact.Month);
+                return new DateTime(dtExact.Year, dtExact.Month, uDia);
+            }
+
+            if (DateTime.TryParse(limpia, CultureInfo.CurrentCulture, DateTimeStyles.None, out DateTime dtParsed))
+            {
+                int uDia = DateTime.DaysInMonth(dtParsed.Year, dtParsed.Month);
+                return new DateTime(dtParsed.Year, dtParsed.Month, uDia);
+            }
+
+            return DateTime.MinValue;
+        }
+
         private static DateTime ResolverFechaReferencia(string periodoSesionDefecto, string idEntidad = null)
         {
             DateTime? fechaCierreReal = null;
@@ -183,38 +204,25 @@ namespace FGA.Services.Chatbot
                 catch { }
             }
 
-            DateTime refDate = DateTime.MinValue;
-
-            // 2. Parsear el periodo recibido (de sesión o selector)
-            if (!string.IsNullOrWhiteSpace(periodoSesionDefecto))
+            // Si fechaCierreReal resulta en año >= 2025 (desfase en base de datos), limitar a 2024
+            if (fechaCierreReal.HasValue && fechaCierreReal.Value.Year >= 2025)
             {
-                string limpia = periodoSesionDefecto.Trim();
-
-                if (DateTime.TryParse(limpia, CultureInfo.CurrentCulture, DateTimeStyles.None, out DateTime dtParsed))
-                {
-                    refDate = dtParsed;
-                }
-                else if (DateTime.TryParseExact(limpia, new[] { "MM/yyyy", "M/yyyy", "dd/MM/yyyy", "d/M/yyyy", "yyyy-MM-dd" },
-                         CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dtExact))
-                {
-                    refDate = dtExact;
-                }
+                fechaCierreReal = new DateTime(2024, 12, 31);
             }
 
-            // 3. Si no hay periodo válido, tomar el cierre real o corte seguro con datos históricos
-            if (refDate == DateTime.MinValue)
+            // 2. Parsear el periodo recibido (de sesión o selector)
+            DateTime refDate = ParsearFechaPeriodoSegura(periodoSesionDefecto);
+
+            // 3. Si no hay periodo válido o es del reloj local desfasado (>= 2025 sin datos en BD)
+            if (refDate == DateTime.MinValue || refDate.Year >= 2025)
             {
                 refDate = fechaCierreReal.HasValue ? fechaCierreReal.Value : new DateTime(2024, 12, 31);
             }
 
-            // 4. Protección contra fechas futuras o desfasadas (si la fecha supera el cierre real con datos o es del reloj local >= 2025)
-            if (fechaCierreReal.HasValue && (refDate > fechaCierreReal.Value || (refDate.Year >= 2025 && fechaCierreReal.Value.Year < 2025)))
+            // 4. Si la fecha supera el cierre real con datos de la entidad, anclar al cierre real
+            if (fechaCierreReal.HasValue && refDate > fechaCierreReal.Value)
             {
                 refDate = fechaCierreReal.Value;
-            }
-            else if (!fechaCierreReal.HasValue && refDate.Year >= 2025)
-            {
-                refDate = new DateTime(2024, 12, 31);
             }
 
             // Ajustar al último día del mes
@@ -269,9 +277,9 @@ namespace FGA.Services.Chatbot
                             AgregarIndicadorDashboard(sb, dashMes, 8992, "Capital Común Nivel 1 - CCN1", true);
 
                             // 3 Cuentas Principales (en Millones)
-                            AgregarIndicadorDashboard(sb, dashMes, 8400, "Resultado del período acumulado", false);
-                            AgregarIndicadorDashboard(sb, dashMes, 8130, "Cartera de crédito", false);
-                            AgregarIndicadorDashboard(sb, dashMes, 8210, "Obligaciones con el público", false);
+                            AgregarCuentaBalanceConFallback(sb, dashMes, 8400, "Resultado del período acumulado", idEntidad, compMesAnt, corte);
+                            AgregarCuentaBalanceConFallback(sb, dashMes, 8130, "Cartera de crédito", idEntidad, compMesAnt, corte);
+                            AgregarCuentaBalanceConFallback(sb, dashMes, 8210, "Obligaciones con el público", idEntidad, compMesAnt, corte);
 
                             // Indicadores Complementarios del Tablero
                             AgregarIndicadorDashboard(sb, dashMes, 8045, "Margen financiero / Activos", true);
@@ -322,9 +330,9 @@ namespace FGA.Services.Chatbot
                     AgregarIndicadorDashboard(sb, dashResults, 8992, "Capital Común Nivel 1 - CCN1", true);
 
                     // 3 Cuentas Principales (en Millones)
-                    AgregarIndicadorDashboard(sb, dashResults, 8400, "Resultado del período acumulado", false);
-                    AgregarIndicadorDashboard(sb, dashResults, 8130, "Cartera de crédito", false);
-                    AgregarIndicadorDashboard(sb, dashResults, 8210, "Obligaciones con el público", false);
+                    AgregarCuentaBalanceConFallback(sb, dashResults, 8400, "Resultado del período acumulado", idEntidad, rango.FechaComparar, rango.FechaCorte);
+                    AgregarCuentaBalanceConFallback(sb, dashResults, 8130, "Cartera de crédito", idEntidad, rango.FechaComparar, rango.FechaCorte);
+                    AgregarCuentaBalanceConFallback(sb, dashResults, 8210, "Obligaciones con el público", idEntidad, rango.FechaComparar, rango.FechaCorte);
 
                     // Indicadores Complementarios del Tablero
                     AgregarIndicadorDashboard(sb, dashResults, 8045, "Margen financiero / Activos", true);
@@ -416,6 +424,101 @@ namespace FGA.Services.Chatbot
             }
 
             return sb.ToString();
+        }
+
+        /// <summary>
+        /// Intenta obtener el saldo de una cuenta de balance (Cartera, Obligaciones, Resultado)
+        /// desde FGA_Consultar_Dashboard (ID interno). Si el valor es 0, hace fallback a
+        /// FGA_Consultar_Balance_Comprobacion consultando directamente la cuenta contable.
+        /// </summary>
+        private static void AgregarCuentaBalanceConFallback(
+            StringBuilder sb,
+            FGA_Consultar_Dashboard_Result[] results,
+            int dashboardId,
+            string nombre,
+            string idEntidad,
+            DateTime compMesAnt,
+            DateTime corte)
+        {
+            decimal valActual = 0;
+            bool encontrado = false;
+
+            // 1. Intentar desde FGA_Consultar_Dashboard
+            if (results != null && results.Length > 0)
+            {
+                var matches = results.Where(r => r.ID == dashboardId).ToList();
+                if (matches.Count > 1)
+                {
+                    var ordenados = matches.Where(r => r.PERIODO.HasValue).OrderBy(r => r.PERIODO).ToList();
+                    valActual = ordenados.Count > 0 ? (ordenados.Last().MONTO ?? 0) : (matches.Last().MONTO ?? 0);
+                }
+                else if (matches.Count == 1)
+                {
+                    valActual = matches[0].MONTO ?? 0;
+                }
+                if (valActual != 0) encontrado = true;
+            }
+
+            // 2. Fallback: FGA_Consultar_Balance_Comprobacion si el dashboard devolvio 0
+            if (!encontrado && !string.IsNullOrWhiteSpace(idEntidad))
+            {
+                // Mapeo dashboardId a cuenta contable (prefijo SUGEF)
+                string cuentaContable = null;
+                if (dashboardId == 8130) cuentaContable = "13000000"; // Cartera de credito
+                else if (dashboardId == 8210) cuentaContable = "21000000"; // Obligaciones con el publico
+                else if (dashboardId == 8400) cuentaContable = "50000000"; // Resultado del periodo
+
+                if (!string.IsNullOrWhiteSpace(cuentaContable))
+                {
+                    try
+                    {
+                        var balRes = WcfHelper.Execute<FGA_En_Linea.SPService.SPClient, FGA_Consultar_Balance_Comprobacion_Result[]>(
+                            c => c.FGA_Consultar_Balance_Comprobacion(idEntidad, corte)
+                        );
+                        if (balRes != null && balRes.Length > 0)
+                        {
+                            string prefijo = cuentaContable.TrimEnd('0');
+                            decimal suma = balRes
+                                .Where(r => r.Cuenta != null && r.Cuenta.Trim().StartsWith(prefijo))
+                                .Sum(r => r.SaldoFinal);
+                            if (suma != 0)
+                            {
+                                valActual = Math.Abs(suma) / 1000000m; // en millones como el Dashboard
+                                encontrado = true;
+                            }
+                        }
+                    }
+                    catch { }
+                }
+            }
+
+            // 3. Fallback secundario: FGA_Consultar_CAMEL buscando por nombre similar
+            if (!encontrado && !string.IsNullOrWhiteSpace(idEntidad))
+            {
+                try
+                {
+                    var camel = WcfHelper.Execute<FGA_En_Linea.SPService.SPClient, FGA_Consultar_CAMEL_Result[]>(
+                        c => c.FGA_Consultar_CAMEL(idEntidad, compMesAnt, corte, DateTime.Now, "S")
+                    );
+                    if (camel != null && camel.Length > 0)
+                    {
+                        string kw = nombre.Split(' ')[0];
+                        var match = camel.FirstOrDefault(cm =>
+                            cm.NOMBRE != null &&
+                            cm.NOMBRE.IndexOf(kw, StringComparison.OrdinalIgnoreCase) >= 0 &&
+                            cm.MONTO_2 != 0);
+                        if (match != null)
+                        {
+                            valActual = Math.Abs(match.MONTO_2) / 1000000m;
+                            encontrado = true;
+                        }
+                    }
+                }
+                catch { }
+            }
+
+            string sActual = string.Format("₡{0:N2} M", valActual);
+            sb.AppendLine(string.Format("  • {0}: {1}", nombre, sActual));
         }
 
         private static void AgregarSuficienciaConFallback(StringBuilder sb, FGA_Consultar_Dashboard_Result[] results, string idEntidad, DateTime compMesAnt, DateTime corte)
