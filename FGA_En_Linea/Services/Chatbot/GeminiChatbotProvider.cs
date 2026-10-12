@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Configuration;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
 
 namespace FGA.Services.Chatbot
@@ -156,7 +157,8 @@ namespace FGA.Services.Chatbot
                         }
                         else if (!string.IsNullOrEmpty(corteActual) && line.IndexOf(palabraClave, StringComparison.OrdinalIgnoreCase) >= 0)
                         {
-                            sb.AppendLine(string.Format("• **{0}**: {1}", corteActual, line.Trim().TrimStart('•', ' ')));
+                            string limpia = Regex.Replace(line.Trim().TrimStart('•', ' '), @"\s*\(Comparativo[^\)]*\)", "", RegexOptions.IgnoreCase);
+                            sb.AppendLine(string.Format("• **{0}**: {1}", corteActual, limpia));
                         }
                     }
                     sb.AppendLine();
@@ -193,7 +195,8 @@ namespace FGA.Services.Chatbot
                     sb.AppendLine();
                     foreach (var m in distinctMatches)
                     {
-                        sb.AppendLine(m.Trim());
+                        string limpia = Regex.Replace(m.Trim(), @"\s*\(Comparativo[^\)]*\)", "", RegexOptions.IgnoreCase);
+                        sb.AppendLine(limpia);
                     }
                     sb.AppendLine();
                     sb.AppendLine("¿Deseas profundizar en algún otro indicador o comparar contra otra fecha?");

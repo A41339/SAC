@@ -45,6 +45,7 @@ namespace FGA.Services.Chatbot
             sb.AppendLine("3. Si el usuario pide comparar periodos, calcula la variación y explícala con criterio financiero.");
             sb.AppendLine("4. Si te preguntan por otra cooperativa, responde que por confidencialidad no tienes acceso a entidades ajenas.");
             sb.AppendLine("5. Formatea tus respuestas usando Markdown limpio (negritas, viñetas, tablas cortas si aplica).");
+            sb.AppendLine("6. Presenta directamente la cifra o porcentaje para cada periodo consultado, sin agregar textos adicionales como '(Comparativo mes ant)' a menos que el usuario lo solicite expresamente.");
 
             return sb.ToString();
         }

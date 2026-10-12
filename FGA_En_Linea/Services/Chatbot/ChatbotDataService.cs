@@ -509,8 +509,7 @@ namespace FGA.Services.Chatbot
             }
 
             string sActual = string.Format("{0:N2}%", valActual);
-            string sComp = string.Format("{0:N2}%", valComp);
-            sb.AppendLine(string.Format("  • Suficiencia Patrimonial: {0} (Comparativo mes ant: {1})", sActual, sComp));
+            sb.AppendLine(string.Format("  • Suficiencia Patrimonial: {0}", sActual));
         }
 
         private static void AgregarIndicadorDashboard(StringBuilder sb, FGA_Consultar_Dashboard_Result[] results, int id, string nombre, bool esPorcentaje)
@@ -519,24 +518,19 @@ namespace FGA.Services.Chatbot
             if (matches.Count == 0) return;
 
             decimal valActual = 0;
-            decimal valComp = 0;
 
             if (matches.Count > 1)
             {
                 var ordenados = matches.Where(r => r.PERIODO.HasValue).OrderBy(r => r.PERIODO).ToList();
-                valComp = ordenados.Count > 0 ? (ordenados.First().MONTO ?? 0) : (matches.First().MONTO ?? 0);
                 valActual = ordenados.Count > 0 ? (ordenados.Last().MONTO ?? 0) : (matches.Last().MONTO ?? 0);
             }
             else
             {
                 valActual = matches[0].MONTO ?? 0;
-                valComp = matches[0].CALIFICACION ?? valActual;
             }
 
             string sActual = esPorcentaje ? string.Format("{0:N2}%", valActual) : string.Format("₡{0:N2}", valActual);
-            string sComp = esPorcentaje ? string.Format("{0:N2}%", valComp) : string.Format("₡{0:N2}", valComp);
-
-            sb.AppendLine(string.Format("  • {0}: {1} (Comparativo mes ant: {2})", nombre, sActual, sComp));
+            sb.AppendLine(string.Format("  • {0}: {1}", nombre, sActual));
         }
 
         private static string FormatearNumero(decimal? num, bool esPct)
