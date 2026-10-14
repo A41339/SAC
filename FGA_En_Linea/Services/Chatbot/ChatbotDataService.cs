@@ -61,8 +61,7 @@ namespace FGA.Services.Chatbot
                     for (int i = mesesRelativos - 1; i >= 0; i--)
                     {
                         DateTime mesDt = fechaReferencia.AddMonths(-i);
-                        int ultimoDia = DateTime.DaysInMonth(mesDt.Year, mesDt.Month);
-                        resultado.CortesHistoricos.Add(new DateTime(mesDt.Year, mesDt.Month, ultimoDia));
+                        resultado.CortesHistoricos.Add(new DateTime(mesDt.Year, mesDt.Month, 1));
                     }
 
                     resultado.FechaCorte = fechaReferencia;
@@ -84,8 +83,7 @@ namespace FGA.Services.Chatbot
                     string mesStr = m.Groups[1].Value.ToLower();
                     if (MesesMap.TryGetValue(mesStr, out int mes) && int.TryParse(m.Groups[2].Value, out int ano))
                     {
-                        int ultimoDia = DateTime.DaysInMonth(ano, mes);
-                        var dt = new DateTime(ano, mes, ultimoDia);
+                        var dt = new DateTime(ano, mes, 1);
                         if (!fechasEncontradas.Contains(dt))
                         {
                             fechasEncontradas.Add(dt);
@@ -100,8 +98,7 @@ namespace FGA.Services.Chatbot
                 {
                     if (int.TryParse(m.Groups[1].Value, out int mes) && int.TryParse(m.Groups[2].Value, out int ano))
                     {
-                        int ultimoDia = DateTime.DaysInMonth(ano, mes);
-                        var dt = new DateTime(ano, mes, ultimoDia);
+                        var dt = new DateTime(ano, mes, 1);
                         if (!fechasEncontradas.Contains(dt))
                         {
                             fechasEncontradas.Add(dt);
@@ -121,16 +118,16 @@ namespace FGA.Services.Chatbot
                 else if (fechasEncontradas.Count == 1)
                 {
                     resultado.FechaCorte = fechasEncontradas[0];
-                    resultado.FechaComparar = resultado.FechaCorte.AddYears(-1);
+                    resultado.FechaComparar = new DateTime(resultado.FechaCorte.AddMonths(-1).Year, resultado.FechaCorte.AddMonths(-1).Month, 1);
                     resultado.EsFechaPersonalizada = true;
-                    resultado.DescripcionCorte = string.Format("{0:MM/yyyy} (corte interanual contra {1:MM/yyyy})", resultado.FechaCorte, resultado.FechaComparar);
+                    resultado.DescripcionCorte = string.Format("{0:MM/yyyy} (corte mensual contra {1:MM/yyyy})", resultado.FechaCorte, resultado.FechaComparar);
                     return resultado;
                 }
             }
 
             // 4. Fallback por defecto: Fecha de referencia activa
             resultado.FechaCorte = fechaReferencia;
-            resultado.FechaComparar = fechaReferencia.AddYears(-1);
+            resultado.FechaComparar = new DateTime(fechaReferencia.AddMonths(-1).Year, fechaReferencia.AddMonths(-1).Month, 1);
             resultado.EsFechaPersonalizada = false;
             resultado.DescripcionCorte = string.Format("{0:MM/yyyy} (periodo de referencia activo)", resultado.FechaCorte);
 
@@ -167,14 +164,12 @@ namespace FGA.Services.Chatbot
             if (DateTime.TryParseExact(limpia, new[] { "MM/yyyy", "M/yyyy", "MM-yyyy", "M-yyyy", "dd/MM/yyyy", "d/M/yyyy", "yyyy-MM-dd", "yyyy/MM/dd", "yyyyMM" },
                 CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dtExact))
             {
-                int uDia = DateTime.DaysInMonth(dtExact.Year, dtExact.Month);
-                return new DateTime(dtExact.Year, dtExact.Month, uDia);
+                return new DateTime(dtExact.Year, dtExact.Month, 1);
             }
 
             if (DateTime.TryParse(limpia, CultureInfo.CurrentCulture, DateTimeStyles.None, out DateTime dtParsed))
             {
-                int uDia = DateTime.DaysInMonth(dtParsed.Year, dtParsed.Month);
-                return new DateTime(dtParsed.Year, dtParsed.Month, uDia);
+                return new DateTime(dtParsed.Year, dtParsed.Month, 1);
             }
 
             return DateTime.MinValue;
@@ -197,26 +192,19 @@ namespace FGA.Services.Chatbot
                         // FGA_Consultar_FechaCierre retorna DATEADD(MONTH, 1, MAX(PERIODO))
                         // Por lo tanto, el último corte contable cerrado con datos reales es fc.AddMonths(-1)
                         DateTime mesCorte = fc.AddMonths(-1);
-                        int uDia = DateTime.DaysInMonth(mesCorte.Year, mesCorte.Month);
-                        fechaCierreReal = new DateTime(mesCorte.Year, mesCorte.Month, uDia);
+                        fechaCierreReal = new DateTime(mesCorte.Year, mesCorte.Month, 1);
                     }
                 }
                 catch { }
             }
 
-            // Si fechaCierreReal resulta en año >= 2025 (desfase en base de datos), limitar a 2024
-            if (fechaCierreReal.HasValue && fechaCierreReal.Value.Year >= 2025)
-            {
-                fechaCierreReal = new DateTime(2024, 12, 31);
-            }
-
             // 2. Parsear el periodo recibido (de sesión o selector)
             DateTime refDate = ParsearFechaPeriodoSegura(periodoSesionDefecto);
 
-            // 3. Si no hay periodo válido o es del reloj local desfasado (>= 2025 sin datos en BD)
-            if (refDate == DateTime.MinValue || refDate.Year >= 2025)
+            // 3. Si no hay periodo válido, tomar el cierre real o fecha activa
+            if (refDate == DateTime.MinValue)
             {
-                refDate = fechaCierreReal.HasValue ? fechaCierreReal.Value : new DateTime(2024, 12, 31);
+                refDate = fechaCierreReal.HasValue ? fechaCierreReal.Value : new DateTime(2026, 8, 1);
             }
 
             // 4. Si la fecha supera el cierre real con datos de la entidad, anclar al cierre real
@@ -225,9 +213,7 @@ namespace FGA.Services.Chatbot
                 refDate = fechaCierreReal.Value;
             }
 
-            // Ajustar al último día del mes
-            int ultimoDia = DateTime.DaysInMonth(refDate.Year, refDate.Month);
-            return new DateTime(refDate.Year, refDate.Month, ultimoDia);
+            return new DateTime(refDate.Year, refDate.Month, 1);
         }
 
         public static string ObtenerContextoIndicadores(string idEntidad, RangoFechasConsulta rango)
@@ -250,46 +236,45 @@ namespace FGA.Services.Chatbot
 
                 foreach (var corte in rango.CortesHistoricos)
                 {
-                    DateTime compMesAnt = corte.AddMonths(-1);
-                    int uDia = DateTime.DaysInMonth(compMesAnt.Year, compMesAnt.Month);
-                    compMesAnt = new DateTime(compMesAnt.Year, compMesAnt.Month, uDia);
+                    DateTime compMesAnt = new DateTime(corte.AddMonths(-1).Year, corte.AddMonths(-1).Month, 1);
+                    DateTime corteDia1 = new DateTime(corte.Year, corte.Month, 1);
 
-                    sb.AppendLine(string.Format("▶ CORTE: {0:MM/yyyy} ({0:dd/MM/yyyy}):", corte));
+                    sb.AppendLine(string.Format("▶ CORTE: {0:MM/yyyy}:", corteDia1));
 
                     try
                     {
                         var dashMes = WcfHelper.Execute<FGA_En_Linea.SPService.SPClient, FGA_Consultar_Dashboard_Result[]>(
-                            c => c.FGA_Consultar_Dashboard(idEntidad, compMesAnt, corte)
+                            c => c.FGA_Consultar_Dashboard(idEntidad, compMesAnt, corteDia1)
                         );
 
                         // Suficiencia Patrimonial con soporte multi-fuente (FGA_Consultar_Dashboard / FGA_Consultar_Grafico_Suficiencia / CAMEL)
-                        AgregarSuficienciaConFallback(sb, dashMes, idEntidad, compMesAnt, corte);
+                        AgregarSuficienciaConFallback(sb, dashMes, idEntidad, compMesAnt, corteDia1);
 
                         if (dashMes != null && dashMes.Length > 0)
                         {
                             // Eficiencia y Mora
-                            AgregarIndicadorDashboard(sb, dashMes, 8118, "Eficiencia Operativa (Costo Administrativo)", true);
-                            AgregarIndicadorDashboard(sb, dashMes, 8022, "Morosidad mayor a 90 días", true);
+                            AgregarIndicadorDashboard(sb, dashMes, 8118, "Eficiencia Operativa (Costo Administrativo)", true, corteDia1);
+                            AgregarIndicadorDashboard(sb, dashMes, 8022, "Morosidad mayor a 90 días", true, corteDia1);
 
                             // Indicadores SUGEF 3-06 (Perfil 2 / Cooperativas no prudenciales)
-                            AgregarIndicadorDashboard(sb, dashMes, 9100, "Apalancamiento (SUGEF 3-06)", true);
-                            AgregarIndicadorDashboard(sb, dashMes, 8991, "Capital Nivel 1 - CN1", true);
-                            AgregarIndicadorDashboard(sb, dashMes, 8992, "Capital Común Nivel 1 - CCN1", true);
+                            AgregarIndicadorDashboard(sb, dashMes, 9100, "Apalancamiento (SUGEF 3-06)", true, corteDia1);
+                            AgregarIndicadorDashboard(sb, dashMes, 8991, "Capital Nivel 1 - CN1", true, corteDia1);
+                            AgregarIndicadorDashboard(sb, dashMes, 8992, "Capital Común Nivel 1 - CCN1", true, corteDia1);
 
                             // 3 Cuentas Principales (en Millones)
-                            AgregarCuentaBalanceConFallback(sb, dashMes, 8400, "Resultado del período acumulado", idEntidad, compMesAnt, corte);
-                            AgregarCuentaBalanceConFallback(sb, dashMes, 8130, "Cartera de crédito", idEntidad, compMesAnt, corte);
-                            AgregarCuentaBalanceConFallback(sb, dashMes, 8210, "Obligaciones con el público", idEntidad, compMesAnt, corte);
+                            AgregarCuentaBalanceConFallback(sb, dashMes, 8400, "Resultado del período acumulado", idEntidad, compMesAnt, corteDia1);
+                            AgregarCuentaBalanceConFallback(sb, dashMes, 8130, "Cartera de crédito", idEntidad, compMesAnt, corteDia1);
+                            AgregarCuentaBalanceConFallback(sb, dashMes, 8210, "Obligaciones con el público", idEntidad, compMesAnt, corteDia1);
 
                             // Indicadores Complementarios del Tablero
-                            AgregarIndicadorDashboard(sb, dashMes, 8045, "Margen financiero / Activos", true);
-                            AgregarIndicadorDashboard(sb, dashMes, 8038, "Margen Financiero Promedio", true);
-                            AgregarIndicadorDashboard(sb, dashMes, 8112, "Rentabilidad nominal / Patrimonio promedio", true);
-                            AgregarIndicadorDashboard(sb, dashMes, 8127, "Utilidad o pérdida acumulada trimestral", true);
-                            AgregarIndicadorDashboard(sb, dashMes, 8030, "Pérdida Esperada Cartera", true);
-                            AgregarIndicadorDashboard(sb, dashMes, 8020, "Concentración de los 20 inversionistas", true);
-                            AgregarIndicadorDashboard(sb, dashMes, 8053, "Disponibilidades / Captaciones a la vista", true);
-                            AgregarIndicadorDashboard(sb, dashMes, 8060, "Activo Productivo / Pasivo con Costo", true);
+                            AgregarIndicadorDashboard(sb, dashMes, 8045, "Margen financiero / Activos", true, corteDia1);
+                            AgregarIndicadorDashboard(sb, dashMes, 8038, "Margen Financiero Promedio", true, corteDia1);
+                            AgregarIndicadorDashboard(sb, dashMes, 8112, "Rentabilidad nominal / Patrimonio promedio", true, corteDia1);
+                            AgregarIndicadorDashboard(sb, dashMes, 8127, "Utilidad o pérdida acumulada trimestral", true, corteDia1);
+                            AgregarIndicadorDashboard(sb, dashMes, 8030, "Pérdida Esperada Cartera", true, corteDia1);
+                            AgregarIndicadorDashboard(sb, dashMes, 8020, "Concentración de los 20 inversionistas", true, corteDia1);
+                            AgregarIndicadorDashboard(sb, dashMes, 8053, "Disponibilidades / Captaciones a la vista", true, corteDia1);
+                            AgregarIndicadorDashboard(sb, dashMes, 8060, "Activo Productivo / Pasivo con Costo", true, corteDia1);
                         }
                     }
                     catch (Exception ex)
@@ -303,46 +288,48 @@ namespace FGA.Services.Chatbot
             }
 
             // CASO B: Corte Único o Comparación entre Dos Fechas
-            sb.AppendLine(string.Format("Corte consultado: {0:dd/MM/yyyy} (Periodo comparativo: {1:dd/MM/yyyy})", rango.FechaCorte, rango.FechaComparar));
+            DateTime corteB = new DateTime(rango.FechaCorte.Year, rango.FechaCorte.Month, 1);
+            DateTime compB = new DateTime(rango.FechaComparar.Year, rango.FechaComparar.Month, 1);
+            sb.AppendLine(string.Format("Corte consultado: {0:MM/yyyy} (Periodo comparativo: {1:MM/yyyy})", corteB, compB));
             sb.AppendLine();
 
             // 1. Indicadores del Tablero Oficial (FGA_Consultar_Dashboard)
             try
             {
                 var dashResults = WcfHelper.Execute<FGA_En_Linea.SPService.SPClient, FGA_Consultar_Dashboard_Result[]>(
-                    c => c.FGA_Consultar_Dashboard(idEntidad, rango.FechaComparar, rango.FechaCorte)
+                    c => c.FGA_Consultar_Dashboard(idEntidad, compB, corteB)
                 );
 
                 sb.AppendLine("--- [1. INDICADORES DEL TABLERO PRINCIPAL] ---");
 
                 // Suficiencia Patrimonial con respaldo multi-fuente
-                AgregarSuficienciaConFallback(sb, dashResults, idEntidad, rango.FechaComparar, rango.FechaCorte);
+                AgregarSuficienciaConFallback(sb, dashResults, idEntidad, compB, corteB);
 
                 if (dashResults != null && dashResults.Length > 0)
                 {
                     // Eficiencia y Mora
-                    AgregarIndicadorDashboard(sb, dashResults, 8118, "Eficiencia Operativa (Costo Administrativo)", true);
-                    AgregarIndicadorDashboard(sb, dashResults, 8022, "Morosidad mayor a 90 días", true);
+                    AgregarIndicadorDashboard(sb, dashResults, 8118, "Eficiencia Operativa (Costo Administrativo)", true, corteB);
+                    AgregarIndicadorDashboard(sb, dashResults, 8022, "Morosidad mayor a 90 días", true, corteB);
 
                     // Indicadores SUGEF 3-06
-                    AgregarIndicadorDashboard(sb, dashResults, 9100, "Apalancamiento (SUGEF 3-06)", true);
-                    AgregarIndicadorDashboard(sb, dashResults, 8991, "Capital Nivel 1 - CN1", true);
-                    AgregarIndicadorDashboard(sb, dashResults, 8992, "Capital Común Nivel 1 - CCN1", true);
+                    AgregarIndicadorDashboard(sb, dashResults, 9100, "Apalancamiento (SUGEF 3-06)", true, corteB);
+                    AgregarIndicadorDashboard(sb, dashResults, 8991, "Capital Nivel 1 - CN1", true, corteB);
+                    AgregarIndicadorDashboard(sb, dashResults, 8992, "Capital Común Nivel 1 - CCN1", true, corteB);
 
                     // 3 Cuentas Principales (en Millones)
-                    AgregarCuentaBalanceConFallback(sb, dashResults, 8400, "Resultado del período acumulado", idEntidad, rango.FechaComparar, rango.FechaCorte);
-                    AgregarCuentaBalanceConFallback(sb, dashResults, 8130, "Cartera de crédito", idEntidad, rango.FechaComparar, rango.FechaCorte);
-                    AgregarCuentaBalanceConFallback(sb, dashResults, 8210, "Obligaciones con el público", idEntidad, rango.FechaComparar, rango.FechaCorte);
+                    AgregarCuentaBalanceConFallback(sb, dashResults, 8400, "Resultado del período acumulado", idEntidad, compB, corteB);
+                    AgregarCuentaBalanceConFallback(sb, dashResults, 8130, "Cartera de crédito", idEntidad, compB, corteB);
+                    AgregarCuentaBalanceConFallback(sb, dashResults, 8210, "Obligaciones con el público", idEntidad, compB, corteB);
 
                     // Indicadores Complementarios del Tablero
-                    AgregarIndicadorDashboard(sb, dashResults, 8045, "Margen financiero / Activos", true);
-                    AgregarIndicadorDashboard(sb, dashResults, 8038, "Margen Financiero Promedio", true);
-                    AgregarIndicadorDashboard(sb, dashResults, 8112, "Rentabilidad nominal / Patrimonio promedio", true);
-                    AgregarIndicadorDashboard(sb, dashResults, 8127, "Utilidad o pérdida acumulada trimestral", true);
-                    AgregarIndicadorDashboard(sb, dashResults, 8030, "Pérdida Esperada Cartera", true);
-                    AgregarIndicadorDashboard(sb, dashResults, 8020, "Concentración de los 20 inversionistas", true);
-                    AgregarIndicadorDashboard(sb, dashResults, 8053, "Disponibilidades / Captaciones a la vista", true);
-                    AgregarIndicadorDashboard(sb, dashResults, 8060, "Activo Productivo / Pasivo con Costo", true);
+                    AgregarIndicadorDashboard(sb, dashResults, 8045, "Margen financiero / Activos", true, corteB);
+                    AgregarIndicadorDashboard(sb, dashResults, 8038, "Margen Financiero Promedio", true, corteB);
+                    AgregarIndicadorDashboard(sb, dashResults, 8112, "Rentabilidad nominal / Patrimonio promedio", true, corteB);
+                    AgregarIndicadorDashboard(sb, dashResults, 8127, "Utilidad o pérdida acumulada trimestral", true, corteB);
+                    AgregarIndicadorDashboard(sb, dashResults, 8030, "Pérdida Esperada Cartera", true, corteB);
+                    AgregarIndicadorDashboard(sb, dashResults, 8020, "Concentración de los 20 inversionistas", true, corteB);
+                    AgregarIndicadorDashboard(sb, dashResults, 8053, "Disponibilidades / Captaciones a la vista", true, corteB);
+                    AgregarIndicadorDashboard(sb, dashResults, 8060, "Activo Productivo / Pasivo con Costo", true, corteB);
                     sb.AppendLine();
                 }
             }
@@ -443,30 +430,47 @@ namespace FGA.Services.Chatbot
             decimal valActual = 0;
             bool encontrado = false;
 
+            // Normalización de IDs entre esquema moderno (serie 8000) y tradicional
+            int idTrad = dashboardId;
+            int idMod = dashboardId;
+            if (dashboardId == 8130 || dashboardId == 130) { idTrad = 130; idMod = 8130; }
+            else if (dashboardId == 8210 || dashboardId == 210) { idTrad = 210; idMod = 8210; }
+            else if (dashboardId == 8400 || dashboardId == 400) { idTrad = 400; idMod = 8400; }
+
             // 1. Intentar desde FGA_Consultar_Dashboard
             if (results != null && results.Length > 0)
             {
-                var matches = results.Where(r => r.ID == dashboardId).ToList();
-                if (matches.Count > 1)
+                var matches = results.Where(r => r.ID == idMod || r.ID == idTrad).ToList();
+                if (matches.Count > 0)
                 {
-                    var ordenados = matches.Where(r => r.PERIODO.HasValue).OrderBy(r => r.PERIODO).ToList();
-                    valActual = ordenados.Count > 0 ? (ordenados.Last().MONTO ?? 0) : (matches.Last().MONTO ?? 0);
+                    // Buscar coincidencia que coincida con el mes y año de corte
+                    var matchCorte = matches.FirstOrDefault(r => r.PERIODO.HasValue && r.PERIODO.Value.Year == corte.Year && r.PERIODO.Value.Month == corte.Month);
+                    if (matchCorte != null && (matchCorte.MONTO.GetValueOrDefault() != 0 || matchCorte.CALIFICACION.GetValueOrDefault() != 0))
+                    {
+                        valActual = matchCorte.MONTO.GetValueOrDefault() != 0 ? matchCorte.MONTO.Value : matchCorte.CALIFICACION.GetValueOrDefault();
+                        encontrado = true;
+                    }
+                    else
+                    {
+                        var ultimo = matches.OrderBy(r => r.PERIODO ?? DateTime.MinValue).Last();
+                        decimal cand = ultimo.MONTO.GetValueOrDefault() != 0 ? ultimo.MONTO.Value : ultimo.CALIFICACION.GetValueOrDefault();
+                        if (cand != 0)
+                        {
+                            valActual = cand;
+                            encontrado = true;
+                        }
+                    }
                 }
-                else if (matches.Count == 1)
-                {
-                    valActual = matches[0].MONTO ?? 0;
-                }
-                if (valActual != 0) encontrado = true;
             }
 
             // 2. Fallback: FGA_Consultar_Balance_Comprobacion si el dashboard devolvio 0
             if (!encontrado && !string.IsNullOrWhiteSpace(idEntidad))
             {
-                // Mapeo dashboardId a cuenta contable (prefijo SUGEF)
+                // Mapeo dashboardId a cuenta contable exacta (SUGEF)
                 string cuentaContable = null;
-                if (dashboardId == 8130) cuentaContable = "13000000"; // Cartera de credito
-                else if (dashboardId == 8210) cuentaContable = "21000000"; // Obligaciones con el publico
-                else if (dashboardId == 8400) cuentaContable = "50000000"; // Resultado del periodo
+                if (idTrad == 130) cuentaContable = "13000000"; // Cartera de credito
+                else if (idTrad == 210) cuentaContable = "21000000"; // Obligaciones con el publico
+                else if (idTrad == 400) cuentaContable = "50000000"; // Resultado del periodo (ingresos)
 
                 if (!string.IsNullOrWhiteSpace(cuentaContable))
                 {
@@ -477,14 +481,42 @@ namespace FGA.Services.Chatbot
                         );
                         if (balRes != null && balRes.Length > 0)
                         {
-                            string prefijo = cuentaContable.TrimEnd('0');
-                            decimal suma = balRes
-                                .Where(r => r.Cuenta != null && r.Cuenta.Trim().StartsWith(prefijo))
-                                .Sum(r => r.SaldoFinal);
-                            if (suma != 0)
+                            // Caso especial: Resultado del período = Ingresos (50000000) - Gastos (40000000)
+                            if (idTrad == 400)
                             {
-                                valActual = Math.Abs(suma) / 1000000m; // en millones como el Dashboard
-                                encontrado = true;
+                                var ing = balRes.FirstOrDefault(r => r.Cuenta != null && r.Cuenta.Trim() == "50000000");
+                                var gas = balRes.FirstOrDefault(r => r.Cuenta != null && r.Cuenta.Trim() == "40000000");
+                                decimal resultado = (ing != null ? ing.SaldoFinal : 0) - (gas != null ? gas.SaldoFinal : 0);
+                                if (resultado != 0)
+                                {
+                                    valActual = Math.Abs(resultado) / 1000000m;
+                                    encontrado = true;
+                                }
+                            }
+                            else
+                            {
+                                // Buscar cuenta exacta (igual que el Dashboard SQL: WHERE CUENTA = '21000000')
+                                var cuentaExacta = balRes.FirstOrDefault(r =>
+                                    r.Cuenta != null && r.Cuenta.Trim() == cuentaContable && r.SaldoFinal != 0);
+
+                                // Si no hay exacta, intentar con subcuentas de primer nivel (prefijo de 2 dígitos)
+                                if (cuentaExacta == null)
+                                {
+                                    string prefijo = cuentaContable.Substring(0, 2);
+                                    decimal suma = balRes
+                                        .Where(r => r.Cuenta != null && r.Cuenta.Trim().StartsWith(prefijo) && r.SaldoFinal != 0)
+                                        .Sum(r => r.SaldoFinal);
+                                    if (suma != 0)
+                                    {
+                                        valActual = Math.Abs(suma) / 1000000m;
+                                        encontrado = true;
+                                    }
+                                }
+                                else
+                                {
+                                    valActual = Math.Abs(cuentaExacta.SaldoFinal) / 1000000m;
+                                    encontrado = true;
+                                }
                             }
                         }
                     }
@@ -524,24 +556,28 @@ namespace FGA.Services.Chatbot
         private static void AgregarSuficienciaConFallback(StringBuilder sb, FGA_Consultar_Dashboard_Result[] results, string idEntidad, DateTime compMesAnt, DateTime corte)
         {
             decimal valActual = 0;
-            decimal valComp = 0;
             bool encontradoEnDashboard = false;
 
-            if (results != null)
+            if (results != null && results.Length > 0)
             {
-                var matches = results.Where(r => r.ID == 8001).ToList();
-                if (matches.Count > 1)
+                var matches = results.Where(r => r.ID == 8001 || r.ID == 1).ToList();
+                if (matches.Count > 0)
                 {
-                    var ordenados = matches.Where(r => r.PERIODO.HasValue).OrderBy(r => r.PERIODO).ToList();
-                    valComp = ordenados.Count > 0 ? (ordenados.First().MONTO ?? 0) : (matches.First().MONTO ?? 0);
-                    valActual = ordenados.Count > 0 ? (ordenados.Last().MONTO ?? 0) : (matches.Last().MONTO ?? 0);
-                    if (valActual > 0) encontradoEnDashboard = true;
-                }
-                else if (matches.Count == 1)
-                {
-                    valActual = matches[0].MONTO ?? 0;
-                    valComp = matches[0].CALIFICACION ?? valActual;
-                    if (valActual > 0) encontradoEnDashboard = true;
+                    var matchCorte = matches.FirstOrDefault(r => r.PERIODO.HasValue && r.PERIODO.Value.Year == corte.Year && r.PERIODO.Value.Month == corte.Month);
+                    if (matchCorte != null && matchCorte.MONTO.HasValue && matchCorte.MONTO.Value > 0)
+                    {
+                        valActual = matchCorte.MONTO.Value;
+                        encontradoEnDashboard = true;
+                    }
+                    else
+                    {
+                        var ultimo = matches.OrderBy(r => r.PERIODO ?? DateTime.MinValue).Last();
+                        if (ultimo.MONTO.HasValue && ultimo.MONTO.Value > 0)
+                        {
+                            valActual = ultimo.MONTO.Value;
+                            encontradoEnDashboard = true;
+                        }
+                    }
                 }
             }
 
@@ -559,7 +595,6 @@ namespace FGA.Services.Chatbot
                         if (matchActual != null)
                         {
                             valActual = matchActual.Monto.Value;
-                            valComp = valActual;
                             encontradoEnDashboard = true;
                         }
                     }
@@ -581,7 +616,6 @@ namespace FGA.Services.Chatbot
                         if (matchCamel != null)
                         {
                             valActual = matchCamel.MONTO_2;
-                            valComp = matchCamel.MONTO_1 > 0 ? matchCamel.MONTO_1 : valActual;
                             encontradoEnDashboard = true;
                         }
                     }
@@ -603,7 +637,6 @@ namespace FGA.Services.Chatbot
                         if (matchForm != null)
                         {
                             valActual = matchForm.RESULTADO.Value;
-                            valComp = matchForm.RESULTADO_COMPARAR ?? valActual;
                             encontradoEnDashboard = true;
                         }
                     }
@@ -615,21 +648,29 @@ namespace FGA.Services.Chatbot
             sb.AppendLine(string.Format("  • Suficiencia Patrimonial: {0}", sActual));
         }
 
-        private static void AgregarIndicadorDashboard(StringBuilder sb, FGA_Consultar_Dashboard_Result[] results, int id, string nombre, bool esPorcentaje)
+        private static void AgregarIndicadorDashboard(StringBuilder sb, FGA_Consultar_Dashboard_Result[] results, int id, string nombre, bool esPorcentaje, DateTime? corte = null)
         {
+            if (results == null || results.Length == 0) return;
             var matches = results.Where(r => r.ID == id).ToList();
             if (matches.Count == 0) return;
 
             decimal valActual = 0;
 
-            if (matches.Count > 1)
+            if (corte.HasValue)
             {
-                var ordenados = matches.Where(r => r.PERIODO.HasValue).OrderBy(r => r.PERIODO).ToList();
-                valActual = ordenados.Count > 0 ? (ordenados.Last().MONTO ?? 0) : (matches.Last().MONTO ?? 0);
+                var matchCorte = matches.FirstOrDefault(r => r.PERIODO.HasValue && r.PERIODO.Value.Year == corte.Value.Year && r.PERIODO.Value.Month == corte.Value.Month);
+                if (matchCorte != null)
+                {
+                    valActual = matchCorte.MONTO ?? matchCorte.CALIFICACION ?? 0;
+                }
+                else
+                {
+                    valActual = matches.Last().MONTO ?? matches.Last().CALIFICACION ?? 0;
+                }
             }
             else
             {
-                valActual = matches[0].MONTO ?? 0;
+                valActual = matches.Last().MONTO ?? matches.Last().CALIFICACION ?? 0;
             }
 
             string sActual = esPorcentaje ? string.Format("{0:N2}%", valActual) : string.Format("₡{0:N2}", valActual);

@@ -165,6 +165,29 @@ namespace FGA.Services.Chatbot
                     sb.AppendLine("¿Deseas que analicemos algún otro periodo o indicador?");
                     return sb.ToString();
                 }
+                else if (p.Contains("indicador") || p.Contains("resumen") || p.Contains("evoluc") || p.Contains("meses") || p.Contains("general") || p.Contains("datos") || p.Contains("estado") || p.Contains("como esta") || p.Contains("situac"))
+                {
+                    var sbGen = new StringBuilder();
+                    sbGen.AppendLine(string.Format("Resumen de indicadores principales ({0}):", refLine.Replace("Referencia utilizada: ", "").Trim()));
+                    sbGen.AppendLine();
+                    string corteActual = "";
+                    foreach (var line in lines)
+                    {
+                        if (line.Trim().StartsWith("▶ CORTE:"))
+                        {
+                            corteActual = line.Trim().Replace("▶ CORTE: ", "").TrimEnd(':');
+                            sbGen.AppendLine(string.Format("• **{0}**:", corteActual));
+                        }
+                        else if (!string.IsNullOrEmpty(corteActual) && (line.Contains("Suficiencia") || line.Contains("Cartera de crédito") || line.Contains("Obligaciones") || line.Contains("Resultado")))
+                        {
+                            string limpia = Regex.Replace(line.Trim().TrimStart('•', ' '), @"\s*\(Comparativo[^\)]*\)", "", RegexOptions.IgnoreCase);
+                            sbGen.AppendLine("   - " + limpia);
+                        }
+                    }
+                    sbGen.AppendLine();
+                    sbGen.AppendLine("¿Deseas profundizar en algún otro indicador o periodo?");
+                    return sbGen.ToString();
+                }
             }
 
             // 2. Si el prompt contiene datos oficiales consultados de DBService para corte específico
@@ -186,6 +209,10 @@ namespace FGA.Services.Chatbot
                 if (p.Contains("excedente") || p.Contains("resultado") || p.Contains("pérdida") || p.Contains("perdida")) matchingLines.AddRange(lines.Where(l => l.IndexOf("Excedentes", StringComparison.OrdinalIgnoreCase) >= 0));
                 if (p.Contains("liquidez")) matchingLines.AddRange(lines.Where(l => l.IndexOf("Liquidez", StringComparison.OrdinalIgnoreCase) >= 0));
                 if (p.Contains("camel")) matchingLines.AddRange(lines.Where(l => l.IndexOf("CAMEL", StringComparison.OrdinalIgnoreCase) >= 0));
+                if (p.Contains("indicador") || p.Contains("resumen") || p.Contains("general") || p.Contains("estado") || p.Contains("datos") || p.Contains("cifras") || p.Contains("como esta") || p.Contains("situac"))
+                {
+                    matchingLines.AddRange(lines.Where(l => l.Trim().StartsWith("•") || l.Trim().StartsWith("  •")));
+                }
 
                 if (matchingLines.Count > 0)
                 {

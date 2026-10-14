@@ -48,12 +48,50 @@ namespace FGA.Controllers
 
                 // 3. Extracción de contexto de entidad seguro (Aislamiento de Cooperativa / Admin FFC)
                 string entidadId = null;
+                string entidadNombre = null;
 
-                if (!string.IsNullOrWhiteSpace(entidadContexto) && entidadContexto != "0" && entidadContexto != "-1")
+                // Obtener catálogo de entidades activas para mapeo por ID y por NOMBRE
+                FGA.Models.Entidad[] listaEnt = null;
+                try
+                {
+                    listaEnt = Utility.WcfHelper.Execute<EntidadServiceClient, FGA.Models.Entidad[]>(
+                        c => c.GetAll()
+                    );
+                }
+                catch { }
+
+                // DETECCIÓN POR NOMBRE: Si el usuario menciona una cooperativa en su consulta (ej. "Coopealianza", "Credecoop", etc.)
+                if (listaEnt != null && listaEnt.Length > 0 && !string.IsNullOrWhiteSpace(mensaje))
+                {
+                    string msgNorm = mensaje.ToLower();
+                    foreach (var e in listaEnt.Where(x => x.Activo == true && x.Id != "0" && x.Id != "-1"))
+                    {
+                        string nom = (e.Nombre ?? "").Trim().ToLower();
+                        if (nom.Length >= 4 && msgNorm.Contains(nom))
+                        {
+                            entidadId = e.Id;
+                            entidadNombre = e.Nombre.Trim();
+                            break;
+                        }
+
+                        // Buscar también palabras distintivas del nombre (ej. "alianza" para Coopealianza, "credecoop", etc.)
+                        string palLimpia = nom.Replace("cooperativa", "").Replace("coope", "").Trim();
+                        if (palLimpia.Length >= 4 && msgNorm.Contains(palLimpia))
+                        {
+                            entidadId = e.Id;
+                            entidadNombre = e.Nombre.Trim();
+                            break;
+                        }
+                    }
+                }
+
+                // Si no se mencionó por nombre, priorizar el selector activo del frontend
+                if (string.IsNullOrWhiteSpace(entidadId) && !string.IsNullOrWhiteSpace(entidadContexto) && entidadContexto != "0" && entidadContexto != "-1")
                 {
                     entidadId = entidadContexto.Trim();
                 }
 
+                // Si no, verificar Session["IdEntidad"]
                 if (string.IsNullOrWhiteSpace(entidadId) && Session["IdEntidad"] != null)
                 {
                     string sId = Session["IdEntidad"].ToString().Trim();
@@ -63,6 +101,7 @@ namespace FGA.Controllers
                     }
                 }
 
+                // Si no, verificar Env.GetUserInfo("identidad")
                 if (string.IsNullOrWhiteSpace(entidadId))
                 {
                     string uEnt = Env.GetUserInfo("identidad");
@@ -72,46 +111,33 @@ namespace FGA.Controllers
                     }
                 }
 
-                // Si es un usuario Administrador FFC o no hay cooperativa fija en sesión, obtener la primera entidad activa válida
+                // Fallback: si aún es nulo o 0 (admin FFC sin entidad seleccionada), tomar la primera entidad activa válida con datos
                 if (string.IsNullOrWhiteSpace(entidadId) || entidadId == "0" || entidadId == "-1")
                 {
-                    try
-                    {
-                        var listaEnt = Utility.WcfHelper.Execute<EntidadServiceClient, FGA.Models.Entidad[]>(
-                            c => c.GetAll()
-                        );
-                        var primera = listaEnt?.FirstOrDefault(e => e.Id != "0" && e.Id != "-1" && e.Activo == true);
-                        entidadId = primera != null ? primera.Id : "2";
-                    }
-                    catch
-                    {
-                        entidadId = "2";
-                    }
+                    var primera = listaEnt?.FirstOrDefault(e => e.Id != "0" && e.Id != "-1" && e.Activo == true);
+                    entidadId = primera != null ? primera.Id : "2";
                 }
 
                 Session["IdEntidad"] = entidadId;
 
-                // Nombre de la Entidad
-                string entidadNombre = Session["NomEntidad"]?.ToString();
-                if (string.IsNullOrWhiteSpace(entidadNombre) || entidadNombre.Equals("FGA", StringComparison.OrdinalIgnoreCase) || entidadNombre.Equals("FFC", StringComparison.OrdinalIgnoreCase))
+                // Nombre oficial de la entidad
+                if (string.IsNullOrWhiteSpace(entidadNombre))
                 {
-                    try
+                    entidadNombre = Session["NomEntidad"]?.ToString();
+                    if (string.IsNullOrWhiteSpace(entidadNombre) || entidadNombre.Equals("FGA", StringComparison.OrdinalIgnoreCase) || entidadNombre.Equals("FFC", StringComparison.OrdinalIgnoreCase))
                     {
-                        var entObj = Utility.WcfHelper.Execute<EntidadServiceClient, FGA.Models.Entidad>(
-                            c => c.Get(entidadId)
-                        );
+                        var entObj = listaEnt?.FirstOrDefault(e => e.Id == entidadId);
                         if (entObj != null && !string.IsNullOrWhiteSpace(entObj.Nombre))
                         {
-                            entidadNombre = entObj.Nombre;
-                            Session["NomEntidad"] = entidadNombre;
+                            entidadNombre = entObj.Nombre.Trim();
                         }
                     }
-                    catch { }
                 }
                 if (string.IsNullOrWhiteSpace(entidadNombre))
                 {
                     entidadNombre = Env.GetUserInfo("entidad") ?? "Entidad Cooperativa";
                 }
+                Session["NomEntidad"] = entidadNombre;
 
                 string usuario = Env.GetUserInfo("name");
 
@@ -137,33 +163,23 @@ namespace FGA.Controllers
                     {
                         // FGA_Consultar_FechaCierre retorna DATEADD(MONTH, 1, MAX(PERIODO)), por lo que el último mes cerrado con datos es fc.AddMonths(-1)
                         DateTime mesCorte = fc.AddMonths(-1);
-                        int uDia = DateTime.DaysInMonth(mesCorte.Year, mesCorte.Month);
-                        maxFechaDatos = new DateTime(mesCorte.Year, mesCorte.Month, uDia);
+                        maxFechaDatos = new DateTime(mesCorte.Year, mesCorte.Month, 1);
                     }
                 }
                 catch { }
 
-                // Si no hay periodo, o si el periodo recibido excede la fecha máxima con datos, o es del año actual desfasado (>= 2025)
-                if (maxFechaDatos > DateTime.MinValue)
+                if (maxFechaDatos == DateTime.MinValue)
                 {
-                    if (string.IsNullOrEmpty(periodo))
-                    {
-                        periodo = maxFechaDatos.ToString("dd/MM/yyyy");
-                    }
-                    else if (DateTime.TryParse(periodo, out DateTime dtP))
-                    {
-                        if (dtP > maxFechaDatos || (dtP.Year >= 2025 && maxFechaDatos.Year < 2025))
-                        {
-                            periodo = maxFechaDatos.ToString("dd/MM/yyyy");
-                        }
-                    }
+                    maxFechaDatos = new DateTime(2026, 8, 1);
                 }
-                else
+
+                // Parsear periodo de forma segura reconociendo formatos MM/yyyy
+                DateTime dtPeriodoParsed = ChatbotDataService.ParsearFechaPeriodoSegura(periodo);
+
+                // Si no hay periodo o la fecha solicitada supera la fecha de cierre oficial de la entidad, anclar al último corte con datos
+                if (dtPeriodoParsed == DateTime.MinValue || dtPeriodoParsed > maxFechaDatos)
                 {
-                    if (string.IsNullOrEmpty(periodo) || (DateTime.TryParse(periodo, out DateTime dtFallback) && dtFallback.Year >= 2025))
-                    {
-                        periodo = "31/12/2024";
-                    }
+                    periodo = maxFechaDatos.ToString("dd/MM/yyyy");
                 }
 
                 // 4. Construcción del Prompt de Sistema con contexto dinámico de fecha e indicadores
