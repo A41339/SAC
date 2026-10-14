@@ -22,7 +22,7 @@ namespace FGA.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> Preguntar(string mensaje, string historial, string periodoContexto = null, string entidadContexto = null)
+        public async Task<JsonResult> Preguntar(string mensaje, string historial, string periodoContexto = null, string entidadContexto = null, string pantallaContexto = null)
         {
             try
             {
@@ -183,7 +183,7 @@ namespace FGA.Controllers
                 }
 
                 // 4. Construcción del Prompt de Sistema con contexto dinámico de fecha e indicadores
-                string promptSistema = ChatbotContextBuilder.ConstruirPromptSistema(entidadId, entidadNombre, usuario, mensaje, periodo);
+                string promptSistema = ChatbotContextBuilder.ConstruirPromptSistema(entidadId, entidadNombre, usuario, mensaje, periodo, pantallaContexto);
 
                 // 5. Invocación del proveedor de IA
                 string respuesta = await _aiProvider.GenerarRespuestaAsync(promptSistema, historial, mensaje.Trim());

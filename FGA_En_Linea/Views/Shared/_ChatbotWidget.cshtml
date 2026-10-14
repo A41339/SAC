@@ -1,6 +1,7 @@
 @* ==========================================================================
    WIDGET FLOTANTE: ASISTENTE VIRTUAL INTELIGENTE (COPILOT SAC / FFC)
    Renderizado condicional controlado por Env.IsChatbotEnabled()
+   Soporta contextualización dinámica por pantalla e interactividad con chips
    ========================================================================== *@
 @{
     string nombreEntidad = FGA.Env.GetUserInfo("entidad");
@@ -43,27 +44,19 @@
 
     <!-- Área de Mensajes -->
     <div id="sacChatbotMessages" class="sac-chatbot-messages">
-        <!-- Mensaje de Bienvenida Inicial -->
+        <!-- Mensaje de Bienvenida Inicial con Contexto Dinámico -->
         <div class="sac-msg sac-msg-bot">
             <div class="sac-msg-avatar"><i class="fa fa-shield"></i></div>
             <div class="sac-msg-bubble">
-                <p>¡Hola <strong>@(string.IsNullOrWhiteSpace(nombreUsuario) ? "" : nombreUsuario)</strong>! 👋 Soy tu <strong>Asistente Virtual Financiero del SAC</strong>.</p>
-                <p>Tengo acceso al contexto de <strong>@(string.IsNullOrWhiteSpace(nombreEntidad) ? "tu entidad" : nombreEntidad)</strong>. Puedes preguntarme sobre tus 11 indicadores, alertas activas, pérdidas esperadas o la metodología SBR.</p>
+                <div id="sacScreenContextBadge" class="sac-screen-context-badge">
+                    <i class="fa fa-compass"></i> <span>Detectando contexto...</span>
+                </div>
+                <p>¡Hola <strong>@(string.IsNullOrWhiteSpace(nombreUsuario) ? "" : nombreUsuario)</strong>! 👋 Soy tu <strong>Copilot Financiero SAC</strong>.</p>
+                <p>Tengo acceso al contexto oficial de <strong>@(string.IsNullOrWhiteSpace(nombreEntidad) ? "tu entidad" : nombreEntidad)</strong>.</p>
                 
                 <div class="sac-quick-prompts">
-                    <span class="sac-quick-title"><i class="fa fa-bolt"></i> Consultas sugeridas:</span>
-                    <button type="button" class="sac-quick-btn" data-pregunta="¿Cómo cerró mi suficiencia patrimonial y qué significa?">
-                        📊 Suficiencia Patrimonial
-                    </button>
-                    <button type="button" class="sac-quick-btn" data-pregunta="¿Tengo alertas financieras activas o desviaciones contables?">
-                        🔔 Mis Alertas Activas
-                    </button>
-                    <button type="button" class="sac-quick-btn" data-pregunta="¿Cómo se calcula el Margen de Intermediación en el tablero?">
-                        📈 Margen Financiero
-                    </button>
-                    <button type="button" class="sac-quick-btn" data-pregunta="¿Qué es el Plan de Remediación en Evaluación SBR?">
-                        🛡️ Metodología SBR
-                    </button>
+                    <span class="sac-quick-title"><i class="fa fa-bolt"></i> Consultas recomendadas para esta pantalla:</span>
+                    <div id="sacWelcomeChipsList" style="display: flex; flex-direction: column; gap: 6px; margin-top: 4px;"></div>
                 </div>
             </div>
         </div>
@@ -77,11 +70,16 @@
         <span class="sac-typing-text">Analizando datos de la entidad...</span>
     </div>
 
-    <!-- Formulario / Caja de Entrada -->
+    <!-- Formulario / Caja de Entrada con Barra de Chips Persistente -->
     <div class="sac-chatbot-footer">
+        <!-- Barra de Sugerencias Rápidas Contextuales (Scroll Horizontal) -->
+        <div id="sacQuickChipsBar" class="sac-quick-chips-bar">
+            <!-- Se carga dinámicamente según la pantalla activa -->
+        </div>
+
         <form id="sacChatbotForm" class="sac-chatbot-form" onsubmit="return false;">
             <div class="sac-input-wrapper">
-                <input type="text" id="sacChatbotInput" class="sac-chatbot-input" placeholder="Pregunta sobre tus indicadores, alertas o SBR..." autocomplete="off" />
+                <input type="text" id="sacChatbotInput" class="sac-chatbot-input" placeholder="Pregunta sobre indicadores, alertas o SBR..." autocomplete="off" />
                 <button type="button" id="btnSacChatbotEnviar" class="sac-btn-enviar" title="Enviar consulta">
                     <i class="fa fa-paper-plane"></i>
                 </button>
@@ -102,9 +100,171 @@
         var $input = $('#sacChatbotInput');
         var $btnEnviar = $('#btnSacChatbotEnviar');
         var $typing = $('#sacChatbotTyping');
+        var $chipsBar = $('#sacQuickChipsBar');
+        var $welcomeChipsList = $('#sacWelcomeChipsList');
+        var $badge = $('#sacScreenContextBadge');
         var historial = [];
 
-        // Abrir / Cerrar ventana
+        // 1. Detección Inteligente del Módulo / Pantalla Activa en el SAC
+        function detectarPantallaActual() {
+            var path = (window.location.pathname || '').toLowerCase();
+
+            // Estructura de Fondeo
+            if (path.indexOf('estructurafondeo') !== -1 || path.indexOf('fondeo') !== -1) {
+                return {
+                    id: 'fondeo',
+                    nombre: 'Estructura de Fondeo',
+                    icono: 'fa-university',
+                    chips: [
+                        { icono: '👥', label: 'Top 20 Inversionistas', pregunta: '¿Cuál es el saldo y concentración de los 20 mayores inversionistas?' },
+                        { icono: '⏳', label: 'Plazo vs Vista', pregunta: '¿Cómo se distribuyen las captaciones a plazo frente a captaciones a la vista?' },
+                        { icono: '⚖️', label: 'Composición Fondeo', pregunta: '¿Cuál es la composición porcentual de nuestras fuentes de fondeo?' },
+                        { icono: '⚠️', label: 'Riesgo Concentración', pregunta: '¿Cuáles son las recomendaciones para mitigar la concentración de pasivos?' }
+                    ]
+                };
+            }
+
+            // Cartera de Crédito / SUGEF 14-21 / Créditos
+            if (path.indexOf('cartera') !== -1 || path.indexOf('credito') !== -1) {
+                return {
+                    id: 'cartera',
+                    nombre: 'Cartera de Crédito',
+                    icono: 'fa-line-chart',
+                    chips: [
+                        { icono: '📉', label: 'Morosidad > 90 días', pregunta: '¿Cuál es el índice de morosidad mayor a 90 días y su tendencia?' },
+                        { icono: '🎯', label: 'Pérdida Esperada', pregunta: '¿Cuál es el nivel de estimaciones y pérdida esperada según SUGEF 14-21?' },
+                        { icono: '📑', label: 'Distribución Crédito', pregunta: '¿Cómo se distribuye la cartera de crédito entre consumo, vivienda y comercio?' },
+                        { icono: '🔍', label: 'Calidad Crediticia', pregunta: '¿Qué alertas o deterioros presenta la calidad de cartera en el último corte?' }
+                    ]
+                };
+            }
+
+            // Evaluación SBR / CAMEL
+            if (path.indexOf('evaluacion') !== -1 || path.indexOf('camel') !== -1 || path.indexOf('sbr') !== -1) {
+                return {
+                    id: 'evaluacion',
+                    nombre: 'Evaluación SBR / CAMEL',
+                    icono: 'fa-shield',
+                    chips: [
+                        { icono: '🛡️', label: 'Metodología SBR', pregunta: '¿En qué consiste la Supervisión Basada en Riesgos y cuáles son sus etapas?' },
+                        { icono: '📝', label: 'Plan de Remediación', pregunta: '¿Qué requisitos y plazos aplican para el Plan de Remediación institucional?' },
+                        { icono: '🏛️', label: 'Calificación CAMEL', pregunta: '¿Cuáles son los 5 componentes CAMEL y qué evalúa cada uno?' },
+                        { icono: '📋', label: 'Autoevaluación Riesgos', pregunta: '¿Cómo registrar y documentar la autoevaluación institucional de riesgos?' }
+                    ]
+                };
+            }
+
+            // Bandeja de Alertas
+            if (path.indexOf('alerta') !== -1) {
+                return {
+                    id: 'alertas',
+                    nombre: 'Bandeja de Alertas',
+                    icono: 'fa-bell',
+                    chips: [
+                        { icono: '🔔', label: 'Alertas Activas', pregunta: '¿Cuáles alertas financieras o de umbrales se encuentran activadas?' },
+                        { icono: '📐', label: 'Desviaciones Contables', pregunta: '¿Existen inconsistencias o desviaciones entre balance y anexos?' },
+                        { icono: '🚦', label: 'Umbrales y Semáforos', pregunta: '¿Cómo se definen los rangos de criticidad verde, amarillo y rojo en el SAC?' }
+                    ]
+                };
+            }
+
+            // Indicadores Financieros / Margen
+            if (path.indexOf('indicador') !== -1 || path.indexOf('margen') !== -1 || path.indexOf('formula') !== -1) {
+                return {
+                    id: 'indicadores',
+                    nombre: 'Indicadores y Margen',
+                    icono: 'fa-pie-chart',
+                    chips: [
+                        { icono: '📊', label: 'Solvencia y Liquidez', pregunta: '¿Cuáles son los ratios de solvencia y liquidez recomendados?' },
+                        { icono: '💡', label: 'Margen Financiero', pregunta: '¿Cómo se calcula el Margen de Intermediación Financiera en el SAC?' },
+                        { icono: '📈', label: 'ROA y ROE', pregunta: '¿Cuál es el rendimiento sobre activos (ROA) y patrimonio (ROE)?' }
+                    ]
+                };
+            }
+
+            // Macroeconómico / Tasas
+            if (path.indexOf('indeconomico') !== -1 || path.indexOf('tasainteres') !== -1) {
+                return {
+                    id: 'macro',
+                    nombre: 'Entorno Macroeconómico',
+                    icono: 'fa-globe',
+                    chips: [
+                        { icono: '📈', label: 'Tasas de Referencia', pregunta: '¿Cuál es el impacto de la Tasa Política Monetaria (TPM) en la entidad?' },
+                        { icono: '💵', label: 'Tipo de Cambio', pregunta: '¿Cómo ha evolucionado el tipo de cambio y qué impacto tiene en balance?' },
+                        { icono: '📊', label: 'Inflación y Tasas', pregunta: '¿Cuáles son las proyecciones macroeconómicas y su impacto cooperativo?' }
+                    ]
+                };
+            }
+
+            // Proyecciones y Simulación de Capital
+            if (path.indexOf('proyeccion') !== -1 || path.indexOf('simulacion') !== -1) {
+                return {
+                    id: 'proyecciones',
+                    nombre: 'Proyecciones y Simulación',
+                    icono: 'fa-calculator',
+                    chips: [
+                        { icono: '🔮', label: 'Simulación Capital', pregunta: '¿Cómo simular un requerimiento de capital o estrés patrimonial?' },
+                        { icono: '📊', label: 'Proyección EEFF', pregunta: '¿Qué supuestos se utilizan para la proyección de Estados Financieros?' }
+                    ]
+                };
+            }
+
+            // Tablero Principal (Dashboard) o Fallback General
+            return {
+                id: 'dashboard',
+                nombre: 'Tablero Principal',
+                icono: 'fa-tachometer',
+                chips: [
+                    { icono: '📊', label: 'Suficiencia Patrimonial', pregunta: '¿Cómo cerró mi suficiencia patrimonial y cuál es su tendencia?' },
+                    { icono: '🏦', label: 'Obligaciones con público', pregunta: '¿Cuál es el saldo de obligaciones con el público de los últimos 2 meses?' },
+                    { icono: '💳', label: 'Cartera de Crédito', pregunta: '¿Cuál es el saldo de cartera de crédito y morosidad?' },
+                    { icono: '📈', label: 'Margen y Resultado', pregunta: '¿Cuál es el margen financiero y resultado neto del periodo?' },
+                    { icono: '🔄', label: 'Últimos 3 meses', pregunta: 'Muestra la evolución de los principales indicadores en los últimos 3 meses' }
+                ]
+            };
+        }
+
+        // 2. Inicializar Chips Contextuales y Badge de Pantalla
+        var contextoActual = detectarPantallaActual();
+
+        function renderizarContexto() {
+            // Actualizar badge en mensaje inicial
+            if ($badge.length) {
+                $badge.html('<i class="fa ' + contextoActual.icono + '"></i> Módulo activo: <strong>' + contextoActual.nombre + '</strong>');
+            }
+
+            // Actualizar lista en el mensaje de bienvenida
+            if ($welcomeChipsList.length) {
+                $welcomeChipsList.empty();
+                $.each(contextoActual.chips, function (i, c) {
+                    var $btn = $('<button type="button" class="sac-quick-btn" data-pregunta="' + c.pregunta + '">' +
+                        c.icono + ' ' + c.label +
+                        '</button>');
+                    $welcomeChipsList.append($btn);
+                });
+            }
+
+            // Actualizar barra horizontal de chips persistente encima del input
+            if ($chipsBar.length) {
+                $chipsBar.empty();
+                $.each(contextoActual.chips, function (i, c) {
+                    var $chip = $('<button type="button" class="sac-quick-chip" data-pregunta="' + c.pregunta + '">' +
+                        c.icono + ' ' + c.label +
+                        '</button>');
+                    $chipsBar.append($chip);
+                });
+
+                // Si no es el Dashboard, agregar un chip de acceso rápido a los 11 indicadores
+                if (contextoActual.id !== 'dashboard') {
+                    $chipsBar.append('<button type="button" class="sac-quick-chip" data-pregunta="¿Cómo cerró mi suficiencia patrimonial y qué significa?">📊 Suficiencia</button>');
+                    $chipsBar.append('<button type="button" class="sac-quick-chip" data-pregunta="¿Cuál es el saldo de obligaciones con el público de los últimos 2 meses?">🏦 Obligaciones</button>');
+                }
+            }
+        }
+
+        renderizarContexto();
+
+        // 3. Abrir / Cerrar ventana
         $launcher.on('click', function () {
             $window.fadeToggle(200, function () {
                 if ($window.is(':visible')) {
@@ -118,7 +278,7 @@
             $window.fadeOut(200);
         });
 
-        // Enviar al pulsar Enter o el botón Enviar
+        // 4. Enviar al pulsar Enter o el botón Enviar
         $input.on('keypress', function (e) {
             if (e.which === 13) {
                 e.preventDefault();
@@ -130,13 +290,14 @@
             enviarPregunta();
         });
 
-        // Clic en chips de preguntas rápidas
-        $(document).on('click', '.sac-quick-btn', function () {
+        // 5. Clic en chips de preguntas rápidas (bienvenida, barra horizontal y botones de seguimiento)
+        $(document).on('click', '.sac-quick-btn, .sac-quick-chip, .sac-followup-btn', function () {
             var pregunta = $(this).attr('data-pregunta') || $(this).text().trim();
             $input.val(pregunta);
             enviarPregunta();
         });
 
+        // 6. Envío de consulta con enriquecimiento de contexto
         function enviarPregunta() {
             var texto = $input.val().trim();
             if (!texto) return;
@@ -149,19 +310,22 @@
             $typing.fadeIn(150);
             scrollAbajo();
 
-            // Detectar si la pantalla activa tiene un selector de fecha/periodo (#Periodo2, #Periodo, #PeriodoF, etc.)
+            // Detectar selector de fecha/periodo (#Periodo2, #Periodo, #PeriodoF, etc.)
             var periodoActivo = '';
             var $p = $('#Periodo2, input[name="Periodo2"], #Periodo, input[name="Periodo"], #PeriodoF, input[name="PeriodoF"]').first();
             if ($p.length && $p.val()) {
                 periodoActivo = $p.val().trim();
             }
 
-            // Detectar si la pantalla activa tiene selector de entidad (#IdEntidad, select[name="IdEntidad"], select[name="Entidades"], etc.)
+            // Detectar selector de entidad (#IdEntidad, select[name="IdEntidad"], select[name="Entidades"], etc.)
             var entidadActiva = '';
             var $e = $('#IdEntidad, select[name="IdEntidad"], select[name="Entidades"]').first();
             if ($e.length && $e.val()) {
                 entidadActiva = $e.val().trim();
             }
+
+            // Información de pantalla para el modelo
+            var pantallaInfo = contextoActual.nombre + ' (' + (window.location.pathname || '') + ')';
 
             // Petición AJAX al controlador ChatbotController
             $.ajax({
@@ -171,7 +335,8 @@
                     mensaje: texto,
                     historial: historial.slice(-6).join('\n'),
                     periodoContexto: periodoActivo,
-                    entidadContexto: entidadActiva
+                    entidadContexto: entidadActiva,
+                    pantallaContexto: pantallaInfo
                 },
                 dataType: 'json',
                 success: function (res) {
@@ -192,13 +357,40 @@
             });
         }
 
+        // 7. Renderizado de Mensajes y Opciones Interactivas
         function agregarMensaje(tipo, contenido) {
             var esBot = tipo === 'bot';
+            var sugerencias = [];
+
+            // Si es respuesta del bot, extraer sugerencias dinámicas de seguimiento [Sugerencia: ...]
+            if (esBot && contenido) {
+                contenido = contenido.replace(/\[(?:Sugerencia|Opción|Opcion)\s*:\s*([^\]]+)\]/gi, function (match, sug) {
+                    var s = (sug || '').trim();
+                    if (s) {
+                        sugerencias.push(s);
+                    }
+                    return ''; // Quitar del texto para renderizado limpio
+                });
+            }
+
             var htmlFormatted = formatearMarkdown(contenido);
+
+            // Generar contenedor de opciones sugeridas interactivas si existen
+            var htmlSugerencias = '';
+            if (sugerencias.length > 0) {
+                htmlSugerencias += '<div class="sac-followup-container">' +
+                    '<span class="sac-followup-title"><i class="fa fa-lightbulb-o"></i> Continuar análisis con:</span>';
+                $.each(sugerencias, function (i, s) {
+                    htmlSugerencias += '<button type="button" class="sac-followup-btn" data-pregunta="' + s.replace(/"/g, '&quot;') + '">' +
+                        '<span>' + s + '</span> <i class="fa fa-chevron-right"></i>' +
+                        '</button>';
+                });
+                htmlSugerencias += '</div>';
+            }
 
             var $msg = $('<div class="sac-msg ' + (esBot ? 'sac-msg-bot' : 'sac-msg-user') + '">' +
                 (esBot ? '<div class="sac-msg-avatar"><i class="fa fa-shield"></i></div>' : '') +
-                '<div class="sac-msg-bubble">' + htmlFormatted + '</div>' +
+                '<div class="sac-msg-bubble">' + htmlFormatted + htmlSugerencias + '</div>' +
                 (!esBot ? '<div class="sac-msg-avatar user-av"><i class="fa fa-user"></i></div>' : '') +
                 '</div>');
 

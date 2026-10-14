@@ -7,7 +7,7 @@ namespace FGA.Services.Chatbot
 {
     public class ChatbotContextBuilder
     {
-        public static string ConstruirPromptSistema(string entidadId, string entidadNombre, string usuario, string pregunta, string periodoDefecto)
+        public static string ConstruirPromptSistema(string entidadId, string entidadNombre, string usuario, string pregunta, string periodoDefecto, string pantallaContexto = null)
         {
             var sb = new StringBuilder();
 
@@ -21,6 +21,10 @@ namespace FGA.Services.Chatbot
             sb.AppendLine(string.Format("Entidad activa: {0} (ID: {1})", string.IsNullOrEmpty(entidadNombre) ? "Entidad Cooperativa" : entidadNombre, entidadId));
             sb.AppendLine(string.Format("Usuario conectado: {0}", usuario));
             sb.AppendLine(string.Format("Fecha/Periodo analizado: {0}", rangoFechas.DescripcionCorte));
+            if (!string.IsNullOrWhiteSpace(pantallaContexto))
+            {
+                sb.AppendLine(string.Format("Pantalla activa en el sistema: {0}", pantallaContexto));
+            }
             if (rangoFechas.EsFechaPersonalizada)
             {
                 sb.AppendLine("NOTA DE PRIORIDAD: El usuario ha preguntado específicamente por una fecha/periodo histórico. Usa obligatoriamente los datos extraídos para ese corte.");
@@ -46,6 +50,8 @@ namespace FGA.Services.Chatbot
             sb.AppendLine("4. Si te preguntan por otra cooperativa, responde que por confidencialidad no tienes acceso a entidades ajenas.");
             sb.AppendLine("5. Formatea tus respuestas usando Markdown limpio (negritas, viñetas, tablas cortas si aplica).");
             sb.AppendLine("6. Presenta directamente la cifra o porcentaje para cada periodo consultado, sin agregar textos adicionales como '(Comparativo mes ant)' a menos que el usuario lo solicite expresamente.");
+            sb.AppendLine("7. Si la consulta se relaciona con la pantalla activa del usuario, contextualiza tu explicación a dicha pantalla.");
+            sb.AppendLine("8. Al final de tu respuesta, incluye 2 o 3 opciones o preguntas de seguimiento relevantes en líneas individuales usando exactamente la sintaxis: [Sugerencia: Pregunta corta]");
 
             return sb.ToString();
         }
