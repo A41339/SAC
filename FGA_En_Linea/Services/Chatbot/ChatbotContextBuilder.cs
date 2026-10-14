@@ -35,13 +35,14 @@ namespace FGA.Services.Chatbot
             string datosIndicadores = ChatbotDataService.ObtenerContextoIndicadores(entidadId, rangoFechas);
             sb.AppendLine(datosIndicadores);
 
-            sb.AppendLine("=== CONCEPTOS DE LA PLATAFORMA ===");
-            sb.AppendLine("- Tablero Principal: Contiene los 11 indicadores oficiales (Activo, Cartera Bruta/Neta, Depósitos, Morosidad, Margen, ROA, ROE, Capital Social, Suficiencia, Excedentes).");
-            sb.AppendLine("- Indicadores Financieros / Fórmulas: Fórmulas de liquidez, solvencia, rentabilidad y calces.");
-            sb.AppendLine("- Cartera de Crédito: Morosidad, calidad de cartera y colocaciones.");
-            sb.AppendLine("- Evaluación CAMEL: Metodología internacional de supervisión para Capital, Activos, Manejo, Rentabilidad y Liquidez.");
-            sb.AppendLine("- Evaluación SBR: Supervisión Basada en Riesgos (Autoevaluación institucional y Plan de Remediación).");
-            sb.AppendLine("- Bandeja de Alertas: Monitoreo preventivo por umbrales contables y variaciones.");
+            sb.AppendLine("=== CONCEPTOS CLAVE DEL SISTEMA SAC Y METODOLOGÍAS FFC ===");
+            sb.AppendLine("- Tablero Principal: 11 indicadores oficiales (Activo, Cartera Bruta/Neta, Depósitos, Morosidad, Margen, ROA, ROE, Capital Social, Suficiencia Patrimonial, Excedentes).");
+            sb.AppendLine("- Estructura de Fondeo: Analiza la estabilidad de pasivos, concentración de los 10 y 20 mayores depositantes/inversionistas, distribución entre captaciones a plazo (CDP) y a la vista, y mitigación de riesgo de liquidez.");
+            sb.AppendLine("- Cartera de Crédito y SUGEF 14-21: Análisis de morosidad (>30, >60, >90 días), provisiones contracíclicas, estimaciones y pérdida esperada (Probabilidad de Incumplimiento x Severidad x Exposición).");
+            sb.AppendLine("- Evaluación CAMEL: Metodología internacional en 5 componentes: Capital (solvencia/suficiencia), Activos (calidad crediticia y provisiones), Manejo (eficiencia y gobierno corporativo), Excedentes (rentabilidad de activos y patrimonio), Liquidez (calce de plazos y disponibilidades).");
+            sb.AppendLine("- Metodología SBR (Supervisión Basada en Riesgos): Evalúa el perfil de riesgo institucional a partir de dos dimensiones: 1) Riesgos Inherentes (Crédito, Liquidez, Mercado, Operacional/TI, Gobernanza, Legal) y 2) Calidad de Mitigadores/Controles (Control Interno, Auditoría, Gestión de Riesgos). El cruce determina el Riesgo Neto Residual.");
+            sb.AppendLine("- Plan de Remediación (SBR): Instrumento formal de compromiso correctivo ante debilidades o riesgos materiales. Debe incluir: Hallazgo o deficiencia detectada, Causa raíz, Acción correctiva planificada, Área responsable y Fecha límite de cumplimiento.");
+            sb.AppendLine("- Bandeja de Alertas Financieras: Detección temprana de desviaciones y variaciones abruptas de cuentas contables. Clasifica en CRÍTICAS (superan umbrales fijados) y ADVERTENCIAS, permitiendo identificar discrepancias entre balance y anexos.");
             sb.AppendLine();
             sb.AppendLine("=== REGLAS ESTRICTAS DE SEGURIDAD Y PRECISIÓN ===");
             sb.AppendLine("1. Solo responde con respecto a los datos y metodología de la entidad conectada: " + entidadNombre + ".");

@@ -284,6 +284,7 @@ namespace FGA.Services.Chatbot
                     sb.AppendLine();
                 }
 
+                AgregarAlertasYFondeo(sb, idEntidad, rango.FechaComparar, rango.FechaCorte);
                 return sb.ToString();
             }
 
@@ -410,7 +411,73 @@ namespace FGA.Services.Chatbot
                 sb.AppendLine("Aviso: No se pudieron extraer datos CAMEL: " + ex.Message);
             }
 
+            // 5. Alertas y Fondeo
+            AgregarAlertasYFondeo(sb, idEntidad, compB, corteB);
+
             return sb.ToString();
+        }
+
+        private static void AgregarAlertasYFondeo(StringBuilder sb, string idEntidad, DateTime comp, DateTime corte)
+        {
+            if (string.IsNullOrWhiteSpace(idEntidad)) return;
+
+            // Alertas Financieras Activas (FGA_Obtener_Alertas_Financieras)
+            try
+            {
+                var alertas = WcfHelper.Execute<FGA_En_Linea.SPService.SPClient, FGA_Obtener_Alertas_Financieras_Result[]>(
+                    c => c.FGA_Obtener_Alertas_Financieras(idEntidad, false, 20)
+                );
+
+                sb.AppendLine("--- [BANDEJA DE ALERTAS ACTIVAS DE LA ENTIDAD] ---");
+                if (alertas != null && alertas.Length > 0)
+                {
+                    sb.AppendLine(string.Format("Total de alertas registradas en el sistema: {0}", alertas.Length));
+                    foreach (var al in alertas.Take(6))
+                    {
+                        sb.AppendLine(string.Format("• [{0}] {1} (Cuenta: {2}): Variación {3:N2}% ({4:N2} M). Período: {5:MM/yyyy}",
+                            al.TipoAlerta ?? "ALERTA",
+                            al.NombreCuenta?.Trim() ?? al.Titulo?.Trim() ?? "Cuenta contable",
+                            al.Cuenta?.Trim() ?? "N/A",
+                            al.VariacionPorcentaje,
+                            al.VariacionMonto / 1000000m,
+                            al.PeriodoActual));
+                    }
+                }
+                else
+                {
+                    sb.AppendLine("• La entidad no presenta alertas financieras activas ni desviaciones contables por umbrales en este momento.");
+                }
+                sb.AppendLine();
+            }
+            catch (Exception ex)
+            {
+                sb.AppendLine("Aviso: No se pudieron consultar alertas: " + ex.Message);
+            }
+
+            // Concentración de Fondeo y Ahorrantes (FGA_Consultar_Concentracion_Ahorrantes)
+            try
+            {
+                var ahorrantes = WcfHelper.Execute<FGA_En_Linea.SPService.SPClient, FGA_Consultar_Concentracion_Ahorrantes_Result[]>(
+                    c => c.FGA_Consultar_Concentracion_Ahorrantes(idEntidad, comp, corte)
+                );
+
+                if (ahorrantes != null && ahorrantes.Length > 0)
+                {
+                    sb.AppendLine("--- [CONCENTRACIÓN DE FONDEO Y AHORRANTES] ---");
+                    var ult = ahorrantes.LastOrDefault();
+                    if (ult != null)
+                    {
+                        if (ult.PorcTop10.HasValue) sb.AppendLine(string.Format("• Concentración 10 Mayores Ahorrantes: {0:N2}%", ult.PorcTop10.Value));
+                        if (ult.PorcTop20.HasValue) sb.AppendLine(string.Format("• Concentración 20 Mayores Ahorrantes: {0:N2}%", ult.PorcTop20.Value));
+                        if (ult.MontoTotal.HasValue && ult.MontoTotal.Value > 0)
+                        {
+                            sb.AppendLine(string.Format("• Captaciones Totales de Ahorrantes: ₡{0:N2} M", ult.MontoTotal.Value / 1000000m));
+                        }
+                    }
+                    sb.AppendLine();
+                }
+            }
+            catch { }
         }
 
         /// <summary>
