@@ -261,15 +261,18 @@ namespace FGA.Services.Chatbot
                             AgregarIndicadorDashboard(sb, dashMes, 8991, "Capital Nivel 1 - CN1", true, corteDia1);
                             AgregarIndicadorDashboard(sb, dashMes, 8992, "Capital Común Nivel 1 - CCN1", true, corteDia1);
 
-                            // 3 Cuentas Principales (en Millones)
+                            // Cuentas de Balance (en Millones)
                             AgregarCuentaBalanceConFallback(sb, dashMes, 8400, "Resultado del período acumulado", idEntidad, compMesAnt, corteDia1);
                             AgregarCuentaBalanceConFallback(sb, dashMes, 8130, "Cartera de crédito", idEntidad, compMesAnt, corteDia1);
                             AgregarCuentaBalanceConFallback(sb, dashMes, 8210, "Obligaciones con el público", idEntidad, compMesAnt, corteDia1);
+                            AgregarCuentaBalanceConFallback(sb, dashMes, 310, "Capital Social", idEntidad, compMesAnt, corteDia1);
+                            AgregarCuentaBalanceConFallback(sb, dashMes, 300, "Patrimonio Total", idEntidad, compMesAnt, corteDia1);
+                            AgregarCuentaBalanceConFallback(sb, dashMes, 100, "Activo Total", idEntidad, compMesAnt, corteDia1);
 
                             // Indicadores Complementarios del Tablero
                             AgregarIndicadorDashboard(sb, dashMes, 8045, "Margen financiero / Activos", true, corteDia1);
                             AgregarIndicadorDashboard(sb, dashMes, 8038, "Margen Financiero Promedio", true, corteDia1);
-                            AgregarIndicadorDashboard(sb, dashMes, 8112, "Rentabilidad nominal / Patrimonio promedio", true, corteDia1);
+                            AgregarIndicadorDashboard(sb, dashMes, 8112, "Rentabilidad sobre Patrimonio Promedio (ROE)", true, corteDia1);
                             AgregarIndicadorDashboard(sb, dashMes, 8127, "Utilidad o pérdida acumulada trimestral", true, corteDia1);
                             AgregarIndicadorDashboard(sb, dashMes, 8030, "Pérdida Esperada Cartera", true, corteDia1);
                             AgregarIndicadorDashboard(sb, dashMes, 8020, "Concentración de los 20 inversionistas", true, corteDia1);
@@ -317,15 +320,18 @@ namespace FGA.Services.Chatbot
                     AgregarIndicadorDashboard(sb, dashResults, 8991, "Capital Nivel 1 - CN1", true, corteB);
                     AgregarIndicadorDashboard(sb, dashResults, 8992, "Capital Común Nivel 1 - CCN1", true, corteB);
 
-                    // 3 Cuentas Principales (en Millones)
+                    // Cuentas de Balance (en Millones)
                     AgregarCuentaBalanceConFallback(sb, dashResults, 8400, "Resultado del período acumulado", idEntidad, compB, corteB);
                     AgregarCuentaBalanceConFallback(sb, dashResults, 8130, "Cartera de crédito", idEntidad, compB, corteB);
                     AgregarCuentaBalanceConFallback(sb, dashResults, 8210, "Obligaciones con el público", idEntidad, compB, corteB);
+                    AgregarCuentaBalanceConFallback(sb, dashResults, 310, "Capital Social", idEntidad, compB, corteB);
+                    AgregarCuentaBalanceConFallback(sb, dashResults, 300, "Patrimonio Total", idEntidad, compB, corteB);
+                    AgregarCuentaBalanceConFallback(sb, dashResults, 100, "Activo Total", idEntidad, compB, corteB);
 
                     // Indicadores Complementarios del Tablero
                     AgregarIndicadorDashboard(sb, dashResults, 8045, "Margen financiero / Activos", true, corteB);
                     AgregarIndicadorDashboard(sb, dashResults, 8038, "Margen Financiero Promedio", true, corteB);
-                    AgregarIndicadorDashboard(sb, dashResults, 8112, "Rentabilidad nominal / Patrimonio promedio", true, corteB);
+                    AgregarIndicadorDashboard(sb, dashResults, 8112, "Rentabilidad sobre Patrimonio Promedio (ROE)", true, corteB);
                     AgregarIndicadorDashboard(sb, dashResults, 8127, "Utilidad o pérdida acumulada trimestral", true, corteB);
                     AgregarIndicadorDashboard(sb, dashResults, 8030, "Pérdida Esperada Cartera", true, corteB);
                     AgregarIndicadorDashboard(sb, dashResults, 8020, "Concentración de los 20 inversionistas", true, corteB);
@@ -503,6 +509,9 @@ namespace FGA.Services.Chatbot
             if (dashboardId == 8130 || dashboardId == 130) { idTrad = 130; idMod = 8130; }
             else if (dashboardId == 8210 || dashboardId == 210) { idTrad = 210; idMod = 8210; }
             else if (dashboardId == 8400 || dashboardId == 400) { idTrad = 400; idMod = 8400; }
+            else if (dashboardId == 310 || dashboardId == 31000000) { idTrad = 310; idMod = 310; }
+            else if (dashboardId == 300 || dashboardId == 30000000) { idTrad = 300; idMod = 300; }
+            else if (dashboardId == 100 || dashboardId == 10000000) { idTrad = 100; idMod = 100; }
 
             // 1. Intentar desde FGA_Consultar_Dashboard
             if (results != null && results.Length > 0)
@@ -538,6 +547,9 @@ namespace FGA.Services.Chatbot
                 if (idTrad == 130) cuentaContable = "13000000"; // Cartera de credito
                 else if (idTrad == 210) cuentaContable = "21000000"; // Obligaciones con el publico
                 else if (idTrad == 400) cuentaContable = "50000000"; // Resultado del periodo (ingresos)
+                else if (idTrad == 310) cuentaContable = "31000000"; // Capital Social
+                else if (idTrad == 300) cuentaContable = "30000000"; // Patrimonio Total
+                else if (idTrad == 100) cuentaContable = "10000000"; // Activo Total
 
                 if (!string.IsNullOrWhiteSpace(cuentaContable))
                 {

@@ -117,8 +117,8 @@
                     icono: 'fa-university',
                     chips: [
                         { icono: '👥', label: 'Top 20 Inversionistas', pregunta: '¿Cuál es el saldo y concentración de los 20 mayores inversionistas?' },
-                        { icono: '⏳', label: 'Plazo vs Vista', pregunta: '¿Cómo se distribuyen las captaciones a plazo frente a captaciones a la vista?' },
-                        { icono: '⚖️', label: 'Composición Fondeo', pregunta: '¿Cuál es la composición porcentual de nuestras fuentes de fondeo?' },
+                        { icono: '👥', label: 'Top 10 Inversionistas', pregunta: '¿Cuál es la concentración de los 10 mayores inversionistas?' },
+                        { icono: '⏳', label: 'Disponibilidades / Vista', pregunta: '¿Cuál es el ratio de disponibilidades sobre captaciones a la vista?' },
                         { icono: '⚠️', label: 'Riesgo Concentración', pregunta: '¿Cuáles son las recomendaciones para mitigar la concentración de pasivos?' }
                     ]
                 };
@@ -132,9 +132,9 @@
                     icono: 'fa-line-chart',
                     chips: [
                         { icono: '📉', label: 'Morosidad > 90 días', pregunta: '¿Cuál es el índice de morosidad mayor a 90 días y su tendencia?' },
-                        { icono: '🎯', label: 'Pérdida Esperada', pregunta: '¿Cuál es el nivel de estimaciones y pérdida esperada según SUGEF 14-21?' },
-                        { icono: '📑', label: 'Distribución Crédito', pregunta: '¿Cómo se distribuye la cartera de crédito entre consumo, vivienda y comercio?' },
-                        { icono: '🔍', label: 'Calidad Crediticia', pregunta: '¿Qué alertas o deterioros presenta la calidad de cartera en el último corte?' }
+                        { icono: '💳', label: 'Saldo de Cartera', pregunta: '¿Cuál es el saldo total de la cartera de crédito y su evolución?' },
+                        { icono: '🎯', label: 'Pérdida Esperada', pregunta: '¿Cuál es el nivel de pérdida esperada de la cartera de crédito?' },
+                        { icono: '📑', label: 'Cartera Vencida > 30 días', pregunta: '¿Cuál es el índice de cartera vencida mayor de 30 días?' }
                     ]
                 };
             }
@@ -161,9 +161,9 @@
                     nombre: 'Bandeja de Alertas',
                     icono: 'fa-bell',
                     chips: [
-                        { icono: '🔔', label: 'Alertas Activas', pregunta: '¿Cuáles alertas financieras o de umbrales se encuentran activadas?' },
-                        { icono: '📐', label: 'Desviaciones Contables', pregunta: '¿Existen inconsistencias o desviaciones entre balance y anexos?' },
-                        { icono: '🚦', label: 'Umbrales y Semáforos', pregunta: '¿Cómo se definen los rangos de criticidad verde, amarillo y rojo en el SAC?' }
+                        { icono: '🔔', label: 'Mis Alertas Activas', pregunta: '¿Cuáles alertas financieras o de umbrales se encuentran activadas?' },
+                        { icono: '🚦', label: 'Semáforos de Criticidad', pregunta: '¿Cómo se definen los rangos de criticidad verde, amarillo y rojo en el SAC?' },
+                        { icono: '📐', label: 'Cuentas con Desviación', pregunta: '¿Cuáles cuentas contables presentan las mayores variaciones en el último corte?' }
                     ]
                 };
             }
@@ -175,36 +175,10 @@
                     nombre: 'Indicadores y Margen',
                     icono: 'fa-pie-chart',
                     chips: [
-                        { icono: '📊', label: 'Solvencia y Liquidez', pregunta: '¿Cuáles son los ratios de solvencia y liquidez recomendados?' },
-                        { icono: '💡', label: 'Margen Financiero', pregunta: '¿Cómo se calcula el Margen de Intermediación Financiera en el SAC?' },
-                        { icono: '📈', label: 'ROA y ROE', pregunta: '¿Cuál es el rendimiento sobre activos (ROA) y patrimonio (ROE)?' }
-                    ]
-                };
-            }
-
-            // Macroeconómico / Tasas
-            if (path.indexOf('indeconomico') !== -1 || path.indexOf('tasainteres') !== -1) {
-                return {
-                    id: 'macro',
-                    nombre: 'Entorno Macroeconómico',
-                    icono: 'fa-globe',
-                    chips: [
-                        { icono: '📈', label: 'Tasas de Referencia', pregunta: '¿Cuál es el impacto de la Tasa Política Monetaria (TPM) en la entidad?' },
-                        { icono: '💵', label: 'Tipo de Cambio', pregunta: '¿Cómo ha evolucionado el tipo de cambio y qué impacto tiene en balance?' },
-                        { icono: '📊', label: 'Inflación y Tasas', pregunta: '¿Cuáles son las proyecciones macroeconómicas y su impacto cooperativo?' }
-                    ]
-                };
-            }
-
-            // Proyecciones y Simulación de Capital
-            if (path.indexOf('proyeccion') !== -1 || path.indexOf('simulacion') !== -1) {
-                return {
-                    id: 'proyecciones',
-                    nombre: 'Proyecciones y Simulación',
-                    icono: 'fa-calculator',
-                    chips: [
-                        { icono: '🔮', label: 'Simulación Capital', pregunta: '¿Cómo simular un requerimiento de capital o estrés patrimonial?' },
-                        { icono: '📊', label: 'Proyección EEFF', pregunta: '¿Qué supuestos se utilizan para la proyección de Estados Financieros?' }
+                        { icono: '⚡', label: 'Eficiencia Operativa', pregunta: '¿Cuál es el indicador de eficiencia operativa (costo administrativo)?' },
+                        { icono: '📈', label: 'Margen Financiero', pregunta: '¿Cuál es el margen financiero sobre activos de la entidad?' },
+                        { icono: '🏛️', label: 'Apalancamiento SUGEF', pregunta: '¿Cuál es el ratio de apalancamiento SUGEF 3-06?' },
+                        { icono: '📊', label: 'Suficiencia Patrimonial', pregunta: '¿Cómo cerró mi suficiencia patrimonial y qué significa?' }
                     ]
                 };
             }
@@ -218,7 +192,7 @@
                     { icono: '📊', label: 'Suficiencia Patrimonial', pregunta: '¿Cómo cerró mi suficiencia patrimonial y cuál es su tendencia?' },
                     { icono: '🏦', label: 'Obligaciones con público', pregunta: '¿Cuál es el saldo de obligaciones con el público de los últimos 2 meses?' },
                     { icono: '💳', label: 'Cartera de Crédito', pregunta: '¿Cuál es el saldo de cartera de crédito y morosidad?' },
-                    { icono: '📈', label: 'Margen y Resultado', pregunta: '¿Cuál es el margen financiero y resultado neto del periodo?' },
+                    { icono: '📈', label: 'Margen y Resultado', pregunta: '¿Cuál es el margen financiero y resultado neto acumulado del periodo?' },
                     { icono: '🔄', label: 'Últimos 3 meses', pregunta: 'Muestra la evolución de los principales indicadores en los últimos 3 meses' }
                 ]
             };

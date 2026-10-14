@@ -36,7 +36,7 @@ namespace FGA.Services.Chatbot
             sb.AppendLine(datosIndicadores);
 
             sb.AppendLine("=== CONCEPTOS CLAVE DEL SISTEMA SAC Y METODOLOGÍAS FFC ===");
-            sb.AppendLine("- Tablero Principal: 11 indicadores oficiales (Activo, Cartera Bruta/Neta, Depósitos, Morosidad, Margen, ROA, ROE, Capital Social, Suficiencia Patrimonial, Excedentes).");
+            sb.AppendLine("- Tablero Principal: Indicadores oficiales verificados con datos directos (Suficiencia Patrimonial, Obligaciones con el público, Cartera de Crédito, Resultado del Período / Excedentes, Capital Social, Patrimonio Total, Activo Total, Morosidad mayor a 90 días, Eficiencia Operativa, Margen Financiero, Apalancamiento SUGEF 3-06).");
             sb.AppendLine("- Estructura de Fondeo: Analiza la estabilidad de pasivos, concentración de los 10 y 20 mayores depositantes/inversionistas, distribución entre captaciones a plazo (CDP) y a la vista, y mitigación de riesgo de liquidez.");
             sb.AppendLine("- Cartera de Crédito y SUGEF 14-21: Análisis de morosidad (>30, >60, >90 días), provisiones contracíclicas, estimaciones y pérdida esperada (Probabilidad de Incumplimiento x Severidad x Exposición).");
             sb.AppendLine("- Evaluación CAMEL: Metodología internacional en 5 componentes: Capital (solvencia/suficiencia), Activos (calidad crediticia y provisiones), Manejo (eficiencia y gobierno corporativo), Excedentes (rentabilidad de activos y patrimonio), Liquidez (calce de plazos y disponibilidades).");
