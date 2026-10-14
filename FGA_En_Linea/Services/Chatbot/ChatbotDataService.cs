@@ -216,7 +216,111 @@ namespace FGA.Services.Chatbot
             return new DateTime(refDate.Year, refDate.Month, 1);
         }
 
-        public static string ObtenerContextoIndicadores(string idEntidad, RangoFechasConsulta rango)
+        private static readonly Dictionary<string, string> CatalogoCuentasSUGEF = new Dictionary<string, string>
+        {
+            { "10000000", "Activo Total" },
+            { "11000000", "Disponibilidades" },
+            { "11100000", "Efectivo" },
+            { "11200000", "Depósitos en Banco Central de Costa Rica (BCCR)" },
+            { "12000000", "Inversiones en Instrumentos Financieros" },
+            { "13000000", "Cartera de Crédito" },
+            { "14000000", "Cuentas y Comisiones por Cobrar" },
+            { "15000000", "Bienes Realizables" },
+            { "20000000", "Pasivo Total" },
+            { "21000000", "Obligaciones con el Público" },
+            { "21100000", "Captaciones / Depósitos a la Vista" },
+            { "21200000", "Captaciones / Depósitos a Plazo (CDP)" },
+            { "22000000", "Obligaciones con Entidades Financieras" },
+            { "30000000", "Patrimonio Total" },
+            { "31000000", "Capital Social" },
+            { "34000000", "Reservas Patrimoniales" },
+            { "36000000", "Resultado del Período" },
+            { "40000000", "Gastos Totales" },
+            { "50000000", "Ingresos Totales" }
+        };
+
+        private static string ExtraerCuentaContablePregunta(string pregunta)
+        {
+            if (string.IsNullOrWhiteSpace(pregunta)) return null;
+
+            // 1. Detectar patrón explícito: "cuenta 31000000", "cuenta: 31000000", "cta 31000000", etc.
+            var matchExplicit = Regex.Match(pregunta, @"(?i)(?:cuenta|cta|partida)\s*[:#]?\s*([1-5]\d{3,7})");
+            if (matchExplicit.Success)
+            {
+                return matchExplicit.Groups[1].Value.PadRight(8, '0');
+            }
+
+            // 2. Detectar número de 8 dígitos que empiece por 1, 2, 3, 4 o 5
+            var matchNum = Regex.Match(pregunta, @"\b([1-5]\d{7})\b");
+            if (matchNum.Success)
+            {
+                return matchNum.Groups[1].Value;
+            }
+
+            return null;
+        }
+
+        private static void AgregarConsultaEspecificaCuenta(StringBuilder sb, string idEntidad, string cuenta, RangoFechasConsulta rango)
+        {
+            if (string.IsNullOrWhiteSpace(cuenta) || string.IsNullOrWhiteSpace(idEntidad)) return;
+
+            string nombreCuenta = null;
+            if (CatalogoCuentasSUGEF.TryGetValue(cuenta, out var nomCat))
+            {
+                nombreCuenta = nomCat;
+            }
+
+            // Fechas a consultar
+            var fechas = new List<DateTime>();
+            if (rango.EsSerieHistorica && rango.CortesHistoricos.Count > 0)
+            {
+                fechas.AddRange(rango.CortesHistoricos);
+            }
+            else
+            {
+                if (rango.FechaComparar > DateTime.MinValue) fechas.Add(rango.FechaComparar);
+                if (rango.FechaCorte > DateTime.MinValue && !fechas.Contains(rango.FechaCorte)) fechas.Add(rango.FechaCorte);
+            }
+
+            var resultadosCortes = new List<string>();
+
+            foreach (var f in fechas)
+            {
+                DateTime dtDia1 = new DateTime(f.Year, f.Month, 1);
+                try
+                {
+                    var balRes = WcfHelper.Execute<FGA_En_Linea.SPService.SPClient, FGA_Consultar_Balance_Comprobacion_Result[]>(
+                        c => c.FGA_Consultar_Balance_Comprobacion(idEntidad, dtDia1)
+                    );
+
+                    if (balRes != null && balRes.Length > 0)
+                    {
+                        var ctaExacta = balRes.FirstOrDefault(r => r.Cuenta != null && r.Cuenta.Trim() == cuenta);
+                        if (ctaExacta != null)
+                        {
+                            decimal montoM = Math.Abs(ctaExacta.SaldoFinal) / 1000000m;
+                            resultadosCortes.Add(string.Format("• {0:MM/yyyy}: ₡{1:N2} M (Saldo contable: ₡{2:N2})", dtDia1, montoM, ctaExacta.SaldoFinal));
+                        }
+                    }
+                }
+                catch { }
+            }
+
+            if (resultadosCortes.Count > 0)
+            {
+                sb.AppendLine("=== [CONSULTA ESPECÍFICA DE LA CUENTA CONTABLE SOLICITADA] ===");
+                sb.AppendLine(string.Format("Cuenta consultada por el usuario: {0} ({1})", cuenta, string.IsNullOrWhiteSpace(nombreCuenta) ? "Cuenta Contable" : nombreCuenta));
+                sb.AppendLine("Saldos oficiales mes a mes encontrados en el Balance de Comprobación:");
+                foreach (var rc in resultadosCortes)
+                {
+                    sb.AppendLine("  " + rc);
+                }
+                sb.AppendLine("INSTRUCCIÓN DE MÁXIMA PRIORIDAD: El usuario preguntó específicamente por esta cuenta contable. Responde directamente con estos saldos para cada período solicitado, indicando su evolución y monto en millones.");
+                sb.AppendLine();
+            }
+        }
+
+        public static string ObtenerContextoIndicadores(string idEntidad, RangoFechasConsulta rango, string pregunta = null)
         {
             if (string.IsNullOrWhiteSpace(idEntidad))
             {
@@ -228,6 +332,13 @@ namespace FGA.Services.Chatbot
             sb.AppendLine("=== DATOS OFICIALES DE LA ENTIDAD CONSULTADOS VÍA DBSERVICE ===");
             sb.AppendLine("Referencia utilizada: " + rango.DescripcionCorte);
             sb.AppendLine();
+
+            // Detección de cuenta contable específica en la pregunta del usuario (ej. "cuenta 31000000")
+            string ctaEspecifica = ExtraerCuentaContablePregunta(pregunta);
+            if (!string.IsNullOrWhiteSpace(ctaEspecifica))
+            {
+                AgregarConsultaEspecificaCuenta(sb, idEntidad, ctaEspecifica, rango);
+            }
 
             // CASO A: Serie Histórica Relativa (ej. "últimos 3 meses")
             if (rango.EsSerieHistorica && rango.CortesHistoricos.Count > 0)

@@ -32,7 +32,7 @@ namespace FGA.Services.Chatbot
             sb.AppendLine();
 
             // 2. Consulta y enriquecimiento dinámico con datos de DBService
-            string datosIndicadores = ChatbotDataService.ObtenerContextoIndicadores(entidadId, rangoFechas);
+            string datosIndicadores = ChatbotDataService.ObtenerContextoIndicadores(entidadId, rangoFechas, pregunta);
             sb.AppendLine(datosIndicadores);
 
             sb.AppendLine("=== CONCEPTOS CLAVE DEL SISTEMA SAC Y METODOLOGÍAS FFC ===");
