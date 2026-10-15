@@ -440,20 +440,67 @@
                 lineSafe = lineSafe.replace(/\*(.*?)\*/g, '<em>$1</em>');
 
                 // Detectar si la línea es un encabezado o título de sección (ej. **Resumen ejecutivo:** o **Análisis:**)
-                var esTituloSeccion = /^\*\*(Resumen ejecutivo|An[aá]lisis|Comportamiento|Bandeja de alertas|Estructura de|Detalle|Normativa)\*\*:?$/i.test(rawLine)
-                                   || /^<strong>(Resumen ejecutivo|An[aá]lisis|Comportamiento|Bandeja de alertas|Estructura de|Detalle|Normativa)<\/strong>:?$/i.test(lineSafe);
+                var esTituloSeccion = /^(\*{2}|<strong>)?\s*(Resumen ejecutivo|An[aá]lisis|Comportamiento|Bandeja de alertas|Estructura de|Detalle|Normativa)[\:\s]*(\*{2}|<\/strong>)?[\:\s]*$/i.test(rawLine)
+                                   || /^(\*{2}|<strong>)?\s*(Resumen ejecutivo|An[aá]lisis|Comportamiento|Bandeja de alertas|Estructura de|Detalle|Normativa)[\:\s]*(\*{2}|<\/strong>)?[\:\s]*$/i.test(lineSafe);
 
                 // Detectar si es la línea de apertura del indicador ("Tu **Suficiencia...** cerró en..." o "El saldo de...")
-                var esHeroKPI = (i === 0 && (rawLine.indexOf('cerró en') >= 0 || rawLine.indexOf('cerro en') >= 0 || rawLine.indexOf('al corte de') >= 0));
+                var esHeroKPI = (i === 0 && (rawLine.indexOf('cerró en') >= 0 || rawLine.indexOf('cerro en') >= 0 || rawLine.indexOf('al corte de') >= 0 || rawLine.indexOf('al corte del') >= 0));
 
                 // Detectar viñetas: empieza con •, -, *, o número.
                 var esVineta = /^([•\-\*]|\d+\.)\s+(.+)$/.test(rawLine);
 
                 if (esHeroKPI) {
-                    htmlParts.push('<div class="sac-kpi-hero"><i class="fa fa-info-circle sac-kpi-hero-icon"></i><div class="sac-kpi-hero-text">' + lineSafe + '</div></div>');
+                    // Opción 1: Hero Stat Card destacada con cifra protagónica
+                    var cleanText = rawLine.replace(/[\*\_]/g, '');
+                    var valorMatch = cleanText.match(/(?:₡\s*[\d\.\,]+\s*[MBKmbk]?|[\d\.\,]+\s*\%)/i);
+                    var periodoMatch = cleanText.match(/\b(0[1-9]|1[0-2])\/\d{4}\b/);
+                    var valorStr = valorMatch ? valorMatch[0].trim() : '';
+                    var periodoStr = periodoMatch ? periodoMatch[0].trim() : '';
+
+                    var nombreIndicador = '';
+                    var allBolds = rawLine.match(/\*\*(.*?)\*\*/g);
+                    if (allBolds && allBolds.length > 0) {
+                        var candidate = allBolds[0].replace(/\*\*/g, '').trim();
+                        if (candidate !== valorStr && candidate !== periodoStr) {
+                            nombreIndicador = candidate;
+                        }
+                    }
+                    if (!nombreIndicador) {
+                        var mPre = cleanText.match(/(?:Tu|El saldo de la|El saldo del|El saldo de|El ratio de|El|La)\s+(.*?)\s+cerr[oó]/i);
+                        if (mPre && mPre[1]) {
+                            nombreIndicador = mPre[1].trim();
+                        }
+                    }
+
+                    if (valorStr) {
+                        var badgeTitle = nombreIndicador ? nombreIndicador : 'Indicador Financiero';
+                        var iconHeader = 'fa-line-chart';
+                        if (/cartera|cr[eé]dito/i.test(badgeTitle)) iconHeader = 'fa-credit-card';
+                        else if (/suficiencia|patrimoni/i.test(badgeTitle)) iconHeader = 'fa-shield';
+                        else if (/morosidad|mora/i.test(badgeTitle)) iconHeader = 'fa-exclamation-triangle';
+                        else if (/obligaci|p[uú]blico/i.test(badgeTitle)) iconHeader = 'fa-university';
+                        else if (/capital/i.test(badgeTitle)) iconHeader = 'fa-pie-chart';
+                        else if (/resultado|excedente/i.test(badgeTitle)) iconHeader = 'fa-money';
+                        else if (/eficiencia|costo/i.test(badgeTitle)) iconHeader = 'fa-tachometer';
+                        else if (/activo/i.test(badgeTitle)) iconHeader = 'fa-cubes';
+                        else if (/apalancamiento/i.test(badgeTitle)) iconHeader = 'fa-balance-scale';
+
+                        var heroCard = 
+                            '<div class="sac-kpi-hero-card">' +
+                                '<div class="sac-kpi-hero-top">' +
+                                    '<span class="sac-kpi-hero-badge"><i class="fa ' + iconHeader + '"></i> ' + $('<div>').text(badgeTitle.toUpperCase()).html() + '</span>' +
+                                    (periodoStr ? '<span class="sac-kpi-hero-period"><i class="fa fa-calendar-o"></i> ' + $('<div>').text(periodoStr).html() + '</span>' : '') +
+                                '</div>' +
+                                '<div class="sac-kpi-hero-value">' + $('<div>').text(valorStr).html() + '</div>' +
+                                '<div class="sac-kpi-hero-desc"><i class="fa fa-check-circle"></i> Saldo al corte del período</div>' +
+                            '</div>';
+                        htmlParts.push(heroCard);
+                    } else {
+                        htmlParts.push('<div class="sac-kpi-hero"><i class="fa fa-info-circle sac-kpi-hero-icon"></i><div class="sac-kpi-hero-text">' + lineSafe + '</div></div>');
+                    }
                 } else if (esTituloSeccion) {
-                    var tituloLimpio = rawLine.replace(/[\*\:]/g, '').trim();
-                    htmlParts.push('<div class="sac-section-heading"><i class="fa fa-bar-chart"></i> ' + tituloLimpio + '</div>');
+                    var tituloLimpio = rawLine.replace(/[\*\_]/g, '').replace(/[\:]+$/, '').trim();
+                    htmlParts.push('<div class="sac-section-heading"><i class="fa fa-bar-chart"></i> ' + $('<div>').text(tituloLimpio).html() + '</div>');
                 } else if (esVineta) {
                     var matchVineta = rawLine.match(/^([•\-\*]|\d+\.)\s+(.+)$/);
                     var textoVineta = matchVineta ? matchVineta[2] : rawLine;
@@ -464,12 +511,12 @@
 
                     // Icono contextual dinámico
                     var iconFa = 'fa-chevron-right';
-                    if (/variaci[oó]n|evoluci[oó]n|tendencia|al alza|a la baja|estable/i.test(textoVineta)) {
+                    if (/\[CR[IÍ]TICA\]/i.test(textoVineta) || /alerta|riesgo|atenci[oó]n|atraso/i.test(textoVineta)) {
+                        iconFa = 'fa-exclamation-circle';
+                    } else if (/variaci[oó]n|evoluci[oó]n|tendencia|al alza|a la baja|estable/i.test(textoVineta)) {
                         iconFa = 'fa-exchange';
                     } else if (/sugef|norma|regulatorio|umbral|ley/i.test(textoVineta)) {
                         iconFa = 'fa-shield';
-                    } else if (/alerta|riesgo|atenci[oó]n|atraso/i.test(textoVineta)) {
-                        iconFa = 'fa-exclamation-circle';
                     } else if (/corte|fecha|periodo/i.test(textoVineta)) {
                         iconFa = 'fa-calendar';
                     } else if (/asociado|asociación|capital/i.test(textoVineta)) {
@@ -478,6 +525,14 @@
 
                     // Resaltar cumplimiento normativo con insignia verde
                     vinetaSafe = vinetaSafe.replace(/Cumple el m[ií]nimo regulatorio/gi, '<span class="sac-badge-cumple"><i class="fa fa-check"></i> Cumple SUGEF</span>');
+
+                    // Insignias para Alertas Críticas y Advertencias
+                    vinetaSafe = vinetaSafe.replace(/\[CR[IÍ]TICA\]/gi, '<span class="sac-badge-crit"><i class="fa fa-exclamation-triangle"></i> CRÍTICA</span>');
+                    vinetaSafe = vinetaSafe.replace(/\[ADVERTENCIA\]/gi, '<span class="sac-badge-adv"><i class="fa fa-info-circle"></i> ADVERTENCIA</span>');
+
+                    // Resaltar comparación de períodos (ej. vs. 08/2025 o vs. mes anterior)
+                    vinetaSafe = vinetaSafe.replace(/(vs\.\s+[0-9]{2}\/[0-9]{4})/gi, '<strong>$1</strong>');
+                    vinetaSafe = vinetaSafe.replace(/\((interanual|vs\.\s+mes anterior)\)/gi, '<span class="sac-badge-period-comp">($1)</span>');
 
                     htmlParts.push('<div class="sac-bullet-item"><span class="sac-bullet-icon"><i class="fa ' + iconFa + '"></i></span><div class="sac-bullet-body">' + vinetaSafe + '</div></div>');
                 } else {

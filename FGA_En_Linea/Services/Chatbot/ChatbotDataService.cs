@@ -553,13 +553,16 @@ namespace FGA.Services.Chatbot
                         sb.AppendLine(string.Format("Total de alertas registradas en el sistema: {0}", alertas.Length));
                         foreach (var al in alertas.Take(6))
                         {
-                            sb.AppendLine(string.Format("• [{0}] {1} (Cuenta: {2}): Variación {3:N2}% ({4:N2} M). Período: {5:MM/yyyy}",
+                            string tipoComp = (al.PeriodoActual.Year != al.PeriodoAnterior.Year) ? "interanual" : "vs. mes anterior";
+                            sb.AppendLine(string.Format("• [{0}] {1} (Cuenta: {2}): Variación {3:N2}% ({4:N2} M) en {5:MM/yyyy} vs. {6:MM/yyyy} ({7})",
                                 al.TipoAlerta ?? "ALERTA",
                                 al.NombreCuenta?.Trim() ?? al.Titulo?.Trim() ?? "Cuenta contable",
                                 al.Cuenta?.Trim() ?? "N/A",
                                 al.VariacionPorcentaje,
                                 al.VariacionMonto / 1000000m,
-                                al.PeriodoActual));
+                                al.PeriodoActual,
+                                al.PeriodoAnterior,
+                                tipoComp));
                         }
                     }
                     else

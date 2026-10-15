@@ -212,7 +212,9 @@ namespace FGA.Controllers
                     porcFormato = (a.VariacionPorcentaje >= 0 ? "+" : "") + a.VariacionPorcentaje.ToString("N1", _crCulture) + "%",
                     esPositivo = a.VariacionMonto >= 0,
                     tiempoRelativo = ObtenerTiempoRelativo(a.FechaGeneracion),
-                    entidad = a.NombreEntidad
+                    entidad = a.NombreEntidad,
+                    periodoActual = a.PeriodoActual.ToString("MM/yyyy"),
+                    periodoAnterior = a.PeriodoAnterior.ToString("MM/yyyy")
                 }).ToList();
 
                 return Json(new

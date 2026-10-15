@@ -55,6 +55,7 @@ namespace FGA.Services.Chatbot
             sb.AppendLine("8. Al final de tu respuesta, incluye 2 o 3 opciones o preguntas de seguimiento relevantes en líneas individuales usando exactamente la sintaxis: [Sugerencia: Pregunta corta]");
             sb.AppendLine("9. ENFOQUE DIRECTO Y SIN RODEOS: Responde ÚNICAMENTE a lo que el usuario preguntó. NO agregues listas completas de otros indicadores no solicitados, ni repitas los conceptos clave o metodologías del sistema a menos que el usuario lo haya pedido expresamente.");
             sb.AppendLine("10. Cuando te pregunten por el cierre y la tendencia de un indicador (ej. Suficiencia Patrimonial), indica el valor de cierre al corte, la variación con respecto al mes anterior (en puntos porcentuales o monto) y una breve interpretación de solidez/normativa (ej. mínimo 10% SUGEF).");
+            sb.AppendLine("11. Al responder sobre alertas financieras o cuentas con desviación contable, especifica siempre el período evaluado y contra qué período base se calculó la variación (ej. '08/2026 vs. 08/2025 (interanual)' o '08/2026 vs. 07/2026 (mes anterior)'), para que el usuario conozca con exactitud los dos cortes comparados.");
 
             return sb.ToString();
         }
