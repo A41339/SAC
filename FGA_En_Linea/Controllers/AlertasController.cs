@@ -20,6 +20,11 @@ namespace FGA.Controllers
         /// </summary>
         public ActionResult Index(string entidad, string tipoAlerta, bool? soloNoLeidas)
         {
+            if (!Env.IsAlertasEnabled())
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
             try
             {
                 string idEntidad = ResolveCurrentEntity(entidad, out bool esAdmin);
@@ -137,6 +142,18 @@ namespace FGA.Controllers
         [HttpGet]
         public ActionResult GetResumenNavbar()
         {
+            if (!Env.IsAlertasEnabled())
+            {
+                return Json(new
+                {
+                    success = false,
+                    habilitado = false,
+                    totalNoLeidas = 0,
+                    total = 0,
+                    alertas = new object[0]
+                }, JsonRequestBehavior.AllowGet);
+            }
+
             try
             {
                 string idEntidad = ResolveCurrentEntity(null, out bool esAdmin);
@@ -218,6 +235,11 @@ namespace FGA.Controllers
         [HttpPost]
         public ActionResult MarcarLeida(int id)
         {
+            if (!Env.IsAlertasEnabled())
+            {
+                return Json(new { success = false, message = "El módulo de alertas se encuentra deshabilitado por configuración del sistema." });
+            }
+
             try
             {
                 string usuario = Env.GetUserInfo("name") ?? "SYSTEM";
@@ -245,6 +267,11 @@ namespace FGA.Controllers
         [HttpPost]
         public ActionResult MarcarTodasLeidas()
         {
+            if (!Env.IsAlertasEnabled())
+            {
+                return Json(new { success = false, message = "El módulo de alertas se encuentra deshabilitado por configuración del sistema." });
+            }
+
             try
             {
                 string idEntidad = ResolveCurrentEntity(null, out bool esAdmin);
@@ -279,6 +306,15 @@ namespace FGA.Controllers
         [HttpPost]
         public ActionResult EvaluarPeriodo(string entidadId, string periodo, string modalidad, string tipoComparacion)
         {
+            if (!Env.IsAlertasEnabled())
+            {
+                return Json(new AlertaOperacionResponse
+                {
+                    Success = false,
+                    Message = "El módulo de alertas se encuentra deshabilitado por configuración del sistema."
+                });
+            }
+
             try
             {
                 string idEnt = ResolveCurrentEntity(entidadId, out bool esAdmin);
@@ -471,6 +507,15 @@ namespace FGA.Controllers
         [HttpGet]
         public ActionResult GetConfiguracionEntidad(string entidadId)
         {
+            if (!Env.IsAlertasEnabled())
+            {
+                return Json(new AlertaConfiguracionResponse
+                {
+                    Success = false,
+                    Message = "El módulo de alertas se encuentra deshabilitado por configuración del sistema."
+                }, JsonRequestBehavior.AllowGet);
+            }
+
             try
             {
                 string idEntidad = ResolverEntidadAutorizada(entidadId);
@@ -526,6 +571,15 @@ namespace FGA.Controllers
             bool? activo = null,
             bool? usarGlobales = null)
         {
+            if (!Env.IsAlertasEnabled())
+            {
+                return Json(new AlertaOperacionResponse
+                {
+                    Success = false,
+                    Message = "El módulo de alertas se encuentra deshabilitado por configuración del sistema."
+                });
+            }
+
             try
             {
                 string idEntidad = ResolverEntidadAutorizada(entidadId);
@@ -689,6 +743,16 @@ namespace FGA.Controllers
         [HttpGet]
         public ActionResult GetCuentasMonitoreadas(string entidadId)
         {
+            if (!Env.IsAlertasEnabled())
+            {
+                return Json(new AlertaCuentasMonitoreadasResponse
+                {
+                    Success = false,
+                    Message = "El módulo de alertas se encuentra deshabilitado por configuración del sistema.",
+                    Cuentas = new List<AlertaCuentaMonitoreadaDTO>()
+                }, JsonRequestBehavior.AllowGet);
+            }
+
             var lista = new List<AlertaCuentaMonitoreadaDTO>();
             try
             {
@@ -869,6 +933,16 @@ namespace FGA.Controllers
         [HttpGet]
         public ActionResult BuscarCuentasCatalogo(string query = null, string filtro = null, string entidadId = null)
         {
+            if (!Env.IsAlertasEnabled())
+            {
+                return Json(new AlertaCatalogoCuentasResponse
+                {
+                    Success = false,
+                    Message = "El módulo de alertas se encuentra deshabilitado por configuración del sistema.",
+                    Items = new List<AlertaCuentaCatalogoItemDTO>()
+                }, JsonRequestBehavior.AllowGet);
+            }
+
             try
             {
                 string q = (query ?? filtro ?? "").Trim();
@@ -1037,6 +1111,15 @@ namespace FGA.Controllers
             decimal? umbralPorc = null,
             decimal? umbralMonto = null)
         {
+            if (!Env.IsAlertasEnabled())
+            {
+                return Json(new AlertaOperacionResponse
+                {
+                    Success = false,
+                    Message = "El módulo de alertas se encuentra deshabilitado por configuración del sistema."
+                });
+            }
+
             try
             {
                 string idEntidad = ResolverEntidadAutorizada(entidadId);
@@ -1194,6 +1277,15 @@ namespace FGA.Controllers
         [HttpPost]
         public ActionResult EliminarCuentaMonitoreada(int id, string entidadId)
         {
+            if (!Env.IsAlertasEnabled())
+            {
+                return Json(new AlertaOperacionResponse
+                {
+                    Success = false,
+                    Message = "El módulo de alertas se encuentra deshabilitado por configuración del sistema."
+                });
+            }
+
             try
             {
                 string idEntidad = ResolverEntidadAutorizada(entidadId);

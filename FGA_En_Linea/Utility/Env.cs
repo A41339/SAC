@@ -534,5 +534,65 @@ namespace FGA
                 return false;
             }
         }
+
+        public static bool IsAlertasEnabled()
+        {
+            try
+            {
+                // 1. Verificación primaria en Web.config (Kill-switch de infraestructura)
+                string cfgVal = System.Configuration.ConfigurationManager.AppSettings["Alertas_Habilitadas"] 
+                                ?? System.Configuration.ConfigurationManager.AppSettings["Alertas_Habilitado"];
+                if (!string.IsNullOrEmpty(cfgVal) && (cfgVal.Equals("false", StringComparison.OrdinalIgnoreCase) || cfgVal == "0"))
+                {
+                    return false;
+                }
+
+                // 2. Verificación dinámica vía DBService (WCF) con caché de 60 segundos
+                var ctx = HttpContext.Current;
+                if (ctx != null)
+                {
+                    object cachedObj = ctx.Cache["Alertas_Habilitadas_BD"];
+                    if (cachedObj != null)
+                    {
+                        return (bool)cachedObj;
+                    }
+
+                    bool dbEnabled = true;
+                    try
+                    {
+                        var lista = WcfHelper.Execute<FGA_En_Linea.ParametrosService.ParametrosServiceClient, FGA.Models.Parametros[]>(
+                            c => c.GetAll()
+                        );
+                        if (lista != null)
+                        {
+                            var param = lista.FirstOrDefault(p =>
+                                string.Equals(p.Llave, "ALERTAS_HABILITADAS", StringComparison.OrdinalIgnoreCase) ||
+                                string.Equals(p.Llave, "ALERTA_HABILITADA", StringComparison.OrdinalIgnoreCase) ||
+                                string.Equals(p.Llave, "ALERTAS_HABILITADO", StringComparison.OrdinalIgnoreCase));
+                            if (param != null && !string.IsNullOrEmpty(param.Valor))
+                            {
+                                string sVal = param.Valor.Trim();
+                                dbEnabled = !(sVal == "0" || sVal.Equals("false", StringComparison.OrdinalIgnoreCase) || sVal.Equals("N", StringComparison.OrdinalIgnoreCase));
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        // Si DBService no responde temporalmente, mantener por defecto habilitado
+                        dbEnabled = true;
+                    }
+
+                    ctx.Cache.Insert("Alertas_Habilitadas_BD", dbEnabled, null, DateTime.Now.AddSeconds(60), System.Web.Caching.Cache.NoSlidingExpiration);
+                    return dbEnabled;
+                }
+
+                return true;
+            }
+            catch
+            {
+                return true;
+            }
+        }
     }
 }
+

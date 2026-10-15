@@ -539,36 +539,39 @@ namespace FGA.Services.Chatbot
             if (string.IsNullOrWhiteSpace(idEntidad)) return;
 
             // Alertas Financieras Activas (FGA_Obtener_Alertas_Financieras)
-            try
+            if (FGA.Env.IsAlertasEnabled())
             {
-                var alertas = WcfHelper.Execute<FGA_En_Linea.SPService.SPClient, FGA_Obtener_Alertas_Financieras_Result[]>(
-                    c => c.FGA_Obtener_Alertas_Financieras(idEntidad, false, 20)
-                );
+                try
+                {
+                    var alertas = WcfHelper.Execute<FGA_En_Linea.SPService.SPClient, FGA_Obtener_Alertas_Financieras_Result[]>(
+                        c => c.FGA_Obtener_Alertas_Financieras(idEntidad, false, 20)
+                    );
 
-                sb.AppendLine("--- [BANDEJA DE ALERTAS ACTIVAS DE LA ENTIDAD] ---");
-                if (alertas != null && alertas.Length > 0)
-                {
-                    sb.AppendLine(string.Format("Total de alertas registradas en el sistema: {0}", alertas.Length));
-                    foreach (var al in alertas.Take(6))
+                    sb.AppendLine("--- [BANDEJA DE ALERTAS ACTIVAS DE LA ENTIDAD] ---");
+                    if (alertas != null && alertas.Length > 0)
                     {
-                        sb.AppendLine(string.Format("• [{0}] {1} (Cuenta: {2}): Variación {3:N2}% ({4:N2} M). Período: {5:MM/yyyy}",
-                            al.TipoAlerta ?? "ALERTA",
-                            al.NombreCuenta?.Trim() ?? al.Titulo?.Trim() ?? "Cuenta contable",
-                            al.Cuenta?.Trim() ?? "N/A",
-                            al.VariacionPorcentaje,
-                            al.VariacionMonto / 1000000m,
-                            al.PeriodoActual));
+                        sb.AppendLine(string.Format("Total de alertas registradas en el sistema: {0}", alertas.Length));
+                        foreach (var al in alertas.Take(6))
+                        {
+                            sb.AppendLine(string.Format("• [{0}] {1} (Cuenta: {2}): Variación {3:N2}% ({4:N2} M). Período: {5:MM/yyyy}",
+                                al.TipoAlerta ?? "ALERTA",
+                                al.NombreCuenta?.Trim() ?? al.Titulo?.Trim() ?? "Cuenta contable",
+                                al.Cuenta?.Trim() ?? "N/A",
+                                al.VariacionPorcentaje,
+                                al.VariacionMonto / 1000000m,
+                                al.PeriodoActual));
+                        }
                     }
+                    else
+                    {
+                        sb.AppendLine("• La entidad no presenta alertas financieras activas ni desviaciones contables por umbrales en este momento.");
+                    }
+                    sb.AppendLine();
                 }
-                else
+                catch (Exception ex)
                 {
-                    sb.AppendLine("• La entidad no presenta alertas financieras activas ni desviaciones contables por umbrales en este momento.");
+                    sb.AppendLine("Aviso: No se pudieron consultar alertas: " + ex.Message);
                 }
-                sb.AppendLine();
-            }
-            catch (Exception ex)
-            {
-                sb.AppendLine("Aviso: No se pudieron consultar alertas: " + ex.Message);
             }
 
             // Concentración de Fondeo y Ahorrantes (FGA_Consultar_Concentracion_Ahorrantes)

@@ -120,6 +120,7 @@ namespace FGA.Controllers
                         Descripcion = (descripcion ?? "").Trim()
                     };
                     param.Add(ref newParam);
+                    BaseController.InvalidarCacheParametros();
                     return Json(new { success = true, message = "Parámetro creado exitosamente." });
                 }
                 else
@@ -136,6 +137,7 @@ namespace FGA.Controllers
                     editParam.Descripcion = (descripcion ?? "").Trim();
 
                     param.Update(editParam);
+                    BaseController.InvalidarCacheParametros();
                     return Json(new { success = true, message = "Parámetro actualizado exitosamente." });
                 }
             }
@@ -155,6 +157,7 @@ namespace FGA.Controllers
                     return Json(new { success = false, message = "Identificador no proporcionado." });
 
                 param.Delete(id);
+                BaseController.InvalidarCacheParametros();
                 return Json(new { success = true, message = "Parámetro eliminado exitosamente." });
             }
             catch (Exception ex)
@@ -191,6 +194,7 @@ namespace FGA.Controllers
                 if (ModelState.IsValid)
                 {
                     param.Add(ref ObjParametros);
+                    BaseController.InvalidarCacheParametros();
                     sb.Append("Sumitted");
                     return Content(sb.ToString());
                 }
@@ -232,6 +236,7 @@ namespace FGA.Controllers
                 if (ModelState.IsValid)
                 {
                     param.Update(ObjParametros);
+                    BaseController.InvalidarCacheParametros();
                     sb.Append("Sumitted");
                     return Content(sb.ToString());
                 }

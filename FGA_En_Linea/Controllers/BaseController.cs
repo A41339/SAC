@@ -631,6 +631,24 @@ namespace FGA.Controllers
             var item = list.FirstOrDefault(p => string.Equals(p.Llave, llave, StringComparison.OrdinalIgnoreCase));
             return item != null && !string.IsNullOrEmpty(item.Valor) ? item.Valor : fallback;
         }
+
+        /// <summary>
+        /// Invalida las cachés en memoria asociadas a los parámetros del sistema (alertas, chatbot, lista global).
+        /// </summary>
+        public static void InvalidarCacheParametros()
+        {
+            try
+            {
+                var cache = System.Web.HttpContext.Current?.Cache;
+                if (cache != null)
+                {
+                    cache.Remove("Cache_Parametros_Sistema");
+                    cache.Remove("Alertas_Habilitadas_BD");
+                    cache.Remove("Chatbot_Habilitado_BD");
+                }
+            }
+            catch { }
+        }
         #endregion
 
         #region Session & Date Helpers
