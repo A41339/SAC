@@ -384,41 +384,41 @@ namespace FGA.Services.Chatbot
             var sb = new StringBuilder();
             if (item != null)
             {
-                sb.AppendLine(string.Format("Tu **Suficiencia Patrimonial** cerró en **{0}** para el corte de **{1}**.", item.ValorActualStr, corteStr));
+                sb.AppendLine(string.Format("Tu **Suficiencia Patrimonial** cerró en **{0}** al corte de **{1}**.", item.ValorActualStr, corteStr));
                 sb.AppendLine();
-                sb.AppendLine("**Análisis de tendencia:**");
+                sb.AppendLine("**Resumen ejecutivo:**");
 
                 if (item.ValorAnterior.HasValue && item.ValorAnterior.Value > 0)
                 {
                     decimal dif = item.ValorActual - item.ValorAnterior.Value;
                     string signo = dif >= 0 ? "+" : "";
                     string sentido = dif > 0 ? "al alza (favorable)" : (dif < 0 ? "a la baja" : "estable");
-                    sb.AppendLine(string.Format("• **Evolución:** Muestra una variación de **{0}{1:N2} puntos porcentuales** {2} respecto al mes anterior (**{3}** en {4}).", signo, dif, sentido, item.ValorAnteriorStr, compStr));
+                    sb.AppendLine(string.Format("• **Variación:** **{0}{1:N2} p.p.** {2} vs. mes anterior (**{3}** en {4}).", signo, dif, sentido, item.ValorAnteriorStr, compStr));
                 }
                 else
                 {
-                    sb.AppendLine(string.Format("• **Evolución:** Mantiene su registro oficial en **{0}** para el corte evaluado.", item.ValorActualStr));
+                    sb.AppendLine(string.Format("• **Registro oficial:** **{0}** para el corte evaluado.", item.ValorActualStr));
                 }
 
                 if (item.ValorActual >= 10m)
                 {
                     decimal holgura = item.ValorActual - 10m;
-                    sb.AppendLine(string.Format("• **Posición regulatoria:** La entidad supera ampliamente el requerimiento normativo mínimo del **10,00%** normado por la SUGEF (Acuerdo SUGEF 3-06), ubicándose en una posición de adecuada solidez patrimonial con una holgura de **+{0:N2} p.p.**", holgura));
+                    sb.AppendLine(string.Format("• **Norma SUGEF 3-06:** Cumple el mínimo regulatorio (**10,00%**) con holgura patrimonial de **+{0:N2} p.p.**", holgura));
                 }
                 else
                 {
-                    sb.AppendLine("• **Posición regulatoria:** Se encuentra por debajo del requerimiento normativo mínimo del **10,00%** de la SUGEF, requiriendo seguimiento patrimonial prioritario.");
+                    sb.AppendLine("• **Norma SUGEF 3-06:** Por debajo del umbral mínimo del **10,00%** (requiere atención prioritaria).");
                 }
             }
             else
             {
-                sb.AppendLine("La **Suficiencia Patrimonial** es el ratio prudencial que mide la solvencia y solidez patrimonial de la entidad ante la SUGEF y el FFC, exigiendo un mínimo regulatorio del 10%.");
+                sb.AppendLine("La **Suficiencia Patrimonial** mide la solvencia institucional ante la SUGEF y el FFC, exigiendo un mínimo regulatorio del 10,00%.");
             }
 
             sb.AppendLine();
-            sb.AppendLine("[Sugerencia: ¿Cuál es el saldo de la cartera de crédito?]");
-            sb.AppendLine("[Sugerencia: ¿Cómo cerró la morosidad mayor a 90 días?]");
-            sb.AppendLine("[Sugerencia: Ver evolución de los últimos 3 meses]");
+            sb.AppendLine("[Sugerencia: Saldo cartera de crédito]");
+            sb.AppendLine("[Sugerencia: Morosidad mayor a 90 días]");
+            sb.AppendLine("[Sugerencia: Evolución últimos 3 meses]");
 
             return sb.ToString();
         }
@@ -430,40 +430,40 @@ namespace FGA.Services.Chatbot
             var sb = new StringBuilder();
             if (item != null)
             {
-                sb.AppendLine(string.Format("La **Morosidad mayor a 90 días** cerró en **{0}** para el corte de **{1}**.", item.ValorActualStr, corteStr));
+                sb.AppendLine(string.Format("La **Morosidad mayor a 90 días** cerró en **{0}** al corte de **{1}**.", item.ValorActualStr, corteStr));
                 sb.AppendLine();
-                sb.AppendLine("**Análisis de tendencia:**");
+                sb.AppendLine("**Resumen ejecutivo:**");
 
                 if (item.ValorAnterior.HasValue && item.ValorAnterior.Value > 0)
                 {
                     decimal dif = item.ValorActual - item.ValorAnterior.Value;
                     string signo = dif >= 0 ? "+" : "";
-                    string sentido = dif < 0 ? "favorable (reducción del atraso)" : (dif > 0 ? "aumento en la cartera atrasada" : "estable");
-                    sb.AppendLine(string.Format("• **Evolución:** Muestra una variación de **{0}{1:N2} puntos porcentuales** ({2}) respecto al periodo anterior (**{3}** en {4}).", signo, dif, sentido, item.ValorAnteriorStr, compStr));
+                    string sentido = dif < 0 ? "favorable (reducción)" : (dif > 0 ? "aumento en mora" : "estable");
+                    sb.AppendLine(string.Format("• **Variación:** **{0}{1:N2} p.p.** ({2}) vs. periodo anterior (**{3}** en {4}).", signo, dif, sentido, item.ValorAnteriorStr, compStr));
                 }
                 else
                 {
-                    sb.AppendLine(string.Format("• **Corte analizado:** Se registra en **{0}** al cierre de {1}.", item.ValorActualStr, corteStr));
+                    sb.AppendLine(string.Format("• **Registro oficial:** **{0}** al cierre de {1}.", item.ValorActualStr, corteStr));
                 }
 
                 if (item.ValorActual <= 3m)
                 {
-                    sb.AppendLine("• **Límite prudencial:** Se encuentra dentro del rango prudencial aceptable fijado por la SUGEF (máximo recomendado del **3,00%**), reflejando una sana calidad crediticia.");
+                    sb.AppendLine("• **Umbral SUGEF:** Dentro del rango prudencial aceptable (**≤ 3,00%**), reflejando sana calidad de cartera.");
                 }
                 else
                 {
-                    sb.AppendLine("• **Límite prudencial:** Supera el umbral prudencial del **3,00%** de la SUGEF, por lo que se recomienda intensificar las gestiones de cobranza y recuperación.");
+                    sb.AppendLine("• **Umbral SUGEF:** Supera el límite recomendado del **3,00%** (se sugiere reforzar cobranza).");
                 }
             }
             else
             {
-                sb.AppendLine("El indicador de **Morosidad mayor a 90 días** refleja la proporción de créditos con atrasos superiores a 90 días respecto a la cartera total, con un umbral regulatorio recomendado no mayor al 3,00%.");
+                sb.AppendLine("La **Morosidad mayor a 90 días** mide el porcentaje de créditos con atrasos superiores a 90 días respecto a la cartera total (umbral ≤ 3,00%).");
             }
 
             sb.AppendLine();
-            sb.AppendLine("[Sugerencia: ¿Cuál es el saldo de la cartera de crédito?]");
-            sb.AppendLine("[Sugerencia: ¿Cómo cerró la suficiencia patrimonial?]");
-            sb.AppendLine("[Sugerencia: Ver alertas financieras]");
+            sb.AppendLine("[Sugerencia: Saldo cartera de crédito]");
+            sb.AppendLine("[Sugerencia: Suficiencia patrimonial]");
+            sb.AppendLine("[Sugerencia: Alertas financieras]");
 
             return sb.ToString();
         }
@@ -477,7 +477,7 @@ namespace FGA.Services.Chatbot
             {
                 sb.AppendLine(string.Format("El saldo de la **Cartera de crédito** cerró en **{0}** al corte de **{1}**.", item.ValorActualStr, corteStr));
                 sb.AppendLine();
-                sb.AppendLine("**Análisis de tendencia:**");
+                sb.AppendLine("**Resumen ejecutivo:**");
 
                 if (item.ValorAnterior.HasValue && item.ValorAnterior.Value > 0)
                 {
@@ -485,20 +485,20 @@ namespace FGA.Services.Chatbot
                     decimal porcVar = (dif / item.ValorAnterior.Value) * 100m;
                     string signo = dif >= 0 ? "+" : "";
                     string signoPorc = porcVar >= 0 ? "+" : "";
-                    string sentido = dif > 0 ? "crecimiento neto de colocaciones" : (dif < 0 ? "amortización neta o contracción" : "saldo estable");
-                    sb.AppendLine(string.Format("• **Evolución:** Registra una variación de **{0}₡{1:N2} M** ({2}{3:N2}%) respecto al mes anterior (**{4}** en {5}), reflejando un {6}.", signo, Math.Abs(dif), signoPorc, porcVar, item.ValorAnteriorStr, compStr, sentido));
+                    string sentido = dif > 0 ? "crecimiento de colocaciones" : (dif < 0 ? "amortización o contracción neta" : "saldo estable");
+                    sb.AppendLine(string.Format("• **Variación:** **{0}₡{1:N2} M** ({2}{3:N2}%) vs. mes anterior (**{4}** en {5}).", signo, Math.Abs(dif), signoPorc, porcVar, item.ValorAnteriorStr, compStr));
+                    sb.AppendLine(string.Format("• **Comportamiento:** Refleja {0}.", sentido));
                 }
-                sb.AppendLine("• **Importancia estratégica:** Constituye el principal activo productivo generador de ingresos de la entidad.");
             }
             else
             {
-                sb.AppendLine("La **Cartera de crédito** representa la totalidad de los financiamientos otorgados por la cooperativa a sus asociados.");
+                sb.AppendLine("La **Cartera de crédito** representa la totalidad de las operaciones de crédito vigentes otorgadas a asociados.");
             }
 
             sb.AppendLine();
-            sb.AppendLine("[Sugerencia: ¿Cómo cerró la morosidad mayor a 90 días?]");
-            sb.AppendLine("[Sugerencia: ¿Cuánto tenemos en obligaciones con el público?]");
-            sb.AppendLine("[Sugerencia: Ver evolución de los últimos 3 meses]");
+            sb.AppendLine("[Sugerencia: Morosidad mayor a 90 días]");
+            sb.AppendLine("[Sugerencia: Obligaciones con el público]");
+            sb.AppendLine("[Sugerencia: Evolución últimos 3 meses]");
 
             return sb.ToString();
         }
@@ -510,9 +510,9 @@ namespace FGA.Services.Chatbot
             var sb = new StringBuilder();
             if (item != null)
             {
-                sb.AppendLine(string.Format("Las **Obligaciones con el público** (captaciones y depósitos de asociados) cerraron en **{0}** al corte de **{1}**.", item.ValorActualStr, corteStr));
+                sb.AppendLine(string.Format("Las **Obligaciones con el público** cerraron en **{0}** al corte de **{1}**.", item.ValorActualStr, corteStr));
                 sb.AppendLine();
-                sb.AppendLine("**Análisis de tendencia:**");
+                sb.AppendLine("**Resumen ejecutivo:**");
 
                 if (item.ValorAnterior.HasValue && item.ValorAnterior.Value > 0)
                 {
@@ -520,20 +520,20 @@ namespace FGA.Services.Chatbot
                     decimal porcVar = (dif / item.ValorAnterior.Value) * 100m;
                     string signo = dif >= 0 ? "+" : "";
                     string signoPorc = porcVar >= 0 ? "+" : "";
-                    string sentido = dif > 0 ? "captación neta positiva" : (dif < 0 ? "vencimiento de captaciones" : "saldo estable");
-                    sb.AppendLine(string.Format("• **Evolución:** Variación de **{0}₡{1:N2} M** ({2}{3:N2}%) respecto al mes anterior (**{4}** en {5}), indicando {6}.", signo, Math.Abs(dif), signoPorc, porcVar, item.ValorAnteriorStr, compStr, sentido));
+                    string sentido = dif > 0 ? "captación neta positiva" : (dif < 0 ? "vencimientos netos" : "saldo estable");
+                    sb.AppendLine(string.Format("• **Variación:** **{0}₡{1:N2} M** ({2}{3:N2}%) vs. mes anterior (**{4}** en {5}).", signo, Math.Abs(dif), signoPorc, porcVar, item.ValorAnteriorStr, compStr));
+                    sb.AppendLine(string.Format("• **Comportamiento:** Refleja {0} en depósitos y captaciones.", sentido));
                 }
-                sb.AppendLine("• **Estabilidad de pasivos:** Es la principal fuente de fondeo institucional para la intermediación financiera.");
             }
             else
             {
-                sb.AppendLine("Las **Obligaciones con el público** corresponden al total de recursos captados de asociados en ahorros a la vista, plazo fijo y aportaciones contractuales.");
+                sb.AppendLine("Las **Obligaciones con el público** corresponden al total de recursos captados de asociados en ahorros y depósitos a plazo.");
             }
 
             sb.AppendLine();
-            sb.AppendLine("[Sugerencia: ¿Cuál es la concentración de los 10 mayores ahorrantes?]");
-            sb.AppendLine("[Sugerencia: ¿Cuál es el saldo de la cartera de crédito?]");
-            sb.AppendLine("[Sugerencia: Ver evolución de los últimos 3 meses]");
+            sb.AppendLine("[Sugerencia: Concentración mayores ahorrantes]");
+            sb.AppendLine("[Sugerencia: Saldo cartera de crédito]");
+            sb.AppendLine("[Sugerencia: Evolución últimos 3 meses]");
 
             return sb.ToString();
         }
@@ -547,7 +547,7 @@ namespace FGA.Services.Chatbot
             {
                 sb.AppendLine(string.Format("El **Capital Social** de la entidad cerró en **{0}** al corte de **{1}**.", item.ValorActualStr, corteStr));
                 sb.AppendLine();
-                sb.AppendLine("**Análisis de tendencia:**");
+                sb.AppendLine("**Resumen ejecutivo:**");
 
                 if (item.ValorAnterior.HasValue && item.ValorAnterior.Value > 0)
                 {
@@ -555,19 +555,18 @@ namespace FGA.Services.Chatbot
                     decimal porcVar = (dif / item.ValorAnterior.Value) * 100m;
                     string signo = dif >= 0 ? "+" : "";
                     string signoPorc = porcVar >= 0 ? "+" : "";
-                    sb.AppendLine(string.Format("• **Evolución:** Muestra una variación de **{0}₡{1:N2} M** ({2}{3:N2}%) respecto a {4} (**{5}**).", signo, Math.Abs(dif), signoPorc, porcVar, compStr, item.ValorAnteriorStr));
+                    sb.AppendLine(string.Format("• **Variación:** **{0}₡{1:N2} M** ({2}{3:N2}%) vs. periodo anterior (**{4}** en {5}).", signo, Math.Abs(dif), signoPorc, porcVar, item.ValorAnteriorStr, compStr));
                 }
-                sb.AppendLine("• **Respaldo institucional:** Representa la aportación directa de los asociados y constituye la base estructural del patrimonio cooperativo.");
             }
             else
             {
-                sb.AppendLine("El **Capital Social** representa el patrimonio fundacional aportado por los asociados de la cooperativa.");
+                sb.AppendLine("El **Capital Social** representa las aportaciones directas de los asociados a la cooperativa.");
             }
 
             sb.AppendLine();
-            sb.AppendLine("[Sugerencia: ¿Cómo cerró la suficiencia patrimonial?]");
-            sb.AppendLine("[Sugerencia: ¿Cuál es el saldo del patrimonio total?]");
-            sb.AppendLine("[Sugerencia: Ver evolución de los últimos 3 meses]");
+            sb.AppendLine("[Sugerencia: Suficiencia patrimonial]");
+            sb.AppendLine("[Sugerencia: Saldo patrimonio total]");
+            sb.AppendLine("[Sugerencia: Evolución últimos 3 meses]");
 
             return sb.ToString();
         }
@@ -581,31 +580,31 @@ namespace FGA.Services.Chatbot
             {
                 sb.AppendLine(string.Format("El **Resultado del período acumulado** cerró en **{0}** al corte de **{1}**.", item.ValorActualStr, corteStr));
                 sb.AppendLine();
-                sb.AppendLine("**Análisis:**");
+                sb.AppendLine("**Resumen ejecutivo:**");
                 if (item.ValorActual >= 0)
                 {
-                    sb.AppendLine("• **Desempeño:** La entidad genera **excedentes acumulados positivos** en el ejercicio económico analizado.");
+                    sb.AppendLine("• **Desempeño:** Genera **excedentes acumulados positivos** en el ejercicio.");
                 }
                 else
                 {
-                    sb.AppendLine("• **Desempeño:** La entidad registra pérdidas acumuladas en el ejercicio económico analizado.");
+                    sb.AppendLine("• **Desempeño:** Registra pérdidas acumuladas en el ejercicio.");
                 }
                 if (item.ValorAnterior.HasValue && item.ValorAnterior.Value != 0)
                 {
                     decimal dif = item.ValorActual - item.ValorAnterior.Value;
                     string signo = dif >= 0 ? "+" : "";
-                    sb.AppendLine(string.Format("• **Evolución:** Variación de **{0}₡{1:N2} M** respecto al periodo comparativo ({2}).", signo, Math.Abs(dif), item.ValorAnteriorStr ?? compStr));
+                    sb.AppendLine(string.Format("• **Variación:** **{0}₡{1:N2} M** vs. periodo comparativo ({2}).", signo, Math.Abs(dif), item.ValorAnteriorStr ?? compStr));
                 }
             }
             else
             {
-                sb.AppendLine("El **Resultado del período acumulado** refleja la utilidad o pérdida neta generada durante el ejercicio fiscal en curso.");
+                sb.AppendLine("El **Resultado del período acumulado** refleja la utilidad o pérdida neta generada durante el ejercicio fiscal.");
             }
 
             sb.AppendLine();
-            sb.AppendLine("[Sugerencia: ¿Cuál es la eficiencia operativa?]");
-            sb.AppendLine("[Sugerencia: ¿Cómo cerró la suficiencia patrimonial?]");
-            sb.AppendLine("[Sugerencia: ¿Cuál es el saldo de la cartera de crédito?]");
+            sb.AppendLine("[Sugerencia: Eficiencia operativa]");
+            sb.AppendLine("[Sugerencia: Suficiencia patrimonial]");
+            sb.AppendLine("[Sugerencia: Saldo cartera de crédito]");
 
             return sb.ToString();
         }
@@ -619,24 +618,23 @@ namespace FGA.Services.Chatbot
             {
                 sb.AppendLine(string.Format("La **Eficiencia Operativa (Costo Administrativo)** cerró en **{0}** al corte de **{1}**.", item.ValorActualStr, corteStr));
                 sb.AppendLine();
-                sb.AppendLine("**Análisis de tendencia:**");
+                sb.AppendLine("**Resumen ejecutivo:**");
                 if (item.ValorAnterior.HasValue && item.ValorAnterior.Value > 0)
                 {
                     decimal dif = item.ValorActual - item.ValorAnterior.Value;
                     string signo = dif >= 0 ? "+" : "";
-                    string sentido = dif < 0 ? "mejora (reducción de costos)" : (dif > 0 ? "aumento en la carga de gastos" : "estable");
-                    sb.AppendLine(string.Format("• **Evolución:** Variación de **{0}{1:N2} p.p.** ({2}) respecto al periodo anterior (**{3}** en {4}).", signo, dif, sentido, item.ValorAnteriorStr, compStr));
+                    string sentido = dif < 0 ? "mejora (reducción de costos)" : (dif > 0 ? "aumento en gastos" : "estable");
+                    sb.AppendLine(string.Format("• **Variación:** **{0}{1:N2} p.p.** ({2}) vs. mes anterior (**{3}** en {4}).", signo, dif, sentido, item.ValorAnteriorStr, compStr));
                 }
-                sb.AppendLine("• **Interpretación:** Mide la proporción de gastos operativos sobre el activo total; un porcentaje menor refleja mayor optimización en la estructura de costos.");
             }
             else
             {
-                sb.AppendLine("La **Eficiencia Operativa** evalúa los gastos administrativos incurridos para gestionar el volumen de activos de la cooperativa.");
+                sb.AppendLine("La **Eficiencia Operativa** evalúa los gastos administrativos incurridos para gestionar el activo de la entidad.");
             }
 
             sb.AppendLine();
-            sb.AppendLine("[Sugerencia: ¿Cuál fue el resultado del período acumulado?]");
-            sb.AppendLine("[Sugerencia: ¿Cómo cerró la suficiencia patrimonial?]");
+            sb.AppendLine("[Sugerencia: Resultado del período]");
+            sb.AppendLine("[Sugerencia: Suficiencia patrimonial]");
 
             return sb.ToString();
         }
@@ -650,17 +648,17 @@ namespace FGA.Services.Chatbot
             {
                 sb.AppendLine(string.Format("El ratio de **Apalancamiento (SUGEF 3-06)** cerró en **{0}** para el corte de **{1}**.", item.ValorActualStr, corteStr));
                 sb.AppendLine();
-                sb.AppendLine("**Análisis:**");
-                sb.AppendLine("• **Normativa prudencial:** Mide el nivel de respaldo que provee el capital común y aportaciones institucionales sobre los activos totales y contingentes según el Acuerdo SUGEF 3-06.");
+                sb.AppendLine("**Resumen ejecutivo:**");
+                sb.AppendLine("• **Normativa:** Refleja el respaldo del capital institucional sobre los activos totales y contingentes según Acuerdo SUGEF 3-06.");
             }
             else
             {
-                sb.AppendLine("El ratio de **Apalancamiento SUGEF 3-06** relaciona la exposición total de activos con el capital base de la entidad.");
+                sb.AppendLine("El ratio de **Apalancamiento SUGEF 3-06** relaciona la exposición de activos con el capital base institucional.");
             }
 
             sb.AppendLine();
-            sb.AppendLine("[Sugerencia: ¿Cómo cerró la suficiencia patrimonial?]");
-            sb.AppendLine("[Sugerencia: ¿Cuál es el saldo del patrimonio total?]");
+            sb.AppendLine("[Sugerencia: Suficiencia patrimonial]");
+            sb.AppendLine("[Sugerencia: Saldo patrimonio total]");
 
             return sb.ToString();
         }
@@ -672,20 +670,19 @@ namespace FGA.Services.Chatbot
             var sb = new StringBuilder();
             if (item != null)
             {
-                sb.AppendLine(string.Format("El **Patrimonio Total** de la entidad cerró en **{0}** al corte de **{1}**.", item.ValorActualStr, corteStr));
+                sb.AppendLine(string.Format("El **Patrimonio Total** cerró en **{0}** al corte de **{1}**.", item.ValorActualStr, corteStr));
                 sb.AppendLine();
-                sb.AppendLine("**Análisis:**");
+                sb.AppendLine("**Resumen ejecutivo:**");
                 if (item.ValorAnterior.HasValue && item.ValorAnterior.Value > 0)
                 {
                     decimal dif = item.ValorActual - item.ValorAnterior.Value;
                     string signo = dif >= 0 ? "+" : "";
-                    sb.AppendLine(string.Format("• **Evolución:** Variación de **{0}₡{1:N2} M** respecto a {2} (**{3}**).", signo, Math.Abs(dif), compStr, item.ValorAnteriorStr));
+                    sb.AppendLine(string.Format("• **Variación:** **{0}₡{1:N2} M** vs. {2} (**{3}**).", signo, Math.Abs(dif), compStr, item.ValorAnteriorStr));
                 }
-                sb.AppendLine("• **Respaldo institucional:** Agrupa el capital social, reservas patrimoniales y excedentes acumulados.");
             }
             sb.AppendLine();
-            sb.AppendLine("[Sugerencia: ¿Cómo cerró la suficiencia patrimonial?]");
-            sb.AppendLine("[Sugerencia: ¿Cuál es el saldo del capital social?]");
+            sb.AppendLine("[Sugerencia: Suficiencia patrimonial]");
+            sb.AppendLine("[Sugerencia: Capital social]");
             return sb.ToString();
         }
 
@@ -696,20 +693,19 @@ namespace FGA.Services.Chatbot
             var sb = new StringBuilder();
             if (item != null)
             {
-                sb.AppendLine(string.Format("El **Activo Total** de la entidad cerró en **{0}** al corte de **{1}**.", item.ValorActualStr, corteStr));
+                sb.AppendLine(string.Format("El **Activo Total** cerró en **{0}** al corte de **{1}**.", item.ValorActualStr, corteStr));
                 sb.AppendLine();
-                sb.AppendLine("**Análisis:**");
+                sb.AppendLine("**Resumen ejecutivo:**");
                 if (item.ValorAnterior.HasValue && item.ValorAnterior.Value > 0)
                 {
                     decimal dif = item.ValorActual - item.ValorAnterior.Value;
                     string signo = dif >= 0 ? "+" : "";
-                    sb.AppendLine(string.Format("• **Evolución:** Variación de **{0}₡{1:N2} M** respecto a {2} (**{3}**).", signo, Math.Abs(dif), compStr, item.ValorAnteriorStr));
+                    sb.AppendLine(string.Format("• **Variación:** **{0}₡{1:N2} M** vs. {2} (**{3}**).", signo, Math.Abs(dif), compStr, item.ValorAnteriorStr));
                 }
-                sb.AppendLine("• **Composición principal:** Integrado mayoritariamente por la cartera de crédito y las disponibilidades líquidas.");
             }
             sb.AppendLine();
-            sb.AppendLine("[Sugerencia: ¿Cuál es el saldo de la cartera de crédito?]");
-            sb.AppendLine("[Sugerencia: ¿Cuánto tenemos en obligaciones con el público?]");
+            sb.AppendLine("[Sugerencia: Saldo cartera de crédito]");
+            sb.AppendLine("[Sugerencia: Obligaciones con el público]");
             return sb.ToString();
         }
 
@@ -753,8 +749,8 @@ namespace FGA.Services.Chatbot
             }
 
             sb.AppendLine();
-            sb.AppendLine("[Sugerencia: ¿Cómo cerró la morosidad mayor a 90 días?]");
-            sb.AppendLine("[Sugerencia: ¿Cómo cerró la suficiencia patrimonial?]");
+            sb.AppendLine("[Sugerencia: Morosidad mayor a 90 días]");
+            sb.AppendLine("[Sugerencia: Suficiencia patrimonial]");
 
             return sb.ToString();
         }
