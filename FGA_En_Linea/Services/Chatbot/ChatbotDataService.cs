@@ -628,7 +628,7 @@ namespace FGA.Services.Chatbot
             // 1. Intentar desde FGA_Consultar_Dashboard
             if (results != null && results.Length > 0)
             {
-                var matches = results.Where(r => r.ID == idMod || r.ID == idTrad).ToList();
+                var matches = results.Where(r => r.ID == idMod || r.ID == idTrad).OrderBy(r => r.ID == idMod ? 0 : 1).ToList();
                 if (matches.Count > 0)
                 {
                     // Buscar coincidencia que coincida con el mes y año de corte
@@ -772,7 +772,7 @@ namespace FGA.Services.Chatbot
 
             if (results != null && results.Length > 0)
             {
-                var matches = results.Where(r => r.ID == 8001 || r.ID == 1).ToList();
+                var matches = results.Where(r => r.ID == 8001).ToList();
                 if (matches.Count > 0)
                 {
                     var matchCorte = matches.FirstOrDefault(r => r.PERIODO.HasValue && r.PERIODO.Value.Year == corte.Year && r.PERIODO.Value.Month == corte.Month);
@@ -796,6 +796,14 @@ namespace FGA.Services.Chatbot
                     {
                         valAnterior = matchComp.MONTO.Value;
                     }
+                    else
+                    {
+                        var ant = matches.Where(r => r.PERIODO.HasValue && r.PERIODO.Value < corte).OrderByDescending(r => r.PERIODO.Value).FirstOrDefault();
+                        if (ant != null && ant.MONTO.HasValue && ant.MONTO.Value > 0)
+                        {
+                            valAnterior = ant.MONTO.Value;
+                        }
+                    }
                 }
             }
 
@@ -809,21 +817,27 @@ namespace FGA.Services.Chatbot
                     );
                     if (takSuf != null && takSuf.Length > 0)
                     {
-                        if (!encontradoEnDashboard)
+                        var sufItems = takSuf.Where(s => s.Nombre != null && s.Nombre.Trim().Equals("Suficiencia", StringComparison.OrdinalIgnoreCase) && s.Monto.HasValue && s.Monto.Value > 0).ToList();
+                        if (sufItems.Count > 0)
                         {
-                            var matchActual = takSuf.FirstOrDefault(s => s.Nombre != null && s.Nombre.Trim().Equals("Suficiencia", StringComparison.OrdinalIgnoreCase) && s.Monto.HasValue && s.Monto.Value > 0);
-                            if (matchActual != null)
+                            if (!encontradoEnDashboard)
                             {
-                                valActual = matchActual.Monto.Value;
-                                encontradoEnDashboard = true;
+                                var matchActual = sufItems.FirstOrDefault(s => s.Periodo.HasValue && s.Periodo.Value.Year == corte.Year && s.Periodo.Value.Month == corte.Month)
+                                                  ?? sufItems.OrderBy(s => s.Periodo ?? DateTime.MinValue).Last();
+                                if (matchActual != null)
+                                {
+                                    valActual = matchActual.Monto.Value;
+                                    encontradoEnDashboard = true;
+                                }
                             }
-                        }
-                        if (valAnterior == 0)
-                        {
-                            var matchAnt = takSuf.FirstOrDefault(s => s.Nombre != null && (s.Nombre.IndexOf("Anterior", StringComparison.OrdinalIgnoreCase) >= 0 || s.Nombre.IndexOf("Comp", StringComparison.OrdinalIgnoreCase) >= 0) && s.Monto.HasValue && s.Monto.Value > 0);
-                            if (matchAnt != null)
+                            if (valAnterior == 0)
                             {
-                                valAnterior = matchAnt.Monto.Value;
+                                var matchAnt = sufItems.FirstOrDefault(s => s.Periodo.HasValue && s.Periodo.Value.Year == compMesAnt.Year && s.Periodo.Value.Month == compMesAnt.Month)
+                                               ?? sufItems.Where(s => s.Periodo.HasValue && s.Periodo.Value < corte).OrderByDescending(s => s.Periodo.Value).FirstOrDefault();
+                                if (matchAnt != null)
+                                {
+                                    valAnterior = matchAnt.Monto.Value;
+                                }
                             }
                         }
                     }
@@ -831,7 +845,7 @@ namespace FGA.Services.Chatbot
                 catch { }
             }
 
-            // Si aún da 0, consultar FGA_Consultar_CAMEL (ID 1 o nombre Suficiencia)
+            // Si aún da 0, consultar FGA_Consultar_CAMEL (nombre Suficiencia)
             if ((!encontradoEnDashboard || valAnterior == 0) && !string.IsNullOrWhiteSpace(idEntidad))
             {
                 try
@@ -841,7 +855,7 @@ namespace FGA.Services.Chatbot
                     );
                     if (camel != null && camel.Length > 0)
                     {
-                        var matchCamel = camel.FirstOrDefault(cm => (cm.IDRPT_CAMEL == 1 || (cm.NOMBRE != null && cm.NOMBRE.IndexOf("SUFICIENCIA", StringComparison.OrdinalIgnoreCase) >= 0)) && cm.MONTO_2 > 0);
+                        var matchCamel = camel.FirstOrDefault(cm => cm.NOMBRE != null && cm.NOMBRE.IndexOf("SUFICIENCIA", StringComparison.OrdinalIgnoreCase) >= 0 && cm.MONTO_2 > 0);
                         if (matchCamel != null)
                         {
                             if (!encontradoEnDashboard)
@@ -925,6 +939,14 @@ namespace FGA.Services.Chatbot
                     if (matchComp != null)
                     {
                         valComp = matchComp.MONTO ?? matchComp.CALIFICACION;
+                    }
+                    else
+                    {
+                        var ant = matches.Where(r => r.PERIODO.HasValue && r.PERIODO.Value < corte.Value).OrderByDescending(r => r.PERIODO.Value).FirstOrDefault();
+                        if (ant != null)
+                        {
+                            valComp = ant.MONTO ?? ant.CALIFICACION;
+                        }
                     }
                 }
             }
