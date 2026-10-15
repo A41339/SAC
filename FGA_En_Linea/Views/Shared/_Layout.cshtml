@@ -29,9 +29,44 @@
     <meta content="width=device-width, initial-scale=0.8, maximum-scale=1, user-scalable=no" name="viewport">
     <link rel="icon" href="~/favicon.ico">
     @Styles.Render("~/Content/css")
-    <link rel="stylesheet" href="~/Content/theme/bower_components/font-awesome/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/theme/bower_components/font-awesome/css/font-awesome.min.css?v=4.7.0")" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
     <style>
+        /* Fallback robusto para fuentes de FontAwesome garantizado con @@Url.Content para entornos IIS / subdirectorios */
+        @@font-face {
+            font-family: 'FontAwesome';
+            src: url('@Url.Content("~/Content/theme/bower_components/font-awesome/fonts/fontawesome-webfont.eot?v=4.7.0")');
+            src: url('@Url.Content("~/Content/theme/bower_components/font-awesome/fonts/fontawesome-webfont.eot?#iefix&v=4.7.0")') format('embedded-opentype'),
+                 url('@Url.Content("~/Content/theme/bower_components/font-awesome/fonts/fontawesome-webfont.woff2?v=4.7.0")') format('woff2'),
+                 url('@Url.Content("~/Content/theme/bower_components/font-awesome/fonts/fontawesome-webfont.woff?v=4.7.0")') format('woff'),
+                 url('@Url.Content("~/Content/theme/bower_components/font-awesome/fonts/fontawesome-webfont.ttf?v=4.7.0")') format('truetype'),
+                 url('@Url.Content("~/Content/theme/bower_components/font-awesome/fonts/fontawesome-webfont.svg?v=4.7.0#fontawesomeregular")') format('svg'),
+                 url('@Url.Content("~/fonts/fontawesome-webfont.woff2?v=4.7.0")') format('woff2'),
+                 url('@Url.Content("~/fonts/fontawesome-webfont.woff?v=4.7.0")') format('woff'),
+                 url('@Url.Content("~/fonts/fontawesome-webfont.ttf?v=4.7.0")') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        /* Asegurar que ningún estilo de fuente del menú lateral sobreescriba FontAwesome con Segoe UI */
+        .sidebar-menu i,
+        .sidebar-menu .fa,
+        .sidebar-menu li a i,
+        .sidebar-menu .treeview-menu li a i,
+        .sidebar-menu > li > a > i:first-child,
+        .main-sidebar i,
+        .main-sidebar .fa,
+        i.fa {
+            font-family: 'FontAwesome' !important;
+            font-style: normal !important;
+            font-weight: normal !important;
+            display: inline-block !important;
+            line-height: 1 !important;
+            -webkit-font-smoothing: antialiased !important;
+            -moz-osx-font-smoothing: grayscale !important;
+        }
+
         /* Píldoras de Selección FFC (Modalidad, Comparativo, etc.): Fondo blanco, borde sutil y texto azul */
         .pill-group {
             display: inline-flex !important;
@@ -1674,7 +1709,19 @@
 
         @Html.Action("Index", "ParameterPartial")
 
-        @if (FGA.Env.IsChatbotEnabled())
+        @{
+            bool chatbotHabilitado = true;
+            try
+            {
+                var appSettingChatbot = System.Configuration.ConfigurationManager.AppSettings["Chatbot_Habilitado"];
+                if (!string.IsNullOrEmpty(appSettingChatbot) && (appSettingChatbot.Trim() == "0" || appSettingChatbot.Trim().Equals("false", StringComparison.OrdinalIgnoreCase)))
+                {
+                    chatbotHabilitado = false;
+                }
+            }
+            catch { }
+        }
+        @if (chatbotHabilitado)
         {
             @Html.Partial("_ChatbotWidget")
         }
