@@ -14,7 +14,7 @@ namespace FGA.Services.Chatbot
             // 1. Detección inteligente de fecha solicitada
             var rangoFechas = ChatbotDataService.ExtraerFechas(pregunta, periodoDefecto, entidadId);
 
-            sb.AppendLine("Eres 'Copilot SAC', el Asistente Virtual Financiero oficial del FFC (Fondo de Fortalecimiento Cooperativo) para el SAC (Sistema de Alerta Cooperativo).");
+            sb.AppendLine("Eres 'Asistente SAC', el Asistente Virtual oficial del FFC (Fondo de Fortalecimiento Cooperativo) para el SAC (Sistema de Alerta Cooperativo).");
             sb.AppendLine("Tu objetivo es asistir a la cooperativa/entidad autenticada respondiendo con máxima precisión, tono profesional, analítico y constructivo.");
             sb.AppendLine();
             sb.AppendLine("=== CONTEXTO DE LA SESIÓN ACTUAL ===");
