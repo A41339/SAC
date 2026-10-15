@@ -8,6 +8,73 @@
     string nombreUsuario = FGA.Env.GetUserInfo("name");
 }
 
+<style>
+    /* Estilos críticos e independientes de caché para el Hero KPI Card y badges del Chatbot */
+    .sac-kpi-hero-card {
+        background: linear-gradient(135deg, #ffffff 0%, #f0f7ff 100%) !important;
+        border: 1px solid #bae6fd !important;
+        border-left: 4px solid #0071AD !important;
+        border-radius: 10px !important;
+        padding: 10px 14px 9px 14px !important;
+        margin-bottom: 10px !important;
+        box-shadow: 0 2px 6px rgba(0, 113, 173, 0.08) !important;
+        display: block !important;
+    }
+    .sac-kpi-hero-top {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        width: 100% !important;
+        gap: 8px !important;
+        margin-bottom: 4px !important;
+    }
+    .sac-kpi-hero-badge {
+        font-size: 11px !important;
+        font-weight: 700 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.5px !important;
+        color: #0284c7 !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 5px !important;
+    }
+    .sac-kpi-hero-badge i {
+        font-size: 11px !important;
+        color: #0071AD !important;
+    }
+    .sac-kpi-hero-period {
+        font-size: 10.5px !important;
+        font-weight: 700 !important;
+        color: #475569 !important;
+        background: #e2e8f0 !important;
+        padding: 2px 8px !important;
+        border-radius: 6px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 4px !important;
+        margin-left: auto !important;
+        white-space: nowrap !important;
+    }
+    .sac-kpi-hero-value {
+        font-size: 22px !important;
+        font-weight: 800 !important;
+        color: #004b75 !important;
+        line-height: 1.2 !important;
+        margin: 3px 0 2px 0 !important;
+        letter-spacing: -0.3px !important;
+        display: block !important;
+    }
+    .sac-kpi-hero-desc {
+        font-size: 10.5px !important;
+        color: #0369a1 !important;
+        font-weight: 600 !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 4px !important;
+        opacity: 0.9 !important;
+    }
+</style>
+
 <!-- Botón Flotante Disparador (Launcher) -->
 <div id="sacChatbotLauncher" class="sac-chatbot-launcher" title="Asistente SAC">
     <div class="sac-launcher-inner">
@@ -486,13 +553,13 @@
                         else if (/apalancamiento/i.test(badgeTitle)) iconHeader = 'fa-balance-scale';
 
                         var heroCard = 
-                            '<div class="sac-kpi-hero-card">' +
-                                '<div class="sac-kpi-hero-top">' +
-                                    '<span class="sac-kpi-hero-badge"><i class="fa ' + iconHeader + '"></i> ' + $('<div>').text(badgeTitle.toUpperCase()).html() + '</span>' +
-                                    (periodoStr ? '<span class="sac-kpi-hero-period"><i class="fa fa-calendar-o"></i> ' + $('<div>').text(periodoStr).html() + '</span>' : '') +
+                            '<div class="sac-kpi-hero-card" style="background: linear-gradient(135deg, #ffffff 0%, #f0f7ff 100%) !important; border: 1px solid #bae6fd !important; border-left: 4px solid #0071AD !important; border-radius: 10px !important; padding: 10px 14px 9px 14px !important; margin-bottom: 10px !important; box-shadow: 0 2px 6px rgba(0, 113, 173, 0.08) !important; display: block !important;">' +
+                                '<div class="sac-kpi-hero-top" style="display: flex !important; align-items: center !important; justify-content: space-between !important; width: 100% !important; gap: 8px !important; margin-bottom: 4px !important;">' +
+                                    '<span class="sac-kpi-hero-badge" style="font-size: 11px !important; font-weight: 700 !important; text-transform: uppercase !important; letter-spacing: 0.5px !important; color: #0284c7 !important; display: inline-flex !important; align-items: center !important; gap: 5px !important;"><i class="fa ' + iconHeader + '" style="color: #0071AD !important;"></i> ' + $('<div>').text(badgeTitle.toUpperCase()).html() + '</span>' +
+                                    (periodoStr ? '<span class="sac-kpi-hero-period" style="font-size: 10.5px !important; font-weight: 700 !important; color: #475569 !important; background: #e2e8f0 !important; padding: 2px 8px !important; border-radius: 6px !important; display: inline-flex !important; align-items: center !important; gap: 4px !important; margin-left: auto !important; white-space: nowrap !important;"><i class="fa fa-calendar-o"></i> ' + $('<div>').text(periodoStr).html() + '</span>' : '') +
                                 '</div>' +
-                                '<div class="sac-kpi-hero-value">' + $('<div>').text(valorStr).html() + '</div>' +
-                                '<div class="sac-kpi-hero-desc"><i class="fa fa-check-circle"></i> Saldo al corte del período</div>' +
+                                '<div class="sac-kpi-hero-value" style="font-size: 22px !important; font-weight: 800 !important; color: #004b75 !important; line-height: 1.2 !important; margin: 3px 0 2px 0 !important; letter-spacing: -0.3px !important; display: block !important;">' + $('<div>').text(valorStr).html() + '</div>' +
+                                '<div class="sac-kpi-hero-desc" style="font-size: 10.5px !important; color: #0369a1 !important; font-weight: 600 !important; display: flex !important; align-items: center !important; gap: 4px !important; opacity: 0.9 !important;"><i class="fa fa-check-circle"></i> Saldo al corte del período</div>' +
                             '</div>';
                         htmlParts.push(heroCard);
                     } else {

@@ -954,7 +954,7 @@ namespace FGA.Controllers
             try
             {
                 string q = (query ?? filtro ?? "").Trim();
-                if (string.IsNullOrWhiteSpace(q))
+                if (string.IsNullOrWhiteSpace(q) || q.Length < 2)
                 {
                     return Json(new AlertaCatalogoCuentasResponse
                     {
@@ -963,58 +963,44 @@ namespace FGA.Controllers
                     }, JsonRequestBehavior.AllowGet);
                 }
 
-                string qLower = q.ToLowerInvariant();
-                List<AlertaCuentaCatalogoItemDTO> resultado = new List<AlertaCuentaCatalogoItemDTO>();
+                string connStr = ObtenerCadenaConexion();
+                var catalogo = ObtenerCatalogoCuentas(connStr);
+                List<AlertaCuentaCatalogoItemDTO> resultado;
 
-                // 1. Intentar vía CatalogoCuentaClient si está disponible
-                try
+                if (catalogo != null && catalogo.Count > 0)
                 {
-                    var catClient = new FGA_En_Linea.CatalogoCuentaService.CatalogoCuentaClient();
-                    try
-                    {
-                        var cuentas = catClient.GetAll();
-                        if (cuentas != null && cuentas.Length > 0)
-                        {
-                            resultado = cuentas
-                                .Where(c => c != null && !string.IsNullOrEmpty(c.Cuenta) &&
-                                       (c.Cuenta.ToLowerInvariant().Contains(qLower) || (c.Nombre != null && c.Nombre.ToLowerInvariant().Contains(qLower))))
-                                .OrderBy(c => c.Cuenta.StartsWith(q, StringComparison.OrdinalIgnoreCase) ? 0 : 1)
-                                .ThenBy(c => c.Cuenta)
-                                .Take(30)
-                                .Select(c => new AlertaCuentaCatalogoItemDTO
-                                {
-                                    Cuenta = c.Cuenta != null ? c.Cuenta.Trim() : "",
-                                    Descripcion = c.Nombre != null ? c.Nombre.Trim() : "",
-                                    Nivel = c.Nivel ?? 3
-                                })
-                                .ToList();
+                    bool esDigito = char.IsDigit(q[0]);
 
-                            if (resultado.Count > 0)
-                            {
-                                return Json(new AlertaCatalogoCuentasResponse
-                                {
-                                    Success = true,
-                                    Items = resultado
-                                }, JsonRequestBehavior.AllowGet);
-                            }
-                        }
-                    }
-                    finally
+                    if (esDigito)
                     {
-                        catClient.SafeClose();
+                        // Priorizar coincidencia por código de cuenta
+                        resultado = catalogo
+                            .Where(c => c.Cuenta != null && (c.Cuenta.StartsWith(q, StringComparison.OrdinalIgnoreCase) || c.Cuenta.IndexOf(q, StringComparison.OrdinalIgnoreCase) >= 0))
+                            .OrderBy(c => c.Cuenta.StartsWith(q, StringComparison.OrdinalIgnoreCase) ? 0 : 1)
+                            .ThenBy(c => c.Cuenta)
+                            .Take(30)
+                            .ToList();
+                    }
+                    else
+                    {
+                        // Búsqueda por descripción o código
+                        resultado = catalogo
+                            .Where(c => (c.Descripcion != null && c.Descripcion.IndexOf(q, StringComparison.OrdinalIgnoreCase) >= 0) ||
+                                        (c.Cuenta != null && c.Cuenta.IndexOf(q, StringComparison.OrdinalIgnoreCase) >= 0))
+                            .OrderBy(c => (c.Descripcion != null && c.Descripcion.StartsWith(q, StringComparison.OrdinalIgnoreCase)) ? 0 :
+                                          (c.Cuenta != null && c.Cuenta.StartsWith(q, StringComparison.OrdinalIgnoreCase)) ? 1 : 2)
+                            .ThenBy(c => c.Cuenta)
+                            .Take(30)
+                            .ToList();
                     }
                 }
-                catch { }
-
-                // 2. Fallback vía base de datos directa
-                string connStr = ObtenerCadenaConexion();
-                if (!string.IsNullOrEmpty(connStr))
+                else
                 {
+                    // Fallback directo a SQL si la lista en memoria no estuviese cargada aún
+                    resultado = new List<AlertaCuentaCatalogoItemDTO>();
                     using (var conn = new SqlConnection(connStr))
                     {
                         conn.Open();
-                        AsegurarTablasAlertasPersonalizadas(conn);
-
                         string sqlCatalog = @"
                             SELECT TOP 30 
                                 CUENTA, 
@@ -1033,6 +1019,7 @@ namespace FGA.Controllers
 
                         using (var cmd = new SqlCommand(sqlCatalog, conn))
                         {
+                            cmd.CommandTimeout = 15;
                             cmd.Parameters.AddWithValue("@qLike", "%" + q + "%");
                             cmd.Parameters.AddWithValue("@qStart", q + "%");
                             using (var reader = cmd.ExecuteReader())
@@ -1047,42 +1034,6 @@ namespace FGA.Controllers
                                     });
                                 }
                             }
-                        }
-
-                        // 3. Fallback adicional si no hubieron resultados en CATALOGOCUENTA:
-                        // Buscar en SALIDA_BALANCE_COMPROBACION
-                        if (resultado.Count == 0)
-                        {
-                            try
-                            {
-                                string sqlBal = @"
-                                    SELECT DISTINCT TOP 30 
-                                        CUENTA, 
-                                        DESCRIPCION 
-                                    FROM dbo.SALIDA_BALANCE_COMPROBACION WITH(NOLOCK) 
-                                    WHERE (CUENTA LIKE @qLike OR DESCRIPCION LIKE @qLike)
-                                      AND (@idEntidad IS NULL OR IDENTIDAD = @idEntidad)
-                                    ORDER BY CUENTA";
-
-                                using (var cmdBal = new SqlCommand(sqlBal, conn))
-                                {
-                                    cmdBal.Parameters.AddWithValue("@qLike", "%" + q + "%");
-                                    cmdBal.Parameters.AddWithValue("@idEntidad", string.IsNullOrEmpty(entidadId) || entidadId == "-1" ? (object)DBNull.Value : entidadId);
-                                    using (var rBal = cmdBal.ExecuteReader())
-                                    {
-                                        while (rBal.Read())
-                                        {
-                                            resultado.Add(new AlertaCuentaCatalogoItemDTO
-                                            {
-                                                Cuenta = rBal["CUENTA"].ToString().Trim(),
-                                                Descripcion = rBal["DESCRIPCION"] != DBNull.Value ? rBal["DESCRIPCION"].ToString().Trim() : "",
-                                                Nivel = 3
-                                            });
-                                        }
-                                    }
-                                }
-                            }
-                            catch { }
                         }
                     }
                 }
@@ -1453,6 +1404,76 @@ namespace FGA.Controllers
             catch
             {
                 return 0;
+            }
+        }
+
+        private static List<AlertaCuentaCatalogoItemDTO> _cacheCatalogoCuentas = null;
+        private static readonly object _lockCatalogo = new object();
+        private static DateTime _cacheCatalogoExpira = DateTime.MinValue;
+
+        private static List<AlertaCuentaCatalogoItemDTO> ObtenerCatalogoCuentas(string connStr)
+        {
+            if (_cacheCatalogoCuentas != null && DateTime.UtcNow < _cacheCatalogoExpira)
+            {
+                return _cacheCatalogoCuentas;
+            }
+
+            lock (_lockCatalogo)
+            {
+                if (_cacheCatalogoCuentas != null && DateTime.UtcNow < _cacheCatalogoExpira)
+                {
+                    return _cacheCatalogoCuentas;
+                }
+
+                var lista = new List<AlertaCuentaCatalogoItemDTO>(12000);
+                try
+                {
+                    using (var conn = new SqlConnection(connStr))
+                    {
+                        conn.Open();
+                        string sql = @"
+                            SELECT 
+                                CUENTA, 
+                                NOMBRE, 
+                                CASE 
+                                    WHEN LEN(RTRIM(CUENTA)) <= 2 THEN 1
+                                    WHEN LEN(RTRIM(CUENTA)) <= 4 THEN 2
+                                    WHEN LEN(RTRIM(CUENTA)) <= 6 THEN 3
+                                    ELSE 4
+                                END AS NIVEL 
+                            FROM dbo.CATALOGOCUENTA WITH(NOLOCK) 
+                            ORDER BY CUENTA";
+
+                        using (var cmd = new SqlCommand(sql, conn))
+                        {
+                            cmd.CommandTimeout = 15;
+                            using (var reader = cmd.ExecuteReader())
+                            {
+                                while (reader.Read())
+                                {
+                                    lista.Add(new AlertaCuentaCatalogoItemDTO
+                                    {
+                                        Cuenta = reader["CUENTA"].ToString().Trim(),
+                                        Descripcion = reader["NOMBRE"] != DBNull.Value ? reader["NOMBRE"].ToString().Trim() : "",
+                                        Nivel = Convert.ToInt32(reader["NIVEL"])
+                                    });
+                                }
+                            }
+                        }
+                    }
+
+                    if (lista.Count > 0)
+                    {
+                        _cacheCatalogoCuentas = lista;
+                        _cacheCatalogoExpira = DateTime.UtcNow.AddHours(4);
+                    }
+                }
+                catch
+                {
+                    if (_cacheCatalogoCuentas != null) return _cacheCatalogoCuentas;
+                }
+
+                return lista;
             }
         }
 

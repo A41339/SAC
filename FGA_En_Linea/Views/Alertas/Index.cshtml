@@ -710,6 +710,7 @@
     // ==========================================================================
     var currentConfigEntidadId = "-1";
     var searchCuentaTimeout = null;
+    var currentCuentaAjaxReq = null;
 
     function abrirModalConfigEntidad(tabInicial) {
         var selectVal = $('#selectEntidad').val();
@@ -1178,7 +1179,7 @@
             abrirModalConfigEntidad();
         });
 
-        // Autocomplete en vivo para búsqueda de cuentas contables
+        // Autocomplete en vivo para búsqueda de cuentas contables (Optimizado y ultra rápido)
         $('#txtBuscarCuentaCatalogo').on('input', function() {
             var val = $(this).val().trim();
             var $dropdown = $('#dropdownResultadosCuentas');
@@ -1186,7 +1187,12 @@
 
             clearTimeout(searchCuentaTimeout);
 
-            if (val.length < 1) {
+            if (currentCuentaAjaxReq && currentCuentaAjaxReq.abort) {
+                currentCuentaAjaxReq.abort();
+                currentCuentaAjaxReq = null;
+            }
+
+            if (val.length < 2) {
                 $dropdown.hide().empty();
                 $spin.hide();
                 return;
@@ -1194,12 +1200,13 @@
 
             $spin.show();
             searchCuentaTimeout = setTimeout(function() {
-                $.getJSON('@Url.Action("BuscarCuentasCatalogo", "Alertas")', {
+                currentCuentaAjaxReq = $.getJSON('@Url.Action("BuscarCuentasCatalogo", "Alertas")', {
                     filtro: val,
                     query: val,
                     entidadId: currentConfigEntidadId
                 }, function(res) {
                     $spin.hide();
+                    currentCuentaAjaxReq = null;
                     if (res && res.success && res.items && res.items.length > 0) {
                         var html = '';
                         for (var i = 0; i < res.items.length; i++) {
@@ -1215,11 +1222,13 @@
                     } else {
                         $dropdown.html('<div style="padding: 12px; font-size: 12px; color: #94a3b8; text-align: center;">No se encontraron cuentas contables que coincidan.</div>').show();
                     }
-                }).fail(function() {
+                }).fail(function(jqXHR, textStatus) {
+                    if (textStatus === 'abort') return;
                     $spin.hide();
+                    currentCuentaAjaxReq = null;
                     $dropdown.hide().empty();
                 });
-            }, 200);
+            }, 300);
         }).on('keydown', function(e) {
             if (e.which === 13) {
                 e.preventDefault();
