@@ -32,7 +32,12 @@ namespace FGA
                 "~/Content/facturacion.css",
                 "~/Content/entidades.css",
                 "~/Content/estructura_fondeo.css",
-                "~/Content/alertas.css"));
+                "~/Content/alertas.css",
+                "~/Content/layout_modern.css",
+                "~/Content/chatbot.css",
+                "~/Content/mantenimiento_admin.css",
+                "~/Content/evaluacion.css",
+                "~/Content/indicadores.css"));
 
             bundles.Add(new ScriptBundle("~/bundles/javascript").Include(
                     "~/Content/theme/plugins/jQuery/jQuery-2.1.3.min.js",

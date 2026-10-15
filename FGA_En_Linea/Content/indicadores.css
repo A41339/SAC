@@ -1,0 +1,490 @@
+﻿/* ==========================================================================
+   ESTILOS DEDICADOS: MÓDULO DE INDICADORES SUGEF Y GRÁFICAS (FFC)
+   ========================================================================== */
+
+/* --- SUGEF.cshtml --- */
+/* ==============================================================================
+       ESTILOS DE TABLAS E INDICADORES SUGEF (BASADOS EN ESTRUCTURA DE FONDEO)
+       ============================================================================== */
+    #tbFinancieroSugef, #tbSuficiencia306 {
+        border-collapse: separate !important;
+        border-spacing: 0 !important;
+        width: 100% !important;
+    }
+
+    #tbFinancieroSugef thead th,
+    #tbSuficiencia306 thead th {
+        font-size: 13px !important;
+        font-weight: 600 !important;
+        color: #2F5597 !important;
+        border-bottom: 2px solid #88D1E2 !important;
+        border-top: none !important;
+        padding: 10px 14px !important;
+        background-color: #ffffff !important;
+        white-space: nowrap !important;
+        letter-spacing: 0.2px !important;
+    }
+
+    #tbFinancieroSugef tbody td,
+    #tbSuficiencia306 tbody td {
+        font-size: 13px !important;
+        font-weight: 400 !important;
+        color: #334155 !important;
+        line-height: 1.4 !important;
+        vertical-align: middle !important;
+        border-top: 1px solid #f1f5f9 !important;
+        border-bottom: none !important;
+        padding: 10px 14px !important;
+    }
+
+    /* Zebra striping idÃ©ntica a Estructura de Fondeo */
+    #tbFinancieroSugef.table-striped > tbody > tr:nth-of-type(odd),
+    #tbFinancieroSugef tbody tr.odd,
+    #tbSuficiencia306.table-striped > tbody > tr:nth-of-type(odd),
+    #tbSuficiencia306 tbody tr.odd {
+        background-color: #f8fafc !important;
+    }
+
+    #tbFinancieroSugef.table-striped > tbody > tr:nth-of-type(even),
+    #tbFinancieroSugef tbody tr.even,
+    #tbSuficiencia306.table-striped > tbody > tr:nth-of-type(even),
+    #tbSuficiencia306 tbody tr.even {
+        background-color: #ffffff !important;
+    }
+
+    /* Hover de filas */
+    #tbFinancieroSugef tbody tr:hover,
+    #tbFinancieroSugef tbody tr.odd:hover,
+    #tbFinancieroSugef tbody tr.even:hover,
+    #tbSuficiencia306 tbody tr:hover,
+    #tbSuficiencia306 tbody tr.odd:hover,
+    #tbSuficiencia306 tbody tr.even:hover {
+        background-color: #eef2f6 !important;
+    }
+
+    /* Estilos de botones de grÃ¡fico en filas idÃ©nticos a Estructura de Fondeo */
+    table td a[href*="getGraph"],
+    .table td a[href*="getGraph"],
+    .modern-data-table td a[href*="getGraph"],
+    a.btn-indicador-chart {
+        width: 30px !important;
+        height: 30px !important;
+        min-width: 30px !important;
+        max-width: 30px !important;
+        padding: 0 !important;
+        margin: 0 auto !important;
+        border-radius: 6px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        background: #e0f2fe !important;
+        color: #0284c7 !important;
+        border: 1px solid #bae6fd !important;
+        box-shadow: 0 1px 2px rgba(2, 132, 199, 0.08) !important;
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        text-decoration: none !important;
+        cursor: pointer !important;
+        vertical-align: middle !important;
+    }
+
+    table td a[href*="getGraph"]:hover,
+    .table td a[href*="getGraph"]:hover,
+    .modern-data-table td a[href*="getGraph"]:hover,
+    a.btn-indicador-chart:hover {
+        background: #0284c7 !important;
+        color: #ffffff !important;
+        border-color: #0284c7 !important;
+        transform: translateY(-1px) scale(1.06);
+        box-shadow: 0 4px 10px rgba(2, 132, 199, 0.3) !important;
+    }
+
+    table td a[href*="getGraph"] i,
+    table td a[href*="getGraph"] i.fa,
+    table td a[href*="getGraph"] i.btn,
+    .table td a[href*="getGraph"] i,
+    .modern-data-table td a[href*="getGraph"] i,
+    a.btn-indicador-chart i {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-family: 'FontAwesome' !important;
+        font-style: normal !important;
+        font-weight: normal !important;
+        font-size: 13px !important;
+        line-height: 1 !important;
+        color: inherit !important;
+        background: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        width: auto !important;
+        height: auto !important;
+        box-shadow: none !important;
+    }
+
+    /* Barra de botones de exportaciÃ³n DataTables moderna */
+    .modern-table-card .dt-buttons {
+        display: inline-flex !important;
+        gap: 6px !important;
+        margin-bottom: 14px !important;
+        flex-wrap: wrap !important;
+    }
+
+    .modern-table-card .dt-buttons .dt-button,
+    .modern-table-card a.dt-button,
+    .modern-table-card button.dt-button {
+        height: 32px !important;
+        padding: 0 14px !important;
+        font-size: 12px !important;
+        font-weight: 600 !important;
+        border-radius: 6px !important;
+        background: #ffffff !important;
+        border: 1px solid #cbd5e1 !important;
+        color: #334155 !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+        transition: all 0.2s ease !important;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.04) !important;
+        margin-right: 4px !important;
+        cursor: pointer !important;
+    }
+
+    .modern-table-card .dt-buttons .dt-button:hover,
+    .modern-table-card a.dt-button:hover,
+    .modern-table-card button.dt-button:hover {
+        background: #f8fafc !important;
+        border-color: #2F5597 !important;
+        color: #2F5597 !important;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 6px rgba(47, 85, 151, 0.15) !important;
+    }
+
+    .modern-table-card .dt-buttons .buttons-excel {
+        color: #15803d !important;
+        border-color: #bbf7d0 !important;
+    }
+    .modern-table-card .dt-buttons .buttons-excel:hover {
+        background: #f0fdf4 !important;
+        border-color: #16a34a !important;
+        color: #15803d !important;
+    }
+
+    /* Buscador y selector de longitud */
+    .modern-table-card .dataTables_wrapper .dataTables_filter {
+        float: right !important;
+        margin-bottom: 14px !important;
+    }
+
+    .modern-table-card .dataTables_wrapper .dataTables_filter input {
+        height: 32px !important;
+        border: 1px solid #cbd5e1 !important;
+        border-radius: 6px !important;
+        padding: 4px 12px !important;
+        font-size: 12.5px !important;
+        color: #1e293b !important;
+        background: #ffffff !important;
+        outline: none !important;
+        transition: all 0.2s ease !important;
+        width: 220px !important;
+    }
+
+    .modern-table-card .dataTables_wrapper .dataTables_filter input:focus {
+        border-color: #2F5597 !important;
+        box-shadow: 0 0 0 3px rgba(47, 85, 151, 0.15) !important;
+    }
+
+    .modern-table-card .dataTables_wrapper .dataTables_length {
+        float: left !important;
+        margin-right: 16px !important;
+        margin-bottom: 14px !important;
+    }
+
+    .modern-table-card .dataTables_wrapper .dataTables_length select {
+        height: 32px !important;
+        border: 1px solid #cbd5e1 !important;
+        border-radius: 6px !important;
+        padding: 2px 8px !important;
+        font-size: 12.5px !important;
+        color: #334155 !important;
+        background: #ffffff !important;
+        outline: none !important;
+    }
+
+    /* PaginaciÃ³n DataTables */
+    .modern-table-card .dataTables_paginate {
+        padding-top: 10px !important;
+    }
+
+    .modern-table-card .dataTables_paginate .paginate_button {
+        border-radius: 6px !important;
+        border: 1px solid #e2e8f0 !important;
+        background: #ffffff !important;
+        color: #475569 !important;
+        margin: 0 2px !important;
+        padding: 4px 10px !important;
+        font-size: 12px !important;
+        font-weight: 500 !important;
+        transition: all 0.2s ease !important;
+    }
+
+    .modern-table-card .dataTables_paginate .paginate_button:hover {
+        background: #f1f5f9 !important;
+        border-color: #cbd5e1 !important;
+        color: #1e293b !important;
+    }
+
+    .modern-table-card .dataTables_paginate .paginate_button.current,
+    .modern-table-card .dataTables_paginate .paginate_button.current:hover {
+        background: #2F5597 !important;
+        border-color: #2F5597 !important;
+        color: #ffffff !important;
+    }
+
+    .modern-table-card .dataTables_info {
+        font-size: 12px !important;
+        color: #64748b !important;
+        padding-top: 14px !important;
+    }
+
+    /* Estilos de pestaÃ±as de navegaciÃ³n */
+    .nav-tabs > li.active > a,
+    .nav-tabs > li.active > a:focus,
+    .nav-tabs > li.active > a:hover {
+        color: #2F5597 !important;
+        border-color: #2F5597 #2F5597 transparent !important;
+        border-bottom: 2.5px solid #2F5597 !important;
+        background-color: transparent !important;
+    }
+
+    #graphModal .modal-body {
+        overflow: hidden !important;
+    }
+    #graphModal .highcharts-container {
+        overflow: visible !important;
+    }
+    #graphModal .highcharts-tooltip,
+    #graphModal .highcharts-tooltip * {
+        pointer-events: none !important;
+    }
+
+/* --- SUGEFIndicador.cshtml --- */
+#tbError {
+        border-collapse: separate !important;
+        border-spacing: 0 !important;
+        width: 100% !important;
+    }
+
+    #tbError thead th {
+        font-size: 13px !important;
+        font-weight: 600 !important;
+        color: #2F5597 !important;
+        border-bottom: 2px solid #88D1E2 !important;
+        border-top: none !important;
+        padding: 10px 14px !important;
+        background-color: #ffffff !important;
+        white-space: nowrap !important;
+        letter-spacing: 0.2px !important;
+    }
+
+    #tbError tbody td {
+        font-size: 13px !important;
+        font-weight: 400 !important;
+        color: #334155 !important;
+        line-height: 1.4 !important;
+        vertical-align: middle !important;
+        border-top: 1px solid #f1f5f9 !important;
+        border-bottom: none !important;
+        padding: 10px 14px !important;
+    }
+
+    #tbError.table-striped > tbody > tr:nth-of-type(odd),
+    #tbError tbody tr.odd {
+        background-color: #f8fafc !important;
+    }
+
+    #tbError.table-striped > tbody > tr:nth-of-type(even),
+    #tbError tbody tr.even {
+        background-color: #ffffff !important;
+    }
+
+    #tbError tbody tr:hover,
+    #tbError tbody tr.odd:hover,
+    #tbError tbody tr.even:hover {
+        background-color: #eef2f6 !important;
+    }
+
+    .modern-table-card .dt-buttons {
+        display: inline-flex !important;
+        gap: 6px !important;
+        margin-bottom: 14px !important;
+        flex-wrap: wrap !important;
+    }
+
+    .modern-table-card .dt-buttons .dt-button {
+        height: 32px !important;
+        padding: 0 14px !important;
+        font-size: 12px !important;
+        font-weight: 600 !important;
+        border-radius: 6px !important;
+        background: #ffffff !important;
+        border: 1px solid #cbd5e1 !important;
+        color: #334155 !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+        transition: all 0.2s ease !important;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.04) !important;
+        margin-right: 4px !important;
+        cursor: pointer !important;
+    }
+
+    .modern-table-card .dt-buttons .dt-button:hover {
+        background: #f8fafc !important;
+        border-color: #2F5597 !important;
+        color: #2F5597 !important;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 6px rgba(47, 85, 151, 0.15) !important;
+    }
+
+    .modern-table-card .dt-buttons .buttons-excel {
+        color: #15803d !important;
+        border-color: #bbf7d0 !important;
+    }
+
+    .modern-table-card .dt-buttons .buttons-excel:hover {
+        background: #f0fdf4 !important;
+        border-color: #16a34a !important;
+        color: #15803d !important;
+    }
+
+    .modern-table-card .dataTables_wrapper .dataTables_filter {
+        float: right !important;
+        margin-bottom: 14px !important;
+    }
+
+    .modern-table-card .dataTables_wrapper .dataTables_filter input {
+        height: 32px !important;
+        border: 1px solid #cbd5e1 !important;
+        border-radius: 6px !important;
+        padding: 4px 12px !important;
+        font-size: 12.5px !important;
+        color: #1e293b !important;
+        background: #ffffff !important;
+        outline: none !important;
+        width: 220px !important;
+    }
+
+    .modern-table-card .dataTables_wrapper .dataTables_length {
+        float: left !important;
+        margin-right: 16px !important;
+        margin-bottom: 14px !important;
+    }
+
+    .modern-table-card .dataTables_wrapper .dataTables_length select {
+        height: 32px !important;
+        border: 1px solid #cbd5e1 !important;
+        border-radius: 6px !important;
+        padding: 2px 8px !important;
+        font-size: 12.5px !important;
+        color: #334155 !important;
+        background: #ffffff !important;
+        outline: none !important;
+    }
+
+    .modern-table-card .dataTables_paginate .paginate_button {
+        border-radius: 6px !important;
+        border: 1px solid #e2e8f0 !important;
+        background: #ffffff !important;
+        color: #475569 !important;
+        margin: 0 2px !important;
+        padding: 4px 10px !important;
+        font-size: 12px !important;
+        font-weight: 500 !important;
+    }
+
+    .modern-table-card .dataTables_paginate .paginate_button.current,
+    .modern-table-card .dataTables_paginate .paginate_button.current:hover {
+        background: #2F5597 !important;
+        border-color: #2F5597 !important;
+        color: #ffffff !important;
+    }
+
+    table td a[href*="getGraph"],
+    .modern-data-table td a[href*="getGraph"],
+    a.btn-indicador-chart {
+        width: 30px !important;
+        height: 30px !important;
+        min-width: 30px !important;
+        max-width: 30px !important;
+        padding: 0 !important;
+        margin: 0 auto !important;
+        border-radius: 6px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        background: #e0f2fe !important;
+        color: #0284c7 !important;
+        border: 1px solid #bae6fd !important;
+        box-shadow: 0 1px 2px rgba(2, 132, 199, 0.08) !important;
+        transition: all 0.2s ease !important;
+        text-decoration: none !important;
+        cursor: pointer !important;
+    }
+
+    table td a[href*="getGraph"]:hover,
+    .modern-data-table td a[href*="getGraph"]:hover,
+    a.btn-indicador-chart:hover {
+        background: #0284c7 !important;
+        color: #ffffff !important;
+        border-color: #0284c7 !important;
+        transform: translateY(-1px) scale(1.06);
+    }
+
+/* --- Graficas.cshtml --- */
+/* Acordeon de ayuda en Indicadores/Graficas */
+    .graficas-accordion-item {
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .graficas-accordion-item:last-child {
+        border-bottom: none;
+    }
+
+    .graficas-accordion-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 13px 20px;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 600;
+        color: #1e293b;
+        transition: background 0.2s ease;
+        user-select: none;
+    }
+
+    .graficas-accordion-header:hover {
+        background: #f0f9ff;
+    }
+
+    .graficas-accordion-chevron {
+        color: #94a3b8;
+        font-size: 12px;
+        transition: transform 0.25s ease;
+    }
+
+    .graficas-accordion-header.open .graficas-accordion-chevron {
+        transform: rotate(180deg);
+        color: #0284c7;
+    }
+
+    .graficas-accordion-body {
+        padding: 0 16px 14px 16px;
+        background: #f8fafc;
+    }
+
+    .graficas-accordion-body table thead tr th {
+        border-bottom: 2px solid #e2e8f0;
+    }
+

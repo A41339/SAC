@@ -1,0 +1,592 @@
+/* ==========================================================================
+   LAYOUT MODERNO Y COMPONENTES GLOBALES (FFC UI)
+   FontAwesome Fallback, Píldoras, Botón Ampliar, Breadcrumbs y Toasts
+   ========================================================================== */
+
+/* Fallback robusto para fuentes de FontAwesome */
+@font-face {
+    font-family: 'FontAwesome';
+    src: url('../Content/theme/bower_components/font-awesome/fonts/fontawesome-webfont.eot?v=4.7.0');
+    src: url('../Content/theme/bower_components/font-awesome/fonts/fontawesome-webfont.eot?#iefix&v=4.7.0') format('embedded-opentype'),
+         url('../Content/theme/bower_components/font-awesome/fonts/fontawesome-webfont.woff2?v=4.7.0') format('woff2'),
+         url('../Content/theme/bower_components/font-awesome/fonts/fontawesome-webfont.woff?v=4.7.0') format('woff'),
+         url('../Content/theme/bower_components/font-awesome/fonts/fontawesome-webfont.ttf?v=4.7.0') format('truetype'),
+         url('../Content/theme/bower_components/font-awesome/fonts/fontawesome-webfont.svg?v=4.7.0#fontawesomeregular') format('svg'),
+         url('../fonts/fontawesome-webfont.woff2?v=4.7.0') format('woff2'),
+         url('../fonts/fontawesome-webfont.woff?v=4.7.0') format('woff'),
+         url('../fonts/fontawesome-webfont.ttf?v=4.7.0') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Asegurar que ningún estilo de fuente del menú lateral sobreescriba FontAwesome con Segoe UI */
+.sidebar-menu i,
+.sidebar-menu .fa,
+.sidebar-menu li a i,
+.sidebar-menu .treeview-menu li a i,
+.sidebar-menu > li > a > i:first-child,
+.main-sidebar i,
+.main-sidebar .fa,
+i.fa {
+    font-family: 'FontAwesome' !important;
+    font-style: normal !important;
+    font-weight: normal !important;
+    display: inline-block !important;
+    line-height: 1 !important;
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
+}
+
+/* Píldoras de Selección FFC (Modalidad, Comparativo, etc.): Fondo blanco, borde sutil y texto azul */
+.pill-group {
+    display: inline-flex !important;
+    background: #f1f5f9 !important;
+    border-radius: 8px !important;
+    padding: 3px !important;
+    border: 1px solid #e2e8f0 !important;
+    gap: 3px !important;
+}
+.pill-item, 
+button.pill-item, 
+a.pill-item {
+    padding: 5px 14px !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    border-radius: 6px !important;
+    border: 1px solid transparent !important;
+    background: transparent !important;
+    color: #475569 !important;
+    cursor: pointer !important;
+    text-decoration: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    white-space: nowrap !important;
+    transition: all 0.15s ease !important;
+}
+.pill-item:hover,
+button.pill-item:hover,
+a.pill-item:hover {
+    color: #1e293b !important;
+    background: #e2e8f0 !important;
+}
+.pill-item.active,
+.pill-item.active-modalidad,
+button.pill-item.active,
+a.pill-item.active {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    color: #2F5597 !important;
+    border: 1px solid #cbd5e1 !important;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08) !important;
+    font-weight: 700 !important;
+}
+.pill-item.active:hover,
+button.pill-item.active:hover,
+a.pill-item.active:hover {
+    background: #ffffff !important;
+    color: #1e3a8a !important;
+    border-color: #94a3b8 !important;
+}
+#btnMarcarTodasNavbar,
+.fga-btn-mark-all {
+    background-color: #2F5597 !important;
+    background: #2F5597 !important;
+    color: #ffffff !important;
+    border: 1px solid #1e3a8a !important;
+    border-radius: 6px !important;
+    font-weight: 600 !important;
+    font-size: 11px !important;
+    padding: 4px 10px !important;
+    cursor: pointer !important;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.08) !important;
+}
+#btnMarcarTodasNavbar i,
+.fga-btn-mark-all i {
+    color: #ffffff !important;
+}
+#btnMarcarTodasNavbar:hover,
+#btnMarcarTodasNavbar:focus,
+.fga-btn-mark-all:hover,
+.fga-btn-mark-all:focus {
+    background-color: #1e3a8a !important;
+    background: #1e3a8a !important;
+    color: #ffffff !important;
+    border-color: #0f172a !important;
+}
+
+/* Boton "Ampliar" estandarizado (Dashboard, Composicion, Cartera, etc.) */
+a.btn-ampliar,
+.btn-ampliar,
+.modern-table-card a.btn-ampliar,
+.modern-table-card .btn-ampliar,
+.modern-table-card a[href*="javascript:m"],
+.box-header a.btn-ampliar,
+.box-header a[href*="javascript:m"],
+.box-header a.text-right {
+    background-color: #ebf5ff !important;
+    color: #2F5597 !important;
+    border: 1px solid #bfdbfe !important;
+    border-radius: 8px !important;
+    height: 36px !important;
+    padding: 0 16px !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    line-height: 1 !important;
+    letter-spacing: 0.15px !important;
+    transition: all 0.2s ease !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 7px !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+    text-decoration: none !important;
+    margin-left: auto !important;
+    flex-shrink: 0 !important;
+    cursor: pointer !important;
+}
+
+a.btn-ampliar:hover,
+.btn-ampliar:hover,
+.modern-table-card a.btn-ampliar:hover,
+.modern-table-card a[href*="javascript:m"]:hover,
+.box-header a.btn-ampliar:hover,
+.box-header a[href*="javascript:m"]:hover,
+.box-header a.text-right:hover {
+    background-color: #2F5597 !important;
+    color: #ffffff !important;
+    border-color: #2F5597 !important;
+    text-decoration: none !important;
+    box-shadow: 0 2px 6px rgba(47, 85, 151, 0.25) !important;
+}
+
+a.btn-ampliar *,
+.btn-ampliar *,
+.modern-table-card a.btn-ampliar *,
+.modern-table-card a[href*="javascript:m"] *,
+.box-header a.btn-ampliar *,
+.box-header a[href*="javascript:m"] *,
+.box-header a.text-right * {
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    color: inherit !important;
+    font-family: inherit !important;
+    font-size: 13px !important;
+}
+
+/* FontAwesome icons inside btn-ampliar: inline-block preserves ::before glyph rendering */
+a.btn-ampliar i, a.btn-ampliar i[class*="fa-"],
+.btn-ampliar i, .btn-ampliar i[class*="fa-"],
+.modern-table-card a.btn-ampliar i,
+.modern-table-card a[href*="javascript:m"] i,
+.box-header a.btn-ampliar i,
+.box-header a[href*="javascript:m"] i,
+.box-header a.text-right i {
+    display: inline-block !important;
+    font-family: FontAwesome !important;
+    line-height: 1 !important;
+    width: auto !important;
+}
+
+/* ==========================================================================
+   MODERN BREADCRUMB CAPSULE / NAVEGACIÓN SUPERIOR DERECHA (Pill Bar)
+   ========================================================================== */
+.content-header > .breadcrumb,
+.breadcrumb.modern-breadcrumb-pill {
+    position: absolute !important;
+    top: 18px !important;
+    right: 24px !important;
+    float: none !important;
+    margin: 0 !important;
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 9999px !important;
+    padding: 5px 14px !important;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.05), 0 1px 2px rgba(15, 23, 42, 0.03) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    list-style: none !important;
+    z-index: 10 !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.content-header > .breadcrumb:hover,
+.breadcrumb.modern-breadcrumb-pill:hover {
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08) !important;
+    border-color: #cbd5e1 !important;
+}
+
+.content-header > .breadcrumb > li + li:before,
+.breadcrumb.modern-breadcrumb-pill > li + li:before {
+    content: " " !important;
+    display: none !important;
+}
+
+.content-header > .breadcrumb > li,
+.breadcrumb.modern-breadcrumb-pill > li {
+    display: inline-flex !important;
+    align-items: center !important;
+    font-size: 12px !important;
+    color: #64748b !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.content-header > .breadcrumb > li + li:not(:empty):before,
+.breadcrumb.modern-breadcrumb-pill > li + li:not(:empty):before {
+    display: inline-block !important;
+    font-family: 'FontAwesome' !important;
+    content: "\f105" !important; /* fa-angle-right */
+    color: #94a3b8 !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    margin: 0 7px 0 3px !important;
+}
+
+.content-header > .breadcrumb > li:first-child > a,
+.breadcrumb.modern-breadcrumb-pill > li:first-child > a {
+    color: #64748b !important;
+    font-weight: 500 !important;
+    text-decoration: none !important;
+    padding: 3px 6px !important;
+    border-radius: 6px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 5px !important;
+    transition: all 0.15s ease !important;
+}
+
+.content-header > .breadcrumb > li:first-child > a:hover,
+.breadcrumb.modern-breadcrumb-pill > li:first-child > a:hover {
+    color: #0284c7 !important;
+    background-color: #f1f5f9 !important;
+    text-decoration: none !important;
+}
+
+.content-header > .breadcrumb > li:first-child > a i,
+.breadcrumb.modern-breadcrumb-pill > li:first-child > a i {
+    color: #0284c7 !important;
+    font-size: 13px !important;
+}
+
+/* Botón Hero interactivo de retorno al Módulo Papá */
+.breadcrumb-parent-pill,
+.breadcrumb-hub-link,
+.content-header > .breadcrumb > li > a.breadcrumb-parent-pill,
+.content-header > .breadcrumb > li > a.breadcrumb-hub-link {
+    background-color: #f0f9ff !important;
+    color: #0284c7 !important;
+    border: 1px solid #bae6fd !important;
+    font-weight: 600 !important;
+    font-size: 12px !important;
+    padding: 3px 10px !important;
+    border-radius: 9999px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 5px !important;
+    text-decoration: none !important;
+    cursor: pointer !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: 0 1px 2px rgba(2, 132, 199, 0.06) !important;
+}
+
+.breadcrumb-parent-pill:hover,
+.breadcrumb-hub-link:hover,
+.content-header > .breadcrumb > li > a.breadcrumb-parent-pill:hover,
+.content-header > .breadcrumb > li > a.breadcrumb-hub-link:hover {
+    background-color: #0284c7 !important;
+    color: #ffffff !important;
+    border-color: #0284c7 !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 3px 8px rgba(2, 132, 199, 0.3) !important;
+    text-decoration: none !important;
+}
+
+.breadcrumb-parent-pill:hover i,
+.breadcrumb-hub-link:hover i,
+.content-header > .breadcrumb > li > a.breadcrumb-parent-pill:hover i,
+.content-header > .breadcrumb > li > a.breadcrumb-hub-link:hover i {
+    color: #ffffff !important;
+}
+
+.content-header > .breadcrumb > li > a:not(.breadcrumb-parent-pill):not(.breadcrumb-hub-link) {
+    color: #0284c7 !important;
+    font-weight: 500 !important;
+    text-decoration: none !important;
+    padding: 3px 6px !important;
+    border-radius: 6px !important;
+    transition: all 0.15s ease !important;
+}
+
+.content-header > .breadcrumb > li > a:not(.breadcrumb-parent-pill):not(.breadcrumb-hub-link):hover {
+    color: #0369a1 !important;
+    background-color: #f0f9ff !important;
+    text-decoration: none !important;
+}
+
+.content-header > .breadcrumb > li.active,
+.breadcrumb.modern-breadcrumb-pill > li.active {
+    color: #1e293b !important;
+    font-weight: 600 !important;
+    padding: 3px 6px !important;
+    background: transparent !important;
+}
+
+@media (max-width: 767px) {
+    .content-header > .breadcrumb,
+    .breadcrumb.modern-breadcrumb-pill {
+        position: relative !important;
+        top: auto !important;
+        right: auto !important;
+        margin-top: 12px !important;
+        display: flex !important;
+        flex-wrap: wrap !important;
+        border-radius: 12px !important;
+    }
+}
+
+/* Buscador Global de Módulos y Pantallas */
+.header-search-wrapper {
+    float: left !important;
+    position: relative !important;
+    margin: 8px 0 0 15px !important;
+    width: 320px !important;
+    max-width: 320px !important;
+    height: 34px !important;
+    z-index: 1000 !important;
+}
+
+.header-search-input-group {
+    position: relative !important;
+    width: 100% !important;
+    height: 34px !important;
+    display: block !important;
+}
+
+#globalMenuSearch {
+    background: rgba(255, 255, 255, 0.18) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    border-radius: 20px !important;
+    padding: 5px 36px 5px 34px !important;
+    color: #ffffff !important;
+    font-size: 12.5px !important;
+    font-weight: 500 !important;
+    height: 34px !important;
+    line-height: 22px !important;
+    transition: all 0.25s ease !important;
+    box-shadow: none !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+#globalMenuSearch::-webkit-input-placeholder { color: rgba(255, 255, 255, 0.8) !important; }
+#globalMenuSearch::-moz-placeholder { color: rgba(255, 255, 255, 0.8) !important; }
+#globalMenuSearch:-ms-input-placeholder { color: rgba(255, 255, 255, 0.8) !important; }
+
+#globalMenuSearch:focus {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    border-color: #0284c7 !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18) !important;
+}
+
+#globalMenuSearch:focus::-webkit-input-placeholder { color: #94a3b8 !important; }
+#globalMenuSearch:focus + .header-search-icon { color: #0284c7 !important; }
+#globalMenuSearch:focus ~ .header-search-shortcut { opacity: 0.5 !important; }
+
+.header-search-dropdown {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    box-shadow: 0 16px 36px -4px rgba(0, 0, 0, 0.22), 0 6px 12px -2px rgba(0, 0, 0, 0.08) !important;
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 6px 0;
+    z-index: 999999 !important;
+    top: 40px !important;
+    left: 0 !important;
+    width: 360px !important;
+}
+
+.search-result-item {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    padding: 10px 16px !important;
+    text-decoration: none !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+    transition: background 0.15s ease !important;
+    cursor: pointer !important;
+}
+
+.search-result-item:last-child {
+    border-bottom: none !important;
+}
+
+.search-result-item:hover,
+.search-result-item.selected {
+    background-color: #f0f9ff !important;
+    text-decoration: none !important;
+}
+
+.search-result-item .match-highlight {
+    background-color: #fef08a !important;
+    color: #0f172a !important;
+    border-radius: 2px !important;
+    padding: 0 2px !important;
+    font-weight: 700 !important;
+}
+
+@media (max-width: 991px) {
+    .header-search-wrapper {
+        width: 200px !important;
+        max-width: 200px !important;
+        margin: 8px 0 0 8px !important;
+    }
+    .header-search-shortcut {
+        display: none !important;
+    }
+}
+
+@media (max-width: 767px) {
+    .header-search-wrapper {
+        display: none !important;
+    }
+}
+
+/* ==========================================================================
+   UNIVERSAL FLOATING TOAST NOTIFICATIONS (FFC Modern UI)
+   ========================================================================== */
+.fga-toast-container {
+    position: fixed !important;
+    bottom: 24px !important;
+    right: 24px !important;
+    z-index: 999999 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+    pointer-events: none !important;
+    max-width: 440px !important;
+    width: calc(100% - 48px) !important;
+}
+
+.fga-toast-item {
+    pointer-events: auto !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    padding: 13px 18px !important;
+    background: #0f172a !important;
+    color: #ffffff !important;
+    border-radius: 10px !important;
+    box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.35), 0 4px 6px -2px rgba(0, 0, 0, 0.1) !important;
+    font-size: 13.5px !important;
+    font-weight: 500 !important;
+    line-height: 1.4 !important;
+    border-left: 4px solid #10b981 !important;
+    animation: fgaToastSlideIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+    transition: opacity 0.25s ease, transform 0.25s ease !important;
+    border-top: none !important;
+    border-right: none !important;
+    border-bottom: none !important;
+}
+
+.fga-toast-item.toast-success {
+    border-left-color: #10b981 !important;
+}
+.fga-toast-item.toast-success .toast-icon {
+    color: #10b981 !important;
+}
+
+.fga-toast-item.toast-error {
+    border-left-color: #ef4444 !important;
+}
+.fga-toast-item.toast-error .toast-icon {
+    color: #ef4444 !important;
+}
+
+.fga-toast-item.toast-warning {
+    border-left-color: #f59e0b !important;
+}
+.fga-toast-item.toast-warning .toast-icon {
+    color: #f59e0b !important;
+}
+
+.fga-toast-item.toast-info {
+    border-left-color: #0284c7 !important;
+}
+.fga-toast-item.toast-info .toast-icon {
+    color: #38bdf8 !important;
+}
+
+.fga-toast-item .toast-icon {
+    font-size: 20px !important;
+    flex-shrink: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.fga-toast-item .toast-body {
+    flex: 1 !important;
+    min-width: 0 !important;
+    word-break: break-word !important;
+}
+
+.fga-toast-item .toast-title {
+    font-weight: 700 !important;
+    font-size: 13.5px !important;
+    margin-bottom: 2px !important;
+    color: #ffffff !important;
+}
+
+.fga-toast-item .toast-message {
+    color: #f1f5f9 !important;
+    font-size: 13px !important;
+}
+
+.fga-toast-item .toast-close {
+    background: transparent !important;
+    border: none !important;
+    color: #94a3b8 !important;
+    cursor: pointer !important;
+    padding: 4px !important;
+    margin-left: 6px !important;
+    font-size: 16px !important;
+    line-height: 1 !important;
+    opacity: 0.7 !important;
+    transition: opacity 0.2s, color 0.2s !important;
+    flex-shrink: 0 !important;
+}
+.fga-toast-item .toast-close:hover {
+    opacity: 1 !important;
+    color: #ffffff !important;
+}
+
+@keyframes fgaToastSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.96);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes fgaToastFadeOut {
+    from {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(10px) scale(0.96);
+    }
+}

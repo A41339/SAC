@@ -1,4 +1,4 @@
-@model IEnumerable<FGA.Models.FileModel>
+﻿@model IEnumerable<FGA.Models.FileModel>
 
 <div id="commands">
     @Html.Partial("ActionLinks", ViewData["Parent"] == null ? string.Empty : ViewData["Parent"])
@@ -72,33 +72,6 @@
         <span>@Model.Count() elemento(s) en esta carpeta</span>
     </div>
 </div>
-
-<style>
-    .explorer-row {
-        transition: background 0.15s ease;
-        cursor: default;
-    }
-    .explorer-row:hover {
-        background: #f0f9ff !important;
-    }
-    .explorer-row.t-state-selected,
-    .explorer-row.t-state-selected:hover {
-        background: #e0f2fe !important;
-    }
-    .explorer-row.t-state-selected td {
-        color: #0284c7 !important;
-        font-weight: 600;
-    }
-    #listview td {
-        border-top: 1px solid #f1f5f9 !important;
-        border-left: none !important;
-        border-right: none !important;
-        border-bottom: none !important;
-    }
-    #listview tr:first-child td {
-        border-top: none !important;
-    }
-</style>
 
 <script type="text/javascript">
     $(function () {

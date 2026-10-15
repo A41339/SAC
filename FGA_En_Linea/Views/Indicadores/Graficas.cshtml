@@ -1,4 +1,4 @@
-@*@model IEnumerable<Entities.Entities.Procedures.FGA_Consultar_Tipos_Indicadores_Result>*@
+﻿@*@model IEnumerable<Entities.Entities.Procedures.FGA_Consultar_Tipos_Indicadores_Result>*@
 @{
     ViewBag.Title = "Indicadores personalizados";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -442,54 +442,6 @@
     </div>
 </div>
 
-<style>
-    /* Acordeon de ayuda en Indicadores/Graficas */
-    .graficas-accordion-item {
-        border-bottom: 1px solid #e2e8f0;
-    }
-
-    .graficas-accordion-item:last-child {
-        border-bottom: none;
-    }
-
-    .graficas-accordion-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 13px 20px;
-        cursor: pointer;
-        font-size: 13px;
-        font-weight: 600;
-        color: #1e293b;
-        transition: background 0.2s ease;
-        user-select: none;
-    }
-
-    .graficas-accordion-header:hover {
-        background: #f0f9ff;
-    }
-
-    .graficas-accordion-chevron {
-        color: #94a3b8;
-        font-size: 12px;
-        transition: transform 0.25s ease;
-    }
-
-    .graficas-accordion-header.open .graficas-accordion-chevron {
-        transform: rotate(180deg);
-        color: #0284c7;
-    }
-
-    .graficas-accordion-body {
-        padding: 0 16px 14px 16px;
-        background: #f8fafc;
-    }
-
-    .graficas-accordion-body table thead tr th {
-        border-bottom: 2px solid #e2e8f0;
-    }
-</style>
-
 <script type="text/javascript">
 
     /* ---- Acordeon propio (reemplaza el jQuery accordion antiguo) ---- */
@@ -542,7 +494,7 @@
     }
 
     function refreshGraph() {
-        $('#grafica').html('<div style="text-align: center; padding: 40px 0; color: #64748b;"><i class="fa fa-spinner fa-spin fa-2x" style="color: #0284c7;"></i><p style="margin-top: 10px; font-size: 13px;">Generando gráfico...</p></div>');
+        $('#grafica').html('<div style="text-align: center; padding: 40px 0; color: #64748b;"><i class="fa fa-spinner fa-spin fa-2x" style="color: #0284c7;"></i><p style="margin-top: 10px; font-size: 13px;">Generando grÃ¡fico...</p></div>');
         $.ajax({
             url: '@Url.Action("GraficaDetalle", "Indicadores")',
             type: 'POST',
@@ -568,7 +520,7 @@
                 }, 80);
             },
             error: function () {
-                $('#grafica').html('<div class="alert alert-danger" style="margin: 20px;">Ocurrió un error al generar el gráfico.</div>');
+                $('#grafica').html('<div class="alert alert-danger" style="margin: 20px;">OcurriÃ³ un error al generar el grÃ¡fico.</div>');
             }
         });
     }
