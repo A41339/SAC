@@ -73,6 +73,97 @@
         gap: 4px !important;
         opacity: 0.9 !important;
     }
+
+    /* Modo Expandido del Asistente Virtual (Drawer amplio para tablas y balances) */
+    .sac-chatbot-window.sac-window-expanded {
+        width: 650px !important;
+        height: 720px !important;
+        max-width: calc(100vw - 32px) !important;
+        max-height: calc(100vh - 100px) !important;
+        transition: width 0.25s cubic-bezier(0.16, 1, 0.3, 1), height 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    }
+
+    /* Botón y barra de acciones para copiar respuesta */
+    .sac-bubble-actions {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 6px;
+        margin-top: 8px;
+        padding-top: 6px;
+        border-top: 1px dashed rgba(0, 113, 173, 0.18);
+    }
+    .sac-btn-copy-bubble {
+        background: #ffffff;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        color: #475569;
+        font-size: 11px;
+        font-weight: 600;
+        padding: 3px 8px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        transition: all 0.2s ease;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    }
+    .sac-btn-copy-bubble:hover {
+        background: #f1f5f9;
+        border-color: #94a3b8;
+        color: #0f172a;
+    }
+    .sac-btn-copy-bubble.copied {
+        background: #ecfdf5 !important;
+        border-color: #10b981 !important;
+        color: #047857 !important;
+    }
+
+    /* Tablas Markdown con Estilo Corporativo FFC */
+    .sac-table-responsive {
+        width: 100%;
+        overflow-x: auto;
+        margin: 10px 0;
+        border-radius: 8px;
+        border: 1px solid #cbd5e1;
+        background: #ffffff;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+    .sac-chatbot-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 11.5px;
+        line-height: 1.4;
+        text-align: left;
+    }
+    .sac-chatbot-table th {
+        background: #0071AD;
+        color: #ffffff;
+        font-weight: 700;
+        padding: 8px 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        font-size: 10.5px;
+        border-bottom: 2px solid #005a8c;
+        white-space: nowrap;
+    }
+    .sac-chatbot-table td {
+        padding: 6px 10px;
+        border-bottom: 1px solid #e2e8f0;
+        color: #1e293b;
+    }
+    .sac-chatbot-table tbody tr:nth-child(even) {
+        background: #f8fafc;
+    }
+    .sac-chatbot-table tbody tr:hover {
+        background: #f0f7ff;
+    }
+    .sac-chatbot-table td.num-cell,
+    .sac-chatbot-table th.num-cell {
+        text-align: right;
+        font-family: "Consolas", "Segoe UI Mono", monospace;
+        font-weight: 600;
+    }
 </style>
 
 <!-- Botón Flotante Disparador (Launcher) -->
@@ -115,6 +206,9 @@
             </div>
         </div>
         <div class="sac-chatbot-header-actions">
+            <button type="button" id="btnSacChatbotExpandir" class="sac-btn-header" title="Expandir / Restaurar tamaño">
+                <i class="fa fa-expand"></i>
+            </button>
             <button type="button" id="btnSacChatbotMinimizar" class="sac-btn-header" title="Minimizar">
                 <i class="fa fa-minus"></i>
             </button>
@@ -342,6 +436,62 @@
             $window.fadeOut(200);
         });
 
+        // 3.1 Control de Expansión / Modo Maximizado del Asistente
+        var $btnExpandir = $('#btnSacChatbotExpandir');
+        $btnExpandir.on('click', function () {
+            var isExpanded = $window.toggleClass('sac-window-expanded').hasClass('sac-window-expanded');
+            $btnExpandir.find('i').toggleClass('fa-expand', !isExpanded).toggleClass('fa-compress', isExpanded);
+            $btnExpandir.attr('title', isExpanded ? 'Restaurar tamaño normal' : 'Expandir panel');
+            try {
+                localStorage.setItem('sac_chatbot_expanded', isExpanded ? '1' : '0');
+            } catch (err) { }
+        });
+
+        // Restaurar tamaño preferido si el usuario lo tenía expandido
+        try {
+            if (localStorage.getItem('sac_chatbot_expanded') === '1') {
+                $window.addClass('sac-window-expanded');
+                $btnExpandir.find('i').removeClass('fa-expand').addClass('fa-compress');
+                $btnExpandir.attr('title', 'Restaurar tamaño normal');
+            }
+        } catch (err) { }
+
+        // 3.2 Copiar respuesta del asistente al portapapeles
+        $(document).on('click', '.sac-btn-copy-bubble', function (e) {
+            e.preventDefault();
+            var $btn = $(this);
+            var $bubble = $btn.closest('.sac-msg-bubble');
+            var $clone = $bubble.clone();
+            $clone.find('.sac-bubble-actions, .sac-followup-container').remove();
+            var textoACopiar = $clone.text().replace(/\n\s*\n/g, '\n').trim();
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(textoACopiar).then(mostrarFeedbackCopiado, fallbackCopiar);
+            } else {
+                fallbackCopiar();
+            }
+
+            function fallbackCopiar() {
+                var $temp = $('<textarea>').css({ position: 'fixed', left: '-9999px', top: '0' }).val(textoACopiar);
+                $('body').append($temp);
+                $temp.select();
+                try {
+                    document.execCommand('copy');
+                    mostrarFeedbackCopiado();
+                } catch (ex) {
+                    if (window.mostrarToast) window.mostrarToast('No se pudo copiar automáticamente', 'warning');
+                }
+                $temp.remove();
+            }
+
+            function mostrarFeedbackCopiado() {
+                $btn.addClass('copied').html('<i class="fa fa-check"></i> <span>¡Copiado!</span>');
+                setTimeout(function () {
+                    $btn.removeClass('copied').html('<i class="fa fa-clone"></i> <span>Copiar</span>');
+                }, 2000);
+            }
+        });
+
         // 4. Enviar al pulsar Enter o el botón Enviar
         $input.on('keypress', function (e) {
             if (e.which === 13) {
@@ -454,11 +604,17 @@
                 htmlSugerencias += '</div></div>';
             }
 
+            var copyActionBar = esBot ? ('<div class="sac-bubble-actions">' +
+                '<button type="button" class="sac-btn-copy-bubble" title="Copiar análisis al portapapeles">' +
+                '<i class="fa fa-clone"></i> <span>Copiar</span>' +
+                '</button>' +
+                '</div>') : '';
+
             var botAvatarSvg = '<div class="sac-msg-avatar"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="3"></rect><circle cx="12" cy="5" r="2"></circle><path d="M12 7v4"></path><line x1="8" y1="15" x2="8.01" y2="15" stroke-width="3"></line><line x1="16" y1="15" x2="16.01" y2="15" stroke-width="3"></line></svg></div>';
 
             var $msg = $('<div class="sac-msg ' + (esBot ? 'sac-msg-bot' : 'sac-msg-user') + '">' +
                 (esBot ? botAvatarSvg : '') +
-                '<div class="sac-msg-bubble">' + htmlFormatted + htmlSugerencias + '</div>' +
+                '<div class="sac-msg-bubble">' + htmlFormatted + htmlSugerencias + copyActionBar + '</div>' +
                 (!esBot ? '<div class="sac-msg-avatar user-av"><i class="fa fa-user"></i></div>' : '') +
                 '</div>');
 
@@ -490,12 +646,66 @@
             if (!txt) return '';
             txt = txt.trim();
 
+            // 1. Procesamiento previo de tablas Markdown (| Encabezado 1 | Encabezado 2 | ... )
+            var placeholderMap = {};
+            var phIndex = 0;
+            if (txt.indexOf('|') !== -1) {
+                txt = txt.replace(/(?:^|\n)(\|[^\n]+\|\r?\n\|(?:\s*:?---*:?\s*\|)+\r?\n(?:\|[^\n]+\|\r?\n?)+)/g, function (match, tablaRaw) {
+                    var lineasT = tablaRaw.trim().split(/\r?\n/);
+                    if (lineasT.length < 3) return match;
+
+                    var headerCols = lineasT[0].split('|').map(function (c) { return c.trim(); }).filter(function (c, i, a) { return i > 0 && i < a.length - 1; });
+                    var alignCols = lineasT[1].split('|').map(function (c) { return c.trim(); }).filter(function (c, i, a) { return i > 0 && i < a.length - 1; });
+
+                    var alignments = alignCols.map(function (a) {
+                        if (/^:.*:$/.test(a)) return 'center';
+                        if (/.*:$/.test(a)) return 'right';
+                        return 'left';
+                    });
+
+                    var htmlTabla = '<div class="sac-table-responsive"><table class="sac-chatbot-table"><thead><tr>';
+                    for (var h = 0; h < headerCols.length; h++) {
+                        var alignClass = alignments[h] === 'right' ? ' class="num-cell"' : '';
+                        htmlTabla += '<th' + alignClass + '>' + $('<div>').text(headerCols[h]).html() + '</th>';
+                    }
+                    htmlTabla += '</tr></thead><tbody>';
+
+                    for (var r = 2; r < lineasT.length; r++) {
+                        var rowLine = lineasT[r].trim();
+                        if (!rowLine || rowLine.indexOf('|') === -1) continue;
+                        var cells = rowLine.split('|').map(function (c) { return c.trim(); }).filter(function (c, i, a) { return i > 0 && i < a.length - 1; });
+                        htmlTabla += '<tr>';
+                        for (var c = 0; c < headerCols.length; c++) {
+                            var cellVal = cells[c] || '';
+                            var isNumeric = alignments[c] === 'right' || /(?:₡|%|\b\d+[\.,]\d+\b)/.test(cellVal);
+                            var cellClass = isNumeric ? ' class="num-cell"' : '';
+                            var safeVal = $('<div>').text(cellVal).html()
+                                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                                .replace(/\*(.*?)\*/g, '<em>$1</em>');
+                            htmlTabla += '<td' + cellClass + '>' + safeVal + '</td>';
+                        }
+                        htmlTabla += '</tr>';
+                    }
+                    htmlTabla += '</tbody></table></div>';
+
+                    var phKey = '___SAC_TABLE_PH_' + (phIndex++) + '___';
+                    placeholderMap[phKey] = htmlTabla;
+                    return '\n\n' + phKey + '\n\n';
+                });
+            }
+
             var lines = txt.split(/\r?\n/);
             var htmlParts = [];
 
             for (var i = 0; i < lines.length; i++) {
                 var rawLine = lines[i].trim();
                 if (!rawLine) continue;
+
+                // Si es un placeholder de tabla procesada, inyectar el HTML directamente
+                if (placeholderMap[rawLine]) {
+                    htmlParts.push(placeholderMap[rawLine]);
+                    continue;
+                }
 
                 // Escapar HTML para evitar XSS
                 var lineSafe = $('<div>').text(rawLine).html();

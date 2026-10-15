@@ -32,6 +32,9 @@
         <li class="active">Alertas Financieras</li>
     </ol>
     <div class="alertas-header-actions">
+        <button type="button" class="btn-al-action btn-al-outline-green" id="btnExportarAlertasHeader" title="Descargar alertas visibles en formato Excel / CSV">
+            <i class="fa fa-file-excel-o" style="color: #16a34a;"></i> Exportar a Excel
+        </button>
         <button type="button" class="btn-al-action btn-al-outline-blue" id="btnAbrirConfigEntidad" title="Personalizar umbrales y cuentas monitoreadas para la entidad">
             <i class="fa fa-sliders"></i> Parámetros de la Entidad
         </button>
@@ -1145,34 +1148,112 @@
             });
         });
 
-        // Exportar a CSV básico
-        $('#btnExportarCsv').on('click', function() {
-            var csv = [];
-            csv.push(['Criticidad', 'Entidad', 'Cuenta', 'Nombre Cuenta', 'Periodo Comparado', 'Saldo Anterior', 'Saldo Actual', 'Variacion Monto', 'Variacion %', 'Estado'].join(';'));
+        // ==========================================================================
+        // EXPORTACIÓN AVANZADA A EXCEL / CSV PARA COMITÉS DE RIESGO Y AUDITORÍA
+        // ==========================================================================
+        function exportarAlertasExcel() {
+            var $filasVisibles = $('#tbodyAlertas tr:visible').not('#rowEmptyAlertas');
+            if ($filasVisibles.length === 0) {
+                if (window.mostrarToast) {
+                    window.mostrarToast('No hay alertas visibles para exportar con los filtros seleccionados.', 'warning', 'Exportación de Alertas');
+                } else {
+                    alert('No hay alertas visibles para exportar.');
+                }
+                return;
+            }
 
-            $('#tbodyAlertas tr:visible').each(function() {
-                if ($(this).attr('id') === 'rowEmptyAlertas') return;
-                var cols = [];
-                $(this).find('td').each(function(idx) {
-                    if (idx < 8) {
-                        var text = $(this).text().replace(/\s+/g, ' ').trim().replace(/;/g, ',');
-                        cols.push('"' + text + '"');
-                    }
-                });
-                var leido = $(this).attr('data-leido') === '1' ? 'Leída' : 'Pendiente';
-                cols.push('"' + leido + '"');
-                csv.push(cols.join(';'));
+            var csv = [];
+            csv.push(['Criticidad', 'Entidad', 'Cuenta Contable', 'Nombre Cuenta', 'Periodos Comparados', 'Saldo Anterior (CRC)', 'Saldo Actual (CRC)', 'Variacion Monto (CRC)', 'Variacion Porc (%)', 'Estado'].join(';'));
+
+            $filasVisibles.each(function () {
+                var $tr = $(this);
+                var criticidad = $tr.attr('data-tipo') || ($tr.find('.badge-severidad-pill').text().trim().toLowerCase().indexOf('crítica') >= 0 ? 'CRITICA' : 'ADVERTENCIA');
+                var entidad = $tr.attr('data-entidad') || $tr.find('.col-entidad').text().trim();
+                var cuenta = $tr.attr('data-cuenta') || '';
+                var nombreCuenta = $tr.attr('data-nombre-cuenta') || $tr.find('.alerta-cuenta-desc').text().trim();
+                var periodos = $tr.find('.col-periodos').text().replace(/\s+/g, ' ').trim();
+                var saldoAnt = $tr.find('td.col-monto').eq(0).text().trim().replace(/[\u00A0\s]/g, '');
+                var saldoAct = $tr.find('td.col-monto').eq(1).text().trim().replace(/[\u00A0\s]/g, '');
+                var varMonto = $tr.find('td.col-var-monto').text().trim().replace(/[\u00A0\s]/g, '');
+                var varPorc = $tr.find('td.col-var-porc').text().trim().replace(/[\u00A0\s]/g, '');
+                var estado = $tr.attr('data-leido') === '1' ? 'Leida' : 'Pendiente';
+
+                var rowData = [
+                    '"' + criticidad.replace(/"/g, '""') + '"',
+                    '"' + entidad.replace(/"/g, '""') + '"',
+                    '"' + cuenta.replace(/"/g, '""') + '"',
+                    '"' + nombreCuenta.replace(/"/g, '""') + '"',
+                    '"' + periodos.replace(/"/g, '""') + '"',
+                    '"' + saldoAnt.replace(/"/g, '""') + '"',
+                    '"' + saldoAct.replace(/"/g, '""') + '"',
+                    '"' + varMonto.replace(/"/g, '""') + '"',
+                    '"' + varPorc.replace(/"/g, '""') + '"',
+                    '"' + estado + '"'
+                ];
+                csv.push(rowData.join(';'));
             });
 
-            var csvContent = "data:text/csv;charset=utf-8,\uFEFF" + csv.join("\n");
-            var encodedUri = encodeURI(csvContent);
-            var link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", "Alertas_Financieras_FFC.csv");
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            var now = new Date();
+            var timeStamp = now.getFullYear() +
+                ('0' + (now.getMonth() + 1)).slice(-2) +
+                ('0' + now.getDate()).slice(-2) + '_' +
+                ('0' + now.getHours()).slice(-2) +
+                ('0' + now.getMinutes()).slice(-2);
+
+            var blob = new Blob(["\uFEFF" + csv.join("\r\n")], { type: 'text/csv;charset=utf-8;' });
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement("a");
+            a.href = url;
+            a.download = "Alertas_Financieras_FFC_" + timeStamp + ".csv";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            if (window.mostrarToast) {
+                window.mostrarToast('Listado de alertas exportado exitosamente (' + $filasVisibles.length + ' registros).', 'success', 'Exportación Exitosa');
+            }
+        }
+
+        $('#btnExportarAlertasHeader, #btnExportarCsv').on('click', function (e) {
+            e.preventDefault();
+            exportarAlertasExcel();
         });
+
+        // ==========================================================================
+        // PERSISTENCIA INTELIGENTE DE FILTROS PREFERIDOS (localStorage)
+        // ==========================================================================
+        $('#formFiltroAlertas').on('submit', function () {
+            try {
+                var prefs = {
+                    tipo: $('#selectTipo').val(),
+                    soloNoLeidas: $('#chkSoloNoLeidas').is(':checked')
+                };
+                localStorage.setItem('sac_alertas_preferencias', JSON.stringify(prefs));
+            } catch (err) { }
+        });
+
+        // Restaurar preferencias previas si la URL no trae filtros específicos
+        if (window.location.search.indexOf('tipoAlerta') === -1 && window.location.search.indexOf('soloNoLeidas') === -1) {
+            try {
+                var rawPref = localStorage.getItem('sac_alertas_preferencias');
+                if (rawPref) {
+                    var pref = JSON.parse(rawPref);
+                    var redirigir = false;
+                    if (pref.tipo && pref.tipo !== 'TODAS' && pref.tipo !== $('#selectTipo').val()) {
+                        $('#selectTipo').val(pref.tipo);
+                        redirigir = true;
+                    }
+                    if (pref.soloNoLeidas && !$('#chkSoloNoLeidas').is(':checked')) {
+                        $('#chkSoloNoLeidas').prop('checked', true);
+                        redirigir = true;
+                    }
+                    if (redirigir) {
+                        $('#formFiltroAlertas').submit();
+                    }
+                }
+            } catch (err) { }
+        }
 
         // Botones para abrir Modal de Parámetros por Entidad
         $('#btnAbrirConfigEntidad, #btnConfigEntidadToolbar').on('click', function(e) {
