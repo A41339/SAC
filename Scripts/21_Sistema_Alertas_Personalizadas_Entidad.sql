@@ -25,7 +25,7 @@ BEGIN TRY
             IdEntidad NVARCHAR(5) NOT NULL,
             UmbralVariacionPorc DECIMAL(18,2) NULL,
             UmbralVariacionMonto DECIMAL(18,2) NULL,
-            ModoMonitoreo NVARCHAR(20) NOT NULL CONSTRAINT DF_AlertaParametrosEntidad_Modo DEFAULT 'TODAS', -- 'TODAS', 'SOLO_WATCHLIST', 'EXCLUIR_BLACKLIST'
+            ModoMonitoreo NVARCHAR(20) NOT NULL CONSTRAINT DF_AlertaParametrosEntidad_Modo DEFAULT 'SOLO_WATCHLIST', -- 'SOLO_WATCHLIST' (default: 0 cuentas monitoreadas), 'TODAS', 'EXCLUIR_BLACKLIST'
             Activo BIT NOT NULL CONSTRAINT DF_AlertaParametrosEntidad_Activo DEFAULT 1,
             FechaModificacion DATETIME NOT NULL CONSTRAINT DF_AlertaParametrosEntidad_Fecha DEFAULT GETDATE(),
             UsuarioModificacion NVARCHAR(100) NULL,
@@ -159,9 +159,9 @@ BEGIN
         @IDENTIDAD AS IdEntidad,
         ISNULL(ape.UmbralVariacionPorc, @GlobalPorc) AS UmbralVariacionPorc,
         ISNULL(ape.UmbralVariacionMonto, @GlobalMonto) AS UmbralVariacionMonto,
-        ISNULL(ape.ModoMonitoreo, 'TODAS') AS ModoMonitoreo,
+        ISNULL(ape.ModoMonitoreo, 'SOLO_WATCHLIST') AS ModoMonitoreo,
         CASE 
-            WHEN ape.Id IS NOT NULL AND ape.Activo = 1 AND (ape.UmbralVariacionPorc IS NOT NULL OR ape.UmbralVariacionMonto IS NOT NULL OR ape.ModoMonitoreo != 'TODAS') 
+            WHEN ape.Id IS NOT NULL AND ape.Activo = 1 AND (ape.UmbralVariacionPorc IS NOT NULL OR ape.UmbralVariacionMonto IS NOT NULL OR ape.ModoMonitoreo != 'SOLO_WATCHLIST') 
             THEN CAST(1 AS BIT) 
             ELSE CAST(0 AS BIT) 
         END AS EsPersonalizado,
@@ -183,7 +183,7 @@ CREATE OR ALTER PROCEDURE [dbo].[FGA_Guardar_Configuracion_Alerta_Entidad]
     @IDENTIDAD NVARCHAR(5),
     @UMBRAL_PORC DECIMAL(18,2) = NULL,
     @UMBRAL_MONTO DECIMAL(18,2) = NULL,
-    @MODO_MONITOREO NVARCHAR(20) = 'TODAS',
+    @MODO_MONITOREO NVARCHAR(20) = 'SOLO_WATCHLIST',
     @ACTIVO BIT = 1,
     @USUARIO NVARCHAR(100) = 'SYSTEM'
 AS
@@ -197,8 +197,8 @@ BEGIN
         RETURN;
     END
 
-    IF @MODO_MONITOREO NOT IN ('TODAS', 'SOLO_WATCHLIST', 'EXCLUIR_BLACKLIST')
-        SET @MODO_MONITOREO = 'TODAS';
+    IF @MODO_MONITOREO NOT IN ('SOLO_WATCHLIST', 'TODAS', 'EXCLUIR_BLACKLIST')
+        SET @MODO_MONITOREO = 'SOLO_WATCHLIST';
 
     IF EXISTS (SELECT 1 FROM dbo.AlertaParametrosEntidad WHERE IdEntidad = @IDENTIDAD)
     BEGIN
@@ -448,6 +448,38 @@ BEGIN
         IF @PERIODO_ACTUAL IS NULL SET @PERIODO_ACTUAL = DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1);
     END
 
+    -- 2.1 Por defecto ninguna cuenta genera alertas si la entidad no ha registrado cuentas en su Watchlist.
+    -- Si la entidad específica está en modo SOLO_WATCHLIST (modo por defecto) y no tiene cuentas monitoreadas,
+    -- limpiar alertas previas de esa entidad y retornar 0 alertas inmediatamente.
+    IF @IDENTIDAD != '-1'
+    BEGIN
+        DECLARE @ModoEntidadEval NVARCHAR(20) = 'SOLO_WATCHLIST';
+        SELECT TOP 1 @ModoEntidadEval = ISNULL(ModoMonitoreo, 'SOLO_WATCHLIST')
+        FROM dbo.AlertaParametrosEntidad WITH(NOLOCK)
+        WHERE IdEntidad = @IDENTIDAD AND Activo = 1;
+
+        IF @ModoEntidadEval = 'SOLO_WATCHLIST'
+        BEGIN
+            DECLARE @CntCuentasMonitoreadas INT = 0;
+            SELECT @CntCuentasMonitoreadas = COUNT(1)
+            FROM dbo.AlertaCuentaMonitoreada WITH(NOLOCK)
+            WHERE IdEntidad = @IDENTIDAD AND Activo = 1 AND TipoRegla = 'MONITOREAR';
+
+            IF @CntCuentasMonitoreadas = 0
+            BEGIN
+                DELETE FROM dbo.AlertaFinanciera
+                WHERE IdEntidad = @IDENTIDAD
+                  AND PeriodoActual = @PERIODO_ACTUAL;
+
+                EXEC dbo.FGA_Obtener_Alertas_Financieras 
+                    @IDENTIDAD = @IDENTIDAD, 
+                    @SOLO_NO_LEIDAS = 0, 
+                    @TOP = 100;
+                RETURN;
+            END
+        END
+    END
+
     -- 3. Determinar Período Anterior
     DECLARE @PERIODO_ANTERIOR DATE;
     IF UPPER(@TIPO_COMPARACION) = 'MENSUAL'
@@ -514,7 +546,7 @@ BEGIN
             -- Resolver umbrales efectivos por entidad o herencia global
             ISNULL(acm.UmbralPorcPersonalizado, ISNULL(ape.UmbralVariacionPorc, @GLOBAL_PORC)) AS UmbralPorcEfectivo,
             ISNULL(acm.UmbralMontoPersonalizado, ISNULL(ape.UmbralVariacionMonto, @GLOBAL_MONTO)) AS UmbralMontoEfectivo,
-            ISNULL(ape.ModoMonitoreo, 'TODAS') AS ModoMonitoreo,
+            ISNULL(ape.ModoMonitoreo, 'SOLO_WATCHLIST') AS ModoMonitoreo,
             acm.TipoRegla AS ReglaCuenta,
             acm.Activo AS CuentaActiva
         FROM SaldosPeriodos sp
@@ -609,6 +641,82 @@ BEGIN
 END;
 GO
 
+-- =========================================================================================
+-- SP 7: dbo.FGA_Obtener_Alertas_Financieras (ACTUALIZADO)
+-- Consulta las alertas financieras respetando el modo de monitoreo de la entidad
+-- =========================================================================================
+CREATE OR ALTER PROCEDURE [dbo].[FGA_Obtener_Alertas_Financieras]
+    @IDENTIDAD NVARCHAR(5) = '-1',
+    @SOLO_NO_LEIDAS BIT = 0,
+    @TOP INT = 30
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SET FMTONLY OFF;
+
+    IF @IDENTIDAD = '99' SET @IDENTIDAD = '13';
+    IF @TOP IS NULL OR @TOP <= 0 SET @TOP = 30;
+
+    SELECT TOP (@TOP)
+        af.Id,
+        af.IdEntidad,
+        ISNULL(e.Nombre, 'Entidad ' + af.IdEntidad) AS NombreEntidad,
+        af.PeriodoActual,
+        af.PeriodoAnterior,
+        af.Cuenta,
+        af.NombreCuenta,
+        af.SaldoActual,
+        af.SaldoAnterior,
+        af.VariacionMonto,
+        af.VariacionPorcentaje,
+        af.TipoAlerta,
+        af.Titulo,
+        af.Mensaje,
+        af.FechaGeneracion,
+        af.Leido,
+        af.FechaLeido,
+        af.UsuarioLeido,
+        af.Estado
+    FROM dbo.AlertaFinanciera af WITH(NOLOCK)
+    LEFT JOIN dbo.Entidad e WITH(NOLOCK) ON af.IdEntidad = e.Id
+    LEFT JOIN dbo.AlertaParametrosEntidad ape WITH(NOLOCK) ON af.IdEntidad = ape.IdEntidad AND ape.Activo = 1
+    WHERE (@IDENTIDAD = '-1' OR af.IdEntidad = @IDENTIDAD)
+      AND (@SOLO_NO_LEIDAS = 0 OR af.Leido = 0)
+      AND af.Estado = 'ACTIVA'
+      -- Si la entidad está en modo SOLO_WATCHLIST (por defecto), solo mostrar cuentas monitoreadas activas
+      AND (
+          (ISNULL(ape.ModoMonitoreo, 'SOLO_WATCHLIST') = 'SOLO_WATCHLIST' 
+           AND EXISTS (
+               SELECT 1 FROM dbo.AlertaCuentaMonitoreada acm WITH(NOLOCK)
+               WHERE acm.IdEntidad = af.IdEntidad 
+                 AND acm.Cuenta = af.Cuenta 
+                 AND acm.Activo = 1 
+                 AND acm.TipoRegla = 'MONITOREAR'
+           ))
+          OR (ISNULL(ape.ModoMonitoreo, 'SOLO_WATCHLIST') = 'EXCLUIR_BLACKLIST'
+           AND NOT EXISTS (
+               SELECT 1 FROM dbo.AlertaCuentaMonitoreada acm WITH(NOLOCK)
+               WHERE acm.IdEntidad = af.IdEntidad 
+                 AND acm.Cuenta = af.Cuenta 
+                 AND acm.Activo = 1 
+                 AND acm.TipoRegla = 'IGNORAR'
+           ))
+          OR (ISNULL(ape.ModoMonitoreo, 'SOLO_WATCHLIST') = 'TODAS'
+           AND NOT EXISTS (
+               SELECT 1 FROM dbo.AlertaCuentaMonitoreada acm WITH(NOLOCK)
+               WHERE acm.IdEntidad = af.IdEntidad 
+                 AND acm.Cuenta = af.Cuenta 
+                 AND acm.Activo = 1 
+                 AND acm.TipoRegla = 'IGNORAR'
+           ))
+      )
+    ORDER BY 
+        af.Leido ASC, 
+        af.FechaGeneracion DESC, 
+        ABS(af.VariacionMonto) DESC;
+END;
+GO
+
 PRINT '================================================================================';
 PRINT '>> [5/5] Asignando Permisos de Ejecución a los Nuevos Procedimientos...';
 PRINT '================================================================================';
@@ -625,6 +733,8 @@ GRANT EXECUTE ON [dbo].[FGA_Eliminar_Cuenta_Monitoreada_Entidad] TO [FGA];
 GRANT EXECUTE ON [dbo].[FGA_Eliminar_Cuenta_Monitoreada_Entidad] TO [public];
 GRANT EXECUTE ON [dbo].[FGA_Generar_Alertas_Variacion_Financiera] TO [FGA];
 GRANT EXECUTE ON [dbo].[FGA_Generar_Alertas_Variacion_Financiera] TO [public];
+GRANT EXECUTE ON [dbo].[FGA_Obtener_Alertas_Financieras] TO [FGA];
+GRANT EXECUTE ON [dbo].[FGA_Obtener_Alertas_Financieras] TO [public];
 GO
 
 PRINT '================================================================================';

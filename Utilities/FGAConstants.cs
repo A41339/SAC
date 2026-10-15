@@ -75,6 +75,7 @@ namespace FGA.Utility
             public const string ModoTodas = "TODAS";
             public const string ModoSoloWatchlist = "SOLO_WATCHLIST";
             public const string ModoExcluirBlacklist = "EXCLUIR_BLACKLIST";
+            public const string ModoDefecto = ModoSoloWatchlist;
 
             public const string SeveridadCritica = "CRITICA";
             public const string SeveridadAdvertencia = "ADVERTENCIA";

@@ -46,23 +46,22 @@ namespace FGA.Controllers
                 int.TryParse(idEntidad, out idEntParsed);
                 ViewBag.IdEntidadUsuario = idEntParsed;
 
+                // Conteo de cuentas en lista de monitoreo para la entidad actual
+                int cuentasMonitoreadasCount = ObtenerCantidadCuentasMonitoreadas(idEntidad);
+                ViewBag.CuentasMonitoreadasCount = cuentasMonitoreadasCount;
+
                 FGA_Obtener_Alertas_Financieras_Result[] rawAlertas = null;
                 var spClient = new FGA_En_Linea.SPService.SPClient();
                 try
                 {
-                    // Si no existen alertas, intentar disparar una evaluación inicial del período actual
+                    // Por arquitectura multi-tenant y default institucional:
+                    // Se consultan las alertas financieras vigentes ya calificadas para las cuentas monitoreadas.
+                    // No se autogeneran alertas para cuentas no autorizadas por la entidad.
                     rawAlertas = spClient.FGA_Obtener_Alertas_Financieras(idEntidad, false, 100);
-                    if (rawAlertas == null || rawAlertas.Length == 0)
-                    {
-                        try
-                        {
-                            rawAlertas = spClient.FGA_Generar_Alertas_Variacion_Financiera(idEntidad, null, "Acumulado", "Interanual");
-                        }
-                        catch
-                        {
-                            rawAlertas = new FGA_Obtener_Alertas_Financieras_Result[0];
-                        }
-                    }
+                }
+                catch
+                {
+                    rawAlertas = new FGA_Obtener_Alertas_Financieras_Result[0];
                 }
                 finally
                 {
@@ -170,18 +169,10 @@ namespace FGA.Controllers
                 try
                 {
                     rawAlertas = spClient.FGA_Obtener_Alertas_Financieras(idEntidad, false, 50);
-                    if (rawAlertas == null || rawAlertas.Length == 0)
-                    {
-                        // Intentar autogenerar para el período actual si aún no hay registros
-                        try
-                        {
-                            rawAlertas = spClient.FGA_Generar_Alertas_Variacion_Financiera(idEntidad, null, "Acumulado", "Interanual");
-                        }
-                        catch
-                        {
-                            rawAlertas = new FGA_Obtener_Alertas_Financieras_Result[0];
-                        }
-                    }
+                }
+                catch
+                {
+                    rawAlertas = new FGA_Obtener_Alertas_Financieras_Result[0];
                 }
                 finally
                 {
@@ -330,6 +321,21 @@ namespace FGA.Controllers
                 string tipoComp = string.IsNullOrEmpty(tipoComparacion) ? "Interanual" : tipoComparacion;
 
                 ObtenerUmbralesEfectivos(idEnt, out decimal umbralPorc, out decimal umbralMonto, out string modoMonitoreo, out bool esPersonalizado);
+
+                // Si la entidad está en modo SOLO_WATCHLIST (por defecto) y no tiene cuentas configuradas en su Lista de Monitoreo
+                if ((modoMonitoreo == FGAConstants.Alertas.ModoSoloWatchlist || string.IsNullOrEmpty(modoMonitoreo)) && idEnt != "-1")
+                {
+                    int totalCuentas = ObtenerCantidadCuentasMonitoreadas(idEnt);
+                    if (totalCuentas == 0)
+                    {
+                        return Json(new AlertaOperacionResponse
+                        {
+                            Success = true,
+                            TotalGeneradas = 0,
+                            Message = "Su entidad no tiene cuentas registradas en su Lista de Monitoreo. Por defecto el FFC no genera alertas automáticas hasta que configure las cuentas que desea supervisar en 'Configurar Entidad' -> pestaña 'Cuentas a Monitorear'."
+                        });
+                    }
+                }
 
                 FGA_Obtener_Alertas_Financieras_Result[] result = null;
                 var spClient = new FGA_En_Linea.SPService.SPClient();
@@ -613,13 +619,13 @@ namespace FGA.Controllers
 
                 decimal? porcFinal = umbralPorc ?? umbralPorcentaje;
                 decimal? montoFinal = umbralMonto;
-                string modoFinal = string.IsNullOrEmpty(modoMonitoreo) ? FGAConstants.Alertas.ModoTodas : modoMonitoreo.Trim().ToUpperInvariant();
+                string modoFinal = string.IsNullOrEmpty(modoMonitoreo) ? FGAConstants.Alertas.ModoDefecto : modoMonitoreo.Trim().ToUpperInvariant();
 
                 if (!esActivo)
                 {
                     porcFinal = null;
                     montoFinal = null;
-                    modoFinal = FGAConstants.Alertas.ModoTodas;
+                    modoFinal = FGAConstants.Alertas.ModoDefecto;
                 }
                 else
                 {
@@ -627,7 +633,7 @@ namespace FGA.Controllers
                     if (!montoFinal.HasValue || montoFinal.Value <= 0) montoFinal = FGAConstants.Alertas.UmbralVariacionMontoGlobal;
                     if (modoFinal != FGAConstants.Alertas.ModoTodas && modoFinal != FGAConstants.Alertas.ModoSoloWatchlist && modoFinal != FGAConstants.Alertas.ModoExcluirBlacklist)
                     {
-                        modoFinal = FGAConstants.Alertas.ModoTodas;
+                        modoFinal = FGAConstants.Alertas.ModoDefecto;
                     }
                 }
 
@@ -1427,6 +1433,29 @@ namespace FGA.Controllers
             return _cachedConnString;
         }
 
+        private int ObtenerCantidadCuentasMonitoreadas(string idEntidad)
+        {
+            if (string.IsNullOrEmpty(idEntidad) || idEntidad == "-1" || idEntidad == "0") return 0;
+            try
+            {
+                string connStr = ObtenerCadenaConexion();
+                using (var conn = new SqlConnection(connStr))
+                {
+                    conn.Open();
+                    using (var cmd = new SqlCommand("SELECT COUNT(1) FROM dbo.AlertaCuentaMonitoreada WITH(NOLOCK) WHERE IdEntidad = @idEntidad AND Activo = 1 AND TipoRegla = 'MONITOREAR'", conn))
+                    {
+                        cmd.Parameters.AddWithValue("@idEntidad", idEntidad);
+                        var obj = cmd.ExecuteScalar();
+                        return obj != null && obj != DBNull.Value ? Convert.ToInt32(obj) : 0;
+                    }
+                }
+            }
+            catch
+            {
+                return 0;
+            }
+        }
+
         private static bool _tablasAseguradas = false;
         private static readonly object _lockTablas = new object();
 
@@ -1446,7 +1475,7 @@ namespace FGA.Controllers
                                 IdEntidad NVARCHAR(5) NOT NULL UNIQUE,
                                 UmbralVariacionPorc DECIMAL(18,2) NULL,
                                 UmbralVariacionMonto DECIMAL(18,2) NULL,
-                                ModoMonitoreo NVARCHAR(20) NOT NULL DEFAULT 'TODAS',
+                                ModoMonitoreo NVARCHAR(20) NOT NULL DEFAULT 'SOLO_WATCHLIST',
                                 Activo BIT NOT NULL DEFAULT 1,
                                 FechaModificacion DATETIME NOT NULL DEFAULT GETDATE(),
                                 UsuarioModificacion NVARCHAR(100) NULL
@@ -1490,7 +1519,7 @@ namespace FGA.Controllers
             ObtenerUmbralesConfigurados(out globalPorc, out globalMonto);
             umbralPorc = globalPorc;
             umbralMonto = globalMonto;
-            modoMonitoreo = "TODAS";
+            modoMonitoreo = FGAConstants.Alertas.ModoDefecto;
             esPersonalizado = false;
             fechaModif = null;
             usuarioModif = null;
@@ -1513,7 +1542,7 @@ namespace FGA.Controllers
                         var item = cfg[0];
                         umbralPorc = item.UmbralVariacionPorc;
                         umbralMonto = item.UmbralVariacionMonto;
-                        modoMonitoreo = string.IsNullOrEmpty(item.ModoMonitoreo) ? "TODAS" : item.ModoMonitoreo;
+                        modoMonitoreo = string.IsNullOrEmpty(item.ModoMonitoreo) ? FGAConstants.Alertas.ModoDefecto : item.ModoMonitoreo;
                         esPersonalizado = item.EsPersonalizado;
                         fechaModif = item.FechaModificacion;
                         usuarioModif = item.UsuarioModificacion;
@@ -1559,7 +1588,7 @@ namespace FGA.Controllers
                                             umbralPorc = Convert.ToDecimal(r["UmbralVariacionPorc"]);
                                         if (r["UmbralVariacionMonto"] != DBNull.Value)
                                             umbralMonto = Convert.ToDecimal(r["UmbralVariacionMonto"]);
-                                        if (r["ModoMonitoreo"] != DBNull.Value)
+                                        if (r["ModoMonitoreo"] != DBNull.Value && !string.IsNullOrEmpty(r["ModoMonitoreo"].ToString()))
                                             modoMonitoreo = r["ModoMonitoreo"].ToString();
                                         if (r["EsPersonalizado"] != DBNull.Value)
                                             esPersonalizado = Convert.ToBoolean(r["EsPersonalizado"]);
@@ -1601,7 +1630,7 @@ namespace FGA.Controllers
                                                 umbralPorc = Convert.ToDecimal(r["UmbralVariacionPorc"]);
                                             if (r["UmbralVariacionMonto"] != DBNull.Value)
                                                 umbralMonto = Convert.ToDecimal(r["UmbralVariacionMonto"]);
-                                            if (r["ModoMonitoreo"] != DBNull.Value)
+                                            if (r["ModoMonitoreo"] != DBNull.Value && !string.IsNullOrEmpty(r["ModoMonitoreo"].ToString()))
                                                 modoMonitoreo = r["ModoMonitoreo"].ToString();
                                             esPersonalizado = true;
                                             if (r["FechaModificacion"] != DBNull.Value)

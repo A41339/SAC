@@ -220,9 +220,10 @@
                             <i class="fa fa-filter" style="color: #64748b; font-size: 11px;"></i>
                             <span class="chip-name">Modo:</span>
                             <strong class="chip-val" id="bannerModoMonitoreo">
-                                @if (modoMonitoreo == "SOLO_WATCHLIST")
+                                @if (modoMonitoreo == "SOLO_WATCHLIST" || string.IsNullOrEmpty(modoMonitoreo))
                                 {
-                                    <span style="color: #0284c7;"><i class="fa fa-bookmark"></i> Solo Cuentas Prioritarias</span>
+                                    int cntMon = ViewBag.CuentasMonitoreadasCount != null ? (int)ViewBag.CuentasMonitoreadasCount : 0;
+                                    <span style="color: #0284c7;"><i class="fa fa-bookmark"></i> Solo Cuentas Prioritarias (@cntMon @(cntMon == 1 ? "cuenta" : "cuentas"))</span>
                                 }
                                 else if (modoMonitoreo == "EXCLUIR_BLACKLIST")
                                 {
@@ -281,14 +282,38 @@
                     <tbody id="tbodyAlertas">
                         @if (Model == null || Model.Count == 0)
                         {
+                            int cuentasCount = ViewBag.CuentasMonitoreadasCount != null ? (int)ViewBag.CuentasMonitoreadasCount : 0;
                             <tr id="rowEmptyAlertas">
                                 <td colspan="9">
                                     <div class="empty-state-box">
-                                        <div class="empty-state-icon">
-                                            <i class="fa fa-check"></i>
-                                        </div>
-                                        <h4 style="font-size: 16px; font-weight: 700; color: #1e293b; margin: 0 0 6px 0;">No hay alertas pendientes para los criterios seleccionados</h4>
-                                        <p style="font-size: 13px; color: #64748b; margin: 0;">Todas las cuentas contables evaluadas se encuentran dentro de los rangos de variación esperados.</p>
+                                        @if (cuentasCount == 0 && (modoMonitoreo == "SOLO_WATCHLIST" || string.IsNullOrEmpty(modoMonitoreo)))
+                                        {
+                                            <div class="empty-state-icon" style="background: #e0f2fe; color: #0284c7;">
+                                                <i class="fa fa-sliders"></i>
+                                            </div>
+                                            <h4 style="font-size: 16px; font-weight: 700; color: #1e293b; margin: 0 0 6px 0;">No hay cuentas configuradas para monitoreo</h4>
+                                            <p style="font-size: 13px; color: #64748b; margin: 0; max-width: 580px;">
+                                                Por defecto el FFC no genera alertas automáticas hasta que la entidad configure las cuentas contables que desea supervisar. Puede agregar sus cuentas prioritarias en la pantalla de configuración.
+                                            </p>
+                                            <div style="margin-top: 14px;">
+                                                <button type="button" class="btn-al-action btn-al-primary" onclick="abrirModalConfigEntidad('cuentas');" style="box-shadow: 0 4px 12px rgba(47, 85, 151, 0.25);">
+                                                    <i class="fa fa-plus-circle"></i> Configurar Cuentas a Monitorear
+                                                </button>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="empty-state-icon">
+                                                <i class="fa fa-check"></i>
+                                            </div>
+                                            <h4 style="font-size: 16px; font-weight: 700; color: #1e293b; margin: 0 0 6px 0;">No hay alertas pendientes para los criterios seleccionados</h4>
+                                            <p style="font-size: 13px; color: #64748b; margin: 0;">Todas las cuentas contables monitoreadas se encuentran dentro de los rangos de variación esperados.</p>
+                                            <div style="margin-top: 12px;">
+                                                <button type="button" class="btn btn-default btn-sm" onclick="abrirModalConfigEntidad('cuentas');" style="border-radius: 6px; font-weight: 600; color: #2F5597;">
+                                                    <i class="fa fa-cog"></i> Administrar Cuentas Monitoreadas (@cuentasCount activas)
+                                                </button>
+                                            </div>
+                                        }
                                     </div>
                                 </td>
                             </tr>
@@ -479,25 +504,26 @@
                             </p>
 
                             <div class="radio-card-grid">
-                                <!-- Opción 1: TODAS -->
-                                <div class="radio-card-item selected" id="cardModoTodas" onclick="seleccionarModoMonitoreo('TODAS');">
+                                <!-- Opción 1: SOLO_WATCHLIST (Por Defecto) -->
+                                <div class="radio-card-item selected" id="cardModoWatchlist" onclick="seleccionarModoMonitoreo('SOLO_WATCHLIST');">
                                     <div class="radio-card-header">
-                                        <input type="radio" name="rdModoMonitoreo" id="rdModoTodas" value="TODAS" checked style="margin: 0; accent-color: #2F5597;" />
-                                        <span>Todas las Cuentas</span>
+                                        <input type="radio" name="rdModoMonitoreo" id="rdModoWatchlist" value="SOLO_WATCHLIST" checked style="margin: 0; accent-color: #2F5597;" />
+                                        <span>Solo Cuentas Prioritarias</span>
+                                        <span class="badge" style="background: #0284c7; color: #fff; font-size: 10px; margin-left: 6px; padding: 2px 6px;">Por Defecto</span>
                                     </div>
                                     <div class="radio-card-desc">
-                                        Evalúa cualquier cuenta contable del catálogo que sobrepase los umbrales de variación.
+                                        Dispara alertas <strong>únicamente</strong> para las cuentas registradas en su Lista de Monitoreo (pestaña superior). Por defecto ninguna cuenta genera alertas hasta ser configurada por la entidad.
                                     </div>
                                 </div>
 
-                                <!-- Opción 2: SOLO_WATCHLIST -->
-                                <div class="radio-card-item" id="cardModoWatchlist" onclick="seleccionarModoMonitoreo('SOLO_WATCHLIST');">
+                                <!-- Opción 2: TODAS -->
+                                <div class="radio-card-item" id="cardModoTodas" onclick="seleccionarModoMonitoreo('TODAS');">
                                     <div class="radio-card-header">
-                                        <input type="radio" name="rdModoMonitoreo" id="rdModoWatchlist" value="SOLO_WATCHLIST" style="margin: 0; accent-color: #2F5597;" />
-                                        <span>Solo Cuentas Prioritarias</span>
+                                        <input type="radio" name="rdModoMonitoreo" id="rdModoTodas" value="TODAS" style="margin: 0; accent-color: #2F5597;" />
+                                        <span>Todas las Cuentas</span>
                                     </div>
                                     <div class="radio-card-desc">
-                                        Dispara alertas <strong>únicamente</strong> para las cuentas registradas en su Lista Prioritaria (Watchlist).
+                                        Evalúa exhaustivamente todo el catálogo contable de la entidad (No recomendado: genera gran volumen de alertas generales).
                                     </div>
                                 </div>
 
@@ -685,7 +711,7 @@
     var currentConfigEntidadId = "-1";
     var searchCuentaTimeout = null;
 
-    function abrirModalConfigEntidad() {
+    function abrirModalConfigEntidad(tabInicial) {
         var selectVal = $('#selectEntidad').val();
         var esAdmin = @((ViewBag.EsAdmin != null && (bool)ViewBag.EsAdmin) ? "true" : "false");
         var idEntidadUsuario = '@(ViewBag.IdEntidadUsuario != null ? ViewBag.IdEntidadUsuario.ToString() : "")';
@@ -711,7 +737,7 @@
 
         currentConfigEntidadId = entidadId;
         $('#lblModalNombreEntidad').text(entidadNombre);
-        cambiarTabConfig('umbrales');
+        cambiarTabConfig(tabInicial === 'cuentas' ? 'cuentas' : 'umbrales');
         cargarConfiguracionEntidad(entidadId);
         cargarCuentasMonitoreadas(entidadId);
         limpiarCuentaSeleccionada();
@@ -771,7 +797,7 @@
 
                 var uPorc = c.UmbralVariacionPorcentaje || c.UmbralPorc || c.umbralVariacionPorcentaje || c.umbralPorc || res.globalUmbralPorc || res.GlobalUmbralPorc || 15.0;
                 var uMonto = c.UmbralVariacionMonto || c.UmbralMonto || c.umbralVariacionMonto || c.umbralMonto || res.globalUmbralMonto || res.GlobalUmbralMonto || 10000000.0;
-                var modo = c.ModoMonitoreo || c.modoMonitoreo || 'TODAS';
+                var modo = c.ModoMonitoreo || c.modoMonitoreo || 'SOLO_WATCHLIST';
 
                 $('#txtCfgUmbralPorc').val(uPorc);
                 $('#txtCfgUmbralMonto').val(uMonto);
@@ -783,7 +809,7 @@
                 var gMonto = (res && (res.globalUmbralMonto || res.GlobalUmbralMonto)) ? (res.globalUmbralMonto || res.GlobalUmbralMonto) : 10000000.0;
                 $('#txtCfgUmbralPorc').val(gPorc);
                 $('#txtCfgUmbralMonto').val(gMonto);
-                seleccionarModoMonitoreo('TODAS');
+                seleccionarModoMonitoreo('SOLO_WATCHLIST');
             }
         }).fail(function() {
             $('#btnGuardarConfigUmbrales').prop('disabled', false).html('<i class="fa fa-floppy-o"></i> Guardar Parámetros de Entidad');
@@ -794,7 +820,7 @@
         var activo = $('#chkUsarPersonalizado').is(':checked');
         var umbralPorc = parseFloat($('#txtCfgUmbralPorc').val());
         var umbralMonto = parseFloat($('#txtCfgUmbralMonto').val());
-        var modoMonitoreo = $('input[name="rdModoMonitoreo"]:checked').val() || 'TODAS';
+        var modoMonitoreo = $('input[name="rdModoMonitoreo"]:checked').val() || 'SOLO_WATCHLIST';
 
         if (activo) {
             if (isNaN(umbralPorc) || umbralPorc <= 0) {
@@ -844,7 +870,8 @@
 
                 var modoTexto = '<span><i class="fa fa-th-list"></i> Todas las Cuentas</span>';
                 if (modoMonitoreo === 'SOLO_WATCHLIST') {
-                    modoTexto = '<span style="color: #0284c7;"><i class="fa fa-bookmark"></i> Solo Cuentas Prioritarias</span>';
+                    var cntCuentas = parseInt($('#lblCountCuentasBadge').text(), 10) || 0;
+                    modoTexto = '<span style="color: #0284c7;"><i class="fa fa-bookmark"></i> Solo Cuentas Prioritarias (' + cntCuentas + ' ' + (cntCuentas === 1 ? 'cuenta' : 'cuentas') + ')</span>';
                 } else if (modoMonitoreo === 'EXCLUIR_BLACKLIST') {
                     modoTexto = '<span style="color: #475569;"><i class="fa fa-ban"></i> Excluyendo Omitidas</span>';
                 }
@@ -874,6 +901,12 @@
                 var cuentas = res.cuentas;
                 $('#lblCountCuentasBadge').text(cuentas.length);
                 $('#lblCountCuentasTabla').text(cuentas.length + (cuentas.length === 1 ? ' cuenta' : ' cuentas'));
+
+                // Actualizar chip en el banner de la matriz
+                var modoActual = $('input[name="rdModoMonitoreo"]:checked').val() || 'SOLO_WATCHLIST';
+                if (modoActual === 'SOLO_WATCHLIST') {
+                    $('#bannerModoMonitoreo').html('<span style="color: #0284c7;"><i class="fa fa-bookmark"></i> Solo Cuentas Prioritarias (' + cuentas.length + ' ' + (cuentas.length === 1 ? 'cuenta' : 'cuentas') + ')</span>');
+                }
 
                 if (cuentas.length === 0) {
                     $tbody.html('<tr><td colspan="5" style="text-align: center; padding: 35px 20px; color: #94a3b8;"><i class="fa fa-info-circle" style="font-size: 20px; margin-bottom: 6px; display: block;"></i>No hay cuentas registradas en la lista de esta entidad.</td></tr>');
