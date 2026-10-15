@@ -371,7 +371,7 @@
                 contenido = contenido.trim(); // Limpiar espacios y saltos de línea sobrantes
             }
 
-            var htmlFormatted = formatearMarkdown(contenido);
+            var htmlFormatted = esBot ? formatearMarkdown(contenido) : $('<div>').text(contenido).html().replace(/\n/g, '<br/>');
 
             // Generar contenedor de opciones sugeridas interactivas si existen
             var htmlSugerencias = '';
@@ -421,31 +421,71 @@
 
         function formatearMarkdown(txt) {
             if (!txt) return '';
-            // Limpiar saltos de línea al inicio y fin
             txt = txt.trim();
 
-            // Escapar HTML básico
-            var safe = $('<div>').text(txt).html();
+            var lines = txt.split(/\r?\n/);
+            var htmlParts = [];
 
-            // Normalizar saltos de línea múltiples (máximo 2 consecutivos para evitar huecos en blanco)
-            safe = safe.replace(/(?:\r\n|\r|\n){3,}/g, '\n\n');
+            for (var i = 0; i < lines.length; i++) {
+                var rawLine = lines[i].trim();
+                if (!rawLine) continue;
 
-            // Negritas: **texto**
-            safe = safe.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                // Escapar HTML para evitar XSS
+                var lineSafe = $('<div>').text(rawLine).html();
 
-            // Cursivas: *texto*
-            safe = safe.replace(/\*(.*?)\*/g, '<em>$1</em>');
+                // Negritas: **texto**
+                lineSafe = lineSafe.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
 
-            // Viñetas: líneas que empiezan con - o *
-            safe = safe.replace(/(?:^|\n)[-\*]\s+(.+)/g, '<br/>• $1');
+                // Cursivas: *texto*
+                lineSafe = lineSafe.replace(/\*(.*?)\*/g, '<em>$1</em>');
 
-            // Saltos de línea
-            safe = safe.replace(/\n/g, '<br/>');
+                // Detectar si la línea es un encabezado o título de sección (ej. **Resumen ejecutivo:** o **Análisis:**)
+                var esTituloSeccion = /^\*\*(Resumen ejecutivo|An[aá]lisis|Comportamiento|Bandeja de alertas|Estructura de|Detalle|Normativa)\*\*:?$/i.test(rawLine)
+                                   || /^<strong>(Resumen ejecutivo|An[aá]lisis|Comportamiento|Bandeja de alertas|Estructura de|Detalle|Normativa)<\/strong>:?$/i.test(lineSafe);
 
-            // ELIMINAR estrictamente cualquier <br/> o espacio al final del contenido
-            safe = safe.replace(/(<br\s*\/?>|\s)+$/gi, '');
+                // Detectar si es la línea de apertura del indicador ("Tu **Suficiencia...** cerró en..." o "El saldo de...")
+                var esHeroKPI = (i === 0 && (rawLine.indexOf('cerró en') >= 0 || rawLine.indexOf('cerro en') >= 0 || rawLine.indexOf('al corte de') >= 0));
 
-            return safe;
+                // Detectar viñetas: empieza con •, -, *, o número.
+                var esVineta = /^([•\-\*]|\d+\.)\s+(.+)$/.test(rawLine);
+
+                if (esHeroKPI) {
+                    htmlParts.push('<div class="sac-kpi-hero"><i class="fa fa-info-circle sac-kpi-hero-icon"></i><div class="sac-kpi-hero-text">' + lineSafe + '</div></div>');
+                } else if (esTituloSeccion) {
+                    var tituloLimpio = rawLine.replace(/[\*\:]/g, '').trim();
+                    htmlParts.push('<div class="sac-section-heading"><i class="fa fa-bar-chart"></i> ' + tituloLimpio + '</div>');
+                } else if (esVineta) {
+                    var matchVineta = rawLine.match(/^([•\-\*]|\d+\.)\s+(.+)$/);
+                    var textoVineta = matchVineta ? matchVineta[2] : rawLine;
+                    
+                    var vinetaSafe = $('<div>').text(textoVineta).html()
+                        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                        .replace(/\*(.*?)\*/g, '<em>$1</em>');
+
+                    // Icono contextual dinámico
+                    var iconFa = 'fa-chevron-right';
+                    if (/variaci[oó]n|evoluci[oó]n|tendencia|al alza|a la baja|estable/i.test(textoVineta)) {
+                        iconFa = 'fa-exchange';
+                    } else if (/sugef|norma|regulatorio|umbral|ley/i.test(textoVineta)) {
+                        iconFa = 'fa-shield';
+                    } else if (/alerta|riesgo|atenci[oó]n|atraso/i.test(textoVineta)) {
+                        iconFa = 'fa-exclamation-circle';
+                    } else if (/corte|fecha|periodo/i.test(textoVineta)) {
+                        iconFa = 'fa-calendar';
+                    } else if (/asociado|asociación|capital/i.test(textoVineta)) {
+                        iconFa = 'fa-users';
+                    }
+
+                    // Resaltar cumplimiento normativo con insignia verde
+                    vinetaSafe = vinetaSafe.replace(/Cumple el m[ií]nimo regulatorio/gi, '<span class="sac-badge-cumple"><i class="fa fa-check"></i> Cumple SUGEF</span>');
+
+                    htmlParts.push('<div class="sac-bullet-item"><span class="sac-bullet-icon"><i class="fa ' + iconFa + '"></i></span><div class="sac-bullet-body">' + vinetaSafe + '</div></div>');
+                } else {
+                    htmlParts.push('<div class="sac-msg-p">' + lineSafe + '</div>');
+                }
+            }
+
+            return htmlParts.join('');
         }
     })();
 </script>
