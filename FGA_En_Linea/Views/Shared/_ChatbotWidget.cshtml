@@ -368,6 +368,7 @@
                     }
                     return ''; // Quitar del texto para renderizado limpio
                 });
+                contenido = contenido.trim(); // Limpiar espacios y saltos de línea sobrantes
             }
 
             var htmlFormatted = formatearMarkdown(contenido);
@@ -397,13 +398,18 @@
             $messages.append($msg);
 
             if (esBot) {
-                // Desplazar para que el usuario lea la respuesta desde el principio (evita que las sugerencias oculten el texto)
+                // Desplazamiento exacto para que el usuario lea la respuesta desde su primera línea
                 setTimeout(function () {
-                    if ($msg && $msg.length) {
-                        var targetScroll = $messages.scrollTop() + $msg.position().top - 8;
+                    if ($msg && $msg.length && $messages.length) {
+                        var container = $messages[0];
+                        var msgElem = $msg[0];
+                        var rectMsg = msgElem.getBoundingClientRect();
+                        var rectContainer = container.getBoundingClientRect();
+                        var relativeTop = rectMsg.top - rectContainer.top;
+                        var targetScroll = container.scrollTop + relativeTop - 10;
                         $messages.animate({ scrollTop: Math.max(0, targetScroll) }, 260);
                     }
-                }, 30);
+                }, 50);
             } else {
                 scrollAbajo();
             }
@@ -415,8 +421,14 @@
 
         function formatearMarkdown(txt) {
             if (!txt) return '';
+            // Limpiar saltos de línea al inicio y fin
+            txt = txt.trim();
+
             // Escapar HTML básico
             var safe = $('<div>').text(txt).html();
+
+            // Normalizar saltos de línea múltiples (máximo 2 consecutivos para evitar huecos en blanco)
+            safe = safe.replace(/(?:\r\n|\r|\n){3,}/g, '\n\n');
 
             // Negritas: **texto**
             safe = safe.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
@@ -429,6 +441,9 @@
 
             // Saltos de línea
             safe = safe.replace(/\n/g, '<br/>');
+
+            // ELIMINAR estrictamente cualquier <br/> o espacio al final del contenido
+            safe = safe.replace(/(<br\s*\/?>|\s)+$/gi, '');
 
             return safe;
         }

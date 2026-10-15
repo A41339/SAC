@@ -416,11 +416,11 @@ namespace FGA.Services.Chatbot
             }
 
             sb.AppendLine();
-            sb.AppendLine("[Sugerencia: Saldo cartera de crédito]");
-            sb.AppendLine("[Sugerencia: Morosidad mayor a 90 días]");
-            sb.AppendLine("[Sugerencia: Evolución últimos 3 meses]");
+            sb.AppendLine("[Sugerencia: Cartera de crédito]");
+            sb.AppendLine("[Sugerencia: Morosidad > 90d]");
+            sb.AppendLine("[Sugerencia: Evolución 3 meses]");
 
-            return sb.ToString();
+            return sb.ToString().Trim();
         }
 
         private string ResponderMorosidad(Dictionary<string, IndicadorItem> indicadores, string corteStr, string compStr, string pregunta)
@@ -461,11 +461,11 @@ namespace FGA.Services.Chatbot
             }
 
             sb.AppendLine();
-            sb.AppendLine("[Sugerencia: Saldo cartera de crédito]");
+            sb.AppendLine("[Sugerencia: Cartera de crédito]");
             sb.AppendLine("[Sugerencia: Suficiencia patrimonial]");
             sb.AppendLine("[Sugerencia: Alertas financieras]");
 
-            return sb.ToString();
+            return sb.ToString().Trim();
         }
 
         private string ResponderCartera(Dictionary<string, IndicadorItem> indicadores, string corteStr, string compStr, string pregunta)
@@ -496,11 +496,11 @@ namespace FGA.Services.Chatbot
             }
 
             sb.AppendLine();
-            sb.AppendLine("[Sugerencia: Morosidad mayor a 90 días]");
-            sb.AppendLine("[Sugerencia: Obligaciones con el público]");
-            sb.AppendLine("[Sugerencia: Evolución últimos 3 meses]");
+            sb.AppendLine("[Sugerencia: Morosidad > 90d]");
+            sb.AppendLine("[Sugerencia: Obligaciones público]");
+            sb.AppendLine("[Sugerencia: Evolución 3 meses]");
 
-            return sb.ToString();
+            return sb.ToString().Trim();
         }
 
         private string ResponderObligaciones(Dictionary<string, IndicadorItem> indicadores, string corteStr, string compStr, string pregunta)
@@ -531,11 +531,11 @@ namespace FGA.Services.Chatbot
             }
 
             sb.AppendLine();
-            sb.AppendLine("[Sugerencia: Concentración mayores ahorrantes]");
-            sb.AppendLine("[Sugerencia: Saldo cartera de crédito]");
-            sb.AppendLine("[Sugerencia: Evolución últimos 3 meses]");
+            sb.AppendLine("[Sugerencia: Cartera de crédito]");
+            sb.AppendLine("[Sugerencia: Suficiencia patrimonial]");
+            sb.AppendLine("[Sugerencia: Evolución 3 meses]");
 
-            return sb.ToString();
+            return sb.ToString().Trim();
         }
 
         private string ResponderCapitalSocial(Dictionary<string, IndicadorItem> indicadores, string corteStr, string compStr, string pregunta)
@@ -565,10 +565,10 @@ namespace FGA.Services.Chatbot
 
             sb.AppendLine();
             sb.AppendLine("[Sugerencia: Suficiencia patrimonial]");
-            sb.AppendLine("[Sugerencia: Saldo patrimonio total]");
-            sb.AppendLine("[Sugerencia: Evolución últimos 3 meses]");
+            sb.AppendLine("[Sugerencia: Patrimonio total]");
+            sb.AppendLine("[Sugerencia: Evolución 3 meses]");
 
-            return sb.ToString();
+            return sb.ToString().Trim();
         }
 
         private string ResponderResultado(Dictionary<string, IndicadorItem> indicadores, string corteStr, string compStr, string pregunta)
@@ -604,9 +604,9 @@ namespace FGA.Services.Chatbot
             sb.AppendLine();
             sb.AppendLine("[Sugerencia: Eficiencia operativa]");
             sb.AppendLine("[Sugerencia: Suficiencia patrimonial]");
-            sb.AppendLine("[Sugerencia: Saldo cartera de crédito]");
+            sb.AppendLine("[Sugerencia: Cartera de crédito]");
 
-            return sb.ToString();
+            return sb.ToString().Trim();
         }
 
         private string ResponderEficiencia(Dictionary<string, IndicadorItem> indicadores, string corteStr, string compStr, string pregunta)
@@ -633,10 +633,10 @@ namespace FGA.Services.Chatbot
             }
 
             sb.AppendLine();
-            sb.AppendLine("[Sugerencia: Resultado del período]");
+            sb.AppendLine("[Sugerencia: Resultado período]");
             sb.AppendLine("[Sugerencia: Suficiencia patrimonial]");
 
-            return sb.ToString();
+            return sb.ToString().Trim();
         }
 
         private string ResponderApalancamiento(Dictionary<string, IndicadorItem> indicadores, string corteStr, string compStr, string pregunta)
@@ -658,9 +658,9 @@ namespace FGA.Services.Chatbot
 
             sb.AppendLine();
             sb.AppendLine("[Sugerencia: Suficiencia patrimonial]");
-            sb.AppendLine("[Sugerencia: Saldo patrimonio total]");
+            sb.AppendLine("[Sugerencia: Patrimonio total]");
 
-            return sb.ToString();
+            return sb.ToString().Trim();
         }
 
         private string ResponderPatrimonio(Dictionary<string, IndicadorItem> indicadores, string corteStr, string compStr, string pregunta)
@@ -683,7 +683,7 @@ namespace FGA.Services.Chatbot
             sb.AppendLine();
             sb.AppendLine("[Sugerencia: Suficiencia patrimonial]");
             sb.AppendLine("[Sugerencia: Capital social]");
-            return sb.ToString();
+            return sb.ToString().Trim();
         }
 
         private string ResponderActivo(Dictionary<string, IndicadorItem> indicadores, string corteStr, string compStr, string pregunta)
@@ -704,9 +704,9 @@ namespace FGA.Services.Chatbot
                 }
             }
             sb.AppendLine();
-            sb.AppendLine("[Sugerencia: Saldo cartera de crédito]");
-            sb.AppendLine("[Sugerencia: Obligaciones con el público]");
-            return sb.ToString();
+            sb.AppendLine("[Sugerencia: Cartera de crédito]");
+            sb.AppendLine("[Sugerencia: Obligaciones público]");
+            return sb.ToString().Trim();
         }
 
         private string ResponderAlertas(string bloqueDatos, string corteStr)
@@ -749,10 +749,10 @@ namespace FGA.Services.Chatbot
             }
 
             sb.AppendLine();
-            sb.AppendLine("[Sugerencia: Morosidad mayor a 90 días]");
+            sb.AppendLine("[Sugerencia: Morosidad > 90d]");
             sb.AppendLine("[Sugerencia: Suficiencia patrimonial]");
 
-            return sb.ToString();
+            return sb.ToString().Trim();
         }
 
         private string ResponderConcentracion(string bloqueDatos, string corteStr)
@@ -795,10 +795,10 @@ namespace FGA.Services.Chatbot
             }
 
             sb.AppendLine();
-            sb.AppendLine("[Sugerencia: ¿Cuánto tenemos en obligaciones con el público?]");
-            sb.AppendLine("[Sugerencia: ¿Cuál es el saldo de la cartera de crédito?]");
+            sb.AppendLine("[Sugerencia: Obligaciones público]");
+            sb.AppendLine("[Sugerencia: Cartera de crédito]");
 
-            return sb.ToString();
+            return sb.ToString().Trim();
         }
 
         private string ResponderResumenGeneral(Dictionary<string, IndicadorItem> indicadores, string corteStr, string compStr)
@@ -834,11 +834,11 @@ namespace FGA.Services.Chatbot
             }
 
             sb.AppendLine();
-            sb.AppendLine("[Sugerencia: ¿Cómo cerró mi suficiencia patrimonial y cuál es su tendencia?]");
-            sb.AppendLine("[Sugerencia: ¿Cuál es el saldo de la cartera de crédito?]");
-            sb.AppendLine("[Sugerencia: Ver evolución de los últimos 3 meses]");
+            sb.AppendLine("[Sugerencia: Suficiencia patrimonial]");
+            sb.AppendLine("[Sugerencia: Cartera de crédito]");
+            sb.AppendLine("[Sugerencia: Evolución 3 meses]");
 
-            return sb.ToString();
+            return sb.ToString().Trim();
         }
 
         private string FormatearRespuestaCuentaContable(string promptSistema)
@@ -878,11 +878,11 @@ namespace FGA.Services.Chatbot
             }
 
             sb.AppendLine();
-            sb.AppendLine("[Sugerencia: ¿Cómo cerró la suficiencia patrimonial?]");
-            sb.AppendLine("[Sugerencia: ¿Cuál es el saldo de la cartera de crédito?]");
-            sb.AppendLine("[Sugerencia: Ver obligaciones con el público]");
+            sb.AppendLine("[Sugerencia: Suficiencia patrimonial]");
+            sb.AppendLine("[Sugerencia: Cartera de crédito]");
+            sb.AppendLine("[Sugerencia: Obligaciones público]");
 
-            return sb.ToString();
+            return sb.ToString().Trim();
         }
 
         private string FormatearRespuestaEvolucionHistorica(string promptSistema, string p)
@@ -954,10 +954,10 @@ namespace FGA.Services.Chatbot
                 }
 
                 sb.AppendLine();
-                sb.AppendLine("[Sugerencia: ¿Cómo cerró la suficiencia patrimonial?]");
-                sb.AppendLine("[Sugerencia: ¿Cuál es el saldo de la cartera de crédito?]");
-                sb.AppendLine("[Sugerencia: Ver obligaciones con el público]");
-                return sb.ToString();
+                sb.AppendLine("[Sugerencia: Suficiencia patrimonial]");
+                sb.AppendLine("[Sugerencia: Cartera de crédito]");
+                sb.AppendLine("[Sugerencia: Obligaciones público]");
+                return sb.ToString().Trim();
             }
 
             // Resumen general mes a mes
@@ -978,10 +978,11 @@ namespace FGA.Services.Chatbot
                     sbGen.AppendLine("   - " + limpia);
                 }
             }
+
             sbGen.AppendLine();
-            sbGen.AppendLine("[Sugerencia: ¿Cómo cerró la suficiencia patrimonial?]");
-            sbGen.AppendLine("[Sugerencia: ¿Cuál es el saldo de la cartera de crédito?]");
-            return sbGen.ToString();
+            sbGen.AppendLine("[Sugerencia: Suficiencia patrimonial]");
+            sbGen.AppendLine("[Sugerencia: Cartera de crédito]");
+            return sbGen.ToString().Trim();
         }
 
         private string ObtenerParametro(string llave)
