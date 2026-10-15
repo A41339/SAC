@@ -53,6 +53,8 @@ namespace FGA.Services.Chatbot
             sb.AppendLine("6. Presenta directamente la cifra o porcentaje para cada periodo consultado, sin agregar textos adicionales como '(Comparativo mes ant)' a menos que el usuario lo solicite expresamente.");
             sb.AppendLine("7. Si la consulta se relaciona con la pantalla activa del usuario, contextualiza tu explicación a dicha pantalla.");
             sb.AppendLine("8. Al final de tu respuesta, incluye 2 o 3 opciones o preguntas de seguimiento relevantes en líneas individuales usando exactamente la sintaxis: [Sugerencia: Pregunta corta]");
+            sb.AppendLine("9. ENFOQUE DIRECTO Y SIN RODEOS: Responde ÚNICAMENTE a lo que el usuario preguntó. NO agregues listas completas de otros indicadores no solicitados, ni repitas los conceptos clave o metodologías del sistema a menos que el usuario lo haya pedido expresamente.");
+            sb.AppendLine("10. Cuando te pregunten por el cierre y la tendencia de un indicador (ej. Suficiencia Patrimonial), indica el valor de cierre al corte, la variación con respecto al mes anterior (en puntos porcentuales o monto) y una breve interpretación de solidez/normativa (ej. mínimo 10% SUGEF).");
 
             return sb.ToString();
         }

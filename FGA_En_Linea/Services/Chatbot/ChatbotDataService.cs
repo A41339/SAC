@@ -423,13 +423,13 @@ namespace FGA.Services.Chatbot
                 if (dashResults != null && dashResults.Length > 0)
                 {
                     // Eficiencia y Mora
-                    AgregarIndicadorDashboard(sb, dashResults, 8118, "Eficiencia Operativa (Costo Administrativo)", true, corteB);
-                    AgregarIndicadorDashboard(sb, dashResults, 8022, "Morosidad mayor a 90 días", true, corteB);
+                    AgregarIndicadorDashboard(sb, dashResults, 8118, "Eficiencia Operativa (Costo Administrativo)", true, corteB, compB);
+                    AgregarIndicadorDashboard(sb, dashResults, 8022, "Morosidad mayor a 90 días", true, corteB, compB);
 
                     // Indicadores SUGEF 3-06
-                    AgregarIndicadorDashboard(sb, dashResults, 9100, "Apalancamiento (SUGEF 3-06)", true, corteB);
-                    AgregarIndicadorDashboard(sb, dashResults, 8991, "Capital Nivel 1 - CN1", true, corteB);
-                    AgregarIndicadorDashboard(sb, dashResults, 8992, "Capital Común Nivel 1 - CCN1", true, corteB);
+                    AgregarIndicadorDashboard(sb, dashResults, 9100, "Apalancamiento (SUGEF 3-06)", false, corteB, compB);
+                    AgregarIndicadorDashboard(sb, dashResults, 8991, "Capital Nivel 1 - CN1", true, corteB, compB);
+                    AgregarIndicadorDashboard(sb, dashResults, 8992, "Capital Común Nivel 1 - CCN1", true, corteB, compB);
 
                     // Cuentas de Balance (en Millones)
                     AgregarCuentaBalanceConFallback(sb, dashResults, 8400, "Resultado del período acumulado", idEntidad, compB, corteB);
@@ -612,6 +612,7 @@ namespace FGA.Services.Chatbot
             DateTime corte)
         {
             decimal valActual = 0;
+            decimal valComp = 0;
             bool encontrado = false;
 
             // Normalización de IDs entre esquema moderno (serie 8000) y tradicional
@@ -647,6 +648,12 @@ namespace FGA.Services.Chatbot
                             encontrado = true;
                         }
                     }
+
+                    var matchComp = matches.FirstOrDefault(r => r.PERIODO.HasValue && r.PERIODO.Value.Year == compMesAnt.Year && r.PERIODO.Value.Month == compMesAnt.Month);
+                    if (matchComp != null && (matchComp.MONTO.GetValueOrDefault() != 0 || matchComp.CALIFICACION.GetValueOrDefault() != 0))
+                    {
+                        valComp = matchComp.MONTO.GetValueOrDefault() != 0 ? matchComp.MONTO.Value : matchComp.CALIFICACION.GetValueOrDefault();
+                    }
                 }
             }
 
@@ -671,42 +678,18 @@ namespace FGA.Services.Chatbot
                         );
                         if (balRes != null && balRes.Length > 0)
                         {
-                            // Caso especial: Resultado del período = Ingresos (50000000) - Gastos (40000000)
-                            if (idTrad == 400)
-                            {
-                                var ing = balRes.FirstOrDefault(r => r.Cuenta != null && r.Cuenta.Trim() == "50000000");
-                                var gas = balRes.FirstOrDefault(r => r.Cuenta != null && r.Cuenta.Trim() == "40000000");
-                                decimal resultado = (ing != null ? ing.SaldoFinal : 0) - (gas != null ? gas.SaldoFinal : 0);
-                                if (resultado != 0)
-                                {
-                                    valActual = Math.Abs(resultado) / 1000000m;
-                                    encontrado = true;
-                                }
-                            }
-                            else
-                            {
-                                // Buscar cuenta exacta (igual que el Dashboard SQL: WHERE CUENTA = '21000000')
-                                var cuentaExacta = balRes.FirstOrDefault(r =>
-                                    r.Cuenta != null && r.Cuenta.Trim() == cuentaContable && r.SaldoFinal != 0);
+                            valActual = ObtenerSaldoBalance(balRes, idTrad, cuentaContable);
+                            if (valActual != 0) encontrado = true;
+                        }
 
-                                // Si no hay exacta, intentar con subcuentas de primer nivel (prefijo de 2 dígitos)
-                                if (cuentaExacta == null)
-                                {
-                                    string prefijo = cuentaContable.Substring(0, 2);
-                                    decimal suma = balRes
-                                        .Where(r => r.Cuenta != null && r.Cuenta.Trim().StartsWith(prefijo) && r.SaldoFinal != 0)
-                                        .Sum(r => r.SaldoFinal);
-                                    if (suma != 0)
-                                    {
-                                        valActual = Math.Abs(suma) / 1000000m;
-                                        encontrado = true;
-                                    }
-                                }
-                                else
-                                {
-                                    valActual = Math.Abs(cuentaExacta.SaldoFinal) / 1000000m;
-                                    encontrado = true;
-                                }
+                        if (valComp == 0)
+                        {
+                            var balComp = WcfHelper.Execute<FGA_En_Linea.SPService.SPClient, FGA_Consultar_Balance_Comprobacion_Result[]>(
+                                c => c.FGA_Consultar_Balance_Comprobacion(idEntidad, compMesAnt)
+                            );
+                            if (balComp != null && balComp.Length > 0)
+                            {
+                                valComp = ObtenerSaldoBalance(balComp, idTrad, cuentaContable);
                             }
                         }
                     }
@@ -732,6 +715,10 @@ namespace FGA.Services.Chatbot
                         if (match != null)
                         {
                             valActual = Math.Abs(match.MONTO_2) / 1000000m;
+                            if (valComp == 0 && match.MONTO_1 != 0)
+                            {
+                                valComp = Math.Abs(match.MONTO_1) / 1000000m;
+                            }
                             encontrado = true;
                         }
                     }
@@ -740,12 +727,47 @@ namespace FGA.Services.Chatbot
             }
 
             string sActual = string.Format("₡{0:N2} M", valActual);
-            sb.AppendLine(string.Format("  • {0}: {1}", nombre, sActual));
+            if (valComp != 0)
+            {
+                sb.AppendLine(string.Format("  • {0}: {1} (Anterior: ₡{2:N2} M)", nombre, sActual, valComp));
+            }
+            else
+            {
+                sb.AppendLine(string.Format("  • {0}: {1}", nombre, sActual));
+            }
+        }
+
+        private static decimal ObtenerSaldoBalance(FGA_Consultar_Balance_Comprobacion_Result[] balRes, int idTrad, string cuentaContable)
+        {
+            if (balRes == null || balRes.Length == 0) return 0;
+
+            if (idTrad == 400)
+            {
+                var ing = balRes.FirstOrDefault(r => r.Cuenta != null && r.Cuenta.Trim() == "50000000");
+                var gas = balRes.FirstOrDefault(r => r.Cuenta != null && r.Cuenta.Trim() == "40000000");
+                decimal resultado = (ing != null ? ing.SaldoFinal : 0) - (gas != null ? gas.SaldoFinal : 0);
+                return resultado != 0 ? Math.Abs(resultado) / 1000000m : 0;
+            }
+
+            var cuentaExacta = balRes.FirstOrDefault(r =>
+                r.Cuenta != null && r.Cuenta.Trim() == cuentaContable && r.SaldoFinal != 0);
+
+            if (cuentaExacta == null)
+            {
+                string prefijo = cuentaContable.Substring(0, 2);
+                decimal suma = balRes
+                    .Where(r => r.Cuenta != null && r.Cuenta.Trim().StartsWith(prefijo) && r.SaldoFinal != 0)
+                    .Sum(r => r.SaldoFinal);
+                return suma != 0 ? Math.Abs(suma) / 1000000m : 0;
+            }
+
+            return Math.Abs(cuentaExacta.SaldoFinal) / 1000000m;
         }
 
         private static void AgregarSuficienciaConFallback(StringBuilder sb, FGA_Consultar_Dashboard_Result[] results, string idEntidad, DateTime compMesAnt, DateTime corte)
         {
             decimal valActual = 0;
+            decimal valAnterior = 0;
             bool encontradoEnDashboard = false;
 
             if (results != null && results.Length > 0)
@@ -768,11 +790,17 @@ namespace FGA.Services.Chatbot
                             encontradoEnDashboard = true;
                         }
                     }
+
+                    var matchComp = matches.FirstOrDefault(r => r.PERIODO.HasValue && r.PERIODO.Value.Year == compMesAnt.Year && r.PERIODO.Value.Month == compMesAnt.Month);
+                    if (matchComp != null && matchComp.MONTO.HasValue && matchComp.MONTO.Value > 0)
+                    {
+                        valAnterior = matchComp.MONTO.Value;
+                    }
                 }
             }
 
             // Si FGA_Consultar_Dashboard arrojó 0 o no lo encontró, consultar vía FGA_Consultar_Grafico_Suficiencia
-            if (!encontradoEnDashboard && !string.IsNullOrWhiteSpace(idEntidad))
+            if ((!encontradoEnDashboard || valAnterior == 0) && !string.IsNullOrWhiteSpace(idEntidad))
             {
                 try
                 {
@@ -781,11 +809,22 @@ namespace FGA.Services.Chatbot
                     );
                     if (takSuf != null && takSuf.Length > 0)
                     {
-                        var matchActual = takSuf.FirstOrDefault(s => s.Nombre != null && s.Nombre.Trim().Equals("Suficiencia", StringComparison.OrdinalIgnoreCase) && s.Monto.HasValue && s.Monto.Value > 0);
-                        if (matchActual != null)
+                        if (!encontradoEnDashboard)
                         {
-                            valActual = matchActual.Monto.Value;
-                            encontradoEnDashboard = true;
+                            var matchActual = takSuf.FirstOrDefault(s => s.Nombre != null && s.Nombre.Trim().Equals("Suficiencia", StringComparison.OrdinalIgnoreCase) && s.Monto.HasValue && s.Monto.Value > 0);
+                            if (matchActual != null)
+                            {
+                                valActual = matchActual.Monto.Value;
+                                encontradoEnDashboard = true;
+                            }
+                        }
+                        if (valAnterior == 0)
+                        {
+                            var matchAnt = takSuf.FirstOrDefault(s => s.Nombre != null && (s.Nombre.IndexOf("Anterior", StringComparison.OrdinalIgnoreCase) >= 0 || s.Nombre.IndexOf("Comp", StringComparison.OrdinalIgnoreCase) >= 0) && s.Monto.HasValue && s.Monto.Value > 0);
+                            if (matchAnt != null)
+                            {
+                                valAnterior = matchAnt.Monto.Value;
+                            }
                         }
                     }
                 }
@@ -793,7 +832,7 @@ namespace FGA.Services.Chatbot
             }
 
             // Si aún da 0, consultar FGA_Consultar_CAMEL (ID 1 o nombre Suficiencia)
-            if (!encontradoEnDashboard && !string.IsNullOrWhiteSpace(idEntidad))
+            if ((!encontradoEnDashboard || valAnterior == 0) && !string.IsNullOrWhiteSpace(idEntidad))
             {
                 try
                 {
@@ -805,8 +844,15 @@ namespace FGA.Services.Chatbot
                         var matchCamel = camel.FirstOrDefault(cm => (cm.IDRPT_CAMEL == 1 || (cm.NOMBRE != null && cm.NOMBRE.IndexOf("SUFICIENCIA", StringComparison.OrdinalIgnoreCase) >= 0)) && cm.MONTO_2 > 0);
                         if (matchCamel != null)
                         {
-                            valActual = matchCamel.MONTO_2;
-                            encontradoEnDashboard = true;
+                            if (!encontradoEnDashboard)
+                            {
+                                valActual = matchCamel.MONTO_2;
+                                encontradoEnDashboard = true;
+                            }
+                            if (valAnterior == 0 && matchCamel.MONTO_1 > 0)
+                            {
+                                valAnterior = matchCamel.MONTO_1;
+                            }
                         }
                     }
                 }
@@ -814,7 +860,7 @@ namespace FGA.Services.Chatbot
             }
 
             // Si aún da 0, consultar FGA_Consultar_Indicadores_Formulas
-            if (!encontradoEnDashboard && !string.IsNullOrWhiteSpace(idEntidad))
+            if ((!encontradoEnDashboard || valAnterior == 0) && !string.IsNullOrWhiteSpace(idEntidad))
             {
                 try
                 {
@@ -826,8 +872,15 @@ namespace FGA.Services.Chatbot
                         var matchForm = formulas.FirstOrDefault(f => f.NOMBRE != null && f.NOMBRE.IndexOf("SUFICIENCIA", StringComparison.OrdinalIgnoreCase) >= 0 && f.RESULTADO.HasValue && f.RESULTADO.Value > 0);
                         if (matchForm != null)
                         {
-                            valActual = matchForm.RESULTADO.Value;
-                            encontradoEnDashboard = true;
+                            if (!encontradoEnDashboard)
+                            {
+                                valActual = matchForm.RESULTADO.Value;
+                                encontradoEnDashboard = true;
+                            }
+                            if (valAnterior == 0 && matchForm.RESULTADO_COMPARAR.HasValue && matchForm.RESULTADO_COMPARAR.Value > 0)
+                            {
+                                valAnterior = matchForm.RESULTADO_COMPARAR.Value;
+                            }
                         }
                     }
                 }
@@ -835,16 +888,24 @@ namespace FGA.Services.Chatbot
             }
 
             string sActual = string.Format("{0:N2}%", valActual);
-            sb.AppendLine(string.Format("  • Suficiencia Patrimonial: {0}", sActual));
+            if (valAnterior > 0)
+            {
+                sb.AppendLine(string.Format("  • Suficiencia Patrimonial: {0} (Anterior: {1:N2}%)", sActual, valAnterior));
+            }
+            else
+            {
+                sb.AppendLine(string.Format("  • Suficiencia Patrimonial: {0}", sActual));
+            }
         }
 
-        private static void AgregarIndicadorDashboard(StringBuilder sb, FGA_Consultar_Dashboard_Result[] results, int id, string nombre, bool esPorcentaje, DateTime? corte = null)
+        private static void AgregarIndicadorDashboard(StringBuilder sb, FGA_Consultar_Dashboard_Result[] results, int id, string nombre, bool esPorcentaje, DateTime? corte = null, DateTime? comp = null)
         {
             if (results == null || results.Length == 0) return;
             var matches = results.Where(r => r.ID == id).ToList();
             if (matches.Count == 0) return;
 
             decimal valActual = 0;
+            decimal? valComp = null;
 
             if (corte.HasValue)
             {
@@ -857,6 +918,15 @@ namespace FGA.Services.Chatbot
                 {
                     valActual = matches.Last().MONTO ?? matches.Last().CALIFICACION ?? 0;
                 }
+
+                if (comp.HasValue)
+                {
+                    var matchComp = matches.FirstOrDefault(r => r.PERIODO.HasValue && r.PERIODO.Value.Year == comp.Value.Year && r.PERIODO.Value.Month == comp.Value.Month);
+                    if (matchComp != null)
+                    {
+                        valComp = matchComp.MONTO ?? matchComp.CALIFICACION;
+                    }
+                }
             }
             else
             {
@@ -864,7 +934,15 @@ namespace FGA.Services.Chatbot
             }
 
             string sActual = esPorcentaje ? string.Format("{0:N2}%", valActual) : string.Format("₡{0:N2}", valActual);
-            sb.AppendLine(string.Format("  • {0}: {1}", nombre, sActual));
+            if (valComp.HasValue && valComp.Value != 0)
+            {
+                string sComp = esPorcentaje ? string.Format("{0:N2}%", valComp.Value) : string.Format("₡{0:N2}", valComp.Value);
+                sb.AppendLine(string.Format("  • {0}: {1} (Anterior: {2})", nombre, sActual, sComp));
+            }
+            else
+            {
+                sb.AppendLine(string.Format("  • {0}: {1}", nombre, sActual));
+            }
         }
 
         private static string FormatearNumero(decimal? num, bool esPct)
