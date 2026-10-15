@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using FGA.Services.Chatbot;
+using FGA.Utility;
 using FGA_En_Linea.EntidadService;
 
 namespace FGA.Controllers
@@ -58,13 +59,16 @@ namespace FGA.Controllers
                         c => c.GetAll()
                     );
                 }
-                catch { }
+                catch (Exception exEnt)
+                {
+                    System.Diagnostics.Trace.TraceWarning("ChatbotController: Error al consultar catálogo de entidades WCF: " + exEnt.Message);
+                }
 
                 // DETECCIÓN POR NOMBRE: Si el usuario menciona una cooperativa en su consulta (ej. "Coopealianza", "Credecoop", etc.)
                 if (listaEnt != null && listaEnt.Length > 0 && !string.IsNullOrWhiteSpace(mensaje))
                 {
                     string msgNorm = mensaje.ToLower();
-                    foreach (var e in listaEnt.Where(x => x.Activo == true && x.Id != "0" && x.Id != "-1"))
+                    foreach (var e in listaEnt.Where(x => x.Activo == true && FGAConstants.Entidades.EsEntidadEspecifica(x.Id)))
                     {
                         string nom = (e.Nombre ?? "").Trim().ToLower();
                         if (nom.Length >= 4 && msgNorm.Contains(nom))
@@ -86,16 +90,16 @@ namespace FGA.Controllers
                 }
 
                 // Si no se mencionó por nombre, priorizar el selector activo del frontend
-                if (string.IsNullOrWhiteSpace(entidadId) && !string.IsNullOrWhiteSpace(entidadContexto) && entidadContexto != "0" && entidadContexto != "-1")
+                if (string.IsNullOrWhiteSpace(entidadId) && FGAConstants.Entidades.EsEntidadEspecifica(entidadContexto))
                 {
                     entidadId = entidadContexto.Trim();
                 }
 
                 // Si no, verificar Session["IdEntidad"]
-                if (string.IsNullOrWhiteSpace(entidadId) && Session["IdEntidad"] != null)
+                if (string.IsNullOrWhiteSpace(entidadId) && Session?[FGAConstants.Sesion.IdEntidad] != null)
                 {
-                    string sId = Session["IdEntidad"].ToString().Trim();
-                    if (!string.IsNullOrWhiteSpace(sId) && sId != "0" && sId != "-1")
+                    string sId = Session[FGAConstants.Sesion.IdEntidad].ToString().Trim();
+                    if (FGAConstants.Entidades.EsEntidadEspecifica(sId))
                     {
                         entidadId = sId;
                     }
@@ -104,27 +108,27 @@ namespace FGA.Controllers
                 // Si no, verificar Env.GetUserInfo("identidad")
                 if (string.IsNullOrWhiteSpace(entidadId))
                 {
-                    string uEnt = Env.GetUserInfo("identidad");
-                    if (!string.IsNullOrWhiteSpace(uEnt) && uEnt != "0" && uEnt != "-1")
+                    string uEnt = Env.GetUserInfo(FGAConstants.Sesion.Entidad);
+                    if (FGAConstants.Entidades.EsEntidadEspecifica(uEnt))
                     {
                         entidadId = uEnt.Trim();
                     }
                 }
 
-                // Fallback: si aún es nulo o 0 (admin FFC sin entidad seleccionada), tomar la primera entidad activa válida con datos
-                if (string.IsNullOrWhiteSpace(entidadId) || entidadId == "0" || entidadId == "-1")
+                // Fallback: si aún es nulo o filtro global (admin FFC sin entidad seleccionada), tomar la primera entidad activa válida con datos
+                if (FGAConstants.Entidades.EsFiltroTodas(entidadId))
                 {
-                    var primera = listaEnt?.FirstOrDefault(e => e.Id != "0" && e.Id != "-1" && e.Activo == true);
-                    entidadId = primera != null ? primera.Id : "2";
+                    var primera = listaEnt?.FirstOrDefault(e => FGAConstants.Entidades.EsEntidadEspecifica(e.Id) && e.Activo == true);
+                    entidadId = primera != null ? primera.Id : FGAConstants.Alertas.EntidadDefecto;
                 }
 
-                Session["IdEntidad"] = entidadId;
+                Session[FGAConstants.Sesion.IdEntidad] = entidadId;
 
                 // Nombre oficial de la entidad
                 if (string.IsNullOrWhiteSpace(entidadNombre))
                 {
-                    entidadNombre = Session["NomEntidad"]?.ToString();
-                    if (string.IsNullOrWhiteSpace(entidadNombre) || entidadNombre.Equals("FGA", StringComparison.OrdinalIgnoreCase) || entidadNombre.Equals("FFC", StringComparison.OrdinalIgnoreCase))
+                    entidadNombre = Session?[FGAConstants.Sesion.NomEntidad]?.ToString();
+                    if (string.IsNullOrWhiteSpace(entidadNombre) || entidadNombre.Equals("FGA", StringComparison.OrdinalIgnoreCase) || entidadNombre.Equals(FGAConstants.Entidades.NombreAdministradora, StringComparison.OrdinalIgnoreCase))
                     {
                         var entObj = listaEnt?.FirstOrDefault(e => e.Id == entidadId);
                         if (entObj != null && !string.IsNullOrWhiteSpace(entObj.Nombre))
@@ -135,11 +139,11 @@ namespace FGA.Controllers
                 }
                 if (string.IsNullOrWhiteSpace(entidadNombre))
                 {
-                    entidadNombre = Env.GetUserInfo("entidad") ?? "Entidad Cooperativa";
+                    entidadNombre = Env.GetUserInfo(FGAConstants.Sesion.Entidad) ?? "Entidad Cooperativa";
                 }
-                Session["NomEntidad"] = entidadNombre;
+                Session[FGAConstants.Sesion.NomEntidad] = entidadNombre;
 
-                string usuario = Env.GetUserInfo("name");
+                string usuario = Env.GetUserInfo(FGAConstants.Sesion.Nombre);
 
                 // Periodo prioritario: enviado explícitamente desde la UI de la pantalla activa
                 string periodo = !string.IsNullOrWhiteSpace(periodoContexto) ? periodoContexto.Trim() : null;
@@ -166,7 +170,10 @@ namespace FGA.Controllers
                         maxFechaDatos = new DateTime(mesCorte.Year, mesCorte.Month, 1);
                     }
                 }
-                catch { }
+                catch (Exception exFc)
+                {
+                    System.Diagnostics.Trace.TraceWarning("ChatbotController: Error al consultar fecha de cierre: " + exFc.Message);
+                }
 
                 if (maxFechaDatos == DateTime.MinValue)
                 {

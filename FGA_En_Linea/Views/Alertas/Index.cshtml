@@ -1,4 +1,5 @@
 @model List<Entities.Entities.Procedures.FGA_Obtener_Alertas_Financieras_Result>
+@using FGA.Utility;
 @{
     ViewBag.Title = "Bandeja de Alertas Financieras";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -118,12 +119,12 @@
                             @if (ViewBag.EsAdmin != null && (bool)ViewBag.EsAdmin)
                             {
                                 <select id="selectEntidad" name="entidad" class="param-modern-select" onchange="$('#formFiltroAlertas').submit();">
-                                    <option value="-1" @(ViewBag.EntidadSeleccionada == "-1" || string.IsNullOrEmpty(ViewBag.EntidadSeleccionada) ? "selected" : "")>TODAS LAS COOPERATIVAS</option>
+                                    <option value="@FGAConstants.Entidades.Todas" @(ViewBag.EntidadSeleccionada == FGAConstants.Entidades.Todas || string.IsNullOrEmpty(ViewBag.EntidadSeleccionada) ? "selected" : "")>@FGAConstants.Entidades.TextoTodasCooperativas</option>
                                     @if (ViewBag.EntidadesList != null)
                                     {
                                         foreach (var ent in (List<FGA.Models.Entidad>)ViewBag.EntidadesList)
                                         {
-                                            if (ent.Id != "-1" && ent.Id != "99" && !ent.Nombre.Trim().Equals("TODAS LAS COOPERATIVAS", StringComparison.OrdinalIgnoreCase))
+                                            if (FGAConstants.Entidades.EsEntidadEspecifica(ent.Id) && !ent.Nombre.Trim().Equals(FGAConstants.Entidades.TextoTodasCooperativas, StringComparison.OrdinalIgnoreCase))
                                             {
                                                 <option value="@ent.Id" @(ViewBag.EntidadSeleccionada == ent.Id ? "selected" : "")>@ent.Nombre</option>
                                             }
@@ -134,7 +135,7 @@
                             else
                             {
                                 <span class="param-entidad-badge-fixed" style="display: inline-flex; align-items: center; gap: 8px; font-weight: 600; color: #0071AD; padding: 6px 14px; background: #f0f7fb; border-radius: 6px; border: 1px solid #d0e4f1; font-size: 13px;">
-                                    <i class="fa fa-university text-primary"></i> @(Session["NomEntidad"] ?? "Mi Cooperativa")
+                                    <i class="fa fa-university text-primary"></i> @(Session[FGAConstants.Sesion.NomEntidad] ?? "Mi Cooperativa")
                                 </span>
                                 <input type="hidden" id="selectEntidad" name="entidad" value="@ViewBag.EntidadSeleccionada" />
                             }
@@ -148,9 +149,9 @@
                         </span>
                         <div class="param-select-wrapper">
                             <select id="selectTipo" name="tipoAlerta" class="param-modern-select param-select-criticidad" onchange="$('#formFiltroAlertas').submit();">
-                                <option value="TODAS" @(ViewBag.TipoAlertaSeleccionado == "TODAS" ? "selected" : "")>Todas las severidades</option>
-                                <option value="CRITICA" @(ViewBag.TipoAlertaSeleccionado == "CRITICA" ? "selected" : "")>Críticas (Monto)</option>
-                                <option value="ADVERTENCIA" @(ViewBag.TipoAlertaSeleccionado == "ADVERTENCIA" ? "selected" : "")>Advertencias (Porcentaje)</option>
+                                <option value="@FGAConstants.Alertas.SeveridadTodas" @(ViewBag.TipoAlertaSeleccionado == FGAConstants.Alertas.SeveridadTodas ? "selected" : "")>Todas las severidades</option>
+                                <option value="@FGAConstants.Alertas.SeveridadCritica" @(ViewBag.TipoAlertaSeleccionado == FGAConstants.Alertas.SeveridadCritica ? "selected" : "")>Críticas (Monto)</option>
+                                <option value="@FGAConstants.Alertas.SeveridadAdvertencia" @(ViewBag.TipoAlertaSeleccionado == FGAConstants.Alertas.SeveridadAdvertencia ? "selected" : "")>Advertencias (Porcentaje)</option>
                             </select>
                         </div>
                     </div>
@@ -220,12 +221,12 @@
                             <i class="fa fa-filter" style="color: #64748b; font-size: 11px;"></i>
                             <span class="chip-name">Modo:</span>
                             <strong class="chip-val" id="bannerModoMonitoreo">
-                                @if (modoMonitoreo == "SOLO_WATCHLIST" || string.IsNullOrEmpty(modoMonitoreo))
+                                @if (modoMonitoreo == FGAConstants.Alertas.ModoSoloWatchlist || string.IsNullOrEmpty(modoMonitoreo))
                                 {
                                     int cntMon = ViewBag.CuentasMonitoreadasCount != null ? (int)ViewBag.CuentasMonitoreadasCount : 0;
                                     <span style="color: #0284c7;"><i class="fa fa-bookmark"></i> Solo Cuentas Prioritarias (@cntMon @(cntMon == 1 ? "cuenta" : "cuentas"))</span>
                                 }
-                                else if (modoMonitoreo == "EXCLUIR_BLACKLIST")
+                                else if (modoMonitoreo == FGAConstants.Alertas.ModoExcluirBlacklist)
                                 {
                                     <span style="color: #475569;"><i class="fa fa-ban"></i> Excluyendo Omitidas</span>
                                 }
@@ -286,7 +287,7 @@
                             <tr id="rowEmptyAlertas">
                                 <td colspan="9">
                                     <div class="empty-state-box">
-                                        @if (cuentasCount == 0 && (modoMonitoreo == "SOLO_WATCHLIST" || string.IsNullOrEmpty(modoMonitoreo)))
+                                        @if (cuentasCount == 0 && (modoMonitoreo == FGAConstants.Alertas.ModoSoloWatchlist || string.IsNullOrEmpty(modoMonitoreo)))
                                         {
                                             <div class="empty-state-icon" style="background: #e0f2fe; color: #0284c7;">
                                                 <i class="fa fa-sliders"></i>

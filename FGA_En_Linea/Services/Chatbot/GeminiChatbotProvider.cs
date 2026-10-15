@@ -167,19 +167,19 @@ namespace FGA.Services.Chatbot
             }
 
             // Caso MOROSIDAD
-            if (p.Contains("mora") || p.Contains("moro") || p.Contains("vencid"))
+            if (ContieneAlguno(p, "mora", "moro", "vencid"))
             {
                 return ResponderMorosidad(indicadores, corteStr, compStr, p);
             }
 
             // Caso CARTERA DE CRÉDITO
-            if (p.Contains("cartera") || p.Contains("credito"))
+            if (ContieneAlguno(p, "cartera", "credito"))
             {
                 return ResponderCartera(indicadores, corteStr, compStr, p);
             }
 
             // Caso OBLIGACIONES CON EL PÚBLICO / DEPÓSITOS
-            if (p.Contains("obligaci") || p.Contains("publico") || p.Contains("deposito") || p.Contains("captaci"))
+            if (ContieneAlguno(p, "obligaci", "publico", "deposito", "captaci"))
             {
                 return ResponderObligaciones(indicadores, corteStr, compStr, p);
             }
@@ -191,13 +191,13 @@ namespace FGA.Services.Chatbot
             }
 
             // Caso RESULTADO DEL PERÍODO / EXCEDENTES / UTILIDAD
-            if (p.Contains("resultado") || p.Contains("excedente") || p.Contains("utilidad") || p.Contains("perdida"))
+            if (ContieneAlguno(p, "resultado", "excedente", "utilidad", "perdida"))
             {
                 return ResponderResultado(indicadores, corteStr, compStr, p);
             }
 
             // Caso EFICIENCIA OPERATIVA / COSTO ADMINISTRATIVO
-            if (p.Contains("eficiencia") || p.Contains("costo administrativo") || p.Contains("gasto administrativo"))
+            if (ContieneAlguno(p, "eficiencia", "costo administrativo", "gasto administrativo"))
             {
                 return ResponderEficiencia(indicadores, corteStr, compStr, p);
             }
@@ -215,31 +215,31 @@ namespace FGA.Services.Chatbot
             }
 
             // Caso ACTIVO TOTAL
-            if (p.Contains("activo total") || p.Contains("activo"))
+            if (ContieneAlguno(p, "activo total", "activo"))
             {
                 return ResponderActivo(indicadores, corteStr, compStr, p);
             }
 
             // Caso BANDEJA DE ALERTAS
-            if (p.Contains("alerta") || p.Contains("bandeja"))
+            if (ContieneAlguno(p, "alerta", "bandeja"))
             {
                 return ResponderAlertas(bloqueDatos, corteStr);
             }
 
             // Caso CONCENTRACIÓN DE FONDEO / MAYORES AHORRANTES
-            if (p.Contains("fondeo") || p.Contains("concentraci") || p.Contains("ahorrante") || p.Contains("inversionista"))
+            if (ContieneAlguno(p, "fondeo", "concentraci", "ahorrante", "inversionista"))
             {
                 return ResponderConcentracion(bloqueDatos, corteStr);
             }
 
             // Caso RESUMEN GENERAL / TABLERO / ESTADO DE LA ENTIDAD
-            if (p.Contains("indicador") || p.Contains("resumen") || p.Contains("tablero") || p.Contains("como esta") || p.Contains("situac") || p.Contains("general") || p.Contains("cifra") || p.Contains("dato"))
+            if (ContieneAlguno(p, "indicador", "resumen", "tablero", "como esta", "situac", "general", "cifra", "dato"))
             {
                 return ResponderResumenGeneral(indicadores, corteStr, compStr);
             }
 
             // Caso PREGUNTAS METODOLÓGICAS O CONCEPTUALES
-            if (p.Contains("sbr") || p.Contains("supervision basada") || p.Contains("remediacion"))
+            if (ContieneAlguno(p, "sbr", "supervision basada", "remediacion"))
             {
                 return "La metodología **SBR (Supervisión Basada en Riesgos)** evalúa el perfil de riesgo institucional a partir de dos dimensiones: los **Riesgos Inherentes** (Crédito, Liquidez, Mercado, Operacional, Gobernanza) y la efectividad de los **Mitigadores y Controles Internos**. Si se detectan brechas, se formaliza un **Plan de Remediación** con causas raíz y acciones correctivas calendarizadas.\n\n[Sugerencia: ¿Cómo cerró la suficiencia patrimonial?]\n[Sugerencia: ¿Cuál es el índice de morosidad mayor a 90 días?]";
             }
@@ -892,11 +892,11 @@ namespace FGA.Services.Chatbot
 
             string palabraClave = null;
             if (p.Contains("suficiencia")) palabraClave = "Suficiencia Patrimonial";
-            else if (p.Contains("eficiencia") || p.Contains("costo")) palabraClave = "Eficiencia Operativa";
-            else if (p.Contains("mora") || p.Contains("vencid")) palabraClave = "Morosidad";
-            else if (p.Contains("resultado") || p.Contains("excedente") || p.Contains("pérdida") || p.Contains("perdida")) palabraClave = "Resultado del período";
-            else if (p.Contains("cartera") || p.Contains("crédito") || p.Contains("credito")) palabraClave = "Cartera de crédito";
-            else if (p.Contains("obligacion") || p.Contains("público") || p.Contains("publico") || p.Contains("depósito") || p.Contains("deposito") || p.Contains("captaci")) palabraClave = "Obligaciones con el público";
+            else if (ContieneAlguno(p, "eficiencia", "costo")) palabraClave = "Eficiencia Operativa";
+            else if (ContieneAlguno(p, "mora", "vencid")) palabraClave = "Morosidad";
+            else if (ContieneAlguno(p, "resultado", "excedente", "pérdida", "perdida")) palabraClave = "Resultado del período";
+            else if (ContieneAlguno(p, "cartera", "crédito", "credito")) palabraClave = "Cartera de crédito";
+            else if (ContieneAlguno(p, "obligacion", "público", "publico", "depósito", "deposito", "captaci")) palabraClave = "Obligaciones con el público";
             else if (p.Contains("capital")) palabraClave = "Capital Social";
             else if (p.Contains("activo")) palabraClave = "Activo Total";
             else if (p.Contains("patrimonio")) palabraClave = "Patrimonio Total";
@@ -998,10 +998,25 @@ namespace FGA.Services.Chatbot
                     return param?.Valor?.Trim();
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                System.Diagnostics.Trace.TraceWarning("GeminiChatbotProvider.ObtenerParametro error: " + ex.Message);
             }
             return null;
+        }
+
+        /// <summary>
+        /// Evalúa si el texto contiene alguno de los términos especificados (insensible a mayúsculas)
+        /// </summary>
+        private static bool ContieneAlguno(string texto, params string[] terminos)
+        {
+            if (string.IsNullOrEmpty(texto) || terminos == null || terminos.Length == 0) return false;
+            for (int i = 0; i < terminos.Length; i++)
+            {
+                if (!string.IsNullOrEmpty(terminos[i]) && texto.IndexOf(terminos[i], StringComparison.OrdinalIgnoreCase) >= 0)
+                    return true;
+            }
+            return false;
         }
     }
 }

@@ -61,7 +61,12 @@ namespace FGA.Utility
 
             public static bool EsFiltroTodas(string entidadId)
             {
-                return string.IsNullOrEmpty(entidadId) || entidadId == Todas || entidadId == "0";
+                return string.IsNullOrEmpty(entidadId) || entidadId == Todas || entidadId == Administradora;
+            }
+
+            public static bool EsEntidadEspecifica(string entidadId)
+            {
+                return !string.IsNullOrEmpty(entidadId) && entidadId != Todas && entidadId != Administradora && entidadId != Comodin;
             }
         }
         #endregion
