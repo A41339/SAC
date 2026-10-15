@@ -74,6 +74,55 @@ namespace FGA.Services
                 }
                 session["Periodo2"] = refDate.ToShortDateString();
 
+                // Resolver nombre de la entidad de forma robusta e inequívoca
+                string resolvedName = null;
+                if (idEntidad == "-1")
+                {
+                    resolvedName = "TODAS LAS COOPERATIVAS";
+                }
+                else
+                {
+                    try
+                    {
+                        var rawLista = session != null ? session["AllEntidades"] as FGA.Models.Entidad[] : null;
+                        if (rawLista != null)
+                        {
+                            var matched = rawLista.FirstOrDefault(o => o.Id == idEntidad);
+                            if (matched != null && !string.IsNullOrEmpty(matched.Nombre))
+                            {
+                                resolvedName = matched.Nombre;
+                            }
+                        }
+                        if (string.IsNullOrEmpty(resolvedName) && entClient != null)
+                        {
+                            var entObj = entClient.Get(idEntidad);
+                            if (entObj != null && !string.IsNullOrEmpty(entObj.Nombre))
+                            {
+                                resolvedName = entObj.Nombre;
+                            }
+                        }
+                    }
+                    catch { }
+
+                    if (string.IsNullOrEmpty(resolvedName))
+                    {
+                        if (session != null && session["NomEntidad"] != null && session["IdEntidad"] != null && session["IdEntidad"].ToString() == idEntidad)
+                        {
+                            resolvedName = session["NomEntidad"].ToString();
+                        }
+                        else
+                        {
+                            resolvedName = "COOPENAE R.L.";
+                        }
+                    }
+                }
+
+                if (session != null)
+                {
+                    session["IdEntidad"] = idEntidad;
+                    session["NomEntidad"] = resolvedName;
+                }
+
                 // Verificación de caché en memoria
                 string cacheKey = string.Format("FGA_BalanzaComp_{0}_{1:yyyyMM}_{2}_{3}", idEntidad, refDate, modalidad, tipoComp);
                 if (HttpRuntime.Cache != null)
@@ -81,6 +130,12 @@ namespace FGA.Services
                     var cachedModel = HttpRuntime.Cache.Get(cacheKey) as BalanzaComprobacionViewModel;
                     if (cachedModel != null)
                     {
+                        cachedModel.EntidadId = idEntidad;
+                        cachedModel.NombreEntidad = resolvedName;
+                        if (session != null && session["Logo"] != null)
+                        {
+                            cachedModel.LogoUrl = session["Logo"].ToString();
+                        }
                         return cachedModel;
                     }
                 }
@@ -88,30 +143,12 @@ namespace FGA.Services
                 var model = new BalanzaComprobacionViewModel
                 {
                     EntidadId = idEntidad,
+                    NombreEntidad = resolvedName,
                     Modalidad = modalidad,
                     TipoComparacion = tipoComp,
                     PeriodoReferencia = refDate,
-                    LogoUrl = session["Logo"] != null ? session["Logo"].ToString() : ""
+                    LogoUrl = session != null && session["Logo"] != null ? session["Logo"].ToString() : ""
                 };
-
-                // Nombre de la Entidad
-                if (idEntidad == "-1")
-                {
-                    model.NombreEntidad = "TODAS LAS COOPERATIVAS";
-                }
-                else
-                {
-                    if (session != null && session["NomEntidad"] != null && session["IdEntidad"] != null && session["IdEntidad"].ToString() == idEntidad && !string.IsNullOrEmpty(session["NomEntidad"].ToString()))
-                    {
-                        model.NombreEntidad = session["NomEntidad"].ToString();
-                    }
-                    else
-                    {
-                        var entObj = entClient != null ? entClient.Get(idEntidad) : null;
-                        model.NombreEntidad = entObj != null ? entObj.Nombre : (session != null && session["NomEntidad"] != null ? session["NomEntidad"].ToString() : "COOPENAE R.L.");
-                        if (session != null) session["NomEntidad"] = model.NombreEntidad;
-                    }
-                }
 
                 // 1. Determinar 5 períodos consecutivos según tipo de comparación
                 DateTime[] pFechas = DeterminarFechasPeriodos(refDate, tipoComp, model);

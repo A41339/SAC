@@ -84,6 +84,10 @@ namespace FGA.Controllers
         [AllowAnonymous]
         public ActionResult LoadBalance(String Entidades, DateTime Periodo1, DateTime Periodo2, DateTime Periodo3)
         {
+            if (!string.IsNullOrEmpty(Entidades))
+            {
+                Session["IdEntidad"] = Entidades;
+            }
             var model = ConstruirModeloBalance(Entidades, Periodo2.ToString("MM/yyyy"), null);
             return View("Balance", model);
         }
@@ -108,13 +112,37 @@ namespace FGA.Controllers
 
         public ActionResult Index(string Entidades = null, string Periodo = null, string Modalidad = "Acumulado", string TipoComparacion = null)
         {
+            if (!string.IsNullOrEmpty(Entidades))
+            {
+                Session["IdEntidad"] = Entidades;
+            }
             var model = ConstruirModeloBalanza(Entidades, Periodo, Modalidad, TipoComparacion);
             return View("Index", model);
         }
 
         public BalanzaComprobacionViewModel ConstruirModeloBalanza(string entidadId, string periodoSel, string modalidadSel, string tipoCompSel)
         {
+            if (!string.IsNullOrEmpty(entidadId))
+            {
+                Session["IdEntidad"] = entidadId;
+            }
             PageLoad();
+            if (!string.IsNullOrEmpty(entidadId))
+            {
+                Session["IdEntidad"] = entidadId;
+                try
+                {
+                    var rawLista = Session["AllEntidades"] as Entidad[] ?? ent.GetAll();
+                    var entItem = rawLista.FirstOrDefault(o => o.Id == entidadId) ?? ent.Get(entidadId);
+                    if (entItem != null)
+                    {
+                        Session["NomEntidad"] = entItem.Nombre;
+                        Session["Logo"] = MicrosoftHelper.MSHelper.GetSiteRoot() + "/Content/images/" + entItem.Nombre + ".jpg";
+                    }
+                    ConfigurarComboEntidades(entidadId);
+                }
+                catch { }
+            }
             var model = _balanzaService.ConstruirModeloBalanza(entidadId, periodoSel, modalidadSel, tipoCompSel, Session, sp, ent, catClient);
             if (model.FechasPeriodos != null && model.FechasPeriodos.Length == 5)
             {
@@ -123,6 +151,10 @@ namespace FGA.Controllers
                 Session["Periodo3"] = model.FechasPeriodos[4].ToShortDateString();
                 Session["TipoComparacion"] = model.TipoComparacion;
                 Session["IdEntidad"] = model.EntidadId;
+                if (!string.IsNullOrEmpty(model.NombreEntidad))
+                {
+                    Session["NomEntidad"] = model.NombreEntidad;
+                }
             }
 
             ConfigurarComboEntidades(model.EntidadId);
@@ -385,18 +417,46 @@ namespace FGA.Controllers
 
         public ActionResult Origen(string Entidades = null, string Periodo = null, string TipoComparacion = null)
         {
+            if (!string.IsNullOrEmpty(Entidades))
+            {
+                Session["IdEntidad"] = Entidades;
+            }
             var model = ConstruirModeloOrigen(Entidades, Periodo, TipoComparacion);
             return View("Origen", model);
         }
 
         public OrigenAplicacionViewModel ConstruirModeloOrigen(string entidadId, string periodoSel, string tipoCompSel)
         {
+            if (!string.IsNullOrEmpty(entidadId))
+            {
+                Session["IdEntidad"] = entidadId;
+            }
             PageLoad();
+            if (!string.IsNullOrEmpty(entidadId))
+            {
+                Session["IdEntidad"] = entidadId;
+                try
+                {
+                    var rawLista = Session["AllEntidades"] as Entidad[] ?? ent.GetAll();
+                    var entItem = rawLista.FirstOrDefault(o => o.Id == entidadId) ?? ent.Get(entidadId);
+                    if (entItem != null)
+                    {
+                        Session["NomEntidad"] = entItem.Nombre;
+                        Session["Logo"] = MicrosoftHelper.MSHelper.GetSiteRoot() + "/Content/images/" + entItem.Nombre + ".jpg";
+                    }
+                    ConfigurarComboEntidades(entidadId);
+                }
+                catch { }
+            }
             var model = _origenService.ConstruirModeloOrigen(entidadId, periodoSel, tipoCompSel, Session, sp, ent);
             Session["Periodo1"] = model.FechaComparacion.ToShortDateString();
             Session["Periodo2"] = model.FechaBase.ToShortDateString();
             Session["TipoComparacion"] = model.TipoComparacion;
             Session["IdEntidad"] = model.EntidadId;
+            if (!string.IsNullOrEmpty(model.EntidadNombre))
+            {
+                Session["NomEntidad"] = model.EntidadNombre;
+            }
             Session["TipoReporte"] = Utility.Utilitarios.enum_tipoReporte.origen_aplicacion;
 
             ConfigurarComboEntidades(model.EntidadId);
@@ -627,6 +687,7 @@ namespace FGA.Controllers
                     if (entItem != null)
                     {
                         Session["NomEntidad"] = entItem.Nombre;
+                        Session["Logo"] = MicrosoftHelper.MSHelper.GetSiteRoot() + "/Content/images/" + entItem.Nombre + ".jpg";
                     }
                     ConfigurarComboEntidades(entidadId);
                 }
@@ -640,8 +701,14 @@ namespace FGA.Controllers
                 Session["Periodo3"] = model.FechasPeriodos[4].ToShortDateString();
                 Session["TipoComparacion"] = model.TipoComparacion;
                 Session["IdEntidad"] = model.EntidadId;
+                if (!string.IsNullOrEmpty(model.NombreEntidad))
+                {
+                    Session["NomEntidad"] = model.NombreEntidad;
+                }
                 Session["TipoReporte"] = Utility.Utilitarios.enum_tipoReporte.rpt_er;
             }
+
+            ConfigurarComboEntidades(model.EntidadId);
             return model;
         }
 
@@ -842,13 +909,37 @@ namespace FGA.Controllers
 
         public ActionResult Balance(string Entidades = null, string Periodo = null, string TipoComparacion = null)
         {
+            if (!string.IsNullOrEmpty(Entidades))
+            {
+                Session["IdEntidad"] = Entidades;
+            }
             var model = ConstruirModeloBalance(Entidades, Periodo, TipoComparacion);
             return View("Balance", model);
         }
 
         public BalanceGeneralViewModel ConstruirModeloBalance(string entidadId, string periodoSel, string tipoCompSel)
         {
+            if (!string.IsNullOrEmpty(entidadId))
+            {
+                Session["IdEntidad"] = entidadId;
+            }
             PageLoad();
+            if (!string.IsNullOrEmpty(entidadId))
+            {
+                Session["IdEntidad"] = entidadId;
+                try
+                {
+                    var rawLista = Session["AllEntidades"] as Entidad[] ?? ent.GetAll();
+                    var entItem = rawLista.FirstOrDefault(o => o.Id == entidadId) ?? ent.Get(entidadId);
+                    if (entItem != null)
+                    {
+                        Session["NomEntidad"] = entItem.Nombre;
+                        Session["Logo"] = MicrosoftHelper.MSHelper.GetSiteRoot() + "/Content/images/" + entItem.Nombre + ".jpg";
+                    }
+                    ConfigurarComboEntidades(entidadId);
+                }
+                catch { }
+            }
             var model = _balanceService.ConstruirModeloBalance(entidadId, periodoSel, tipoCompSel, Session, sp, ent);
             if (model.FechasPeriodos != null && model.FechasPeriodos.Length == 5)
             {
@@ -857,6 +948,10 @@ namespace FGA.Controllers
                 Session["Periodo3"] = model.FechasPeriodos[4].ToShortDateString();
                 Session["TipoComparacion"] = model.TipoComparacion;
                 Session["IdEntidad"] = model.EntidadId;
+                if (!string.IsNullOrEmpty(model.NombreEntidad))
+                {
+                    Session["NomEntidad"] = model.NombreEntidad;
+                }
                 Session["TipoReporte"] = Utility.Utilitarios.enum_tipoReporte.rpt_balance;
             }
 

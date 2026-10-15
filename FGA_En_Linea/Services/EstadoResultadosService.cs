@@ -59,33 +59,14 @@ namespace FGA.Services
                 }
                 session["Periodo2"] = refDate.ToShortDateString();
 
-                string cacheKey = string.Format("FGA_ER_{0}_{1:yyyyMM}_{2}_{3}", idEntidad, refDate, modalidad, tipoComp);
-                if (HttpRuntime.Cache != null)
-                {
-                    var cachedModel = HttpRuntime.Cache.Get(cacheKey) as EstadoResultadosViewModel;
-                    if (cachedModel != null)
-                    {
-                        return cachedModel;
-                    }
-                }
-
-                var model = new EstadoResultadosViewModel
-                {
-                    EntidadId = idEntidad,
-                    Modalidad = modalidad,
-                    TipoComparacion = tipoComp,
-                    PeriodoReferencia = refDate,
-                    LogoUrl = session["Logo"] != null ? session["Logo"].ToString() : ""
-                };
-
-                // Nombre de la Entidad
+                // Resolver nombre de la entidad de forma robusta e inequívoca
+                string resolvedName = null;
                 if (idEntidad == "-1")
                 {
-                    model.NombreEntidad = "TODAS LAS COOPERATIVAS";
+                    resolvedName = "TODAS LAS COOPERATIVAS";
                 }
                 else
                 {
-                    string resolvedName = null;
                     try
                     {
                         var rawLista = session != null ? session["AllEntidades"] as FGA.Models.Entidad[] : null;
@@ -110,16 +91,48 @@ namespace FGA.Services
 
                     if (string.IsNullOrEmpty(resolvedName))
                     {
-                        resolvedName = (session != null && session["NomEntidad"] != null) ? session["NomEntidad"].ToString() : "ENTIDAD";
-                    }
-
-                    model.NombreEntidad = resolvedName;
-                    if (session != null)
-                    {
-                        session["NomEntidad"] = resolvedName;
-                        session["IdEntidad"] = idEntidad;
+                        if (session != null && session["NomEntidad"] != null && session["IdEntidad"] != null && session["IdEntidad"].ToString() == idEntidad)
+                        {
+                            resolvedName = session["NomEntidad"].ToString();
+                        }
+                        else
+                        {
+                            resolvedName = "COOPENAE R.L.";
+                        }
                     }
                 }
+
+                if (session != null)
+                {
+                    session["IdEntidad"] = idEntidad;
+                    session["NomEntidad"] = resolvedName;
+                }
+
+                string cacheKey = string.Format("FGA_ER_{0}_{1:yyyyMM}_{2}_{3}", idEntidad, refDate, modalidad, tipoComp);
+                if (HttpRuntime.Cache != null)
+                {
+                    var cachedModel = HttpRuntime.Cache.Get(cacheKey) as EstadoResultadosViewModel;
+                    if (cachedModel != null)
+                    {
+                        cachedModel.EntidadId = idEntidad;
+                        cachedModel.NombreEntidad = resolvedName;
+                        if (session != null && session["Logo"] != null)
+                        {
+                            cachedModel.LogoUrl = session["Logo"].ToString();
+                        }
+                        return cachedModel;
+                    }
+                }
+
+                var model = new EstadoResultadosViewModel
+                {
+                    EntidadId = idEntidad,
+                    NombreEntidad = resolvedName,
+                    Modalidad = modalidad,
+                    TipoComparacion = tipoComp,
+                    PeriodoReferencia = refDate,
+                    LogoUrl = session != null && session["Logo"] != null ? session["Logo"].ToString() : ""
+                };
 
                 // 1. Determinar 5 períodos consecutivos
                 DateTime[] pFechas = DeterminarFechasPeriodos(refDate, tipoComp, model);
