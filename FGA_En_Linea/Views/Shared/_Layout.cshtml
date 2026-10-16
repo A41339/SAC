@@ -1585,17 +1585,30 @@
             chartMenuObserver.observe(document.body, { childList: true, subtree: true });
         }
 
-        // Reflow global automatico de graficos Highcharts en cualquier modal al abrirse
+        // Redimensionamiento y reflow global automatico de graficos Highcharts en cualquier modal al abrirse
         $(document).on('shown.bs.modal', '.modal', function () {
+            var $modal = $(this);
             if (typeof Highcharts !== 'undefined' && Highcharts.charts) {
-                setTimeout(function () {
+                var resizeModalCharts = function () {
+                    var $body = $modal.find('.modal-body');
+                    var bodyWidth = $body.width();
                     Highcharts.charts.forEach(function (c) {
-                        if (c) {
-                            try { c.reflow(); } catch (e) {}
+                        if (c && c.renderTo && $(c.renderTo).closest($modal).length) {
+                            try {
+                                $(c.renderTo).css({ 'width': '100%', 'display': 'block' });
+                                var w = $(c.renderTo).parent().width() || bodyWidth;
+                                var h = (c.options && c.options.chart && c.options.chart.height) || c.chartHeight || 480;
+                                if (w && w > 100) {
+                                    c.setSize(w, h, false);
+                                    c.reflow();
+                                }
+                            } catch (e) {}
                         }
                     });
                     bringExportButtonsToFront();
-                }, 50);
+                };
+                setTimeout(resizeModalCharts, 50);
+                setTimeout(resizeModalCharts, 250);
             }
         });
 
