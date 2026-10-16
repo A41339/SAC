@@ -3,14 +3,14 @@
 <script type="text/javascript">
     if (typeof Highcharts !== 'undefined') {
         Highcharts.setOptions({
-            colors: ['#0071AD', '#959595', '#6DB5CB', '#FE7235', '#B7D8DF', '#565656', '#003F6B', '#0099D6', '#FFB347', '#CFCFCF'],
+            colors: ['#0071AD', '#475569', '#0d9488', '#ea580c', '#0284c7', '#6366f1', '#1e3a8a', '#d97706', '#059669', '#64748b'],
             chart: {
                 options3d: {
                     enabled: true,
-                    alpha: 7,
-                    beta: -6,
-                    depth: 35,
-                    viewDistance: 500,
+                    alpha: 14,
+                    beta: 8,
+                    depth: 38,
+                    viewDistance: 600,
                     fitToPlot: true,
                     frame: {
                         bottom: { size: 0, color: 'transparent' },
@@ -21,32 +21,32 @@
             },
             plotOptions: {
                 column: {
-                    depth: 30,
-                    edgeColor: 'rgba(0, 0, 0, 0.16)',
-                    edgeWidth: 1.2,
+                    depth: 34,
+                    edgeColor: 'rgba(15, 23, 42, 0.20)',
+                    edgeWidth: 1.4,
                     groupZPadding: 6,
-                    pointPadding: 0.10,
-                    groupPadding: 0.12,
-                    maxPointWidth: 46
+                    pointPadding: 0.08,
+                    groupPadding: 0.10,
+                    maxPointWidth: 44
                 },
                 bar: {
                     depth: 28,
-                    edgeColor: 'rgba(0, 0, 0, 0.16)',
+                    edgeColor: 'rgba(15, 23, 42, 0.20)',
                     edgeWidth: 1.2,
                     pointPadding: 0.08,
                     groupPadding: 0.10,
-                    maxPointWidth: 46
+                    maxPointWidth: 44
                 },
                 line: {
                     lineWidth: 5,
                     linecap: 'round',
                     linejoin: 'round',
                     shadow: {
-                        color: 'rgba(0, 0, 0, 0.28)',
+                        color: 'rgba(0, 0, 0, 0.25)',
                         offsetX: 1,
-                        offsetY: 4,
-                        width: 6,
-                        opacity: 0.25
+                        offsetY: 3,
+                        width: 5,
+                        opacity: 0.22
                     },
                     marker: {
                         enabled: true,
@@ -63,21 +63,21 @@
                     }
                 },
                 spline: {
-                    lineWidth: 5,
+                    lineWidth: 4.5,
                     linecap: 'round',
                     linejoin: 'round',
                     shadow: {
-                        color: 'rgba(0, 0, 0, 0.28)',
+                        color: 'rgba(0, 0, 0, 0.22)',
                         offsetX: 1,
-                        offsetY: 4,
-                        width: 6,
-                        opacity: 0.25
+                        offsetY: 3,
+                        width: 5,
+                        opacity: 0.20
                     },
                     marker: {
                         enabled: true,
-                        radius: 6,
+                        radius: 5.5,
                         symbol: 'circle',
-                        lineWidth: 2.5,
+                        lineWidth: 2.2,
                         lineColor: '#ffffff',
                         shadow: {
                             color: 'rgba(0, 0, 0, 0.2)',
@@ -130,6 +130,9 @@
             <button type="button" class="btn-toggle-3d" id="btnToggle3DComposicion" onclick="window.toggle3DCartera(this)" title="Alternar entre perspectiva 3D volumétrica y 2D clásica" style="height: 28px; padding: 0 11px; font-size: 11.5px; font-weight: 600; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid #bae6fd; background: #f0f9ff; color: #0369a1; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
                 <i class="fa fa-cube" style="color: #0284c7; font-size: 13px;"></i> <span id="lblToggle3DComposicion">Vista 3D: ON</span>
             </button>
+            <span id="lblRotarHintComposicion" style="font-size: 11px; color: #64748b; font-weight: 500; display: inline-flex; align-items: center; gap: 4px; padding: 0 4px;" title="Haz clic y arrastra sobre el gráfico para rotar el ángulo 3D">
+                <i class="fa fa-hand-pointer-o" style="color: #0284c7;"></i> Arrastra para rotar
+            </span>
             <a class="btn-ampliar" data-toggle="tooltip" data-placement="top" title="Ampliar gr&aacute;fico" href="javascript:mPopUp()" style="height: 28px; padding: 0 11px; font-size: 11.5px; border-radius: 6px; display: inline-flex; align-items: center; gap: 5px;">
                 <i class="fa fa-line-chart"></i> Ampliar
             </a>
@@ -166,6 +169,9 @@
                     <button type="button" class="btn-toggle-3d-modal" id="btnToggle3DModal" onclick="window.toggle3DCartera(this)" title="Alternar entre perspectiva 3D volumétrica y 2D clásica" style="height: 28px; padding: 0 11px; font-size: 11.5px; font-weight: 600; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.18); color: #ffffff; cursor: pointer; transition: all 0.2s ease;">
                         <i class="fa fa-cube" style="color: #38bdf8; font-size: 13px;"></i> <span id="lblToggle3DModal">Vista 3D: ON</span>
                     </button>
+                    <span id="lblRotarHintModal" style="font-size: 11px; color: rgba(255,255,255,0.85); font-weight: 500; display: inline-flex; align-items: center; gap: 4px; padding: 0 4px;" title="Haz clic y arrastra sobre el gráfico para rotar el ángulo 3D">
+                        <i class="fa fa-hand-pointer-o" style="color: #38bdf8;"></i> Arrastra para rotar
+                    </span>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: #ffffff !important; opacity: 0.9; font-size: 22px; line-height: 1;"><span aria-hidden="true">&times;</span></button>
                 </div>
             </div>
@@ -196,90 +202,7 @@
     window.tipoGraficoActual = window.tipoGraficoActual || 'column';
     window.cartera3DActivo = (typeof window.cartera3DActivo === 'boolean') ? window.cartera3DActivo : true;
 
-    window.coloresPlano2D = ['#0071AD', '#959595', '#6DB5CB', '#FE7235', '#B7D8DF', '#565656', '#003F6B', '#0099D6', '#FFB347', '#CFCFCF'];
-
-    window.gradientesLuz3D = [
-        {
-            linearGradient: { x1: 0, x2: 1, y1: 0, y2: 1 },
-            stops: [
-                [0, '#38bdf8'],
-                [0.55, '#0284c7'],
-                [1, '#075985']
-            ]
-        },
-        {
-            linearGradient: { x1: 0, x2: 1, y1: 0, y2: 1 },
-            stops: [
-                [0, '#cbd5e1'],
-                [0.55, '#94a3b8'],
-                [1, '#475569']
-            ]
-        },
-        {
-            linearGradient: { x1: 0, x2: 1, y1: 0, y2: 1 },
-            stops: [
-                [0, '#7dd3fc'],
-                [0.55, '#38bdf8'],
-                [1, '#0284c7']
-            ]
-        },
-        {
-            linearGradient: { x1: 0, x2: 1, y1: 0, y2: 1 },
-            stops: [
-                [0, '#fdba74'],
-                [0.55, '#f97316'],
-                [1, '#c2410c']
-            ]
-        },
-        {
-            linearGradient: { x1: 0, x2: 1, y1: 0, y2: 1 },
-            stops: [
-                [0, '#e0f2fe'],
-                [0.55, '#bae6fd'],
-                [1, '#7dd3fc']
-            ]
-        },
-        {
-            linearGradient: { x1: 0, x2: 1, y1: 0, y2: 1 },
-            stops: [
-                [0, '#94a3b8'],
-                [0.55, '#64748b'],
-                [1, '#334155']
-            ]
-        },
-        {
-            linearGradient: { x1: 0, x2: 1, y1: 0, y2: 1 },
-            stops: [
-                [0, '#1e40af'],
-                [0.55, '#1e3a8a'],
-                [1, '#172554']
-            ]
-        },
-        {
-            linearGradient: { x1: 0, x2: 1, y1: 0, y2: 1 },
-            stops: [
-                [0, '#38bdf8'],
-                [0.55, '#0071AD'],
-                [1, '#004f7a']
-            ]
-        },
-        {
-            linearGradient: { x1: 0, x2: 1, y1: 0, y2: 1 },
-            stops: [
-                [0, '#fed7aa'],
-                [0.55, '#fb923c'],
-                [1, '#ea580c']
-            ]
-        },
-        {
-            linearGradient: { x1: 0, x2: 1, y1: 0, y2: 1 },
-            stops: [
-                [0, '#e2e8f0'],
-                [0.55, '#cbd5e1'],
-                [1, '#94a3b8']
-            ]
-        }
-    ];
+    window.coloresPlano2D = ['#0071AD', '#475569', '#0d9488', '#ea580c', '#0284c7', '#6366f1', '#1e3a8a', '#d97706', '#059669', '#64748b'];
 
     window.guardarConfiguracionOriginal = function (chart) {
         if (!chart || chart._fgaOriginalConfig) return;
@@ -304,10 +227,11 @@
                         else if (s.yAxis.options.id === 'Concentracion') yAxisIdx = 0;
                         else if (chart.yAxis && chart.yAxis.indexOf(s.yAxis) >= 0) yAxisIdx = chart.yAxis.indexOf(s.yAxis);
                     }
+                    var sColor = s.color || window.coloresPlano2D[idx % window.coloresPlano2D.length];
                     savedSeries.push({
                         name: s.name,
                         origType: (s.type === 'line' || s.type === 'spline') ? 'line' : 'column',
-                        color: s.color,
+                        color: sColor,
                         data: rawData,
                         yAxis: yAxisIdx,
                         stack: (s.options && s.options.stack) ? s.options.stack : null,
@@ -326,12 +250,64 @@
                 series: savedSeries,
                 categories: savedCats,
                 title: (chart.title && chart.title.textStr) ? chart.title.textStr : '',
-                subTitle: (chart.subtitle && chart.subtitle.textStr) ? chart.subtitle.textStr : '',
-                isPieActive: false
+                subTitle: (chart.subtitle && chart.subtitle.textStr) ? chart.subtitle.textStr : ''
             };
         } catch (err) {
             console.warn('Error al guardar configuración original:', err);
         }
+    };
+
+    window.habilitarRotacionInteractiva3D = function (chart) {
+        if (!chart || !chart.container) return;
+        var container = chart.container;
+        if (container._has3DRotation) {
+            $(container).css('cursor', (window.cartera3DActivo && window.tipoGraficoActual === 'column') ? 'grab' : 'default');
+            return;
+        }
+        container._has3DRotation = true;
+        $(container).css('cursor', (window.cartera3DActivo && window.tipoGraficoActual === 'column') ? 'grab' : 'default');
+
+        function drag(eStart) {
+            if (!window.cartera3DActivo || window.tipoGraficoActual !== 'column') return;
+            if (!chart.options || !chart.options.chart || !chart.options.chart.options3d) return;
+
+            var e = chart.pointer.normalize(eStart);
+            var posX = e.chartX;
+            var posY = e.chartY;
+            var alpha = chart.options.chart.options3d.alpha || 14;
+            var beta = chart.options.chart.options3d.beta || 8;
+            var sensitivity = 5.5;
+
+            $(container).css('cursor', 'grabbing');
+
+            function move(eMove) {
+                eMove = chart.pointer.normalize(eMove);
+                var newAlpha = alpha + (eMove.chartY - posY) / sensitivity;
+                var newBeta = beta + (posX - eMove.chartX) / sensitivity;
+
+                newAlpha = Math.max(2, Math.min(32, newAlpha));
+                newBeta = Math.max(-22, Math.min(22, newBeta));
+
+                chart.options.chart.options3d.alpha = newAlpha;
+                chart.options.chart.options3d.beta = newBeta;
+                chart.redraw(false);
+            }
+
+            function up() {
+                $(container).css('cursor', (window.cartera3DActivo && window.tipoGraficoActual === 'column') ? 'grab' : 'default');
+                $(document).off('mousemove.hc3d touchmove.hc3d', move);
+                $(document).off('mouseup.hc3d touchend.hc3d', up);
+            }
+
+            $(document).on('mousemove.hc3d touchmove.hc3d', move);
+            $(document).on('mouseup.hc3d touchend.hc3d', up);
+        }
+
+        $(container).on('mousedown.hc3d touchstart.hc3d', function (e) {
+            if (!window.cartera3DActivo || window.tipoGraficoActual !== 'column') return;
+            if ($(e.target).closest('.highcharts-legend, .highcharts-exporting-group, .highcharts-button').length) return;
+            drag(e);
+        });
     };
 
     window.aplicarTipoAGrafico = function (chart, tipo) {
@@ -350,8 +326,13 @@
             if (elem && $(elem).closest('#mPopUp').length) isModal = true;
         } catch (e) {}
 
+        // 1. Limpiar completamente las series existentes
+        while (chart.series.length > 0) {
+            chart.series[0].remove(false);
+        }
+
+        // 2. Aplicar configuración según tipo
         if (tipo === 'pie') {
-            orig.isPieActive = true;
             var pieData = [];
             var colSeries = orig.series.filter(function (s) { return s.origType === 'column'; });
             if (colSeries.length === 0) colSeries = orig.series;
@@ -367,18 +348,13 @@
                     else if (Array.isArray(pt) && typeof pt[1] === 'number') val = pt[1];
                 }
                 if (val > 0) {
-                    var sliceColor = is3D ? (window.gradientesLuz3D[pIdx % window.gradientesLuz3D.length] || s.color) : (s.color || window.coloresPlano2D[pIdx % window.coloresPlano2D.length]);
                     pieData.push({
                         name: s.name,
                         y: val,
-                        color: sliceColor
+                        color: s.color || window.coloresPlano2D[pIdx % window.coloresPlano2D.length]
                     });
                 }
             });
-
-            while (chart.series.length > 0) {
-                chart.series[0].remove(false);
-            }
 
             chart.update({
                 chart: {
@@ -388,7 +364,7 @@
                         alpha: is3D ? 45 : 0,
                         beta: 0,
                         depth: is3D ? 35 : 0,
-                        viewDistance: 500,
+                        viewDistance: 600,
                         fitToPlot: true,
                         frame: {
                             bottom: { size: 0, color: 'transparent' },
@@ -430,42 +406,8 @@
             if (lastPeriodLabel) {
                 chart.setTitle(null, { text: 'Distribución al período: ' + lastPeriodLabel, style: { fontSize: '11.5px', color: '#64748b' } }, false);
             }
-            chart.redraw();
-            return;
-        }
-
-        if (orig.isPieActive) {
-            orig.isPieActive = false;
-            while (chart.series.length > 0) {
-                chart.series[0].remove(false);
-            }
-            chart.update({
-                xAxis: {
-                    categories: orig.categories.slice()
-                }
-            }, false);
-
-            if (orig.subTitle) {
-                chart.setTitle(null, { text: orig.subTitle }, false);
-            } else {
-                chart.setTitle(null, { text: '' }, false);
-            }
-
-            orig.series.forEach(function (s) {
-                chart.addSeries({
-                    name: s.name,
-                    type: s.origType,
-                    color: s.color,
-                    yAxis: s.yAxis,
-                    data: JSON.parse(JSON.stringify(s.data)),
-                    stack: s.stack,
-                    dashStyle: s.dashStyle,
-                    zIndex: s.zIndex
-                }, false);
-            });
-        }
-
-        if (tipo === 'spline') {
+        } else if (tipo === 'spline') {
+            // VISTA DE LÍNEAS TRANSFORMADA: LÍNEAS SUAVES VIBRANTES CON MARCADORES DEFINIDOS
             chart.update({
                 chart: {
                     inverted: false,
@@ -477,12 +419,12 @@
                     },
                     spline: {
                         stacking: null,
-                        lineWidth: 4,
+                        lineWidth: 4.5,
                         marker: {
                             enabled: true,
                             radius: 5.5,
                             symbol: 'circle',
-                            lineWidth: 2,
+                            lineWidth: 2.2,
                             lineColor: '#ffffff'
                         }
                     }
@@ -492,25 +434,42 @@
                 }
             }, false);
 
-            chart.series.forEach(function (s, idx) {
-                var origInfo = orig.series[idx] || {};
-                var origColor = origInfo.color || window.coloresPlano2D[idx % window.coloresPlano2D.length];
-                var isOrigLine = (origInfo.origType === 'line');
-                s.update({
+            if (orig.subTitle) {
+                chart.setTitle(null, { text: orig.subTitle }, false);
+            } else {
+                chart.setTitle(null, { text: '' }, false);
+            }
+
+            orig.series.forEach(function (s, idx) {
+                var isOrigLine = (s.origType === 'line');
+                chart.addSeries({
+                    name: s.name,
                     type: 'spline',
                     stacking: null,
-                    color: origColor,
-                    lineWidth: isOrigLine ? 5 : 3.8,
+                    color: s.color,
+                    yAxis: s.yAxis,
+                    data: JSON.parse(JSON.stringify(s.data)),
+                    lineWidth: isOrigLine ? 5.5 : 4,
+                    dashStyle: 'Solid',
+                    zIndex: isOrigLine ? 15 : (10 - idx),
                     marker: {
                         enabled: true,
-                        radius: isOrigLine ? 6 : 5,
+                        radius: isOrigLine ? 6.5 : 5.5,
                         symbol: 'circle',
-                        lineWidth: 2,
+                        lineWidth: 2.2,
                         lineColor: '#ffffff'
+                    },
+                    shadow: {
+                        color: 'rgba(0, 0, 0, 0.22)',
+                        offsetX: 1,
+                        offsetY: 3,
+                        width: 5,
+                        opacity: 0.20
                     }
                 }, false);
             });
         } else if (tipo === 'area') {
+            // VISTA DE ÁREAS APILADAS: ONDAS SUAVES CON OPACIDAD ELEGANTE
             chart.update({
                 chart: {
                     inverted: false,
@@ -519,7 +478,7 @@
                 plotOptions: {
                     areaspline: {
                         stacking: 'normal',
-                        fillOpacity: 0.35,
+                        fillOpacity: 0.38,
                         lineWidth: 2.5,
                         marker: { enabled: true, radius: 4 }
                     }
@@ -529,40 +488,58 @@
                 }
             }, false);
 
-            chart.series.forEach(function (s, idx) {
-                var origInfo = orig.series[idx] || {};
-                var origColor = origInfo.color || window.coloresPlano2D[idx % window.coloresPlano2D.length];
-                var isOrigLine = (origInfo.origType === 'line');
+            if (orig.subTitle) {
+                chart.setTitle(null, { text: orig.subTitle }, false);
+            } else {
+                chart.setTitle(null, { text: '' }, false);
+            }
+
+            orig.series.forEach(function (s, idx) {
+                var isOrigLine = (s.origType === 'line');
                 if (isOrigLine) {
-                    s.update({
+                    chart.addSeries({
+                        name: s.name,
                         type: 'spline',
                         stacking: null,
-                        color: origColor,
-                        lineWidth: 5,
-                        marker: { enabled: true, radius: 6, symbol: 'circle', lineWidth: 2.5, lineColor: '#ffffff' }
+                        color: s.color,
+                        yAxis: s.yAxis,
+                        data: JSON.parse(JSON.stringify(s.data)),
+                        lineWidth: 5.5,
+                        zIndex: 15,
+                        marker: {
+                            enabled: true,
+                            radius: 6.5,
+                            symbol: 'circle',
+                            lineWidth: 2.5,
+                            lineColor: '#ffffff'
+                        }
                     }, false);
                 } else {
-                    s.update({
+                    chart.addSeries({
+                        name: s.name,
                         type: 'areaspline',
                         stacking: 'normal',
-                        color: origColor,
-                        fillOpacity: 0.35,
+                        color: s.color,
+                        fillOpacity: 0.38,
                         lineWidth: 2.5,
+                        yAxis: s.yAxis,
+                        data: JSON.parse(JSON.stringify(s.data)),
+                        zIndex: idx,
                         marker: { enabled: true, radius: 4 }
                     }, false);
                 }
             });
         } else {
-            // column
+            // VISTA DE COLUMNAS 3D / 2D ARQUITECTÓNICA
             chart.update({
                 chart: {
                     inverted: false,
                     options3d: {
                         enabled: is3D,
-                        alpha: 7,
-                        beta: -6,
-                        depth: 35,
-                        viewDistance: 500,
+                        alpha: is3D ? 14 : 0,
+                        beta: is3D ? 8 : 0,
+                        depth: is3D ? 38 : 0,
+                        viewDistance: 600,
                         fitToPlot: true,
                         frame: {
                             bottom: { size: 0, color: 'transparent' },
@@ -574,13 +551,13 @@
                 plotOptions: {
                     column: {
                         stacking: 'normal',
-                        depth: is3D ? 30 : 0,
-                        edgeColor: is3D ? 'rgba(0, 0, 0, 0.16)' : 'none',
-                        edgeWidth: is3D ? 1.2 : 0,
-                        groupZPadding: 6,
+                        depth: is3D ? 34 : 0,
+                        edgeColor: is3D ? 'rgba(15, 23, 42, 0.20)' : 'none',
+                        edgeWidth: is3D ? 1.4 : 0,
+                        groupZPadding: is3D ? 6 : 0,
                         pointPadding: 0.08,
                         groupPadding: 0.10,
-                        maxPointWidth: 46
+                        maxPointWidth: 44
                     }
                 },
                 xAxis: {
@@ -588,30 +565,51 @@
                 }
             }, false);
 
-            chart.series.forEach(function (s, idx) {
-                var origInfo = orig.series[idx] || {};
-                var isOrigLine = (origInfo.origType === 'line');
+            if (orig.subTitle) {
+                chart.setTitle(null, { text: orig.subTitle }, false);
+            } else {
+                chart.setTitle(null, { text: '' }, false);
+            }
+
+            orig.series.forEach(function (s, idx) {
+                var isOrigLine = (s.origType === 'line');
                 if (isOrigLine) {
-                    s.update({
+                    chart.addSeries({
+                        name: s.name,
                         type: 'line',
+                        color: s.color,
+                        yAxis: s.yAxis,
+                        data: JSON.parse(JSON.stringify(s.data)),
                         lineWidth: 5,
+                        zIndex: 15,
                         linecap: 'round',
                         linejoin: 'round',
                         shadow: { color: 'rgba(0, 0, 0, 0.28)', offsetX: 1, offsetY: 4, width: 6, opacity: 0.25 },
                         marker: { enabled: true, radius: 6, symbol: 'circle', lineWidth: 2.5, lineColor: '#ffffff' }
                     }, false);
                 } else {
-                    var colorToUse = is3D ? (window.gradientesLuz3D[idx % window.gradientesLuz3D.length] || origInfo.color) : (origInfo.color || window.coloresPlano2D[idx % window.coloresPlano2D.length]);
-                    s.update({
+                    chart.addSeries({
+                        name: s.name,
                         type: 'column',
                         stacking: 'normal',
-                        color: colorToUse
+                        color: s.color,
+                        yAxis: s.yAxis,
+                        data: JSON.parse(JSON.stringify(s.data)),
+                        zIndex: idx
                     }, false);
                 }
             });
         }
 
         chart.redraw();
+        window.habilitarRotacionInteractiva3D(chart);
+
+        // Control de visibilidad del hint de rotación
+        var hintMain = document.getElementById('lblRotarHintCartera') || document.getElementById('lblRotarHintComposicion');
+        var hintModal = document.getElementById('lblRotarHintModal');
+        var showHint = (is3D && tipo === 'column');
+        if (hintMain) hintMain.style.display = showHint ? 'inline-flex' : 'none';
+        if (hintModal) hintModal.style.display = showHint ? 'inline-flex' : 'none';
 
         try {
             var containerElem = document.getElementById('container');
@@ -894,6 +892,7 @@
                             if (typeof window.aplicarTipoAGrafico === 'function') {
                                 window.aplicarTipoAGrafico(c, window.tipoGraficoActual);
                             }
+                            window.habilitarRotacionInteractiva3D(c);
                             c.reflow();
                         } catch (e) {}
                     }
