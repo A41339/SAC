@@ -101,37 +101,68 @@ namespace FGA.Controllers
                         Series serie;
                         i = 0;
 
-                        // Paleta ejecutiva armónica FFC para segmentos de crédito
-                        string[] paletaArmonica = new string[]
+                        // Paleta ejecutiva moderna y distintiva para segmentos de tasas de crédito
+                        // Cada color posee un matiz completamente diferente y armónico, evitando apilar tonos azules repetitivos
+                        string[] paletaDistintiva = new string[]
                         {
-                            "#1e3a8a", // Azul marino profundo
-                            "#2563eb", // Azul cobalto
-                            "#0284c7", // Celeste corporativo
-                            "#0f766e", // Teal / esmeralda financiero
-                            "#3b82f6", // Azul medio
-                            "#475569", // Slate corporativo
-                            "#0369a1", // Azul zafiro
-                            "#64748b", // Gris pizarra medio
-                            "#94a3b8", // Slate suave
-                            "#4338ca"  // Índigo corporativo
+                            "#1e40af", // Azul real profundo
+                            "#f59e0b", // Ámbar dorado cálido
+                            "#7c3aed", // Violeta real / Púrpura corporativo
+                            "#059669", // Verde esmeralda fresco
+                            "#0284c7", // Celeste océano vibrante
+                            "#e11d48", // Coral rosa ejecutivo
+                            "#0d9488", // Teal financiero
+                            "#d97706", // Miel ocre dorado
+                            "#4338ca", // Índigo corporativo
+                            "#10b981", // Menta esmeralda
+                            "#ea580c", // Naranja cálido
+                            "#64748b"  // Slate neutro
                         };
-                        int colorSegmentoIdx = 0;
 
+                        // Mapeo semántico de alta estética para categorías de crédito de la SUGEF
+                        Func<string, int, Color> resolverColorSegmento = (nombre, idx) =>
+                        {
+                            if (!string.IsNullOrWhiteSpace(nombre))
+                            {
+                                string s = nombre.Trim().ToLowerInvariant();
+
+                                if (s.Contains("revolutivo") || s.Contains("tarjeta"))
+                                    return ColorTranslator.FromHtml("#1e40af"); // Azul real profundo (Revolutivos)
+
+                                if (s.Contains("tasa ponderada") || s.Contains("ponderada total"))
+                                    return ColorTranslator.FromHtml("#f59e0b"); // Ámbar dorado cálido (Referencia ponderada global)
+
+                                if (s.Contains("consumo") || s.Contains("personal"))
+                                    return ColorTranslator.FromHtml("#7c3aed"); // Violeta real (Consumo)
+
+                                if (s.Contains("empresarial 1") || s.Contains("corporativo 1"))
+                                    return ColorTranslator.FromHtml("#059669"); // Verde esmeralda (Empresarial 1)
+
+                                if (s.Contains("empresarial 2") || s.Contains("corporativo 2"))
+                                    return ColorTranslator.FromHtml("#0284c7"); // Celeste océano (Empresarial 2)
+
+                                if (s.Contains("vehicular") || s.Contains("auto"))
+                                    return ColorTranslator.FromHtml("#e11d48"); // Coral rosa (Vehiculares)
+
+                                if (s.Contains("vivienda") || s.Contains("hipotec"))
+                                    return ColorTranslator.FromHtml("#0d9488"); // Teal financiero (Vivienda)
+
+                                if (s.Contains("empresarial 3") || s.Contains("corporativo 3") || s.Contains("micro"))
+                                    return ColorTranslator.FromHtml("#d97706"); // Miel / Ocre dorado (Empresarial 3)
+
+                                if (s.Contains("no aplica") || s.Contains("otro"))
+                                    return ColorTranslator.FromHtml("#94a3b8"); // Slate neutro (No aplica)
+                            }
+                            return ColorTranslator.FromHtml(paletaDistintiva[idx % paletaDistintiva.Length]);
+                        };
+
+                        int colorIdx = 0;
                         foreach (Serie detalle in listaSeries)
                         {
                             if (detalle.mostrar)
                             {
-                                Color colorSerie;
-                                if (detalle.nombre != null && detalle.nombre.Trim().ToLower().Contains("tasa ponderada total"))
-                                {
-                                    // Destacado con Naranja Institucional FFC para la referencia global
-                                    colorSerie = ColorTranslator.FromHtml("#ea580c");
-                                }
-                                else
-                                {
-                                    colorSerie = ColorTranslator.FromHtml(paletaArmonica[colorSegmentoIdx % paletaArmonica.Length]);
-                                    colorSegmentoIdx++;
-                                }
+                                Color colorSerie = resolverColorSegmento(detalle.nombre, colorIdx);
+                                colorIdx++;
 
                                 serie = new Series
                                 {

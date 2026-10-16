@@ -92,6 +92,8 @@ namespace FGA.Model
                     Column = new PlotOptionsColumn
                     {
                         Stacking = Stackings.Normal,
+                        BorderWidth = (Number)1,
+                        BorderColor = Color.White,
                         DataLabels = new PlotOptionsColumnDataLabels
                         {
                             Enabled = System.Web.HttpContext.Current.Session[FGA.Utility.Utilitarios.show_ColumnDetail] is null ? false : true,
