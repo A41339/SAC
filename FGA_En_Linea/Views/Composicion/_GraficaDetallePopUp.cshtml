@@ -392,34 +392,31 @@
                 var pTot = periodTotals[xIdx] || 0;
                 var pct = pTot > 0 ? ((v / pTot) * 100) : 0;
 
-                // Si tiene valor real mayor a 0 pero es pequeño, se le garantiza la altura mínima visible escalonada
-                var zRender = 0;
+                // Solo graficar tramos con valor real > 0 para eliminar cubos fantasma en el suelo que desvíen el cursor
                 if (v > 0) {
-                    if (v < minFloor) {
-                        zRender = minFloor + ((v / minFloor) * (minFloor * 0.35));
-                    } else {
-                        zRender = v;
-                    }
+                    var zRender = (v < minFloor) ? (minFloor + ((v / minFloor) * (minFloor * 0.35))) : v;
+                    data3D.push({
+                        name: cat + ' - ' + s.name,
+                        value: [xIdx, yIdx, zRender],
+                        realVal: v,
+                        tramo: s.name,
+                        mes: cat,
+                        pct: pct,
+                        itemStyle: {
+                            color: col,
+                            opacity: 0.96
+                        }
+                    });
                 }
-
-                data3D.push({
-                    name: cat + ' - ' + s.name,
-                    value: [xIdx, yIdx, zRender],
-                    realVal: v,
-                    tramo: s.name,
-                    mes: cat,
-                    pct: pct,
-                    itemStyle: {
-                        color: col,
-                        opacity: 0.96
-                    }
-                });
             });
         });
 
         var myChart = echarts.getInstanceByDom(dom);
         if (!myChart) {
-            myChart = echarts.init(dom);
+            myChart = echarts.init(dom, null, {
+                renderer: 'canvas',
+                devicePixelRatio: window.devicePixelRatio || 1
+            });
         }
 
         var numCats = Math.max(1, cats.length);
@@ -430,9 +427,9 @@
         var dynamicBoxDepth = Math.max(80, Math.min(110, numTramos * 20));
         var dynamicBoxHeight = 64;
 
-        // Ancho de barras proporcional
-        var barWidth = Math.max(9, Math.min(20, (dynamicBoxWidth * 0.74) / numCats));
-        var barDepth = Math.max(9, Math.min(20, (dynamicBoxDepth * 0.70) / numTramos));
+        // Ancho de barras calibrado con holgura de separación limpia (evita solapamiento de puntero entre columnas adyacentes)
+        var barWidth = Math.max(8, Math.min(18, (dynamicBoxWidth * 0.68) / numCats));
+        var barDepth = Math.max(8, Math.min(18, (dynamicBoxDepth * 0.65) / numTramos));
 
         var option = {
             backgroundColor: '#ffffff',
@@ -454,6 +451,9 @@
             },
             tooltip: {
                 show: true,
+                confine: true,
+                enterable: false,
+                extraCssText: 'pointer-events: none; z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.12); border-radius: 8px;',
                 formatter: function (params) {
                     var d = params.data;
                     if (!d) return '';
@@ -554,8 +554,8 @@
                     metalness: 0.12
                 },
                 barSize: [barWidth, barDepth],
-                bevelSize: 0.35,
-                bevelSegments: 3,
+                bevelSize: 0.05,
+                bevelSegments: 1,
                 emphasis: {
                     label: { show: false },
                     itemStyle: { color: '#f59e0b' }
@@ -572,6 +572,13 @@
             myChart.setOption(option, true);
             myChart.resize();
         }
+
+        setTimeout(function () {
+            if (myChart) myChart.resize();
+        }, 120);
+        setTimeout(function () {
+            if (myChart) myChart.resize();
+        }, 300);
 
         return myChart;
     };
@@ -676,7 +683,15 @@
                 if (isModal || $('#mPopUp').hasClass('in')) {
                     window.renderEChartsMatrix3D('echartsContainerModalCartera', chart);
                 }
-            }, 60);
+            }, 80);
+            setTimeout(function () {
+                if (typeof echarts !== 'undefined') {
+                    var c1 = echarts.getInstanceByDom(document.getElementById('echartsContainerCartera'));
+                    if (c1) c1.resize();
+                    var c2 = echarts.getInstanceByDom(document.getElementById('echartsContainerModalCartera'));
+                    if (c2) c2.resize();
+                }
+            }, 250);
 
             return;
         }
