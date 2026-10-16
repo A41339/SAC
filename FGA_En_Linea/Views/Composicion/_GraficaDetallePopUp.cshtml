@@ -7,22 +7,23 @@
             chart: {
                 options3d: {
                     enabled: true,
-                    alpha: 12,
+                    alpha: 0,
                     beta: 14,
-                    depth: 45,
-                    viewDistance: 25
+                    depth: 35,
+                    viewDistance: 100,
+                    fitToPlot: true
                 }
             },
             plotOptions: {
                 column: {
-                    depth: 35,
-                    edgeColor: 'rgba(0, 0, 0, 0.12)',
+                    depth: 30,
+                    edgeColor: 'rgba(0, 0, 0, 0.15)',
                     edgeWidth: 1,
                     groupZPadding: 10
                 },
                 bar: {
-                    depth: 30,
-                    edgeColor: 'rgba(0, 0, 0, 0.12)',
+                    depth: 25,
+                    edgeColor: 'rgba(0, 0, 0, 0.15)',
                     edgeWidth: 1
                 },
                 line: {
@@ -111,8 +112,8 @@
             </a>
         </div>
     </div>
-    <div style="padding: 10px 14px 6px 14px; max-width: 100%;">
-        <div id="container" style="width: 100%; max-width: 100%;">
+    <div style="padding: 10px 14px 6px 14px; width: 100%; box-sizing: border-box;">
+        <div id="container" style="width: 100%; min-width: 100%; box-sizing: border-box;">
             @(Model.detalle)
         </div>
     </div>
@@ -340,21 +341,22 @@
                     chart: {
                         options3d: {
                             enabled: is3D,
-                            alpha: 12,
+                            alpha: 0,
                             beta: 14,
-                            depth: 45,
-                            viewDistance: 25
+                            depth: 35,
+                            viewDistance: 100,
+                            fitToPlot: true
                         }
                     },
                     plotOptions: {
                         column: {
-                            depth: is3D ? 35 : 0,
+                            depth: is3D ? 30 : 0,
                             edgeColor: is3D ? 'rgba(0, 0, 0, 0.15)' : 'none',
                             edgeWidth: is3D ? 1 : 0,
                             groupZPadding: is3D ? 10 : 0
                         },
                         bar: {
-                            depth: is3D ? 30 : 0,
+                            depth: is3D ? 25 : 0,
                             edgeColor: is3D ? 'rgba(0, 0, 0, 0.15)' : 'none',
                             edgeWidth: is3D ? 1 : 0
                         },
@@ -426,6 +428,12 @@
                 }
 
                 chart.redraw();
+                try {
+                    chart.reflow();
+                    if (typeof chart.setSize === 'function') {
+                        chart.setSize(null, null, false);
+                    }
+                } catch (e) {}
             }
         } catch (err) {
             console.warn('Error al aplicar perspectiva 3D/líneas:', err);
@@ -466,14 +474,28 @@
     };
 
     $(function () {
-        setTimeout(function () {
+        function asegurarAnchoCompleto() {
+            $('#grafica #container, #grafica div[id$="_container"], #grafica .highcharts-container').css({
+                'width': '100%',
+                'max-width': '100%'
+            });
             if (typeof Highcharts !== 'undefined' && Highcharts.charts) {
                 Highcharts.charts.forEach(function (c) {
-                    if (c) {
-                        window.aplicarEstilo3DCartera(c, window.cartera3DActivo);
+                    if (!c) return;
+                    var elem = (typeof c.renderTo === 'string') ? document.getElementById(c.renderTo.replace(/^#/, '')) : c.renderTo;
+                    if (elem && $(elem).closest('#grafica').length) {
+                        try {
+                            c.reflow();
+                            if (typeof c.setSize === 'function') {
+                                c.setSize(null, null, false);
+                            }
+                        } catch (e) {}
                     }
                 });
             }
-        }, 100);
+        }
+        setTimeout(asegurarAnchoCompleto, 60);
+        setTimeout(asegurarAnchoCompleto, 180);
+        setTimeout(asegurarAnchoCompleto, 400);
     });
 </script>

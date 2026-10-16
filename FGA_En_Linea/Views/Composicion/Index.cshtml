@@ -179,15 +179,25 @@
                  if (entText) {
                      $("#pSubEntidad").text(entText);
                  }
-                 setTimeout(function () {
+                 function reflowGrafica() {
                      if (typeof Highcharts !== 'undefined' && Highcharts.charts) {
                          Highcharts.charts.forEach(function (c) {
-                             if (c && c.renderTo && $(c.renderTo).closest('#grafica').length) {
-                                 try { c.reflow(); } catch (e) {}
+                             if (!c) return;
+                             var elem = (typeof c.renderTo === 'string') ? document.getElementById(c.renderTo.replace(/^#/, '')) : c.renderTo;
+                             if (elem && $(elem).closest('#grafica').length) {
+                                 try {
+                                     c.reflow();
+                                     if (typeof c.setSize === 'function') {
+                                         c.setSize(null, null, false);
+                                     }
+                                 } catch (e) {}
                              }
                          });
                      }
-                 }, 60);
+                 }
+                 setTimeout(reflowGrafica, 60);
+                 setTimeout(reflowGrafica, 180);
+                 setTimeout(reflowGrafica, 350);
              },
             error: function () {
                 $('#grafica').html('<div class="alert alert-danger" style="margin: 20px;">Ocurrió un error al cargar el gráfico.</div>');
@@ -202,8 +212,15 @@
     $(window).on('resize', function () {
         if (typeof Highcharts !== 'undefined' && Highcharts.charts) {
             Highcharts.charts.forEach(function (c) {
-                if (c && c.renderTo && $(c.renderTo).closest('#grafica').length) {
-                    try { c.reflow(); } catch (e) {}
+                if (!c) return;
+                var elem = (typeof c.renderTo === 'string') ? document.getElementById(c.renderTo.replace(/^#/, '')) : c.renderTo;
+                if (elem && $(elem).closest('#grafica').length) {
+                    try {
+                        c.reflow();
+                        if (typeof c.setSize === 'function') {
+                            c.setSize(null, null, false);
+                        }
+                    } catch (e) {}
                 }
             });
         }
