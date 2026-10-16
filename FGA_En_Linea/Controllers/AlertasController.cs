@@ -76,10 +76,11 @@ namespace FGA.Controllers
                     alertasBase = alertasBase.Where(a => a.IdEntidad == idEntidad).ToArray();
                 }
 
-                // Filtrar estrictamente por los umbrales vigentes configurados en Parámetros
-                var todos = alertasBase
-                    .Where(a => Math.Abs(a.VariacionPorcentaje) >= umbralPorc && Math.Abs(a.VariacionMonto) >= umbralMonto)
-                    .ToList();
+                // Si se consulta una entidad específica, filtrar por sus umbrales efectivos configurados
+                // Si se consulta "Todas las Cooperativas" (-1), las alertas ya fueron calificadas en BD por los umbrales de cada entidad
+                var todos = (!string.IsNullOrEmpty(idEntidad) && idEntidad != "-1" && idEntidad != FGAConstants.Entidades.Todas)
+                    ? alertasBase.Where(a => Math.Abs(a.VariacionPorcentaje) >= umbralPorc && Math.Abs(a.VariacionMonto) >= umbralMonto).ToList()
+                    : alertasBase.ToList();
 
                 var listAlertas = todos.ToList();
 
@@ -139,7 +140,7 @@ namespace FGA.Controllers
         /// Endpoint AJAX para la campana del Navbar: retorna conteo de no leídas y las 6 alertas más recientes
         /// </summary>
         [HttpGet]
-        public ActionResult GetResumenNavbar()
+        public ActionResult GetResumenNavbar(string entidad = null)
         {
             if (!Env.IsAlertasEnabled())
             {
@@ -155,14 +156,22 @@ namespace FGA.Controllers
 
             try
             {
-                string idEntidad = ResolveCurrentEntity(null, out bool esAdmin);
+                string idEntidad = ResolveCurrentEntity(entidad, out bool esAdmin);
                 if (!esAdmin && string.IsNullOrEmpty(idEntidad))
                 {
                     idEntidad = Env.GetUserInfo("identidad");
                 }
                 if (string.IsNullOrEmpty(idEntidad)) idEntidad = "-1";
 
-                ObtenerUmbralesConfigurados(out decimal umbralPorc, out decimal umbralMonto);
+                decimal umbralPorc = 0;
+                decimal umbralMonto = 0;
+                bool filtrarPorUmbralEspecifico = false;
+
+                if (!string.IsNullOrEmpty(idEntidad) && idEntidad != "-1" && idEntidad != FGAConstants.Entidades.Todas)
+                {
+                    ObtenerUmbralesEfectivos(idEntidad, out umbralPorc, out umbralMonto, out _, out _);
+                    filtrarPorUmbralEspecifico = true;
+                }
 
                 FGA_Obtener_Alertas_Financieras_Result[] rawAlertas = null;
                 var spClient = new FGA_En_Linea.SPService.SPClient();
@@ -170,8 +179,9 @@ namespace FGA.Controllers
                 {
                     rawAlertas = spClient.FGA_Obtener_Alertas_Financieras(idEntidad, false, 50);
                 }
-                catch
+                catch (Exception exSp)
                 {
+                    System.Diagnostics.Trace.TraceWarning("GetResumenNavbar WCF SPClient error: " + exSp.Message);
                     rawAlertas = new FGA_Obtener_Alertas_Financieras_Result[0];
                 }
                 finally
@@ -185,27 +195,28 @@ namespace FGA.Controllers
                     listRaw = listRaw.Where(a => a.IdEntidad == idEntidad).ToArray();
                 }
 
-                var list = listRaw
-                    .Where(a => Math.Abs(a.VariacionPorcentaje) >= umbralPorc && Math.Abs(a.VariacionMonto) >= umbralMonto)
-                    .ToList();
+                var list = filtrarPorUmbralEspecifico
+                    ? listRaw.Where(a => Math.Abs(a.VariacionPorcentaje) >= umbralPorc && Math.Abs(a.VariacionMonto) >= umbralMonto).ToList()
+                    : listRaw.ToList();
+
                 int noLeidas = list.Count(a => !a.Leido);
 
                 var items = list.Take(6).Select(a => new
                 {
                     id = a.Id,
                     cuenta = a.Cuenta,
-                    nombreCuenta = a.NombreCuenta,
+                    nombreCuenta = !string.IsNullOrEmpty(a.NombreCuenta) ? a.NombreCuenta : a.Cuenta,
                     tipo = a.TipoAlerta,
-                    titulo = a.Titulo,
+                    titulo = !string.IsNullOrEmpty(a.Titulo) ? a.Titulo : ("Variación en cuenta " + a.Cuenta),
                     mensaje = a.Mensaje,
                     leido = a.Leido,
                     montoFormato = FormatearMontoColones(a.VariacionMonto),
                     porcFormato = (a.VariacionPorcentaje >= 0 ? "+" : "") + a.VariacionPorcentaje.ToString("N1", _crCulture) + "%",
                     esPositivo = a.VariacionMonto >= 0,
                     tiempoRelativo = ObtenerTiempoRelativo(a.FechaGeneracion),
-                    entidad = a.NombreEntidad,
-                    periodoActual = a.PeriodoActual.ToString("MM/yyyy"),
-                    periodoAnterior = a.PeriodoAnterior.ToString("MM/yyyy")
+                    entidad = !string.IsNullOrEmpty(a.NombreEntidad) ? a.NombreEntidad : ("Entidad " + a.IdEntidad),
+                    periodoActual = (a.PeriodoActual != default(DateTime)) ? a.PeriodoActual.ToString("MM/yyyy") : "",
+                    periodoAnterior = (a.PeriodoAnterior != default(DateTime)) ? a.PeriodoAnterior.ToString("MM/yyyy") : ""
                 }).ToList();
 
                 return Json(new
@@ -218,6 +229,7 @@ namespace FGA.Controllers
             }
             catch (Exception ex)
             {
+                System.Diagnostics.Trace.TraceError("GetResumenNavbar error: " + ex);
                 return Json(new { success = false, message = ex.Message }, JsonRequestBehavior.AllowGet);
             }
         }
@@ -348,9 +360,9 @@ namespace FGA.Controllers
                     spClient.SafeClose();
                 }
 
-                var filtradas = (result ?? new FGA_Obtener_Alertas_Financieras_Result[0])
-                    .Where(a => Math.Abs(a.VariacionPorcentaje) >= umbralPorc && Math.Abs(a.VariacionMonto) >= umbralMonto)
-                    .ToList();
+                var filtradas = (!string.IsNullOrEmpty(idEnt) && idEnt != "-1" && idEnt != FGAConstants.Entidades.Todas)
+                    ? (result ?? new FGA_Obtener_Alertas_Financieras_Result[0]).Where(a => Math.Abs(a.VariacionPorcentaje) >= umbralPorc && Math.Abs(a.VariacionMonto) >= umbralMonto).ToList()
+                    : (result ?? new FGA_Obtener_Alertas_Financieras_Result[0]).ToList();
 
                 int total = filtradas.Count;
                 string descModo = modoMonitoreo == "SOLO_WATCHLIST" ? " [Modo: Lista de Seguimiento]" : (modoMonitoreo == "EXCLUIR_BLACKLIST" ? " [Modo: Exclusión de Cuentas]" : "");

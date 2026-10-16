@@ -694,7 +694,7 @@
 
                 // Sincronizar campana del Navbar
                 if (window.actualizarCampanaAlertas) {
-                    window.actualizarCampanaAlertas();
+                    window.actualizarCampanaAlertas($('#selectEntidad').val() || '@(ViewBag.EntidadSeleccionada ?? "")');
                 }
 
                 // Toast flotante FFC
@@ -1072,6 +1072,11 @@
     }
 
     $(document).ready(function() {
+        // Sincronizar campana del Navbar inmediatamente con el contexto activo de la vista
+        if (window.actualizarCampanaAlertas) {
+            window.actualizarCampanaAlertas($('#selectEntidad').val() || '@(ViewBag.EntidadSeleccionada ?? "")');
+        }
+
         // Búsqueda en vivo (Live Instant Search)
         $('#txtBuscarAlerta').on('keyup', function() {
             var value = $(this).val().toLowerCase().trim();

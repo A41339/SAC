@@ -2416,10 +2416,15 @@
                 // ==========================================================
                 // GESTION DE NOTIFICACIONES Y ALERTAS FINANCIERAS EN NAVBAR
                 // ==========================================================
-                function cargarAlertasNavbar() {
+                function cargarAlertasNavbar(entidadId) {
+                    var reqData = {};
+                    if (entidadId !== undefined && entidadId !== null && entidadId !== '') {
+                        reqData.entidad = entidadId;
+                    }
                     $.ajax({
                         url: '@Url.Content("~/Alertas/GetResumenNavbar")',
                         type: 'GET',
+                        data: reqData,
                         dataType: 'json',
                         cache: false,
                         success: function (res) {
