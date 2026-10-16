@@ -106,7 +106,17 @@
             <img width="28" height="28" src="@Session["Logo"]" style="border-radius: 6px; background: #ffffff; padding: 2px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); flex-shrink: 0;" />
             <h3 id="entidad" class="box-title" style="margin: 0; font-size: 14px; font-weight: 700; color: #0f172a; text-align: left;"></h3>
         </div>
-        <div style="display: flex; align-items: center; gap: 8px;">
+        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+            <div style="display: inline-flex; align-items: center; gap: 5px;">
+                <span style="font-size: 11px; font-weight: 600; color: #64748b; white-space: nowrap;"><i class="fa fa-sliders" style="color: #0284c7;"></i> Tipo:</span>
+                <select id="selTipoGraficoComposicion" onchange="window.cambiarTipoGrafico(this.value)" class="form-control" style="height: 28px; padding: 2px 8px; font-size: 11.5px; font-weight: 600; border-radius: 6px; border: 1px solid #cbd5e1; color: #0f172a; background: #ffffff; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
+                    <option value="column">📊 Columnas</option>
+                    <option value="bar">📶 Barras</option>
+                    <option value="spline">📈 Líneas</option>
+                    <option value="area">🏔️ Áreas</option>
+                    <option value="pie">🥧 Pastel / Circular</option>
+                </select>
+            </div>
             <button type="button" class="btn-toggle-3d" id="btnToggle3DComposicion" onclick="window.toggle3DCartera(this)" title="Alternar entre perspectiva 3D volumétrica y 2D clásica" style="height: 28px; padding: 0 11px; font-size: 11.5px; font-weight: 600; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid #bae6fd; background: #f0f9ff; color: #0369a1; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
                 <i class="fa fa-cube" style="color: #0284c7; font-size: 13px;"></i> <span id="lblToggle3DComposicion">Vista 3D: ON</span>
             </button>
@@ -132,7 +142,17 @@
                         <div id="pSubEntidad" style="font-size: 11.5px; color: rgba(255,255,255,0.85); font-weight: 400; margin-top: 1px;"></div>
                     </div>
                 </div>
-                <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                    <div style="display: inline-flex; align-items: center; gap: 5px;">
+                        <span style="font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.9); white-space: nowrap;"><i class="fa fa-sliders" style="color: #38bdf8;"></i> Tipo:</span>
+                        <select id="selTipoGraficoModal" onchange="window.cambiarTipoGrafico(this.value)" class="form-control" style="height: 28px; padding: 2px 8px; font-size: 11.5px; font-weight: 600; border-radius: 6px; border: 1px solid rgba(255,255,255,0.3); color: #0f172a; background: #ffffff; cursor: pointer;">
+                            <option value="column">📊 Columnas</option>
+                            <option value="bar">📶 Barras</option>
+                            <option value="spline">📈 Líneas</option>
+                            <option value="area">🏔️ Áreas</option>
+                            <option value="pie">🥧 Pastel / Circular</option>
+                        </select>
+                    </div>
                     <button type="button" class="btn-toggle-3d-modal" id="btnToggle3DModal" onclick="window.toggle3DCartera(this)" title="Alternar entre perspectiva 3D volumétrica y 2D clásica" style="height: 28px; padding: 0 11px; font-size: 11.5px; font-weight: 600; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.18); color: #ffffff; cursor: pointer; transition: all 0.2s ease;">
                         <i class="fa fa-cube" style="color: #38bdf8; font-size: 13px;"></i> <span id="lblToggle3DModal">Vista 3D: ON</span>
                     </button>
@@ -172,7 +192,9 @@
                 var elem = (typeof getHighchartsRenderElement === 'function') ? getHighchartsRenderElement(chart) : (chart.renderTo ? (typeof chart.renderTo === 'string' ? document.getElementById(chart.renderTo.replace(/^#/, '')) : chart.renderTo) : null);
                 if (elem && $(elem).closest('#mPopUp').length) {
                     chart.hasUserSize = true;
-                    if (typeof window.aplicarEstilo3DCartera === 'function') {
+                    if (typeof window.aplicarTipoAGrafico === 'function') {
+                        window.aplicarTipoAGrafico(chart, window.tipoGraficoActual);
+                    } else if (typeof window.aplicarEstilo3DCartera === 'function') {
                         window.aplicarEstilo3DCartera(chart, window.cartera3DActivo);
                     }
                     chart.reflow();
@@ -190,6 +212,15 @@
                     var chart = modalCharts[0];
 
                     function renderComposicionKpi(selectedIdx) {
+                        if (window.tipoGraficoActual === 'pie') {
+                            $('#composicionModalKpiStrip').html(
+                                '<div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px 14px; font-size: 12px; color: #475569; display: flex; align-items: center; gap: 8px;">' +
+                                '    <i class="fa fa-pie-chart" style="color: #0284c7; font-size: 14px;"></i>' +
+                                '    <span>Vista de distribución circular activa. Pasa el cursor sobre los segmentos para ver la participación porcentual.</span>' +
+                                '</div>'
+                            );
+                            return;
+                        }
                         var seriesIdx = 0;
                         if (typeof selectedIdx === 'number' && selectedIdx >= 0 && selectedIdx < chart.series.length) {
                             seriesIdx = selectedIdx;
@@ -309,6 +340,7 @@
                         });
                     }
 
+                    window.renderComposicionModalKpi = renderComposicionKpi;
                     renderComposicionKpi();
                 } catch (e) {
                     console.error(e);
@@ -316,6 +348,7 @@
             }, 180);
         }
     });
+
     function formatMillion() {
         if (typeof Highcharts !== 'undefined' && Highcharts.numberFormat) {
             var decimals = (this.value % 1 !== 0) ? 2 : 0;
@@ -333,6 +366,52 @@
     }
 
     window.cartera3DActivo = (typeof window.cartera3DActivo === 'boolean') ? window.cartera3DActivo : true;
+    window.tipoGraficoActual = window.tipoGraficoActual || 'column';
+
+    window.guardarConfiguracionOriginal = function (chart) {
+        if (!chart || chart._fgaOriginal) return;
+        var origSeries = [];
+        if (chart.series && chart.series.length > 0) {
+            chart.series.forEach(function (s, idx) {
+                var rawData = [];
+                if (s.options && s.options.data) {
+                    rawData = JSON.parse(JSON.stringify(s.options.data));
+                } else if (s.data) {
+                    rawData = s.data.map(function (pt) {
+                        if (pt && typeof pt.y === 'number') return pt.y;
+                        if (Array.isArray(pt)) return pt[1];
+                        return pt;
+                    });
+                }
+                origSeries.push({
+                    name: s.name,
+                    type: s.type || 'column',
+                    color: s.color,
+                    yAxis: (s.yAxis && s.yAxis.options && typeof s.yAxis.options.index === 'number') ? s.yAxis.options.index : 0,
+                    data: rawData,
+                    stack: (s.options && s.options.stack) ? s.options.stack : null,
+                    dashStyle: (s.options && s.options.dashStyle) ? s.options.dashStyle : null,
+                    zIndex: (s.options && s.options.zIndex !== undefined) ? s.options.zIndex : idx
+                });
+            });
+        }
+
+        var origCats = [];
+        if (chart.xAxis && chart.xAxis[0] && chart.xAxis[0].categories) {
+            origCats = chart.xAxis[0].categories.slice();
+        }
+
+        var origXTitle = (chart.xAxis && chart.xAxis[0] && chart.xAxis[0].options && chart.xAxis[0].options.title) ? chart.xAxis[0].options.title.text : null;
+        var origSubTitle = (chart.subtitle && chart.subtitle.textStr) ? chart.subtitle.textStr : '';
+
+        chart._fgaOriginal = {
+            series: origSeries,
+            categories: origCats,
+            xTitle: origXTitle,
+            subTitle: origSubTitle,
+            isPieMode: false
+        };
+    };
 
     window.aplicarEstilo3DCartera = function (chart, activo) {
         if (!chart) return;
@@ -472,6 +551,252 @@
         }
     };
 
+    window.aplicarTipoAGrafico = function (chart, tipo) {
+        if (!chart) return;
+        tipo = tipo || window.tipoGraficoActual || 'column';
+        window.guardarConfiguracionOriginal(chart);
+
+        var is3D = (typeof window.cartera3DActivo === 'boolean') ? window.cartera3DActivo : true;
+
+        if (tipo === 'pie') {
+            chart._fgaOriginal.isPieMode = true;
+
+            var pieData = [];
+            var origSeries = chart._fgaOriginal.series;
+            var origCats = chart._fgaOriginal.categories;
+
+            if (origSeries.length > 1) {
+                var seriesParaPie = origSeries.filter(function (s) {
+                    return s.type !== 'spline' && s.type !== 'line';
+                });
+                if (seriesParaPie.length === 0) seriesParaPie = origSeries;
+
+                var lastPeriodLabel = (origCats && origCats.length > 0) ? origCats[origCats.length - 1] : '';
+
+                seriesParaPie.forEach(function (s) {
+                    var val = 0;
+                    if (s.data && s.data.length > 0) {
+                        var lastPt = s.data[s.data.length - 1];
+                        if (typeof lastPt === 'number') val = lastPt;
+                        else if (lastPt && typeof lastPt.y === 'number') val = lastPt.y;
+                        else if (Array.isArray(lastPt) && typeof lastPt[1] === 'number') val = lastPt[1];
+                    }
+                    if (val > 0) {
+                        pieData.push({
+                            name: s.name,
+                            y: val,
+                            color: s.color
+                        });
+                    }
+                });
+
+                if (lastPeriodLabel) {
+                    chart.setTitle(null, { text: 'Distribución al período: ' + lastPeriodLabel, style: { fontSize: '11px', color: '#64748b' } }, false);
+                }
+            } else if (origSeries.length === 1) {
+                var s = origSeries[0];
+                var defaultColors = Highcharts.getOptions().colors || ['#0071AD', '#959595', '#6DB5CB', '#FE7235', '#B7D8DF', '#565656', '#003F6B', '#0099D6', '#FFB347', '#CFCFCF'];
+                if (s.data && origCats && origCats.length > 0) {
+                    for (var i = 0; i < origCats.length; i++) {
+                        var val = 0;
+                        var pt = s.data[i];
+                        if (typeof pt === 'number') val = pt;
+                        else if (pt && typeof pt.y === 'number') val = pt.y;
+                        else if (Array.isArray(pt) && typeof pt[1] === 'number') val = pt[1];
+
+                        if (val > 0) {
+                            pieData.push({
+                                name: origCats[i],
+                                y: val,
+                                color: defaultColors[i % defaultColors.length]
+                            });
+                        }
+                    }
+                }
+            }
+
+            while (chart.series.length > 0) {
+                chart.series[0].remove(false);
+            }
+
+            chart.update({
+                chart: {
+                    inverted: false,
+                    options3d: {
+                        enabled: is3D,
+                        alpha: is3D ? 45 : 0,
+                        beta: 0,
+                        depth: is3D ? 35 : 0
+                    }
+                },
+                xAxis: {
+                    categories: [],
+                    title: { text: null }
+                },
+                plotOptions: {
+                    pie: {
+                        allowPointSelect: true,
+                        cursor: 'pointer',
+                        depth: is3D ? 35 : 0,
+                        dataLabels: {
+                            enabled: true,
+                            format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                            style: {
+                                fontSize: '11px',
+                                fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif',
+                                textOutline: 'none',
+                                color: '#1e293b'
+                            }
+                        },
+                        showInLegend: true
+                    }
+                }
+            }, false);
+
+            chart.addSeries({
+                type: 'pie',
+                name: 'Participación',
+                data: pieData
+            }, false);
+
+            chart.redraw();
+            return;
+        }
+
+        if (chart._fgaOriginal && chart._fgaOriginal.isPieMode) {
+            chart._fgaOriginal.isPieMode = false;
+
+            while (chart.series.length > 0) {
+                chart.series[0].remove(false);
+            }
+
+            chart.update({
+                xAxis: {
+                    categories: chart._fgaOriginal.categories.slice(),
+                    title: { text: chart._fgaOriginal.xTitle }
+                }
+            }, false);
+
+            if (chart._fgaOriginal.subTitle) {
+                chart.setTitle(null, { text: chart._fgaOriginal.subTitle }, false);
+            } else {
+                chart.setTitle(null, { text: '' }, false);
+            }
+
+            chart._fgaOriginal.series.forEach(function (s) {
+                chart.addSeries({
+                    name: s.name,
+                    type: s.type,
+                    color: s.color,
+                    yAxis: s.yAxis,
+                    data: JSON.parse(JSON.stringify(s.data)),
+                    stack: s.stack,
+                    dashStyle: s.dashStyle,
+                    zIndex: s.zIndex
+                }, false);
+            });
+        }
+
+        if (tipo === 'bar') {
+            chart.update({
+                chart: {
+                    inverted: true,
+                    options3d: {
+                        enabled: is3D,
+                        alpha: is3D ? 7 : 0,
+                        beta: is3D ? -10 : 0,
+                        depth: is3D ? 35 : 0,
+                        viewDistance: 0,
+                        fitToPlot: false
+                    }
+                }
+            }, false);
+            chart.series.forEach(function (s, idx) {
+                var origType = (chart._fgaOriginal && chart._fgaOriginal.series[idx]) ? chart._fgaOriginal.series[idx].type : 'column';
+                var targetType = (origType === 'spline' || origType === 'line') ? 'spline' : 'bar';
+                s.update({ type: targetType }, false);
+            });
+        } else if (tipo === 'spline') {
+            chart.update({
+                chart: {
+                    inverted: false,
+                    options3d: { enabled: false }
+                }
+            }, false);
+            chart.series.forEach(function (s) {
+                s.update({
+                    type: 'spline',
+                    lineWidth: 4.5,
+                    marker: { enabled: true, radius: 5.5, symbol: 'circle', lineWidth: 2, lineColor: '#ffffff' }
+                }, false);
+            });
+        } else if (tipo === 'area') {
+            chart.update({
+                chart: {
+                    inverted: false,
+                    options3d: { enabled: false }
+                }
+            }, false);
+            chart.series.forEach(function (s, idx) {
+                var origType = (chart._fgaOriginal && chart._fgaOriginal.series[idx]) ? chart._fgaOriginal.series[idx].type : 'column';
+                if (origType === 'spline' || origType === 'line') {
+                    s.update({ type: 'spline', lineWidth: 4 }, false);
+                } else {
+                    s.update({
+                        type: 'areaspline',
+                        fillOpacity: 0.35,
+                        lineWidth: 3,
+                        marker: { enabled: true, radius: 4 }
+                    }, false);
+                }
+            });
+        } else {
+            // column
+            chart.update({
+                chart: {
+                    inverted: false,
+                    options3d: {
+                        enabled: is3D,
+                        alpha: is3D ? 7 : 0,
+                        beta: is3D ? -10 : 0,
+                        depth: is3D ? 35 : 0,
+                        viewDistance: 0,
+                        fitToPlot: false
+                    }
+                }
+            }, false);
+            chart.series.forEach(function (s, idx) {
+                var origType = (chart._fgaOriginal && chart._fgaOriginal.series[idx]) ? chart._fgaOriginal.series[idx].type : 'column';
+                var targetType = (origType === 'spline' || origType === 'line') ? 'spline' : 'column';
+                s.update({ type: targetType }, false);
+            });
+            if (typeof window.aplicarEstilo3DCartera === 'function') {
+                window.aplicarEstilo3DCartera(chart, is3D);
+            }
+        }
+
+        chart.redraw();
+        chart.reflow();
+    };
+
+    window.cambiarTipoGrafico = function (tipo) {
+        if (!tipo) return;
+        window.tipoGraficoActual = tipo;
+
+        $('#selTipoGraficoCartera, #selTipoGraficoComposicion, #selTipoGraficoModal').val(tipo);
+
+        if (typeof Highcharts !== 'undefined' && Highcharts.charts) {
+            Highcharts.charts.forEach(function (chart) {
+                if (!chart) return;
+                window.aplicarTipoAGrafico(chart, tipo);
+            });
+        }
+
+        if ($('#mPopUp').is(':visible') && typeof window.renderComposicionModalKpi === 'function') {
+            window.renderComposicionModalKpi();
+        }
+    };
+
     window.toggle3DCartera = function (btn) {
         window.cartera3DActivo = !window.cartera3DActivo;
         var is3D = window.cartera3DActivo;
@@ -499,7 +824,7 @@
         if (typeof Highcharts !== 'undefined' && Highcharts.charts) {
             Highcharts.charts.forEach(function (c) {
                 if (c) {
-                    window.aplicarEstilo3DCartera(c, is3D);
+                    window.aplicarTipoAGrafico(c, window.tipoGraficoActual);
                 }
             });
         }
@@ -527,7 +852,10 @@
                             if (targetWidth && targetWidth > 200) {
                                 c.setSize(targetWidth, null, false);
                             }
-                            if (typeof window.aplicarEstilo3DCartera === 'function') {
+                            window.guardarConfiguracionOriginal(c);
+                            if (window.tipoGraficoActual && window.tipoGraficoActual !== 'column') {
+                                window.aplicarTipoAGrafico(c, window.tipoGraficoActual);
+                            } else if (typeof window.aplicarEstilo3DCartera === 'function') {
                                 window.aplicarEstilo3DCartera(c, window.cartera3DActivo);
                             }
                             c.reflow();
@@ -535,6 +863,7 @@
                     }
                 });
             }
+            $('#selTipoGraficoCartera, #selTipoGraficoComposicion, #selTipoGraficoModal').val(window.tipoGraficoActual || 'column');
         }
         setTimeout(asegurarAnchoCompleto, 60);
         setTimeout(asegurarAnchoCompleto, 180);
