@@ -8,10 +8,15 @@
                 options3d: {
                     enabled: true,
                     alpha: 7,
-                    beta: -8,
+                    beta: -6,
                     depth: 35,
                     viewDistance: 500,
-                    fitToPlot: true
+                    fitToPlot: true,
+                    frame: {
+                        bottom: { size: 0, color: 'transparent' },
+                        back: { size: 0, color: 'transparent' },
+                        side: { size: 0, color: 'transparent' }
+                    }
                 }
             },
             plotOptions: {
@@ -107,12 +112,21 @@
 </script>
 
 <div class="modern-table-card" style="border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; background: #ffffff; overflow: visible;">
-    <div style="display: flex; align-items: center; justify-content: space-between; padding: 7px 14px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; border-radius: 8px 8px 0 0;">
+    <div style="display: flex; align-items: center; justify-content: space-between; padding: 7px 14px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; border-radius: 8px 8px 0 0; flex-wrap: wrap; gap: 8px;">
         <div style="display: flex; align-items: center; gap: 8px; margin: 0; padding: 0; text-align: left;">
             <img width="28" height="28" src="@Session["Logo"]" style="border-radius: 6px; background: #ffffff; padding: 2px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); flex-shrink: 0;" />
             <h3 id="entidad" class="box-title" style="margin: 0; font-size: 14px; font-weight: 700; color: #0f172a; text-align: left;"></h3>
         </div>
-        <div style="display: flex; align-items: center; gap: 8px;">
+        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+            <div style="display: inline-flex; align-items: center; gap: 5px;">
+                <span style="font-size: 11px; font-weight: 600; color: #475569; white-space: nowrap;"><i class="fa fa-sliders" style="color: #0284c7;"></i> Tipo:</span>
+                <select id="selTipoGraficoComposicion" onchange="window.cambiarTipoGrafico(this.value)" class="form-control" style="height: 28px; padding: 2px 8px; font-size: 11.5px; font-weight: 600; border-radius: 6px; border: 1px solid #cbd5e1; color: #0f172a; background: #ffffff; cursor: pointer;">
+                    <option value="column">📊 Columnas</option>
+                    <option value="spline">📈 Líneas</option>
+                    <option value="area">📉 Áreas</option>
+                    <option value="pie">🥧 Circular</option>
+                </select>
+            </div>
             <button type="button" class="btn-toggle-3d" id="btnToggle3DComposicion" onclick="window.toggle3DCartera(this)" title="Alternar entre perspectiva 3D volumétrica y 2D clásica" style="height: 28px; padding: 0 11px; font-size: 11.5px; font-weight: 600; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid #bae6fd; background: #f0f9ff; color: #0369a1; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
                 <i class="fa fa-cube" style="color: #0284c7; font-size: 13px;"></i> <span id="lblToggle3DComposicion">Vista 3D: ON</span>
             </button>
@@ -131,7 +145,7 @@
 <div class="modal fade" id="mPopUp" tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl" style="width: 96%; max-width: 1440px; margin: 10px auto;">
         <div class="modal-content" style="border-radius: 12px; overflow: hidden; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
-            <div class="modal-header" style="background: linear-gradient(135deg, #1b3866 0%, #2F5597 100%); color: #ffffff; padding: 10px 18px; display: flex; align-items: center; justify-content: space-between;">
+            <div class="modal-header" style="background: linear-gradient(135deg, #1b3866 0%, #2F5597 100%); color: #ffffff; padding: 10px 18px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
                 <div style="display: flex; align-items: center; gap: 10px; background: transparent;">
                     <img width="30" height="30" src="@Session["Logo"]" style="border-radius: 6px; background: #ffffff; padding: 2px;" />
                     <div>
@@ -139,7 +153,16 @@
                         <div id="pSubEntidad" style="font-size: 11.5px; color: rgba(255,255,255,0.85); font-weight: 400; margin-top: 1px;"></div>
                     </div>
                 </div>
-                <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                    <div style="display: inline-flex; align-items: center; gap: 5px;">
+                        <span style="font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.9); white-space: nowrap;"><i class="fa fa-sliders" style="color: #38bdf8;"></i> Tipo:</span>
+                        <select id="selTipoGraficoModal" onchange="window.cambiarTipoGrafico(this.value)" class="form-control" style="height: 28px; padding: 2px 8px; font-size: 11.5px; font-weight: 600; border-radius: 6px; border: 1px solid rgba(255,255,255,0.3); color: #0f172a; background: #ffffff; cursor: pointer;">
+                            <option value="column">📊 Columnas</option>
+                            <option value="spline">📈 Líneas</option>
+                            <option value="area">📉 Áreas</option>
+                            <option value="pie">🥧 Circular</option>
+                        </select>
+                    </div>
                     <button type="button" class="btn-toggle-3d-modal" id="btnToggle3DModal" onclick="window.toggle3DCartera(this)" title="Alternar entre perspectiva 3D volumétrica y 2D clásica" style="height: 28px; padding: 0 11px; font-size: 11.5px; font-weight: 600; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.18); color: #ffffff; cursor: pointer; transition: all 0.2s ease;">
                         <i class="fa fa-cube" style="color: #38bdf8; font-size: 13px;"></i> <span id="lblToggle3DModal">Vista 3D: ON</span>
                     </button>
@@ -170,316 +193,462 @@
         $('#mPopUp').modal('show');
     }
 
-    $('#mPopUp').on('shown.bs.modal', function () {
-        if (typeof Highcharts !== 'undefined') {
-            if (typeof resizeAllChartsInModal === 'function') {
-                resizeAllChartsInModal(this);
-            }
-            Highcharts.charts.forEach(function (chart) {
-                if (!chart) return;
-                var elem = (typeof getHighchartsRenderElement === 'function') ? getHighchartsRenderElement(chart) : (chart.renderTo ? (typeof chart.renderTo === 'string' ? document.getElementById(chart.renderTo.replace(/^#/, '')) : chart.renderTo) : null);
-                if (elem && $(elem).closest('#mPopUp').length) {
-                    chart.hasUserSize = true;
-                    if (typeof window.aplicarEstilo3DCartera === 'function') {
-                        window.aplicarEstilo3DCartera(chart, window.cartera3DActivo);
+    window.tipoGraficoActual = window.tipoGraficoActual || 'column';
+    window.cartera3DActivo = (typeof window.cartera3DActivo === 'boolean') ? window.cartera3DActivo : true;
+
+    window.coloresPlano2D = ['#0071AD', '#959595', '#6DB5CB', '#FE7235', '#B7D8DF', '#565656', '#003F6B', '#0099D6', '#FFB347', '#CFCFCF'];
+
+    window.gradientesLuz3D = [
+        {
+            linearGradient: { x1: 0, x2: 1, y1: 0, y2: 1 },
+            stops: [
+                [0, '#38bdf8'],
+                [0.55, '#0284c7'],
+                [1, '#075985']
+            ]
+        },
+        {
+            linearGradient: { x1: 0, x2: 1, y1: 0, y2: 1 },
+            stops: [
+                [0, '#cbd5e1'],
+                [0.55, '#94a3b8'],
+                [1, '#475569']
+            ]
+        },
+        {
+            linearGradient: { x1: 0, x2: 1, y1: 0, y2: 1 },
+            stops: [
+                [0, '#7dd3fc'],
+                [0.55, '#38bdf8'],
+                [1, '#0284c7']
+            ]
+        },
+        {
+            linearGradient: { x1: 0, x2: 1, y1: 0, y2: 1 },
+            stops: [
+                [0, '#fdba74'],
+                [0.55, '#f97316'],
+                [1, '#c2410c']
+            ]
+        },
+        {
+            linearGradient: { x1: 0, x2: 1, y1: 0, y2: 1 },
+            stops: [
+                [0, '#e0f2fe'],
+                [0.55, '#bae6fd'],
+                [1, '#7dd3fc']
+            ]
+        },
+        {
+            linearGradient: { x1: 0, x2: 1, y1: 0, y2: 1 },
+            stops: [
+                [0, '#94a3b8'],
+                [0.55, '#64748b'],
+                [1, '#334155']
+            ]
+        },
+        {
+            linearGradient: { x1: 0, x2: 1, y1: 0, y2: 1 },
+            stops: [
+                [0, '#1e40af'],
+                [0.55, '#1e3a8a'],
+                [1, '#172554']
+            ]
+        },
+        {
+            linearGradient: { x1: 0, x2: 1, y1: 0, y2: 1 },
+            stops: [
+                [0, '#38bdf8'],
+                [0.55, '#0071AD'],
+                [1, '#004f7a']
+            ]
+        },
+        {
+            linearGradient: { x1: 0, x2: 1, y1: 0, y2: 1 },
+            stops: [
+                [0, '#fed7aa'],
+                [0.55, '#fb923c'],
+                [1, '#ea580c']
+            ]
+        },
+        {
+            linearGradient: { x1: 0, x2: 1, y1: 0, y2: 1 },
+            stops: [
+                [0, '#e2e8f0'],
+                [0.55, '#cbd5e1'],
+                [1, '#94a3b8']
+            ]
+        }
+    ];
+
+    window.guardarConfiguracionOriginal = function (chart) {
+        if (!chart || chart._fgaOriginalConfig) return;
+        try {
+            var savedSeries = [];
+            if (chart.series && chart.series.length > 0) {
+                chart.series.forEach(function (s, idx) {
+                    var rawData = [];
+                    if (s.options && s.options.data) {
+                        rawData = JSON.parse(JSON.stringify(s.options.data));
+                    } else if (s.data) {
+                        rawData = s.data.map(function (pt) {
+                            if (typeof pt === 'number') return pt;
+                            if (pt && typeof pt.y === 'number') return pt.y;
+                            if (Array.isArray(pt)) return pt[1];
+                            return pt;
+                        });
                     }
-                    chart.reflow();
+                    var yAxisIdx = 0;
+                    if (s.yAxis) {
+                        if (typeof s.yAxis.options.index === 'number') yAxisIdx = s.yAxis.options.index;
+                        else if (s.yAxis.options.id === 'Concentracion') yAxisIdx = 0;
+                        else if (chart.yAxis && chart.yAxis.indexOf(s.yAxis) >= 0) yAxisIdx = chart.yAxis.indexOf(s.yAxis);
+                    }
+                    savedSeries.push({
+                        name: s.name,
+                        origType: (s.type === 'line' || s.type === 'spline') ? 'line' : 'column',
+                        color: s.color,
+                        data: rawData,
+                        yAxis: yAxisIdx,
+                        stack: (s.options && s.options.stack) ? s.options.stack : null,
+                        dashStyle: (s.options && s.options.dashStyle) ? s.options.dashStyle : null,
+                        zIndex: (s.options && s.options.zIndex !== undefined) ? s.options.zIndex : idx
+                    });
+                });
+            }
+
+            var savedCats = [];
+            if (chart.xAxis && chart.xAxis[0] && chart.xAxis[0].categories) {
+                savedCats = chart.xAxis[0].categories.slice();
+            }
+
+            chart._fgaOriginalConfig = {
+                series: savedSeries,
+                categories: savedCats,
+                title: (chart.title && chart.title.textStr) ? chart.title.textStr : '',
+                subTitle: (chart.subtitle && chart.subtitle.textStr) ? chart.subtitle.textStr : '',
+                isPieActive: false
+            };
+        } catch (err) {
+            console.warn('Error al guardar configuración original:', err);
+        }
+    };
+
+    window.aplicarTipoAGrafico = function (chart, tipo) {
+        if (!chart) return;
+        tipo = tipo || window.tipoGraficoActual || 'column';
+        window.tipoGraficoActual = tipo;
+
+        window.guardarConfiguracionOriginal(chart);
+        var orig = chart._fgaOriginalConfig;
+        if (!orig || !orig.series || orig.series.length === 0) return;
+
+        var is3D = (typeof window.cartera3DActivo === 'boolean') ? window.cartera3DActivo : true;
+        var isModal = false;
+        try {
+            var elem = (chart.renderTo ? (typeof chart.renderTo === 'string' ? document.getElementById(chart.renderTo.replace(/^#/, '')) : chart.renderTo) : null);
+            if (elem && $(elem).closest('#mPopUp').length) isModal = true;
+        } catch (e) {}
+
+        if (tipo === 'pie') {
+            orig.isPieActive = true;
+            var pieData = [];
+            var colSeries = orig.series.filter(function (s) { return s.origType === 'column'; });
+            if (colSeries.length === 0) colSeries = orig.series;
+
+            var lastPeriodLabel = (orig.categories && orig.categories.length > 0) ? orig.categories[orig.categories.length - 1] : '';
+
+            colSeries.forEach(function (s, pIdx) {
+                var val = 0;
+                if (s.data && s.data.length > 0) {
+                    var pt = s.data[s.data.length - 1];
+                    if (typeof pt === 'number') val = pt;
+                    else if (pt && typeof pt.y === 'number') val = pt.y;
+                    else if (Array.isArray(pt) && typeof pt[1] === 'number') val = pt[1];
+                }
+                if (val > 0) {
+                    var sliceColor = is3D ? (window.gradientesLuz3D[pIdx % window.gradientesLuz3D.length] || s.color) : (s.color || window.coloresPlano2D[pIdx % window.coloresPlano2D.length]);
+                    pieData.push({
+                        name: s.name,
+                        y: val,
+                        color: sliceColor
+                    });
                 }
             });
 
-            setTimeout(function () {
-                try {
-                    if (typeof Highcharts === 'undefined' || !Highcharts.charts) return;
-                    var modalCharts = Highcharts.charts.filter(function (c) {
-                        var elem = (typeof getHighchartsRenderElement === 'function') ? getHighchartsRenderElement(c) : (c && typeof c.renderTo === 'string' ? document.getElementById(c.renderTo.replace(/^#/, '')) : (c ? c.renderTo : null));
-                        return c && elem && $(elem).closest('#mPopUp').length && c.series && c.series.length > 0;
-                    });
-                    if (modalCharts.length === 0) return;
-                    var chart = modalCharts[0];
+            while (chart.series.length > 0) {
+                chart.series[0].remove(false);
+            }
 
-                    function renderComposicionKpi(selectedIdx) {
-                        var seriesIdx = 0;
-                        if (typeof selectedIdx === 'number' && selectedIdx >= 0 && selectedIdx < chart.series.length) {
-                            seriesIdx = selectedIdx;
-                        } else {
-                            for (var k = 0; k < chart.series.length; k++) {
-                                if (chart.series[k].type === 'spline' || chart.series[k].type === 'line') {
-                                    seriesIdx = k;
-                                    break;
-                                }
-                            }
+            chart.update({
+                chart: {
+                    inverted: false,
+                    options3d: {
+                        enabled: is3D,
+                        alpha: is3D ? 45 : 0,
+                        beta: 0,
+                        depth: is3D ? 35 : 0,
+                        viewDistance: 500,
+                        fitToPlot: true,
+                        frame: {
+                            bottom: { size: 0, color: 'transparent' },
+                            back: { size: 0, color: 'transparent' },
+                            side: { size: 0, color: 'transparent' }
                         }
-
-                        var s = chart.series[seriesIdx];
-                        if (!s || !s.data || s.data.length === 0) {
-                            for (var k = 0; k < chart.series.length; k++) {
-                                if (chart.series[k] && chart.series[k].data && chart.series[k].data.length > 0) {
-                                    seriesIdx = k;
-                                    s = chart.series[k];
-                                    break;
-                                }
-                            }
-                        }
-                        if (!s || !s.data || s.data.length === 0) return;
-
-                        var cats = (chart.xAxis && chart.xAxis[0] && chart.xAxis[0].categories) ? chart.xAxis[0].categories : [];
-                        var rawData = s.data.map(function (pt) {
-                            if (!pt) return 0;
-                            if (typeof pt.y === 'number') return pt.y;
-                            if (Array.isArray(pt) && typeof pt[1] === 'number') return pt[1];
-                            return parseFloat(pt.y) || 0;
-                        });
-
-                        if (rawData.length === 0) return;
-
-                        var p1Label = cats && cats.length > 0 ? cats[0] : 'Inicial';
-                        var p2Label = cats && cats.length > 0 ? cats[cats.length - 1] : 'Final';
-                        var v1 = rawData[0];
-                        var v2 = rawData[rawData.length - 1];
-                        var diff = v2 - v1;
-                        var sum = rawData.reduce(function (a, b) { return a + b; }, 0);
-                        var avg = sum / rawData.length;
-                        var minVal = Math.min.apply(null, rawData);
-                        var maxVal = Math.max.apply(null, rawData);
-
-                        var sName = s.name || '';
-                        var yLabelsFormatter = (s.yAxis && s.yAxis.options && s.yAxis.options.labels && s.yAxis.options.labels.formatter) ? s.yAxis.options.labels.formatter.toString() : '';
-                        var isPct = (sName.indexOf('%') > -1) ||
-                                    (s.yAxis && s.yAxis.options && s.yAxis.options.title && s.yAxis.options.title.text && (s.yAxis.options.title.text.indexOf('Porcent') > -1 || s.yAxis.options.title.text.indexOf('Concentrac') > -1)) ||
-                                    (yLabelsFormatter.indexOf('formatPercent') > -1 || yLabelsFormatter.indexOf('%') > -1);
-                        var suf = isPct ? '%' : '';
-
-                        var isPos = diff >= 0;
-                        var badgeBg = isPos ? 'background-color: #dbeafe; color: #1e40af;' : 'background-color: #ffedd5; color: #c2410c;';
-                        var sign = isPos ? '+' : '';
-
-                        var formatNum = function (n) {
-                            return (typeof n === 'number') ? n.toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : n;
-                        };
-
-                        var diffFormatted = sign + formatNum(diff) + (isPct ? ' p.p.' : suf);
-
-                        var selectorHtml = '';
-                        if (chart.series.length > 1) {
-                            selectorHtml =
-                                '<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">' +
-                                '    <div style="font-size: 12.5px; font-weight: 700; color: #1e3a8a; display: flex; align-items: center; gap: 6px;">' +
-                                '        <i class="fa fa-sliders" style="color: #2F5597;"></i> Indicadores de la serie:' +
-                                '    </div>' +
-                                '    <div>' +
-                                '        <select id="carteraComposicionModalSeriesSelect" class="form-control" style="height: 28px; font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 6px; border: 1px solid #cbd5e1; color: #1e3a8a; background: #ffffff; min-width: 240px;">';
-
-                            for (var idx = 0; idx < chart.series.length; idx++) {
-                                var ser = chart.series[idx];
-                                var isSelected = (idx === seriesIdx) ? ' selected' : '';
-                                selectorHtml += '<option value="' + idx + '"' + isSelected + '>● ' + (ser.name || ('Serie ' + (idx + 1))) + '</option>';
-                            }
-
-                            selectorHtml +=
-                                '        </select>' +
-                                '    </div>' +
-                                '</div>';
-                        }
-
-                        var stripHtml = selectorHtml +
-                            '<div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 7px 14px;">' +
-                            '    <div>' +
-                            '        <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block; line-height: 1.2;">Período Inicial (' + p1Label + ')</span>' +
-                            '        <span style="font-size: 14.5px; font-weight: 700; color: #1e3a8a;">' + formatNum(v1) + suf + '</span>' +
-                            '    </div>' +
-                            '    <div style="border-left: 1px solid #cbd5e1; padding-left: 14px;">' +
-                            '        <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block; line-height: 1.2;">Período Final (' + p2Label + ')</span>' +
-                            '        <span style="font-size: 14.5px; font-weight: 700; color: #0f172a;">' + formatNum(v2) + suf + '</span>' +
-                            '    </div>' +
-                            '    <div style="border-left: 1px solid #cbd5e1; padding-left: 14px;">' +
-                            '        <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block; line-height: 1.2;">Variación</span>' +
-                            '        <span class="badge" style="' + badgeBg + ' font-size: 11.5px; font-weight: 700; padding: 3px 8px; border-radius: 6px;">' +
-                            '            ' + diffFormatted +
-                            '        </span>' +
-                            '    </div>' +
-                            '    <div style="border-left: 1px solid #cbd5e1; padding-left: 14px;">' +
-                            '        <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block; line-height: 1.2;">Promedio</span>' +
-                            '        <span style="font-size: 14.5px; font-weight: 700; color: #334155;">' + formatNum(avg) + suf + '</span>' +
-                            '    </div>' +
-                            '    <div style="border-left: 1px solid #cbd5e1; padding-left: 14px;">' +
-                            '        <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block; line-height: 1.2;">Mín / Máx</span>' +
-                            '        <span style="font-size: 13px; font-weight: 600; color: #475569;">' +
-                            '            ' + formatNum(minVal) + suf + ' / ' + formatNum(maxVal) + suf +
-                            '        </span>' +
-                            '    </div>' +
-                            '</div>';
-
-                        $('#composicionModalKpiStrip').html(stripHtml);
-
-                        $('#carteraComposicionModalSeriesSelect').off('change').on('change', function () {
-                            var newIdx = parseInt($(this).val(), 10);
-                            renderComposicionKpi(newIdx);
-                        });
                     }
-
-                    renderComposicionKpi();
-                } catch (e) {
-                    console.error(e);
+                },
+                xAxis: {
+                    categories: [],
+                    title: { text: null }
+                },
+                plotOptions: {
+                    pie: {
+                        allowPointSelect: true,
+                        cursor: 'pointer',
+                        depth: is3D ? 35 : 0,
+                        dataLabels: {
+                            enabled: true,
+                            format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                            style: {
+                                fontSize: '11.5px',
+                                fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif',
+                                textOutline: 'none',
+                                color: '#1e293b'
+                            }
+                        },
+                        showInLegend: true
+                    }
                 }
-            }, 180);
+            }, false);
+
+            chart.addSeries({
+                type: 'pie',
+                name: 'Participación',
+                data: pieData
+            }, false);
+
+            if (lastPeriodLabel) {
+                chart.setTitle(null, { text: 'Distribución al período: ' + lastPeriodLabel, style: { fontSize: '11.5px', color: '#64748b' } }, false);
+            }
+            chart.redraw();
+            return;
         }
-    });
 
-    function formatMillion() {
-        if (typeof Highcharts !== 'undefined' && Highcharts.numberFormat) {
-            var decimals = (this.value % 1 !== 0) ? 2 : 0;
-            return Highcharts.numberFormat(this.value, decimals, '.', ',');
+        if (orig.isPieActive) {
+            orig.isPieActive = false;
+            while (chart.series.length > 0) {
+                chart.series[0].remove(false);
+            }
+            chart.update({
+                xAxis: {
+                    categories: orig.categories.slice()
+                }
+            }, false);
+
+            if (orig.subTitle) {
+                chart.setTitle(null, { text: orig.subTitle }, false);
+            } else {
+                chart.setTitle(null, { text: '' }, false);
+            }
+
+            orig.series.forEach(function (s) {
+                chart.addSeries({
+                    name: s.name,
+                    type: s.origType,
+                    color: s.color,
+                    yAxis: s.yAxis,
+                    data: JSON.parse(JSON.stringify(s.data)),
+                    stack: s.stack,
+                    dashStyle: s.dashStyle,
+                    zIndex: s.zIndex
+                }, false);
+            });
         }
-        return this.value;
-    }
 
-    function formatPercent() {
-        if (typeof Highcharts !== 'undefined' && Highcharts.numberFormat) {
-            var decimals = (this.value % 1 !== 0) ? 2 : 0;
-            return Highcharts.numberFormat(this.value, decimals, '.', ',') + ' %';
-        }
-        return this.value + " %";
-    }
-
-    window.cartera3DActivo = (typeof window.cartera3DActivo === 'boolean') ? window.cartera3DActivo : true;
-
-    window.aplicarEstilo3DCartera = function (chart, activo) {
-        if (!chart) return;
-        var is3D = (typeof activo === 'boolean') ? activo : window.cartera3DActivo;
-
-        try {
-            if (chart.options && chart.options.chart) {
-                chart.update({
-                    chart: {
-                        options3d: {
-                            enabled: is3D,
-                            alpha: is3D ? 7 : 0,
-                            beta: is3D ? -8 : 0,
-                            depth: is3D ? 35 : 0,
-                            viewDistance: 500,
-                            fitToPlot: true
-                        },
-                        spacingLeft: is3D ? 35 : 15,
-                        spacingRight: 25
+        if (tipo === 'spline') {
+            chart.update({
+                chart: {
+                    inverted: false,
+                    options3d: { enabled: false }
+                },
+                plotOptions: {
+                    series: {
+                        stacking: null
                     },
-                    xAxis: {
-                        minPadding: is3D ? 0.02 : 0.01,
-                        maxPadding: is3D ? 0.02 : 0.01
-                    },
-                    exporting: {
-                        buttons: {
-                            contextButton: {
-                                align: 'right',
-                                verticalAlign: 'top',
-                                y: -44,
-                                x: -25,
-                                width: 105
-                            }
+                    spline: {
+                        stacking: null,
+                        lineWidth: 4,
+                        marker: {
+                            enabled: true,
+                            radius: 5.5,
+                            symbol: 'circle',
+                            lineWidth: 2,
+                            lineColor: '#ffffff'
                         }
-                    },
-                    plotOptions: {
-                        column: {
-                            depth: is3D ? 30 : 0,
-                            edgeColor: is3D ? 'rgba(0, 0, 0, 0.16)' : 'none',
-                            edgeWidth: is3D ? 1.2 : 0,
-                            groupZPadding: is3D ? 6 : 0,
-                            pointPadding: is3D ? 0.10 : 0.08,
-                            groupPadding: is3D ? 0.12 : 0.12,
-                            maxPointWidth: 46
-                        },
-                        bar: {
-                            depth: is3D ? 28 : 0,
-                            edgeColor: is3D ? 'rgba(0, 0, 0, 0.16)' : 'none',
-                            edgeWidth: is3D ? 1.2 : 0,
-                            pointPadding: is3D ? 0.08 : 0.08,
-                            groupPadding: is3D ? 0.10 : 0.12,
-                            maxPointWidth: 46
-                        },
-                        line: {
-                            lineWidth: 5,
-                            linecap: 'round',
-                            linejoin: 'round',
-                            shadow: {
-                                color: 'rgba(0, 0, 0, 0.28)',
-                                offsetX: 1,
-                                offsetY: 4,
-                                width: 6,
-                                opacity: 0.25
-                            },
-                            marker: {
-                                enabled: true,
-                                radius: 6,
-                                symbol: 'circle',
-                                lineWidth: 2.5,
-                                lineColor: '#ffffff'
-                            }
-                        },
-                        spline: {
-                            lineWidth: 5,
-                            linecap: 'round',
-                            linejoin: 'round',
-                            shadow: {
-                                color: 'rgba(0, 0, 0, 0.28)',
-                                offsetX: 1,
-                                offsetY: 4,
-                                width: 6,
-                                opacity: 0.25
-                            },
-                            marker: {
-                                enabled: true,
-                                radius: 6,
-                                symbol: 'circle',
-                                lineWidth: 2.5,
-                                lineColor: '#ffffff'
-                            }
-                        }
+                    }
+                },
+                xAxis: {
+                    categories: orig.categories.slice()
+                }
+            }, false);
+
+            chart.series.forEach(function (s, idx) {
+                var origInfo = orig.series[idx] || {};
+                var origColor = origInfo.color || window.coloresPlano2D[idx % window.coloresPlano2D.length];
+                var isOrigLine = (origInfo.origType === 'line');
+                s.update({
+                    type: 'spline',
+                    stacking: null,
+                    color: origColor,
+                    lineWidth: isOrigLine ? 5 : 3.8,
+                    marker: {
+                        enabled: true,
+                        radius: isOrigLine ? 6 : 5,
+                        symbol: 'circle',
+                        lineWidth: 2,
+                        lineColor: '#ffffff'
                     }
                 }, false);
-
-                if (chart.series && chart.series.length > 0) {
-                    chart.series.forEach(function (s) {
-                        if (s.type === 'line' || s.type === 'spline') {
-                            s.update({
-                                lineWidth: 5,
-                                linecap: 'round',
-                                linejoin: 'round',
-                                shadow: {
-                                    color: 'rgba(0, 0, 0, 0.28)',
-                                    offsetX: 1,
-                                    offsetY: 4,
-                                    width: 6,
-                                    opacity: 0.25
-                                },
-                                marker: {
-                                    enabled: true,
-                                    radius: 6,
-                                    symbol: 'circle',
-                                    lineWidth: 2.5,
-                                    lineColor: '#ffffff'
-                                }
-                            }, false);
-                        }
-                    });
+            });
+        } else if (tipo === 'area') {
+            chart.update({
+                chart: {
+                    inverted: false,
+                    options3d: { enabled: false }
+                },
+                plotOptions: {
+                    areaspline: {
+                        stacking: 'normal',
+                        fillOpacity: 0.35,
+                        lineWidth: 2.5,
+                        marker: { enabled: true, radius: 4 }
+                    }
+                },
+                xAxis: {
+                    categories: orig.categories.slice()
                 }
+            }, false);
 
-                chart.redraw();
+            chart.series.forEach(function (s, idx) {
+                var origInfo = orig.series[idx] || {};
+                var origColor = origInfo.color || window.coloresPlano2D[idx % window.coloresPlano2D.length];
+                var isOrigLine = (origInfo.origType === 'line');
+                if (isOrigLine) {
+                    s.update({
+                        type: 'spline',
+                        stacking: null,
+                        color: origColor,
+                        lineWidth: 5,
+                        marker: { enabled: true, radius: 6, symbol: 'circle', lineWidth: 2.5, lineColor: '#ffffff' }
+                    }, false);
+                } else {
+                    s.update({
+                        type: 'areaspline',
+                        stacking: 'normal',
+                        color: origColor,
+                        fillOpacity: 0.35,
+                        lineWidth: 2.5,
+                        marker: { enabled: true, radius: 4 }
+                    }, false);
+                }
+            });
+        } else {
+            // column
+            chart.update({
+                chart: {
+                    inverted: false,
+                    options3d: {
+                        enabled: is3D,
+                        alpha: 7,
+                        beta: -6,
+                        depth: 35,
+                        viewDistance: 500,
+                        fitToPlot: true,
+                        frame: {
+                            bottom: { size: 0, color: 'transparent' },
+                            back: { size: 0, color: 'transparent' },
+                            side: { size: 0, color: 'transparent' }
+                        }
+                    }
+                },
+                plotOptions: {
+                    column: {
+                        stacking: 'normal',
+                        depth: is3D ? 30 : 0,
+                        edgeColor: is3D ? 'rgba(0, 0, 0, 0.16)' : 'none',
+                        edgeWidth: is3D ? 1.2 : 0,
+                        groupZPadding: 6,
+                        pointPadding: 0.08,
+                        groupPadding: 0.10,
+                        maxPointWidth: 46
+                    }
+                },
+                xAxis: {
+                    categories: orig.categories.slice()
+                }
+            }, false);
 
-                try {
-                    var containerElem = document.getElementById('container');
-                    var w = containerElem ? $(containerElem).width() : null;
-                    if (!w || w < 200) {
-                        var pW = $('#grafica').width() || $(chart.container).closest('.modern-table-card').width();
-                        if (pW && pW > 200) w = Math.floor(pW) - 30;
-                    }
-                    if (w && w > 200) {
-                        chart.setSize(w, null, false);
-                    }
-                    chart.reflow();
-                } catch (e) {}
-            }
-        } catch (err) {
-            console.warn('Error al aplicar perspectiva 3D/líneas:', err);
+            chart.series.forEach(function (s, idx) {
+                var origInfo = orig.series[idx] || {};
+                var isOrigLine = (origInfo.origType === 'line');
+                if (isOrigLine) {
+                    s.update({
+                        type: 'line',
+                        lineWidth: 5,
+                        linecap: 'round',
+                        linejoin: 'round',
+                        shadow: { color: 'rgba(0, 0, 0, 0.28)', offsetX: 1, offsetY: 4, width: 6, opacity: 0.25 },
+                        marker: { enabled: true, radius: 6, symbol: 'circle', lineWidth: 2.5, lineColor: '#ffffff' }
+                    }, false);
+                } else {
+                    var colorToUse = is3D ? (window.gradientesLuz3D[idx % window.gradientesLuz3D.length] || origInfo.color) : (origInfo.color || window.coloresPlano2D[idx % window.coloresPlano2D.length]);
+                    s.update({
+                        type: 'column',
+                        stacking: 'normal',
+                        color: colorToUse
+                    }, false);
+                }
+            });
         }
+
+        chart.redraw();
+
+        try {
+            var containerElem = document.getElementById('container');
+            var w = containerElem ? $(containerElem).width() : null;
+            if (!w || w < 200) {
+                var pW = $('#grafica').width() || $(chart.container).closest('.modern-table-card').width();
+                if (pW && pW > 200) w = Math.floor(pW) - 30;
+            }
+            if (w && w > 200) {
+                chart.setSize(w, isModal ? null : 420, false);
+            }
+            chart.reflow();
+        } catch (e) {}
+    };
+
+    window.cambiarTipoGrafico = function (tipo) {
+        window.tipoGraficoActual = tipo;
+        $('#selTipoGraficoCartera, #selTipoGraficoComposicion, #selTipoGraficoModal').val(tipo);
+
+        if (typeof Highcharts !== 'undefined' && Highcharts.charts) {
+            Highcharts.charts.forEach(function (c) {
+                if (c) {
+                    window.aplicarTipoAGrafico(c, tipo);
+                }
+            });
+        }
+
+        if ($('#mPopUp').hasClass('in') && typeof window.actualizarKpiModalComposicion === 'function') {
+            window.actualizarKpiModalComposicion();
+        }
+    };
+
+    window.aplicarEstilo3DCartera = function (chart, activo) {
+        if (typeof activo === 'boolean') {
+            window.cartera3DActivo = activo;
+        }
+        window.aplicarTipoAGrafico(chart, window.tipoGraficoActual || 'column');
     };
 
     window.toggle3DCartera = function (btn) {
@@ -509,11 +678,195 @@
         if (typeof Highcharts !== 'undefined' && Highcharts.charts) {
             Highcharts.charts.forEach(function (c) {
                 if (c) {
-                    window.aplicarEstilo3DCartera(c, is3D);
+                    window.aplicarTipoAGrafico(c, window.tipoGraficoActual || 'column');
                 }
             });
         }
     };
+
+    $('#mPopUp').on('shown.bs.modal', function () {
+        if (typeof Highcharts !== 'undefined') {
+            if (typeof resizeAllChartsInModal === 'function') {
+                resizeAllChartsInModal(this);
+            }
+            Highcharts.charts.forEach(function (chart) {
+                if (!chart) return;
+                var elem = (typeof getHighchartsRenderElement === 'function') ? getHighchartsRenderElement(chart) : (chart.renderTo ? (typeof chart.renderTo === 'string' ? document.getElementById(chart.renderTo.replace(/^#/, '')) : chart.renderTo) : null);
+                if (elem && $(elem).closest('#mPopUp').length) {
+                    chart.hasUserSize = true;
+                    window.guardarConfiguracionOriginal(chart);
+                    window.aplicarTipoAGrafico(chart, window.tipoGraficoActual);
+                    chart.reflow();
+                }
+            });
+
+            setTimeout(function () {
+                window.actualizarKpiModalComposicion();
+            }, 180);
+        }
+    });
+
+    window.actualizarKpiModalComposicion = function () {
+        try {
+            if (typeof Highcharts === 'undefined' || !Highcharts.charts) return;
+            var modalCharts = Highcharts.charts.filter(function (c) {
+                var elem = (typeof getHighchartsRenderElement === 'function') ? getHighchartsRenderElement(c) : (c && typeof c.renderTo === 'string' ? document.getElementById(c.renderTo.replace(/^#/, '')) : (c ? c.renderTo : null));
+                return c && elem && $(elem).closest('#mPopUp').length && c.series && c.series.length > 0;
+            });
+            if (modalCharts.length === 0) return;
+            var chart = modalCharts[0];
+
+            if (window.tipoGraficoActual === 'pie') {
+                $('#composicionModalKpiStrip').html(
+                    '<div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px 14px; font-size: 12px; color: #475569; display: flex; align-items: center; gap: 8px;">' +
+                    '    <i class="fa fa-pie-chart" style="color: #0284c7; font-size: 14px;"></i>' +
+                    '    <span>Vista de distribución circular activa. Pasa el cursor sobre los segmentos para ver la participación porcentual del último período.</span>' +
+                    '</div>'
+                );
+                return;
+            }
+
+            function renderComposicionKpi(selectedIdx) {
+                var seriesIdx = 0;
+                if (typeof selectedIdx === 'number' && selectedIdx >= 0 && selectedIdx < chart.series.length) {
+                    seriesIdx = selectedIdx;
+                } else {
+                    for (var k = 0; k < chart.series.length; k++) {
+                        if (chart.series[k].type === 'spline' || chart.series[k].type === 'line') {
+                            seriesIdx = k;
+                            break;
+                        }
+                    }
+                }
+
+                var s = chart.series[seriesIdx];
+                if (!s || !s.data || s.data.length === 0) {
+                    for (var k = 0; k < chart.series.length; k++) {
+                        if (chart.series[k] && chart.series[k].data && chart.series[k].data.length > 0) {
+                            seriesIdx = k;
+                            s = chart.series[k];
+                            break;
+                        }
+                    }
+                }
+                if (!s || !s.data || s.data.length === 0) return;
+
+                var cats = (chart.xAxis && chart.xAxis[0] && chart.xAxis[0].categories) ? chart.xAxis[0].categories : [];
+                var rawData = s.data.map(function (pt) {
+                    if (!pt) return 0;
+                    if (typeof pt.y === 'number') return pt.y;
+                    if (Array.isArray(pt) && typeof pt[1] === 'number') return pt[1];
+                    return parseFloat(pt.y) || 0;
+                });
+
+                if (rawData.length === 0) return;
+
+                var p1Label = cats && cats.length > 0 ? cats[0] : 'Inicial';
+                var p2Label = cats && cats.length > 0 ? cats[cats.length - 1] : 'Final';
+                var v1 = rawData[0];
+                var v2 = rawData[rawData.length - 1];
+                var diff = v2 - v1;
+                var sum = rawData.reduce(function (a, b) { return a + b; }, 0);
+                var avg = sum / rawData.length;
+                var minVal = Math.min.apply(null, rawData);
+                var maxVal = Math.max.apply(null, rawData);
+
+                var sName = s.name || '';
+                var yLabelsFormatter = (s.yAxis && s.yAxis.options && s.yAxis.options.labels && s.yAxis.options.labels.formatter) ? s.yAxis.options.labels.formatter.toString() : '';
+                var isPct = (sName.indexOf('%') > -1) ||
+                            (s.yAxis && s.yAxis.options && s.yAxis.options.title && s.yAxis.options.title.text && (s.yAxis.options.title.text.indexOf('Porcent') > -1 || s.yAxis.options.title.text.indexOf('Concentrac') > -1)) ||
+                            (yLabelsFormatter.indexOf('formatPercent') > -1 || yLabelsFormatter.indexOf('%') > -1);
+                var suf = isPct ? '%' : '';
+
+                var isPos = diff >= 0;
+                var badgeBg = isPos ? 'background-color: #dbeafe; color: #1e40af;' : 'background-color: #ffedd5; color: #c2410c;';
+                var sign = isPos ? '+' : '';
+
+                var formatNum = function (n) {
+                    return (typeof n === 'number') ? n.toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : n;
+                };
+
+                var diffFormatted = sign + formatNum(diff) + (isPct ? ' p.p.' : suf);
+
+                var selectorHtml = '';
+                if (chart.series.length > 1) {
+                    selectorHtml =
+                        '<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">' +
+                        '    <div style="font-size: 12.5px; font-weight: 700; color: #1e3a8a; display: flex; align-items: center; gap: 6px;">' +
+                        '        <i class="fa fa-sliders" style="color: #2F5597;"></i> Indicadores de la serie:' +
+                        '    </div>' +
+                        '    <div>' +
+                        '        <select id="composicionModalSeriesSelect" class="form-control" style="height: 28px; font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 6px; border: 1px solid #cbd5e1; color: #1e3a8a; background: #ffffff; min-width: 240px;">';
+
+                    for (var idx = 0; idx < chart.series.length; idx++) {
+                        var ser = chart.series[idx];
+                        var isSelected = (idx === seriesIdx) ? ' selected' : '';
+                        selectorHtml += '<option value="' + idx + '"' + isSelected + '>● ' + (ser.name || ('Serie ' + (idx + 1))) + '</option>';
+                    }
+
+                    selectorHtml +=
+                        '        </select>' +
+                        '    </div>' +
+                        '</div>';
+                }
+
+                var stripHtml = selectorHtml +
+                    '<div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 7px 14px;">' +
+                    '    <div>' +
+                    '        <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block; line-height: 1.2;">Período Inicial (' + p1Label + ')</span>' +
+                    '        <span style="font-size: 14.5px; font-weight: 700; color: #1e3a8a;">' + formatNum(v1) + suf + '</span>' +
+                    '    </div>' +
+                    '    <div style="border-left: 1px solid #cbd5e1; padding-left: 14px;">' +
+                    '        <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block; line-height: 1.2;">Período Final (' + p2Label + ')</span>' +
+                    '        <span style="font-size: 14.5px; font-weight: 700; color: #0f172a;">' + formatNum(v2) + suf + '</span>' +
+                    '    </div>' +
+                    '    <div style="border-left: 1px solid #cbd5e1; padding-left: 14px;">' +
+                    '        <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block; line-height: 1.2;">Variación</span>' +
+                    '        <span class="badge" style="' + badgeBg + ' font-size: 11.5px; font-weight: 700; padding: 3px 8px; border-radius: 6px;">' +
+                    '            ' + diffFormatted +
+                    '        </span>' +
+                    '    </div>' +
+                    '    <div style="border-left: 1px solid #cbd5e1; padding-left: 14px;">' +
+                    '        <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block; line-height: 1.2;">Promedio</span>' +
+                    '        <span style="font-size: 14.5px; font-weight: 700; color: #334155;">' + formatNum(avg) + suf + '</span>' +
+                    '    </div>' +
+                    '    <div style="border-left: 1px solid #cbd5e1; padding-left: 14px;">' +
+                    '        <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block; line-height: 1.2;">Mín / Máx</span>' +
+                    '        <span style="font-size: 13px; font-weight: 600; color: #475569;">' +
+                    '            ' + formatNum(minVal) + suf + ' / ' + formatNum(maxVal) + suf +
+                    '        </span>' +
+                    '    </div>' +
+                    '</div>';
+
+                $('#composicionModalKpiStrip').html(stripHtml);
+
+                $('#composicionModalSeriesSelect').off('change').on('change', function () {
+                    var newIdx = parseInt($(this).val(), 10);
+                    renderComposicionKpi(newIdx);
+                });
+            }
+
+            renderComposicionKpi();
+        } catch (e) {
+            console.error(e);
+        }
+    };
+
+    function formatMillion() {
+        if (typeof Highcharts !== 'undefined' && Highcharts.numberFormat) {
+            var decimals = (this.value % 1 !== 0) ? 2 : 0;
+            return Highcharts.numberFormat(this.value, decimals, '.', ',');
+        }
+        return this.value;
+    }
+
+    function formatPercent() {
+        if (typeof Highcharts !== 'undefined' && Highcharts.numberFormat) {
+            var decimals = (this.value % 1 !== 0) ? 2 : 0;
+            return Highcharts.numberFormat(this.value, decimals, '.', ',') + ' %';
+        }
+        return this.value + " %";
+    }
 
     $(function () {
         function asegurarAnchoCompleto() {
@@ -535,16 +888,18 @@
                     if (elem && $(elem).closest('#container').length) {
                         try {
                             if (targetWidth && targetWidth > 200) {
-                                c.setSize(targetWidth, null, false);
+                                c.setSize(targetWidth, 420, false);
                             }
-                            if (typeof window.aplicarEstilo3DCartera === 'function') {
-                                window.aplicarEstilo3DCartera(c, window.cartera3DActivo);
+                            window.guardarConfiguracionOriginal(c);
+                            if (typeof window.aplicarTipoAGrafico === 'function') {
+                                window.aplicarTipoAGrafico(c, window.tipoGraficoActual);
                             }
                             c.reflow();
                         } catch (e) {}
                     }
                 });
             }
+            $('#selTipoGraficoCartera, #selTipoGraficoComposicion, #selTipoGraficoModal').val(window.tipoGraficoActual || 'column');
         }
         setTimeout(asegurarAnchoCompleto, 60);
         setTimeout(asegurarAnchoCompleto, 180);
