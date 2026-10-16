@@ -1585,30 +1585,110 @@
             chartMenuObserver.observe(document.body, { childList: true, subtree: true });
         }
 
-        // Redimensionamiento y reflow global automatico de graficos Highcharts en cualquier modal al abrirse
-        $(document).on('shown.bs.modal', '.modal', function () {
+        // Redimensionamiento global garantizado de gráficos Highcharts en cualquier modal al abrirse (en todas las pantallas)
+        $(document).on('show.bs.modal shown.bs.modal', '.modal', function () {
             var $modal = $(this);
+            if (typeof Highcharts === 'undefined' || !Highcharts.charts) return;
+
+            var resizeModalCharts = function () {
+                var $body = $modal.find('.modal-body');
+                var bodyWidth = $body.width();
+                if (!bodyWidth || bodyWidth < 200) {
+                    bodyWidth = $modal.width() ? ($modal.width() - 40) : 1100;
+                }
+                var targetWidth = Math.max(bodyWidth, 600);
+
+                Highcharts.charts.forEach(function (c) {
+                    if (!c) return;
+
+                    var renderElem = null;
+                    if (c.renderTo) {
+                        if (typeof c.renderTo === 'string') {
+                            renderElem = document.getElementById(c.renderTo);
+                        } else if (c.renderTo.nodeType) {
+                            renderElem = c.renderTo;
+                        }
+                    }
+                    if (!renderElem && c.container) {
+                        renderElem = c.container.parentNode || c.container;
+                    }
+                    if (!renderElem) return;
+
+                    var isInModal = false;
+                    try {
+                        isInModal = $.contains($modal[0], renderElem) || $(renderElem).closest('.modal')[0] === $modal[0];
+                    } catch (ex) {
+                        isInModal = $(renderElem).closest($modal).length > 0;
+                    }
+
+                    if (isInModal) {
+                        try {
+                            var h = (c.options && c.options.chart && c.options.chart.height) || c.chartHeight || 480;
+                            $(renderElem).css({
+                                'width': '100%',
+                                'height': h + 'px',
+                                'min-height': h + 'px',
+                                'display': 'block'
+                            });
+
+                            var finalWidth = Math.max($(renderElem).width() || targetWidth, targetWidth);
+
+                            if (c.options && c.options.chart) {
+                                c.options.chart.width = finalWidth;
+                                c.options.chart.height = h;
+                            }
+
+                            c.setSize(finalWidth, h, false);
+                        } catch (e) {
+                            console.error('Error al redimensionar gráfico modal global:', e);
+                        }
+                    }
+                });
+                bringExportButtonsToFront();
+            };
+
+            resizeModalCharts();
+            setTimeout(resizeModalCharts, 60);
+            setTimeout(resizeModalCharts, 180);
+            setTimeout(resizeModalCharts, 350);
+            setTimeout(resizeModalCharts, 600);
+        });
+
+        $(window).on('resize', function () {
             if (typeof Highcharts !== 'undefined' && Highcharts.charts) {
-                var resizeModalCharts = function () {
-                    var $body = $modal.find('.modal-body');
+                $('.modal.in, .modal.show').each(function () {
+                    var $openModal = $(this);
+                    var $body = $openModal.find('.modal-body');
                     var bodyWidth = $body.width();
+                    if (!bodyWidth || bodyWidth < 200) {
+                        bodyWidth = $openModal.width() ? ($openModal.width() - 40) : 1100;
+                    }
+                    var targetWidth = Math.max(bodyWidth, 600);
+
                     Highcharts.charts.forEach(function (c) {
-                        if (c && c.renderTo && $(c.renderTo).closest($modal).length) {
+                        if (!c) return;
+                        var renderElem = typeof c.renderTo === 'string' ? document.getElementById(c.renderTo) : (c.renderTo || (c.container && c.container.parentNode));
+                        if (!renderElem) return;
+                        var isInModal = false;
+                        try {
+                            isInModal = $.contains($openModal[0], renderElem) || $(renderElem).closest('.modal')[0] === $openModal[0];
+                        } catch (ex) {
+                            isInModal = $(renderElem).closest($openModal).length > 0;
+                        }
+                        if (isInModal) {
                             try {
-                                $(c.renderTo).css({ 'width': '100%', 'display': 'block' });
-                                var w = $(c.renderTo).parent().width() || bodyWidth;
                                 var h = (c.options && c.options.chart && c.options.chart.height) || c.chartHeight || 480;
-                                if (w && w > 100) {
-                                    c.setSize(w, h, false);
-                                    c.reflow();
+                                $(renderElem).css({ 'width': '100%', 'height': h + 'px', 'min-height': h + 'px', 'display': 'block' });
+                                var finalW = Math.max($(renderElem).width() || targetWidth, targetWidth);
+                                if (c.options && c.options.chart) {
+                                    c.options.chart.width = finalW;
+                                    c.options.chart.height = h;
                                 }
+                                c.setSize(finalW, h, false);
                             } catch (e) {}
                         }
                     });
-                    bringExportButtonsToFront();
-                };
-                setTimeout(resizeModalCharts, 50);
-                setTimeout(resizeModalCharts, 250);
+                });
             }
         });
 
