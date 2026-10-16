@@ -344,14 +344,18 @@
                     chart: {
                         options3d: {
                             enabled: is3D,
-                            alpha: is3D ? 8 : 0,
-                            beta: is3D ? -16 : 0,
-                            depth: is3D ? 45 : 0,
+                            alpha: is3D ? 7 : 0,
+                            beta: is3D ? -10 : 0,
+                            depth: is3D ? 35 : 0,
                             viewDistance: 0,
                             fitToPlot: false
                         },
-                        spacingLeft: 15,
+                        spacingLeft: is3D ? 45 : 15,
                         spacingRight: 30
+                    },
+                    xAxis: {
+                        minPadding: is3D ? 0.02 : 0.01,
+                        maxPadding: is3D ? 0.02 : 0.01
                     },
                     exporting: {
                         buttons: {
@@ -366,19 +370,21 @@
                     },
                     plotOptions: {
                         column: {
-                            depth: is3D ? 40 : 0,
-                            edgeColor: is3D ? 'rgba(15, 23, 42, 0.28)' : 'none',
-                            edgeWidth: is3D ? 1.5 : 0,
-                            groupZPadding: is3D ? 10 : 0,
-                            pointPadding: is3D ? 0.05 : 0.08,
-                            groupPadding: is3D ? 0.08 : 0.12
+                            depth: is3D ? 30 : 0,
+                            edgeColor: is3D ? 'rgba(15, 23, 42, 0.25)' : 'none',
+                            edgeWidth: is3D ? 1.2 : 0,
+                            groupZPadding: is3D ? 8 : 0,
+                            pointPadding: is3D ? 0.12 : 0.08,
+                            groupPadding: is3D ? 0.14 : 0.12,
+                            maxPointWidth: 48
                         },
                         bar: {
-                            depth: is3D ? 35 : 0,
-                            edgeColor: is3D ? 'rgba(15, 23, 42, 0.28)' : 'none',
-                            edgeWidth: is3D ? 1.5 : 0,
-                            pointPadding: is3D ? 0.05 : 0.08,
-                            groupPadding: is3D ? 0.08 : 0.12
+                            depth: is3D ? 30 : 0,
+                            edgeColor: is3D ? 'rgba(15, 23, 42, 0.25)' : 'none',
+                            edgeWidth: is3D ? 1.2 : 0,
+                            pointPadding: is3D ? 0.10 : 0.08,
+                            groupPadding: is3D ? 0.12 : 0.12,
+                            maxPointWidth: 48
                         },
                         line: {
                             lineWidth: 5,
