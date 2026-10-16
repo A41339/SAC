@@ -371,9 +371,10 @@
         });
         if (maxVal <= 0) maxVal = 1;
 
-        // Umbral de altura mínima visible para barras con porcentajes o valores reducidos (aprox 3.5% de la altura máxima)
-        // Garantiza que cualquier barra con valor real > 0 tenga un relieve 3D nítido y visible (nunca plana o invisible)
-        var minVisible3DHeight = maxVal * 0.035;
+        // Umbral de altura mínima visible para barras con porcentajes o saldos reducidos
+        // Se establece un piso mínimo del 9% del valor máximo para que cualquier barra con valor real > 0
+        // tenga una altura 3D visible, ergonómica y bien biselada (alrededor de 20-25px en pantalla) sin perder su jerarquía relativa.
+        var minFloor = maxVal * 0.09;
 
         // 2. Construir datos en formato [xIdx, yIdx, zVal] respetando colores institucionales
         var data3D = [];
@@ -391,8 +392,15 @@
                 var pTot = periodTotals[xIdx] || 0;
                 var pct = pTot > 0 ? ((v / pTot) * 100) : 0;
 
-                // Si el valor real es mayor a 0 pero su altura sería imperceptible, se le asigna la altura mínima visible en 3D
-                var zRender = (v > 0 && v < minVisible3DHeight) ? minVisible3DHeight : v;
+                // Si tiene valor real mayor a 0 pero es pequeño, se le garantiza la altura mínima visible escalonada
+                var zRender = 0;
+                if (v > 0) {
+                    if (v < minFloor) {
+                        zRender = minFloor + ((v / minFloor) * (minFloor * 0.35));
+                    } else {
+                        zRender = v;
+                    }
+                }
 
                 data3D.push({
                     name: cat + ' - ' + s.name,
@@ -420,7 +428,7 @@
         // Dimensiones calibradas para evitar recortes al rotar en cualquier ángulo diagonal o cenital
         var dynamicBoxWidth = Math.max(240, Math.min(300, numCats * 22));
         var dynamicBoxDepth = Math.max(80, Math.min(110, numTramos * 20));
-        var dynamicBoxHeight = 58;
+        var dynamicBoxHeight = 64;
 
         // Ancho de barras proporcional
         var barWidth = Math.max(9, Math.min(20, (dynamicBoxWidth * 0.74) / numCats));
@@ -452,11 +460,14 @@
                     var valReal = (typeof d.realVal !== 'undefined') ? d.realVal : d.value[2];
                     var valFormatted = (typeof Highcharts !== 'undefined' && Highcharts.numberFormat) ? Highcharts.numberFormat(valReal, 2, '.', ',') : valReal.toFixed(2);
                     var pctFormatted = (typeof Highcharts !== 'undefined' && Highcharts.numberFormat) ? Highcharts.numberFormat(d.pct, 2, '.', ',') : d.pct.toFixed(2);
+                    var esSoloPorcentaje = (Math.abs(valReal - d.pct) < 0.05 && valReal <= 100);
                     return '<div style="padding: 6px 10px; font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif;">' +
                            '  <div style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase;">Período: ' + d.mes + '</div>' +
                            '  <div style="font-size: 13.5px; font-weight: 800; color: #1e3a8a; margin: 2px 0;">' + d.tramo + '</div>' +
-                           '  <div style="font-size: 12px; color: #0f172a;">Saldo: <b>' + valFormatted + '</b></div>' +
-                           '  <div style="font-size: 12px; color: #0284c7; font-weight: 700; margin-top: 2px;">Concentración: <b>' + pctFormatted + '%</b></div>' +
+                           (esSoloPorcentaje
+                               ? '  <div style="font-size: 12.5px; color: #0284c7; font-weight: 700; margin-top: 2px;">Porcentaje: <b>' + pctFormatted + '%</b></div>'
+                               : '  <div style="font-size: 12px; color: #0f172a;">Saldo: <b>' + valFormatted + '</b></div>' +
+                                 '  <div style="font-size: 12px; color: #0284c7; font-weight: 700; margin-top: 2px;">Concentración: <b>' + pctFormatted + '%</b></div>') +
                            '</div>';
                 }
             },
