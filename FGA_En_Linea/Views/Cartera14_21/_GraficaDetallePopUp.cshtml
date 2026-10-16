@@ -109,8 +109,8 @@
     </div>
 
     <!-- PANEL REPRODUCTOR TEMPORAL DONUT RACE 3D (PANTALLA PRINCIPAL) -->
-    <div id="donutRaceControllerCartera" style="display: none; align-items: center; justify-content: space-between; padding: 8px 14px; background: #f0f9ff; border-bottom: 1px solid #bae6fd; gap: 12px; flex-wrap: wrap;">
-        <div style="display: flex; align-items: center; gap: 8px;">
+    <div id="donutRaceControllerCartera" style="display: none; align-items: center; justify-content: space-between; padding: 7px 14px; background: #f0f9ff; border-bottom: 1px solid #bae6fd; gap: 10px; flex-wrap: wrap;">
+        <div style="display: flex; align-items: center; gap: 6px;">
             <button type="button" id="btnDonutRacePlayCartera" onclick="window.toggleDonutRacePlay()" class="btn btn-sm btn-primary" style="height: 28px; padding: 0 12px; font-size: 11.5px; font-weight: 700; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; background: #0284c7; border: none; box-shadow: 0 1px 3px rgba(2,132,199,0.3); cursor: pointer;">
                 <i class="fa fa-play"></i> <span>Reproducir</span>
             </button>
@@ -118,7 +118,14 @@
                 <i class="fa fa-step-backward"></i>
             </button>
         </div>
-        <div style="flex: 1; min-width: 200px; display: flex; align-items: center; gap: 10px;">
+        <div style="display: inline-flex; align-items: center; gap: 3px; background: #e0f2fe; padding: 2px 4px; border-radius: 6px; border: 1px solid #bae6fd;">
+            <span style="font-size: 10.5px; font-weight: 700; color: #0369a1; padding: 0 3px;"><i class="fa fa-dashboard"></i> Vel:</span>
+            <button type="button" class="btn-donut-speed" data-speed="1600" onclick="window.setDonutRaceSpeed(1600)" style="height: 22px; padding: 0 6px; font-size: 10px; font-weight: 700; border-radius: 4px; border: none; background: transparent; color: #0369a1; cursor: pointer;">0.5x</button>
+            <button type="button" class="btn-donut-speed active-speed" data-speed="950" onclick="window.setDonutRaceSpeed(950)" style="height: 22px; padding: 0 6px; font-size: 10px; font-weight: 700; border-radius: 4px; border: none; background: #0284c7; color: #ffffff; cursor: pointer;">1x</button>
+            <button type="button" class="btn-donut-speed" data-speed="600" onclick="window.setDonutRaceSpeed(600)" style="height: 22px; padding: 0 6px; font-size: 10px; font-weight: 700; border-radius: 4px; border: none; background: transparent; color: #0369a1; cursor: pointer;">1.5x</button>
+            <button type="button" class="btn-donut-speed" data-speed="350" onclick="window.setDonutRaceSpeed(350)" style="height: 22px; padding: 0 6px; font-size: 10px; font-weight: 700; border-radius: 4px; border: none; background: transparent; color: #0369a1; cursor: pointer;">2x</button>
+        </div>
+        <div style="flex: 1; min-width: 180px; display: flex; align-items: center; gap: 8px;">
             <span id="lblDonutRaceMinCartera" style="font-size: 11px; font-weight: 700; color: #64748b; white-space: nowrap;">Inicial</span>
             <input type="range" id="sliderDonutRaceCartera" min="0" max="12" step="1" value="0" oninput="window.onDonutRaceSlider(this.value)" style="flex: 1; cursor: pointer; accent-color: #0284c7; height: 6px;" />
             <span id="lblDonutRaceMaxCartera" style="font-size: 11px; font-weight: 700; color: #64748b; white-space: nowrap;">Final</span>
@@ -165,8 +172,8 @@
             </div>
 
             <!-- PANEL REPRODUCTOR TEMPORAL DONUT RACE 3D (MODAL) -->
-            <div id="donutRaceControllerModal" style="display: none; align-items: center; justify-content: space-between; padding: 8px 18px; background: #f0f9ff; border-bottom: 1px solid #bae6fd; gap: 12px; flex-wrap: wrap;">
-                <div style="display: flex; align-items: center; gap: 8px;">
+            <div id="donutRaceControllerModal" style="display: none; align-items: center; justify-content: space-between; padding: 7px 18px; background: #f0f9ff; border-bottom: 1px solid #bae6fd; gap: 10px; flex-wrap: wrap;">
+                <div style="display: flex; align-items: center; gap: 6px;">
                     <button type="button" id="btnDonutRacePlayModal" onclick="window.toggleDonutRacePlay()" class="btn btn-sm btn-primary" style="height: 28px; padding: 0 12px; font-size: 11.5px; font-weight: 700; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; background: #0284c7; border: none; box-shadow: 0 1px 3px rgba(2,132,199,0.3); cursor: pointer;">
                         <i class="fa fa-play"></i> <span>Reproducir</span>
                     </button>
@@ -174,7 +181,14 @@
                         <i class="fa fa-step-backward"></i>
                     </button>
                 </div>
-                <div style="flex: 1; min-width: 200px; display: flex; align-items: center; gap: 10px;">
+                <div style="display: inline-flex; align-items: center; gap: 3px; background: #e0f2fe; padding: 2px 4px; border-radius: 6px; border: 1px solid #bae6fd;">
+                    <span style="font-size: 10.5px; font-weight: 700; color: #0369a1; padding: 0 3px;"><i class="fa fa-dashboard"></i> Vel:</span>
+                    <button type="button" class="btn-donut-speed" data-speed="1600" onclick="window.setDonutRaceSpeed(1600)" style="height: 22px; padding: 0 6px; font-size: 10px; font-weight: 700; border-radius: 4px; border: none; background: transparent; color: #0369a1; cursor: pointer;">0.5x</button>
+                    <button type="button" class="btn-donut-speed active-speed" data-speed="950" onclick="window.setDonutRaceSpeed(950)" style="height: 22px; padding: 0 6px; font-size: 10px; font-weight: 700; border-radius: 4px; border: none; background: #0284c7; color: #ffffff; cursor: pointer;">1x</button>
+                    <button type="button" class="btn-donut-speed" data-speed="600" onclick="window.setDonutRaceSpeed(600)" style="height: 22px; padding: 0 6px; font-size: 10px; font-weight: 700; border-radius: 4px; border: none; background: transparent; color: #0369a1; cursor: pointer;">1.5x</button>
+                    <button type="button" class="btn-donut-speed" data-speed="350" onclick="window.setDonutRaceSpeed(350)" style="height: 22px; padding: 0 6px; font-size: 10px; font-weight: 700; border-radius: 4px; border: none; background: transparent; color: #0369a1; cursor: pointer;">2x</button>
+                </div>
+                <div style="flex: 1; min-width: 180px; display: flex; align-items: center; gap: 8px;">
                     <span id="lblDonutRaceMinModal" style="font-size: 11px; font-weight: 700; color: #64748b; white-space: nowrap;">Inicial</span>
                     <input type="range" id="sliderDonutRaceModal" min="0" max="12" step="1" value="0" oninput="window.onDonutRaceSlider(this.value)" style="flex: 1; cursor: pointer; accent-color: #0284c7; height: 6px;" />
                     <span id="lblDonutRaceMaxModal" style="font-size: 11px; font-weight: 700; color: #64748b; white-space: nowrap;">Final</span>
@@ -216,8 +230,66 @@
     window.donutRaceTimer = null;
     window.donutRacePeriodIdx = 0;
     window.donutRaceMaxPeriods = 12;
+    window.donutRaceSpeedMs = 950;
 
     window.coloresPlano2D = ['#0071AD', '#475569', '#0d9488', '#ea580c', '#0284c7', '#6366f1', '#1e3a8a', '#d97706', '#059669', '#64748b'];
+
+    // Paleta 3D Premium Fintech de alta vibrancia y contraste
+    window.paletaVibrante3D = [
+        '#1d4ed8', // Azul Real vibrante (Al día / Vigente)
+        '#0284c7', // Celeste Océano brillante (1 - 30 días)
+        '#f59e0b', // Ámbar Dorado (31 - 60 días)
+        '#ea580c', // Naranja Fuego (61 - 90 días)
+        '#dc2626', // Rojo Carmesí (> 90 días)
+        '#7c3aed', // Púrpura eléctrico
+        '#059669', // Verde Esmeralda
+        '#db2777', // Rosa Fucsia
+        '#475569'  // Gris neutro
+    ];
+
+    // Generador de gradiente radial 3D con reflejo especular
+    window.crearGradienteDonut3D = function (hexColor) {
+        if (!hexColor || typeof hexColor !== 'string' || hexColor.indexOf('#') !== 0) return hexColor;
+        try {
+            var ColorFn = (typeof Highcharts !== 'undefined') ? (Highcharts.color || Highcharts.Color) : null;
+            if (ColorFn) {
+                var c = ColorFn(hexColor);
+                return {
+                    radialGradient: { cx: 0.5, cy: 0.35, r: 0.72 },
+                    stops: [
+                        [0, c.brighten(0.38).get('rgb')],
+                        [0.45, hexColor],
+                        [0.85, c.brighten(-0.16).get('rgb')],
+                        [1, c.brighten(-0.28).get('rgb')]
+                    ]
+                };
+            }
+        } catch (e) {}
+        return hexColor;
+    };
+
+    window.setDonutRaceSpeed = function (speedMs) {
+        window.donutRaceSpeedMs = parseInt(speedMs, 10) || 950;
+        $('.btn-donut-speed').each(function () {
+            var s = parseInt($(this).attr('data-speed'), 10);
+            if (s === window.donutRaceSpeedMs) {
+                $(this).css({ 'background': '#0284c7', 'color': '#ffffff' });
+            } else {
+                $(this).css({ 'background': 'transparent', 'color': '#0369a1' });
+            }
+        });
+        if (window.donutRaceTimer) {
+            clearInterval(window.donutRaceTimer);
+            window.donutRaceTimer = setInterval(function () {
+                var maxP = window.donutRaceMaxPeriods || 12;
+                window.donutRacePeriodIdx++;
+                if (window.donutRacePeriodIdx > maxP) {
+                    window.donutRacePeriodIdx = 0;
+                }
+                window.actualizarPasoDonutRace(window.donutRacePeriodIdx);
+            }, window.donutRaceSpeedMs);
+        }
+    };
 
     window.guardarConfiguracionOriginal = function (chart) {
         if (!chart || chart._fgaOriginalConfig) return;
@@ -280,7 +352,7 @@
         }
     };
 
-    // Helper para extraer datos de la dona para un período específico
+    // Helper para extraer datos de la dona para un período específico con gradientes 3D
     window.obtenerDatosDonutParaPeriodo = function (chart, periodIdx) {
         var orig = chart._fgaOriginalConfig;
         if (!orig || !orig.series) return [];
@@ -297,17 +369,21 @@
                 else if (Array.isArray(pt) && typeof pt[1] === 'number') val = pt[1];
             }
             if (val > 0) {
+                var baseColor = window.paletaVibrante3D[pIdx % window.paletaVibrante3D.length];
+                var gradColor = window.crearGradienteDonut3D(baseColor);
                 result.push({
                     name: s.name,
                     y: val,
-                    color: s.color || window.coloresPlano2D[pIdx % window.coloresPlano2D.length]
+                    color: gradColor,
+                    _baseColor: baseColor,
+                    sliced: false
                 });
             }
         });
         return result;
     };
 
-    // Actualiza el paso de la animación Donut Race
+    // Actualiza el paso de la animación Donut Race con HUD central integrado
     window.actualizarPasoDonutRace = function (periodIdx) {
         periodIdx = parseInt(periodIdx, 10) || 0;
         window.donutRacePeriodIdx = periodIdx;
@@ -325,14 +401,38 @@
                 var donutData = window.obtenerDatosDonutParaPeriodo(chart, periodIdx);
 
                 if (chart.series && chart.series.length > 0 && chart.series[0].type === 'pie') {
-                    chart.series[0].setData(donutData, true, { duration: 450 });
-                    chart.setTitle(null, {
-                        useHTML: true,
-                        text: '<div style="text-align:center; font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif;">' +
-                              '  <div style="font-size: 11.5px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Evolución de Composición</div>' +
-                              '  <div style="font-size: 19px; font-weight: 800; color: #0284c7; margin-top: 1px;">' + periodLabel + '</div>' +
-                              '</div>'
-                    }, false);
+                    var animDuration = Math.max(220, Math.floor((window.donutRaceSpeedMs || 950) * 0.65));
+                    chart.series[0].setData(donutData, true, { duration: animDuration });
+
+                    // Cálculo del % Al Día para el HUD central
+                    var totalPeriodo = 0;
+                    donutData.forEach(function (d) { totalPeriodo += (d.y || 0); });
+                    var alDiaPct = 0;
+                    if (donutData.length > 0 && totalPeriodo > 0) {
+                        alDiaPct = ((donutData[0].y / totalPeriodo) * 100).toFixed(1);
+                    }
+
+                    // HUD Central Dinámico y Título Superior
+                    chart.setTitle(
+                        {
+                            useHTML: true,
+                            text: '<div style="text-align: center; font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif;">' +
+                                  '  <span style="font-size: 13.5px; font-weight: 800; color: #1e3a8a; letter-spacing: 0.5px; text-transform: uppercase;">Evolución de Composición</span>' +
+                                  '</div>'
+                        },
+                        {
+                            useHTML: true,
+                            align: 'center',
+                            verticalAlign: 'middle',
+                            y: -8,
+                            text: '<div style="text-align: center; font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif; pointer-events: none; user-select: none;">' +
+                                  '  <div style="font-size: 10px; font-weight: 800; color: #64748b; letter-spacing: 1.2px; text-transform: uppercase;">PERÍODO</div>' +
+                                  '  <div style="font-size: 24px; font-weight: 900; color: #0284c7; line-height: 1.15; margin: 2px 0; text-shadow: 0 1px 3px rgba(2,132,199,0.25);">' + periodLabel + '</div>' +
+                                  (alDiaPct > 0 ? ('  <div style="display: inline-block; padding: 2px 9px; border-radius: 12px; background: #ecfdf5; border: 1px solid #a7f3d0; color: #059669; font-size: 11px; font-weight: 800; box-shadow: 0 1px 3px rgba(0,0,0,0.06);">' + alDiaPct + '% Al Día</div>') : '') +
+                                  '</div>'
+                        },
+                        false
+                    );
                 }
             });
         }
@@ -342,7 +442,9 @@
         if (window.donutRaceTimer) return;
         var btnPlay = $('#btnDonutRacePlayCartera, #btnDonutRacePlayModal');
         btnPlay.html('<i class="fa fa-pause"></i> <span>Pausar</span>');
+        btnPlay.removeClass('btn-primary').addClass('btn-warning').css('background', '#f59e0b');
 
+        var speed = window.donutRaceSpeedMs || 950;
         window.donutRaceTimer = setInterval(function () {
             var maxP = window.donutRaceMaxPeriods || 12;
             window.donutRacePeriodIdx++;
@@ -350,7 +452,7 @@
                 window.donutRacePeriodIdx = 0;
             }
             window.actualizarPasoDonutRace(window.donutRacePeriodIdx);
-        }, 950);
+        }, speed);
     };
 
     window.pauseDonutRace = function () {
@@ -360,6 +462,7 @@
         }
         var btnPlay = $('#btnDonutRacePlayCartera, #btnDonutRacePlayModal');
         btnPlay.html('<i class="fa fa-play"></i> <span>Reproducir</span>');
+        btnPlay.removeClass('btn-warning').addClass('btn-primary').css('background', '#0284c7');
     };
 
     window.toggleDonutRacePlay = function () {
@@ -403,11 +506,18 @@
         }
 
         if (tipo === 'pie') {
-            // MODO DONUT RACE 3D
+            // MODO DONUT RACE 3D CON ALTO VOLUMEN Y RELIEVE
             var currentP = window.donutRacePeriodIdx || 0;
             var pieData = window.obtenerDatosDonutParaPeriodo(chart, currentP);
             var cats = orig.categories || [];
             var periodLabel = cats[currentP] || '';
+
+            var totalPeriodo = 0;
+            pieData.forEach(function (d) { totalPeriodo += (d.y || 0); });
+            var alDiaPct = 0;
+            if (pieData.length > 0 && totalPeriodo > 0) {
+                alDiaPct = ((pieData[0].y / totalPeriodo) * 100).toFixed(1);
+            }
 
             chart.update({
                 chart: {
@@ -415,10 +525,10 @@
                     inverted: false,
                     options3d: {
                         enabled: true,
-                        alpha: 45,
+                        alpha: 55,
                         beta: 0,
-                        depth: 35,
-                        viewDistance: 600,
+                        depth: 45,
+                        viewDistance: 500,
                         fitToPlot: true,
                         frame: {
                             bottom: { size: 0, color: 'transparent' },
@@ -433,24 +543,57 @@
                 },
                 plotOptions: {
                     pie: {
-                        innerSize: '58%',
-                        depth: 35,
+                        innerSize: '54%',
+                        depth: 45,
+                        edgeWidth: 1.5,
+                        edgeColor: 'rgba(255, 255, 255, 0.45)',
+                        slicedOffset: 16,
                         allowPointSelect: true,
                         cursor: 'pointer',
                         dataLabels: {
                             enabled: true,
-                            format: '<b>{point.name}</b>: {point.percentage:.1f} %',
-                            style: {
-                                fontSize: '11.5px',
-                                fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif',
-                                textOutline: 'none',
-                                color: '#1e293b'
+                            useHTML: true,
+                            connectorColor: 'rgba(100, 116, 139, 0.55)',
+                            connectorWidth: 1.5,
+                            connectorPadding: 6,
+                            distance: 24,
+                            formatter: function () {
+                                var baseCol = this.point._baseColor || (this.point.color && this.point.color.stops ? this.point.color.stops[1][1] : '#0f172a');
+                                return '<div style="font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif; text-shadow: 0 1px 2px rgba(255,255,255,0.9); line-height: 1.25;">' +
+                                       '  <span style="font-size: 11px; font-weight: 700; color: ' + baseCol + ';">' + this.point.name + '</span>: ' +
+                                       '  <b style="font-size: 12.5px; font-weight: 800; color: #0f172a;">' + Highcharts.numberFormat(this.point.percentage, 1) + '%</b>' +
+                                       '</div>';
                             }
                         },
                         showInLegend: true,
+                        states: {
+                            hover: {
+                                halo: { size: 10, opacity: 0.25 },
+                                brightness: 0.12
+                            }
+                        },
                         animation: {
-                            duration: 500
+                            duration: Math.max(220, Math.floor((window.donutRaceSpeedMs || 950) * 0.65))
                         }
+                    }
+                },
+                tooltip: {
+                    useHTML: true,
+                    backgroundColor: '#ffffff',
+                    borderColor: '#e2e8f0',
+                    borderRadius: 8,
+                    shadow: true,
+                    formatter: function () {
+                        var baseCol = this.point._baseColor || (this.point.color && this.point.color.stops ? this.point.color.stops[1][1] : '#0284c7');
+                        var currP = window.donutRacePeriodIdx || 0;
+                        var cCats = orig.categories || [];
+                        var curLabel = cCats[currP] || '';
+                        return '<div style="padding: 4px 6px; font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif;">' +
+                               '  <div style="font-size: 10.5px; font-weight: 700; color: #64748b; text-transform: uppercase;">' + curLabel + '</div>' +
+                               '  <div style="font-size: 13px; font-weight: 800; color: ' + baseCol + '; margin: 2px 0;">' + this.point.name + '</div>' +
+                               '  <div style="font-size: 12px; color: #0f172a;">Participación: <b>' + Highcharts.numberFormat(this.point.percentage, 1) + '%</b></div>' +
+                               (this.point.y ? ('  <div style="font-size: 11.5px; color: #475569;">Saldo: <b>$' + Highcharts.numberFormat(this.point.y, 0) + '</b></div>') : '') +
+                               '</div>';
                     }
                 }
             }, false);
@@ -461,13 +604,26 @@
                 data: pieData
             }, false);
 
-            chart.setTitle(null, {
-                useHTML: true,
-                text: '<div style="text-align:center; font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif;">' +
-                      '  <div style="font-size: 11.5px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Evolución de Composición</div>' +
-                      '  <div style="font-size: 19px; font-weight: 800; color: #0284c7; margin-top: 1px;">' + periodLabel + '</div>' +
-                      '</div>'
-            }, false);
+            chart.setTitle(
+                {
+                    useHTML: true,
+                    text: '<div style="text-align: center; font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif;">' +
+                          '  <span style="font-size: 13.5px; font-weight: 800; color: #1e3a8a; letter-spacing: 0.5px; text-transform: uppercase;">Evolución de Composición</span>' +
+                          '</div>'
+                },
+                {
+                    useHTML: true,
+                    align: 'center',
+                    verticalAlign: 'middle',
+                    y: -8,
+                    text: '<div style="text-align: center; font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif; pointer-events: none; user-select: none;">' +
+                          '  <div style="font-size: 10px; font-weight: 800; color: #64748b; letter-spacing: 1.2px; text-transform: uppercase;">PERÍODO</div>' +
+                          '  <div style="font-size: 24px; font-weight: 900; color: #0284c7; line-height: 1.15; margin: 2px 0; text-shadow: 0 1px 3px rgba(2,132,199,0.25);">' + periodLabel + '</div>' +
+                          (alDiaPct > 0 ? ('  <div style="display: inline-block; padding: 2px 9px; border-radius: 12px; background: #ecfdf5; border: 1px solid #a7f3d0; color: #059669; font-size: 11px; font-weight: 800; box-shadow: 0 1px 3px rgba(0,0,0,0.06);">' + alDiaPct + '% Al Día</div>') : '') +
+                          '</div>'
+                },
+                false
+            );
 
         } else if (tipo === 'spline') {
             // MODO LÍNEAS (TENDENCIA MULTIPERÍODO)
@@ -495,14 +651,25 @@
                 },
                 xAxis: {
                     categories: orig.categories.slice()
+                },
+                tooltip: {
+                    shared: true,
+                    useHTML: false,
+                    formatter: null
                 }
             }, false);
 
-            if (orig.subTitle) {
-                chart.setTitle(null, { text: orig.subTitle }, false);
-            } else {
-                chart.setTitle(null, { text: '' }, false);
-            }
+            chart.setTitle(
+                orig.title ? { text: orig.title } : { text: '' },
+                {
+                    useHTML: false,
+                    align: 'center',
+                    verticalAlign: null,
+                    y: null,
+                    text: orig.subTitle || ''
+                },
+                false
+            );
 
             orig.series.forEach(function (s, idx) {
                 var isOrigLine = (s.origType === 'line');
@@ -551,14 +718,25 @@
                 },
                 xAxis: {
                     categories: orig.categories.slice()
+                },
+                tooltip: {
+                    shared: true,
+                    useHTML: false,
+                    formatter: null
                 }
             }, false);
 
-            if (orig.subTitle) {
-                chart.setTitle(null, { text: orig.subTitle }, false);
-            } else {
-                chart.setTitle(null, { text: '' }, false);
-            }
+            chart.setTitle(
+                orig.title ? { text: orig.title } : { text: '' },
+                {
+                    useHTML: false,
+                    align: 'center',
+                    verticalAlign: null,
+                    y: null,
+                    text: orig.subTitle || ''
+                },
+                false
+            );
 
             orig.series.forEach(function (s, idx) {
                 var isOrigLine = (s.origType === 'line');
@@ -616,14 +794,25 @@
                 },
                 xAxis: {
                     categories: orig.categories.slice()
+                },
+                tooltip: {
+                    shared: true,
+                    useHTML: false,
+                    formatter: null
                 }
             }, false);
 
-            if (orig.subTitle) {
-                chart.setTitle(null, { text: orig.subTitle }, false);
-            } else {
-                chart.setTitle(null, { text: '' }, false);
-            }
+            chart.setTitle(
+                orig.title ? { text: orig.title } : { text: '' },
+                {
+                    useHTML: false,
+                    align: 'center',
+                    verticalAlign: null,
+                    y: null,
+                    text: orig.subTitle || ''
+                },
+                false
+            );
 
             orig.series.forEach(function (s, idx) {
                 var isOrigLine = (s.origType === 'line');
