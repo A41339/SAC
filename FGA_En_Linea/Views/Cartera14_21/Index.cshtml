@@ -127,15 +127,19 @@
                  }
                  function reflowGrafica() {
                      if (typeof Highcharts !== 'undefined' && Highcharts.charts) {
+                         var targetWidth = $('#grafica').width() || $('#grafica').closest('.col-xs-12').width();
+                         if (targetWidth && targetWidth > 200) {
+                             targetWidth = Math.floor(targetWidth) - 24;
+                         }
                          Highcharts.charts.forEach(function (c) {
                              if (!c) return;
                              var elem = (typeof c.renderTo === 'string') ? document.getElementById(c.renderTo.replace(/^#/, '')) : c.renderTo;
                              if (elem && $(elem).closest('#grafica').length) {
                                  try {
-                                     c.reflow();
-                                     if (typeof c.setSize === 'function') {
-                                         c.setSize(null, null, false);
+                                     if (targetWidth && targetWidth > 200) {
+                                         c.setSize(targetWidth, null, false);
                                      }
+                                     c.reflow();
                                  } catch (e) {}
                              }
                          });
@@ -157,15 +161,19 @@
 
     $(window).on('resize', function () {
         if (typeof Highcharts !== 'undefined' && Highcharts.charts) {
+            var targetWidth = $('#grafica').width() || $('#grafica').closest('.col-xs-12').width();
+            if (targetWidth && targetWidth > 200) {
+                targetWidth = Math.floor(targetWidth) - 24;
+            }
             Highcharts.charts.forEach(function (c) {
                 if (!c) return;
                 var elem = (typeof c.renderTo === 'string') ? document.getElementById(c.renderTo.replace(/^#/, '')) : c.renderTo;
                 if (elem && $(elem).closest('#grafica').length) {
                     try {
-                        c.reflow();
-                        if (typeof c.setSize === 'function') {
-                            c.setSize(null, null, false);
+                        if (targetWidth && targetWidth > 200) {
+                            c.setSize(targetWidth, null, false);
                         }
+                        c.reflow();
                     } catch (e) {}
                 }
             });
