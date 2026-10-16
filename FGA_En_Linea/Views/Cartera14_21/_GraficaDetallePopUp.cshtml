@@ -651,8 +651,14 @@
         var is3D = (tipo === 'matrix3d');
         var isModal = false;
         try {
-            var elem = (chart.renderTo ? (typeof chart.renderTo === 'string' ? document.getElementById(chart.renderTo.replace(/^#/, '')) : chart.renderTo) : null);
-            if (elem && $(elem).closest('#mPopUp').length) isModal = true;
+            if (chart.container && ($(chart.container).closest('#mPopUp').length || $(chart.container).closest('#modalHighchartsContainer').length)) {
+                isModal = true;
+            } else if (chart.renderTo) {
+                var elem = (typeof chart.renderTo === 'string') ? document.getElementById(chart.renderTo.replace(/^#/, '')) : chart.renderTo;
+                if (elem && ($(elem).closest('#mPopUp').length || $(elem).closest('#modalHighchartsContainer').length)) {
+                    isModal = true;
+                }
+            }
         } catch (e) {}
 
         if (is3D) {
@@ -915,16 +921,49 @@
         chart.redraw();
 
         try {
-            var containerElem = document.getElementById('container');
-            var w = containerElem ? $(containerElem).width() : null;
+            var targetContainer = isModal ? document.getElementById('modalHighchartsContainer') : document.getElementById('container');
+            var targetH = isModal ? 580 : 420;
+            var w = targetContainer ? $(targetContainer).width() : null;
             if (!w || w < 200) {
-                var pW = $('#grafica').width() || $(chart.container).closest('.modern-table-card').width();
-                if (pW && pW > 200) w = Math.floor(pW) - 30;
+                if (isModal) {
+                    var mBody = $('#mPopUp .modal-body');
+                    w = (mBody.length && mBody.width() > 200) ? Math.floor(mBody.width()) - 36 : null;
+                } else {
+                    var pW = $('#grafica').width() || $(chart.container).closest('.modern-table-card').width();
+                    if (pW && pW > 200) w = Math.floor(pW) - 30;
+                }
+            }
+            if (!w || w < 200) {
+                if (isModal) {
+                    var mDialog = $('#mPopUp .modal-dialog');
+                    w = (mDialog.length && mDialog.width() > 200) ? Math.floor(mDialog.width()) - 60 : null;
+                }
             }
             if (w && w > 200) {
-                chart.setSize(w, isModal ? null : 420, false);
+                chart.setSize(w, targetH, false);
+            }
+            if (isModal && chart.container) {
+                $(chart.container).css({ 'width': '100%', 'height': targetH + 'px' });
             }
             chart.reflow();
+
+            setTimeout(function () {
+                try {
+                    var cElem = isModal ? document.getElementById('modalHighchartsContainer') : document.getElementById('container');
+                    var curW = cElem ? $(cElem).width() : 0;
+                    if (isModal && (!curW || curW < 300)) {
+                        var mb = $('#mPopUp .modal-body');
+                        if (mb.length && mb.width() > 300) curW = Math.floor(mb.width()) - 36;
+                    }
+                    if (curW && curW > 200) {
+                        chart.setSize(curW, targetH, false);
+                    }
+                    if (isModal && chart.container) {
+                        $(chart.container).css({ 'width': '100%', 'height': targetH + 'px' });
+                    }
+                    chart.reflow();
+                } catch (ex) {}
+            }, 60);
         } catch (e) {}
     };
 
@@ -944,6 +983,25 @@
                     window.aplicarTipoAGrafico(c, tipo);
                 }
             });
+        }
+
+        if (tipo !== 'matrix3d' && $('#mPopUp').hasClass('in')) {
+            $('#modalHighchartsContainer').show();
+            $('#echartsContainerModalCartera').hide();
+            setTimeout(function () {
+                if (typeof Highcharts !== 'undefined' && Highcharts.charts) {
+                    Highcharts.charts.forEach(function (c) {
+                        if (c && c.container && ($(c.container).closest('#mPopUp').length || $(c.container).closest('#modalHighchartsContainer').length)) {
+                            var mW = $('#modalHighchartsContainer').width() || ($('#mPopUp .modal-body').width() - 36);
+                            if (mW && mW > 200) {
+                                c.setSize(mW, 580, false);
+                            }
+                            $(c.container).css({ 'width': '100%', 'height': '580px' });
+                            c.reflow();
+                        }
+                    });
+                }
+            }, 100);
         }
 
         if ($('#mPopUp').hasClass('in') && typeof window.actualizarKpiModalCartera === 'function') {
@@ -1005,7 +1063,7 @@
             Highcharts.charts.forEach(function (chart) {
                 if (!chart) return;
                 var elem = (typeof getHighchartsRenderElement === 'function') ? getHighchartsRenderElement(chart) : (chart.renderTo ? (typeof chart.renderTo === 'string' ? document.getElementById(chart.renderTo.replace(/^#/, '')) : chart.renderTo) : null);
-                if (elem && $(elem).closest('#mPopUp').length) {
+                if ((elem && $(elem).closest('#mPopUp').length) || (chart.container && ($(chart.container).closest('#mPopUp').length || $(chart.container).closest('#modalHighchartsContainer').length))) {
                     chart.hasUserSize = true;
                     window.guardarConfiguracionOriginal(chart);
                     window.aplicarTipoAGrafico(chart, window.tipoGraficoActual);
