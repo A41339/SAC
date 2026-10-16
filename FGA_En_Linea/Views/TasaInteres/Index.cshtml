@@ -360,26 +360,41 @@
     function mDiferencialTasas() {
         $("#pSubEntidadDiferencial").text(getFilterSubtitle());
         $('#mDiferencialTasas').modal('show');
+        setTimeout(function () {
+            syncModalView('#mDiferencialTasas', '#diferencialModalKpiStrip', 'diferencialModalSeriesSelect');
+        }, 50);
     }
 
     function mTasaActiva() {
         $("#pSubEntidadActiva").text(getFilterSubtitle());
         $('#mTasaActiva').modal('show');
+        setTimeout(function () {
+            syncModalView('#mTasaActiva', '#activaModalKpiStrip', 'activaModalSeriesSelect');
+        }, 50);
     }
 
     function mTasaPasiva() {
         $("#pSubEntidadPasiva").text(getFilterSubtitle());
         $('#mTasaPasiva').modal('show');
+        setTimeout(function () {
+            syncModalView('#mTasaPasiva', '#pasivaModalKpiStrip', 'pasivaModalSeriesSelect');
+        }, 50);
     }
 
     function mTasaPonderada() {
         $("#pSubEntidadPonderada").text(getFilterSubtitle());
         $('#mTasaPonderada').modal('show');
+        setTimeout(function () {
+            syncModalView('#mTasaPonderada', '#ponderadaModalKpiStrip', 'ponderadaModalSeriesSelect');
+        }, 50);
     }
 
     function mTasaPonderadaSegmento() {
         $("#pSubEntidadSegmento").text(getFilterSubtitle());
         $('#mTasaPonderadaSegmento').modal('show');
+        setTimeout(function () {
+            syncModalView('#mTasaPonderadaSegmento', '#segmentoModalKpiStrip', 'segmentoModalSeriesSelect');
+        }, 50);
     }
 
     // Reflow charts al cambiar pestañas
@@ -393,16 +408,14 @@
         }
     });
 
-    // Helper general para renderizar el header de detalle / KPI strip en los modales
-    var modalChartMapping = {
-        '#mDiferencialTasas': { containerId: 'pMargen_container', modalVar: 'pMargen', pageVar: 'Margen', kpiStrip: '#diferencialModalKpiStrip', kpiSelect: 'diferencialModalSeriesSelect' },
-        '#mTasaActiva': { containerId: 'pTasaActiva_container', modalVar: 'pTasaActiva', pageVar: 'TasaActiva', kpiStrip: '#activaModalKpiStrip', kpiSelect: 'activaModalSeriesSelect' },
-        '#mTasaPasiva': { containerId: 'pTasaPasiva_container', modalVar: 'pTasaPasiva', pageVar: 'TasaPasiva', kpiStrip: '#pasivaModalKpiStrip', kpiSelect: 'pasivaModalSeriesSelect' },
-        '#mTasaPonderada': { containerId: 'pPonderada_container', modalVar: 'pPonderada', pageVar: 'Ponderada', kpiStrip: '#ponderadaModalKpiStrip', kpiSelect: 'ponderadaModalSeriesSelect' },
-        '#mTasaPonderadaSegmento': { containerId: 'pSegmento_container', modalVar: 'pSegmento', pageVar: 'Segmento', kpiStrip: '#segmentoModalKpiStrip', kpiSelect: 'segmentoModalSeriesSelect' }
-    };
 
-    window.modalChartOptionsCache = window.modalChartOptionsCache || {};
+    var modalChartVarMap = {
+        '#mDiferencialTasas': 'pMargen',
+        '#mTasaActiva': 'pTasaActiva',
+        '#mTasaPasiva': 'pTasaPasiva',
+        '#mTasaPonderada': 'pPonderada',
+        '#mTasaPonderadaSegmento': 'pSegmento'
+    };
 
     // Helper general para renderizar el header de detalle / KPI strip en los modales
     function renderKpiStripForModal(modalId, kpiContainerId, selectElementId) {
@@ -415,8 +428,8 @@
         var chart = null;
         if (modalCharts.length > 0) {
             chart = modalCharts[modalCharts.length - 1];
-        } else if (modalChartMapping[modalId] && window[modalChartMapping[modalId].modalVar]) {
-            chart = window[modalChartMapping[modalId].modalVar];
+        } else if (modalChartVarMap[modalId] && window[modalChartVarMap[modalId]]) {
+            chart = window[modalChartVarMap[modalId]];
         }
 
         if (!chart || !chart.series || chart.series.length === 0) return;
@@ -553,162 +566,115 @@
         renderKpi();
     }
 
-    function renderModalChartFresh(modalId) {
-        var map = modalChartMapping[modalId];
-        if (!map) return;
-        var $modal = $(modalId);
+    function resizeModalChart(modalSelector) {
+        if (typeof Highcharts === 'undefined' || !Highcharts.charts) return;
+        var $modal = $(modalSelector);
         if (!$modal.length) return;
-
-        var targetWidth = $modal.find('.modal-body').width() || 1100;
+        var $body = $modal.find('.modal-body');
+        var targetWidth = $body.width();
+        if (!targetWidth || targetWidth < 200) {
+            targetWidth = $modal.width() ? ($modal.width() - 40) : 1100;
+        }
         var targetHeight = 480;
-        var containerId = map.containerId;
-        var $container = $('#' + containerId);
-        if (!$container.length) {
-            var found = $modal.find('.modal-body div[id$="_container"]');
-            if (found.length) {
-                $container = $(found[0]);
-                containerId = $container.attr('id');
-            }
-        }
-        if (!$container.length) return;
 
-        var baseOptions = window.modalChartOptionsCache[modalId];
+        // 1. Recorrer Highcharts.charts y redimensionar los que pertenezcan a este modal
+        Highcharts.charts.forEach(function (c) {
+            if (c && c.renderTo && $(c.renderTo).closest(modalSelector).length) {
+                try {
+                    $(c.renderTo).css({
+                        'width': '100%',
+                        'height': targetHeight + 'px',
+                        'min-height': targetHeight + 'px',
+                        'display': 'block'
+                    });
 
-        if (!baseOptions) {
-            var source = window[map.modalVar] || window[map.pageVar];
-            if (!source || (!source.options && !source.userOptions)) {
-                if (typeof Highcharts !== 'undefined' && Highcharts.charts) {
-                    for (var i = 0; i < Highcharts.charts.length; i++) {
-                        var ch = Highcharts.charts[i];
-                        if (ch && (ch.options || ch.userOptions) && ch.renderTo && (ch.renderTo.id === containerId || $(ch.renderTo).closest(modalId).length)) {
-                            source = ch;
-                            break;
-                        }
+                    var containerWidth = $(c.renderTo).width() || targetWidth;
+                    var finalWidth = Math.max(containerWidth, targetWidth);
+
+                    if (c.options && c.options.chart) {
+                        c.options.chart.width = finalWidth;
+                        c.options.chart.height = targetHeight;
                     }
+
+                    c.setSize(finalWidth, targetHeight, false);
+                } catch (e) {
+                    console.error('Error al redimensionar gráfico en modal ' + modalSelector + ':', e);
                 }
             }
+        });
 
-            if (source) {
-                var srcOpts = source.userOptions || source.options;
-                if (srcOpts) {
-                    baseOptions = $.extend(true, {}, srcOpts);
-                    if (source.series && source.series.length) {
-                        baseOptions.series = baseOptions.series || [];
-                        for (var sIdx = 0; sIdx < source.series.length; sIdx++) {
-                            var ser = source.series[sIdx];
-                            if (ser && ser.options) {
-                                baseOptions.series[sIdx] = $.extend(true, {}, ser.options);
-                            }
-                        }
-                    }
-                    window.modalChartOptionsCache[modalId] = baseOptions;
-                }
-            }
-        }
-
-        if (baseOptions) {
+        // 2. Garantía por variable global directa si no fue capturado arriba
+        var varName = modalChartVarMap[modalSelector];
+        if (varName && window[varName] && typeof window[varName].setSize === 'function') {
             try {
-                if (typeof Highcharts !== 'undefined' && Highcharts.charts) {
-                    for (var j = Highcharts.charts.length - 1; j >= 0; j--) {
-                        var existing = Highcharts.charts[j];
-                        if (existing && existing.renderTo && (existing.renderTo.id === containerId || $(existing.renderTo).closest(modalId).length)) {
-                            try { existing.destroy(); } catch (e) {}
-                        }
-                    }
+                var inst = window[varName];
+                if (inst.renderTo) {
+                    $(inst.renderTo).css({
+                        'width': '100%',
+                        'height': targetHeight + 'px',
+                        'min-height': targetHeight + 'px',
+                        'display': 'block'
+                    });
                 }
-
-                $container.empty();
-                $container.css({
-                    'width': '100%',
-                    'height': targetHeight + 'px',
-                    'min-height': targetHeight + 'px',
-                    'display': 'block'
-                });
-
-                var opts = $.extend(true, {}, baseOptions);
-                opts.chart = opts.chart || {};
-                opts.chart.renderTo = containerId;
-                opts.chart.width = targetWidth;
-                opts.chart.height = targetHeight;
-                opts.chart.animation = false;
-
-                var freshChart = new Highcharts.Chart(opts);
-                window[map.modalVar] = freshChart;
-            } catch (err) {
-                console.error('Error al recrear gráfico en modal ' + modalId + ':', err);
+                var finalW = Math.max($body.width() || targetWidth, targetWidth);
+                if (inst.options && inst.options.chart) {
+                    inst.options.chart.width = finalW;
+                    inst.options.chart.height = targetHeight;
+                }
+                inst.setSize(finalW, targetHeight, false);
+            } catch (ex) {
+                console.error('Error al redimensionar variable global ' + varName + ':', ex);
             }
-        }
-
-        try {
-            renderKpiStripForModal(modalId, map.kpiStrip, map.kpiSelect);
-        } catch (e) {
-            console.error('Error al renderizar KPI strip:', e);
         }
     }
 
-    function resizeModalChart(modalSelector) {
-        renderModalChartFresh(modalSelector);
+    function syncModalView(modalId, kpiStripId, kpiSelectId) {
+        resizeModalChart(modalId);
+        try {
+            renderKpiStripForModal(modalId, kpiStripId, kpiSelectId);
+        } catch (e) {
+            console.error(e);
+        }
+        setTimeout(function () {
+            resizeModalChart(modalId);
+        }, 120);
+        setTimeout(function () {
+            resizeModalChart(modalId);
+        }, 280);
+        setTimeout(function () {
+            resizeModalChart(modalId);
+        }, 450);
     }
 
     // Modal Diferencial de Tasas
-    $('#mDiferencialTasas').on('shown.bs.modal', function () {
-        renderModalChartFresh('#mDiferencialTasas');
-        setTimeout(function () {
-            var c = window.pMargen;
-            if (c && typeof c.reflow === 'function') {
-                try { c.reflow(); } catch (e) {}
-            }
-        }, 120);
+    $('#mDiferencialTasas').on('show.bs.modal shown.bs.modal', function () {
+        syncModalView('#mDiferencialTasas', '#diferencialModalKpiStrip', 'diferencialModalSeriesSelect');
     });
 
     // Modal Tasa Activa
-    $('#mTasaActiva').on('shown.bs.modal', function () {
-        renderModalChartFresh('#mTasaActiva');
-        setTimeout(function () {
-            var c = window.pTasaActiva;
-            if (c && typeof c.reflow === 'function') {
-                try { c.reflow(); } catch (e) {}
-            }
-        }, 120);
+    $('#mTasaActiva').on('show.bs.modal shown.bs.modal', function () {
+        syncModalView('#mTasaActiva', '#activaModalKpiStrip', 'activaModalSeriesSelect');
     });
 
     // Modal Tasa Pasiva
-    $('#mTasaPasiva').on('shown.bs.modal', function () {
-        renderModalChartFresh('#mTasaPasiva');
-        setTimeout(function () {
-            var c = window.pTasaPasiva;
-            if (c && typeof c.reflow === 'function') {
-                try { c.reflow(); } catch (e) {}
-            }
-        }, 120);
+    $('#mTasaPasiva').on('show.bs.modal shown.bs.modal', function () {
+        syncModalView('#mTasaPasiva', '#pasivaModalKpiStrip', 'pasivaModalSeriesSelect');
     });
 
     // Modal Tasa Ponderada
-    $('#mTasaPonderada').on('shown.bs.modal', function () {
-        renderModalChartFresh('#mTasaPonderada');
-        setTimeout(function () {
-            var c = window.pPonderada;
-            if (c && typeof c.reflow === 'function') {
-                try { c.reflow(); } catch (e) {}
-            }
-        }, 120);
+    $('#mTasaPonderada').on('show.bs.modal shown.bs.modal', function () {
+        syncModalView('#mTasaPonderada', '#ponderadaModalKpiStrip', 'ponderadaModalSeriesSelect');
     });
 
     // Modal Tasa Ponderada Segmento
-    $('#mTasaPonderadaSegmento').on('shown.bs.modal', function () {
-        renderModalChartFresh('#mTasaPonderadaSegmento');
-        setTimeout(function () {
-            var c = window.pSegmento;
-            if (c && typeof c.reflow === 'function') {
-                try { c.reflow(); } catch (e) {}
-            }
-        }, 120);
+    $('#mTasaPonderadaSegmento').on('show.bs.modal shown.bs.modal', function () {
+        syncModalView('#mTasaPonderadaSegmento', '#segmentoModalKpiStrip', 'segmentoModalSeriesSelect');
     });
 
     $(window).on('resize', function () {
         if (typeof Highcharts !== 'undefined' && Highcharts.charts) {
             $('.modal.in, .modal.show').each(function () {
-                renderModalChartFresh('#' + this.id);
+                resizeModalChart('#' + this.id);
             });
             Highcharts.charts.forEach(function (c) {
                 if (c && c.renderTo && !$(c.renderTo).closest('.modal').length) {
