@@ -98,7 +98,7 @@ namespace FGA.Model
                         {
                             Enabled = System.Web.HttpContext.Current.Session[FGA.Utility.Utilitarios.show_ColumnDetail] is null ? false : true,
                             Format = "{point.y:,.2f}%",
-                            Style = "fontSize: '12px', fontWeight: '700', textShadow: 'none', textOutline: 'none', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'",
+                            Style = "fontSize: '12px', fontWeight: '700', color: '#ffffff', textShadow: 'none', textOutline: '1px rgba(0,0,0,0.65)', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'",
                         }
                     }
                 };
@@ -119,7 +119,7 @@ namespace FGA.Model
                         {
                             Enabled = System.Web.HttpContext.Current.Session[FGA.Utility.Utilitarios.show_ColumnDetail] is null ? false : true,
                             Format = "{point.y:,.2f}",
-                            Style = "fontSize: '12px', fontWeight: '700', textShadow: 'none', textOutline: 'none', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'",
+                            Style = "fontSize: '12px', fontWeight: '700', color: '#ffffff', textShadow: 'none', textOutline: '1px rgba(0,0,0,0.65)', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'",
                         }
                     }
                 };
@@ -140,7 +140,7 @@ namespace FGA.Model
                         {
                             Enabled = System.Web.HttpContext.Current.Session[FGA.Utility.Utilitarios.show_ColumnDetail] is null ? false : true,
                             Format = "{point.y:,.0f}",
-                            Style = "fontSize: '12px', fontWeight: '700', textShadow: 'none', textOutline: 'none', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'",
+                            Style = "fontSize: '12px', fontWeight: '700', color: '#ffffff', textShadow: 'none', textOutline: '1px rgba(0,0,0,0.65)', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'",
                         }
                     }
                 };
@@ -162,7 +162,7 @@ namespace FGA.Model
                         {
                             Enabled = System.Web.HttpContext.Current.Session[FGA.Utility.Utilitarios.show_ColumnDetail] is null ? false : true,
                             Format = "{point.y:,.2f}%",
-                            Style = "fontSize: '12px', fontWeight: '700', textShadow: 'none', textOutline: 'none', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'",
+                            Style = "fontSize: '12px', fontWeight: '700', color: '#ffffff', textShadow: 'none', textOutline: '1px rgba(0,0,0,0.65)', fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'",
                              
                         }                         
                     }
