@@ -93,14 +93,14 @@
             <div style="display: inline-flex; align-items: center; gap: 5px;">
                 <span style="font-size: 11px; font-weight: 600; color: #475569; white-space: nowrap;"><i class="fa fa-sliders" style="color: #0284c7;"></i> Tipo:</span>
                 <select id="selTipoGraficoCartera" onchange="window.cambiarTipoGrafico(this.value)" class="form-control" style="height: 28px; padding: 2px 8px; font-size: 11.5px; font-weight: 600; border-radius: 6px; border: 1px solid #cbd5e1; color: #0f172a; background: #ffffff; cursor: pointer;">
-                    <option value="column">📊 Columnas (Original)</option>
+                    <option value="column">📊 Columnas (Original 2D)</option>
+                    <option value="column3d">🏙️ Columnas 3D Isométricas</option>
                     <option value="spline">📈 Líneas (Tendencia)</option>
                     <option value="area">📉 Áreas (Concentración)</option>
-                    <option value="pie">🥧 Donut Race 3D</option>
                 </select>
             </div>
-            <button type="button" class="btn-toggle-3d" id="btnToggle3DCartera" onclick="window.toggle3DCartera(this)" title="Alternar entre la versión original y Donut Race 3D animado" style="height: 28px; padding: 0 11px; font-size: 11.5px; font-weight: 600; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid #cbd5e1; background: #f1f5f9; color: #475569; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
-                <i class="fa fa-cube" style="color: #0284c7; font-size: 13px;"></i> <span id="lblToggle3D">Vista 3D: Donut Race</span>
+            <button type="button" class="btn-toggle-3d" id="btnToggle3DCartera" onclick="window.toggle3DCartera(this)" title="Alternar vista isométrica 3D interactiva" style="height: 28px; padding: 0 11px; font-size: 11.5px; font-weight: 600; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid #cbd5e1; background: #f1f5f9; color: #475569; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
+                <i class="fa fa-cube" style="color: #0284c7; font-size: 13px;"></i> <span id="lblToggle3D">Vista 3D: Isométrica</span>
             </button>
             <a class="btn-ampliar" data-toggle="tooltip" data-placement="top" title="Ampliar gr&aacute;fico" href="javascript:mPopUp()" style="height: 28px; padding: 0 11px; font-size: 11.5px; border-radius: 6px; display: inline-flex; align-items: center; gap: 5px;">
                 <i class="fa fa-line-chart"></i> Ampliar
@@ -108,31 +108,24 @@
         </div>
     </div>
 
-    <!-- PANEL REPRODUCTOR TEMPORAL DONUT RACE 3D (PANTALLA PRINCIPAL) -->
-    <div id="donutRaceControllerCartera" style="display: none; align-items: center; justify-content: space-between; padding: 7px 14px; background: #f0f9ff; border-bottom: 1px solid #bae6fd; gap: 10px; flex-wrap: wrap;">
+    <!-- PANEL DE CONTROL 3D ISOMÉTRICO (PANTALLA PRINCIPAL) -->
+    <div id="skyscrapers3DControllerCartera" style="display: none; align-items: center; justify-content: space-between; padding: 7px 14px; background: #f0f9ff; border-bottom: 1px solid #bae6fd; gap: 10px; flex-wrap: wrap;">
         <div style="display: flex; align-items: center; gap: 6px;">
-            <button type="button" id="btnDonutRacePlayCartera" onclick="window.toggleDonutRacePlay()" class="btn btn-sm btn-primary" style="height: 28px; padding: 0 12px; font-size: 11.5px; font-weight: 700; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; background: #0284c7; border: none; box-shadow: 0 1px 3px rgba(2,132,199,0.3); cursor: pointer;">
-                <i class="fa fa-play"></i> <span>Reproducir</span>
+            <button type="button" class="btn btn-sm btn-primary btn-orbit-3d" onclick="window.toggleAutoRotar3D()" style="height: 28px; padding: 0 12px; font-size: 11.5px; font-weight: 700; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; background: #0284c7; border: none; box-shadow: 0 1px 3px rgba(2,132,199,0.3); cursor: pointer;">
+                <i class="fa fa-refresh"></i> <span>Auto-Girar 360°</span>
             </button>
-            <button type="button" onclick="window.resetDonutRace()" class="btn btn-sm btn-default" style="height: 28px; padding: 0 10px; font-size: 11.5px; font-weight: 600; border-radius: 6px; border: 1px solid #cbd5e1; background: #ffffff; color: #475569; cursor: pointer;" title="Reiniciar al inicio">
-                <i class="fa fa-step-backward"></i>
+            <button type="button" onclick="window.setPresetAngulo3D(15, 22)" class="btn btn-sm btn-default" style="height: 28px; padding: 0 10px; font-size: 11.5px; font-weight: 600; border-radius: 6px; border: 1px solid #cbd5e1; background: #ffffff; color: #475569; cursor: pointer;" title="Restablecer vista isométrica">
+                <i class="fa fa-compass"></i> Isométrica
             </button>
+            <div style="display: inline-flex; align-items: center; gap: 2px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 2px 4px;">
+                <button type="button" onclick="window.setPresetAngulo3D(8, 0)" style="height: 22px; padding: 0 7px; font-size: 10.5px; font-weight: 600; border: none; background: transparent; color: #475569; cursor: pointer; border-radius: 4px;" title="Vista frontal 3D">Frontal</button>
+                <button type="button" onclick="window.setPresetAngulo3D(18, 42)" style="height: 22px; padding: 0 7px; font-size: 10.5px; font-weight: 600; border: none; background: transparent; color: #475569; cursor: pointer; border-radius: 4px;" title="Vista diagonal 3D">Diagonal</button>
+                <button type="button" onclick="window.setPresetAngulo3D(24, 65)" style="height: 22px; padding: 0 7px; font-size: 10.5px; font-weight: 600; border: none; background: transparent; color: #475569; cursor: pointer; border-radius: 4px;" title="Vista lateral 3D">Lateral</button>
+            </div>
         </div>
-        <div style="display: inline-flex; align-items: center; gap: 3px; background: #e0f2fe; padding: 2px 4px; border-radius: 6px; border: 1px solid #bae6fd;">
-            <span style="font-size: 10.5px; font-weight: 700; color: #0369a1; padding: 0 3px;"><i class="fa fa-dashboard"></i> Vel:</span>
-            <button type="button" class="btn-donut-speed" data-speed="1600" onclick="window.setDonutRaceSpeed(1600)" style="height: 22px; padding: 0 6px; font-size: 10px; font-weight: 700; border-radius: 4px; border: none; background: transparent; color: #0369a1; cursor: pointer;">0.5x</button>
-            <button type="button" class="btn-donut-speed active-speed" data-speed="950" onclick="window.setDonutRaceSpeed(950)" style="height: 22px; padding: 0 6px; font-size: 10px; font-weight: 700; border-radius: 4px; border: none; background: #0284c7; color: #ffffff; cursor: pointer;">1x</button>
-            <button type="button" class="btn-donut-speed" data-speed="600" onclick="window.setDonutRaceSpeed(600)" style="height: 22px; padding: 0 6px; font-size: 10px; font-weight: 700; border-radius: 4px; border: none; background: transparent; color: #0369a1; cursor: pointer;">1.5x</button>
-            <button type="button" class="btn-donut-speed" data-speed="350" onclick="window.setDonutRaceSpeed(350)" style="height: 22px; padding: 0 6px; font-size: 10px; font-weight: 700; border-radius: 4px; border: none; background: transparent; color: #0369a1; cursor: pointer;">2x</button>
-        </div>
-        <div style="flex: 1; min-width: 180px; display: flex; align-items: center; gap: 8px;">
-            <span id="lblDonutRaceMinCartera" style="font-size: 11px; font-weight: 700; color: #64748b; white-space: nowrap;">Inicial</span>
-            <input type="range" id="sliderDonutRaceCartera" min="0" max="12" step="1" value="0" oninput="window.onDonutRaceSlider(this.value)" style="flex: 1; cursor: pointer; accent-color: #0284c7; height: 6px;" />
-            <span id="lblDonutRaceMaxCartera" style="font-size: 11px; font-weight: 700; color: #64748b; white-space: nowrap;">Final</span>
-        </div>
-        <div style="display: inline-flex; align-items: center; gap: 6px; background: #ffffff; border: 1px solid #bae6fd; padding: 3px 10px; border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
-            <i class="fa fa-calendar" style="color: #0284c7; font-size: 11.5px;"></i>
-            <span id="lblDonutRacePeriodoCartera" style="font-size: 12px; font-weight: 800; color: #0369a1;">Período actual</span>
+        <div style="display: inline-flex; align-items: center; gap: 6px; background: #ffffff; border: 1px solid #bae6fd; padding: 4px 10px; border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
+            <i class="fa fa-hand-pointer-o" style="color: #0284c7; font-size: 12px;"></i>
+            <span style="font-size: 11.5px; font-weight: 600; color: #0369a1;">Arrastra sobre el gráfico para rotar libremente en 3D</span>
         </div>
     </div>
 
@@ -158,44 +151,37 @@
                     <div style="display: inline-flex; align-items: center; gap: 5px;">
                         <span style="font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.9); white-space: nowrap;"><i class="fa fa-sliders" style="color: #38bdf8;"></i> Tipo:</span>
                         <select id="selTipoGraficoModal" onchange="window.cambiarTipoGrafico(this.value)" class="form-control" style="height: 28px; padding: 2px 8px; font-size: 11.5px; font-weight: 600; border-radius: 6px; border: 1px solid rgba(255,255,255,0.3); color: #0f172a; background: #ffffff; cursor: pointer;">
-                            <option value="column">📊 Columnas (Original)</option>
+                            <option value="column">📊 Columnas (Original 2D)</option>
+                            <option value="column3d">🏙️ Columnas 3D Isométricas</option>
                             <option value="spline">📈 Líneas (Tendencia)</option>
                             <option value="area">📉 Áreas (Concentración)</option>
-                            <option value="pie">🥧 Donut Race 3D</option>
                         </select>
                     </div>
-                    <button type="button" class="btn-toggle-3d-modal" id="btnToggle3DModal" onclick="window.toggle3DCartera(this)" title="Alternar entre la versión original y Donut Race 3D animado" style="height: 28px; padding: 0 11px; font-size: 11.5px; font-weight: 600; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.18); color: #ffffff; cursor: pointer; transition: all 0.2s ease;">
-                        <i class="fa fa-cube" style="color: #38bdf8; font-size: 13px;"></i> <span id="lblToggle3DModal">Vista 3D: Donut Race</span>
+                    <button type="button" class="btn-toggle-3d-modal" id="btnToggle3DModal" onclick="window.toggle3DCartera(this)" title="Alternar vista isométrica 3D interactiva" style="height: 28px; padding: 0 11px; font-size: 11.5px; font-weight: 600; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.18); color: #ffffff; cursor: pointer; transition: all 0.2s ease;">
+                        <i class="fa fa-cube" style="color: #38bdf8; font-size: 13px;"></i> <span id="lblToggle3DModal">Vista 3D: Isométrica</span>
                     </button>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: #ffffff !important; opacity: 0.9; font-size: 22px; line-height: 1;"><span aria-hidden="true">&times;</span></button>
                 </div>
             </div>
 
-            <!-- PANEL REPRODUCTOR TEMPORAL DONUT RACE 3D (MODAL) -->
-            <div id="donutRaceControllerModal" style="display: none; align-items: center; justify-content: space-between; padding: 7px 18px; background: #f0f9ff; border-bottom: 1px solid #bae6fd; gap: 10px; flex-wrap: wrap;">
+            <!-- PANEL DE CONTROL 3D ISOMÉTRICO (MODAL) -->
+            <div id="skyscrapers3DControllerModal" style="display: none; align-items: center; justify-content: space-between; padding: 7px 18px; background: #f0f9ff; border-bottom: 1px solid #bae6fd; gap: 10px; flex-wrap: wrap;">
                 <div style="display: flex; align-items: center; gap: 6px;">
-                    <button type="button" id="btnDonutRacePlayModal" onclick="window.toggleDonutRacePlay()" class="btn btn-sm btn-primary" style="height: 28px; padding: 0 12px; font-size: 11.5px; font-weight: 700; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; background: #0284c7; border: none; box-shadow: 0 1px 3px rgba(2,132,199,0.3); cursor: pointer;">
-                        <i class="fa fa-play"></i> <span>Reproducir</span>
+                    <button type="button" class="btn btn-sm btn-primary btn-orbit-3d" onclick="window.toggleAutoRotar3D()" style="height: 28px; padding: 0 12px; font-size: 11.5px; font-weight: 700; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; background: #0284c7; border: none; box-shadow: 0 1px 3px rgba(2,132,199,0.3); cursor: pointer;">
+                        <i class="fa fa-refresh"></i> <span>Auto-Girar 360°</span>
                     </button>
-                    <button type="button" onclick="window.resetDonutRace()" class="btn btn-sm btn-default" style="height: 28px; padding: 0 10px; font-size: 11.5px; font-weight: 600; border-radius: 6px; border: 1px solid #cbd5e1; background: #ffffff; color: #475569; cursor: pointer;" title="Reiniciar al inicio">
-                        <i class="fa fa-step-backward"></i>
+                    <button type="button" onclick="window.setPresetAngulo3D(15, 22)" class="btn btn-sm btn-default" style="height: 28px; padding: 0 10px; font-size: 11.5px; font-weight: 600; border-radius: 6px; border: 1px solid #cbd5e1; background: #ffffff; color: #475569; cursor: pointer;" title="Restablecer vista isométrica">
+                        <i class="fa fa-compass"></i> Isométrica
                     </button>
+                    <div style="display: inline-flex; align-items: center; gap: 2px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 2px 4px;">
+                        <button type="button" onclick="window.setPresetAngulo3D(8, 0)" style="height: 22px; padding: 0 7px; font-size: 10.5px; font-weight: 600; border: none; background: transparent; color: #475569; cursor: pointer; border-radius: 4px;" title="Vista frontal 3D">Frontal</button>
+                        <button type="button" onclick="window.setPresetAngulo3D(18, 42)" style="height: 22px; padding: 0 7px; font-size: 10.5px; font-weight: 600; border: none; background: transparent; color: #475569; cursor: pointer; border-radius: 4px;" title="Vista diagonal 3D">Diagonal</button>
+                        <button type="button" onclick="window.setPresetAngulo3D(24, 65)" style="height: 22px; padding: 0 7px; font-size: 10.5px; font-weight: 600; border: none; background: transparent; color: #475569; cursor: pointer; border-radius: 4px;" title="Vista lateral 3D">Lateral</button>
+                    </div>
                 </div>
-                <div style="display: inline-flex; align-items: center; gap: 3px; background: #e0f2fe; padding: 2px 4px; border-radius: 6px; border: 1px solid #bae6fd;">
-                    <span style="font-size: 10.5px; font-weight: 700; color: #0369a1; padding: 0 3px;"><i class="fa fa-dashboard"></i> Vel:</span>
-                    <button type="button" class="btn-donut-speed" data-speed="1600" onclick="window.setDonutRaceSpeed(1600)" style="height: 22px; padding: 0 6px; font-size: 10px; font-weight: 700; border-radius: 4px; border: none; background: transparent; color: #0369a1; cursor: pointer;">0.5x</button>
-                    <button type="button" class="btn-donut-speed active-speed" data-speed="950" onclick="window.setDonutRaceSpeed(950)" style="height: 22px; padding: 0 6px; font-size: 10px; font-weight: 700; border-radius: 4px; border: none; background: #0284c7; color: #ffffff; cursor: pointer;">1x</button>
-                    <button type="button" class="btn-donut-speed" data-speed="600" onclick="window.setDonutRaceSpeed(600)" style="height: 22px; padding: 0 6px; font-size: 10px; font-weight: 700; border-radius: 4px; border: none; background: transparent; color: #0369a1; cursor: pointer;">1.5x</button>
-                    <button type="button" class="btn-donut-speed" data-speed="350" onclick="window.setDonutRaceSpeed(350)" style="height: 22px; padding: 0 6px; font-size: 10px; font-weight: 700; border-radius: 4px; border: none; background: transparent; color: #0369a1; cursor: pointer;">2x</button>
-                </div>
-                <div style="flex: 1; min-width: 180px; display: flex; align-items: center; gap: 8px;">
-                    <span id="lblDonutRaceMinModal" style="font-size: 11px; font-weight: 700; color: #64748b; white-space: nowrap;">Inicial</span>
-                    <input type="range" id="sliderDonutRaceModal" min="0" max="12" step="1" value="0" oninput="window.onDonutRaceSlider(this.value)" style="flex: 1; cursor: pointer; accent-color: #0284c7; height: 6px;" />
-                    <span id="lblDonutRaceMaxModal" style="font-size: 11px; font-weight: 700; color: #64748b; white-space: nowrap;">Final</span>
-                </div>
-                <div style="display: inline-flex; align-items: center; gap: 6px; background: #ffffff; border: 1px solid #bae6fd; padding: 3px 10px; border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
-                    <i class="fa fa-calendar" style="color: #0284c7; font-size: 11.5px;"></i>
-                    <span id="lblDonutRacePeriodoModal" style="font-size: 12px; font-weight: 800; color: #0369a1;">Período actual</span>
+                <div style="display: inline-flex; align-items: center; gap: 6px; background: #ffffff; border: 1px solid #bae6fd; padding: 4px 10px; border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
+                    <i class="fa fa-hand-pointer-o" style="color: #0284c7; font-size: 12px;"></i>
+                    <span style="font-size: 11.5px; font-weight: 600; color: #0369a1;">Arrastra sobre el gráfico para rotar libremente en 3D</span>
                 </div>
             </div>
 
@@ -227,69 +213,20 @@
     window.tipoGraficoActual = 'column';
     window.cartera3DActivo = false;
 
-    window.donutRaceTimer = null;
-    window.donutRacePeriodIdx = 0;
-    window.donutRaceMaxPeriods = 12;
-    window.donutRaceSpeedMs = 950;
-
+    window.orbitTimer = null;
     window.coloresPlano2D = ['#0071AD', '#475569', '#0d9488', '#ea580c', '#0284c7', '#6366f1', '#1e3a8a', '#d97706', '#059669', '#64748b'];
 
-    // Paleta 3D Premium Fintech de alta vibrancia y contraste
-    window.paletaVibrante3D = [
-        '#1d4ed8', // Azul Real vibrante (Al día / Vigente)
-        '#0284c7', // Celeste Océano brillante (1 - 30 días)
-        '#f59e0b', // Ámbar Dorado (31 - 60 días)
-        '#ea580c', // Naranja Fuego (61 - 90 días)
-        '#dc2626', // Rojo Carmesí (> 90 días)
-        '#7c3aed', // Púrpura eléctrico
-        '#059669', // Verde Esmeralda
-        '#db2777', // Rosa Fucsia
-        '#475569'  // Gris neutro
+    // Paleta 3D Skyscraper Fintech
+    window.paletaSkyscrapers3D = [
+        '#1d4ed8', // 0: Azul Real vibrante (Al día)
+        '#0284c7', // 1: Celeste Océano (1 - 30 días)
+        '#f59e0b', // 2: Ámbar Oro (31 - 60 días)
+        '#ea580c', // 3: Naranja Fuego (61 - 90 días)
+        '#dc2626', // 4: Carmesí (> 90 días)
+        '#7c3aed', // 5: Violeta
+        '#059669', // 6: Esmeralda
+        '#64748b'  // 7: Pizarra
     ];
-
-    // Generador de gradiente radial 3D con reflejo especular
-    window.crearGradienteDonut3D = function (hexColor) {
-        if (!hexColor || typeof hexColor !== 'string' || hexColor.indexOf('#') !== 0) return hexColor;
-        try {
-            var ColorFn = (typeof Highcharts !== 'undefined') ? (Highcharts.color || Highcharts.Color) : null;
-            if (ColorFn) {
-                var c = ColorFn(hexColor);
-                return {
-                    radialGradient: { cx: 0.5, cy: 0.35, r: 0.72 },
-                    stops: [
-                        [0, c.brighten(0.38).get('rgb')],
-                        [0.45, hexColor],
-                        [0.85, c.brighten(-0.16).get('rgb')],
-                        [1, c.brighten(-0.28).get('rgb')]
-                    ]
-                };
-            }
-        } catch (e) {}
-        return hexColor;
-    };
-
-    window.setDonutRaceSpeed = function (speedMs) {
-        window.donutRaceSpeedMs = parseInt(speedMs, 10) || 950;
-        $('.btn-donut-speed').each(function () {
-            var s = parseInt($(this).attr('data-speed'), 10);
-            if (s === window.donutRaceSpeedMs) {
-                $(this).css({ 'background': '#0284c7', 'color': '#ffffff' });
-            } else {
-                $(this).css({ 'background': 'transparent', 'color': '#0369a1' });
-            }
-        });
-        if (window.donutRaceTimer) {
-            clearInterval(window.donutRaceTimer);
-            window.donutRaceTimer = setInterval(function () {
-                var maxP = window.donutRaceMaxPeriods || 12;
-                window.donutRacePeriodIdx++;
-                if (window.donutRacePeriodIdx > maxP) {
-                    window.donutRacePeriodIdx = 0;
-                }
-                window.actualizarPasoDonutRace(window.donutRacePeriodIdx);
-            }, window.donutRaceSpeedMs);
-        }
-    };
 
     window.guardarConfiguracionOriginal = function (chart) {
         if (!chart || chart._fgaOriginalConfig) return;
@@ -339,149 +276,94 @@
                 title: (chart.title && chart.title.textStr) ? chart.title.textStr : '',
                 subTitle: (chart.subtitle && chart.subtitle.textStr) ? chart.subtitle.textStr : ''
             };
-
-            if (savedCats.length > 0) {
-                window.donutRaceMaxPeriods = savedCats.length - 1;
-                $('#sliderDonutRaceCartera, #sliderDonutRaceModal').attr('max', window.donutRaceMaxPeriods);
-                $('#lblDonutRaceMinCartera, #lblDonutRaceMinModal').text(savedCats[0]);
-                $('#lblDonutRaceMaxCartera, #lblDonutRaceMaxModal').text(savedCats[savedCats.length - 1]);
-                $('#lblDonutRacePeriodoCartera, #lblDonutRacePeriodoModal').text(savedCats[0]);
-            }
         } catch (err) {
             console.warn('Error al guardar configuración original:', err);
         }
     };
 
-    // Helper para extraer datos de la dona para un período específico con gradientes 3D
-    window.obtenerDatosDonutParaPeriodo = function (chart, periodIdx) {
-        var orig = chart._fgaOriginalConfig;
-        if (!orig || !orig.series) return [];
-        var colSeries = orig.series.filter(function (s) { return s.origType === 'column'; });
-        if (colSeries.length === 0) colSeries = orig.series;
+    // Habilitar rotación 360° arrastrando directamente con el ratón o touch
+    window.habilitarRotacion3D = function (chart) {
+        if (!chart || chart._fgaRotacion3DEnabled) return;
+        chart._fgaRotacion3DEnabled = true;
 
-        var result = [];
-        colSeries.forEach(function (s, pIdx) {
-            var val = 0;
-            if (s.data && s.data.length > periodIdx) {
-                var pt = s.data[periodIdx];
-                if (typeof pt === 'number') val = pt;
-                else if (pt && typeof pt.y === 'number') val = pt.y;
-                else if (Array.isArray(pt) && typeof pt[1] === 'number') val = pt[1];
-            }
-            if (val > 0) {
-                var baseColor = window.paletaVibrante3D[pIdx % window.paletaVibrante3D.length];
-                var gradColor = window.crearGradienteDonut3D(baseColor);
-                result.push({
-                    name: s.name,
-                    y: val,
-                    color: gradColor,
-                    _baseColor: baseColor,
-                    sliced: false
-                });
+        var container = chart.container;
+        if (!container) return;
+
+        var isDragging = false;
+        var downX = 0, downY = 0;
+        var origAlpha = 15, origBeta = 22;
+
+        $(container).on('mousedown.fga3d touchstart.fga3d', function (e) {
+            if (!chart.options || !chart.options.chart || !chart.options.chart.options3d || !chart.options.chart.options3d.enabled) return;
+            isDragging = true;
+            if (window.orbitTimer) window.toggleAutoRotar3D();
+            var pageX = e.pageX || (e.originalEvent && e.originalEvent.touches && e.originalEvent.touches[0] ? e.originalEvent.touches[0].pageX : 0);
+            var pageY = e.pageY || (e.originalEvent && e.originalEvent.touches && e.originalEvent.touches[0] ? e.originalEvent.touches[0].pageY : 0);
+            downX = pageX;
+            downY = pageY;
+            origAlpha = chart.options.chart.options3d.alpha;
+            origBeta = chart.options.chart.options3d.beta;
+            $(container).css('cursor', 'grabbing');
+        });
+
+        $(document).on('mousemove.fga3d touchmove.fga3d', function (e) {
+            if (!isDragging) return;
+            if (!chart.options || !chart.options.chart || !chart.options.chart.options3d || !chart.options.chart.options3d.enabled) return;
+            var pageX = e.pageX || (e.originalEvent && e.originalEvent.touches && e.originalEvent.touches[0] ? e.originalEvent.touches[0].pageX : 0);
+            var pageY = e.pageY || (e.originalEvent && e.originalEvent.touches && e.originalEvent.touches[0] ? e.originalEvent.touches[0].pageY : 0);
+            var deltaX = pageX - downX;
+            var deltaY = pageY - downY;
+
+            var newBeta = origBeta + (deltaX * 0.45);
+            var newAlpha = Math.max(2, Math.min(65, origAlpha - (deltaY * 0.35)));
+
+            chart.options.chart.options3d.alpha = newAlpha;
+            chart.options.chart.options3d.beta = newBeta;
+            chart.redraw(false);
+        });
+
+        $(document).on('mouseup.fga3d touchend.fga3d', function () {
+            if (isDragging) {
+                isDragging = false;
+                if (container) $(container).css('cursor', 'default');
             }
         });
-        return result;
     };
 
-    // Actualiza el paso de la animación Donut Race con HUD central integrado
-    window.actualizarPasoDonutRace = function (periodIdx) {
-        periodIdx = parseInt(periodIdx, 10) || 0;
-        window.donutRacePeriodIdx = periodIdx;
-        $('#sliderDonutRaceCartera, #sliderDonutRaceModal').val(periodIdx);
+    // Auto-rotación continua 360° cinematográfica
+    window.toggleAutoRotar3D = function () {
+        var btnOrbit = $('.btn-orbit-3d');
+        if (window.orbitTimer) {
+            clearInterval(window.orbitTimer);
+            window.orbitTimer = null;
+            btnOrbit.html('<i class="fa fa-refresh"></i> <span>Auto-Girar 360°</span>').removeClass('btn-warning').addClass('btn-primary').css('background', '#0284c7');
+        } else {
+            btnOrbit.html('<i class="fa fa-pause"></i> <span>Pausar Giro</span>').removeClass('btn-primary').addClass('btn-warning').css('background', '#f59e0b');
+            window.orbitTimer = setInterval(function () {
+                if (typeof Highcharts !== 'undefined' && Highcharts.charts) {
+                    Highcharts.charts.forEach(function (c) {
+                        if (c && c.options && c.options.chart && c.options.chart.options3d && c.options.chart.options3d.enabled) {
+                            c.options.chart.options3d.beta = (c.options.chart.options3d.beta + 0.9) % 360;
+                            c.redraw(false);
+                        }
+                    });
+                }
+            }, 35);
+        }
+    };
 
+    // Ajustar ángulo a presets predefinidos
+    window.setPresetAngulo3D = function (alpha, beta) {
+        if (window.orbitTimer) window.toggleAutoRotar3D();
         if (typeof Highcharts !== 'undefined' && Highcharts.charts) {
-            Highcharts.charts.forEach(function (chart) {
-                if (!chart || !chart._fgaOriginalConfig) return;
-                var orig = chart._fgaOriginalConfig;
-                var cats = orig.categories || [];
-                var periodLabel = cats[periodIdx] || ('Período ' + (periodIdx + 1));
-
-                $('#lblDonutRacePeriodoCartera, #lblDonutRacePeriodoModal').text(periodLabel);
-
-                var donutData = window.obtenerDatosDonutParaPeriodo(chart, periodIdx);
-
-                if (chart.series && chart.series.length > 0 && chart.series[0].type === 'pie') {
-                    var animDuration = Math.max(220, Math.floor((window.donutRaceSpeedMs || 950) * 0.65));
-                    chart.series[0].setData(donutData, true, { duration: animDuration });
-
-                    // Cálculo del % Al Día para el HUD central
-                    var totalPeriodo = 0;
-                    donutData.forEach(function (d) { totalPeriodo += (d.y || 0); });
-                    var alDiaPct = 0;
-                    if (donutData.length > 0 && totalPeriodo > 0) {
-                        alDiaPct = ((donutData[0].y / totalPeriodo) * 100).toFixed(1);
-                    }
-
-                    // HUD Central Dinámico y Título Superior
-                    chart.setTitle(
-                        {
-                            useHTML: true,
-                            text: '<div style="text-align: center; font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif;">' +
-                                  '  <span style="font-size: 13.5px; font-weight: 800; color: #1e3a8a; letter-spacing: 0.5px; text-transform: uppercase;">Evolución de Composición</span>' +
-                                  '</div>'
-                        },
-                        {
-                            useHTML: true,
-                            align: 'center',
-                            verticalAlign: 'middle',
-                            y: -8,
-                            text: '<div style="text-align: center; font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif; pointer-events: none; user-select: none;">' +
-                                  '  <div style="font-size: 10px; font-weight: 800; color: #64748b; letter-spacing: 1.2px; text-transform: uppercase;">PERÍODO</div>' +
-                                  '  <div style="font-size: 24px; font-weight: 900; color: #0284c7; line-height: 1.15; margin: 2px 0; text-shadow: 0 1px 3px rgba(2,132,199,0.25);">' + periodLabel + '</div>' +
-                                  (alDiaPct > 0 ? ('  <div style="display: inline-block; padding: 2px 9px; border-radius: 12px; background: #ecfdf5; border: 1px solid #a7f3d0; color: #059669; font-size: 11px; font-weight: 800; box-shadow: 0 1px 3px rgba(0,0,0,0.06);">' + alDiaPct + '% Al Día</div>') : '') +
-                                  '</div>'
-                        },
-                        false
-                    );
+            Highcharts.charts.forEach(function (c) {
+                if (c && c.options && c.options.chart && c.options.chart.options3d && c.options.chart.options3d.enabled) {
+                    c.options.chart.options3d.alpha = alpha;
+                    c.options.chart.options3d.beta = beta;
+                    c.redraw(true);
                 }
             });
         }
-    };
-
-    window.playDonutRace = function () {
-        if (window.donutRaceTimer) return;
-        var btnPlay = $('#btnDonutRacePlayCartera, #btnDonutRacePlayModal');
-        btnPlay.html('<i class="fa fa-pause"></i> <span>Pausar</span>');
-        btnPlay.removeClass('btn-primary').addClass('btn-warning').css('background', '#f59e0b');
-
-        var speed = window.donutRaceSpeedMs || 950;
-        window.donutRaceTimer = setInterval(function () {
-            var maxP = window.donutRaceMaxPeriods || 12;
-            window.donutRacePeriodIdx++;
-            if (window.donutRacePeriodIdx > maxP) {
-                window.donutRacePeriodIdx = 0;
-            }
-            window.actualizarPasoDonutRace(window.donutRacePeriodIdx);
-        }, speed);
-    };
-
-    window.pauseDonutRace = function () {
-        if (window.donutRaceTimer) {
-            clearInterval(window.donutRaceTimer);
-            window.donutRaceTimer = null;
-        }
-        var btnPlay = $('#btnDonutRacePlayCartera, #btnDonutRacePlayModal');
-        btnPlay.html('<i class="fa fa-play"></i> <span>Reproducir</span>');
-        btnPlay.removeClass('btn-warning').addClass('btn-primary').css('background', '#0284c7');
-    };
-
-    window.toggleDonutRacePlay = function () {
-        if (window.donutRaceTimer) {
-            window.pauseDonutRace();
-        } else {
-            window.playDonutRace();
-        }
-    };
-
-    window.resetDonutRace = function () {
-        window.pauseDonutRace();
-        window.donutRacePeriodIdx = 0;
-        window.actualizarPasoDonutRace(0);
-    };
-
-    window.onDonutRaceSlider = function (val) {
-        window.pauseDonutRace();
-        window.actualizarPasoDonutRace(val);
     };
 
     window.aplicarTipoAGrafico = function (chart, tipo) {
@@ -493,7 +375,7 @@
         var orig = chart._fgaOriginalConfig;
         if (!orig || !orig.series || orig.series.length === 0) return;
 
-        var is3D = (typeof window.cartera3DActivo === 'boolean') ? window.cartera3DActivo : false;
+        var is3D = (tipo === 'column3d');
         var isModal = false;
         try {
             var elem = (chart.renderTo ? (typeof chart.renderTo === 'string' ? document.getElementById(chart.renderTo.replace(/^#/, '')) : chart.renderTo) : null);
@@ -505,125 +387,99 @@
             chart.series[0].remove(false);
         }
 
-        if (tipo === 'pie') {
-            // MODO DONUT RACE 3D CON ALTO VOLUMEN Y RELIEVE
-            var currentP = window.donutRacePeriodIdx || 0;
-            var pieData = window.obtenerDatosDonutParaPeriodo(chart, currentP);
-            var cats = orig.categories || [];
-            var periodLabel = cats[currentP] || '';
-
-            var totalPeriodo = 0;
-            pieData.forEach(function (d) { totalPeriodo += (d.y || 0); });
-            var alDiaPct = 0;
-            if (pieData.length > 0 && totalPeriodo > 0) {
-                alDiaPct = ((pieData[0].y / totalPeriodo) * 100).toFixed(1);
-            }
-
+        if (tipo === 'column3d') {
+            // MODO COLUMNAS 3D ISOMÉTRICAS ("SKYSCRAPERS") CON ROTACIÓN 360°
             chart.update({
                 chart: {
-                    type: 'pie',
+                    type: 'column',
                     inverted: false,
                     options3d: {
                         enabled: true,
-                        alpha: 55,
-                        beta: 0,
-                        depth: 45,
-                        viewDistance: 500,
+                        alpha: 15,
+                        beta: 22,
+                        depth: 70,
+                        viewDistance: 45,
                         fitToPlot: true,
                         frame: {
-                            bottom: { size: 0, color: 'transparent' },
+                            bottom: { size: 1, color: 'rgba(0,0,0,0.03)' },
                             back: { size: 0, color: 'transparent' },
                             side: { size: 0, color: 'transparent' }
                         }
                     }
                 },
-                xAxis: {
-                    categories: [],
-                    title: { text: null }
-                },
                 plotOptions: {
-                    pie: {
-                        innerSize: '54%',
-                        depth: 45,
-                        edgeWidth: 1.5,
+                    column: {
+                        stacking: 'normal',
+                        depth: 35,
+                        edgeWidth: 1.2,
                         edgeColor: 'rgba(255, 255, 255, 0.45)',
-                        slicedOffset: 16,
-                        allowPointSelect: true,
-                        cursor: 'pointer',
-                        dataLabels: {
-                            enabled: true,
-                            useHTML: true,
-                            connectorColor: 'rgba(100, 116, 139, 0.55)',
-                            connectorWidth: 1.5,
-                            connectorPadding: 6,
-                            distance: 24,
-                            formatter: function () {
-                                var baseCol = this.point._baseColor || (this.point.color && this.point.color.stops ? this.point.color.stops[1][1] : '#0f172a');
-                                return '<div style="font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif; text-shadow: 0 1px 2px rgba(255,255,255,0.9); line-height: 1.25;">' +
-                                       '  <span style="font-size: 11px; font-weight: 700; color: ' + baseCol + ';">' + this.point.name + '</span>: ' +
-                                       '  <b style="font-size: 12.5px; font-weight: 800; color: #0f172a;">' + Highcharts.numberFormat(this.point.percentage, 1) + '%</b>' +
-                                       '</div>';
-                            }
-                        },
-                        showInLegend: true,
-                        states: {
-                            hover: {
-                                halo: { size: 10, opacity: 0.25 },
-                                brightness: 0.12
-                            }
-                        },
+                        pointPadding: 0.08,
+                        groupPadding: 0.12,
+                        maxPointWidth: 42,
                         animation: {
-                            duration: Math.max(220, Math.floor((window.donutRaceSpeedMs || 950) * 0.65))
+                            duration: 950
                         }
                     }
                 },
+                xAxis: {
+                    categories: orig.categories.slice(),
+                    labels: {
+                        rotation: -35,
+                        style: { fontSize: '11px', fontWeight: '600', color: '#475569' }
+                    }
+                },
                 tooltip: {
+                    shared: true,
                     useHTML: true,
                     backgroundColor: '#ffffff',
-                    borderColor: '#e2e8f0',
+                    borderColor: '#cbd5e1',
                     borderRadius: 8,
-                    shadow: true,
-                    formatter: function () {
-                        var baseCol = this.point._baseColor || (this.point.color && this.point.color.stops ? this.point.color.stops[1][1] : '#0284c7');
-                        var currP = window.donutRacePeriodIdx || 0;
-                        var cCats = orig.categories || [];
-                        var curLabel = cCats[currP] || '';
-                        return '<div style="padding: 4px 6px; font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif;">' +
-                               '  <div style="font-size: 10.5px; font-weight: 700; color: #64748b; text-transform: uppercase;">' + curLabel + '</div>' +
-                               '  <div style="font-size: 13px; font-weight: 800; color: ' + baseCol + '; margin: 2px 0;">' + this.point.name + '</div>' +
-                               '  <div style="font-size: 12px; color: #0f172a;">Participación: <b>' + Highcharts.numberFormat(this.point.percentage, 1) + '%</b></div>' +
-                               (this.point.y ? ('  <div style="font-size: 11.5px; color: #475569;">Saldo: <b>$' + Highcharts.numberFormat(this.point.y, 0) + '</b></div>') : '') +
-                               '</div>';
-                    }
+                    shadow: true
                 }
             }, false);
 
-            chart.addSeries({
-                type: 'pie',
-                name: 'Participación',
-                data: pieData
-            }, false);
-
             chart.setTitle(
+                orig.title ? { text: orig.title } : { text: '' },
                 {
-                    useHTML: true,
-                    text: '<div style="text-align: center; font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif;">' +
-                          '  <span style="font-size: 13.5px; font-weight: 800; color: #1e3a8a; letter-spacing: 0.5px; text-transform: uppercase;">Evolución de Composición</span>' +
-                          '</div>'
-                },
-                {
-                    useHTML: true,
+                    useHTML: false,
                     align: 'center',
-                    verticalAlign: 'middle',
-                    y: -8,
-                    text: '<div style="text-align: center; font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif; pointer-events: none; user-select: none;">' +
-                          '  <div style="font-size: 10px; font-weight: 800; color: #64748b; letter-spacing: 1.2px; text-transform: uppercase;">PERÍODO</div>' +
-                          '  <div style="font-size: 24px; font-weight: 900; color: #0284c7; line-height: 1.15; margin: 2px 0; text-shadow: 0 1px 3px rgba(2,132,199,0.25);">' + periodLabel + '</div>' +
-                          (alDiaPct > 0 ? ('  <div style="display: inline-block; padding: 2px 9px; border-radius: 12px; background: #ecfdf5; border: 1px solid #a7f3d0; color: #059669; font-size: 11px; font-weight: 800; box-shadow: 0 1px 3px rgba(0,0,0,0.06);">' + alDiaPct + '% Al Día</div>') : '') +
-                          '</div>'
+                    verticalAlign: null,
+                    y: null,
+                    text: orig.subTitle || ''
                 },
                 false
             );
+
+            orig.series.forEach(function (s, idx) {
+                var isOrigLine = (s.origType === 'line');
+                if (isOrigLine) {
+                    chart.addSeries({
+                        name: s.name,
+                        type: 'spline',
+                        color: s.color,
+                        yAxis: s.yAxis,
+                        data: JSON.parse(JSON.stringify(s.data)),
+                        lineWidth: 4.5,
+                        zIndex: 25,
+                        linecap: 'round',
+                        linejoin: 'round',
+                        shadow: { color: 'rgba(0, 0, 0, 0.28)', offsetX: 1, offsetY: 4, width: 6, opacity: 0.25 },
+                        marker: { enabled: true, radius: 5.5, symbol: 'circle', lineWidth: 2.2, lineColor: '#ffffff' }
+                    }, false);
+                } else {
+                    chart.addSeries({
+                        name: s.name,
+                        type: 'column',
+                        stacking: 'normal',
+                        color: window.paletaSkyscrapers3D[idx % window.paletaSkyscrapers3D.length] || s.color,
+                        yAxis: s.yAxis,
+                        data: JSON.parse(JSON.stringify(s.data)),
+                        zIndex: idx
+                    }, false);
+                }
+            });
+
+            window.habilitarRotacion3D(chart);
 
         } else if (tipo === 'spline') {
             // MODO LÍNEAS (TENDENCIA MULTIPERÍODO)
@@ -846,13 +702,13 @@
 
         chart.redraw();
 
-        // Control de visualización del reproductor Donut Race
-        var showRace = (tipo === 'pie');
-        $('#donutRaceControllerCartera, #donutRaceControllerComposicion').css('display', showRace ? 'flex' : 'none');
-        $('#donutRaceControllerModal').css('display', showRace ? 'flex' : 'none');
+        // Control de visualización del controlador 3D Isométrico
+        var show3DController = (tipo === 'column3d');
+        $('#skyscrapers3DControllerCartera, #skyscrapers3DControllerComposicion').css('display', show3DController ? 'flex' : 'none');
+        $('#skyscrapers3DControllerModal').css('display', show3DController ? 'flex' : 'none');
 
-        if (!showRace) {
-            window.pauseDonutRace();
+        if (!show3DController && window.orbitTimer) {
+            window.toggleAutoRotar3D();
         }
 
         try {
@@ -871,7 +727,7 @@
 
     window.cambiarTipoGrafico = function (tipo) {
         window.tipoGraficoActual = tipo;
-        window.cartera3DActivo = (tipo === 'pie');
+        window.cartera3DActivo = (tipo === 'column3d');
 
         // Sincronizar selectores
         $('#selTipoGraficoCartera, #selTipoGraficoComposicion, #selTipoGraficoModal').val(tipo);
@@ -885,10 +741,6 @@
                     window.aplicarTipoAGrafico(c, tipo);
                 }
             });
-        }
-
-        if (tipo === 'pie') {
-            window.actualizarPasoDonutRace(window.donutRacePeriodIdx || 0);
         }
 
         if ($('#mPopUp').hasClass('in') && typeof window.actualizarKpiModalCartera === 'function') {
@@ -910,11 +762,11 @@
 
         if (btnMain) {
             btnMain.setAttribute('style', is3D ? activeStyle : inactiveStyle);
-            if (lblMain) lblMain.innerText = is3D ? 'Vista 3D: ON (Donut Race)' : 'Vista 3D: Donut Race';
+            if (lblMain) lblMain.innerText = is3D ? 'Vista 3D: ON (Isométrica)' : 'Vista 3D: Isométrica';
         }
         if (btnModal) {
             btnModal.setAttribute('style', is3D ? modalActiveStyle : modalInactiveStyle);
-            if (lblModal) lblModal.innerText = is3D ? 'Vista 3D: ON (Donut Race)' : 'Vista 3D: Donut Race';
+            if (lblModal) lblModal.innerText = is3D ? 'Vista 3D: ON (Isométrica)' : 'Vista 3D: Isométrica';
         }
     };
 
@@ -922,32 +774,10 @@
         window.cartera3DActivo = !window.cartera3DActivo;
         var is3D = window.cartera3DActivo;
 
-        // Si se activa 3D -> Pasa a Donut Race 3D
-        // Si se desactiva 3D -> Regresa a Versión Original (Columnas)
-        var nuevoTipo = is3D ? 'pie' : 'column';
-        window.tipoGraficoActual = nuevoTipo;
-
-        $('#selTipoGraficoCartera, #selTipoGraficoComposicion, #selTipoGraficoModal').val(nuevoTipo);
-        window.actualizarEstiloBotones3D(is3D);
-
-        if (typeof Highcharts !== 'undefined' && Highcharts.charts) {
-            Highcharts.charts.forEach(function (c) {
-                if (c) {
-                    window.aplicarTipoAGrafico(c, nuevoTipo);
-                }
-            });
-        }
-
-        if (is3D) {
-            window.actualizarPasoDonutRace(window.donutRacePeriodIdx || 0);
-            window.playDonutRace();
-        } else {
-            window.pauseDonutRace();
-        }
-
-        if ($('#mPopUp').hasClass('in') && typeof window.actualizarKpiModalCartera === 'function') {
-            window.actualizarKpiModalCartera();
-        }
+        // Si se activa 3D -> Pasa a Columnas 3D Isométricas
+        // Si se desactiva 3D -> Regresa a Versión Original 2D
+        var nuevoTipo = is3D ? 'column3d' : 'column';
+        window.cambiarTipoGrafico(nuevoTipo);
     };
 
     window.aplicarEstilo3DCartera = function (chart, activo) {
@@ -988,16 +818,6 @@
             });
             if (modalCharts.length === 0) return;
             var chart = modalCharts[0];
-
-            if (window.tipoGraficoActual === 'pie') {
-                $('#cartera1421ModalKpiStrip').html(
-                    '<div style="background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 8px; padding: 9px 16px; font-size: 12px; color: #0369a1; display: flex; align-items: center; gap: 10px;">' +
-                    '    <i class="fa fa-play-circle" style="color: #0284c7; font-size: 16px;"></i>' +
-                    '    <span><b>Donut Race 3D Activo:</b> Utiliza el reproductor superior para observar la evolución dinámica período por período de la cartera.</span>' +
-                    '</div>'
-                );
-                return;
-            }
 
             function renderCarteraKpi(selectedIdx) {
                 var seriesIdx = 0;
