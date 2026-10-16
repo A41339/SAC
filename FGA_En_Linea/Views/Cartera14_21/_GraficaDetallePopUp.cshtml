@@ -129,7 +129,7 @@
         <div id="container" style="width: 100%; min-width: 100%; box-sizing: border-box; overflow: visible;">
             @(Model.detalle)
         </div>
-        <div id="echartsContainerCartera" style="display: none; width: 100%; height: 500px; box-sizing: border-box; border-radius: 6px; overflow: hidden; background: #ffffff;"></div>
+        <div id="echartsContainerCartera" style="display: none; width: 100%; height: 580px; box-sizing: border-box; border-radius: 6px; overflow: hidden; background: #ffffff;"></div>
     </div>
 </div>
 
@@ -190,7 +190,7 @@
                 <div id="modalHighchartsContainer">
                     @(Model.pDetalle)
                 </div>
-                <div id="echartsContainerModalCartera" style="display: none; width: 100%; height: 580px; box-sizing: border-box; border-radius: 8px; overflow: hidden; background: #ffffff;"></div>
+                <div id="echartsContainerModalCartera" style="display: none; width: 100%; height: 680px; box-sizing: border-box; border-radius: 8px; overflow: hidden; background: #ffffff;"></div>
             </div>
             <div class="modal-footer" style="padding: 8px 18px; background: #f8fafc; border-top: 1px solid #e2e8f0; text-align: right;">
                 <button type="button" class="btn btn-default" data-dismiss="modal" style="border-radius: 6px; font-weight: 600; padding: 4px 14px; font-size: 12.5px;">Cerrar</button>
@@ -486,8 +486,8 @@
                 boxWidth: dynamicBoxWidth,
                 boxDepth: dynamicBoxDepth,
                 boxHeight: dynamicBoxHeight,
-                top: -15,
-                bottom: 10,
+                top: 0,
+                bottom: 15,
                 axisPointer: {
                     show: true,
                     lineStyle: { color: '#0284c7', width: 1.5 }
@@ -495,8 +495,8 @@
                 viewControl: {
                     alpha: window.echarts3DAlpha || 24,
                     beta: window.echarts3DBeta || 38,
-                    distance: 155, // Distancia reducida para que las barras llenen el ancho del lienzo
-                    minDistance: 60,
+                    distance: 180, // Margen ampliado para que al rotar 360 en cualquier ángulo nunca se recorte
+                    minDistance: 70,
                     maxDistance: 450,
                     autoRotate: !!window.echartsAutoRotate,
                     autoRotateSpeed: 10,
