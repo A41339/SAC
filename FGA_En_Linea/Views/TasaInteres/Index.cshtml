@@ -394,6 +394,17 @@
     });
 
     // Helper general para renderizar el header de detalle / KPI strip en los modales
+    var modalChartMapping = {
+        '#mDiferencialTasas': { containerId: 'pMargen_container', modalVar: 'pMargen', pageVar: 'Margen', kpiStrip: '#diferencialModalKpiStrip', kpiSelect: 'diferencialModalSeriesSelect' },
+        '#mTasaActiva': { containerId: 'pTasaActiva_container', modalVar: 'pTasaActiva', pageVar: 'TasaActiva', kpiStrip: '#activaModalKpiStrip', kpiSelect: 'activaModalSeriesSelect' },
+        '#mTasaPasiva': { containerId: 'pTasaPasiva_container', modalVar: 'pTasaPasiva', pageVar: 'TasaPasiva', kpiStrip: '#pasivaModalKpiStrip', kpiSelect: 'pasivaModalSeriesSelect' },
+        '#mTasaPonderada': { containerId: 'pPonderada_container', modalVar: 'pPonderada', pageVar: 'Ponderada', kpiStrip: '#ponderadaModalKpiStrip', kpiSelect: 'ponderadaModalSeriesSelect' },
+        '#mTasaPonderadaSegmento': { containerId: 'pSegmento_container', modalVar: 'pSegmento', pageVar: 'Segmento', kpiStrip: '#segmentoModalKpiStrip', kpiSelect: 'segmentoModalSeriesSelect' }
+    };
+
+    window.modalChartOptionsCache = window.modalChartOptionsCache || {};
+
+    // Helper general para renderizar el header de detalle / KPI strip en los modales
     function renderKpiStripForModal(modalId, kpiContainerId, selectElementId) {
         if (typeof Highcharts === 'undefined' || !Highcharts.charts) return;
 
@@ -401,18 +412,36 @@
             return c && c.renderTo && $(c.renderTo).closest(modalId).length && c.series && c.series.length > 0;
         });
 
-        if (modalCharts.length === 0) return;
-        var chart = modalCharts[0];
+        var chart = null;
+        if (modalCharts.length > 0) {
+            chart = modalCharts[modalCharts.length - 1];
+        } else if (modalChartMapping[modalId] && window[modalChartMapping[modalId].modalVar]) {
+            chart = window[modalChartMapping[modalId].modalVar];
+        }
+
+        if (!chart || !chart.series || chart.series.length === 0) return;
 
         function renderKpi(selectedIdx) {
             var seriesIdx = 0;
             if (typeof selectedIdx === 'number' && selectedIdx >= 0 && selectedIdx < chart.series.length) {
                 seriesIdx = selectedIdx;
             } else {
+                var foundTotal = -1;
                 for (var k = 0; k < chart.series.length; k++) {
-                    if (chart.series[k].type === 'spline' || chart.series[k].type === 'line' || chart.series[k].type === 'areaspline') {
-                        seriesIdx = k;
+                    var sName = (chart.series[k] && chart.series[k].name) ? chart.series[k].name.toLowerCase() : '';
+                    if (sName.indexOf('ponderada total') !== -1 || sName.indexOf('total') !== -1) {
+                        foundTotal = k;
                         break;
+                    }
+                }
+                if (foundTotal !== -1) {
+                    seriesIdx = foundTotal;
+                } else {
+                    for (var k = 0; k < chart.series.length; k++) {
+                        if (chart.series[k].type === 'spline' || chart.series[k].type === 'line' || chart.series[k].type === 'areaspline') {
+                            seriesIdx = k;
+                            break;
+                        }
                     }
                 }
             }
@@ -524,118 +553,162 @@
         renderKpi();
     }
 
-    function resizeModalChart(modalSelector) {
-        if (typeof Highcharts === 'undefined' || !Highcharts.charts) return;
-        var $modal = $(modalSelector);
+    function renderModalChartFresh(modalId) {
+        var map = modalChartMapping[modalId];
+        if (!map) return;
+        var $modal = $(modalId);
         if (!$modal.length) return;
-        var $body = $modal.find('.modal-body');
-        var targetWidth = $body.width();
-        if (!targetWidth || targetWidth <= 0) return;
 
-        Highcharts.charts.forEach(function (c) {
-            if (c && c.renderTo && $(c.renderTo).closest(modalSelector).length) {
-                try {
-                    $(c.renderTo).css({
-                        'width': '100%',
-                        'height': '480px',
-                        'min-height': '480px',
-                        'display': 'block'
-                    });
-                    var w = $(c.renderTo).parent().width() || targetWidth;
-                    var h = (c.options && c.options.chart && c.options.chart.height) || c.chartHeight || 480;
-                    c.setSize(w, h, false);
-                    c.reflow();
-                } catch (e) {
-                    console.error('Error al redimensionar gráfico en modal:', e);
+        var targetWidth = $modal.find('.modal-body').width() || 1100;
+        var targetHeight = 480;
+        var containerId = map.containerId;
+        var $container = $('#' + containerId);
+        if (!$container.length) {
+            var found = $modal.find('.modal-body div[id$="_container"]');
+            if (found.length) {
+                $container = $(found[0]);
+                containerId = $container.attr('id');
+            }
+        }
+        if (!$container.length) return;
+
+        var baseOptions = window.modalChartOptionsCache[modalId];
+
+        if (!baseOptions) {
+            var source = window[map.modalVar] || window[map.pageVar];
+            if (!source || (!source.options && !source.userOptions)) {
+                if (typeof Highcharts !== 'undefined' && Highcharts.charts) {
+                    for (var i = 0; i < Highcharts.charts.length; i++) {
+                        var ch = Highcharts.charts[i];
+                        if (ch && (ch.options || ch.userOptions) && ch.renderTo && (ch.renderTo.id === containerId || $(ch.renderTo).closest(modalId).length)) {
+                            source = ch;
+                            break;
+                        }
+                    }
                 }
             }
-        });
+
+            if (source) {
+                var srcOpts = source.userOptions || source.options;
+                if (srcOpts) {
+                    baseOptions = $.extend(true, {}, srcOpts);
+                    if (source.series && source.series.length) {
+                        baseOptions.series = baseOptions.series || [];
+                        for (var sIdx = 0; sIdx < source.series.length; sIdx++) {
+                            var ser = source.series[sIdx];
+                            if (ser && ser.options) {
+                                baseOptions.series[sIdx] = $.extend(true, {}, ser.options);
+                            }
+                        }
+                    }
+                    window.modalChartOptionsCache[modalId] = baseOptions;
+                }
+            }
+        }
+
+        if (baseOptions) {
+            try {
+                if (typeof Highcharts !== 'undefined' && Highcharts.charts) {
+                    for (var j = Highcharts.charts.length - 1; j >= 0; j--) {
+                        var existing = Highcharts.charts[j];
+                        if (existing && existing.renderTo && (existing.renderTo.id === containerId || $(existing.renderTo).closest(modalId).length)) {
+                            try { existing.destroy(); } catch (e) {}
+                        }
+                    }
+                }
+
+                $container.empty();
+                $container.css({
+                    'width': '100%',
+                    'height': targetHeight + 'px',
+                    'min-height': targetHeight + 'px',
+                    'display': 'block'
+                });
+
+                var opts = $.extend(true, {}, baseOptions);
+                opts.chart = opts.chart || {};
+                opts.chart.renderTo = containerId;
+                opts.chart.width = targetWidth;
+                opts.chart.height = targetHeight;
+                opts.chart.animation = false;
+
+                var freshChart = new Highcharts.Chart(opts);
+                window[map.modalVar] = freshChart;
+            } catch (err) {
+                console.error('Error al recrear gráfico en modal ' + modalId + ':', err);
+            }
+        }
+
+        try {
+            renderKpiStripForModal(modalId, map.kpiStrip, map.kpiSelect);
+        } catch (e) {
+            console.error('Error al renderizar KPI strip:', e);
+        }
+    }
+
+    function resizeModalChart(modalSelector) {
+        renderModalChartFresh(modalSelector);
     }
 
     // Modal Diferencial de Tasas
     $('#mDiferencialTasas').on('shown.bs.modal', function () {
-        resizeModalChart('#mDiferencialTasas');
+        renderModalChartFresh('#mDiferencialTasas');
         setTimeout(function () {
-            try {
-                renderKpiStripForModal('#mDiferencialTasas', '#diferencialModalKpiStrip', 'diferencialModalSeriesSelect');
-            } catch (e) {
-                console.error(e);
+            var c = window.pMargen;
+            if (c && typeof c.reflow === 'function') {
+                try { c.reflow(); } catch (e) {}
             }
-            resizeModalChart('#mDiferencialTasas');
-        }, 150);
-        setTimeout(function () {
-            resizeModalChart('#mDiferencialTasas');
-        }, 320);
+        }, 120);
     });
 
     // Modal Tasa Activa
     $('#mTasaActiva').on('shown.bs.modal', function () {
-        resizeModalChart('#mTasaActiva');
+        renderModalChartFresh('#mTasaActiva');
         setTimeout(function () {
-            try {
-                renderKpiStripForModal('#mTasaActiva', '#activaModalKpiStrip', 'activaModalSeriesSelect');
-            } catch (e) {
-                console.error(e);
+            var c = window.pTasaActiva;
+            if (c && typeof c.reflow === 'function') {
+                try { c.reflow(); } catch (e) {}
             }
-            resizeModalChart('#mTasaActiva');
-        }, 150);
-        setTimeout(function () {
-            resizeModalChart('#mTasaActiva');
-        }, 320);
+        }, 120);
     });
 
     // Modal Tasa Pasiva
     $('#mTasaPasiva').on('shown.bs.modal', function () {
-        resizeModalChart('#mTasaPasiva');
+        renderModalChartFresh('#mTasaPasiva');
         setTimeout(function () {
-            try {
-                renderKpiStripForModal('#mTasaPasiva', '#pasivaModalKpiStrip', 'pasivaModalSeriesSelect');
-            } catch (e) {
-                console.error(e);
+            var c = window.pTasaPasiva;
+            if (c && typeof c.reflow === 'function') {
+                try { c.reflow(); } catch (e) {}
             }
-            resizeModalChart('#mTasaPasiva');
-        }, 150);
-        setTimeout(function () {
-            resizeModalChart('#mTasaPasiva');
-        }, 320);
+        }, 120);
     });
 
     // Modal Tasa Ponderada
     $('#mTasaPonderada').on('shown.bs.modal', function () {
-        resizeModalChart('#mTasaPonderada');
+        renderModalChartFresh('#mTasaPonderada');
         setTimeout(function () {
-            try {
-                renderKpiStripForModal('#mTasaPonderada', '#ponderadaModalKpiStrip', 'ponderadaModalSeriesSelect');
-            } catch (e) {
-                console.error(e);
+            var c = window.pPonderada;
+            if (c && typeof c.reflow === 'function') {
+                try { c.reflow(); } catch (e) {}
             }
-            resizeModalChart('#mTasaPonderada');
-        }, 150);
-        setTimeout(function () {
-            resizeModalChart('#mTasaPonderada');
-        }, 320);
+        }, 120);
     });
 
     // Modal Tasa Ponderada Segmento
     $('#mTasaPonderadaSegmento').on('shown.bs.modal', function () {
-        resizeModalChart('#mTasaPonderadaSegmento');
+        renderModalChartFresh('#mTasaPonderadaSegmento');
         setTimeout(function () {
-            try {
-                renderKpiStripForModal('#mTasaPonderadaSegmento', '#segmentoModalKpiStrip', 'segmentoModalSeriesSelect');
-            } catch (e) {
-                console.error(e);
+            var c = window.pSegmento;
+            if (c && typeof c.reflow === 'function') {
+                try { c.reflow(); } catch (e) {}
             }
-            resizeModalChart('#mTasaPonderadaSegmento');
-        }, 150);
-        setTimeout(function () {
-            resizeModalChart('#mTasaPonderadaSegmento');
-        }, 320);
+        }, 120);
     });
 
     $(window).on('resize', function () {
         if (typeof Highcharts !== 'undefined' && Highcharts.charts) {
             $('.modal.in, .modal.show').each(function () {
-                resizeModalChart('#' + this.id);
+                renderModalChartFresh('#' + this.id);
             });
             Highcharts.charts.forEach(function (c) {
                 if (c && c.renderTo && !$(c.renderTo).closest('.modal').length) {

@@ -93,8 +93,8 @@ namespace FGA.Controllers
                         m.tasaPonderadaSegmento.SetYAxis(HighChart.GetYAxis(null, null, "formatPercent"));
                         m.pTasaPonderadaSegmento.SetYAxis(HighChart.GetYAxis(null, null, "formatPercent"));
 
-                        m.tasaPonderadaSegmento.SetPlotOptions(HighChart.getLabelStackingNormal());
-                        m.pTasaPonderadaSegmento.SetPlotOptions(HighChart.getLabelStackingNormal());
+                        m.tasaPonderadaSegmento.SetPlotOptions(HighChart.getLabelPercent());
+                        m.pTasaPonderadaSegmento.SetPlotOptions(HighChart.getLabelPercent());
 
                         numSeries = listaSeries.Where(o => o.mostrar == true).Count();
                         Series[] series = new Series[numSeries];
@@ -102,20 +102,18 @@ namespace FGA.Controllers
                         i = 0;
 
                         // Paleta ejecutiva moderna y distintiva para segmentos de tasas de crédito
-                        // Cada color posee un matiz completamente diferente y armónico, evitando apilar tonos azules repetitivos
+                        // Cada color posee un matiz completamente diferente y armónico
                         string[] paletaDistintiva = new string[]
                         {
-                            "#1e40af", // Azul real profundo
-                            "#f59e0b", // Ámbar dorado cálido
+                            "#2563eb", // Azul cobalto real
                             "#7c3aed", // Violeta real / Púrpura corporativo
                             "#059669", // Verde esmeralda fresco
                             "#0284c7", // Celeste océano vibrante
+                            "#d97706", // Miel ocre dorado
                             "#e11d48", // Coral rosa ejecutivo
                             "#0d9488", // Teal financiero
-                            "#d97706", // Miel ocre dorado
                             "#4338ca", // Índigo corporativo
                             "#10b981", // Menta esmeralda
-                            "#ea580c", // Naranja cálido
                             "#64748b"  // Slate neutro
                         };
 
@@ -127,10 +125,10 @@ namespace FGA.Controllers
                                 string s = nombre.Trim().ToLowerInvariant();
 
                                 if (s.Contains("revolutivo") || s.Contains("tarjeta"))
-                                    return ColorTranslator.FromHtml("#1e40af"); // Azul real profundo (Revolutivos)
+                                    return ColorTranslator.FromHtml("#2563eb"); // Azul cobalto real (Revolutivos)
 
                                 if (s.Contains("tasa ponderada") || s.Contains("ponderada total"))
-                                    return ColorTranslator.FromHtml("#f59e0b"); // Ámbar dorado cálido (Referencia ponderada global)
+                                    return ColorTranslator.FromHtml("#ea580c"); // Naranja institucional cálido (Referencia ponderada global destacada)
 
                                 if (s.Contains("consumo") || s.Contains("personal"))
                                     return ColorTranslator.FromHtml("#7c3aed"); // Violeta real (Consumo)
@@ -151,7 +149,7 @@ namespace FGA.Controllers
                                     return ColorTranslator.FromHtml("#d97706"); // Miel / Ocre dorado (Empresarial 3)
 
                                 if (s.Contains("no aplica") || s.Contains("otro"))
-                                    return ColorTranslator.FromHtml("#94a3b8"); // Slate neutro (No aplica)
+                                    return ColorTranslator.FromHtml("#64748b"); // Slate neutro (No aplica)
                             }
                             return ColorTranslator.FromHtml(paletaDistintiva[idx % paletaDistintiva.Length]);
                         };
@@ -164,12 +162,15 @@ namespace FGA.Controllers
                                 Color colorSerie = resolverColorSegmento(detalle.nombre, colorIdx);
                                 colorIdx++;
 
+                                bool esPonderadaTotal = detalle.nombre != null && detalle.nombre.Trim().ToLowerInvariant().Contains("tasa ponderada");
+
                                 serie = new Series
                                 {
-                                    Type = ChartTypes.Column,
+                                    Type = ChartTypes.Spline,
                                     Name = detalle.nombre,
                                     Data = new Data(detalle.valores),
                                     Color = colorSerie,
+                                    PlotOptionsSpline = esPonderadaTotal ? HighChart.getSplineDashPercent(3) : HighChart.getSplinePercent(2)
                                 };
 
                                 series[i] = serie;
