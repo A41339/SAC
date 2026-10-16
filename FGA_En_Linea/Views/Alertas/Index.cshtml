@@ -420,20 +420,24 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <!-- Modal Header -->
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                <div class="modal-config-title">
-                    <i class="fa fa-sliders"></i>
-                    <span>Parámetros de Detección y Cuentas de la Entidad</span>
+            <div class="modal-header modal-config-header">
+                <div class="modal-config-header-main">
+                    <div class="modal-config-title">
+                        <i class="fa fa-sliders"></i>
+                        <span>Parámetros de Detección y Cuentas de la Entidad</span>
+                    </div>
+                    <p class="modal-config-subtitle">
+                        Defina si la entidad utiliza umbrales financieros personalizados o los globales de FFC, y configure cuentas prioritarias o excluidas.
+                    </p>
                 </div>
-                <p class="modal-config-subtitle">
-                    Defina si la entidad utiliza umbrales financieros personalizados o los globales de FFC, y configure cuentas prioritarias o excluidas.
-                </p>
-                <div class="modal-entity-pill" id="modalEntityPill">
-                    <i class="fa fa-university"></i>
-                    <span id="lblModalNombreEntidad">Cargando entidad...</span>
+                <div class="modal-config-header-actions">
+                    <div class="modal-entity-pill" id="modalEntityPill">
+                        <i class="fa fa-university"></i>
+                        <span id="lblModalNombreEntidad">Cargando entidad...</span>
+                    </div>
+                    <button type="button" class="close modal-config-close-btn" data-dismiss="modal" aria-label="Cerrar" title="Cerrar">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                    </button>
                 </div>
             </div>
 
@@ -449,7 +453,7 @@
             </div>
 
             <!-- Modal Body -->
-            <div class="modal-body" style="padding: 24px;">
+            <div class="modal-body modal-config-body">
                 <!-- TAB 1: UMBRALES Y REGLAS DE DETECCIÓN -->
                 <div id="tabContentUmbrales" class="tab-content-panel">
                     <!-- Switch Personalizado -->
@@ -465,33 +469,33 @@
                     </div>
 
                     <!-- Campos de Umbrales -->
-                    <div id="formCamposUmbrales" style="transition: opacity 0.25s ease;">
+                    <div id="formCamposUmbrales" class="config-form-campos">
                         <div class="row">
                             <div class="col-sm-6">
-                                <div class="form-group" style="margin-bottom: 16px;">
-                                    <label style="font-size: 13px; font-weight: 700; color: #1e293b; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
-                                        <i class="fa fa-percent" style="color: #2F5597;"></i> Variación Porcentual Mínima
+                                <div class="form-group config-field-group">
+                                    <label class="config-field-label">
+                                        <i class="fa fa-percent"></i> Variación Porcentual Mínima
                                     </label>
                                     <div class="input-group">
-                                        <input type="number" id="txtCfgUmbralPorc" class="form-control" style="border-radius: 8px 0 0 8px; font-weight: 700; height: 40px; font-size: 14px;" min="0.1" max="1000" step="0.1" placeholder="Ej: 15.0" />
-                                        <span class="input-group-addon" style="border-radius: 0 8px 8px 0; background: #f8fafc; font-weight: 700; color: #475569;">%</span>
+                                        <input type="number" id="txtCfgUmbralPorc" class="form-control config-input-porc" min="0.1" max="1000" step="0.1" placeholder="Ej: 15.0" />
+                                        <span class="input-group-addon config-addon-porc">%</span>
                                     </div>
-                                    <small class="text-muted" style="font-size: 11px; display: block; margin-top: 4px;">
+                                    <small class="text-muted config-help-text">
                                         Porcentaje mínimo de desviación absoluta entre saldos de períodos comparados.
                                     </small>
                                 </div>
                             </div>
 
                             <div class="col-sm-6">
-                                <div class="form-group" style="margin-bottom: 16px;">
-                                    <label style="font-size: 13px; font-weight: 700; color: #1e293b; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
-                                        <i class="fa fa-money" style="color: #2F5597;"></i> Variación de Monto Mínima (Severidad Crítica)
+                                <div class="form-group config-field-group">
+                                    <label class="config-field-label">
+                                        <i class="fa fa-money"></i> Variación de Monto Mínima (Severidad Crítica)
                                     </label>
                                     <div class="input-group">
-                                        <span class="input-group-addon" style="border-radius: 8px 0 0 8px; background: #f8fafc; font-weight: 700; color: #475569;">₡</span>
-                                        <input type="number" id="txtCfgUmbralMonto" class="form-control" style="border-radius: 0 8px 8px 0; font-weight: 700; height: 40px; font-size: 14px;" min="0" step="500000" placeholder="Ej: 10000000" />
+                                        <span class="input-group-addon config-addon-monto">₡</span>
+                                        <input type="number" id="txtCfgUmbralMonto" class="form-control config-input-monto" min="0" step="500000" placeholder="Ej: 10000000" />
                                     </div>
-                                    <small class="text-muted" style="font-size: 11px; display: block; margin-top: 4px;">
+                                    <small class="text-muted config-help-text">
                                         Monto en colones a partir del cual la fluctuación se clasifica como <strong>Crítica</strong>.
                                     </small>
                                 </div>
@@ -499,11 +503,11 @@
                         </div>
 
                         <!-- Modo de Monitoreo -->
-                        <div style="margin-top: 8px; margin-bottom: 20px;">
-                            <label style="font-size: 13px; font-weight: 700; color: #1e293b; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
-                                <i class="fa fa-filter" style="color: #2F5597;"></i> Alcance y Modo de Monitoreo de Cuentas
+                        <div class="config-section-title-wrap">
+                            <label class="config-section-label">
+                                <i class="fa fa-filter"></i> Alcance y Modo de Monitoreo de Cuentas
                             </label>
-                            <p style="font-size: 12px; color: #64748b; margin-bottom: 10px;">
+                            <p class="config-section-desc">
                                 Seleccione la estrategia con la que el motor de alertas filtrará las cuentas contables de su entidad:
                             </p>
 
@@ -511,9 +515,11 @@
                                 <!-- Opción 1: SOLO_WATCHLIST (Por Defecto) -->
                                 <div class="radio-card-item selected" id="cardModoWatchlist" onclick="seleccionarModoMonitoreo('SOLO_WATCHLIST');">
                                     <div class="radio-card-header">
-                                        <input type="radio" name="rdModoMonitoreo" id="rdModoWatchlist" value="SOLO_WATCHLIST" checked style="margin: 0; accent-color: #2F5597;" />
-                                        <span>Solo Cuentas Prioritarias</span>
-                                        <span class="badge" style="background: #0284c7; color: #fff; font-size: 10px; margin-left: 6px; padding: 2px 6px;">Por Defecto</span>
+                                        <div class="radio-card-title-wrap">
+                                            <input type="radio" name="rdModoMonitoreo" id="rdModoWatchlist" value="SOLO_WATCHLIST" checked />
+                                            <span>Solo Cuentas Prioritarias</span>
+                                        </div>
+                                        <span class="badge-modo-default">Por Defecto</span>
                                     </div>
                                     <div class="radio-card-desc">
                                         Dispara alertas <strong>únicamente</strong> para las cuentas registradas en su Lista de Monitoreo (pestaña superior). Por defecto ninguna cuenta genera alertas hasta ser configurada por la entidad.
@@ -523,8 +529,10 @@
                                 <!-- Opción 2: TODAS -->
                                 <div class="radio-card-item" id="cardModoTodas" onclick="seleccionarModoMonitoreo('TODAS');">
                                     <div class="radio-card-header">
-                                        <input type="radio" name="rdModoMonitoreo" id="rdModoTodas" value="TODAS" style="margin: 0; accent-color: #2F5597;" />
-                                        <span>Todas las Cuentas</span>
+                                        <div class="radio-card-title-wrap">
+                                            <input type="radio" name="rdModoMonitoreo" id="rdModoTodas" value="TODAS" />
+                                            <span>Todas las Cuentas</span>
+                                        </div>
                                     </div>
                                     <div class="radio-card-desc">
                                         Evalúa exhaustivamente todo el catálogo contable de la entidad (No recomendado: genera gran volumen de alertas generales).
@@ -534,8 +542,10 @@
                                 <!-- Opción 3: EXCLUIR_BLACKLIST -->
                                 <div class="radio-card-item" id="cardModoBlacklist" onclick="seleccionarModoMonitoreo('EXCLUIR_BLACKLIST');">
                                     <div class="radio-card-header">
-                                        <input type="radio" name="rdModoMonitoreo" id="rdModoBlacklist" value="EXCLUIR_BLACKLIST" style="margin: 0; accent-color: #2F5597;" />
-                                        <span>Excluir Cuentas Omitidas</span>
+                                        <div class="radio-card-title-wrap">
+                                            <input type="radio" name="rdModoMonitoreo" id="rdModoBlacklist" value="EXCLUIR_BLACKLIST" />
+                                            <span>Excluir Cuentas Omitidas</span>
+                                        </div>
                                     </div>
                                     <div class="radio-card-desc">
                                         Evalúa todo el catálogo, <strong>excepto</strong> aquellas cuentas agregadas a su Lista de Exclusión.
@@ -545,8 +555,8 @@
                         </div>
                     </div>
 
-                    <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px; padding-top: 16px; border-top: 1px solid #e2e8f0;">
-                        <button type="button" class="btn btn-default" data-dismiss="modal" style="border-radius: 8px; font-weight: 600; padding: 8px 18px;">
+                    <div class="config-tab-footer-actions">
+                        <button type="button" class="btn btn-default config-btn-cancel" data-dismiss="modal">
                             Cancelar
                         </button>
                         <button type="button" class="btn-al-action btn-al-primary" id="btnGuardarConfigUmbrales" onclick="guardarConfiguracionEntidad();">
@@ -558,20 +568,20 @@
                 <!-- TAB 2: GESTIÓN DE CUENTAS MONITOREADAS (WATCHLIST / BLACKLIST) -->
                 <div id="tabContentCuentas" class="tab-content-panel" style="display: none;">
                     <!-- Formulario de Inclusión de Cuenta -->
-                    <div style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 18px 20px; margin-bottom: 22px;">
-                        <h4 style="margin: 0 0 12px 0; font-size: 14px; font-weight: 800; color: #0f172a; display: flex; align-items: center; gap: 8px;">
+                    <div class="config-add-box">
+                        <h4 class="config-add-title">
                             <i class="fa fa-plus-circle" style="color: #2F5597;"></i> Registrar Cuenta a la Lista
                         </h4>
 
                         <div class="row">
                             <div class="col-sm-7">
                                 <div class="form-group" style="margin-bottom: 12px;">
-                                    <label style="font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 4px;">
+                                    <label class="config-subfield-label">
                                         Buscar Cuenta Contable (por código o nombre):
                                     </label>
                                     <div class="autocomplete-search-container">
                                         <div style="position: relative;">
-                                            <input type="text" id="txtBuscarCuentaCatalogo" class="form-control" placeholder="Escriba código o nombre de la cuenta..." autocomplete="off" style="border-radius: 8px; font-size: 13px; height: 38px; padding-right: 30px;" />
+                                            <input type="text" id="txtBuscarCuentaCatalogo" class="form-control config-input-search" placeholder="Escriba código o nombre de la cuenta..." autocomplete="off" />
                                             <i class="fa fa-spinner fa-spin" id="spinBuscarCuenta" style="position: absolute; right: 10px; top: 12px; color: #2F5597; display: none;"></i>
                                         </div>
                                         <div id="dropdownResultadosCuentas" class="autocomplete-dropdown"></div>
@@ -590,10 +600,10 @@
 
                             <div class="col-sm-5">
                                 <div class="form-group" style="margin-bottom: 12px;">
-                                    <label style="font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 4px;">
+                                    <label class="config-subfield-label">
                                         Tipo de Monitoreo:
                                     </label>
-                                    <select id="selectTipoMonitoreoCuenta" class="form-control" style="border-radius: 8px; font-size: 13px; height: 38px; font-weight: 600;">
+                                    <select id="selectTipoMonitoreoCuenta" class="form-control config-select-tipo">
                                         <option value="WATCHLIST">⭐ Prioritaria (Watchlist - Monitorear)</option>
                                         <option value="BLACKLIST">⛔ Excluida (Blacklist - Omitir Alertas)</option>
                                     </select>
@@ -604,14 +614,14 @@
                         <div class="row">
                             <div class="col-sm-9">
                                 <div class="form-group" style="margin-bottom: 8px;">
-                                    <label style="font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 4px;">
+                                    <label class="config-subfield-label">
                                         Motivo o Justificación (Opcional):
                                     </label>
-                                    <input type="text" id="txtJustificacionCuenta" class="form-control" placeholder="Ej: Cuenta de alto volumen sometida a auditoría o revisión especial..." style="border-radius: 8px; font-size: 12.5px; height: 38px;" />
+                                    <input type="text" id="txtJustificacionCuenta" class="form-control config-input-justificacion" placeholder="Ej: Cuenta de alto volumen sometida a auditoría o revisión especial..." />
                                 </div>
                             </div>
                             <div class="col-sm-3" style="display: flex; align-items: flex-end;">
-                                <button type="button" class="btn btn-primary btn-block" id="btnGuardarCuenta" onclick="guardarCuentaMonitoreada();" style="height: 38px; border-radius: 8px; font-weight: 700; font-size: 12.5px; background: #2F5597; border-color: #1e3a8a; margin-bottom: 8px;">
+                                <button type="button" class="btn btn-primary btn-block config-btn-add-cuenta" id="btnGuardarCuenta" onclick="guardarCuentaMonitoreada();">
                                     <i class="fa fa-plus"></i> Agregar Cuenta
                                 </button>
                             </div>
@@ -619,15 +629,15 @@
                     </div>
 
                     <!-- Tabla de Cuentas Registradas -->
-                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
-                        <span style="font-size: 13px; font-weight: 700; color: #0f172a;">
+                    <div class="config-table-header-wrap">
+                        <span class="config-table-title">
                             <i class="fa fa-table" style="color: #2F5597;"></i> Cuentas Configuradas para esta Entidad
                         </span>
                         <span class="table-count-pill" id="lblCountCuentasTabla">0 cuentas</span>
                     </div>
 
-                    <div style="max-height: 280px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 8px;">
-                        <table class="table table-cuentas-monitoreadas" style="margin-bottom: 0;">
+                    <div class="config-table-scroll-container">
+                        <table class="table table-cuentas-monitoreadas">
                             <thead>
                                 <tr>
                                     <th style="width: 140px;">Código</th>
@@ -650,11 +660,11 @@
             </div>
 
             <!-- Modal Footer -->
-            <div class="modal-footer" style="display: flex; align-items: center; justify-content: space-between; background: #f8fafc; border-top: 1px solid #e2e8f0; padding: 12px 24px;">
-                <span style="font-size: 12px; color: #64748b;">
+            <div class="modal-footer modal-config-footer">
+                <span class="modal-config-footer-info">
                     <i class="fa fa-info-circle" style="color: #2F5597;"></i> Los cambios se aplicarán inmediatamente en la siguiente evaluación de alertas.
                 </span>
-                <button type="button" class="btn btn-default" data-dismiss="modal" style="border-radius: 8px; font-weight: 600; padding: 6px 16px;">
+                <button type="button" class="btn btn-default modal-config-footer-btn" data-dismiss="modal">
                     Cerrar
                 </button>
             </div>

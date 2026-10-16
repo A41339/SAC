@@ -921,7 +921,8 @@
 
     /* Modal de Configuración de Alertas por Entidad */
     .modal-config-entidad .modal-dialog {
-        max-width: 840px;
+        max-width: 920px;
+        width: 94%;
         margin: 30px auto;
     }
     .modal-config-entidad .modal-content {
@@ -930,38 +931,52 @@
         box-shadow: 0 20px 30px rgba(15, 23, 42, 0.18);
         overflow: hidden;
     }
-    .modal-config-entidad .modal-header {
-        background: linear-gradient(135deg, #143750 0%, #1e3a8a 100%);
-        color: #ffffff;
-        padding: 18px 24px;
-        border-bottom: none;
-        position: relative;
+    .modal-config-entidad .modal-header,
+    .modal-config-header {
+        background: linear-gradient(135deg, #143750 0%, #1e3a8a 100%) !important;
+        color: #ffffff !important;
+        padding: 18px 24px !important;
+        border-bottom: none !important;
+        position: relative !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        flex-direction: row !important;
+        gap: 16px !important;
     }
-    .modal-config-entidad .modal-header .close {
-        color: #ffffff;
-        opacity: 0.85;
-        font-size: 26px;
-        font-weight: 300;
-        text-shadow: none;
-        transition: opacity 0.2s;
-        margin-top: -6px;
-    }
-    .modal-config-entidad .modal-header .close:hover {
-        opacity: 1;
+    .modal-config-header-main {
+        flex: 1 1 auto !important;
+        min-width: 0 !important;
+        margin-right: 0 !important;
+        order: 1 !important;
     }
     .modal-config-title {
-        font-size: 18px;
+        font-size: 17px;
         font-weight: 800;
         margin: 0 0 4px 0;
         display: flex;
         align-items: center;
         gap: 10px;
         color: #ffffff;
+        line-height: 1.3;
+    }
+    .modal-config-title i {
+        font-size: 18px;
+        color: #93c5fd;
     }
     .modal-config-subtitle {
-        font-size: 12.5px;
-        color: #94a3b8;
+        font-size: 12px;
+        color: #cbd5e1;
         margin: 0;
+        line-height: 1.4;
+    }
+    .modal-config-header-actions {
+        display: flex !important;
+        align-items: center !important;
+        gap: 12px !important;
+        flex-shrink: 0 !important;
+        margin-left: auto !important;
+        order: 2 !important;
     }
     .modal-entity-pill {
         display: inline-flex;
@@ -970,11 +985,49 @@
         background: rgba(255, 255, 255, 0.15);
         color: #ffffff;
         border: 1px solid rgba(255, 255, 255, 0.25);
-        padding: 4px 12px;
+        padding: 5px 12px;
         border-radius: 20px;
         font-size: 12px;
         font-weight: 700;
-        margin-top: 10px;
+        margin-top: 0 !important;
+        white-space: nowrap;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    }
+    .modal-entity-pill i {
+        color: #93c5fd;
+    }
+    .modal-config-close-btn,
+    .modal-config-entidad .modal-header .close,
+    .modal-config-entidad button.close {
+        width: 32px !important;
+        height: 32px !important;
+        min-width: 32px !important;
+        border-radius: 50% !important;
+        background: rgba(255, 255, 255, 0.15) !important;
+        border: 1px solid rgba(255, 255, 255, 0.25) !important;
+        color: #ffffff !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        font-size: 14px !important;
+        line-height: 1 !important;
+        cursor: pointer !important;
+        opacity: 0.9 !important;
+        transition: all 0.2s ease !important;
+        outline: none !important;
+        text-shadow: none !important;
+        float: none !important;
+        order: 2 !important;
+    }
+    .modal-config-close-btn:hover,
+    .modal-config-entidad .modal-header .close:hover,
+    .modal-config-entidad button.close:hover {
+        background: rgba(255, 255, 255, 0.3) !important;
+        color: #ffffff !important;
+        opacity: 1 !important;
+        transform: scale(1.08);
     }
 
     /* Tabs de Configuración */
@@ -1111,7 +1164,7 @@
         position: relative;
         display: flex;
         flex-direction: column;
-        gap: 6px;
+        gap: 8px;
     }
     .radio-card-item:hover {
         border-color: #93c5fd;
@@ -1124,8 +1177,10 @@
     }
     .radio-card-header {
         display: flex;
-        align-items: center;
-        gap: 8px;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 6px;
+        flex-wrap: wrap;
         font-weight: 700;
         font-size: 13px;
         color: #0f172a;
@@ -1133,9 +1188,36 @@
     .radio-card-item.selected .radio-card-header {
         color: #1e3a8a;
     }
+    .radio-card-title-wrap {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        min-width: 0;
+        flex: 1 1 auto;
+    }
+    .radio-card-title-wrap input[type="radio"] {
+        margin: 0;
+        accent-color: #2F5597;
+        flex-shrink: 0;
+        cursor: pointer;
+    }
     .radio-card-header i {
         font-size: 15px;
         color: #2F5597;
+    }
+    .badge-modo-default {
+        background: #0284c7 !important;
+        color: #ffffff !important;
+        font-size: 10px !important;
+        font-weight: 700 !important;
+        padding: 3px 8px !important;
+        border-radius: 6px !important;
+        white-space: nowrap !important;
+        line-height: 1.2 !important;
+        flex-shrink: 0 !important;
+        letter-spacing: 0.3px !important;
+        display: inline-block !important;
+        box-shadow: 0 1px 3px rgba(2, 132, 199, 0.25);
     }
     .radio-card-desc {
         font-size: 11.5px;
@@ -1278,4 +1360,170 @@
         background: #ffedd5;
         border-color: #ea580c;
         color: #c2410c;
+    }
+
+    /* Helpers para el Modal de Configuración de Entidad */
+    .modal-config-body {
+        padding: 24px;
+    }
+    .modal-config-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: #f8fafc;
+        border-top: 1px solid #e2e8f0;
+        padding: 12px 24px;
+    }
+    .modal-config-footer-info {
+        font-size: 12px;
+        color: #64748b;
+    }
+    .modal-config-footer-btn {
+        border-radius: 8px;
+        font-weight: 600;
+        padding: 6px 16px;
+    }
+    .config-form-campos {
+        transition: opacity 0.25s ease;
+    }
+    .config-field-group {
+        margin-bottom: 16px;
+    }
+    .config-field-label {
+        font-size: 13px;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 6px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .config-field-label i {
+        color: #2F5597;
+    }
+    .config-input-porc {
+        border-radius: 8px 0 0 8px;
+        font-weight: 700;
+        height: 40px;
+        font-size: 14px;
+    }
+    .config-addon-porc {
+        border-radius: 0 8px 8px 0;
+        background: #f8fafc;
+        font-weight: 700;
+        color: #475569;
+    }
+    .config-addon-monto {
+        border-radius: 8px 0 0 8px;
+        background: #f8fafc;
+        font-weight: 700;
+        color: #475569;
+    }
+    .config-input-monto {
+        border-radius: 0 8px 8px 0;
+        font-weight: 700;
+        height: 40px;
+        font-size: 14px;
+    }
+    .config-help-text {
+        font-size: 11px;
+        display: block;
+        margin-top: 4px;
+        color: #64748b;
+    }
+    .config-section-title-wrap {
+        margin-top: 8px;
+        margin-bottom: 20px;
+    }
+    .config-section-label {
+        font-size: 13px;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 4px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .config-section-desc {
+        font-size: 12px;
+        color: #64748b;
+        margin-bottom: 10px;
+    }
+    .config-tab-footer-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 24px;
+        padding-top: 16px;
+        border-top: 1px solid #e2e8f0;
+    }
+    .config-btn-cancel {
+        border-radius: 8px;
+        font-weight: 600;
+        padding: 8px 18px;
+    }
+    .config-add-box {
+        background: #f8fafc;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 18px 20px;
+        margin-bottom: 22px;
+    }
+    .config-add-title {
+        margin: 0 0 12px 0;
+        font-size: 14px;
+        font-weight: 800;
+        color: #0f172a;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .config-subfield-label {
+        font-size: 12px;
+        font-weight: 700;
+        color: #334155;
+        margin-bottom: 4px;
+    }
+    .config-input-search {
+        border-radius: 8px;
+        font-size: 13px;
+        height: 38px;
+        padding-right: 30px;
+    }
+    .config-select-tipo {
+        border-radius: 8px;
+        font-size: 13px;
+        height: 38px;
+        font-weight: 600;
+    }
+    .config-input-justificacion {
+        border-radius: 8px;
+        font-size: 12.5px;
+        height: 38px;
+    }
+    .config-btn-add-cuenta {
+        height: 38px;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 12.5px;
+        background: #2F5597;
+        border-color: #1e3a8a;
+        margin-bottom: 8px;
+    }
+    .config-table-header-wrap {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 10px;
+    }
+    .config-table-title {
+        font-size: 13px;
+        font-weight: 700;
+        color: #0f172a;
+    }
+    .config-table-scroll-container {
+        max-height: 280px;
+        overflow-y: auto;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
     }
