@@ -717,6 +717,7 @@ namespace FGA.Controllers
                 return Json(new AlertaCatalogoCuentasResponse
                 {
                     Success = true,
+                    Message = "OK",
                     Items = resultado
                 }, JsonRequestBehavior.AllowGet);
             }

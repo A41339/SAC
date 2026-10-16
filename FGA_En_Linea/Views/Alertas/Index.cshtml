@@ -912,8 +912,9 @@
         $tbody.html('<tr><td colspan="5" style="text-align: center; padding: 25px; color: #94a3b8;"><i class="fa fa-spinner fa-spin"></i> Cargando cuentas...</td></tr>');
 
         $.getJSON('@Url.Action("GetCuentasMonitoreadas", "Alertas")', { entidadId: entidadId }, function(res) {
-            if (res && res.success && res.cuentas) {
-                var cuentas = res.cuentas;
+            var isOk = res && (res.success === true || res.Success === true);
+            var cuentas = (res && (res.cuentas || res.Cuentas || res.items || res.Items)) || [];
+            if (isOk) {
                 $('#lblCountCuentasBadge').text(cuentas.length);
                 $('#lblCountCuentasTabla').text(cuentas.length + (cuentas.length === 1 ? ' cuenta' : ' cuentas'));
 
@@ -931,18 +932,24 @@
                 var html = '';
                 for (var i = 0; i < cuentas.length; i++) {
                     var c = cuentas[i];
-                    var isWatchlist = (c.TipoMonitoreo === 'WATCHLIST' || c.TipoMonitoreo === 'MONITOREAR');
+                    var tipoMon = (c.TipoMonitoreo || c.tipoMonitoreo || '').toUpperCase();
+                    var isWatchlist = (tipoMon === 'WATCHLIST' || tipoMon === 'MONITOREAR');
                     var badgeHtml = isWatchlist
                         ? '<span class="badge-tipo-watchlist"><i class="fa fa-star"></i> Prioritaria</span>'
                         : '<span class="badge-tipo-blacklist"><i class="fa fa-ban"></i> Excluida</span>';
 
-                    html += '<tr id="row-cuenta-' + c.Id + '">';
-                    html += '<td style="font-family: Consolas, monospace; font-weight: 700; color: #1e3a8a;">' + escapeHtml(c.CuentaContable) + '</td>';
-                    html += '<td style="font-weight: 600; color: #1e293b;">' + escapeHtml(c.NombreCuenta || '') + '</td>';
+                    var cId = c.Id || c.id || 0;
+                    var cCuenta = c.CuentaContable || c.cuentaContable || '';
+                    var cNombre = c.NombreCuenta || c.nombreCuenta || '';
+                    var cJustif = c.Justificacion || c.justificacion || '-';
+
+                    html += '<tr id="row-cuenta-' + cId + '">';
+                    html += '<td style="font-family: Consolas, monospace; font-weight: 700; color: #1e3a8a;">' + escapeHtml(cCuenta) + '</td>';
+                    html += '<td style="font-weight: 600; color: #1e293b;">' + escapeHtml(cNombre) + '</td>';
                     html += '<td style="text-align: center;">' + badgeHtml + '</td>';
-                    html += '<td style="color: #64748b; font-size: 12px;">' + escapeHtml(c.Justificacion || '-') + '</td>';
+                    html += '<td style="color: #64748b; font-size: 12px;">' + escapeHtml(cJustif) + '</td>';
                     html += '<td style="text-align: center;">';
-                    html += '<button type="button" class="btn-delete-cuenta" onclick="eliminarCuentaMonitoreada(' + c.Id + ', \'' + escapeAttr(c.CuentaContable) + '\');" title="Remover de la lista">';
+                    html += '<button type="button" class="btn-delete-cuenta" onclick="eliminarCuentaMonitoreada(' + cId + ', \'' + escapeAttr(cCuenta) + '\');" title="Remover de la lista">';
                     html += '<i class="fa fa-trash-o"></i> Quitar';
                     html += '</button>';
                     html += '</td>';
@@ -950,10 +957,11 @@
                 }
                 $tbody.html(html);
             } else {
-                $tbody.html('<tr><td colspan="5" style="text-align: center; padding: 25px; color: #ea580c;">No fue posible obtener las cuentas registradas.</td></tr>');
+                var errTxt = (res && (res.message || res.Message)) || 'No fue posible obtener las cuentas registradas.';
+                $tbody.html('<tr><td colspan="5" style="text-align: center; padding: 25px; color: #ea580c;"><i class="fa fa-exclamation-circle"></i> ' + escapeHtml(errTxt) + '</td></tr>');
             }
         }).fail(function() {
-            $tbody.html('<tr><td colspan="5" style="text-align: center; padding: 25px; color: #ea580c;">Error al consultar cuentas monitoreadas.</td></tr>');
+            $tbody.html('<tr><td colspan="5" style="text-align: center; padding: 25px; color: #ef4444;"><i class="fa fa-exclamation-triangle"></i> Error al conectar con el servidor para obtener las cuentas.</td></tr>');
         });
     }
 
@@ -990,17 +998,19 @@
             justificacion: justificacion
         }, function(res) {
             $btn.prop('disabled', false).html('<i class="fa fa-plus"></i> Agregar Cuenta');
-            if (res && res.success) {
+            var isOk = res && (res.success === true || res.Success === true);
+            var msg = (res && (res.message || res.Message));
+            if (isOk) {
                 if (window.mostrarToast) {
-                    window.mostrarToast(res.message || 'Cuenta agregada exitosamente a la lista.', 'success', 'Cuenta Registrada');
+                    window.mostrarToast(msg || 'Cuenta agregada exitosamente a la lista.', 'success', 'Cuenta Registrada');
                 } else if (window.mostrarToastExito) {
-                    window.mostrarToastExito(res.message || 'Cuenta agregada exitosamente a la lista.', 'Cuenta Registrada');
+                    window.mostrarToastExito(msg || 'Cuenta agregada exitosamente a la lista.', 'Cuenta Registrada');
                 }
                 limpiarCuentaSeleccionada();
                 $('#txtJustificacionCuenta').val('');
                 cargarCuentasMonitoreadas(currentConfigEntidadId);
             } else {
-                alert((res && res.message) ? res.message : 'Error al registrar la cuenta.');
+                alert(msg || 'Error al registrar la cuenta.');
             }
         }).fail(function() {
             $btn.prop('disabled', false).html('<i class="fa fa-plus"></i> Agregar Cuenta');
@@ -1017,13 +1027,15 @@
             id: id,
             entidadId: currentConfigEntidadId
         }, function(res) {
-            if (res && res.success) {
+            var isOk = res && (res.success === true || res.Success === true);
+            var msg = (res && (res.message || res.Message));
+            if (isOk) {
                 if (window.mostrarToast) {
                     window.mostrarToast('Cuenta contable removida exitosamente.', 'success', 'Eliminada');
                 }
                 cargarCuentasMonitoreadas(currentConfigEntidadId);
             } else {
-                alert((res && res.message) ? res.message : 'No se pudo remover la cuenta.');
+                alert(msg || 'No se pudo remover la cuenta.');
             }
         }).fail(function() {
             alert('Error al remover la cuenta contable.');
@@ -1035,6 +1047,7 @@
         $('#hdnCuentaNombre').val('');
         $('#lblCuentaSeleccionadaTexto').text('');
         $('#boxCuentaSeleccionada').hide();
+        $('#spinBuscarCuenta').hide();
         $('#txtBuscarCuentaCatalogo').val('').show();
         $('#dropdownResultadosCuentas').hide().empty();
     }
@@ -1055,7 +1068,7 @@
 
     function escapeAttr(text) {
         if (!text) return '';
-        return text.replace(/'/g, "\\'");
+        return text.toString().replace(/\\/g, "\\\\").replace(/'/g, "\\'").replace(/"/g, "&quot;");
     }
 
     $(document).ready(function() {
@@ -1299,26 +1312,36 @@
                 }, function(res) {
                     $spin.hide();
                     currentCuentaAjaxReq = null;
-                    if (res && res.success && res.items && res.items.length > 0) {
+                    var items = (res && (res.items || res.Items)) || [];
+                    var isSuccess = res && (res.success === true || res.Success === true);
+
+                    if (isSuccess && items && items.length > 0) {
                         var html = '';
-                        for (var i = 0; i < res.items.length; i++) {
-                            var item = res.items[i];
-                            var safeCuenta = escapeAttr(item.Cuenta);
-                            var safeNombre = escapeAttr(item.Descripcion);
+                        for (var i = 0; i < items.length; i++) {
+                            var item = items[i];
+                            var safeCuenta = escapeAttr(item.Cuenta || item.cuenta || '');
+                            var safeNombre = escapeAttr(item.Descripcion || item.descripcion || item.Nombre || item.nombre || '');
+                            var displayCuenta = escapeHtml(item.Cuenta || item.cuenta || '');
+                            var displayNombre = escapeHtml(item.Descripcion || item.descripcion || item.Nombre || item.nombre || '');
+
                             html += '<div class="autocomplete-item" onclick="seleccionarItemCuenta(\'' + safeCuenta + '\', \'' + safeNombre + '\');">';
-                            html += '<span class="autocomplete-code">' + escapeHtml(item.Cuenta) + '</span>';
-                            html += '<span class="autocomplete-name">' + escapeHtml(item.Descripcion) + '</span>';
+                            html += '<span class="autocomplete-code">' + displayCuenta + '</span>';
+                            html += '<span class="autocomplete-name">' + displayNombre + '</span>';
                             html += '</div>';
                         }
                         $dropdown.html(html).show();
                     } else {
-                        $dropdown.html('<div style="padding: 12px; font-size: 12px; color: #94a3b8; text-align: center;">No se encontraron cuentas contables que coincidan.</div>').show();
+                        var msg = (res && (res.message || res.Message));
+                        if (!msg || isSuccess) {
+                            msg = 'No se encontraron cuentas contables que coincidan con "' + escapeHtml(val) + '".';
+                        }
+                        $dropdown.html('<div style="padding: 12px; font-size: 12px; color: #94a3b8; text-align: center;">' + msg + '</div>').show();
                     }
                 }).fail(function(jqXHR, textStatus) {
                     if (textStatus === 'abort') return;
                     $spin.hide();
                     currentCuentaAjaxReq = null;
-                    $dropdown.hide().empty();
+                    $dropdown.html('<div style="padding: 12px; font-size: 12px; color: #ef4444; text-align: center;"><i class="fa fa-exclamation-triangle"></i> Error al consultar el catálogo contable.</div>').show();
                 });
             }, 300);
         }).on('keydown', function(e) {
@@ -1329,6 +1352,11 @@
                     $firstItem.trigger('click');
                 }
                 return false;
+            }
+        }).on('focus', function() {
+            var val = $(this).val().trim();
+            if (val.length >= 2 && $('#dropdownResultadosCuentas .autocomplete-item').length > 0) {
+                $('#dropdownResultadosCuentas').show();
             }
         });
 
