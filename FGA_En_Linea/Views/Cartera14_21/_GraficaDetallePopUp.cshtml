@@ -93,14 +93,14 @@
             <div style="display: inline-flex; align-items: center; gap: 5px;">
                 <span style="font-size: 11px; font-weight: 600; color: #475569; white-space: nowrap;"><i class="fa fa-sliders" style="color: #0284c7;"></i> Tipo:</span>
                 <select id="selTipoGraficoCartera" onchange="window.cambiarTipoGrafico(this.value)" class="form-control" style="height: 28px; padding: 2px 8px; font-size: 11.5px; font-weight: 600; border-radius: 6px; border: 1px solid #cbd5e1; color: #0f172a; background: #ffffff; cursor: pointer;">
-                    <option value="column">📊 Columnas (Original 2D)</option>
-                    <option value="column3d">🏙️ Columnas 3D Isométricas</option>
+                    <option value="column">📊 Columnas 13 Meses (Original 2D)</option>
+                    <option value="histogram3d">📊 Histograma 3D de Distribución</option>
                     <option value="spline">📈 Líneas (Tendencia)</option>
                     <option value="area">📉 Áreas (Concentración)</option>
                 </select>
             </div>
-            <button type="button" class="btn-toggle-3d" id="btnToggle3DCartera" onclick="window.toggle3DCartera(this)" title="Alternar vista isométrica 3D interactiva" style="height: 28px; padding: 0 11px; font-size: 11.5px; font-weight: 600; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid #cbd5e1; background: #f1f5f9; color: #475569; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
-                <i class="fa fa-cube" style="color: #0284c7; font-size: 13px;"></i> <span id="lblToggle3D">Vista 3D: Isométrica</span>
+            <button type="button" class="btn-toggle-3d" id="btnToggle3DCartera" onclick="window.toggle3DCartera(this)" title="Alternar entre la versión original y el Histograma 3D de distribución" style="height: 28px; padding: 0 11px; font-size: 11.5px; font-weight: 600; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid #cbd5e1; background: #f1f5f9; color: #475569; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
+                <i class="fa fa-cube" style="color: #0284c7; font-size: 13px;"></i> <span id="lblToggle3D">Vista 3D: Histograma</span>
             </button>
             <a class="btn-ampliar" data-toggle="tooltip" data-placement="top" title="Ampliar gr&aacute;fico" href="javascript:mPopUp()" style="height: 28px; padding: 0 11px; font-size: 11.5px; border-radius: 6px; display: inline-flex; align-items: center; gap: 5px;">
                 <i class="fa fa-line-chart"></i> Ampliar
@@ -108,24 +108,30 @@
         </div>
     </div>
 
-    <!-- PANEL DE CONTROL 3D ISOMÉTRICO (PANTALLA PRINCIPAL) -->
-    <div id="skyscrapers3DControllerCartera" style="display: none; align-items: center; justify-content: space-between; padding: 7px 14px; background: #f0f9ff; border-bottom: 1px solid #bae6fd; gap: 10px; flex-wrap: wrap;">
-        <div style="display: flex; align-items: center; gap: 6px;">
-            <button type="button" class="btn btn-sm btn-primary btn-orbit-3d" onclick="window.toggleAutoRotar3D()" style="height: 28px; padding: 0 12px; font-size: 11.5px; font-weight: 700; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; background: #0284c7; border: none; box-shadow: 0 1px 3px rgba(2,132,199,0.3); cursor: pointer;">
-                <i class="fa fa-refresh"></i> <span>Auto-Girar 360°</span>
+    <!-- PANEL DE CONTROL HISTOGRAMA 3D (PANTALLA PRINCIPAL) -->
+    <div id="histograma3DControllerCartera" style="display: none; align-items: center; justify-content: space-between; padding: 7px 14px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; gap: 10px; flex-wrap: wrap;">
+        <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+            <div style="display: inline-flex; align-items: center; gap: 5px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 2px 6px;">
+                <span style="font-size: 11px; font-weight: 700; color: #1e3a8a;"><i class="fa fa-calendar" style="color: #2F5597;"></i> Período:</span>
+                <select class="sel-periodo-hist form-control" onchange="window.cambiarPeriodoHistograma(this.value)" style="height: 24px; padding: 1px 6px; font-size: 11px; font-weight: 700; border: none; background: transparent; color: #0f172a; cursor: pointer;"></select>
+                <button type="button" onclick="window.navegarPeriodoHistograma(-1)" class="btn btn-xs btn-default" style="padding: 2px 5px; font-size: 10px; border-radius: 3px;" title="Período anterior"><i class="fa fa-chevron-left"></i></button>
+                <button type="button" onclick="window.navegarPeriodoHistograma(1)" class="btn btn-xs btn-default" style="padding: 2px 5px; font-size: 10px; border-radius: 3px;" title="Período siguiente"><i class="fa fa-chevron-right"></i></button>
+            </div>
+            <button type="button" class="btn btn-sm btn-primary btn-play-hist" onclick="window.toggleAnimacionHistograma()" style="height: 28px; padding: 0 10px; font-size: 11.5px; font-weight: 700; border-radius: 6px; display: inline-flex; align-items: center; gap: 5px; background: #1b3866; border: none; box-shadow: 0 1px 3px rgba(27,56,102,0.3); cursor: pointer;">
+                <i class="fa fa-play"></i> <span>Evolución</span>
             </button>
-            <button type="button" onclick="window.setPresetAngulo3D(15, 22)" class="btn btn-sm btn-default" style="height: 28px; padding: 0 10px; font-size: 11.5px; font-weight: 600; border-radius: 6px; border: 1px solid #cbd5e1; background: #ffffff; color: #475569; cursor: pointer;" title="Restablecer vista isométrica">
-                <i class="fa fa-compass"></i> Isométrica
+            <button type="button" class="btn btn-sm btn-default btn-orbit-3d" onclick="window.toggleAutoRotar3D()" style="height: 28px; padding: 0 10px; font-size: 11.5px; font-weight: 600; border-radius: 6px; border: 1px solid #cbd5e1; background: #ffffff; color: #475569; cursor: pointer;">
+                <i class="fa fa-refresh" style="color: #0284c7;"></i> <span>Girar 360°</span>
             </button>
             <div style="display: inline-flex; align-items: center; gap: 2px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 2px 4px;">
-                <button type="button" onclick="window.setPresetAngulo3D(8, 0)" style="height: 22px; padding: 0 7px; font-size: 10.5px; font-weight: 600; border: none; background: transparent; color: #475569; cursor: pointer; border-radius: 4px;" title="Vista frontal 3D">Frontal</button>
-                <button type="button" onclick="window.setPresetAngulo3D(18, 42)" style="height: 22px; padding: 0 7px; font-size: 10.5px; font-weight: 600; border: none; background: transparent; color: #475569; cursor: pointer; border-radius: 4px;" title="Vista diagonal 3D">Diagonal</button>
-                <button type="button" onclick="window.setPresetAngulo3D(24, 65)" style="height: 22px; padding: 0 7px; font-size: 10.5px; font-weight: 600; border: none; background: transparent; color: #475569; cursor: pointer; border-radius: 4px;" title="Vista lateral 3D">Lateral</button>
+                <button type="button" onclick="window.setPresetAngulo3D(5, 0)" style="height: 22px; padding: 0 7px; font-size: 10.5px; font-weight: 600; border: none; background: transparent; color: #475569; cursor: pointer; border-radius: 4px;" title="Vista frontal del histograma">Frontal</button>
+                <button type="button" onclick="window.setPresetAngulo3D(12, 18)" style="height: 22px; padding: 0 7px; font-size: 10.5px; font-weight: 600; border: none; background: transparent; color: #1e3a8a; cursor: pointer; border-radius: 4px;" title="Vista 3D equilibrada">3D Normal</button>
+                <button type="button" onclick="window.setPresetAngulo3D(18, 38)" style="height: 22px; padding: 0 7px; font-size: 10.5px; font-weight: 600; border: none; background: transparent; color: #475569; cursor: pointer; border-radius: 4px;" title="Vista diagonal">Diagonal</button>
             </div>
         </div>
-        <div style="display: inline-flex; align-items: center; gap: 6px; background: #ffffff; border: 1px solid #bae6fd; padding: 4px 10px; border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
-            <i class="fa fa-hand-pointer-o" style="color: #0284c7; font-size: 12px;"></i>
-            <span style="font-size: 11.5px; font-weight: 600; color: #0369a1;">Arrastra sobre el gráfico para rotar libremente en 3D</span>
+        <div style="display: inline-flex; align-items: center; gap: 6px; background: #ffffff; border: 1px solid #cbd5e1; padding: 4px 10px; border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
+            <i class="fa fa-bar-chart" style="color: #1b3866; font-size: 12px;"></i>
+            <span style="font-size: 11px; font-weight: 600; color: #475569;">Distribución de saldo por tramo de riesgo | Arrastra para rotar en 3D</span>
         </div>
     </div>
 
@@ -151,37 +157,43 @@
                     <div style="display: inline-flex; align-items: center; gap: 5px;">
                         <span style="font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.9); white-space: nowrap;"><i class="fa fa-sliders" style="color: #38bdf8;"></i> Tipo:</span>
                         <select id="selTipoGraficoModal" onchange="window.cambiarTipoGrafico(this.value)" class="form-control" style="height: 28px; padding: 2px 8px; font-size: 11.5px; font-weight: 600; border-radius: 6px; border: 1px solid rgba(255,255,255,0.3); color: #0f172a; background: #ffffff; cursor: pointer;">
-                            <option value="column">📊 Columnas (Original 2D)</option>
-                            <option value="column3d">🏙️ Columnas 3D Isométricas</option>
+                            <option value="column">📊 Columnas 13 Meses (Original 2D)</option>
+                            <option value="histogram3d">📊 Histograma 3D de Distribución</option>
                             <option value="spline">📈 Líneas (Tendencia)</option>
                             <option value="area">📉 Áreas (Concentración)</option>
                         </select>
                     </div>
-                    <button type="button" class="btn-toggle-3d-modal" id="btnToggle3DModal" onclick="window.toggle3DCartera(this)" title="Alternar vista isométrica 3D interactiva" style="height: 28px; padding: 0 11px; font-size: 11.5px; font-weight: 600; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.18); color: #ffffff; cursor: pointer; transition: all 0.2s ease;">
-                        <i class="fa fa-cube" style="color: #38bdf8; font-size: 13px;"></i> <span id="lblToggle3DModal">Vista 3D: Isométrica</span>
+                    <button type="button" class="btn-toggle-3d-modal" id="btnToggle3DModal" onclick="window.toggle3DCartera(this)" title="Alternar entre la versión original y el Histograma 3D de distribución" style="height: 28px; padding: 0 11px; font-size: 11.5px; font-weight: 600; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.18); color: #ffffff; cursor: pointer; transition: all 0.2s ease;">
+                        <i class="fa fa-cube" style="color: #38bdf8; font-size: 13px;"></i> <span id="lblToggle3DModal">Vista 3D: Histograma</span>
                     </button>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: #ffffff !important; opacity: 0.9; font-size: 22px; line-height: 1;"><span aria-hidden="true">&times;</span></button>
                 </div>
             </div>
 
-            <!-- PANEL DE CONTROL 3D ISOMÉTRICO (MODAL) -->
-            <div id="skyscrapers3DControllerModal" style="display: none; align-items: center; justify-content: space-between; padding: 7px 18px; background: #f0f9ff; border-bottom: 1px solid #bae6fd; gap: 10px; flex-wrap: wrap;">
-                <div style="display: flex; align-items: center; gap: 6px;">
-                    <button type="button" class="btn btn-sm btn-primary btn-orbit-3d" onclick="window.toggleAutoRotar3D()" style="height: 28px; padding: 0 12px; font-size: 11.5px; font-weight: 700; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; background: #0284c7; border: none; box-shadow: 0 1px 3px rgba(2,132,199,0.3); cursor: pointer;">
-                        <i class="fa fa-refresh"></i> <span>Auto-Girar 360°</span>
+            <!-- PANEL DE CONTROL HISTOGRAMA 3D (MODAL) -->
+            <div id="histograma3DControllerModal" style="display: none; align-items: center; justify-content: space-between; padding: 7px 18px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; gap: 10px; flex-wrap: wrap;">
+                <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                    <div style="display: inline-flex; align-items: center; gap: 5px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 2px 6px;">
+                        <span style="font-size: 11px; font-weight: 700; color: #1e3a8a;"><i class="fa fa-calendar" style="color: #2F5597;"></i> Período:</span>
+                        <select class="sel-periodo-hist form-control" onchange="window.cambiarPeriodoHistograma(this.value)" style="height: 24px; padding: 1px 6px; font-size: 11px; font-weight: 700; border: none; background: transparent; color: #0f172a; cursor: pointer;"></select>
+                        <button type="button" onclick="window.navegarPeriodoHistograma(-1)" class="btn btn-xs btn-default" style="padding: 2px 5px; font-size: 10px; border-radius: 3px;" title="Período anterior"><i class="fa fa-chevron-left"></i></button>
+                        <button type="button" onclick="window.navegarPeriodoHistograma(1)" class="btn btn-xs btn-default" style="padding: 2px 5px; font-size: 10px; border-radius: 3px;" title="Período siguiente"><i class="fa fa-chevron-right"></i></button>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-primary btn-play-hist" onclick="window.toggleAnimacionHistograma()" style="height: 28px; padding: 0 10px; font-size: 11.5px; font-weight: 700; border-radius: 6px; display: inline-flex; align-items: center; gap: 5px; background: #1b3866; border: none; box-shadow: 0 1px 3px rgba(27,56,102,0.3); cursor: pointer;">
+                        <i class="fa fa-play"></i> <span>Evolución</span>
                     </button>
-                    <button type="button" onclick="window.setPresetAngulo3D(15, 22)" class="btn btn-sm btn-default" style="height: 28px; padding: 0 10px; font-size: 11.5px; font-weight: 600; border-radius: 6px; border: 1px solid #cbd5e1; background: #ffffff; color: #475569; cursor: pointer;" title="Restablecer vista isométrica">
-                        <i class="fa fa-compass"></i> Isométrica
+                    <button type="button" class="btn btn-sm btn-default btn-orbit-3d" onclick="window.toggleAutoRotar3D()" style="height: 28px; padding: 0 10px; font-size: 11.5px; font-weight: 600; border-radius: 6px; border: 1px solid #cbd5e1; background: #ffffff; color: #475569; cursor: pointer;">
+                        <i class="fa fa-refresh" style="color: #0284c7;"></i> <span>Girar 360°</span>
                     </button>
                     <div style="display: inline-flex; align-items: center; gap: 2px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 2px 4px;">
-                        <button type="button" onclick="window.setPresetAngulo3D(8, 0)" style="height: 22px; padding: 0 7px; font-size: 10.5px; font-weight: 600; border: none; background: transparent; color: #475569; cursor: pointer; border-radius: 4px;" title="Vista frontal 3D">Frontal</button>
-                        <button type="button" onclick="window.setPresetAngulo3D(18, 42)" style="height: 22px; padding: 0 7px; font-size: 10.5px; font-weight: 600; border: none; background: transparent; color: #475569; cursor: pointer; border-radius: 4px;" title="Vista diagonal 3D">Diagonal</button>
-                        <button type="button" onclick="window.setPresetAngulo3D(24, 65)" style="height: 22px; padding: 0 7px; font-size: 10.5px; font-weight: 600; border: none; background: transparent; color: #475569; cursor: pointer; border-radius: 4px;" title="Vista lateral 3D">Lateral</button>
+                        <button type="button" onclick="window.setPresetAngulo3D(5, 0)" style="height: 22px; padding: 0 7px; font-size: 10.5px; font-weight: 600; border: none; background: transparent; color: #475569; cursor: pointer; border-radius: 4px;" title="Vista frontal del histograma">Frontal</button>
+                        <button type="button" onclick="window.setPresetAngulo3D(12, 18)" style="height: 22px; padding: 0 7px; font-size: 10.5px; font-weight: 600; border: none; background: transparent; color: #1e3a8a; cursor: pointer; border-radius: 4px;" title="Vista 3D equilibrada">3D Normal</button>
+                        <button type="button" onclick="window.setPresetAngulo3D(18, 38)" style="height: 22px; padding: 0 7px; font-size: 10.5px; font-weight: 600; border: none; background: transparent; color: #475569; cursor: pointer; border-radius: 4px;" title="Vista diagonal">Diagonal</button>
                     </div>
                 </div>
-                <div style="display: inline-flex; align-items: center; gap: 6px; background: #ffffff; border: 1px solid #bae6fd; padding: 4px 10px; border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
-                    <i class="fa fa-hand-pointer-o" style="color: #0284c7; font-size: 12px;"></i>
-                    <span style="font-size: 11.5px; font-weight: 600; color: #0369a1;">Arrastra sobre el gráfico para rotar libremente en 3D</span>
+                <div style="display: inline-flex; align-items: center; gap: 6px; background: #ffffff; border: 1px solid #cbd5e1; padding: 4px 10px; border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
+                    <i class="fa fa-bar-chart" style="color: #1b3866; font-size: 12px;"></i>
+                    <span style="font-size: 11px; font-weight: 600; color: #475569;">Distribución de saldo por tramo de riesgo | Arrastra para rotar en 3D</span>
                 </div>
             </div>
 
@@ -214,19 +226,44 @@
     window.cartera3DActivo = false;
 
     window.orbitTimer = null;
+    window.animTimerHistograma = null;
+    window.histogramaPeriodoIdx = 0;
     window.coloresPlano2D = ['#0071AD', '#475569', '#0d9488', '#ea580c', '#0284c7', '#6366f1', '#1e3a8a', '#d97706', '#059669', '#64748b'];
 
-    // Paleta 3D Skyscraper Fintech
-    window.paletaSkyscrapers3D = [
-        '#1d4ed8', // 0: Azul Real vibrante (Al día)
-        '#0284c7', // 1: Celeste Océano (1 - 30 días)
-        '#f59e0b', // 2: Ámbar Oro (31 - 60 días)
-        '#ea580c', // 3: Naranja Fuego (61 - 90 días)
-        '#dc2626', // 4: Carmesí (> 90 días)
-        '#7c3aed', // 5: Violeta
-        '#059669', // 6: Esmeralda
-        '#64748b'  // 7: Pizarra
-    ];
+    // Mapeo de paleta institucional y sobria para tramos de riesgo / morosidad
+    window.obtenerColorInstitucional = function (name, idx) {
+        var n = (name || '').toLowerCase();
+        if (n.indexOf('al d') > -1 || n.indexOf('vigente') > -1) {
+            return '#1b3866'; // Azul Marino Institucional FGA
+        } else if (n.indexOf('1 a 30') > -1 || n.indexOf('1-30') > -1 || (n.indexOf('30') > -1 && n.indexOf('60') === -1)) {
+            return '#0284c7'; // Azul Océano Institucional
+        } else if (n.indexOf('31 a 60') > -1 || n.indexOf('31-60') > -1 || (n.indexOf('60') > -1 && n.indexOf('90') === -1)) {
+            return '#d97706'; // Ámbar Institucional (Alerta)
+        } else if (n.indexOf('61 a 90') > -1 || n.indexOf('61-90') > -1) {
+            return '#ea580c'; // Naranja Terracota (Riesgo alto)
+        } else if (n.indexOf('90') > -1 || n.indexOf('mayor') > -1 || n.indexOf('vencid') > -1) {
+            return '#b91c1c'; // Rojo Ejecutivo (Mora crítica)
+        }
+        var paleta = ['#1b3866', '#0284c7', '#d97706', '#ea580c', '#b91c1c', '#475569', '#0d9488', '#2F5597'];
+        return paleta[idx % paleta.length];
+    };
+
+    window.actualizarSelectoresPeriodoHistograma = function (cats) {
+        if (!cats || cats.length === 0) return;
+        var $sels = $('.sel-periodo-hist');
+        $sels.each(function () {
+            var $s = $(this);
+            if ($s.children().length !== cats.length) {
+                $s.empty();
+                cats.forEach(function (cat, idx) {
+                    $s.append('<option value="' + idx + '">' + cat + '</option>');
+                });
+            }
+            var targetIdx = (window.histogramaPeriodoIdx !== undefined && window.histogramaPeriodoIdx < cats.length) ? window.histogramaPeriodoIdx : (cats.length - 1);
+            window.histogramaPeriodoIdx = targetIdx;
+            $s.val(targetIdx);
+        });
+    };
 
     window.guardarConfiguracionOriginal = function (chart) {
         if (!chart || chart._fgaOriginalConfig) return;
@@ -276,8 +313,128 @@
                 title: (chart.title && chart.title.textStr) ? chart.title.textStr : '',
                 subTitle: (chart.subtitle && chart.subtitle.textStr) ? chart.subtitle.textStr : ''
             };
+
+            if (savedCats.length > 0) {
+                window.actualizarSelectoresPeriodoHistograma(savedCats);
+            }
         } catch (err) {
             console.warn('Error al guardar configuración original:', err);
+        }
+    };
+
+    // Helper para generar datos del histograma para el período seleccionado
+    window.obtenerDatosHistograma3D = function (chart, periodIdx) {
+        var orig = chart._fgaOriginalConfig;
+        if (!orig || !orig.series) return { categories: [], data: [], lineData: [], total: 0, periodLabel: '' };
+
+        var colSeries = orig.series.filter(function (s) { return s.origType === 'column'; });
+        if (colSeries.length === 0) colSeries = orig.series;
+
+        var cats = orig.categories || [];
+        var periodLabel = cats[periodIdx] || ('Período ' + (periodIdx + 1));
+
+        var categories = [];
+        var histData = [];
+        var totalPeriodo = 0;
+
+        colSeries.forEach(function (s) {
+            var val = 0;
+            if (s.data && s.data.length > periodIdx) {
+                var pt = s.data[periodIdx];
+                if (typeof pt === 'number') val = pt;
+                else if (pt && typeof pt.y === 'number') val = pt.y;
+                else if (Array.isArray(pt) && typeof pt[1] === 'number') val = pt[1];
+            }
+            totalPeriodo += Math.max(0, val);
+        });
+
+        colSeries.forEach(function (s, idx) {
+            var val = 0;
+            if (s.data && s.data.length > periodIdx) {
+                var pt = s.data[periodIdx];
+                if (typeof pt === 'number') val = pt;
+                else if (pt && typeof pt.y === 'number') val = pt.y;
+                else if (Array.isArray(pt) && typeof pt[1] === 'number') val = pt[1];
+            }
+            var pct = totalPeriodo > 0 ? ((val / totalPeriodo) * 100) : 0;
+            var col = window.obtenerColorInstitucional(s.name, idx);
+
+            categories.push(s.name);
+            histData.push({
+                name: s.name,
+                y: val,
+                color: col,
+                pct: pct
+            });
+        });
+
+        var lineData = histData.map(function (d) {
+            return {
+                name: d.name,
+                y: d.y,
+                pct: d.pct
+            };
+        });
+
+        return {
+            categories: categories,
+            data: histData,
+            lineData: lineData,
+            total: totalPeriodo,
+            periodLabel: periodLabel
+        };
+    };
+
+    window.cambiarPeriodoHistograma = function (idx) {
+        idx = parseInt(idx, 10);
+        if (isNaN(idx)) idx = 0;
+        window.histogramaPeriodoIdx = idx;
+        $('.sel-periodo-hist').val(idx);
+
+        if (typeof Highcharts !== 'undefined' && Highcharts.charts) {
+            Highcharts.charts.forEach(function (c) {
+                if (c && window.tipoGraficoActual === 'histogram3d') {
+                    window.aplicarTipoAGrafico(c, 'histogram3d');
+                }
+            });
+        }
+
+        if ($('#mPopUp').hasClass('in') && typeof window.actualizarKpiModalCartera === 'function') {
+            window.actualizarKpiModalCartera();
+        }
+        if ($('#mPopUp').hasClass('in') && typeof window.actualizarKpiModalComposicion === 'function') {
+            window.actualizarKpiModalComposicion();
+        }
+    };
+
+    window.navegarPeriodoHistograma = function (delta) {
+        var maxIdx = 0;
+        if (typeof Highcharts !== 'undefined' && Highcharts.charts) {
+            for (var i = 0; i < Highcharts.charts.length; i++) {
+                var c = Highcharts.charts[i];
+                if (c && c._fgaOriginalConfig && c._fgaOriginalConfig.categories && c._fgaOriginalConfig.categories.length > 0) {
+                    maxIdx = c._fgaOriginalConfig.categories.length - 1;
+                    break;
+                }
+            }
+        }
+        var newIdx = (window.histogramaPeriodoIdx || 0) + delta;
+        if (newIdx < 0) newIdx = maxIdx;
+        if (newIdx > maxIdx) newIdx = 0;
+        window.cambiarPeriodoHistograma(newIdx);
+    };
+
+    window.toggleAnimacionHistograma = function () {
+        var $btn = $('.btn-play-hist');
+        if (window.animTimerHistograma) {
+            clearInterval(window.animTimerHistograma);
+            window.animTimerHistograma = null;
+            $btn.html('<i class="fa fa-play"></i> <span>Evolución</span>').removeClass('btn-warning').addClass('btn-primary').css('background', '#1b3866');
+        } else {
+            $btn.html('<i class="fa fa-pause"></i> <span>Pausar</span>').removeClass('btn-primary').addClass('btn-warning').css('background', '#d97706');
+            window.animTimerHistograma = setInterval(function () {
+                window.navegarPeriodoHistograma(1);
+            }, 1100);
         }
     };
 
@@ -291,7 +448,7 @@
 
         var isDragging = false;
         var downX = 0, downY = 0;
-        var origAlpha = 15, origBeta = 22;
+        var origAlpha = 12, origBeta = 18;
 
         $(container).on('mousedown.fga3d touchstart.fga3d', function (e) {
             if (!chart.options || !chart.options.chart || !chart.options.chart.options3d || !chart.options.chart.options3d.enabled) return;
@@ -336,9 +493,9 @@
         if (window.orbitTimer) {
             clearInterval(window.orbitTimer);
             window.orbitTimer = null;
-            btnOrbit.html('<i class="fa fa-refresh"></i> <span>Auto-Girar 360°</span>').removeClass('btn-warning').addClass('btn-primary').css('background', '#0284c7');
+            btnOrbit.html('<i class="fa fa-refresh" style="color: #0284c7;"></i> <span>Girar 360°</span>').removeClass('btn-warning').addClass('btn-default').css('background', '#ffffff');
         } else {
-            btnOrbit.html('<i class="fa fa-pause"></i> <span>Pausar Giro</span>').removeClass('btn-primary').addClass('btn-warning').css('background', '#f59e0b');
+            btnOrbit.html('<i class="fa fa-pause"></i> <span>Pausar</span>').removeClass('btn-default').addClass('btn-warning').css('background', '#d97706');
             window.orbitTimer = setInterval(function () {
                 if (typeof Highcharts !== 'undefined' && Highcharts.charts) {
                     Highcharts.charts.forEach(function (c) {
@@ -375,7 +532,7 @@
         var orig = chart._fgaOriginalConfig;
         if (!orig || !orig.series || orig.series.length === 0) return;
 
-        var is3D = (tipo === 'column3d');
+        var is3D = (tipo === 'histogram3d');
         var isModal = false;
         try {
             var elem = (chart.renderTo ? (typeof chart.renderTo === 'string' ? document.getElementById(chart.renderTo.replace(/^#/, '')) : chart.renderTo) : null);
@@ -387,21 +544,28 @@
             chart.series[0].remove(false);
         }
 
-        if (tipo === 'column3d') {
-            // MODO COLUMNAS 3D ISOMÉTRICAS ("SKYSCRAPERS") CON ROTACIÓN 360°
+        if (tipo === 'histogram3d') {
+            // MODO HISTOGRAMA 3D DE DISTRIBUCIÓN DE RIESGO
+            var pIdx = window.histogramaPeriodoIdx;
+            if (pIdx === undefined || pIdx === null) {
+                pIdx = (orig.categories && orig.categories.length > 0) ? (orig.categories.length - 1) : 0;
+                window.histogramaPeriodoIdx = pIdx;
+            }
+            var hist = window.obtenerDatosHistograma3D(chart, pIdx);
+
             chart.update({
                 chart: {
                     type: 'column',
                     inverted: false,
                     options3d: {
                         enabled: true,
-                        alpha: 15,
-                        beta: 22,
-                        depth: 70,
+                        alpha: 12,
+                        beta: 18,
+                        depth: 55,
                         viewDistance: 45,
                         fitToPlot: true,
                         frame: {
-                            bottom: { size: 1, color: 'rgba(0,0,0,0.03)' },
+                            bottom: { size: 1, color: 'rgba(0,0,0,0.04)' },
                             back: { size: 0, color: 'transparent' },
                             side: { size: 0, color: 'transparent' }
                         }
@@ -409,75 +573,110 @@
                 },
                 plotOptions: {
                     column: {
-                        stacking: 'normal',
+                        stacking: null,
+                        grouping: false,
                         depth: 35,
                         edgeWidth: 1.2,
-                        edgeColor: 'rgba(255, 255, 255, 0.45)',
-                        pointPadding: 0.08,
-                        groupPadding: 0.12,
-                        maxPointWidth: 42,
+                        edgeColor: 'rgba(255, 255, 255, 0.55)',
+                        pointPadding: 0.05,
+                        groupPadding: 0.08,
+                        maxPointWidth: 64,
+                        colorByPoint: true,
                         animation: {
-                            duration: 950
+                            duration: 650
                         }
                     }
                 },
                 xAxis: {
-                    categories: orig.categories.slice(),
+                    categories: hist.categories.slice(),
                     labels: {
-                        rotation: -35,
-                        style: { fontSize: '11px', fontWeight: '600', color: '#475569' }
+                        rotation: -18,
+                        style: { fontSize: '11px', fontWeight: '700', color: '#1e3a8a' }
                     }
                 },
                 tooltip: {
-                    shared: true,
+                    shared: false,
                     useHTML: true,
                     backgroundColor: '#ffffff',
                     borderColor: '#cbd5e1',
                     borderRadius: 8,
-                    shadow: true
+                    shadow: true,
+                    formatter: function () {
+                        var pt = this.point;
+                        var pName = pt.name || this.series.name;
+                        var valFormatted = (typeof Highcharts !== 'undefined' && Highcharts.numberFormat) ? Highcharts.numberFormat(this.y, 2, '.', ',') : this.y;
+                        var pctFormatted = (pt.pct !== undefined) ? ((typeof Highcharts !== 'undefined' && Highcharts.numberFormat) ? Highcharts.numberFormat(pt.pct, 2, '.', ',') : pt.pct.toFixed(2)) + '%' : '';
+                        return '<div style="padding: 4px 6px; font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif;">' +
+                               '  <div style="font-size: 10.5px; font-weight: 700; color: #64748b; text-transform: uppercase;">Período: ' + hist.periodLabel + '</div>' +
+                               '  <div style="font-size: 13.5px; font-weight: 800; color: #1e3a8a; margin: 2px 0;">' + pName + '</div>' +
+                               '  <div style="font-size: 12px; color: #0f172a;">Saldo: <b>' + valFormatted + '</b></div>' +
+                               (pctFormatted ? ('  <div style="font-size: 11.5px; color: #0284c7; font-weight: 700; margin-top: 2px;">Distribución: <b>' + pctFormatted + '</b></div>') : '') +
+                               '</div>';
+                    }
                 }
             }, false);
 
+            var totalFormatted = (typeof Highcharts !== 'undefined' && Highcharts.numberFormat) ? Highcharts.numberFormat(hist.total, 2, '.', ',') : hist.total;
             chart.setTitle(
-                orig.title ? { text: orig.title } : { text: '' },
+                orig.title ? { text: orig.title } : { text: 'Distribución de Riesgo de Cartera' },
                 {
                     useHTML: false,
                     align: 'center',
                     verticalAlign: null,
                     y: null,
-                    text: orig.subTitle || ''
+                    text: 'Período: ' + hist.periodLabel + '  |  Saldo Total: ' + totalFormatted
                 },
                 false
             );
 
-            orig.series.forEach(function (s, idx) {
-                var isOrigLine = (s.origType === 'line');
-                if (isOrigLine) {
-                    chart.addSeries({
-                        name: s.name,
-                        type: 'spline',
-                        color: s.color,
-                        yAxis: s.yAxis,
-                        data: JSON.parse(JSON.stringify(s.data)),
-                        lineWidth: 4.5,
-                        zIndex: 25,
-                        linecap: 'round',
-                        linejoin: 'round',
-                        shadow: { color: 'rgba(0, 0, 0, 0.28)', offsetX: 1, offsetY: 4, width: 6, opacity: 0.25 },
-                        marker: { enabled: true, radius: 5.5, symbol: 'circle', lineWidth: 2.2, lineColor: '#ffffff' }
-                    }, false);
-                } else {
-                    chart.addSeries({
-                        name: s.name,
-                        type: 'column',
-                        stacking: 'normal',
-                        color: window.paletaSkyscrapers3D[idx % window.paletaSkyscrapers3D.length] || s.color,
-                        yAxis: s.yAxis,
-                        data: JSON.parse(JSON.stringify(s.data)),
-                        zIndex: idx
-                    }, false);
+            // 1. Barras 3D individuales por tramo
+            chart.addSeries({
+                name: 'Saldo (' + hist.periodLabel + ')',
+                type: 'column',
+                stacking: null,
+                data: hist.data,
+                colorByPoint: true,
+                zIndex: 10,
+                dataLabels: {
+                    enabled: true,
+                    formatter: function () {
+                        if (!this.y || this.y <= 0) return '';
+                        var p = this.point.pct || 0;
+                        return p >= 1 ? ((typeof Highcharts !== 'undefined' && Highcharts.numberFormat) ? Highcharts.numberFormat(p, 1, '.', ',') : p.toFixed(1)) + '%' : '';
+                    },
+                    style: {
+                        fontSize: '11px',
+                        fontWeight: '700',
+                        color: '#0f172a',
+                        textOutline: '2px #ffffff'
+                    }
                 }
-            });
+            }, false);
+
+            // 2. Curva de distribución institucional (spline superpuesto)
+            chart.addSeries({
+                name: 'Curva de Distribución',
+                type: 'spline',
+                data: hist.lineData,
+                color: '#0284c7',
+                lineWidth: 3.5,
+                zIndex: 25,
+                marker: {
+                    enabled: true,
+                    radius: 5.5,
+                    symbol: 'circle',
+                    fillColor: '#ffffff',
+                    lineWidth: 2.5,
+                    lineColor: '#0284c7'
+                },
+                shadow: {
+                    color: 'rgba(0, 0, 0, 0.22)',
+                    offsetX: 1,
+                    offsetY: 3,
+                    width: 5,
+                    opacity: 0.20
+                }
+            }, false);
 
             window.habilitarRotacion3D(chart);
 
@@ -631,7 +830,7 @@
             });
 
         } else {
-            // VERSIÓN ORIGINAL: COLUMNAS APILADAS PLANAS + LÍNEA EN 2D
+            // VERSIÓN ORIGINAL: COLUMNAS APILADAS PLANAS + LÍNEA EN 2D (13 MESES)
             chart.update({
                 chart: {
                     type: 'column',
@@ -702,13 +901,14 @@
 
         chart.redraw();
 
-        // Control de visualización del controlador 3D Isométrico
-        var show3DController = (tipo === 'column3d');
-        $('#skyscrapers3DControllerCartera, #skyscrapers3DControllerComposicion').css('display', show3DController ? 'flex' : 'none');
-        $('#skyscrapers3DControllerModal').css('display', show3DController ? 'flex' : 'none');
+        // Control de visualización del controlador Histograma 3D
+        var show3DController = (tipo === 'histogram3d');
+        $('#histograma3DControllerCartera, #histograma3DControllerComposicion').css('display', show3DController ? 'flex' : 'none');
+        $('#histograma3DControllerModal').css('display', show3DController ? 'flex' : 'none');
 
-        if (!show3DController && window.orbitTimer) {
-            window.toggleAutoRotar3D();
+        if (!show3DController) {
+            if (window.orbitTimer) window.toggleAutoRotar3D();
+            if (window.animTimerHistograma) window.toggleAnimacionHistograma();
         }
 
         try {
@@ -727,7 +927,7 @@
 
     window.cambiarTipoGrafico = function (tipo) {
         window.tipoGraficoActual = tipo;
-        window.cartera3DActivo = (tipo === 'column3d');
+        window.cartera3DActivo = (tipo === 'histogram3d');
 
         // Sincronizar selectores
         $('#selTipoGraficoCartera, #selTipoGraficoComposicion, #selTipoGraficoModal').val(tipo);
@@ -762,11 +962,11 @@
 
         if (btnMain) {
             btnMain.setAttribute('style', is3D ? activeStyle : inactiveStyle);
-            if (lblMain) lblMain.innerText = is3D ? 'Vista 3D: ON (Isométrica)' : 'Vista 3D: Isométrica';
+            if (lblMain) lblMain.innerText = is3D ? 'Vista 3D: ON (Histograma)' : 'Vista 3D: Histograma';
         }
         if (btnModal) {
             btnModal.setAttribute('style', is3D ? modalActiveStyle : modalInactiveStyle);
-            if (lblModal) lblModal.innerText = is3D ? 'Vista 3D: ON (Isométrica)' : 'Vista 3D: Isométrica';
+            if (lblModal) lblModal.innerText = is3D ? 'Vista 3D: ON (Histograma)' : 'Vista 3D: Histograma';
         }
     };
 
@@ -774,9 +974,9 @@
         window.cartera3DActivo = !window.cartera3DActivo;
         var is3D = window.cartera3DActivo;
 
-        // Si se activa 3D -> Pasa a Columnas 3D Isométricas
+        // Si se activa 3D -> Pasa a Histograma 3D de Distribución
         // Si se desactiva 3D -> Regresa a Versión Original 2D
-        var nuevoTipo = is3D ? 'column3d' : 'column';
+        var nuevoTipo = is3D ? 'histogram3d' : 'column';
         window.cambiarTipoGrafico(nuevoTipo);
     };
 
@@ -818,6 +1018,41 @@
             });
             if (modalCharts.length === 0) return;
             var chart = modalCharts[0];
+
+            if (window.tipoGraficoActual === 'histogram3d') {
+                var pIdx = window.histogramaPeriodoIdx || 0;
+                var hist = window.obtenerDatosHistograma3D(chart, pIdx);
+                var alDiaItem = hist.data[0] || { y: 0, pct: 0, name: 'Al día' };
+                var moraCriticaItem = hist.data[hist.data.length - 1] || { y: 0, pct: 0, name: 'Crítico' };
+                var formatN = function (n) {
+                    return (typeof n === 'number') ? n.toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : n;
+                };
+                $('#cartera1421ModalKpiStrip').html(
+                    '<div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 7px 14px;">' +
+                    '    <div>' +
+                    '        <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block; line-height: 1.2;">Corte Histograma</span>' +
+                    '        <span style="font-size: 14.5px; font-weight: 700; color: #1e3a8a;">' + hist.periodLabel + '</span>' +
+                    '    </div>' +
+                    '    <div style="border-left: 1px solid #cbd5e1; padding-left: 14px;">' +
+                    '        <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block; line-height: 1.2;">Saldo Total Período</span>' +
+                    '        <span style="font-size: 14.5px; font-weight: 700; color: #0f172a;">' + formatN(hist.total) + '</span>' +
+                    '    </div>' +
+                    '    <div style="border-left: 1px solid #cbd5e1; padding-left: 14px;">' +
+                    '        <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block; line-height: 1.2;">Vigente / Al Día</span>' +
+                    '        <span class="badge" style="background-color: #dbeafe; color: #1e40af; font-size: 11.5px; font-weight: 700; padding: 3px 8px; border-radius: 6px;">' +
+                    '            ' + formatN(alDiaItem.pct) + '% (' + formatN(alDiaItem.y) + ')' +
+                    '        </span>' +
+                    '    </div>' +
+                    '    <div style="border-left: 1px solid #cbd5e1; padding-left: 14px;">' +
+                    '        <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block; line-height: 1.2;">Mora Crítica</span>' +
+                    '        <span class="badge" style="background-color: #fee2e2; color: #991b1b; font-size: 11.5px; font-weight: 700; padding: 3px 8px; border-radius: 6px;">' +
+                    '            ' + formatN(moraCriticaItem.pct) + '% (' + formatN(moraCriticaItem.y) + ')' +
+                    '        </span>' +
+                    '    </div>' +
+                    '</div>'
+                );
+                return;
+            }
 
             function renderCarteraKpi(selectedIdx) {
                 var seriesIdx = 0;
