@@ -218,8 +218,8 @@
 
     window.echartsAutoRotate = false;
     window.echartsModoMora = 'completo'; // 'completo' | 'vencida'
-    window.echarts3DAlpha = 20;
-    window.echarts3DBeta = 36;
+    window.echarts3DAlpha = 24;
+    window.echarts3DBeta = 38;
     window.coloresPlano2D = ['#0071AD', '#475569', '#0d9488', '#ea580c', '#0284c7', '#6366f1', '#1e3a8a', '#d97706', '#059669', '#64748b'];
 
     // Mapeo de paleta institucional y sobria para tramos de riesgo / morosidad
@@ -333,6 +333,21 @@
                 seriesToRender = vencidas;
             }
         }
+
+        // Ordenar tramos de menor a mayor altura promedio (efecto anfiteatro/estadio)
+        // para que las barras más pequeñas queden en la fila frontal (Y=0) y las más altas al fondo,
+        // garantizando visibilidad total de todas las barras sin oclusiones.
+        seriesToRender = seriesToRender.slice().sort(function (a, b) {
+            var sumA = (a.data || []).reduce(function (acc, val) {
+                var num = (typeof val === 'number') ? val : (val && typeof val.y === 'number' ? val.y : (Array.isArray(val) ? val[1] : 0));
+                return acc + (parseFloat(num) || 0);
+            }, 0);
+            var sumB = (b.data || []).reduce(function (acc, val) {
+                var num = (typeof val === 'number') ? val : (val && typeof val.y === 'number' ? val.y : (Array.isArray(val) ? val[1] : 0));
+                return acc + (parseFloat(num) || 0);
+            }, 0);
+            return sumA - sumB;
+        });
 
         var tramoNames = seriesToRender.map(function (s) { return s.name; });
 
@@ -478,8 +493,8 @@
                     lineStyle: { color: '#0284c7', width: 1.5 }
                 },
                 viewControl: {
-                    alpha: window.echarts3DAlpha || 20,
-                    beta: window.echarts3DBeta || 36,
+                    alpha: window.echarts3DAlpha || 24,
+                    beta: window.echarts3DBeta || 38,
                     distance: 155, // Distancia reducida para que las barras llenen el ancho del lienzo
                     minDistance: 60,
                     maxDistance: 450,
