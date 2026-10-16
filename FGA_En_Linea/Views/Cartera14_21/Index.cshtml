@@ -127,9 +127,11 @@
                  }
                  function reflowGrafica() {
                      if (typeof Highcharts !== 'undefined' && Highcharts.charts) {
-                         var targetWidth = $('#grafica').width() || $('#grafica').closest('.col-xs-12').width();
-                         if (targetWidth && targetWidth > 200) {
-                             targetWidth = Math.floor(targetWidth) - 24;
+                         var cElem = document.getElementById('container');
+                         var targetWidth = cElem ? $(cElem).width() : null;
+                         if (!targetWidth || targetWidth < 200) {
+                             var gW = $('#grafica').width() || $('#grafica').closest('.col-xs-12').width();
+                             if (gW && gW > 200) targetWidth = Math.floor(gW) - 30;
                          }
                          Highcharts.charts.forEach(function (c) {
                              if (!c) return;
@@ -138,6 +140,9 @@
                                  try {
                                      if (targetWidth && targetWidth > 200) {
                                          c.setSize(targetWidth, null, false);
+                                     }
+                                     if (typeof window.aplicarEstilo3DCartera === 'function') {
+                                         window.aplicarEstilo3DCartera(c, window.cartera3DActivo);
                                      }
                                      c.reflow();
                                  } catch (e) {}
@@ -161,9 +166,11 @@
 
     $(window).on('resize', function () {
         if (typeof Highcharts !== 'undefined' && Highcharts.charts) {
-            var targetWidth = $('#grafica').width() || $('#grafica').closest('.col-xs-12').width();
-            if (targetWidth && targetWidth > 200) {
-                targetWidth = Math.floor(targetWidth) - 24;
+            var cElem = document.getElementById('container');
+            var targetWidth = cElem ? $(cElem).width() : null;
+            if (!targetWidth || targetWidth < 200) {
+                var gW = $('#grafica').width() || $('#grafica').closest('.col-xs-12').width();
+                if (gW && gW > 200) targetWidth = Math.floor(gW) - 30;
             }
             Highcharts.charts.forEach(function (c) {
                 if (!c) return;
@@ -172,6 +179,9 @@
                     try {
                         if (targetWidth && targetWidth > 200) {
                             c.setSize(targetWidth, null, false);
+                        }
+                        if (typeof window.aplicarEstilo3DCartera === 'function') {
+                            window.aplicarEstilo3DCartera(c, window.cartera3DActivo);
                         }
                         c.reflow();
                     } catch (e) {}
