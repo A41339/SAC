@@ -1,7 +1,15 @@
 @model FGA.Model.Grafico
 
-<script src="@Url.Content("~/Scripts/echarts.min.js")"></script>
-<script src="@Url.Content("~/Scripts/echarts-gl.min.js")"></script>
+<script type="text/javascript">
+    if (typeof echarts === 'undefined') {
+        var s1 = document.createElement('script');
+        s1.src = '@Url.Content("~/Scripts/echarts.min.js")';
+        document.head.appendChild(s1);
+        var s2 = document.createElement('script');
+        s2.src = '@Url.Content("~/Scripts/echarts-gl.min.js")';
+        document.head.appendChild(s2);
+    }
+</script>
 
 <script type="text/javascript">
     if (typeof Highcharts !== 'undefined') {
@@ -288,7 +296,10 @@
     // Renderizado de la Matriz 3D Multi-período con Apache ECharts GL (WebGL)
     window.renderEChartsMatrix3D = function (domId, chartSource) {
         if (typeof echarts === 'undefined') {
-            console.warn('ECharts no está disponible');
+            console.warn('ECharts aún no está disponible, reintentando carga...');
+            setTimeout(function () {
+                window.renderEChartsMatrix3D(domId, chartSource);
+            }, 120);
             return null;
         }
 
@@ -646,7 +657,7 @@
         }
     };
 
-    window.aplicarTipoAGrafico = function (chart, tipo) {
+    window.aplicarTipoAGrafico = function (chart, tipo, forzar) {
         if (!chart) return;
         tipo = tipo || window.tipoGraficoActual || 'column';
         window.tipoGraficoActual = tipo;
@@ -708,6 +719,16 @@
         if (window.echartsAutoRotate) {
             window.toggleAutoRotar3D();
         }
+
+        // Si ya está en este tipo 2D o es la carga inicial de columnas, no destruir y recrear series
+        if (!forzar && chart._fgaCurrentTipo === tipo) {
+            return;
+        }
+        if (!forzar && !chart._fgaCurrentTipo && tipo === 'column') {
+            chart._fgaCurrentTipo = 'column';
+            return;
+        }
+        chart._fgaCurrentTipo = tipo;
 
         // Limpiar series de Highcharts para reconstruir
         while (chart.series.length > 0) {
@@ -1340,8 +1361,10 @@
                                 c.setSize(targetWidth, 420, false);
                             }
                             window.guardarConfiguracionOriginal(c);
-                            if (typeof window.aplicarTipoAGrafico === 'function') {
-                                window.aplicarTipoAGrafico(c, window.tipoGraficoActual);
+                            if (window.tipoGraficoActual && window.tipoGraficoActual !== 'column') {
+                                if (typeof window.aplicarTipoAGrafico === 'function') {
+                                    window.aplicarTipoAGrafico(c, window.tipoGraficoActual);
+                                }
                             }
                             c.reflow();
                         } catch (e) {}
@@ -1352,8 +1375,6 @@
             window.actualizarEstiloBotones3D(window.cartera3DActivo);
         }
         setTimeout(asegurarAnchoCompleto, 60);
-        setTimeout(asegurarAnchoCompleto, 180);
-        setTimeout(asegurarAnchoCompleto, 400);
 
         $(window).on('resize', function () {
             if (window.tipoGraficoActual === 'matrix3d' && typeof echarts !== 'undefined') {
