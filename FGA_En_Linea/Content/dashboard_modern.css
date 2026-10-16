@@ -2346,7 +2346,7 @@ div.dataTables_filter label {
     grid-template-columns: repeat(12, 1fr);
     gap: 20px;
     margin-bottom: 20px;
-    align-items: start;
+    align-items: stretch;
     position: relative;
 }
 
@@ -2462,6 +2462,9 @@ div.dataTables_filter label {
 
 .side-indicators-wrapper {
     grid-column: span 3;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 @keyframes dashboardCardFadeIn {
@@ -2623,28 +2626,40 @@ div.dataTables_filter label {
     box-shadow: var(--card-shadow);
     border: 1px solid var(--border-color);
     height: 100%;
+    flex: 1;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-bottom: 0;
 }
 
 .indicators-panel-title {
     font-size: 15px;
     font-weight: 700;
     color: #2F5597;
-    margin-bottom: 14px;
+    margin-bottom: 10px;
     padding-bottom: 8px;
     border-left: 4px solid #2F5597;
     padding-left: 10px;
     border-bottom: 2px solid #f1f5f9;
+    flex-shrink: 0;
 }
 
 .indicator-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex: 1;
     padding: 8px 10px;
     font-size: 12px;
     border-radius: 6px;
     border-bottom: 1px dashed #f1f5f9;
     transition: background-color 0.15s ease;
+}
+
+.indicator-item:last-child {
+    border-bottom: none;
 }
 
 .indicator-item:nth-child(even) {
