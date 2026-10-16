@@ -120,6 +120,9 @@
             <button type="button" class="btn-toggle-3d" id="btnToggle3DComposicion" onclick="window.toggle3DCartera(this)" title="Alternar entre perspectiva 3D volumétrica y 2D clásica" style="height: 28px; padding: 0 11px; font-size: 11.5px; font-weight: 600; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid #bae6fd; background: #f0f9ff; color: #0369a1; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
                 <i class="fa fa-cube" style="color: #0284c7; font-size: 13px;"></i> <span id="lblToggle3DComposicion">Vista 3D: ON</span>
             </button>
+            <span id="lbl3DRotateHint" style="font-size: 11px; color: #64748b; font-weight: 500; display: inline-flex; align-items: center; gap: 4px; padding: 0 4px;" title="Haz clic y arrastra sobre el gráfico para rotarlo libremente en 3D. Doble clic para restablecer la vista.">
+                <i class="fa fa-arrows" style="color: #0284c7;"></i> <span class="hidden-xs">Arrastra para rotar</span>
+            </span>
             <a class="btn-ampliar" data-toggle="tooltip" data-placement="top" title="Ampliar gr&aacute;fico" href="javascript:mPopUp()" style="height: 28px; padding: 0 11px; font-size: 11.5px; border-radius: 6px; display: inline-flex; align-items: center; gap: 5px;">
                 <i class="fa fa-line-chart"></i> Ampliar
             </a>
@@ -156,6 +159,9 @@
                     <button type="button" class="btn-toggle-3d-modal" id="btnToggle3DModal" onclick="window.toggle3DCartera(this)" title="Alternar entre perspectiva 3D volumétrica y 2D clásica" style="height: 28px; padding: 0 11px; font-size: 11.5px; font-weight: 600; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.18); color: #ffffff; cursor: pointer; transition: all 0.2s ease;">
                         <i class="fa fa-cube" style="color: #38bdf8; font-size: 13px;"></i> <span id="lblToggle3DModal">Vista 3D: ON</span>
                     </button>
+                    <span id="lbl3DRotateHintModal" style="font-size: 11px; color: rgba(255,255,255,0.85); font-weight: 500; display: inline-flex; align-items: center; gap: 4px; padding: 0 4px;" title="Haz clic y arrastra sobre el gráfico para rotarlo libremente en 3D. Doble clic para restablecer la vista.">
+                        <i class="fa fa-arrows" style="color: #38bdf8;"></i> <span class="hidden-xs">Arrastra para rotar</span>
+                    </span>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: #ffffff !important; opacity: 0.9; font-size: 22px; line-height: 1;"><span aria-hidden="true">&times;</span></button>
                 </div>
             </div>
@@ -413,6 +419,182 @@
         };
     };
 
+    window.gradientesLuz3D = [
+        {
+            linearGradient: { x1: 0, y1: 0, x2: 1, y2: 0 },
+            stops: [
+                [0, '#004c74'],
+                [0.25, '#0071ad'],
+                [0.6, '#38bdf8'],
+                [0.85, '#0071ad'],
+                [1, '#004c74']
+            ]
+        },
+        {
+            linearGradient: { x1: 0, y1: 0, x2: 1, y2: 0 },
+            stops: [
+                [0, '#52525b'],
+                [0.25, '#71717a'],
+                [0.6, '#d4d4d8'],
+                [0.85, '#71717a'],
+                [1, '#52525b']
+            ]
+        },
+        {
+            linearGradient: { x1: 0, y1: 0, x2: 1, y2: 0 },
+            stops: [
+                [0, '#0369a1'],
+                [0.25, '#0284c7'],
+                [0.6, '#7dd3fc'],
+                [0.85, '#0284c7'],
+                [1, '#0369a1']
+            ]
+        },
+        {
+            linearGradient: { x1: 0, y1: 0, x2: 1, y2: 0 },
+            stops: [
+                [0, '#c2410c'],
+                [0.25, '#ea580c'],
+                [0.6, '#fdba74'],
+                [0.85, '#ea580c'],
+                [1, '#c2410c']
+            ]
+        },
+        {
+            linearGradient: { x1: 0, y1: 0, x2: 1, y2: 0 },
+            stops: [
+                [0, '#0e7490'],
+                [0.25, '#0891b2'],
+                [0.6, '#a5f3fc'],
+                [0.85, '#0891b2'],
+                [1, '#0e7490']
+            ]
+        },
+        {
+            linearGradient: { x1: 0, y1: 0, x2: 1, y2: 0 },
+            stops: [
+                [0, '#27272a'],
+                [0.25, '#3f3f46'],
+                [0.6, '#a1a1aa'],
+                [0.85, '#3f3f46'],
+                [1, '#27272a']
+            ]
+        },
+        {
+            linearGradient: { x1: 0, y1: 0, x2: 1, y2: 0 },
+            stops: [
+                [0, '#0f172a'],
+                [0.25, '#1e3a8a'],
+                [0.6, '#60a5fa'],
+                [0.85, '#1e3a8a'],
+                [1, '#0f172a']
+            ]
+        },
+        {
+            linearGradient: { x1: 0, y1: 0, x2: 1, y2: 0 },
+            stops: [
+                [0, '#0369a1'],
+                [0.25, '#0284c7'],
+                [0.6, '#67e8f9'],
+                [0.85, '#0284c7'],
+                [1, '#0369a1']
+            ]
+        },
+        {
+            linearGradient: { x1: 0, y1: 0, x2: 1, y2: 0 },
+            stops: [
+                [0, '#b45309'],
+                [0.25, '#d97706'],
+                [0.6, '#fde68a'],
+                [0.85, '#d97706'],
+                [1, '#b45309']
+            ]
+        },
+        {
+            linearGradient: { x1: 0, y1: 0, x2: 1, y2: 0 },
+            stops: [
+                [0, '#64748b'],
+                [0.25, '#94a3b8'],
+                [0.6, '#f1f5f9'],
+                [0.85, '#94a3b8'],
+                [1, '#64748b']
+            ]
+        }
+    ];
+
+    window.coloresPlano2D = ['#0071AD', '#959595', '#6DB5CB', '#FE7235', '#B7D8DF', '#565656', '#003F6B', '#0099D6', '#FFB347', '#CFCFCF'];
+
+    window.habilitarRotacionInteractiva3D = function (chart) {
+        if (!chart || !chart.container) return;
+        var container = chart.container;
+        if (container._hasRotacion3D) {
+            container.style.cursor = window.cartera3DActivo ? 'grab' : 'default';
+            return;
+        }
+        container._hasRotacion3D = true;
+        container.style.cursor = window.cartera3DActivo ? 'grab' : 'default';
+
+        function drag(eStart) {
+            if (!window.cartera3DActivo) return;
+            if (eStart.type === 'mousedown' && eStart.button !== 0) return;
+            if ($(eStart.target).closest('.highcharts-contextbutton, .highcharts-legend, select, button, a').length) return;
+
+            var eNorm = chart.pointer ? chart.pointer.normalize(eStart) : eStart;
+            var posX = eNorm.chartX || eStart.clientX;
+            var posY = eNorm.chartY || eStart.clientY;
+            var currentAlpha = (chart.options.chart.options3d && typeof chart.options.chart.options3d.alpha === 'number') ? chart.options.chart.options3d.alpha : 7;
+            var currentBeta = (chart.options.chart.options3d && typeof chart.options.chart.options3d.beta === 'number') ? chart.options.chart.options3d.beta : -10;
+            var sensitivity = 3.6;
+
+            container.style.cursor = 'grabbing';
+
+            function mouseMove(eMove) {
+                if (!window.cartera3DActivo) return;
+                var eMoveNorm = chart.pointer ? chart.pointer.normalize(eMove) : eMove;
+                var curX = eMoveNorm.chartX || eMove.clientX;
+                var curY = eMoveNorm.chartY || eMove.clientY;
+                var deltaX = (posX - curX) / sensitivity;
+                var deltaY = (curY - posY) / sensitivity;
+
+                var newBeta = Math.max(-42, Math.min(42, currentBeta + deltaX));
+                var newAlpha = Math.max(0, Math.min(42, currentAlpha + deltaY));
+
+                if (chart.options && chart.options.chart && chart.options.chart.options3d) {
+                    chart.options.chart.options3d.beta = newBeta;
+                    chart.options.chart.options3d.alpha = newAlpha;
+                    chart.redraw(false);
+                }
+            }
+
+            function mouseUp() {
+                container.style.cursor = window.cartera3DActivo ? 'grab' : 'default';
+                document.removeEventListener('mousemove', mouseMove);
+                document.removeEventListener('mouseup', mouseUp);
+                document.removeEventListener('touchmove', mouseMove);
+                document.removeEventListener('touchend', mouseUp);
+            }
+
+            document.addEventListener('mousemove', mouseMove);
+            document.addEventListener('mouseup', mouseUp);
+            document.addEventListener('touchmove', mouseMove, { passive: false });
+            document.addEventListener('touchend', mouseUp);
+        }
+
+        container.addEventListener('mousedown', drag);
+        container.addEventListener('touchstart', drag, { passive: true });
+
+        container.addEventListener('dblclick', function () {
+            if (!window.cartera3DActivo) return;
+            if (chart.options && chart.options.chart && chart.options.chart.options3d) {
+                var defAlpha = (window.tipoGraficoActual === 'pie') ? 45 : 7;
+                var defBeta = (window.tipoGraficoActual === 'pie') ? 0 : -10;
+                chart.options.chart.options3d.alpha = defAlpha;
+                chart.options.chart.options3d.beta = defBeta;
+                chart.redraw();
+            }
+        });
+    };
+
     window.aplicarEstilo3DCartera = function (chart, activo) {
         if (!chart) return;
         var is3D = (typeof activo === 'boolean') ? activo : window.cartera3DActivo;
@@ -425,9 +607,23 @@
                             enabled: is3D,
                             alpha: is3D ? 7 : 0,
                             beta: is3D ? -10 : 0,
-                            depth: is3D ? 35 : 0,
+                            depth: is3D ? 45 : 0,
                             viewDistance: 0,
-                            fitToPlot: false
+                            fitToPlot: false,
+                            frame: {
+                                bottom: {
+                                    size: is3D ? 3 : 0,
+                                    color: is3D ? 'rgba(203, 213, 225, 0.50)' : 'transparent'
+                                },
+                                back: {
+                                    size: is3D ? 1 : 0,
+                                    color: is3D ? 'rgba(241, 245, 249, 0.40)' : 'transparent'
+                                },
+                                side: {
+                                    size: is3D ? 1 : 0,
+                                    color: is3D ? 'rgba(226, 232, 240, 0.30)' : 'transparent'
+                                }
+                            }
                         },
                         spacingLeft: is3D ? 45 : 15,
                         spacingRight: 30
@@ -449,18 +645,18 @@
                     },
                     plotOptions: {
                         column: {
-                            depth: is3D ? 30 : 0,
-                            edgeColor: is3D ? 'rgba(15, 23, 42, 0.25)' : 'none',
-                            edgeWidth: is3D ? 1.2 : 0,
-                            groupZPadding: is3D ? 8 : 0,
+                            depth: is3D ? 35 : 0,
+                            edgeColor: is3D ? 'rgba(15, 23, 42, 0.28)' : 'none',
+                            edgeWidth: is3D ? 1.4 : 0,
+                            groupZPadding: is3D ? 10 : 0,
                             pointPadding: is3D ? 0.12 : 0.08,
                             groupPadding: is3D ? 0.14 : 0.12,
                             maxPointWidth: 48
                         },
                         bar: {
-                            depth: is3D ? 30 : 0,
-                            edgeColor: is3D ? 'rgba(15, 23, 42, 0.25)' : 'none',
-                            edgeWidth: is3D ? 1.2 : 0,
+                            depth: is3D ? 32 : 0,
+                            edgeColor: is3D ? 'rgba(15, 23, 42, 0.28)' : 'none',
+                            edgeWidth: is3D ? 1.4 : 0,
                             pointPadding: is3D ? 0.10 : 0.08,
                             groupPadding: is3D ? 0.12 : 0.12,
                             maxPointWidth: 48
@@ -507,8 +703,13 @@
                 }, false);
 
                 if (chart.series && chart.series.length > 0) {
-                    chart.series.forEach(function (s) {
-                        if (s.type === 'line' || s.type === 'spline') {
+                    chart.series.forEach(function (s, idx) {
+                        if (s.type === 'column' || s.type === 'bar') {
+                            var colorToUse = is3D ? window.gradientesLuz3D[idx % window.gradientesLuz3D.length] : ((chart._fgaOriginal && chart._fgaOriginal.series[idx] && chart._fgaOriginal.series[idx].color) || window.coloresPlano2D[idx % window.coloresPlano2D.length]);
+                            s.update({
+                                color: colorToUse
+                            }, false);
+                        } else if (s.type === 'line' || s.type === 'spline') {
                             s.update({
                                 lineWidth: 5,
                                 linecap: 'round',
@@ -533,6 +734,8 @@
                 }
 
                 chart.redraw();
+                window.habilitarRotacionInteractiva3D(chart);
+
                 try {
                     var containerElem = document.getElementById('container');
                     var w = containerElem ? $(containerElem).width() : null;
@@ -573,7 +776,7 @@
 
                 var lastPeriodLabel = (origCats && origCats.length > 0) ? origCats[origCats.length - 1] : '';
 
-                seriesParaPie.forEach(function (s) {
+                seriesParaPie.forEach(function (s, pIdx) {
                     var val = 0;
                     if (s.data && s.data.length > 0) {
                         var lastPt = s.data[s.data.length - 1];
@@ -582,10 +785,11 @@
                         else if (Array.isArray(lastPt) && typeof lastPt[1] === 'number') val = lastPt[1];
                     }
                     if (val > 0) {
+                        var sliceColor = is3D ? window.gradientesLuz3D[pIdx % window.gradientesLuz3D.length] : (s.color || window.coloresPlano2D[pIdx % window.coloresPlano2D.length]);
                         pieData.push({
                             name: s.name,
                             y: val,
-                            color: s.color
+                            color: sliceColor
                         });
                     }
                 });
@@ -595,7 +799,6 @@
                 }
             } else if (origSeries.length === 1) {
                 var s = origSeries[0];
-                var defaultColors = Highcharts.getOptions().colors || ['#0071AD', '#959595', '#6DB5CB', '#FE7235', '#B7D8DF', '#565656', '#003F6B', '#0099D6', '#FFB347', '#CFCFCF'];
                 if (s.data && origCats && origCats.length > 0) {
                     for (var i = 0; i < origCats.length; i++) {
                         var val = 0;
@@ -605,10 +808,11 @@
                         else if (Array.isArray(pt) && typeof pt[1] === 'number') val = pt[1];
 
                         if (val > 0) {
+                            var sliceColor = is3D ? window.gradientesLuz3D[i % window.gradientesLuz3D.length] : window.coloresPlano2D[i % window.coloresPlano2D.length];
                             pieData.push({
                                 name: origCats[i],
                                 y: val,
-                                color: defaultColors[i % defaultColors.length]
+                                color: sliceColor
                             });
                         }
                     }
@@ -626,7 +830,12 @@
                         enabled: is3D,
                         alpha: is3D ? 45 : 0,
                         beta: 0,
-                        depth: is3D ? 35 : 0
+                        depth: is3D ? 35 : 0,
+                        frame: {
+                            bottom: { size: 0 },
+                            back: { size: 0 },
+                            side: { size: 0 }
+                        }
                     }
                 },
                 xAxis: {
@@ -660,6 +869,7 @@
             }, false);
 
             chart.redraw();
+            window.habilitarRotacionInteractiva3D(chart);
             return;
         }
 
@@ -705,16 +915,31 @@
                         enabled: is3D,
                         alpha: is3D ? 7 : 0,
                         beta: is3D ? -10 : 0,
-                        depth: is3D ? 35 : 0,
+                        depth: is3D ? 45 : 0,
                         viewDistance: 0,
-                        fitToPlot: false
+                        fitToPlot: false,
+                        frame: {
+                            bottom: {
+                                size: is3D ? 3 : 0,
+                                color: is3D ? 'rgba(203, 213, 225, 0.50)' : 'transparent'
+                            },
+                            back: {
+                                size: is3D ? 1 : 0,
+                                color: is3D ? 'rgba(241, 245, 249, 0.40)' : 'transparent'
+                            },
+                            side: {
+                                size: is3D ? 1 : 0,
+                                color: is3D ? 'rgba(226, 232, 240, 0.30)' : 'transparent'
+                            }
+                        }
                     }
                 }
             }, false);
             chart.series.forEach(function (s, idx) {
                 var origType = (chart._fgaOriginal && chart._fgaOriginal.series[idx]) ? chart._fgaOriginal.series[idx].type : 'column';
                 var targetType = (origType === 'spline' || origType === 'line') ? 'spline' : 'bar';
-                s.update({ type: targetType }, false);
+                var colorToUse = is3D ? window.gradientesLuz3D[idx % window.gradientesLuz3D.length] : ((chart._fgaOriginal && chart._fgaOriginal.series[idx] && chart._fgaOriginal.series[idx].color) || window.coloresPlano2D[idx % window.coloresPlano2D.length]);
+                s.update({ type: targetType, color: colorToUse }, false);
             });
         } else if (tipo === 'spline') {
             chart.update({
@@ -723,9 +948,11 @@
                     options3d: { enabled: false }
                 }
             }, false);
-            chart.series.forEach(function (s) {
+            chart.series.forEach(function (s, idx) {
+                var origColor = (chart._fgaOriginal && chart._fgaOriginal.series[idx] && chart._fgaOriginal.series[idx].color) || window.coloresPlano2D[idx % window.coloresPlano2D.length];
                 s.update({
                     type: 'spline',
+                    color: origColor,
                     lineWidth: 4.5,
                     marker: { enabled: true, radius: 5.5, symbol: 'circle', lineWidth: 2, lineColor: '#ffffff' }
                 }, false);
@@ -739,11 +966,13 @@
             }, false);
             chart.series.forEach(function (s, idx) {
                 var origType = (chart._fgaOriginal && chart._fgaOriginal.series[idx]) ? chart._fgaOriginal.series[idx].type : 'column';
+                var origColor = (chart._fgaOriginal && chart._fgaOriginal.series[idx] && chart._fgaOriginal.series[idx].color) || window.coloresPlano2D[idx % window.coloresPlano2D.length];
                 if (origType === 'spline' || origType === 'line') {
-                    s.update({ type: 'spline', lineWidth: 4 }, false);
+                    s.update({ type: 'spline', color: origColor, lineWidth: 4 }, false);
                 } else {
                     s.update({
                         type: 'areaspline',
+                        color: origColor,
                         fillOpacity: 0.35,
                         lineWidth: 3,
                         marker: { enabled: true, radius: 4 }
@@ -759,16 +988,31 @@
                         enabled: is3D,
                         alpha: is3D ? 7 : 0,
                         beta: is3D ? -10 : 0,
-                        depth: is3D ? 35 : 0,
+                        depth: is3D ? 45 : 0,
                         viewDistance: 0,
-                        fitToPlot: false
+                        fitToPlot: false,
+                        frame: {
+                            bottom: {
+                                size: is3D ? 3 : 0,
+                                color: is3D ? 'rgba(203, 213, 225, 0.50)' : 'transparent'
+                            },
+                            back: {
+                                size: is3D ? 1 : 0,
+                                color: is3D ? 'rgba(241, 245, 249, 0.40)' : 'transparent'
+                            },
+                            side: {
+                                size: is3D ? 1 : 0,
+                                color: is3D ? 'rgba(226, 232, 240, 0.30)' : 'transparent'
+                            }
+                        }
                     }
                 }
             }, false);
             chart.series.forEach(function (s, idx) {
                 var origType = (chart._fgaOriginal && chart._fgaOriginal.series[idx]) ? chart._fgaOriginal.series[idx].type : 'column';
                 var targetType = (origType === 'spline' || origType === 'line') ? 'spline' : 'column';
-                s.update({ type: targetType }, false);
+                var colorToUse = is3D ? window.gradientesLuz3D[idx % window.gradientesLuz3D.length] : ((chart._fgaOriginal && chart._fgaOriginal.series[idx] && chart._fgaOriginal.series[idx].color) || window.coloresPlano2D[idx % window.coloresPlano2D.length]);
+                s.update({ type: targetType, color: colorToUse }, false);
             });
             if (typeof window.aplicarEstilo3DCartera === 'function') {
                 window.aplicarEstilo3DCartera(chart, is3D);
@@ -776,6 +1020,7 @@
         }
 
         chart.redraw();
+        window.habilitarRotacionInteractiva3D(chart);
         chart.reflow();
     };
 
@@ -805,6 +1050,8 @@
         var btnModal = document.getElementById('btnToggle3DModal');
         var lblMain = document.getElementById('lblToggle3DComposicion') || document.getElementById('lblToggle3D');
         var lblModal = document.getElementById('lblToggle3DModal');
+        var hintMain = document.getElementById('lbl3DRotateHint') || document.getElementById('lbl3DRotateHintComposicion');
+        var hintModal = document.getElementById('lbl3DRotateHintModal');
 
         var activeStyle = "height: 28px; padding: 0 11px; font-size: 11.5px; font-weight: 600; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid #bae6fd; background: #f0f9ff; color: #0369a1; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 1px 2px rgba(0,0,0,0.04);";
         var inactiveStyle = "height: 28px; padding: 0 11px; font-size: 11.5px; font-weight: 600; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid #cbd5e1; background: #f1f5f9; color: #475569; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 1px 2px rgba(0,0,0,0.04);";
@@ -819,6 +1066,12 @@
         if (btnModal) {
             btnModal.setAttribute('style', is3D ? modalActiveStyle : modalInactiveStyle);
             if (lblModal) lblModal.innerText = is3D ? 'Vista 3D: ON' : 'Vista 2D (Plano)';
+        }
+        if (hintMain) {
+            hintMain.style.display = is3D ? 'inline-flex' : 'none';
+        }
+        if (hintModal) {
+            hintModal.style.display = is3D ? 'inline-flex' : 'none';
         }
 
         if (typeof Highcharts !== 'undefined' && Highcharts.charts) {
@@ -858,12 +1111,17 @@
                             } else if (typeof window.aplicarEstilo3DCartera === 'function') {
                                 window.aplicarEstilo3DCartera(c, window.cartera3DActivo);
                             }
+                            window.habilitarRotacionInteractiva3D(c);
                             c.reflow();
                         } catch (e) {}
                     }
                 });
             }
             $('#selTipoGraficoCartera, #selTipoGraficoComposicion, #selTipoGraficoModal').val(window.tipoGraficoActual || 'column');
+            var hintMain = document.getElementById('lbl3DRotateHint') || document.getElementById('lbl3DRotateHintComposicion');
+            var hintModal = document.getElementById('lbl3DRotateHintModal');
+            if (hintMain) hintMain.style.display = window.cartera3DActivo ? 'inline-flex' : 'none';
+            if (hintModal) hintModal.style.display = window.cartera3DActivo ? 'inline-flex' : 'none';
         }
         setTimeout(asegurarAnchoCompleto, 60);
         setTimeout(asegurarAnchoCompleto, 180);
