@@ -86,7 +86,7 @@
             <div style="display: inline-flex; align-items: center; gap: 5px;">
                 <span style="font-size: 11px; font-weight: 600; color: #475569; white-space: nowrap;"><i class="fa fa-sliders" style="color: #0284c7;"></i> Tipo:</span>
                 <select id="selTipoGraficoComposicion" onchange="window.cambiarTipoGrafico(this.value)" class="form-control" style="height: 28px; padding: 2px 8px; font-size: 11.5px; font-weight: 600; border-radius: 6px; border: 1px solid #cbd5e1; color: #0f172a; background: #ffffff; cursor: pointer;">
-                    <option value="column">📊 Columnas 13 Meses (Original 2D)</option>
+                    <option value="column">📊 Columnas</option>
                     <option value="matrix3d">🏙️ Matriz 3D Multi-período (WebGL)</option>
                     <option value="spline">📈 Líneas (Tendencia)</option>
                     <option value="area">📉 Áreas (Concentración)</option>
@@ -107,7 +107,7 @@
             <div style="display: inline-flex; align-items: center; gap: 3px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 2px 4px;">
                 <span style="font-size: 11px; font-weight: 700; color: #1e3a8a; padding: 0 4px;"><i class="fa fa-eye" style="color: #2F5597;"></i> Modo:</span>
                 <button type="button" id="btnModoTodosComposicion" onclick="window.cambiarModoMora3D('completo')" class="btn btn-xs btn-primary" style="padding: 2px 7px; font-size: 11px; font-weight: 700; border-radius: 4px;" title="Ver todos los tramos incluyendo Cartera al día">🌟 Todos los Tramos</button>
-                <button type="button" id="btnModoMoraComposicion" onclick="window.cambiarModoMora3D('vencida')" class="btn btn-xs btn-default" style="padding: 2px 7px; font-size: 11px; font-weight: 600; border-radius: 4px;" title="Enfocar exclusivamente la mora vencida (1 a >90 días) aprovechando el 100% de la altura 3D">🎯 Enfoque Mora</button>
+                <button type="button" id="btnModoMoraComposicion" onclick="window.cambiarModoMora3D('vencida')" class="btn btn-xs btn-default" style="padding: 2px 7px; font-size: 11px; font-weight: 600; border-radius: 4px;" title="Enfocar exclusivamente la mora vencida aprovechando el 100% de la altura 3D">🎯 Enfoque Mora</button>
             </div>
             <button type="button" class="btn btn-sm btn-default btn-orbit-3d" onclick="window.toggleAutoRotar3D()" style="height: 28px; padding: 0 10px; font-size: 11.5px; font-weight: 600; border-radius: 6px; border: 1px solid #cbd5e1; background: #ffffff; color: #475569; cursor: pointer;">
                 <i class="fa fa-refresh" style="color: #0284c7;"></i> <span>Girar 360°</span>
@@ -121,7 +121,7 @@
         </div>
         <div style="display: inline-flex; align-items: center; gap: 6px; background: #ffffff; border: 1px solid #cbd5e1; padding: 4px 10px; border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
             <i class="fa fa-cubes" style="color: #1b3866; font-size: 12px;"></i>
-            <span style="font-size: 11px; font-weight: 600; color: #475569;">Ciudad Financiera 3D: 13 Meses x Tramos de Riesgo | Arrastra para orbitar | Rueda para zoom</span>
+            <span style="font-size: 11px; font-weight: 600; color: #475569;">Ciudad Financiera 3D: Períodos x Tramos de Riesgo | Arrastra para orbitar | Rueda para zoom</span>
         </div>
     </div>
 
@@ -129,13 +129,13 @@
         <div id="container" style="width: 100%; min-width: 100%; box-sizing: border-box; overflow: visible;">
             @(Model.detalle)
         </div>
-        <div id="echartsContainerCartera" style="display: none; width: 100%; height: 480px; box-sizing: border-box; border-radius: 6px; overflow: hidden; background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);"></div>
+        <div id="echartsContainerCartera" style="display: none; width: 100%; height: 500px; box-sizing: border-box; border-radius: 6px; overflow: hidden; background: #ffffff;"></div>
     </div>
 </div>
 
 <div class="modal fade" id="mPopUp" tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl" style="width: 96%; max-width: 1440px; margin: 10px auto;">
-        <div class="modal-content" style="border-radius: 12px; overflow: hidden; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
+        <div class="modal-content" style="border-radius: 12px; overflow: hidden; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.15); background: #ffffff;">
             <div class="modal-header" style="background: linear-gradient(135deg, #1b3866 0%, #2F5597 100%); color: #ffffff; padding: 10px 18px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
                 <div style="display: flex; align-items: center; gap: 10px; background: transparent;">
                     <img width="30" height="30" src="@Session["Logo"]" style="border-radius: 6px; background: #ffffff; padding: 2px;" />
@@ -148,7 +148,7 @@
                     <div style="display: inline-flex; align-items: center; gap: 5px;">
                         <span style="font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.9); white-space: nowrap;"><i class="fa fa-sliders" style="color: #38bdf8;"></i> Tipo:</span>
                         <select id="selTipoGraficoModal" onchange="window.cambiarTipoGrafico(this.value)" class="form-control" style="height: 28px; padding: 2px 8px; font-size: 11.5px; font-weight: 600; border-radius: 6px; border: 1px solid rgba(255,255,255,0.3); color: #0f172a; background: #ffffff; cursor: pointer;">
-                            <option value="column">📊 Columnas 13 Meses (Original 2D)</option>
+                            <option value="column">📊 Columnas</option>
                             <option value="matrix3d">🏙️ Matriz 3D Multi-período (WebGL)</option>
                             <option value="spline">📈 Líneas (Tendencia)</option>
                             <option value="area">📉 Áreas (Concentración)</option>
@@ -167,7 +167,7 @@
                     <div style="display: inline-flex; align-items: center; gap: 3px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 2px 4px;">
                         <span style="font-size: 11px; font-weight: 700; color: #1e3a8a; padding: 0 4px;"><i class="fa fa-eye" style="color: #2F5597;"></i> Modo:</span>
                         <button type="button" id="btnModoTodosModal" onclick="window.cambiarModoMora3D('completo')" class="btn btn-xs btn-primary" style="padding: 2px 7px; font-size: 11px; font-weight: 700; border-radius: 4px;" title="Ver todos los tramos incluyendo Cartera al día">🌟 Todos los Tramos</button>
-                        <button type="button" id="btnModoMoraModal" onclick="window.cambiarModoMora3D('vencida')" class="btn btn-xs btn-default" style="padding: 2px 7px; font-size: 11px; font-weight: 600; border-radius: 4px;" title="Enfocar exclusivamente la mora vencida (1 a >90 días) aprovechando el 100% de la altura 3D">🎯 Enfoque Mora</button>
+                        <button type="button" id="btnModoMoraModal" onclick="window.cambiarModoMora3D('vencida')" class="btn btn-xs btn-default" style="padding: 2px 7px; font-size: 11px; font-weight: 600; border-radius: 4px;" title="Enfocar exclusivamente la mora vencida aprovechando el 100% de la altura 3D">🎯 Enfoque Mora</button>
                     </div>
                     <button type="button" class="btn btn-sm btn-default btn-orbit-3d" onclick="window.toggleAutoRotar3D()" style="height: 28px; padding: 0 10px; font-size: 11.5px; font-weight: 600; border-radius: 6px; border: 1px solid #cbd5e1; background: #ffffff; color: #475569; cursor: pointer;">
                         <i class="fa fa-refresh" style="color: #0284c7;"></i> <span>Girar 360°</span>
@@ -175,22 +175,22 @@
                     <div style="display: inline-flex; align-items: center; gap: 2px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 2px 4px;">
                         <button type="button" onclick="window.setPresetAngulo3D(22, 38)" style="height: 22px; padding: 0 7px; font-size: 10.5px; font-weight: 700; border: none; background: transparent; color: #1e3a8a; cursor: pointer; border-radius: 4px;" title="Vista isométrica clásica">Isométrica</button>
                         <button type="button" onclick="window.setPresetAngulo3D(5, 0)" style="height: 22px; padding: 0 7px; font-size: 10.5px; font-weight: 600; border: none; background: transparent; color: #475569; cursor: pointer; border-radius: 4px;" title="Vista frontal horizontal">Frontal</button>
-                        <button type="button" onclick="window.setPresetAngulo3D(35, 55)" style="height: 22px; padding: 0 7px; font-size: 10.5px; font-weight: 600; border: none; background: transparent; color: #475569; cursor: pointer; border-radius: 4px;" title="Vista diagonal en perspectiva">Diagonal</button>
+                        <button type="button" onclick="window.setPresetAngulo3D(35, 55)" style="height: 22px; padding: 0 7px; font-size: 10.5px; font-weight: 600; border: none; background: transparent; color: #475569; cursor: border-radius: 4px;" title="Vista diagonal en perspectiva">Diagonal</button>
                         <button type="button" onclick="window.setPresetAngulo3D(70, 20)" style="height: 22px; padding: 0 7px; font-size: 10.5px; font-weight: 600; border: none; background: transparent; color: #475569; cursor: pointer; border-radius: 4px;" title="Vista aérea cenital">Aérea</button>
                     </div>
                 </div>
                 <div style="display: inline-flex; align-items: center; gap: 6px; background: #ffffff; border: 1px solid #cbd5e1; padding: 4px 10px; border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
                     <i class="fa fa-cubes" style="color: #1b3866; font-size: 12px;"></i>
-                    <span style="font-size: 11px; font-weight: 600; color: #475569;">Ciudad Financiera 3D: 13 Meses x Tramos de Riesgo | Arrastra para orbitar | Rueda para zoom</span>
+                    <span style="font-size: 11px; font-weight: 600; color: #475569;">Ciudad Financiera 3D: Períodos x Tramos de Riesgo | Arrastra para orbitar | Rueda para zoom</span>
                 </div>
             </div>
 
-            <div class="modal-body" style="padding: 10px 18px 4px 18px;">
+            <div class="modal-body" style="padding: 10px 18px 4px 18px; background: #ffffff;">
                 <div id="composicionModalKpiStrip" style="margin-bottom: 10px;"></div>
                 <div id="modalHighchartsContainer">
                     @(Model.pDetalle)
                 </div>
-                <div id="echartsContainerModalCartera" style="display: none; width: 100%; height: 580px; box-sizing: border-box; border-radius: 8px; overflow: hidden; background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);"></div>
+                <div id="echartsContainerModalCartera" style="display: none; width: 100%; height: 580px; box-sizing: border-box; border-radius: 8px; overflow: hidden; background: #ffffff;"></div>
             </div>
             <div class="modal-footer" style="padding: 8px 18px; background: #f8fafc; border-top: 1px solid #e2e8f0; text-align: right;">
                 <button type="button" class="btn btn-default" data-dismiss="modal" style="border-radius: 6px; font-weight: 600; padding: 4px 14px; font-size: 12.5px;">Cerrar</button>
@@ -218,8 +218,8 @@
 
     window.echartsAutoRotate = false;
     window.echartsModoMora = 'completo'; // 'completo' | 'vencida'
-    window.echarts3DAlpha = 22;
-    window.echarts3DBeta = 38;
+    window.echarts3DAlpha = 20;
+    window.echarts3DBeta = 36;
     window.coloresPlano2D = ['#0071AD', '#475569', '#0d9488', '#ea580c', '#0284c7', '#6366f1', '#1e3a8a', '#d97706', '#059669', '#64748b'];
 
     // Mapeo de paleta institucional y sobria para tramos de riesgo / morosidad
@@ -296,7 +296,7 @@
     // Renderizado de la Matriz 3D Multi-período con Apache ECharts GL (WebGL)
     window.renderEChartsMatrix3D = function (domId, chartSource) {
         if (typeof echarts === 'undefined') {
-            console.warn('ECharts no está disponible en este momento');
+            console.warn('ECharts no está disponible');
             return null;
         }
 
@@ -336,8 +336,8 @@
 
         var tramoNames = seriesToRender.map(function (s) { return s.name; });
 
-        // Totales mensuales para porcentaje
-        var monthlyTotals = [];
+        // Totales periódicos para porcentaje
+        var periodTotals = [];
         cats.forEach(function (cat, xIdx) {
             var tot = 0;
             colSeries.forEach(function (s) {
@@ -350,7 +350,7 @@
                 }
                 tot += Math.max(0, v || 0);
             });
-            monthlyTotals[xIdx] = tot;
+            periodTotals[xIdx] = tot;
         });
 
         // Construir datos en formato [xIdx, yIdx, zVal]
@@ -366,8 +366,8 @@
                     else if (Array.isArray(pt) && typeof pt[1] === 'number') v = pt[1];
                 }
                 v = Math.max(0, parseFloat(v) || 0);
-                var mTot = monthlyTotals[xIdx] || 0;
-                var pct = mTot > 0 ? ((v / mTot) * 100) : 0;
+                var pTot = periodTotals[xIdx] || 0;
+                var pct = pTot > 0 ? ((v / pTot) * 100) : 0;
 
                 data3D.push({
                     name: cat + ' - ' + s.name,
@@ -377,7 +377,7 @@
                     pct: pct,
                     itemStyle: {
                         color: col,
-                        opacity: 0.94
+                        opacity: 0.96
                     }
                 });
             });
@@ -388,13 +388,25 @@
             myChart = echarts.init(dom);
         }
 
+        var numCats = Math.max(1, cats.length);
+        var numTramos = Math.max(1, tramoNames.length);
+
+        // Dimensiones ampliadas para abarcar prácticamente todo el ancho del contenedor sin verse encogido
+        var dynamicBoxWidth = Math.max(280, Math.min(390, numCats * 26));
+        var dynamicBoxDepth = Math.max(85, Math.min(130, numTramos * 22));
+        var dynamicBoxHeight = 65;
+
+        // Ancho de barras proporcional
+        var barWidth = Math.max(9, Math.min(22, (dynamicBoxWidth * 0.76) / numCats));
+        var barDepth = Math.max(9, Math.min(22, (dynamicBoxDepth * 0.70) / numTramos));
+
         var option = {
             backgroundColor: '#ffffff',
             title: {
-                text: (orig.title ? orig.title : 'Distribución de Riesgo de Cartera Multi-período') + (window.echartsModoMora === 'vencida' ? ' (Enfoque Mora Vencida)' : ''),
-                subtext: 'Perspectiva WebGL 3D interactiva a través de los 13 meses',
+                text: (orig.title ? orig.title : 'Distribución de Riesgo de Cartera') + (window.echartsModoMora === 'vencida' ? ' (Enfoque Mora Vencida)' : ''),
+                subtext: 'Perspectiva 3D interactiva por período',
                 left: 'center',
-                top: 10,
+                top: 8,
                 textStyle: {
                     color: '#1b3866',
                     fontSize: 14,
@@ -456,19 +468,20 @@
                 splitLine: { show: true, lineStyle: { color: '#f1f5f9' } }
             },
             grid3D: {
-                boxWidth: Math.max(160, cats.length * 14),
-                boxDepth: Math.max(70, tramoNames.length * 18),
-                boxHeight: 65,
-                top: -20,
+                boxWidth: dynamicBoxWidth,
+                boxDepth: dynamicBoxDepth,
+                boxHeight: dynamicBoxHeight,
+                top: -15,
+                bottom: 10,
                 axisPointer: {
                     show: true,
                     lineStyle: { color: '#0284c7', width: 1.5 }
                 },
                 viewControl: {
-                    alpha: window.echarts3DAlpha || 22,
-                    beta: window.echarts3DBeta || 38,
-                    distance: 220,
-                    minDistance: 70,
+                    alpha: window.echarts3DAlpha || 20,
+                    beta: window.echarts3DBeta || 36,
+                    distance: 155, // Distancia reducida para que las barras llenen el ancho del lienzo
+                    minDistance: 60,
                     maxDistance: 450,
                     autoRotate: !!window.echartsAutoRotate,
                     autoRotateSpeed: 10,
@@ -482,21 +495,16 @@
                         intensity: 1.35,
                         shadow: true,
                         shadowQuality: 'high',
-                        alpha: 40,
-                        beta: -35
+                        alpha: 45,
+                        beta: -30
                     },
                     ambient: {
-                        intensity: 0.40
+                        intensity: 0.70 // Iluminación ambiental limpia y brillante sobre fondo blanco
                     }
                 },
                 environment: '#ffffff',
                 postEffect: {
-                    enable: true,
-                    SSAO: {
-                        enable: true,
-                        radius: 2,
-                        intensity: 1.3
-                    }
+                    enable: false // Desactivado para garantizar fondo 100% blanco puro sin viñetas oscuras
                 }
             },
             series: [{
@@ -504,11 +512,11 @@
                 data: data3D,
                 shading: 'realistic',
                 realisticMaterial: {
-                    roughness: 0.35,
-                    metalness: 0.15
+                    roughness: 0.32,
+                    metalness: 0.12
                 },
-                barSize: [Math.max(5, Math.min(10, 110 / (cats.length || 1))), Math.max(6, Math.min(14, 55 / (tramoNames.length || 1)))],
-                bevelSize: 0.3,
+                barSize: [barWidth, barDepth],
+                bevelSize: 0.35,
                 bevelSegments: 3,
                 emphasis: {
                     label: { show: false },
@@ -523,7 +531,6 @@
         } catch (e) {
             console.warn('Fallo renderizado realista WebGL, intentando modo lambert:', e);
             option.series[0].shading = 'lambert';
-            delete option.grid3D.postEffect;
             myChart.setOption(option, true);
             myChart.resize();
         }
@@ -647,7 +654,7 @@
         }
 
         if (tipo === 'spline') {
-            // MODO LÍNEAS (TENDENCIA MULTIPERÍODO)
+            // MODO LÍNEAS (TENDENCIA)
             chart.update({
                 chart: {
                     type: 'spline',
@@ -796,7 +803,7 @@
             });
 
         } else {
-            // VERSIÓN ORIGINAL: COLUMNAS APILADAS PLANAS + LÍNEA EN 2D (13 MESES)
+            // VERSIÓN ORIGINAL: COLUMNAS APILADAS PLANAS + LÍNEA EN 2D
             chart.update({
                 chart: {
                     type: 'column',
