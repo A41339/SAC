@@ -6,10 +6,10 @@
             colors: ['#0071AD', '#475569', '#0d9488', '#ea580c', '#0284c7', '#6366f1', '#1e3a8a', '#d97706', '#059669', '#64748b'],
             chart: {
                 options3d: {
-                    enabled: true,
-                    alpha: 14,
-                    beta: 8,
-                    depth: 38,
+                    enabled: false,
+                    alpha: 45,
+                    beta: 0,
+                    depth: 35,
                     viewDistance: 600,
                     fitToPlot: true,
                     frame: {
@@ -21,70 +21,42 @@
             },
             plotOptions: {
                 column: {
-                    depth: 34,
-                    edgeColor: 'rgba(15, 23, 42, 0.20)',
-                    edgeWidth: 1.4,
-                    groupZPadding: 6,
-                    pointPadding: 0.08,
-                    groupPadding: 0.10,
-                    maxPointWidth: 44
-                },
-                bar: {
-                    depth: 28,
-                    edgeColor: 'rgba(15, 23, 42, 0.20)',
-                    edgeWidth: 1.2,
+                    borderWidth: 0,
                     pointPadding: 0.08,
                     groupPadding: 0.10,
                     maxPointWidth: 44
                 },
                 line: {
-                    lineWidth: 5,
+                    lineWidth: 4.5,
                     linecap: 'round',
                     linejoin: 'round',
-                    shadow: {
-                        color: 'rgba(0, 0, 0, 0.25)',
-                        offsetX: 1,
-                        offsetY: 3,
-                        width: 5,
-                        opacity: 0.22
-                    },
                     marker: {
                         enabled: true,
-                        radius: 6,
+                        radius: 5.5,
                         symbol: 'circle',
-                        lineWidth: 2.5,
-                        lineColor: '#ffffff',
-                        shadow: {
-                            color: 'rgba(0, 0, 0, 0.2)',
-                            offsetX: 0,
-                            offsetY: 2,
-                            width: 4
-                        }
+                        lineWidth: 2,
+                        lineColor: '#ffffff'
                     }
                 },
                 spline: {
                     lineWidth: 4.5,
                     linecap: 'round',
                     linejoin: 'round',
-                    shadow: {
-                        color: 'rgba(0, 0, 0, 0.22)',
-                        offsetX: 1,
-                        offsetY: 3,
-                        width: 5,
-                        opacity: 0.20
-                    },
                     marker: {
                         enabled: true,
                         radius: 5.5,
                         symbol: 'circle',
-                        lineWidth: 2.2,
-                        lineColor: '#ffffff',
-                        shadow: {
-                            color: 'rgba(0, 0, 0, 0.2)',
-                            offsetX: 0,
-                            offsetY: 2,
-                            width: 4
-                        }
+                        lineWidth: 2,
+                        lineColor: '#ffffff'
+                    }
+                },
+                pie: {
+                    innerSize: '58%',
+                    depth: 35,
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    animation: {
+                        duration: 500
                     }
                 }
             },
@@ -121,23 +93,42 @@
             <div style="display: inline-flex; align-items: center; gap: 5px;">
                 <span style="font-size: 11px; font-weight: 600; color: #475569; white-space: nowrap;"><i class="fa fa-sliders" style="color: #0284c7;"></i> Tipo:</span>
                 <select id="selTipoGraficoComposicion" onchange="window.cambiarTipoGrafico(this.value)" class="form-control" style="height: 28px; padding: 2px 8px; font-size: 11.5px; font-weight: 600; border-radius: 6px; border: 1px solid #cbd5e1; color: #0f172a; background: #ffffff; cursor: pointer;">
-                    <option value="column">📊 Columnas</option>
-                    <option value="spline">📈 Líneas</option>
-                    <option value="area">📉 Áreas</option>
-                    <option value="pie">🥧 Circular</option>
+                    <option value="column">📊 Columnas (Original)</option>
+                    <option value="spline">📈 Líneas (Tendencia)</option>
+                    <option value="area">📉 Áreas (Concentración)</option>
+                    <option value="pie">🥧 Donut Race 3D</option>
                 </select>
             </div>
-            <button type="button" class="btn-toggle-3d" id="btnToggle3DComposicion" onclick="window.toggle3DCartera(this)" title="Alternar entre perspectiva 3D volumétrica y 2D clásica" style="height: 28px; padding: 0 11px; font-size: 11.5px; font-weight: 600; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid #bae6fd; background: #f0f9ff; color: #0369a1; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
-                <i class="fa fa-cube" style="color: #0284c7; font-size: 13px;"></i> <span id="lblToggle3DComposicion">Vista 3D: ON</span>
+            <button type="button" class="btn-toggle-3d" id="btnToggle3DComposicion" onclick="window.toggle3DCartera(this)" title="Alternar entre la versión original y Donut Race 3D animado" style="height: 28px; padding: 0 11px; font-size: 11.5px; font-weight: 600; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid #cbd5e1; background: #f1f5f9; color: #475569; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
+                <i class="fa fa-cube" style="color: #0284c7; font-size: 13px;"></i> <span id="lblToggle3DComposicion">Vista 3D: Donut Race</span>
             </button>
-            <span id="lblRotarHintComposicion" style="font-size: 11px; color: #64748b; font-weight: 500; display: inline-flex; align-items: center; gap: 4px; padding: 0 4px;" title="Haz clic y arrastra sobre el gráfico para rotar el ángulo 3D">
-                <i class="fa fa-hand-pointer-o" style="color: #0284c7;"></i> Arrastra para rotar
-            </span>
             <a class="btn-ampliar" data-toggle="tooltip" data-placement="top" title="Ampliar gr&aacute;fico" href="javascript:mPopUp()" style="height: 28px; padding: 0 11px; font-size: 11.5px; border-radius: 6px; display: inline-flex; align-items: center; gap: 5px;">
                 <i class="fa fa-line-chart"></i> Ampliar
             </a>
         </div>
     </div>
+
+    <!-- PANEL REPRODUCTOR TEMPORAL DONUT RACE 3D (PANTALLA PRINCIPAL) -->
+    <div id="donutRaceControllerComposicion" style="display: none; align-items: center; justify-content: space-between; padding: 8px 14px; background: #f0f9ff; border-bottom: 1px solid #bae6fd; gap: 12px; flex-wrap: wrap;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <button type="button" id="btnDonutRacePlayComposicion" onclick="window.toggleDonutRacePlay()" class="btn btn-sm btn-primary" style="height: 28px; padding: 0 12px; font-size: 11.5px; font-weight: 700; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; background: #0284c7; border: none; box-shadow: 0 1px 3px rgba(2,132,199,0.3); cursor: pointer;">
+                <i class="fa fa-play"></i> <span>Reproducir</span>
+            </button>
+            <button type="button" onclick="window.resetDonutRace()" class="btn btn-sm btn-default" style="height: 28px; padding: 0 10px; font-size: 11.5px; font-weight: 600; border-radius: 6px; border: 1px solid #cbd5e1; background: #ffffff; color: #475569; cursor: pointer;" title="Reiniciar al inicio">
+                <i class="fa fa-step-backward"></i>
+            </button>
+        </div>
+        <div style="flex: 1; min-width: 200px; display: flex; align-items: center; gap: 10px;">
+            <span id="lblDonutRaceMinComposicion" style="font-size: 11px; font-weight: 700; color: #64748b; white-space: nowrap;">Inicial</span>
+            <input type="range" id="sliderDonutRaceComposicion" min="0" max="12" step="1" value="0" oninput="window.onDonutRaceSlider(this.value)" style="flex: 1; cursor: pointer; accent-color: #0284c7; height: 6px;" />
+            <span id="lblDonutRaceMaxComposicion" style="font-size: 11px; font-weight: 700; color: #64748b; white-space: nowrap;">Final</span>
+        </div>
+        <div style="display: inline-flex; align-items: center; gap: 6px; background: #ffffff; border: 1px solid #bae6fd; padding: 3px 10px; border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
+            <i class="fa fa-calendar" style="color: #0284c7; font-size: 11.5px;"></i>
+            <span id="lblDonutRacePeriodoComposicion" style="font-size: 12px; font-weight: 800; color: #0369a1;">Período actual</span>
+        </div>
+    </div>
+
     <div style="padding: 10px 14px 6px 14px; width: 100%; box-sizing: border-box; overflow: visible;">
         <div id="container" style="width: 100%; min-width: 100%; box-sizing: border-box; overflow: visible;">
             @(Model.detalle)
@@ -160,21 +151,40 @@
                     <div style="display: inline-flex; align-items: center; gap: 5px;">
                         <span style="font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.9); white-space: nowrap;"><i class="fa fa-sliders" style="color: #38bdf8;"></i> Tipo:</span>
                         <select id="selTipoGraficoModal" onchange="window.cambiarTipoGrafico(this.value)" class="form-control" style="height: 28px; padding: 2px 8px; font-size: 11.5px; font-weight: 600; border-radius: 6px; border: 1px solid rgba(255,255,255,0.3); color: #0f172a; background: #ffffff; cursor: pointer;">
-                            <option value="column">📊 Columnas</option>
-                            <option value="spline">📈 Líneas</option>
-                            <option value="area">📉 Áreas</option>
-                            <option value="pie">🥧 Circular</option>
+                            <option value="column">📊 Columnas (Original)</option>
+                            <option value="spline">📈 Líneas (Tendencia)</option>
+                            <option value="area">📉 Áreas (Concentración)</option>
+                            <option value="pie">🥧 Donut Race 3D</option>
                         </select>
                     </div>
-                    <button type="button" class="btn-toggle-3d-modal" id="btnToggle3DModal" onclick="window.toggle3DCartera(this)" title="Alternar entre perspectiva 3D volumétrica y 2D clásica" style="height: 28px; padding: 0 11px; font-size: 11.5px; font-weight: 600; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.18); color: #ffffff; cursor: pointer; transition: all 0.2s ease;">
-                        <i class="fa fa-cube" style="color: #38bdf8; font-size: 13px;"></i> <span id="lblToggle3DModal">Vista 3D: ON</span>
+                    <button type="button" class="btn-toggle-3d-modal" id="btnToggle3DModal" onclick="window.toggle3DCartera(this)" title="Alternar entre la versión original y Donut Race 3D animado" style="height: 28px; padding: 0 11px; font-size: 11.5px; font-weight: 600; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.18); color: #ffffff; cursor: pointer; transition: all 0.2s ease;">
+                        <i class="fa fa-cube" style="color: #38bdf8; font-size: 13px;"></i> <span id="lblToggle3DModal">Vista 3D: Donut Race</span>
                     </button>
-                    <span id="lblRotarHintModal" style="font-size: 11px; color: rgba(255,255,255,0.85); font-weight: 500; display: inline-flex; align-items: center; gap: 4px; padding: 0 4px;" title="Haz clic y arrastra sobre el gráfico para rotar el ángulo 3D">
-                        <i class="fa fa-hand-pointer-o" style="color: #38bdf8;"></i> Arrastra para rotar
-                    </span>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: #ffffff !important; opacity: 0.9; font-size: 22px; line-height: 1;"><span aria-hidden="true">&times;</span></button>
                 </div>
             </div>
+
+            <!-- PANEL REPRODUCTOR TEMPORAL DONUT RACE 3D (MODAL) -->
+            <div id="donutRaceControllerModal" style="display: none; align-items: center; justify-content: space-between; padding: 8px 18px; background: #f0f9ff; border-bottom: 1px solid #bae6fd; gap: 12px; flex-wrap: wrap;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <button type="button" id="btnDonutRacePlayModal" onclick="window.toggleDonutRacePlay()" class="btn btn-sm btn-primary" style="height: 28px; padding: 0 12px; font-size: 11.5px; font-weight: 700; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; background: #0284c7; border: none; box-shadow: 0 1px 3px rgba(2,132,199,0.3); cursor: pointer;">
+                        <i class="fa fa-play"></i> <span>Reproducir</span>
+                    </button>
+                    <button type="button" onclick="window.resetDonutRace()" class="btn btn-sm btn-default" style="height: 28px; padding: 0 10px; font-size: 11.5px; font-weight: 600; border-radius: 6px; border: 1px solid #cbd5e1; background: #ffffff; color: #475569; cursor: pointer;" title="Reiniciar al inicio">
+                        <i class="fa fa-step-backward"></i>
+                    </button>
+                </div>
+                <div style="flex: 1; min-width: 200px; display: flex; align-items: center; gap: 10px;">
+                    <span id="lblDonutRaceMinModal" style="font-size: 11px; font-weight: 700; color: #64748b; white-space: nowrap;">Inicial</span>
+                    <input type="range" id="sliderDonutRaceModal" min="0" max="12" step="1" value="0" oninput="window.onDonutRaceSlider(this.value)" style="flex: 1; cursor: pointer; accent-color: #0284c7; height: 6px;" />
+                    <span id="lblDonutRaceMaxModal" style="font-size: 11px; font-weight: 700; color: #64748b; white-space: nowrap;">Final</span>
+                </div>
+                <div style="display: inline-flex; align-items: center; gap: 6px; background: #ffffff; border: 1px solid #bae6fd; padding: 3px 10px; border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
+                    <i class="fa fa-calendar" style="color: #0284c7; font-size: 11.5px;"></i>
+                    <span id="lblDonutRacePeriodoModal" style="font-size: 12px; font-weight: 800; color: #0369a1;">Período actual</span>
+                </div>
+            </div>
+
             <div class="modal-body" style="padding: 10px 18px 4px 18px;">
                 <div id="composicionModalKpiStrip" style="margin-bottom: 10px;"></div>
                  @(Model.pDetalle)
@@ -199,8 +209,13 @@
         $('#mPopUp').modal('show');
     }
 
-    window.tipoGraficoActual = window.tipoGraficoActual || 'column';
-    window.cartera3DActivo = (typeof window.cartera3DActivo === 'boolean') ? window.cartera3DActivo : true;
+    // Estado inicial: RESPETA LA VERSIÓN ORIGINAL (2D Plano, Columnas)
+    window.tipoGraficoActual = 'column';
+    window.cartera3DActivo = false;
+
+    window.donutRaceTimer = null;
+    window.donutRacePeriodIdx = 0;
+    window.donutRaceMaxPeriods = 12;
 
     window.coloresPlano2D = ['#0071AD', '#475569', '#0d9488', '#ea580c', '#0284c7', '#6366f1', '#1e3a8a', '#d97706', '#059669', '#64748b'];
 
@@ -252,62 +267,118 @@
                 title: (chart.title && chart.title.textStr) ? chart.title.textStr : '',
                 subTitle: (chart.subtitle && chart.subtitle.textStr) ? chart.subtitle.textStr : ''
             };
+
+            if (savedCats.length > 0) {
+                window.donutRaceMaxPeriods = savedCats.length - 1;
+                $('#sliderDonutRaceComposicion, #sliderDonutRaceModal').attr('max', window.donutRaceMaxPeriods);
+                $('#lblDonutRaceMinComposicion, #lblDonutRaceMinModal').text(savedCats[0]);
+                $('#lblDonutRaceMaxComposicion, #lblDonutRaceMaxModal').text(savedCats[savedCats.length - 1]);
+                $('#lblDonutRacePeriodoComposicion, #lblDonutRacePeriodoModal').text(savedCats[0]);
+            }
         } catch (err) {
             console.warn('Error al guardar configuración original:', err);
         }
     };
 
-    window.habilitarRotacionInteractiva3D = function (chart) {
-        if (!chart || !chart.container) return;
-        var container = chart.container;
-        if (container._has3DRotation) {
-            $(container).css('cursor', (window.cartera3DActivo && window.tipoGraficoActual === 'column') ? 'grab' : 'default');
-            return;
-        }
-        container._has3DRotation = true;
-        $(container).css('cursor', (window.cartera3DActivo && window.tipoGraficoActual === 'column') ? 'grab' : 'default');
+    // Helper para extraer datos de la dona para un período específico
+    window.obtenerDatosDonutParaPeriodo = function (chart, periodIdx) {
+        var orig = chart._fgaOriginalConfig;
+        if (!orig || !orig.series) return [];
+        var colSeries = orig.series.filter(function (s) { return s.origType === 'column'; });
+        if (colSeries.length === 0) colSeries = orig.series;
 
-        function drag(eStart) {
-            if (!window.cartera3DActivo || window.tipoGraficoActual !== 'column') return;
-            if (!chart.options || !chart.options.chart || !chart.options.chart.options3d) return;
-
-            var e = chart.pointer.normalize(eStart);
-            var posX = e.chartX;
-            var posY = e.chartY;
-            var alpha = chart.options.chart.options3d.alpha || 14;
-            var beta = chart.options.chart.options3d.beta || 8;
-            var sensitivity = 5.5;
-
-            $(container).css('cursor', 'grabbing');
-
-            function move(eMove) {
-                eMove = chart.pointer.normalize(eMove);
-                var newAlpha = alpha + (eMove.chartY - posY) / sensitivity;
-                var newBeta = beta + (posX - eMove.chartX) / sensitivity;
-
-                newAlpha = Math.max(2, Math.min(32, newAlpha));
-                newBeta = Math.max(-22, Math.min(22, newBeta));
-
-                chart.options.chart.options3d.alpha = newAlpha;
-                chart.options.chart.options3d.beta = newBeta;
-                chart.redraw(false);
+        var result = [];
+        colSeries.forEach(function (s, pIdx) {
+            var val = 0;
+            if (s.data && s.data.length > periodIdx) {
+                var pt = s.data[periodIdx];
+                if (typeof pt === 'number') val = pt;
+                else if (pt && typeof pt.y === 'number') val = pt.y;
+                else if (Array.isArray(pt) && typeof pt[1] === 'number') val = pt[1];
             }
-
-            function up() {
-                $(container).css('cursor', (window.cartera3DActivo && window.tipoGraficoActual === 'column') ? 'grab' : 'default');
-                $(document).off('mousemove.hc3d touchmove.hc3d', move);
-                $(document).off('mouseup.hc3d touchend.hc3d', up);
+            if (val > 0) {
+                result.push({
+                    name: s.name,
+                    y: val,
+                    color: s.color || window.coloresPlano2D[pIdx % window.coloresPlano2D.length]
+                });
             }
-
-            $(document).on('mousemove.hc3d touchmove.hc3d', move);
-            $(document).on('mouseup.hc3d touchend.hc3d', up);
-        }
-
-        $(container).on('mousedown.hc3d touchstart.hc3d', function (e) {
-            if (!window.cartera3DActivo || window.tipoGraficoActual !== 'column') return;
-            if ($(e.target).closest('.highcharts-legend, .highcharts-exporting-group, .highcharts-button').length) return;
-            drag(e);
         });
+        return result;
+    };
+
+    // Actualiza el paso de la animación Donut Race
+    window.actualizarPasoDonutRace = function (periodIdx) {
+        periodIdx = parseInt(periodIdx, 10) || 0;
+        window.donutRacePeriodIdx = periodIdx;
+        $('#sliderDonutRaceComposicion, #sliderDonutRaceModal').val(periodIdx);
+
+        if (typeof Highcharts !== 'undefined' && Highcharts.charts) {
+            Highcharts.charts.forEach(function (chart) {
+                if (!chart || !chart._fgaOriginalConfig) return;
+                var orig = chart._fgaOriginalConfig;
+                var cats = orig.categories || [];
+                var periodLabel = cats[periodIdx] || ('Período ' + (periodIdx + 1));
+
+                $('#lblDonutRacePeriodoComposicion, #lblDonutRacePeriodoModal').text(periodLabel);
+
+                var donutData = window.obtenerDatosDonutParaPeriodo(chart, periodIdx);
+
+                if (chart.series && chart.series.length > 0 && chart.series[0].type === 'pie') {
+                    chart.series[0].setData(donutData, true, { duration: 450 });
+                    chart.setTitle(null, {
+                        useHTML: true,
+                        text: '<div style="text-align:center; font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif;">' +
+                              '  <div style="font-size: 11.5px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Evolución de Composición</div>' +
+                              '  <div style="font-size: 19px; font-weight: 800; color: #0284c7; margin-top: 1px;">' + periodLabel + '</div>' +
+                              '</div>'
+                    }, false);
+                }
+            });
+        }
+    };
+
+    window.playDonutRace = function () {
+        if (window.donutRaceTimer) return;
+        var btnPlay = $('#btnDonutRacePlayComposicion, #btnDonutRacePlayModal');
+        btnPlay.html('<i class="fa fa-pause"></i> <span>Pausar</span>');
+
+        window.donutRaceTimer = setInterval(function () {
+            var maxP = window.donutRaceMaxPeriods || 12;
+            window.donutRacePeriodIdx++;
+            if (window.donutRacePeriodIdx > maxP) {
+                window.donutRacePeriodIdx = 0;
+            }
+            window.actualizarPasoDonutRace(window.donutRacePeriodIdx);
+        }, 950);
+    };
+
+    window.pauseDonutRace = function () {
+        if (window.donutRaceTimer) {
+            clearInterval(window.donutRaceTimer);
+            window.donutRaceTimer = null;
+        }
+        var btnPlay = $('#btnDonutRacePlayComposicion, #btnDonutRacePlayModal');
+        btnPlay.html('<i class="fa fa-play"></i> <span>Reproducir</span>');
+    };
+
+    window.toggleDonutRacePlay = function () {
+        if (window.donutRaceTimer) {
+            window.pauseDonutRace();
+        } else {
+            window.playDonutRace();
+        }
+    };
+
+    window.resetDonutRace = function () {
+        window.pauseDonutRace();
+        window.donutRacePeriodIdx = 0;
+        window.actualizarPasoDonutRace(0);
+    };
+
+    window.onDonutRaceSlider = function (val) {
+        window.pauseDonutRace();
+        window.actualizarPasoDonutRace(val);
     };
 
     window.aplicarTipoAGrafico = function (chart, tipo) {
@@ -319,51 +390,34 @@
         var orig = chart._fgaOriginalConfig;
         if (!orig || !orig.series || orig.series.length === 0) return;
 
-        var is3D = (typeof window.cartera3DActivo === 'boolean') ? window.cartera3DActivo : true;
+        var is3D = (typeof window.cartera3DActivo === 'boolean') ? window.cartera3DActivo : false;
         var isModal = false;
         try {
             var elem = (chart.renderTo ? (typeof chart.renderTo === 'string' ? document.getElementById(chart.renderTo.replace(/^#/, '')) : chart.renderTo) : null);
             if (elem && $(elem).closest('#mPopUp').length) isModal = true;
         } catch (e) {}
 
-        // 1. Limpiar completamente las series existentes
+        // Limpiar series existentes
         while (chart.series.length > 0) {
             chart.series[0].remove(false);
         }
 
-        // 2. Aplicar configuración según tipo
         if (tipo === 'pie') {
-            var pieData = [];
-            var colSeries = orig.series.filter(function (s) { return s.origType === 'column'; });
-            if (colSeries.length === 0) colSeries = orig.series;
-
-            var lastPeriodLabel = (orig.categories && orig.categories.length > 0) ? orig.categories[orig.categories.length - 1] : '';
-
-            colSeries.forEach(function (s, pIdx) {
-                var val = 0;
-                if (s.data && s.data.length > 0) {
-                    var pt = s.data[s.data.length - 1];
-                    if (typeof pt === 'number') val = pt;
-                    else if (pt && typeof pt.y === 'number') val = pt.y;
-                    else if (Array.isArray(pt) && typeof pt[1] === 'number') val = pt[1];
-                }
-                if (val > 0) {
-                    pieData.push({
-                        name: s.name,
-                        y: val,
-                        color: s.color || window.coloresPlano2D[pIdx % window.coloresPlano2D.length]
-                    });
-                }
-            });
+            // MODO DONUT RACE 3D
+            var currentP = window.donutRacePeriodIdx || 0;
+            var pieData = window.obtenerDatosDonutParaPeriodo(chart, currentP);
+            var cats = orig.categories || [];
+            var periodLabel = cats[currentP] || '';
 
             chart.update({
                 chart: {
+                    type: 'pie',
                     inverted: false,
                     options3d: {
-                        enabled: is3D,
-                        alpha: is3D ? 45 : 0,
+                        enabled: true,
+                        alpha: 45,
                         beta: 0,
-                        depth: is3D ? 35 : 0,
+                        depth: 35,
                         viewDistance: 600,
                         fitToPlot: true,
                         frame: {
@@ -379,9 +433,10 @@
                 },
                 plotOptions: {
                     pie: {
+                        innerSize: '58%',
+                        depth: 35,
                         allowPointSelect: true,
                         cursor: 'pointer',
-                        depth: is3D ? 35 : 0,
                         dataLabels: {
                             enabled: true,
                             format: '<b>{point.name}</b>: {point.percentage:.1f} %',
@@ -392,7 +447,10 @@
                                 color: '#1e293b'
                             }
                         },
-                        showInLegend: true
+                        showInLegend: true,
+                        animation: {
+                            duration: 500
+                        }
                     }
                 }
             }, false);
@@ -403,13 +461,19 @@
                 data: pieData
             }, false);
 
-            if (lastPeriodLabel) {
-                chart.setTitle(null, { text: 'Distribución al período: ' + lastPeriodLabel, style: { fontSize: '11.5px', color: '#64748b' } }, false);
-            }
+            chart.setTitle(null, {
+                useHTML: true,
+                text: '<div style="text-align:center; font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif;">' +
+                      '  <div style="font-size: 11.5px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Evolución de Composición</div>' +
+                      '  <div style="font-size: 19px; font-weight: 800; color: #0284c7; margin-top: 1px;">' + periodLabel + '</div>' +
+                      '</div>'
+            }, false);
+
         } else if (tipo === 'spline') {
-            // VISTA DE LÍNEAS TRANSFORMADA: LÍNEAS SUAVES VIBRANTES CON MARCADORES DEFINIDOS
+            // MODO LÍNEAS (TENDENCIA MULTIPERÍODO)
             chart.update({
                 chart: {
+                    type: 'spline',
                     inverted: false,
                     options3d: { enabled: false }
                 },
@@ -468,10 +532,12 @@
                     }
                 }, false);
             });
+
         } else if (tipo === 'area') {
-            // VISTA DE ÁREAS APILADAS: ONDAS SUAVES CON OPACIDAD ELEGANTE
+            // MODO ÁREAS APILADAS
             chart.update({
                 chart: {
+                    type: 'area',
                     inverted: false,
                     options3d: { enabled: false }
                 },
@@ -529,32 +595,20 @@
                     }, false);
                 }
             });
+
         } else {
-            // VISTA DE COLUMNAS 3D / 2D ARQUITECTÓNICA
+            // VERSIÓN ORIGINAL: COLUMNAS APILADAS PLANAS + LÍNEA EN 2D
             chart.update({
                 chart: {
+                    type: 'column',
                     inverted: false,
-                    options3d: {
-                        enabled: is3D,
-                        alpha: is3D ? 14 : 0,
-                        beta: is3D ? 8 : 0,
-                        depth: is3D ? 38 : 0,
-                        viewDistance: 600,
-                        fitToPlot: true,
-                        frame: {
-                            bottom: { size: 0, color: 'transparent' },
-                            back: { size: 0, color: 'transparent' },
-                            side: { size: 0, color: 'transparent' }
-                        }
-                    }
+                    options3d: { enabled: false }
                 },
                 plotOptions: {
                     column: {
                         stacking: 'normal',
-                        depth: is3D ? 34 : 0,
-                        edgeColor: is3D ? 'rgba(15, 23, 42, 0.20)' : 'none',
-                        edgeWidth: is3D ? 1.4 : 0,
-                        groupZPadding: is3D ? 6 : 0,
+                        depth: 0,
+                        borderWidth: 0,
                         pointPadding: 0.08,
                         groupPadding: 0.10,
                         maxPointWidth: 44
@@ -602,14 +656,15 @@
         }
 
         chart.redraw();
-        window.habilitarRotacionInteractiva3D(chart);
 
-        // Control de visibilidad del hint de rotación
-        var hintMain = document.getElementById('lblRotarHintCartera') || document.getElementById('lblRotarHintComposicion');
-        var hintModal = document.getElementById('lblRotarHintModal');
-        var showHint = (is3D && tipo === 'column');
-        if (hintMain) hintMain.style.display = showHint ? 'inline-flex' : 'none';
-        if (hintModal) hintModal.style.display = showHint ? 'inline-flex' : 'none';
+        // Control de visualización del reproductor Donut Race
+        var showRace = (tipo === 'pie');
+        $('#donutRaceControllerCartera, #donutRaceControllerComposicion').css('display', showRace ? 'flex' : 'none');
+        $('#donutRaceControllerModal').css('display', showRace ? 'flex' : 'none');
+
+        if (!showRace) {
+            window.pauseDonutRace();
+        }
 
         try {
             var containerElem = document.getElementById('container');
@@ -627,7 +682,13 @@
 
     window.cambiarTipoGrafico = function (tipo) {
         window.tipoGraficoActual = tipo;
+        window.cartera3DActivo = (tipo === 'pie');
+
+        // Sincronizar selectores
         $('#selTipoGraficoCartera, #selTipoGraficoComposicion, #selTipoGraficoModal').val(tipo);
+
+        // Actualizar botones de 3D
+        window.actualizarEstiloBotones3D(window.cartera3DActivo);
 
         if (typeof Highcharts !== 'undefined' && Highcharts.charts) {
             Highcharts.charts.forEach(function (c) {
@@ -637,22 +698,16 @@
             });
         }
 
+        if (tipo === 'pie') {
+            window.actualizarPasoDonutRace(window.donutRacePeriodIdx || 0);
+        }
+
         if ($('#mPopUp').hasClass('in') && typeof window.actualizarKpiModalComposicion === 'function') {
             window.actualizarKpiModalComposicion();
         }
     };
 
-    window.aplicarEstilo3DCartera = function (chart, activo) {
-        if (typeof activo === 'boolean') {
-            window.cartera3DActivo = activo;
-        }
-        window.aplicarTipoAGrafico(chart, window.tipoGraficoActual || 'column');
-    };
-
-    window.toggle3DCartera = function (btn) {
-        window.cartera3DActivo = !window.cartera3DActivo;
-        var is3D = window.cartera3DActivo;
-
+    window.actualizarEstiloBotones3D = function (is3D) {
         var btnMain = document.getElementById('btnToggle3DComposicion') || document.getElementById('btnToggle3DCartera');
         var btnModal = document.getElementById('btnToggle3DModal');
         var lblMain = document.getElementById('lblToggle3DComposicion') || document.getElementById('lblToggle3D');
@@ -666,20 +721,51 @@
 
         if (btnMain) {
             btnMain.setAttribute('style', is3D ? activeStyle : inactiveStyle);
-            if (lblMain) lblMain.innerText = is3D ? 'Vista 3D: ON' : 'Vista 2D (Plano)';
+            if (lblMain) lblMain.innerText = is3D ? 'Vista 3D: ON (Donut Race)' : 'Vista 3D: Donut Race';
         }
         if (btnModal) {
             btnModal.setAttribute('style', is3D ? modalActiveStyle : modalInactiveStyle);
-            if (lblModal) lblModal.innerText = is3D ? 'Vista 3D: ON' : 'Vista 2D (Plano)';
+            if (lblModal) lblModal.innerText = is3D ? 'Vista 3D: ON (Donut Race)' : 'Vista 3D: Donut Race';
         }
+    };
+
+    window.toggle3DCartera = function (btn) {
+        window.cartera3DActivo = !window.cartera3DActivo;
+        var is3D = window.cartera3DActivo;
+
+        // Si se activa 3D -> Pasa a Donut Race 3D
+        // Si se desactiva 3D -> Regresa a Versión Original (Columnas)
+        var nuevoTipo = is3D ? 'pie' : 'column';
+        window.tipoGraficoActual = nuevoTipo;
+
+        $('#selTipoGraficoCartera, #selTipoGraficoComposicion, #selTipoGraficoModal').val(nuevoTipo);
+        window.actualizarEstiloBotones3D(is3D);
 
         if (typeof Highcharts !== 'undefined' && Highcharts.charts) {
             Highcharts.charts.forEach(function (c) {
                 if (c) {
-                    window.aplicarTipoAGrafico(c, window.tipoGraficoActual || 'column');
+                    window.aplicarTipoAGrafico(c, nuevoTipo);
                 }
             });
         }
+
+        if (is3D) {
+            window.actualizarPasoDonutRace(window.donutRacePeriodIdx || 0);
+            window.playDonutRace();
+        } else {
+            window.pauseDonutRace();
+        }
+
+        if ($('#mPopUp').hasClass('in') && typeof window.actualizarKpiModalComposicion === 'function') {
+            window.actualizarKpiModalComposicion();
+        }
+    };
+
+    window.aplicarEstilo3DCartera = function (chart, activo) {
+        if (typeof activo === 'boolean') {
+            window.cartera3DActivo = activo;
+        }
+        window.aplicarTipoAGrafico(chart, window.tipoGraficoActual || 'column');
     };
 
     $('#mPopUp').on('shown.bs.modal', function () {
@@ -716,9 +802,9 @@
 
             if (window.tipoGraficoActual === 'pie') {
                 $('#composicionModalKpiStrip').html(
-                    '<div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px 14px; font-size: 12px; color: #475569; display: flex; align-items: center; gap: 8px;">' +
-                    '    <i class="fa fa-pie-chart" style="color: #0284c7; font-size: 14px;"></i>' +
-                    '    <span>Vista de distribución circular activa. Pasa el cursor sobre los segmentos para ver la participación porcentual del último período.</span>' +
+                    '<div style="background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 8px; padding: 9px 16px; font-size: 12px; color: #0369a1; display: flex; align-items: center; gap: 10px;">' +
+                    '    <i class="fa fa-play-circle" style="color: #0284c7; font-size: 16px;"></i>' +
+                    '    <span><b>Donut Race 3D Activo:</b> Utiliza el reproductor superior para observar la evolución dinámica período por período de la cartera.</span>' +
                     '</div>'
                 );
                 return;
@@ -892,13 +978,13 @@
                             if (typeof window.aplicarTipoAGrafico === 'function') {
                                 window.aplicarTipoAGrafico(c, window.tipoGraficoActual);
                             }
-                            window.habilitarRotacionInteractiva3D(c);
                             c.reflow();
                         } catch (e) {}
                     }
                 });
             }
             $('#selTipoGraficoCartera, #selTipoGraficoComposicion, #selTipoGraficoModal').val(window.tipoGraficoActual || 'column');
+            window.actualizarEstiloBotones3D(window.cartera3DActivo);
         }
         setTimeout(asegurarAnchoCompleto, 60);
         setTimeout(asegurarAnchoCompleto, 180);
