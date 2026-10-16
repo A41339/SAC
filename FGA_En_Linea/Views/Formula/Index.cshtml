@@ -1,33 +1,34 @@
-﻿@{
-    ViewBag.Title = "FÃ³rmulas Financieras";
+@{
+    ViewBag.Title = "Fórmulas Financieras";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
 
 <section class="content-header">
     <div class="formula-header-banner">
         <div>
             <h1 class="formula-header-title">
                 <i class="fa fa-calculator" style="color: #0284c7;"></i>
-                FÃ³rmulas Financieras
+                Fórmulas Financieras
             </h1>
             <p class="formula-header-subtitle">
-                CatÃ¡logo y configuraciÃ³n de expresiones matemÃ¡ticas para indicadores de supervisiÃ³n
+                Catálogo y configuración de expresiones matemáticas para indicadores de supervisión
             </p>
         </div>
         <div class="formula-banner-actions">
             <button type="button" id="btnGuiaSintaxis" class="btn-guide-formula">
-                <i class="fa fa-book text-info"></i> GuÃ­a de Sintaxis
+                <i class="fa fa-book text-info"></i> Guía de Sintaxis
             </button>
             <button type="button" id="btnNuevaFormula" class="btn-create-formula">
-                <i class="fa fa-plus-circle"></i> Crear FÃ³rmula
+                <i class="fa fa-plus-circle"></i> Crear Fórmula
             </button>
         </div>
     </div>
 
     <ol class="breadcrumb">
         <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
-        <li><a href="@Url.Action("Index", "Modulo", new { id = 9200 })" class="breadcrumb-parent-pill" title="Volver a GestiÃ³n Operativa"><i class="fa fa-cogs" style="margin-right: 4px;"></i> Gesti&oacute;n Operativa</a></li>
-        <li class="active">FÃ³rmulas</li>
+        <li><a href="@Url.Action("Index", "Modulo", new { id = 9200 })" class="breadcrumb-parent-pill" title="Volver a Gestión Operativa"><i class="fa fa-cogs" style="margin-right: 4px;"></i> Gesti&oacute;n Operativa</a></li>
+        <li class="active">Fórmulas</li>
     </ol>
 </section>
 
@@ -38,9 +39,9 @@
                 <table id="tbFormula" class="table table-striped table-bordered modern-data-table" style="width: 100%;">
                     <thead>
                         <tr>
-                            <th style="width: 110px; text-align: center;">AcciÃ³n</th>
+                            <th style="width: 110px; text-align: center;">Acción</th>
                             <th style="width: 32%;">Nombre</th>
-                            <th style="width: 44%;">FÃ³rmula</th>
+                            <th style="width: 44%;">Fórmula</th>
                             <th style="width: 12%; text-align: center;">Porcentual</th>
                         </tr>
                     </thead>
@@ -52,7 +53,7 @@
 </section>
 
 <!-- ======================================================================= -->
-<!-- MODAL CREAR / EDITAR FÃ“RMULA                                            -->
+<!-- MODAL CREAR / EDITAR FÓRMULA                                            -->
 <!-- ======================================================================= -->
 <div class="modal fade modal-formula-custom" id="modalFormula" tabindex="-1" role="dialog" aria-labelledby="lblModalFormulaTitulo" data-backdrop="static">
     <div class="modal-dialog modal-lg" role="document">
@@ -61,7 +62,7 @@
                 <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title" id="lblModalFormulaTitulo">
                     <i class="fa fa-plus-circle" style="color: #0284c7; margin-right: 8px;"></i>
-                    <span id="lblTituloFormulaTexto">Nueva FÃ³rmula</span>
+                    <span id="lblTituloFormulaTexto">Nueva Fórmula</span>
                 </h4>
             </div>
             <form id="frmFormulaModal" autocomplete="off">
@@ -73,17 +74,17 @@
                     <div id="modalFormulaError" class="alert alert-danger" style="display: none; border-radius: 8px;"></div>
 
                     <div class="form-group form-group-custom">
-                        <label for="formulaNombre">Nombre del Indicador / FÃ³rmula <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="formulaNombre" maxlength="150" placeholder="Ej: Morosidad Mayor a 90 DÃ­as" required />
-                        <small class="text-muted">Nombre descriptivo con el que se identificarÃ¡ este indicador en los tableros.</small>
+                        <label for="formulaNombre">Nombre del Indicador / Fórmula <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="formulaNombre" maxlength="150" placeholder="Ej: Morosidad Mayor a 90 Días" required />
+                        <small class="text-muted">Nombre descriptivo con el que se identificará este indicador en los tableros.</small>
                     </div>
 
                     <div class="form-group form-group-custom" style="margin-top: 16px;">
-                        <label for="formulaExpresion">ExpresiÃ³n MatemÃ¡tica <span class="text-danger">*</span></label>
+                        <label for="formulaExpresion">Expresión Matemática <span class="text-danger">*</span></label>
                         <textarea class="form-control formula-expression-input" id="formulaExpresion" rows="3" placeholder="Ej: (V013+V014+V016+V015)/AN100000000" required></textarea>
                         
                         <div class="token-bar">
-                            <span style="font-size: 11.5px; font-weight: 600; color: #64748b; margin-right: 4px;">Insertar rÃ¡pido:</span>
+                            <span style="font-size: 11.5px; font-weight: 600; color: #64748b; margin-right: 4px;">Insertar rápido:</span>
                             <button type="button" class="token-btn" data-token="AN">AN</button>
                             <button type="button" class="token-btn" data-token="ME">ME</button>
                             <button type="button" class="token-btn" data-token="AC">AC</button>
@@ -95,7 +96,7 @@
                             <button type="button" class="token-btn" data-token="(">(</button>
                             <button type="button" class="token-btn" data-token=")">)</button>
                             <a href="javascript:void(0)" id="lnkVerSintaxisModal" style="margin-left: auto; font-size: 12px; font-weight: 600; color: #0284c7; text-decoration: none;">
-                                <i class="fa fa-info-circle"></i> Ver cÃ³digos de cartera y morosidad
+                                <i class="fa fa-info-circle"></i> Ver códigos de cartera y morosidad
                             </a>
                         </div>
                     </div>
@@ -122,7 +123,7 @@
 </div>
 
 <!-- ======================================================================= -->
-<!-- MODAL CONSULTAR DETALLE FÃ“RMULA                                         -->
+<!-- MODAL CONSULTAR DETALLE FÓRMULA                                         -->
 <!-- ======================================================================= -->
 <div class="modal fade modal-formula-custom" id="modalDetalleFormula" tabindex="-1" role="dialog" aria-labelledby="lblModalDetalleTitulo">
     <div class="modal-dialog" role="document">
@@ -131,14 +132,14 @@
                 <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title" id="lblModalDetalleTitulo">
                     <i class="fa fa-info-circle" style="color: #0284c7; margin-right: 8px;"></i>
-                    Detalle de la FÃ³rmula
+                    Detalle de la Fórmula
                 </h4>
             </div>
             <div class="modal-body">
                 <table class="table table-bordered table-striped" style="margin-bottom: 0;">
                     <tbody>
                         <tr>
-                            <th style="width: 35%; color: #475569;">CÃ³digo (ID)</th>
+                            <th style="width: 35%; color: #475569;">Código (ID)</th>
                             <td id="detFormulaId" style="font-family: monospace; font-weight: 700; color: #0284c7;"></td>
                         </tr>
                         <tr>
@@ -146,7 +147,7 @@
                             <td id="detFormulaNombre" style="font-weight: 600;"></td>
                         </tr>
                         <tr>
-                            <th style="color: #475569;">ExpresiÃ³n</th>
+                            <th style="color: #475569;">Expresión</th>
                             <td>
                                 <span id="detFormulaExpresion" class="formula-code-badge" style="font-size: 13.5px; padding: 6px 10px;"></span>
                             </td>
@@ -168,7 +169,7 @@
 </div>
 
 <!-- ======================================================================= -->
-<!-- MODAL CONFIRMAR ELIMINACIÃ“N                                             -->
+<!-- MODAL CONFIRMAR ELIMINACIÓN                                             -->
 <!-- ======================================================================= -->
 <div class="modal fade modal-formula-custom" id="modalDeleteFormula" tabindex="-1" role="dialog" aria-labelledby="lblModalDeleteTitulo">
     <div class="modal-dialog modal-sm" role="document">
@@ -177,16 +178,16 @@
                 <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title" id="lblModalDeleteTitulo" style="color: #991b1b;">
                     <i class="fa fa-exclamation-triangle" style="margin-right: 8px;"></i>
-                    Eliminar FÃ³rmula
+                    Eliminar Fórmula
                 </h4>
             </div>
             <div class="modal-body" style="padding: 20px;">
                 <input type="hidden" id="deleteFormulaId" value="" />
                 <p style="margin: 0; font-size: 14px; color: #334155;">
-                    Â¿EstÃ¡ seguro de que desea eliminar la fÃ³rmula <strong id="deleteFormulaNombre" style="color: #0f172a;"></strong>?
+                    ¿Está seguro de que desea eliminar la fórmula <strong id="deleteFormulaNombre" style="color: #0f172a;"></strong>?
                 </p>
                 <p style="margin: 8px 0 0 0; font-size: 12.5px; color: #64748b;">
-                    Esta acciÃ³n no se puede deshacer.
+                    Esta acción no se puede deshacer.
                 </p>
             </div>
             <div class="modal-footer" style="padding: 12px 20px;">
@@ -202,7 +203,7 @@
 </div>
 
 <!-- ======================================================================= -->
-<!-- MODAL GUÃA DE SINTAXIS Y CÃ“DIGOS                                        -->
+<!-- MODAL GUÍA DE SINTAXIS Y CÓDIGOS                                        -->
 <!-- ======================================================================= -->
 <div class="modal fade modal-formula-custom" id="modalGuiaSintaxis" tabindex="-1" role="dialog" aria-labelledby="lblModalGuiaTitulo">
     <div class="modal-dialog modal-lg" role="document">
@@ -211,20 +212,20 @@
                 <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title" id="lblModalGuiaTitulo">
                     <i class="fa fa-book" style="color: #0284c7; margin-right: 8px;"></i>
-                    GuÃ­a de Sintaxis y CÃ³digos para FÃ³rmulas
+                    Guía de Sintaxis y Códigos para Fórmulas
                 </h4>
             </div>
             <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
                 <div class="panel panel-default" style="border-radius: 8px; border: 1px solid #e2e8f0; overflow: hidden; margin-bottom: 20px;">
                     <div class="panel-heading" style="background: #f8fafc; font-weight: 700; color: #0f172a;">
-                        <i class="fa fa-tag text-info" style="margin-right: 6px;"></i> Prefijos para Cuentas Contables del CatÃ¡logo
+                        <i class="fa fa-tag text-info" style="margin-right: 6px;"></i> Prefijos para Cuentas Contables del Catálogo
                     </div>
                     <div class="panel-body" style="padding: 0;">
                         <table class="table table-bordered table-striped" style="margin-bottom: 0;">
                             <thead>
                                 <tr style="background: #f1f5f9;">
                                     <th style="width: 15%;">Prefijo</th>
-                                    <th style="width: 35%;">DescripciÃ³n</th>
+                                    <th style="width: 35%;">Descripción</th>
                                     <th style="width: 50%;">Ejemplo</th>
                                 </tr>
                             </thead>
@@ -253,23 +254,23 @@
                     <div class="col-md-6">
                         <div class="panel panel-default" style="border-radius: 8px; border: 1px solid #e2e8f0; overflow: hidden;">
                             <div class="panel-heading" style="background: #f8fafc; font-weight: 700; color: #0f172a;">
-                                <i class="fa fa-clock-o text-warning" style="margin-right: 6px;"></i> CÃ³digos por DÃ­as de Atraso (Morosidad)
+                                <i class="fa fa-clock-o text-warning" style="margin-right: 6px;"></i> Códigos por Días de Atraso (Morosidad)
                             </div>
                             <div class="panel-body" style="padding: 0;">
                                 <table class="table table-bordered table-striped" style="margin-bottom: 0; font-size: 13px;">
                                     <thead>
                                         <tr style="background: #f1f5f9;">
-                                            <th style="width: 30%;">CÃ³digo</th>
+                                            <th style="width: 30%;">Código</th>
                                             <th>Rango de Atraso</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr><td><code>V010</code></td><td>1 - 30 dÃ­as</td></tr>
-                                        <tr><td><code>V011</code></td><td>31 - 60 dÃ­as</td></tr>
-                                        <tr><td><code>V012</code></td><td>61 - 90 dÃ­as</td></tr>
-                                        <tr><td><code>V013</code></td><td>91 - 180 dÃ­as</td></tr>
-                                        <tr><td><code>V014</code></td><td>181 - 360 dÃ­as</td></tr>
-                                        <tr><td><code>V016</code></td><td>MÃ¡s de 360 dÃ­as</td></tr>
+                                        <tr><td><code>V010</code></td><td>1 - 30 días</td></tr>
+                                        <tr><td><code>V011</code></td><td>31 - 60 días</td></tr>
+                                        <tr><td><code>V012</code></td><td>61 - 90 días</td></tr>
+                                        <tr><td><code>V013</code></td><td>91 - 180 días</td></tr>
+                                        <tr><td><code>V014</code></td><td>181 - 360 días</td></tr>
+                                        <tr><td><code>V016</code></td><td>Más de 360 días</td></tr>
                                         <tr><td><code>V015</code></td><td>Cobro judicial</td></tr>
                                     </tbody>
                                 </table>
@@ -280,27 +281,27 @@
                     <div class="col-md-6">
                         <div class="panel panel-default" style="border-radius: 8px; border: 1px solid #e2e8f0; overflow: hidden;">
                             <div class="panel-heading" style="background: #f8fafc; font-weight: 700; color: #0f172a;">
-                                <i class="fa fa-briefcase text-success" style="margin-right: 6px;"></i> CÃ³digos por Tipo de Cartera
+                                <i class="fa fa-briefcase text-success" style="margin-right: 6px;"></i> Códigos por Tipo de Cartera
                             </div>
                             <div class="panel-body" style="padding: 0;">
                                 <table class="table table-bordered table-striped" style="margin-bottom: 0; font-size: 13px;">
                                     <thead>
                                         <tr style="background: #f1f5f9;">
-                                            <th style="width: 30%;">CÃ³digo</th>
+                                            <th style="width: 30%;">Código</th>
                                             <th>Tipo de Cartera</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr><td><code>V017</code></td><td>Cartera Consumo</td></tr>
-                                        <tr><td><code>V018</code></td><td>Cartera VehÃ­culos</td></tr>
-                                        <tr><td><code>V019</code></td><td>Cartera Tarjeta de CrÃ©dito</td></tr>
+                                        <tr><td><code>V018</code></td><td>Cartera Vehículos</td></tr>
+                                        <tr><td><code>V019</code></td><td>Cartera Tarjeta de Crédito</td></tr>
                                         <tr><td><code>V020</code></td><td>Cartera Vivienda Residencial</td></tr>
-                                        <tr><td><code>V021</code></td><td>Micro y PequeÃ±a Empresa</td></tr>
+                                        <tr><td><code>V021</code></td><td>Micro y Pequeña Empresa</td></tr>
                                         <tr><td><code>V022</code></td><td>Mediana Empresa</td></tr>
                                         <tr><td><code>V023</code></td><td>Gran Empresa</td></tr>
                                         <tr><td><code>V024</code></td><td>Gobierno Central</td></tr>
-                                        <tr><td><code>V025</code></td><td>ArtÃ­culo 167 (Refinanciada)</td></tr>
-                                        <tr><td><code>V026</code></td><td>MicrocrÃ©dito SBD</td></tr>
+                                        <tr><td><code>V025</code></td><td>Artículo 167 (Refinanciada)</td></tr>
+                                        <tr><td><code>V026</code></td><td>Microcrédito SBD</td></tr>
                                         <tr><td><code>V027</code></td><td>Banca Segundo Piso SBD</td></tr>
                                         <tr><td><code>V028</code></td><td>Banca Desarrollo SBD</td></tr>
                                     </tbody>
@@ -349,7 +350,7 @@
                         var buttons = '<div class="text-center"><div class="btn-group text-left">' +
                             '<button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" ' +
                             'style="border-radius:6px; border:1px solid #cbd5e1; font-size:12px; padding:4px 10px; color:#374151;">' +
-                            '<i class="fa fa-cog" style="margin-right:4px;"></i> AcciÃ³n <span class="caret"></span></button>' +
+                            '<i class="fa fa-cog" style="margin-right:4px;"></i> Acción <span class="caret"></span></button>' +
                             '<ul class="dropdown-menu pull-left" role="menu">' +
                             '<li><a href="javascript:void(0)" class="btn-edit-formula" data-id="' + id + '"><i class="fa fa-pencil text-primary"></i> Modificar</a></li>' +
                             '<li><a href="javascript:void(0)" class="btn-detail-formula" data-id="' + id + '"><i class="fa fa-info-circle text-info"></i> Consultar</a></li>' +
@@ -375,7 +376,7 @@
                     "mRender": function (data) {
                         var isYes = ('' + data).toLowerCase().indexOf('s') !== -1;
                         return '<span class="badge-pill-tag ' + (isYes ? 'yes' : 'no') + '">' +
-                            '<i class="fa ' + (isYes ? 'fa-check' : 'fa-times') + '"></i> ' + (isYes ? 'SÃ­' : 'No') + '</span>';
+                            '<i class="fa ' + (isYes ? 'fa-check' : 'fa-times') + '"></i> ' + (isYes ? 'Sí' : 'No') + '</span>';
                     }
                 }
             ],
@@ -383,14 +384,14 @@
                 "sProcessing": "Procesando...",
                 "sLengthMenu": "Mostrar _MENU_ registros",
                 "sZeroRecords": "No se encontraron resultados",
-                "sEmptyTable": "NingÃºn dato disponible en esta tabla",
+                "sEmptyTable": "Ningún dato disponible en esta tabla",
                 "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
                 "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
                 "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
                 "sSearch": "Buscar:",
                 "oPaginate": {
                     "sFirst": "Primero",
-                    "sLast": "Ãšltimo",
+                    "sLast": "Último",
                     "sNext": "Siguiente",
                     "sPrevious": "Anterior"
                 }
@@ -398,14 +399,14 @@
         });
 
         // ---------------------------------------------------------------------
-        // BOTÃ“N GUÃA DE SINTAXIS
+        // BOTÓN GUÍA DE SINTAXIS
         // ---------------------------------------------------------------------
         $('#btnGuiaSintaxis, #lnkVerSintaxisModal').on('click', function () {
             $('#modalGuiaSintaxis').modal('show');
         });
 
         // ---------------------------------------------------------------------
-        // BOTONES DE TOKENS RÃPIDOS
+        // BOTONES DE TOKENS RÁPIDOS
         // ---------------------------------------------------------------------
         $('.token-btn').on('click', function () {
             var token = $(this).data('token');
@@ -415,10 +416,10 @@
         });
 
         // ---------------------------------------------------------------------
-        // ABRIR MODAL CREAR NUEVA FÃ“RMULA
+        // ABRIR MODAL CREAR NUEVA FÓRMULA
         // ---------------------------------------------------------------------
         $('#btnNuevaFormula').on('click', function () {
-            $('#lblTituloFormulaTexto').text('Nueva FÃ³rmula');
+            $('#lblTituloFormulaTexto').text('Nueva Fórmula');
             $('#lblModalFormulaTitulo i').attr('class', 'fa fa-plus-circle');
             $('#formulaEsNuevo').val('true');
             $('#formulaId').val('');
@@ -431,11 +432,11 @@
         });
 
         // ---------------------------------------------------------------------
-        // ABRIR MODAL EDITAR FÃ“RMULA
+        // ABRIR MODAL EDITAR FÓRMULA
         // ---------------------------------------------------------------------
         $(document).on('click', '.btn-edit-formula', function () {
             var formulaId = $(this).data('id');
-            $('#lblTituloFormulaTexto').text('Modificar FÃ³rmula');
+            $('#lblTituloFormulaTexto').text('Modificar Fórmula');
             $('#lblModalFormulaTitulo i').attr('class', 'fa fa-pencil');
             $('#formulaEsNuevo').val('false');
             $('#formulaId').val(formulaId);
@@ -458,7 +459,7 @@
                     }
                 },
                 error: function () {
-                    window.mostrarToastError('Error de comunicaciÃ³n al consultar la fÃ³rmula.');
+                    window.mostrarToastError('Error de comunicación al consultar la fórmula.');
                 }
             });
         });
@@ -478,7 +479,7 @@
                         $('#detFormulaId').text(d.Id);
                         $('#detFormulaNombre').text(d.Nombre);
                         $('#detFormulaExpresion').text(d.Formula);
-                        var isYes = d.Ind_Porcentaje === 'SÃ­';
+                        var isYes = d.Ind_Porcentaje === 'Sí';
                         $('#detFormulaPorcentual').html(
                             '<span class="badge-pill-tag ' + (isYes ? 'yes' : 'no') + '">' +
                             '<i class="fa ' + (isYes ? 'fa-check' : 'fa-times') + '"></i> ' + d.Ind_Porcentaje + '</span>'
@@ -489,13 +490,13 @@
                     }
                 },
                 error: function () {
-                    window.mostrarToastError('Error de comunicaciÃ³n al consultar el detalle.');
+                    window.mostrarToastError('Error de comunicación al consultar el detalle.');
                 }
             });
         });
 
         // ---------------------------------------------------------------------
-        // GUARDAR FÃ“RMULA (CREAR O EDITAR)
+        // GUARDAR FÓRMULA (CREAR O EDITAR)
         // ---------------------------------------------------------------------
         $('#frmFormulaModal').on('submit', function (e) {
             e.preventDefault();
@@ -529,7 +530,7 @@
                 },
                 error: function () {
                     $btn.prop('disabled', false).html('<i class="fa fa-check" style="margin-right: 4px;"></i> Guardar');
-                    $('#modalFormulaError').text('Error interno de comunicaciÃ³n al procesar la solicitud.').fadeIn();
+                    $('#modalFormulaError').text('Error interno de comunicación al procesar la solicitud.').fadeIn();
                 }
             });
         });
@@ -546,7 +547,7 @@
         });
 
         // ---------------------------------------------------------------------
-        // CONFIRMAR ELIMINACIÃ“N
+        // CONFIRMAR ELIMINACIÓN
         // ---------------------------------------------------------------------
         $('#btnConfirmarEliminarFormula').on('click', function () {
             var id = $('#deleteFormulaId').val();
@@ -575,7 +576,7 @@
                 error: function () {
                     $btn.prop('disabled', false).html('<i class="fa fa-trash" style="margin-right: 4px;"></i> Eliminar');
                     $('#modalDeleteFormula').modal('hide');
-                    window.mostrarToastError('Error de comunicaciÃ³n al eliminar la fÃ³rmula.');
+                    window.mostrarToastError('Error de comunicación al eliminar la fórmula.');
                 }
             });
         });
@@ -587,7 +588,7 @@
     if (!window.mostrarToastExito) {
         window.mostrarToastExito = function (mensaje) {
             if (typeof toastr !== 'undefined') {
-                toastr.success(mensaje, 'Ã‰xito');
+                toastr.success(mensaje, 'Éxito');
             } else if ($.notify) {
                 $.notify({ message: mensaje }, { type: 'success', delay: 3500 });
             } else {

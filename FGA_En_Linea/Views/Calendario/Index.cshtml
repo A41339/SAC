@@ -1,7 +1,8 @@
-﻿@{
+@{
     ViewBag.Title = "Calendario de Cargas";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
 
 <section class="content-header">
     <div class="cal-header-banner">
@@ -11,7 +12,7 @@
                 Mantenimiento de Calendario
             </h1>
             <p class="cal-header-subtitle">
-                GestiÃ³n de fechas lÃ­mite y cronogramas de entrega y carga periÃ³dica de archivos
+                Gestión de fechas límite y cronogramas de entrega y carga periódica de archivos
             </p>
         </div>
         <div>
@@ -23,7 +24,7 @@
 
     <ol class="breadcrumb">
         <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
-        <li><a href="@Url.Action("Index", "Modulo", new { id = 9200 })" class="breadcrumb-parent-pill" title="Volver a GestiÃ³n Operativa"><i class="fa fa-cogs" style="margin-right: 4px;"></i> Gesti&oacute;n Operativa</a></li>
+        <li><a href="@Url.Action("Index", "Modulo", new { id = 9200 })" class="breadcrumb-parent-pill" title="Volver a Gestión Operativa"><i class="fa fa-cogs" style="margin-right: 4px;"></i> Gesti&oacute;n Operativa</a></li>
         <li class="active">Calendario</li>
     </ol>
 </section>
@@ -35,10 +36,10 @@
                 <table id="tbCalendar" class="table table-striped table-bordered modern-data-table" style="width: 100%;">
                     <thead>
                         <tr>
-                            <th style="width: 110px; text-align: center;">AcciÃ³n</th>
-                            <th style="width: 25%;">PerÃ­odo</th>
-                            <th style="width: 25%; text-align: center;">DÃ­a NotificaciÃ³n</th>
-                            <th style="width: 25%; text-align: center;">DÃ­a LÃ­mite Carga</th>
+                            <th style="width: 110px; text-align: center;">Acción</th>
+                            <th style="width: 25%;">Período</th>
+                            <th style="width: 25%; text-align: center;">Día Notificación</th>
+                            <th style="width: 25%; text-align: center;">Día Límite Carga</th>
                             <th style="width: 14%; text-align: center;">Enviado</th>
                         </tr>
                     </thead>
@@ -71,24 +72,24 @@
                     <div id="modalCalError" class="alert alert-danger" style="display: none; border-radius: 8px;"></div>
 
                     <div class="form-group form-group-custom">
-                        <label for="calPeriodo">Fecha de PerÃ­odo <span class="text-danger">*</span></label>
+                        <label for="calPeriodo">Fecha de Período <span class="text-danger">*</span></label>
                         <input type="date" class="form-control" id="calPeriodo" required />
-                        <small class="text-muted">Fecha del mes correspondiente a la informaciÃ³n a recolectar.</small>
+                        <small class="text-muted">Fecha del mes correspondiente a la información a recolectar.</small>
                     </div>
 
                     <div class="row" style="margin-top: 14px;">
                         <div class="col-sm-6">
                             <div class="form-group form-group-custom">
-                                <label for="calDiaNotificacion">DÃ­a de NotificaciÃ³n <span class="text-danger">*</span></label>
+                                <label for="calDiaNotificacion">Día de Notificación <span class="text-danger">*</span></label>
                                 <input type="number" class="form-control" id="calDiaNotificacion" min="1" max="31" placeholder="Ej: 5" required />
-                                <small class="text-muted">DÃ­a del mes para emitir el aviso.</small>
+                                <small class="text-muted">Día del mes para emitir el aviso.</small>
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group form-group-custom">
-                                <label for="calDiaLimite">DÃ­a LÃ­mite de Carga <span class="text-danger">*</span></label>
+                                <label for="calDiaLimite">Día Límite de Carga <span class="text-danger">*</span></label>
                                 <input type="number" class="form-control" id="calDiaLimite" min="1" max="31" placeholder="Ej: 10" required />
-                                <small class="text-muted">Ãšltimo dÃ­a hÃ¡bil para la entrega.</small>
+                                <small class="text-muted">Último día hábil para la entrega.</small>
                             </div>
                         </div>
                     </div>
@@ -96,7 +97,7 @@
                     <div class="form-group form-group-custom" style="margin-top: 16px;">
                         <label class="custom-switch-label">
                             <input type="checkbox" id="calEnviado" />
-                            <span>NotificaciÃ³n Enviada &mdash; <small class="text-muted">Indica si ya se notificÃ³ a las entidades</small></span>
+                            <span>Notificación Enviada &mdash; <small class="text-muted">Indica si ya se notificó a las entidades</small></span>
                         </label>
                     </div>
                 </div>
@@ -135,19 +136,19 @@
                             <td id="detCalId" style="font-family: monospace; font-weight: 700; color: #0284c7;"></td>
                         </tr>
                         <tr>
-                            <th style="color: #475569;">PerÃ­odo</th>
+                            <th style="color: #475569;">Período</th>
                             <td id="detCalPeriodo" style="font-weight: 600;"></td>
                         </tr>
                         <tr>
-                            <th style="color: #475569;">DÃ­a de NotificaciÃ³n</th>
+                            <th style="color: #475569;">Día de Notificación</th>
                             <td id="detCalDiaNotificacion"></td>
                         </tr>
                         <tr>
-                            <th style="color: #475569;">DÃ­a LÃ­mite para Carga</th>
+                            <th style="color: #475569;">Día Límite para Carga</th>
                             <td id="detCalDiaLimite"></td>
                         </tr>
                         <tr>
-                            <th style="color: #475569;">NotificaciÃ³n Enviada</th>
+                            <th style="color: #475569;">Notificación Enviada</th>
                             <td id="detCalEnviado"></td>
                         </tr>
                     </tbody>
@@ -163,7 +164,7 @@
 </div>
 
 <!-- ======================================================================= -->
-<!-- MODAL CONFIRMAR ELIMINACIÃ“N                                             -->
+<!-- MODAL CONFIRMAR ELIMINACIÓN                                             -->
 <!-- ======================================================================= -->
 <div class="modal fade modal-cal-custom" id="modalDeleteCalendario" tabindex="-1" role="dialog" aria-labelledby="lblModalDeleteTitulo">
     <div class="modal-dialog modal-sm" role="document">
@@ -178,10 +179,10 @@
             <div class="modal-body" style="padding: 20px;">
                 <input type="hidden" id="deleteCalId" value="" />
                 <p style="margin: 0; font-size: 14px; color: #334155;">
-                    Â¿EstÃ¡ seguro de que desea eliminar el registro de calendario del perÃ­odo <strong id="deleteCalPeriodo" style="color: #0f172a;"></strong>?
+                    ¿Está seguro de que desea eliminar el registro de calendario del período <strong id="deleteCalPeriodo" style="color: #0f172a;"></strong>?
                 </p>
                 <p style="margin: 8px 0 0 0; font-size: 12.5px; color: #64748b;">
-                    Esta acciÃ³n no se puede deshacer.
+                    Esta acción no se puede deshacer.
                 </p>
             </div>
             <div class="modal-footer" style="padding: 12px 20px;">
@@ -226,7 +227,7 @@
                         var buttons = '<div class="text-center"><div class="btn-group text-left">' +
                             '<button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" ' +
                             'style="border-radius:6px; border:1px solid #cbd5e1; font-size:12px; padding:4px 10px; color:#374151;">' +
-                            '<i class="fa fa-cog" style="margin-right:4px;"></i> AcciÃ³n <span class="caret"></span></button>' +
+                            '<i class="fa fa-cog" style="margin-right:4px;"></i> Acción <span class="caret"></span></button>' +
                             '<ul class="dropdown-menu pull-left" role="menu">' +
                             '<li><a href="javascript:void(0)" class="btn-edit-cal" data-id="' + id + '"><i class="fa fa-pencil text-primary"></i> Modificar</a></li>' +
                             '<li><a href="javascript:void(0)" class="btn-detail-cal" data-id="' + id + '"><i class="fa fa-info-circle text-info"></i> Consultar</a></li>' +
@@ -259,7 +260,7 @@
                     "mRender": function (data) {
                         var isYes = ('' + data).toLowerCase().indexOf('s') !== -1;
                         return '<span class="badge-pill-tag ' + (isYes ? 'yes' : 'no') + '">' +
-                            '<i class="fa ' + (isYes ? 'fa-check' : 'fa-times') + '"></i> ' + (isYes ? 'SÃ­' : 'No') + '</span>';
+                            '<i class="fa ' + (isYes ? 'fa-check' : 'fa-times') + '"></i> ' + (isYes ? 'Sí' : 'No') + '</span>';
                     }
                 }
             ],
@@ -267,14 +268,14 @@
                 "sProcessing": "Procesando...",
                 "sLengthMenu": "Mostrar _MENU_ registros",
                 "sZeroRecords": "No se encontraron resultados",
-                "sEmptyTable": "NingÃºn dato disponible en esta tabla",
+                "sEmptyTable": "Ningún dato disponible en esta tabla",
                 "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
                 "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
                 "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
                 "sSearch": "Buscar:",
                 "oPaginate": {
                     "sFirst": "Primero",
-                    "sLast": "Ãšltimo",
+                    "sLast": "Último",
                     "sNext": "Siguiente",
                     "sPrevious": "Anterior"
                 }
@@ -326,7 +327,7 @@
                     }
                 },
                 error: function () {
-                    window.mostrarToastError('Error de comunicaciÃ³n al consultar el calendario.');
+                    window.mostrarToastError('Error de comunicación al consultar el calendario.');
                 }
             });
         });
@@ -347,7 +348,7 @@
                         $('#detCalPeriodo').text(d.Periodo);
                         $('#detCalDiaNotificacion').text(d.DiaNotificacion + ' de cada mes');
                         $('#detCalDiaLimite').text(d.DiaLimite + ' de cada mes');
-                        var isYes = d.Enviado === 'SÃ­';
+                        var isYes = d.Enviado === 'Sí';
                         $('#detCalEnviado').html(
                             '<span class="badge-pill-tag ' + (isYes ? 'yes' : 'no') + '">' +
                             '<i class="fa ' + (isYes ? 'fa-check' : 'fa-times') + '"></i> ' + d.Enviado + '</span>'
@@ -358,7 +359,7 @@
                     }
                 },
                 error: function () {
-                    window.mostrarToastError('Error de comunicaciÃ³n al consultar el detalle.');
+                    window.mostrarToastError('Error de comunicación al consultar el detalle.');
                 }
             });
         });
@@ -399,7 +400,7 @@
                 },
                 error: function () {
                     $btn.prop('disabled', false).html('<i class="fa fa-check" style="margin-right: 4px;"></i> Guardar');
-                    $('#modalCalError').text('Error interno de comunicaciÃ³n al procesar la solicitud.').fadeIn();
+                    $('#modalCalError').text('Error interno de comunicación al procesar la solicitud.').fadeIn();
                 }
             });
         });
@@ -416,7 +417,7 @@
         });
 
         // ---------------------------------------------------------------------
-        // CONFIRMAR ELIMINACIÃ“N
+        // CONFIRMAR ELIMINACIÓN
         // ---------------------------------------------------------------------
         $('#btnConfirmarEliminarCal').on('click', function () {
             var id = $('#deleteCalId').val();
@@ -445,7 +446,7 @@
                 error: function () {
                     $btn.prop('disabled', false).html('<i class="fa fa-trash" style="margin-right: 4px;"></i> Eliminar');
                     $('#modalDeleteCalendario').modal('hide');
-                    window.mostrarToastError('Error de comunicaciÃ³n al eliminar el calendario.');
+                    window.mostrarToastError('Error de comunicación al eliminar el calendario.');
                 }
             });
         });
@@ -457,7 +458,7 @@
     if (!window.mostrarToastExito) {
         window.mostrarToastExito = function (mensaje) {
             if (typeof toastr !== 'undefined') {
-                toastr.success(mensaje, 'Ã‰xito');
+                toastr.success(mensaje, 'Éxito');
             } else if ($.notify) {
                 $.notify({ message: mensaje }, { type: 'success', delay: 3500 });
             } else {

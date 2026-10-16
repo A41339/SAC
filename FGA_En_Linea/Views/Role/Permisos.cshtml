@@ -1,13 +1,14 @@
-﻿@model FGA.Models.RolPermisosViewModel
+@model FGA.Models.RolPermisosViewModel
 @{
-    ViewBag.Title = "Permisos de MenÃº - " + Model.RolNombre;
+    ViewBag.Title = "Permisos de Menú - " + Model.RolNombre;
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
 
 <section class="content-header" style="position: relative;">
     <ol class="breadcrumb">
         <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
-        <li><a href="@Url.Action("Index", "Modulo", new { id = 9200 })" title="Ir a GestiÃ³n Operativa"><i class="fa fa-cogs" style="margin-right: 4px;"></i> Gesti&oacute;n Operativa</a></li>
+        <li><a href="@Url.Action("Index", "Modulo", new { id = 9200 })" title="Ir a Gestión Operativa"><i class="fa fa-cogs" style="margin-right: 4px;"></i> Gesti&oacute;n Operativa</a></li>
         <li><a href="@Url.Action("Index", "Role")" class="breadcrumb-parent-pill" title="Volver a Roles"><i class="fa fa-users" style="margin-right: 4px;"></i> Roles</a></li>
         <li class="active">Permisos: @Model.RolNombre</li>
     </ol>
@@ -49,14 +50,14 @@
 </section>
 
 <section class="content" style="padding-top: 0; padding-bottom: 80px;">
-    <!-- Barra de BÃƒÂƒÃ‚ÂƒÃƒÂ‚Ã‚Âºsqueda y Acciones RÃƒÂƒÃ‚ÂƒÃƒÂ‚Ã‚Â¡pidas -->
+    <!-- Barra de BÃÂÃÂºsqueda y Acciones RÃÂÃÂ¡pidas -->
     <div class="permisos-toolbar">
         <div style="display: flex; align-items: center; gap: 10px; flex-grow: 1; max-width: 380px;">
             <i class="fa fa-search" style="color: #94a3b8; font-size: 15px;"></i>
             <input type="text" id="txtBuscarOpcion" class="form-control" placeholder="Buscar m&oacute;dulo, sub-m&oacute;dulo o reporte..." style="border-radius: 8px; border: 1px solid #cbd5e1; height: 36px; font-size: 13px;" />
         </div>
         <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-            <button type="button" class="btn-action-pill" id="btnIncluirTodo" title="Habilita el acceso en todos los mÃƒÂƒÃ‚Â³dulos y opciones">
+            <button type="button" class="btn-action-pill" id="btnIncluirTodo" title="Habilita el acceso en todos los mÃÂ³dulos y opciones">
                 <i class="fa fa-check-square-o" style="color:#0284c7; margin-right:4px;"></i> Incluir Todo
             </button>
             <button type="button" class="btn-action-pill" id="btnExcluirTodo" title="Quita el acceso de todas las opciones">
@@ -71,12 +72,12 @@
         </div>
     </div>
 
-    <!-- AcordeÃƒÂƒÃ‚Â³n de MÃƒÂƒÃ‚Â³dulos -->
+    <!-- AcordeÃÂ³n de MÃÂ³dulos -->
     <div id="contenedorModulos">
         @foreach (var modulo in Model.Modulos)
         {
             <div class="modulo-card" id="modulo-card-@modulo.MenuId" data-moduloid="@modulo.MenuId" data-searchtext="@modulo.MenuText">
-                <!-- Fila de Cabecera del MÃƒÂƒÃ‚Â³dulo RaÃƒÂƒÃ‚Â­z -->
+                <!-- Fila de Cabecera del MÃÂ³dulo RaÃÂ­z -->
                 <div class="modulo-header" data-toggle="collapse" data-target="#collapse-@modulo.MenuId">
                     <div class="modulo-header-left">
                         <div class="modulo-icon-box" style="background-color: @modulo.ColorFondo; color: @modulo.ColorIcono;">
@@ -135,7 +136,7 @@
                                         </td>
                                     </tr>
 
-                                    <!-- Si el item es un sub-mÃƒÂƒÃ‚Â³dulo con opciones nietas -->
+                                    <!-- Si el item es un sub-mÃÂ³dulo con opciones nietas -->
                                     if (item.EsSubModulo && item.Hijos != null && item.Hijos.Count > 0)
                                     {
                                         foreach (var hijo in item.Hijos)
@@ -189,7 +190,7 @@
     </div>
 </section>
 
-<!-- Modal NotificaciÃƒÂƒÃ‚ÂƒÃƒÂ‚Ã‚Â³n ÃƒÂƒÃ‚ÂƒÃƒÂ¢Ã‚Â€Ã‚Â°xito / Error -->
+<!-- Modal NotificaciÃÂÃÂ³n ÃÂÃ¢ÂÂ°xito / Error -->
 <div class="modal fade" id="modalFeedbackPermisos" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-sm" style="max-width: 400px; margin: 100px auto;">
         <div class="modal-content" style="border-radius: 14px; border: none; overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.15);">
@@ -216,7 +217,7 @@
         var guardarPermisosUrl = "@Url.Action("GuardarPermisos", "Role")";
         var permisosUrlBase = "@Url.Action("Permisos", "Role")";
 
-        // Cambio rÃƒÂƒÃ‚ÂƒÃƒÂ‚Ã‚Â¡pido de rol desde el select
+        // Cambio rÃÂÃÂ¡pido de rol desde el select
         $('#cboCambiarRol').on('change', function () {
             var nuevoRolId = $(this).val();
             if (nuevoRolId) {
@@ -262,7 +263,7 @@
                     $badge.removeClass('has-perms');
                 }
 
-                // Sincronizar master checkbox del mÃƒÂƒÃ‚Â³dulo
+                // Sincronizar master checkbox del mÃÂ³dulo
                 var $master = $card.find('.chk-modulo-master');
                 if (activasEnModulo > 0) {
                     $master.prop('checked', true);
@@ -284,12 +285,12 @@
 
             actualizarBadgeFila($chk);
 
-            // Si se marcÃƒÂƒÃ‚Â³ un hijo, asegurar que el master del mÃƒÂƒÃ‚Â³dulo raÃƒÂƒÃ‚Â­z estÃƒÂƒÃ‚Â© marcado
+            // Si se marcÃÂ³ un hijo, asegurar que el master del mÃÂ³dulo raÃÂ­z estÃÂ© marcado
             if (isChecked) {
                 var moduloId = $row.data('moduloid');
                 $('#modulo-card-' + moduloId).find('.chk-modulo-master').prop('checked', true);
 
-                // Si es sub-fila, marcar tambiÃƒÂƒÃ‚Â©n el sub-mÃƒÂƒÃ‚Â³dulo padre
+                // Si es sub-fila, marcar tambiÃÂ©n el sub-mÃÂ³dulo padre
                 if ($row.hasClass('perm-sub-row')) {
                     var parentId = $row.data('parentid');
                     var $parentChk = $('.perm-row[data-men&uacute;id="' + parentId + '"]').find('.chk-perm');
@@ -301,7 +302,7 @@
             recalcularContadores();
         });
 
-        // Checkbox Maestro del MÃƒÂƒÃ‚Â³dulo: Marcar / Desmarcar todas las opciones del mÃƒÂƒÃ‚Â³dulo
+        // Checkbox Maestro del MÃÂ³dulo: Marcar / Desmarcar todas las opciones del mÃÂ³dulo
         $(document).on('change', '.chk-modulo-master', function () {
             var moduloId = $(this).data('moduloid');
             var isChecked = $(this).is(':checked');
@@ -344,7 +345,7 @@
             $('.modulo-card .collapse').collapse('hide');
         });
 
-        // BÃƒÂƒÃ‚Âºsqueda en vivo de mÃƒÂƒÃ‚Â³dulos y opciones
+        // BÃÂºsqueda en vivo de mÃÂ³dulos y opciones
         $('#txtBuscarOpcion').on('keyup', function () {
             var query = $.trim($(this).val()).toLowerCase();
 
@@ -384,7 +385,7 @@
 
             var listaPermisos = [];
 
-            // 1. MÃƒÂƒÃ‚Â³dulos raÃƒÂƒÃ‚Â­ces (master)
+            // 1. MÃÂ³dulos raÃÂ­ces (master)
             $('.chk-modulo-master').each(function () {
                 var mId = parseInt($(this).data('men&uacute;id'), 10);
                 var isChecked = $(this).is(':checked');
@@ -397,7 +398,7 @@
                 }
             });
 
-            // 2. Filas de opciones y sub-mÃƒÂƒÃ‚Â³dulos
+            // 2. Filas de opciones y sub-mÃÂ³dulos
             $('.perm-row').each(function () {
                 var mId = parseInt($(this).data('men&uacute;id'), 10);
                 var isChecked = $(this).find('.chk-perm').is(':checked');
@@ -436,8 +437,8 @@
                 error: function () {
                     $btn.prop('disabled', false).html('<i class="fa fa-save"></i> Guardar Permisos');
                     $('#feedbackIconContainer').html('<i class="fa fa-exclamation-circle" style="font-size: 48px; color: #dc2626;"></i>');
-                    $('#feedbackModalTitle').text('Error de ConexiÃƒÂƒÃ‚Â³n');
-                    $('#feedbackModalMessage').text('OcurriÃƒÂƒÃ‚Â³ un error de comunicaciÃƒÂƒÃ‚Â³n con el servidor.');
+                    $('#feedbackModalTitle').text('Error de ConexiÃÂ³n');
+                    $('#feedbackModalMessage').text('OcurriÃÂ³ un error de comunicaciÃÂ³n con el servidor.');
                     $('#modalFeedbackPermisos').modal('show');
                 }
             });

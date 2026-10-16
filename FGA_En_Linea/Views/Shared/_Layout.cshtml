@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -13,16 +13,16 @@
     if (!string.IsNullOrEmpty(cleanPageTitle))
     {
         cleanPageTitle = cleanPageTitle
-            .Replace("CategorÃƒa", "Periodo")
-            .Replace("categorÃƒa", "periodo")
-            .Replace("MenÃƒÆ’Ã‚Âº", "MenÃº")
-            .Replace("MenÃƒÃ‚Âº", "MenÃº")
-            .Replace("MenÃƒÂº", "MenÃº")
-            .Replace("ÃƒÆ’Ã‚Â¡", "Ã¡").Replace("ÃƒÆ’Ã‚Â©", "Ã©").Replace("ÃƒÆ’Ã‚Â­", "Ã­").Replace("ÃƒÆ’Ã‚Â³", "Ã³").Replace("ÃƒÆ’Ã‚Âº", "Ãº").Replace("ÃƒÆ’Ã‚Â±", "Ã±")
-            .Replace("ÃƒÃ‚Â¡", "Ã¡").Replace("ÃƒÃ‚Â©", "Ã©").Replace("ÃƒÃ‚Â­", "Ã­").Replace("ÃƒÃ‚Â³", "Ã³").Replace("ÃƒÃ‚Âº", "Ãº").Replace("ÃƒÃ‚Â±", "Ã±")
-            .Replace("ÃƒÂ¡", "Ã¡").Replace("ÃƒÂ©", "Ã©").Replace("ÃƒÂ­", "Ã­").Replace("ÃƒÂ³", "Ã³").Replace("ÃƒÂº", "Ãº").Replace("ÃƒÂ±", "Ã±")
-            .Replace("Ãƒâ€°", "Ã‰").Replace("Ãƒâ€œ", "Ã“").Replace("ÃƒÅ¡", "Ãš").Replace("Ãƒâ€˜", "Ã‘")
-            .Replace("ÃƒÂ", "Ã").Replace("Ãƒ ", "Ã");
+            .Replace("CategorÃa", "Periodo")
+            .Replace("categorÃa", "periodo")
+            .Replace("MenÃƒÂº", "Menú")
+            .Replace("MenÃÂº", "Menú")
+            .Replace("MenÃº", "Menú")
+            .Replace("ÃƒÂ¡", "á").Replace("ÃƒÂ©", "é").Replace("ÃƒÂ­", "í").Replace("ÃƒÂ³", "ó").Replace("ÃƒÂº", "ú").Replace("ÃƒÂ±", "ñ")
+            .Replace("ÃÂ¡", "á").Replace("ÃÂ©", "é").Replace("ÃÂ­", "í").Replace("ÃÂ³", "ó").Replace("ÃÂº", "ú").Replace("ÃÂ±", "ñ")
+            .Replace("Ã¡", "á").Replace("Ã©", "é").Replace("Ã­", "í").Replace("Ã³", "ó").Replace("Ãº", "ú").Replace("Ã±", "ñ")
+            .Replace("Ã‰", "É").Replace("Ã“", "Ó").Replace("Ãš", "Ú").Replace("Ã‘", "Ñ")
+            .Replace("Ã", "Á").Replace("Ã ", "Á");
     }
     bool alertasHabilitadas = FGA.Env.IsAlertasEnabled();
 }
@@ -31,7 +31,7 @@
     <link rel="icon" href="~/favicon.ico">
     @Styles.Render("~/Content/css")
     <link rel="stylesheet" href="@Url.Content("~/Content/theme/bower_components/font-awesome/css/font-awesome.min.css?v=4.7.0")" />
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
     @Scripts.Render("~/bundles/javascript")
     <script type="text/javascript">
         // ==========================================================================
@@ -66,7 +66,7 @@
                     cleanMsg = cleanMsg.replace(/^(\s*<br\s*\/?>)+/gi, '').trim();
                 }
 
-                // Prevenir mensajes idÃ©nticos duplicados en rÃ¡pida sucesiÃ³n (<1.5s)
+                // Prevenir mensajes idénticos duplicados en rápida sucesión (<1.5s)
                 var dedupeKey = tipo + ':' + cleanMsg;
                 if (shownMessages[dedupeKey]) return;
                 shownMessages[dedupeKey] = true;
@@ -115,7 +115,7 @@
             };
 
             window.mostrarToastError = function (mensaje, titulo) {
-                window.mostrarToast(mensaje, 'error', titulo || 'AtenciÃ³n');
+                window.mostrarToast(mensaje, 'error', titulo || 'Atención');
             };
 
             window.mostrarToastInfo = function (mensaje, titulo) {
@@ -127,7 +127,7 @@
             };
 
             // Interceptor de compatibilidad para jquery-stickynotif ($.sticky)
-            // Utilizado histÃ³ricamente por StarkAjaxFormSubmiter y notij.js
+            // Utilizado históricamente por StarkAjaxFormSubmiter y notij.js
             if (window.jQuery) {
                 jQuery.sticky = function (msg, opts) {
                     var tipo = 'success';
@@ -314,25 +314,25 @@
                 } catch (e) {}
             }
             res = res
-                .replace(/CategorÃƒa/g, 'Per\u00edodo')
-                .replace(/categorÃƒa/g, 'per\u00edodo')
-                .replace(/MenÃƒÆ’Ã‚Âº/g, 'Men\u00fa')
-                .replace(/MenÃƒÃ‚Âº/g, 'Men\u00fa')
+                .replace(/CategorÃa/g, 'Per\u00edodo')
+                .replace(/categorÃa/g, 'per\u00edodo')
                 .replace(/MenÃƒÂº/g, 'Men\u00fa')
-                .replace(/ÃƒÆ’Ã‚Â¡/g, '\u00e1').replace(/ÃƒÆ’Ã‚Â©/g, '\u00e9').replace(/ÃƒÆ’Ã‚Â­/g, '\u00ed')
-                .replace(/ÃƒÆ’Ã‚Â³/g, '\u00f3').replace(/ÃƒÆ’Ã‚Âº/g, '\u00fa').replace(/ÃƒÆ’Ã‚Â±/g, '\u00f1')
-                .replace(/ÃƒÃ‚Â¡/g, '\u00e1').replace(/ÃƒÃ‚Â©/g, '\u00e9').replace(/ÃƒÃ‚Â­/g, '\u00ed')
-                .replace(/ÃƒÃ‚Â³/g, '\u00f3').replace(/ÃƒÃ‚Âº/g, '\u00fa').replace(/ÃƒÃ‚Â±/g, '\u00f1')
+                .replace(/MenÃÂº/g, 'Men\u00fa')
+                .replace(/MenÃº/g, 'Men\u00fa')
                 .replace(/ÃƒÂ¡/g, '\u00e1').replace(/ÃƒÂ©/g, '\u00e9').replace(/ÃƒÂ­/g, '\u00ed')
                 .replace(/ÃƒÂ³/g, '\u00f3').replace(/ÃƒÂº/g, '\u00fa').replace(/ÃƒÂ±/g, '\u00f1')
-                .replace(/Ãƒ /g, '\u00c1').replace(/Ãƒâ€°/g, '\u00c9').replace(/Ãƒ /g, '\u00cd')
-                .replace(/Ãƒâ€œ/g, '\u00d3').replace(/ÃƒÅ¡/g, '\u00da').replace(/Ãƒâ€˜/g, '\u00d1');
+                .replace(/ÃÂ¡/g, '\u00e1').replace(/ÃÂ©/g, '\u00e9').replace(/ÃÂ­/g, '\u00ed')
+                .replace(/ÃÂ³/g, '\u00f3').replace(/ÃÂº/g, '\u00fa').replace(/ÃÂ±/g, '\u00f1')
+                .replace(/Ã¡/g, '\u00e1').replace(/Ã©/g, '\u00e9').replace(/Ã­/g, '\u00ed')
+                .replace(/Ã³/g, '\u00f3').replace(/Ãº/g, '\u00fa').replace(/Ã±/g, '\u00f1')
+                .replace(/Ã /g, '\u00c1').replace(/Ã‰/g, '\u00c9').replace(/Ã /g, '\u00cd')
+                .replace(/Ã“/g, '\u00d3').replace(/Ãš/g, '\u00da').replace(/Ã‘/g, '\u00d1');
             return res;
         };
 
         window.fixDomEncoding = function (root) {
             try {
-                if (document.title && (document.title.indexOf('Ãƒ') !== -1 || document.title.indexOf('&') !== -1)) {
+                if (document.title && (document.title.indexOf('Ã') !== -1 || document.title.indexOf('&') !== -1)) {
                     document.title = window.sanitizeTextAccents(document.title);
                 }
                 var target = root || document.body;
@@ -340,7 +340,7 @@
                 var walker = document.createTreeWalker(target, NodeFilter.SHOW_TEXT, null, false);
                 var node;
                 while (node = walker.nextNode()) {
-                    if (node.nodeValue && node.nodeValue.indexOf('Ãƒ') !== -1) {
+                    if (node.nodeValue && node.nodeValue.indexOf('Ã') !== -1) {
                         node.nodeValue = window.sanitizeTextAccents(node.nodeValue);
                     }
                 }
@@ -367,7 +367,7 @@
             if (!str) return '';
             var meses = ['Ene.', 'Feb.', 'Mar.', 'Abr.', 'May.', 'Jun.', 'Jul.', 'Ago.', 'Set.', 'Oct.', 'Nov.', 'Dic.'];
 
-            // 1. Formatos numÃ©ricos: M-yyyy, MM-yyyy, M.yyyy, M/yyyy (ej: "1-2025", "08.2025", "12/2024")
+            // 1. Formatos numéricos: M-yyyy, MM-yyyy, M.yyyy, M/yyyy (ej: "1-2025", "08.2025", "12/2024")
             var m = str.match(/^(\d{1,2})[-/. ](\d{2,4})$/);
             if (m) {
                 var mes = parseInt(m[1], 10);
@@ -381,7 +381,7 @@
                 }
             }
 
-            // 2. Formatos numÃ©ricos invertidos: yyyy-M o yyyy-MM (ej: "2025-01", "2024/12")
+            // 2. Formatos numéricos invertidos: yyyy-M o yyyy-MM (ej: "2025-01", "2024/12")
             var mY = str.match(/^(\d{4})[-/. ](\d{1,2})$/);
             if (mY) {
                 var anio = parseInt(mY[1], 10);
@@ -412,7 +412,7 @@
             }
 
             // 5. Nombres de meses en texto (ej: "Enero 2025", "Diciembre 24", "ene 25", "ene.-25")
-            var mTxt = str.match(/^([a-zA-ZÃ¡Ã©Ã­Ã³ÃºÃÃ‰ÃÃ“Ãš.]+)[-/\s]+(\d{2,4})$/);
+            var mTxt = str.match(/^([a-zA-ZáéíóúÁÉÍÓÚ.]+)[-/\s]+(\d{2,4})$/);
             if (mTxt) {
                 var txt = mTxt[1].toLowerCase().replace(/\./g, '');
                 var anioVal = parseInt(mTxt[2], 10);
@@ -478,7 +478,7 @@
                               (point.series && point.series.userOptions && point.series.userOptions.tooltip && point.series.userOptions.tooltip.valueSuffix) ||
                               (point.series && point.series.options && point.series.options.tooltip && point.series.options.tooltip.valueSuffix) || '';
 
-                // DetecciÃ³n estricta de no-porcentajes (montos monetarios, conteos, etc.)
+                // Detección estricta de no-porcentajes (montos monetarios, conteos, etc.)
                 var isExplicitNonPercent = sName.indexOf('monto') !== -1 ||
                                            sName.indexOf('saldo') !== -1 ||
                                            sName.indexOf('financiamiento') !== -1 ||
@@ -520,13 +520,13 @@
 
                 if (sSuffix && sSuffix.trim() !== '') {
                     if (sSuffix.trim() === 'M' || sName.indexOf('monto') !== -1 || sName.indexOf('financiamiento') !== -1) {
-                        return 'â‚¡' + Highcharts.numberFormat(val, 2, '.', ',') + ' M';
+                        return '₡' + Highcharts.numberFormat(val, 2, '.', ',') + ' M';
                     }
                     return Highcharts.numberFormat(val, 2, '.', ',') + ' ' + sSuffix.trim();
                 }
 
                 if (sName.indexOf('monto') !== -1 || sName.indexOf('financiamiento') !== -1) {
-                    return 'â‚¡' + Highcharts.numberFormat(val, 2, '.', ',') + ' M';
+                    return '₡' + Highcharts.numberFormat(val, 2, '.', ',') + ' M';
                 }
 
                 if (val % 1 !== 0) {
@@ -695,7 +695,7 @@
                     Highcharts.defaultOptions.lang.decimalPoint = '.';
                 }
 
-                // Interceptar universalmente la inicializaciÃ³n de cualquier grÃ¡fico para garantizar meses normalizados (ej: ene.-25)
+                // Interceptar universalmente la inicialización de cualquier gráfico para garantizar meses normalizados (ej: ene.-25)
                 if (Highcharts.wrap) {
                     Highcharts.wrap(Highcharts.Chart.prototype, 'init', function (proceed, userOptions, callback) {
                         try {
@@ -772,7 +772,7 @@
         })();
     </script>
 </head>
-
+
 
 @{
     var isCollapsed = Session[FGA.Utility.Utilitarios.show_MenuOculto] is null ? "" : "sidebar-collapse";
@@ -802,7 +802,7 @@
                 <div class="header-search-wrapper">
                     <div class="header-search-input-group">
                         <i class="fa fa-search header-search-icon" style="position: absolute; left: 12px; top: 10px; color: rgba(255, 255, 255, 0.8); font-size: 13px; pointer-events: none; z-index: 2; transition: color 0.2s ease;"></i>
-                        <input type="text" id="globalMenuSearch" class="form-control" placeholder="Buscar mÃ³dulo o pantalla... (Ctrl + K)" autocomplete="off" />
+                        <input type="text" id="globalMenuSearch" class="form-control" placeholder="Buscar módulo o pantalla... (Ctrl + K)" autocomplete="off" />
                         <span class="header-search-shortcut" style="position: absolute; right: 10px; top: 7px; background: rgba(0, 0, 0, 0.25); color: rgba(255, 255, 255, 0.85); font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px; pointer-events: none; font-family: monospace;">Ctrl K</span>
                     </div>
                     <div id="globalSearchResults" class="header-search-dropdown" style="display: none; position: absolute;"></div>
@@ -829,8 +829,8 @@
                                             </div>
                                         </div>
                                         <div class="fga-alerts-header-right">
-                                            <button type="button" class="btn btn-xs fga-btn-mark-all" id="btnMarcarTodasNavbar" title="Marcar todas como leÃ­das" style="background-color: #2F5597 !important; background: #2F5597 !important; color: #ffffff !important; border: 1px solid #1e3a8a !important; font-size: 11px !important; font-weight: 600 !important; padding: 4px 10px !important; border-radius: 6px !important; box-shadow: 0 1px 2px rgba(0,0,0,0.08) !important; cursor: pointer !important;">
-                                                <i class="fa fa-check-circle-o" style="color: #ffffff !important; margin-right: 3px;"></i> Marcar leÃ­das
+                                            <button type="button" class="btn btn-xs fga-btn-mark-all" id="btnMarcarTodasNavbar" title="Marcar todas como leídas" style="background-color: #2F5597 !important; background: #2F5597 !important; color: #ffffff !important; border: 1px solid #1e3a8a !important; font-size: 11px !important; font-weight: 600 !important; padding: 4px 10px !important; border-radius: 6px !important; box-shadow: 0 1px 2px rgba(0,0,0,0.08) !important; cursor: pointer !important;">
+                                                <i class="fa fa-check-circle-o" style="color: #ffffff !important; margin-right: 3px;"></i> Marcar leídas
                                             </button>
                                         </div>
                                     </li>
@@ -960,7 +960,7 @@
         }
     </div>
 
-    <!-- IntegraciÃ³n AutomÃ¡tica de Mensajes del Servidor (TempData / Alerts) -->
+    <!-- Integración Automática de Mensajes del Servidor (TempData / Alerts) -->
     @{
         var toastSuccess = TempData["Success"] ?? TempData["success"] ?? TempData["Exito"] ?? TempData["exito"] ?? TempData["Mensaje"];
         var toastError = TempData["Error"] ?? TempData["error"] ?? TempData["danger"] ?? TempData["Danger"];
@@ -986,8 +986,8 @@
                 <text>if (window.mostrarToastInfo) { window.mostrarToastInfo('@Html.Raw(HttpUtility.JavaScriptStringEncode(toastInfo.ToString()))'); }</text>
             }
 
-            // Auto-captura y ocultamiento de alertas estÃ¡ticas heredadas (alert-success / alert-danger)
-            // que se encuentren visibles en el cuerpo de la pÃ¡gina en la carga inicial
+            // Auto-captura y ocultamiento de alertas estáticas heredadas (alert-success / alert-danger)
+            // que se encuentren visibles en el cuerpo de la página en la carga inicial
             setTimeout(function () {
                 $('.alert.alert-success:visible, .alert.alert-danger:visible').each(function () {
                     var $el = $(this);
@@ -1313,7 +1313,7 @@
                 y: -44,
                 x: -10,
                 zIndex: 999,
-                text: 'Descargar â–¾',
+                text: 'Descargar ▾',
                 theme: {
                     fill: '#ffffff',
                     stroke: '#cbd5e1',
@@ -1476,12 +1476,12 @@
                 } catch (e) {}
             }
             res = res
-                .replace(/CategorÃƒa/g, 'Per\u00edodo')
-                .replace(/categorÃƒa/g, 'per\u00edodo')
-                .replace(/ÃƒÂ¡/g, '\u00e1').replace(/ÃƒÂ©/g, '\u00e9').replace(/ÃƒÂ­/g, '\u00ed')
-                .replace(/ÃƒÂ³/g, '\u00f3').replace(/ÃƒÂº/g, '\u00fa').replace(/ÃƒÂ±/g, '\u00f1')
-                .replace(/Ãƒ /g, '\u00c1').replace(/Ãƒâ€°/g, '\u00c9').replace(/Ãƒ /g, '\u00cd')
-                .replace(/Ãƒâ€œ/g, '\u00d3').replace(/ÃƒÅ¡/g, '\u00da').replace(/Ãƒâ€˜/g, '\u00d1');
+                .replace(/CategorÃa/g, 'Per\u00edodo')
+                .replace(/categorÃa/g, 'per\u00edodo')
+                .replace(/Ã¡/g, '\u00e1').replace(/Ã©/g, '\u00e9').replace(/Ã­/g, '\u00ed')
+                .replace(/Ã³/g, '\u00f3').replace(/Ãº/g, '\u00fa').replace(/Ã±/g, '\u00f1')
+                .replace(/Ã /g, '\u00c1').replace(/Ã‰/g, '\u00c9').replace(/Ã /g, '\u00cd')
+                .replace(/Ã“/g, '\u00d3').replace(/Ãš/g, '\u00da').replace(/Ã‘/g, '\u00d1');
             return res;
         }
 
@@ -1505,7 +1505,7 @@
                     }
                 }
 
-                // Encabezados thead: sustituciÃ³n de categorÃ­a por Periodo y decodificaciÃ³n de tildes/HTML
+                // Encabezados thead: sustitución de categoría por Periodo y decodificación de tildes/HTML
                 $tbl.find('thead th, thead td').each(function (idx) {
                     var $cell = $(this);
                     var $btn = $cell.find('button');
@@ -1751,7 +1751,7 @@
             initCanvas('sidebarCanvas', 28);
 
             // ==========================================================================
-            // VinculaciÃ³n interactiva y auto-resoluciÃ³n DINÃMICA del MenÃº PapÃ¡ en Breadcrumbs
+            // Vinculación interactiva y auto-resolución DINÁMICA del Menú Papá en Breadcrumbs
             // ==========================================================================
             var moduloBaseUrl = '@Url.Action("Index", "Modulo")';
             var homeBaseUrl = '@Url.Action("Index", "Home")';
@@ -1772,13 +1772,13 @@
                         .replace(/\s+/g, ' ')
                         .trim();
                 } catch (e) {
-                    return texto.toLowerCase().replace(/Ã¡/g, 'a').replace(/Ã©/g, 'e').replace(/Ã­/g, 'i').replace(/Ã³/g, 'o').replace(/Ãº/g, 'u').replace(/Ã±/g, 'n').trim();
+                    return texto.toLowerCase().replace(/á/g, 'a').replace(/é/g, 'e').replace(/í/g, 'i').replace(/ó/g, 'o').replace(/ú/g, 'u').replace(/ñ/g, 'n').trim();
                 }
             }
 
             // 1. Manejo inteligente de clic en botones de volver:
-            // Si el enlace tiene una URL vÃ¡lida (!== '#' y no javascript:), permite la navegaciÃ³n natural del navegador.
-            // Solo intercepta si el enlace es '#' o vacÃ­o.
+            // Si el enlace tiene una URL válida (!== '#' y no javascript:), permite la navegación natural del navegador.
+            // Solo intercepta si el enlace es '#' o vacío.
             $(document).on('click', '.breadcrumb-parent-pill, .breadcrumb-back-btn, .header-back-link', function (e) {
                 var href = $(this).attr('href');
                 if (href && href !== '#' && href.indexOf('javascript:') !== 0) {
@@ -1802,7 +1802,7 @@
                 return false;
             });
 
-            // 2. Obtener el mÃ³dulo padre raÃ­z activo desde el menÃº lateral de la base de datos (dinÃ¡mico sin URLs en duro)
+            // 2. Obtener el módulo padre raíz activo desde el menú lateral de la base de datos (dinámico sin URLs en duro)
             var parentModuleUrl = null;
             var parentModuleName = null;
             var parentModuleIcon = null;
@@ -1835,7 +1835,7 @@
 
                 if (!tNorm || tNorm === 'inicio') return homeBaseUrl;
 
-                // Buscar coincidencias dinÃ¡micas navegables en el menÃº lateral
+                // Buscar coincidencias dinámicas navegables en el menú lateral
                 var found = null;
                 $('.sidebar-menu li a').each(function () {
                     var h = $(this).attr('href');
@@ -1875,12 +1875,12 @@
                 var $active = $bc.find('li.active');
                 var activeText = $active.length ? normalizar($active.text()) : '';
 
-                // Si solo hay 2 elementos (Inicio > PantallaActual) y conocemos el menÃº papÃ¡, insertar la pÃ­ldora dinÃ¡mica del papÃ¡
+                // Si solo hay 2 elementos (Inicio > PantallaActual) y conocemos el menú papá, insertar la píldora dinámica del papá
                 if ($items.length === 2 && parentModuleName && parentModuleUrl) {
                     var pNorm = normalizar(parentModuleName);
                     if (pNorm !== 'inicio' && pNorm !== activeText && activeText.indexOf(pNorm) === -1) {
                         var parentLiHtml = '<li class="breadcrumb-parent-item">' +
-                            '<a href="' + parentModuleUrl + '" class="breadcrumb-parent-pill" title="Volver a la opciÃ³n anterior: ' + parentModuleName + '">' +
+                            '<a href="' + parentModuleUrl + '" class="breadcrumb-parent-pill" title="Volver a la opción anterior: ' + parentModuleName + '">' +
                             '<i class="' + parentModuleIcon + '"></i> ' + parentModuleName + '</a></li>';
                         $(parentLiHtml).insertAfter($items.first());
                     }
@@ -1899,29 +1899,29 @@
                     var targetUrl = resolverUrlModulo(rawText, existingHref);
 
                     if ($a.length === 0) {
-                        $li.html('<a href="' + targetUrl + '" class="breadcrumb-parent-pill" title="Volver al menÃº de ' + rawText + '">' + rawText + '</a>');
+                        $li.html('<a href="' + targetUrl + '" class="breadcrumb-parent-pill" title="Volver al menú de ' + rawText + '">' + rawText + '</a>');
                     } else {
                         if (!existingHref || existingHref === '#' || existingHref.indexOf('javascript:') === 0) {
                             $a.attr('href', targetUrl);
                         }
                         $a.addClass('breadcrumb-parent-pill');
                         if (!$a.attr('title')) {
-                            $a.attr('title', 'Volver al menÃº de ' + rawText);
+                            $a.attr('title', 'Volver al menú de ' + rawText);
                         }
                     }
                 });
             });
 
-            // 3. Auto-inyecciÃ³n del enlace de cabecera "â† Volver a [MÃ³dulo Padre]" hacia /Modulo/Index/id en todas las pÃ¡ginas hijas
+            // 3. Auto-inyección del enlace de cabecera "← Volver a [Módulo Padre]" hacia /Modulo/Index/id en todas las páginas hijas
             var $parentPill = $('.breadcrumb .breadcrumb-parent-pill').last();
             if ($parentPill.length === 0) {
                 $parentPill = $('.breadcrumb li:not(:first-child):not(.active) a').last();
             }
 
-            // SincronizaciÃ³n proactiva con el mÃ³dulo raÃ­z activo de la base de datos (menÃº lateral)
+            // Sincronización proactiva con el módulo raíz activo de la base de datos (menú lateral)
             if (parentModuleName && parentModuleUrl && $parentPill.length > 0) {
                 var totalBcItems = $('.breadcrumb li').length;
-                // En rutas estÃ¡ndar (Inicio > Padre > Actual), si el texto de la pÃ­ldora difiere del mÃ³dulo de BD, manda la BD
+                // En rutas estándar (Inicio > Padre > Actual), si el texto de la píldora difiere del módulo de BD, manda la BD
                 if (totalBcItems <= 3) {
                     var currentPillNorm = normalizar($parentPill.text());
                     var dbParentNorm = normalizar(parentModuleName);
@@ -1930,7 +1930,7 @@
                         var pIconHtml = $pIcon.length ? $pIcon.prop('outerHTML') + ' ' : '<i class="' + parentModuleIcon + '" style="margin-right: 4px;"></i> ';
                         $parentPill.html(pIconHtml + parentModuleName);
                         $parentPill.attr('href', parentModuleUrl);
-                        $parentPill.attr('title', 'Volver al menÃº de ' + parentModuleName);
+                        $parentPill.attr('title', 'Volver al menú de ' + parentModuleName);
                     }
                 }
             }
@@ -1971,7 +1971,7 @@
                 }
             }
 
-            // 4. Buscador Global de MÃ³dulos y Pantallas (Tiempo Real + Ctrl + K)
+            // 4. Buscador Global de Módulos y Pantallas (Tiempo Real + Ctrl + K)
             (function initGlobalSearch() {
                 var $searchInput = $('#globalMenuSearch');
                 var $searchResults = $('#globalSearchResults');
@@ -1983,7 +1983,7 @@
                     { f: '#fff1eb', c: '#FE7235' }, // Naranja Institucional FFC
                     { f: '#ebf6f9', c: '#6DB5CB' }, // Celeste Medio FFC
                     { f: '#e6ecf1', c: '#003F6B' }, // Azul Oscuro FFC
-                    { f: '#fff7ec', c: '#FFB347' }, // Ãmbar Suave FFC
+                    { f: '#fff7ec', c: '#FFB347' }, // Ámbar Suave FFC
                     { f: '#e6f6fc', c: '#0099D6' }, // Azul Brillante FFC
                     { f: '#f0f7f9', c: '#0071AD' }, // Celeste Claro FFC
                     { f: '#f3f3f3', c: '#565656' }, // Gris FFC
@@ -2019,7 +2019,7 @@
                                 });
                             });
 
-                            // SincronizaciÃ³n automÃ¡tica universal de tÃ­tulos de pantalla y breadcrumbs con el nombre oficial del menÃº de BD
+                            // Sincronización automática universal de títulos de pantalla y breadcrumbs con el nombre oficial del menú de BD
                             try {
                                 var currentPath = window.location.pathname.toLowerCase().replace(/\/+$/, '');
                                 if (currentPath && currentPath !== '' && currentPath !== '/' && currentPath.indexOf('/home') === -1) {
@@ -2058,7 +2058,7 @@
                                     if (matchItem && matchItem.title) {
                                         var officialTitle = matchItem.title.trim();
 
-                                        // A. Actualizar tÃ­tulo h1 en la cabecera
+                                        // A. Actualizar título h1 en la cabecera
                                         var $h1 = $('.content-header h1, .modern-page-title, .cuenta-header-title, .param-header-title, .entidad-header-title').first();
                                         if ($h1.length > 0 && !$h1.closest('.hub-header').length) {
                                             var $icon = $h1.find('i').first();
@@ -2074,7 +2074,7 @@
                                             $bcActive.text(officialTitle);
                                         }
 
-                                        // C. Actualizar breadcrumb del padre y botÃ³n de retorno con la jerarquÃ­a viva de BD
+                                        // C. Actualizar breadcrumb del padre y botón de retorno con la jerarquía viva de BD
                                         if (matchItem.parent) {
                                             var parentItem = null;
                                             var pNorm = normalizar(matchItem.parent);
@@ -2093,7 +2093,7 @@
                                                 var pIconHtml = $pIcon.length ? $pIcon.prop('outerHTML') + ' ' : '';
                                                 $bcParent.html(pIconHtml + matchItem.parent);
                                                 $bcParent.attr('href', parentTargetUrl);
-                                                $bcParent.attr('title', 'Volver al menÃº de ' + matchItem.parent);
+                                                $bcParent.attr('title', 'Volver al menú de ' + matchItem.parent);
                                             }
 
                                             var $headerBack = $('.header-back-link');
@@ -2104,12 +2104,12 @@
                                             }
                                         }
 
-                                        // D. Actualizar pestaÃ±a del navegador
+                                        // D. Actualizar pestaña del navegador
                                         document.title = officialTitle + ' - FFC';
                                     }
                                 }
                             } catch (err) {
-                                console.error('Error sincronizando tÃ­tulos con menÃº:', err);
+                                console.error('Error sincronizando títulos con menú:', err);
                             }
                         }
 
@@ -2171,7 +2171,7 @@
                     }
                 }, true);
 
-                // BÃºsqueda en tiempo real
+                // Búsqueda en tiempo real
                 $searchInput.on('input focus', function () {
                     var query = $.trim($(this).val());
                     if (query.length === 0) {
@@ -2205,7 +2205,7 @@
                     for (var i = 0; i < maxResults; i++) {
                         var m = matches[i];
                         var highlightedTitle = highlightMatch(m.title, query);
-                        var parentTag = m.parent ? '<div style="font-size: 11px; color: #64748b; font-weight: 500; margin-top: 1px;">MÃ³dulo: <span style="color: #0284c7; font-weight: 600;">' + escapeHtml(m.parent) + '</span></div>' : '';
+                        var parentTag = m.parent ? '<div style="font-size: 11px; color: #64748b; font-weight: 500; margin-top: 1px;">Módulo: <span style="color: #0284c7; font-weight: 600;">' + escapeHtml(m.parent) + '</span></div>' : '';
 
                         html += '<a href="' + m.url + '" class="search-result-item' + (i === 0 ? ' selected' : '') + '">' +
                             '<div style="width: 32px; height: 32px; border-radius: 8px; background: ' + m.color.f + '; color: ' + m.color.c + '; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0;">' +
@@ -2235,7 +2235,7 @@
                     return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
                 }
 
-                // NavegaciÃ³n con teclado (Flecha Abajo, Flecha Arriba, Enter, Esc)
+                // Navegación con teclado (Flecha Abajo, Flecha Arriba, Enter, Esc)
                 $searchInput.on('keydown', function (e) {
                     var $items = $searchResults.find('.search-result-item');
                     if ($items.length === 0 || !$searchResults.is(':visible')) return;
@@ -2285,7 +2285,7 @@
                 });
             })();
 
-            // Asegurar que el panel de usuario flote sobre cualquier elemento de la pÃ¡gina al abrirse
+            // Asegurar que el panel de usuario flote sobre cualquier elemento de la página al abrirse
             $(document).on('show.bs.dropdown', '.navbar-nav > .user-menu', function () {
                 $('.main-header').addClass('user-dropdown-open').css('z-index', '999999');
             });
@@ -2334,7 +2334,7 @@
                                 $badge.hide();
                                 $toggle.removeClass('has-unread');
                                 $toggle.find('i').removeClass('fa-bell').addClass('fa-bell-o');
-                                $('#fgaAlertsHeaderSub').text('Al dÃ­a â€¢ Sin pendientes');
+                                $('#fgaAlertsHeaderSub').text('Al día • Sin pendientes');
                             }
 
                             var $list = $('#fgaAlertsList');
@@ -2346,8 +2346,8 @@
                                         '<div style="width: 44px; height: 44px; border-radius: 50%; background: #f0fdf4; color: #16a34a; display: inline-flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 8px;">' +
                                             '<i class="fa fa-check"></i>' +
                                         '</div>' +
-                                        '<div style="font-size: 13.5px; font-weight: 700; color: #1e293b;">Â¡Todo en orden!</div>' +
-                                        '<div style="font-size: 11.5px; color: #64748b; margin-top: 2px;">No se detectaron variaciones financieras atÃ­picas en las cooperativas.</div>' +
+                                        '<div style="font-size: 13.5px; font-weight: 700; color: #1e293b;">¡Todo en orden!</div>' +
+                                        '<div style="font-size: 11.5px; color: #64748b; margin-top: 2px;">No se detectaron variaciones financieras atípicas en las cooperativas.</div>' +
                                     '</li>'
                                 );
                                 return;
@@ -2359,7 +2359,7 @@
                                 var badgeClass = isCrit ? 'fga-badge-crit' : 'fga-badge-adv';
                                 var unreadClass = !item.leido ? 'fga-item-unread' : 'fga-item-read';
                                 var varColorClass = item.esPositivo ? 'var-up' : 'var-down';
-                                var varSign = item.esPositivo ? 'â–² ' : 'â–¼ ';
+                                var varSign = item.esPositivo ? '▲ ' : '▼ ';
 
                                 var $li = $(
                                     '<li class="fga-alert-item ' + unreadClass + '">' +
@@ -2377,7 +2377,7 @@
                                                     '<span class="fga-alert-diff ' + varColorClass + '">' + varSign + item.porcFormato + ' (' + item.montoFormato + ')' + (item.periodoAnterior ? ' vs. ' + item.periodoAnterior : '') + '</span>' +
                                                 '</div>' +
                                             '</div>' +
-                                            '<button type="button" class="fga-single-mark-btn" title="' + (!item.leido ? 'Marcar como leÃ­da' : 'LeÃ­da') + '">' +
+                                            '<button type="button" class="fga-single-mark-btn" title="' + (!item.leido ? 'Marcar como leída' : 'Leída') + '">' +
                                                 '<i class="fa ' + (!item.leido ? 'fa-circle' : 'fa-check') + '"></i>' +
                                             '</button>' +
                                         '</div>' +

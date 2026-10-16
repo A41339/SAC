@@ -3,173 +3,158 @@
    Hero KPI Cards, Ventana Expandida, Botones de Copiado y Tablas Markdown
    ========================================================================== */
 
-/* Hero KPI Card y badges del Chatbot */
-.sac-kpi-hero-card {
-    background: linear-gradient(135deg, #ffffff 0%, #f0f7ff 100%) !important;
-    border: 1px solid #bae6fd !important;
-    border-left: 4px solid #0071AD !important;
-    border-radius: 10px !important;
-    padding: 10px 14px 9px 14px !important;
-    margin-bottom: 10px !important;
-    box-shadow: 0 2px 6px rgba(0, 113, 173, 0.08) !important;
-    display: block !important;
-}
+/* Estilos críticos e independientes de caché para el Hero KPI Card y badges del Chatbot */
+    .sac-kpi-hero-card {
+        background: linear-gradient(135deg, #ffffff 0%, #f0f7ff 100%) !important;
+        border: 1px solid #bae6fd !important;
+        border-left: 4px solid #0071AD !important;
+        border-radius: 10px !important;
+        padding: 10px 14px 9px 14px !important;
+        margin-bottom: 10px !important;
+        box-shadow: 0 2px 6px rgba(0, 113, 173, 0.08) !important;
+        display: block !important;
+    }
+    .sac-kpi-hero-top {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        width: 100% !important;
+        gap: 8px !important;
+        margin-bottom: 4px !important;
+    }
+    .sac-kpi-hero-badge {
+        font-size: 11px !important;
+        font-weight: 700 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.5px !important;
+        color: #0284c7 !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 5px !important;
+    }
+    .sac-kpi-hero-badge i {
+        font-size: 11px !important;
+        color: #0071AD !important;
+    }
+    .sac-kpi-hero-period {
+        font-size: 10.5px !important;
+        font-weight: 700 !important;
+        color: #475569 !important;
+        background: #e2e8f0 !important;
+        padding: 2px 8px !important;
+        border-radius: 6px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 4px !important;
+        margin-left: auto !important;
+        white-space: nowrap !important;
+    }
+    .sac-kpi-hero-value {
+        font-size: 22px !important;
+        font-weight: 800 !important;
+        color: #004b75 !important;
+        line-height: 1.2 !important;
+        margin: 3px 0 2px 0 !important;
+        letter-spacing: -0.3px !important;
+        display: block !important;
+    }
+    .sac-kpi-hero-desc {
+        font-size: 10.5px !important;
+        color: #0369a1 !important;
+        font-weight: 600 !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 4px !important;
+        opacity: 0.9 !important;
+    }
 
-.sac-kpi-hero-top {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    width: 100% !important;
-    gap: 8px !important;
-    margin-bottom: 4px !important;
-}
+    /* Modo Expandido del Asistente Virtual (Drawer amplio para tablas y balances) */
+    .sac-chatbot-window.sac-window-expanded {
+        width: 650px !important;
+        height: 720px !important;
+        max-width: calc(100vw - 32px) !important;
+        max-height: calc(100vh - 100px) !important;
+        transition: width 0.25s cubic-bezier(0.16, 1, 0.3, 1), height 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    }
 
-.sac-kpi-hero-badge {
-    font-size: 11px !important;
-    font-weight: 700 !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.5px !important;
-    color: #0284c7 !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    gap: 5px !important;
-}
+    /* Botón y barra de acciones para copiar respuesta */
+    .sac-bubble-actions {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 6px;
+        margin-top: 8px;
+        padding-top: 6px;
+        border-top: 1px dashed rgba(0, 113, 173, 0.18);
+    }
+    .sac-btn-copy-bubble {
+        background: #ffffff;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        color: #475569;
+        font-size: 11px;
+        font-weight: 600;
+        padding: 3px 8px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        transition: all 0.2s ease;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    }
+    .sac-btn-copy-bubble:hover {
+        background: #f1f5f9;
+        border-color: #94a3b8;
+        color: #0f172a;
+    }
+    .sac-btn-copy-bubble.copied {
+        background: #ecfdf5 !important;
+        border-color: #10b981 !important;
+        color: #047857 !important;
+    }
 
-.sac-kpi-hero-badge i {
-    font-size: 11px !important;
-    color: #0071AD !important;
-}
-
-.sac-kpi-hero-period {
-    font-size: 10.5px !important;
-    font-weight: 700 !important;
-    color: #475569 !important;
-    background: #e2e8f0 !important;
-    padding: 2px 8px !important;
-    border-radius: 6px !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    gap: 4px !important;
-    margin-left: auto !important;
-    white-space: nowrap !important;
-}
-
-.sac-kpi-hero-value {
-    font-size: 22px !important;
-    font-weight: 800 !important;
-    color: #004b75 !important;
-    line-height: 1.2 !important;
-    margin: 3px 0 2px 0 !important;
-    letter-spacing: -0.3px !important;
-    display: block !important;
-}
-
-.sac-kpi-hero-desc {
-    font-size: 10.5px !important;
-    color: #0369a1 !important;
-    font-weight: 600 !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: 4px !important;
-    opacity: 0.9 !important;
-}
-
-/* Modo Expandido del Asistente Virtual (Drawer amplio para tablas y balances) */
-.sac-chatbot-window.sac-window-expanded {
-    width: 650px !important;
-    height: 720px !important;
-    max-width: calc(100vw - 32px) !important;
-    max-height: calc(100vh - 100px) !important;
-    transition: width 0.25s cubic-bezier(0.16, 1, 0.3, 1), height 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
-}
-
-/* Botón y barra de acciones para copiar respuesta */
-.sac-bubble-actions {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    gap: 6px;
-    margin-top: 8px;
-    padding-top: 6px;
-    border-top: 1px dashed rgba(0, 113, 173, 0.18);
-}
-
-.sac-btn-copy-bubble {
-    background: #ffffff;
-    border: 1px solid #cbd5e1;
-    border-radius: 6px;
-    color: #475569;
-    font-size: 11px;
-    font-weight: 600;
-    padding: 3px 8px;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    transition: all 0.2s ease;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
-}
-
-.sac-btn-copy-bubble:hover {
-    background: #f1f5f9;
-    border-color: #94a3b8;
-    color: #0f172a;
-}
-
-.sac-btn-copy-bubble.copied {
-    background: #ecfdf5 !important;
-    border-color: #10b981 !important;
-    color: #047857 !important;
-}
-
-/* Tablas Markdown con Estilo Corporativo FFC */
-.sac-table-responsive {
-    width: 100%;
-    overflow-x: auto;
-    margin: 10px 0;
-    border-radius: 8px;
-    border: 1px solid #cbd5e1;
-    background: #ffffff;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
-}
-
-.sac-chatbot-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 11.5px;
-    line-height: 1.4;
-    text-align: left;
-}
-
-.sac-chatbot-table th {
-    background: #0071AD;
-    color: #ffffff;
-    font-weight: 700;
-    padding: 8px 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.4px;
-    font-size: 10.5px;
-    border-bottom: 2px solid #005a8c;
-    white-space: nowrap;
-}
-
-.sac-chatbot-table td {
-    padding: 6px 10px;
-    border-bottom: 1px solid #e2e8f0;
-    color: #1e293b;
-}
-
-.sac-chatbot-table tbody tr:nth-child(even) {
-    background: #f8fafc;
-}
-
-.sac-chatbot-table tbody tr:hover {
-    background: #f0f7ff;
-}
-
-.sac-chatbot-table td.num-cell,
-.sac-chatbot-table th.num-cell {
-    text-align: right;
-    font-family: "Consolas", "Segoe UI Mono", monospace;
-    font-weight: 600;
-}
+    /* Tablas Markdown con Estilo Corporativo FFC */
+    .sac-table-responsive {
+        width: 100%;
+        overflow-x: auto;
+        margin: 10px 0;
+        border-radius: 8px;
+        border: 1px solid #cbd5e1;
+        background: #ffffff;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+    .sac-chatbot-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 11.5px;
+        line-height: 1.4;
+        text-align: left;
+    }
+    .sac-chatbot-table th {
+        background: #0071AD;
+        color: #ffffff;
+        font-weight: 700;
+        padding: 8px 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        font-size: 10.5px;
+        border-bottom: 2px solid #005a8c;
+        white-space: nowrap;
+    }
+    .sac-chatbot-table td {
+        padding: 6px 10px;
+        border-bottom: 1px solid #e2e8f0;
+        color: #1e293b;
+    }
+    .sac-chatbot-table tbody tr:nth-child(even) {
+        background: #f8fafc;
+    }
+    .sac-chatbot-table tbody tr:hover {
+        background: #f0f7ff;
+    }
+    .sac-chatbot-table td.num-cell,
+    .sac-chatbot-table th.num-cell {
+        text-align: right;
+        font-family: "Consolas", "Segoe UI Mono", monospace;
+        font-weight: 600;
+    }

@@ -1,7 +1,8 @@
-﻿@{
-    ViewBag.Title = "Mantenimiento del MenÃº";
+@{
+    ViewBag.Title = "Mantenimiento del Menú";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
 
 <section class="content-header">
     <div class="menu-header-banner">
@@ -23,7 +24,7 @@
 
     <ol class="breadcrumb">
         <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
-        <li><a href="@Url.Action("Index", "Modulo", new { id = 9200 })" class="breadcrumb-parent-pill" title="Volver a GestiÃ³n Operativa"><i class="fa fa-cogs" style="margin-right: 4px;"></i> Gesti&oacute;n Operativa</a></li>
+        <li><a href="@Url.Action("Index", "Modulo", new { id = 9200 })" class="breadcrumb-parent-pill" title="Volver a Gestión Operativa"><i class="fa fa-cogs" style="margin-right: 4px;"></i> Gesti&oacute;n Operativa</a></li>
         <li class="active">Men&uacute; del Sistema</li>
     </ol>
 </section>
@@ -33,7 +34,7 @@
         <div class="col-xs-12">
             <div class="modern-table-card">
                 
-                <!-- Encabezado con PestaÃ±as -->
+                <!-- Encabezado con Pestañas -->
                 <div class="menu-tabs-wrapper">
                     <ul class="nav nav-tabs custom-nav-tabs" role="tablist">
                         <li role="presentation" class="active">
@@ -51,9 +52,9 @@
                 </div>
 
                 <div class="tab-content">
-                    <!-- PESTAÃ‘A 1: VISTA TABLA -->
+                    <!-- PESTAÑA 1: VISTA TABLA -->
                     <div role="tabpanel" class="tab-pane active" id="tabTabla">
-                        <!-- Barra de Filtro por MÃ³dulo Padre -->
+                        <!-- Barra de Filtro por Módulo Padre -->
                         <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid #e2e8f0;">
                             <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
                                 <label for="filtroPadre" style="margin: 0; font-size: 13.5px; font-weight: 600; color: #334155;">
@@ -61,7 +62,7 @@
                                 </label>
                                 <select id="filtroPadre" class="form-control" style="width: 260px; height: 38px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 13px;">
                                     <option value="">-- Todos los M&oacute;dulos --</option>
-                                    <option value="MÃ³dulo Principal">ðŸŒŸ M&oacute;dulo Principal (Sin Padre)</option>
+                                    <option value="Módulo Principal">🌟 M&oacute;dulo Principal (Sin Padre)</option>
                                 </select>
                             </div>
 
@@ -70,7 +71,7 @@
                             </div>
                         </div>
 
-                        <!-- Tabla de Mantenimiento de MenÃºs -->
+                        <!-- Tabla de Mantenimiento de Menús -->
                         <table id="tbMenus" class="table table-striped table-bordered modern-data-table" style="width: 100%;">
                             <thead>
                                 <tr>
@@ -86,7 +87,7 @@
                         </table>
                     </div>
 
-                    <!-- PESTAÃ‘A 2: ORGANIZADOR VISUAL (DRAG & DROP) -->
+                    <!-- PESTAÑA 2: ORGANIZADOR VISUAL (DRAG & DROP) -->
                     <div role="tabpanel" class="tab-pane" id="tabOrganizador">
                         <!-- Barra Superior de Acciones -->
                         <div class="tree-actions-bar">
@@ -113,7 +114,7 @@
                             </div>
                         </div>
 
-                        <!-- Banner explicativo / ayuda rÃ¡pida -->
+                        <!-- Banner explicativo / ayuda rápida -->
                         <div class="alert alert-info" style="background: #f0f9ff; border: 1px solid #bae6fd; color: #0369a1; border-radius: 10px; padding: 12px 16px; margin-bottom: 20px; font-size: 12.5px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
                             <div style="display: flex; align-items: center; gap: 10px;">
                                 <i class="fa fa-info-circle" style="font-size: 18px; color: #0284c7;"></i>
@@ -129,12 +130,12 @@
                             <div style="margin-top: 12px; font-size: 14px; font-weight: 500;">Cargando estructura del men&uacute;...</div>
                         </div>
 
-                        <!-- Lista de MÃ³dulos Principales (Sortable) -->
+                        <!-- Lista de Módulos Principales (Sortable) -->
                         <div id="modulesSortableList" style="display: none;">
-                            <!-- Generado dinÃ¡micamente -->
+                            <!-- Generado dinámicamente -->
                         </div>
 
-                        <!-- Contenedor de Opciones Sin MÃ³dulo Asignado (si existen) -->
+                        <!-- Contenedor de Opciones Sin Módulo Asignado (si existen) -->
                         <div id="unassignedContainer" style="display: none; margin-top: 24px;">
                             <div class="module-card" style="border-style: dashed; border-color: #f59e0b; background: #fffbeb;">
                                 <div class="module-header" style="background: #fef3c7; border-bottom: 1px dashed #fde68a;">
@@ -150,7 +151,7 @@
                                     </div>
                                 </div>
                                 <ul class="menu-items-sortable" id="unassignedList" data-module-id="" style="background: #fffdf5;">
-                                    <!-- Generado dinÃ¡micamente -->
+                                    <!-- Generado dinámicamente -->
                                 </ul>
                             </div>
                         </div>
@@ -163,7 +164,7 @@
     </div>
 </section>
 
-<!-- Modal de EdiciÃ³n de OpciÃ³n de MenÃº -->
+<!-- Modal de Edición de Opción de Menú -->
 <div class="modal fade modal-menu-custom" id="modalEditarMenu" tabindex="-1" role="dialog" aria-labelledby="modalMenuLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
@@ -183,7 +184,7 @@
                 
                 <div class="modal-body">
                     <div class="row">
-                        <!-- Nombre de la opciÃ³n -->
+                        <!-- Nombre de la opción -->
                         <div class="col-md-7 col-xs-12">
                             <div class="form-group" style="margin-bottom: 18px;">
                                 <label class="form-label-custom" for="menuText">
@@ -194,7 +195,7 @@
                             </div>
                         </div>
 
-                        <!-- MÃ³dulo Padre -->
+                        <!-- Módulo Padre -->
                         <div class="col-md-5 col-xs-12">
                             <div class="form-group" style="margin-bottom: 18px;">
                                 <label class="form-label-custom" for="menuParentId">
@@ -210,7 +211,7 @@
 
                     <hr style="border-color: #f1f5f9; margin: 4px 0 18px 0;" />
 
-                    <!-- Ãcono de la OpciÃ³n -->
+                    <!-- Ícono de la Opción -->
                     <div class="form-group" style="margin-bottom: 20px;">
                         <label class="form-label-custom">
                             &Iacute;cono de la Ficha (FontAwesome):
@@ -225,12 +226,12 @@
                                     Valor por defecto del sistema: <strong id="lblDefaultIcon" style="color: #0284c7;">fa fa-folder-open-o</strong>.
                                 </div>
                             </div>
-                            <button type="button" id="btnRestaurarIcono" class="btn btn-default btn-sm" style="border-radius: 8px; border: 1px solid #cbd5e1; white-space: nowrap;" title="Usar Ã­cono por defecto">
+                            <button type="button" id="btnRestaurarIcono" class="btn btn-default btn-sm" style="border-radius: 8px; border: 1px solid #cbd5e1; white-space: nowrap;" title="Usar ícono por defecto">
                                 <i class="fa fa-undo"></i> Usar por defecto
                             </button>
                         </div>
 
-                        <!-- Chips de Ãconos Comunes -->
+                        <!-- Chips de Íconos Comunes -->
                         <div style="margin-top: 8px;">
                             <span style="font-size: 11.5px; font-weight: 600; color: #64748b; margin-right: 6px;">Sugeridos:</span>
                             <div style="display: inline-flex; flex-wrap: wrap; gap: 6px; margin-top: 4px;">
@@ -249,7 +250,7 @@
                         </div>
                     </div>
 
-                    <!-- DescripciÃ³n de la Ficha (Columna Description) -->
+                    <!-- Descripción de la Ficha (Columna Description) -->
                     <div class="form-group" style="margin-bottom: 10px;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
                             <label class="form-label-custom" for="menuDescription" style="margin-bottom: 0;">
@@ -259,7 +260,7 @@
                                 <i class="fa fa-undo"></i> Usar por defecto
                             </button>
                         </div>
-                        <textarea id="menuDescription" name="Description" class="form-control-custom" rows="3" maxlength="2000" placeholder="Ingrese el texto explicativo que se mostrarÃ¡ dentro de la tarjeta de la ficha..."></textarea>
+                        <textarea id="menuDescription" name="Description" class="form-control-custom" rows="3" maxlength="2000" placeholder="Ingrese el texto explicativo que se mostrará dentro de la tarjeta de la ficha..."></textarea>
                         
                         <div style="background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 8px; padding: 10px 14px; margin-top: 8px;">
                             <div style="font-size: 11.5px; font-weight: 600; color: #475569; margin-bottom: 2px;">
@@ -337,7 +338,7 @@
         var urlGetParents = '@Url.Action("GetParents", "Menu")';
         var urlSave = '@Url.Action("Save", "Menu")';
 
-        // Cargar combo de MÃ³dulos Padres para filtro y modal
+        // Cargar combo de Módulos Padres para filtro y modal
         $.ajax({
             url: urlGetParents,
             type: 'GET',
@@ -385,7 +386,7 @@
                     "data": "parentName",
                     "render": function (data, type, row) {
                         if (type === 'filter' || type === 'sort') {
-                            return row.parentId ? (data || '') : 'MÃ³dulo Principal';
+                            return row.parentId ? (data || '') : 'Módulo Principal';
                         }
                         if (!row.parentId) {
                             return '<span class="badge-modulo-principal"><i class="fa fa-sitemap"></i> M&oacute;dulo Principal</span>';
@@ -422,7 +423,7 @@
                             ? '<span class="badge-custom" style="margin-bottom: 4px;"><i class="fa fa-star"></i> Personalizada</span>'
                             : '<span class="badge-default" style="margin-bottom: 4px;">Por defecto</span>';
 
-                        var descText = data ? data : '<span style="color: #94a3b8; font-style: italic;">(Sin descripciÃ³n)</span>';
+                        var descText = data ? data : '<span style="color: #94a3b8; font-style: italic;">(Sin descripción)</span>';
 
                         return '<div>' + badgeHtml + '<div style="font-size: 12px; line-height: 1.4; color: #334155; margin-top: 2px;">' + descText + '</div></div>';
                     }
@@ -439,7 +440,7 @@
                 }
             ],
             "language": {
-                "processing": "Cargando opciones de menÃº...",
+                "processing": "Cargando opciones de menú...",
                 "search": "Buscar:",
                 "info": "Mostrando _START_ a _END_ de _TOTAL_ opciones",
                 "infoEmpty": "Mostrando 0 a 0 de 0 opciones",
@@ -449,34 +450,34 @@
                     "first": "Primero",
                     "previous": "Anterior",
                     "next": "Siguiente",
-                    "last": "Ãšltimo"
+                    "last": "Último"
                 }
             }
         });
 
-        // Filtrado por MÃ³dulo Padre
+        // Filtrado por Módulo Padre
         $('#filtroPadre').on('change', function () {
             var val = $(this).val();
             tablaMenus.column(1).search(val ? '^' + val + '$' : '', true, false).draw();
         });
 
-        // Preview en vivo del Ã­cono al escribir en el input
+        // Preview en vivo del ícono al escribir en el input
         $('#menuIcon').on('input', function () {
             actualizarPreviewIcono($(this).val());
         });
 
-        // BotÃ³n restaurar Ã­cono por defecto
+        // Botón restaurar ícono por defecto
         $('#btnRestaurarIcono').on('click', function () {
             $('#menuIcon').val('');
             actualizarPreviewIcono('');
         });
 
-        // BotÃ³n restaurar descripciÃ³n por defecto
+        // Botón restaurar descripción por defecto
         $('#btnRestaurarDesc').on('click', function () {
             $('#menuDescription').val('');
         });
 
-        // EnvÃ­o AJAX del formulario de ediciÃ³n
+        // Envío AJAX del formulario de edición
         $('#frmEditarMenu').on('submit', function (e) {
             e.preventDefault();
             $('#alertModal').hide().text('');
@@ -497,15 +498,15 @@
                             cargarJerarquia(false);
                         }
                         
-                        // NotificaciÃ³n flotante de Ã©xito
-                        mostrarToastExito(res.message || 'OpciÃ³n actualizada exitosamente.');
+                        // Notificación flotante de éxito
+                        mostrarToastExito(res.message || 'Opción actualizada exitosamente.');
                     } else {
-                        $('#alertModal').text(res.message || 'OcurriÃ³ un error al guardar los cambios.').show();
+                        $('#alertModal').text(res.message || 'Ocurrió un error al guardar los cambios.').show();
                     }
                 },
                 error: function (xhr, status, err) {
                     btn.prop('disabled', false).html('<i class="fa fa-save"></i> Guardar Cambios');
-                    $('#alertModal').text('Error de comunicaciÃ³n con el servidor: ' + err).show();
+                    $('#alertModal').text('Error de comunicación con el servidor: ' + err).show();
                 }
             });
         });
@@ -519,7 +520,7 @@
 
         $('#btnRecargarArbol').on('click', function () {
             if (hayCambiosPendientes()) {
-                if (!confirm("Tiene cambios sin guardar en el orden del menÃº. Â¿Desea descartarlos y recargar la estructura original?")) {
+                if (!confirm("Tiene cambios sin guardar en el orden del menú. ¿Desea descartarlos y recargar la estructura original?")) {
                     return;
                 }
             }
@@ -540,7 +541,7 @@
     });
 
     // ==========================================
-    // LÃ³gica del Organizador Visual (Drag & Drop)
+    // Lógica del Organizador Visual (Drag & Drop)
     // ==========================================
     var urlGetHierarchy = '@Url.Action("GetHierarchy", "Menu")';
     var urlUpdateHierarchy = '@Url.Action("UpdateHierarchy", "Menu")';
@@ -580,7 +581,7 @@
                         modulesList.show();
                     }
 
-                    // Elementos huÃ©rfanos reales (ParentId que no existe en BD)
+                    // Elementos huérfanos reales (ParentId que no existe en BD)
                     if (res.unassigned && res.unassigned.length > 0) {
                         var unassignedUl = $('#unassignedList');
                         $.each(res.unassigned, function (uIdx, uItem) {
@@ -600,13 +601,13 @@
                     actualizarBadgesYEstado(false);
                     jerarquiaCargada = true;
 
-                    // Si hay filtro activo en el buscador del Ã¡rbol, reaplicarlo
+                    // Si hay filtro activo en el buscador del árbol, reaplicarlo
                     var q = $('#treeSearchInput').val();
                     if (q) {
                         filtrarArbol(q);
                     }
                 } else {
-                    alert(res.message || 'Error al cargar la jerarquÃ­a de menÃºs.');
+                    alert(res.message || 'Error al cargar la jerarquía de menús.');
                 }
             },
             error: function (xhr, status, err) {
@@ -620,13 +621,13 @@
         var hasChildren = item.children && item.children.length > 0;
         var isContainer = item.isContainer || hasChildren;
 
-        // Caso A: MÃ³dulo RaÃ­z (Nivel 0)
+        // Caso A: Módulo Raíz (Nivel 0)
         if (nivel === 0) {
             var modCard = $('<div class="module-card" data-id="' + item.id + '" data-parent-id=""></div>');
             var modHeader = $(
                 '<div class="module-header">' +
                     '<div class="module-header-left">' +
-                        '<span class="module-drag-handle" title="Arrastre para reordenar este mÃ³dulo principal"><i class="fa fa-bars"></i></span>' +
+                        '<span class="module-drag-handle" title="Arrastre para reordenar este módulo principal"><i class="fa fa-bars"></i></span>' +
                         (isContainer
                             ? '<button type="button" class="module-collapse-btn" onclick="toggleModulo(' + item.id + ', this)" title="Colapsar / Expandir"><i class="fa fa-chevron-down"></i></button>'
                             : '<span class="badge-direct-link" title="Enlace Directo"><i class="fa fa-link"></i> Directo</span>') +
@@ -636,7 +637,7 @@
                     '</div>' +
                     '<div class="module-header-right">' +
                         '<span class="module-order-badge" id="modOrder_' + item.id + '">#0</span>' +
-                        '<button type="button" class="btn btn-default btn-xs" onclick="abrirModalEditar(' + item.id + ')" title="Modificar mÃ³dulo" style="border-radius: 6px; padding: 3px 8px;">' +
+                        '<button type="button" class="btn btn-default btn-xs" onclick="abrirModalEditar(' + item.id + ')" title="Modificar módulo" style="border-radius: 6px; padding: 3px 8px;">' +
                             '<i class="fa fa-edit text-primary"></i>' +
                         '</button>' +
                     '</div>' +
@@ -657,13 +658,13 @@
             return modCard;
         }
 
-        // Caso B: SubmÃ³dulo (Nivel > 0 pero tiene hijos o es contenedor)
+        // Caso B: Submódulo (Nivel > 0 pero tiene hijos o es contenedor)
         if (isContainer) {
             var subCard = $(
                 '<li class="submodule-card-item" data-id="' + item.id + '" data-text="' + $('<div>').text(item.menuText || '').html() + '">' +
                     '<div class="submodule-header">' +
                         '<div class="module-header-left">' +
-                            '<span class="item-drag-handle" title="Arrastre para reordenar este submÃ³dulo"><i class="fa fa-arrows"></i></span>' +
+                            '<span class="item-drag-handle" title="Arrastre para reordenar este submódulo"><i class="fa fa-arrows"></i></span>' +
                             '<button type="button" class="module-collapse-btn" onclick="toggleModulo(' + item.id + ', this)" title="Colapsar / Expandir"><i class="fa fa-chevron-down"></i></button>' +
                             '<div class="item-icon-box" style="width: 26px; height: 26px; font-size: 12px;"><i class="' + (item.menuIcon || 'fa fa-folder-open') + '"></i></div>' +
                             '<strong style="font-size: 13px; color: #0f172a;">' + $('<div>').text(item.menuText).html() + '</strong>' +
@@ -672,7 +673,7 @@
                         '</div>' +
                         '<div class="module-header-right">' +
                             '<span class="item-order-badge" id="modOrder_' + item.id + '">#0</span>' +
-                            '<button type="button" class="btn btn-default btn-xs" onclick="abrirModalEditar(' + item.id + ')" title="Modificar submÃ³dulo" style="border-radius: 6px; padding: 3px 8px;">' +
+                            '<button type="button" class="btn btn-default btn-xs" onclick="abrirModalEditar(' + item.id + ')" title="Modificar submódulo" style="border-radius: 6px; padding: 3px 8px;">' +
                                 '<i class="fa fa-edit text-primary"></i>' +
                             '</button>' +
                         '</div>' +
@@ -690,14 +691,14 @@
             return subCard;
         }
 
-        // Caso C: OpciÃ³n Hoja (Ficha / Pantalla directa)
+        // Caso C: Opción Hoja (Ficha / Pantalla directa)
         var iconCls = limpiarClaseIcono(item.menuIcon) || 'fa fa-file-text-o';
         var urlLabel = item.menuUrl ? item.menuUrl : '#';
 
         var itemLi = $(
             '<li class="menu-item-card" data-id="' + item.id + '" data-text="' + $('<div>').text(item.menuText || '').html() + '" data-url="' + $('<div>').text(urlLabel).html() + '">' +
                 '<div class="item-info">' +
-                    '<span class="item-drag-handle" title="Arrastre para mover esta opciÃ³n"><i class="fa fa-arrows"></i></span>' +
+                    '<span class="item-drag-handle" title="Arrastre para mover esta opción"><i class="fa fa-arrows"></i></span>' +
                     '<div class="item-icon-box"><i class="' + iconCls + '"></i></div>' +
                     '<div style="min-width: 0; flex: 1;">' +
                         '<div class="item-title-text">' + $('<div>').text(item.menuText).html() + '</div>' +
@@ -706,7 +707,7 @@
                 '</div>' +
                 '<div style="display: flex; align-items: center; gap: 8px; margin-left: 10px;">' +
                     '<span class="item-order-badge" id="itemOrder_' + item.id + '">#0</span>' +
-                    '<button type="button" class="btn btn-default btn-xs" onclick="abrirModalEditar(' + item.id + ')" title="Modificar opciÃ³n" style="border-radius: 6px; padding: 3px 8px;">' +
+                    '<button type="button" class="btn btn-default btn-xs" onclick="abrirModalEditar(' + item.id + ')" title="Modificar opción" style="border-radius: 6px; padding: 3px 8px;">' +
                         '<i class="fa fa-edit text-primary"></i>' +
                     '</button>' +
                 '</div>' +
@@ -721,7 +722,7 @@
             padres: {}
         };
 
-        // MÃ³dulos raÃ­z
+        // Módulos raíz
         var rootIds = [];
         $('#modulesSortableList > .module-card').each(function () {
             var id = parseInt($(this).data('id'));
@@ -752,7 +753,7 @@
     var itemsModificadosUsuario = {};
 
     function iniciarSortables() {
-        // Reordenar mÃ³dulos principales entre sÃ­
+        // Reordenar módulos principales entre sí
         $('#modulesSortableList').sortable({
             handle: '.module-drag-handle',
             placeholder: 'module-sortable-placeholder',
@@ -774,7 +775,7 @@
             }
         });
 
-        // Reordenar y transferir opciones hijas y submÃ³dulos entre contenedores
+        // Reordenar y transferir opciones hijas y submódulos entre contenedores
         $('.menu-items-sortable').sortable({
             connectWith: '.menu-items-sortable',
             handle: '.item-drag-handle',
@@ -812,8 +813,8 @@
     }
 
     function actualizarBadgesYEstado(evaluarCambios) {
-        // 1. Actualizar nÃºmeros de orden secuenciales en la UI
-        // MÃ³dulos raÃ­z
+        // 1. Actualizar números de orden secuenciales en la UI
+        // Módulos raíz
         $('#modulesSortableList > .module-card').each(function (idx) {
             var modId = parseInt($(this).data('id'));
             $('#modOrder_' + modId).text('Orden #' + (idx + 1));
@@ -885,7 +886,7 @@
             $('#badgeCambiosHeader').text(cantMovimientos).show();
 
             window.onbeforeunload = function () {
-                return "Tiene cambios sin guardar en la jerarquÃ­a del menÃº.";
+                return "Tiene cambios sin guardar en la jerarquía del menú.";
             };
         } else {
             itemsModificadosUsuario = {};
@@ -907,7 +908,7 @@
     function guardarJerarquia() {
         var listaFinal = [];
 
-        // 1. MÃ³dulos raÃ­z
+        // 1. Módulos raíz
         $('#modulesSortableList > .module-card').each(function (modIndex) {
             var modId = parseInt($(this).data('id'));
             if (!isNaN(modId)) {
@@ -919,7 +920,7 @@
             }
         });
 
-        // 2. Todos los hijos y submÃ³dulos en cualquier .menu-items-sortable
+        // 2. Todos los hijos y submódulos en cualquier .menu-items-sortable
         $('.menu-items-sortable').each(function () {
             var parentModId = parseInt($(this).data('module-id'));
             if (!isNaN(parentModId)) {
@@ -937,7 +938,7 @@
         });
 
         if (listaFinal.length === 0) {
-            alert('No se encontraron elementos de menÃº para guardar.');
+            alert('No se encontraron elementos de menú para guardar.');
             return;
         }
 
@@ -952,17 +953,17 @@
             success: function (res) {
                 if (res && res.success) {
                     window.onbeforeunload = null;
-                    mostrarToastExito(res.message || 'JerarquÃ­a actualizada exitosamente.');
+                    mostrarToastExito(res.message || 'Jerarquía actualizada exitosamente.');
                     tablaMenus.ajax.reload(null, false);
                     cargarJerarquia(true);
                 } else {
                     btn.prop('disabled', false).html('<i class="fa fa-save"></i> Guardar Cambios');
-                    alert(res.message || 'OcurriÃ³ un error al guardar la jerarquÃ­a.');
+                    alert(res.message || 'Ocurrió un error al guardar la jerarquía.');
                 }
             },
             error: function (xhr, status, err) {
                 btn.prop('disabled', false).html('<i class="fa fa-save"></i> Guardar Cambios');
-                alert('Error de comunicaciÃ³n con el servidor: ' + err);
+                alert('Error de comunicación con el servidor: ' + err);
             }
         });
     }
@@ -1053,22 +1054,22 @@
         });
     }
 
-    // Abrir Modal de EdiciÃ³n
+    // Abrir Modal de Edición
     function abrirModalEditar(id) {
         $('#alertModal').hide().text('');
         var urlGetMenu = '@Url.Action("Get", "Menu")/' + id;
         var urlGetParents = '@Url.Action("GetParents", "Menu")?excludeId=' + id;
 
         var selectModal = $('#menuParentId');
-        selectModal.prop('disabled', true).empty().append($('<option>', { value: '', text: 'Cargando mÃ³dulos padres...' }));
+        selectModal.prop('disabled', true).empty().append($('<option>', { value: '', text: 'Cargando módulos padres...' }));
 
-        // 1. Cargar combo de mÃ³dulos padres vÃ¡lidos (excluyendo a sÃ­ mismo y a sus descendientes)
+        // 1. Cargar combo de módulos padres válidos (excluyendo a sí mismo y a sus descendientes)
         $.ajax({
             url: urlGetParents,
             type: 'GET',
             success: function (pRes) {
                 selectModal.empty();
-                selectModal.append($('<option>', { value: '', text: '(Ninguno - MÃ³dulo Principal / RaÃ­z)' }));
+                selectModal.append($('<option>', { value: '', text: '(Ninguno - Módulo Principal / Raíz)' }));
                 if (pRes && pRes.success && pRes.parents) {
                     $.each(pRes.parents, function (i, item) {
                         selectModal.append($('<option>', { value: item.id, text: item.nombre }));
@@ -1076,7 +1077,7 @@
                 }
                 selectModal.prop('disabled', false);
 
-                // 2. Cargar datos de la opciÃ³n a editar
+                // 2. Cargar datos de la opción a editar
                 $.ajax({
                     url: urlGetMenu,
                     type: 'GET',
@@ -1093,23 +1094,23 @@
                             defaultDescActual = m.defaultDescription || '';
 
                             $('#lblDefaultIcon').text(defaultIconActual);
-                            $('#lblDefaultDesc').text(defaultDescActual || '(No tiene descripciÃ³n por defecto)');
+                            $('#lblDefaultDesc').text(defaultDescActual || '(No tiene descripción por defecto)');
 
                             actualizarPreviewIcono(m.menuIcon);
 
                             $('#modalEditarMenu').modal('show');
                         } else {
-                            alert(res.message || 'No fue posible consultar la opciÃ³n de menÃº.');
+                            alert(res.message || 'No fue posible consultar la opción de menú.');
                         }
                     },
                     error: function () {
-                        alert('Error al consultar datos de la opciÃ³n.');
+                        alert('Error al consultar datos de la opción.');
                     }
                 });
             },
             error: function () {
                 selectModal.prop('disabled', false);
-                alert('Error al consultar lista de mÃ³dulos padres.');
+                alert('Error al consultar lista de módulos padres.');
             }
         });
     }

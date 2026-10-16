@@ -1,7 +1,8 @@
-﻿@{
-    ViewBag.Title = "CatÃ¡logo SUGEF";
+@{
+    ViewBag.Title = "Catálogo SUGEF";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
 
 <section class="content-header">
     <div class="cuenta-header-banner">
@@ -23,7 +24,7 @@
 
     <ol class="breadcrumb">
         <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
-        <li><a href="@Url.Action("Index", "Modulo", new { id = 9200 })" class="breadcrumb-parent-pill" title="Volver a GestiÃ³n Operativa"><i class="fa fa-cogs" style="margin-right: 4px;"></i> Gesti&oacute;n Operativa</a></li>
+        <li><a href="@Url.Action("Index", "Modulo", new { id = 9200 })" class="breadcrumb-parent-pill" title="Volver a Gestión Operativa"><i class="fa fa-cogs" style="margin-right: 4px;"></i> Gesti&oacute;n Operativa</a></li>
         <li class="active">Cat&aacute;logo SUGEF</li>
     </ol>
 </section>
@@ -49,7 +50,7 @@
 </section>
 
 <!-- ========================================================================= -->
-<!-- MODAL DINÃMICO: CREAR / EDITAR CUENTA CONTABLE -->
+<!-- MODAL DINÁMICO: CREAR / EDITAR CUENTA CONTABLE -->
 <!-- ========================================================================= -->
 <div class="modal fade modal-cuenta-custom" id="modalCuenta" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
     <div class="modal-dialog modal-md" role="document">
@@ -69,12 +70,12 @@
                     <div class="form-group form-group-custom">
                         <label for="cuentaId">N&uacute;mero de Cuenta Contable <span style="color: #ef4444;">*</span></label>
                         <input type="text" class="form-control" id="cuentaId" placeholder="Ej: 1010101" required autocomplete="off" />
-                        <small class="text-muted" style="font-size: 11.5px;">CÃ³digo numÃ©rico segÃºn el catÃ¡logo de cuentas de SUGEF.</small>
+                        <small class="text-muted" style="font-size: 11.5px;">Código numérico según el catálogo de cuentas de SUGEF.</small>
                     </div>
 
                     <div class="form-group form-group-custom">
                         <label for="cuentaNombre">Nombre / Descripci&oacute;n de la Cuenta <span style="color: #ef4444;">*</span></label>
-                        <input type="text" class="form-control" id="cuentaNombre" placeholder="DescripciÃ³n oficial" required autocomplete="off" />
+                        <input type="text" class="form-control" id="cuentaNombre" placeholder="Descripción oficial" required autocomplete="off" />
                     </div>
 
                     <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px 16px; margin-top: 14px;">
@@ -83,7 +84,7 @@
                             <span><strong>Habilitar para Proyecci&oacute;n</strong> (Ind_Proyectar)</span>
                         </label>
                         <small class="text-muted" style="display: block; margin-top: 4px; font-size: 11.5px;">
-                            Indica si esta cuenta participa en los modelos y cÃ¡lculos de proyecciÃ³n financiera.
+                            Indica si esta cuenta participa en los modelos y cálculos de proyección financiera.
                         </small>
                     </div>
                 </div>
@@ -99,7 +100,7 @@
 </div>
 
 <!-- ========================================================================= -->
-<!-- MODAL DINÃMICO: CONFIRMAR ELIMINACIÃ“N DE CUENTA -->
+<!-- MODAL DINÁMICO: CONFIRMAR ELIMINACIÓN DE CUENTA -->
 <!-- ========================================================================= -->
 <div class="modal fade modal-cuenta-custom" id="modalDeleteCuenta" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-sm" role="document">
@@ -112,7 +113,7 @@
             </div>
             <div class="modal-body" style="text-align: center; padding: 24px 16px;">
                 <p style="font-size: 14px; color: #334155; margin-bottom: 8px;">
-                    Â¿Est&aacute; seguro que desea eliminar la cuenta contable?
+                    ¿Est&aacute; seguro que desea eliminar la cuenta contable?
                 </p>
                 <p style="font-size: 15px; font-weight: 700; color: #0f172a; word-break: break-word;" id="lblDeleteCuentaInfo"></p>
                 <p style="font-size: 12px; color: #94a3b8; margin-top: 12px;">
@@ -179,7 +180,7 @@
                     "mRender": function (data) {
                         var isYes = ('' + data).toLowerCase().indexOf('s') !== -1;
                         return '<span class="badge-pill-tag ' + (isYes ? 'yes' : 'no') + '">' +
-                            '<i class="fa ' + (isYes ? 'fa-check' : 'fa-times') + '"></i> ' + (isYes ? 'SÃ­' : 'No') + '</span>';
+                            '<i class="fa ' + (isYes ? 'fa-check' : 'fa-times') + '"></i> ' + (isYes ? 'Sí' : 'No') + '</span>';
                     }
                 }
             ]
@@ -227,7 +228,7 @@
                     }
                 },
                 error: function () {
-                    window.mostrarToastError('Error de comunicaciÃ³n al consultar la cuenta.');
+                    window.mostrarToastError('Error de comunicación al consultar la cuenta.');
                 }
             });
         });
@@ -264,7 +265,7 @@
                 },
                 error: function () {
                     $btn.prop('disabled', false).html('<i class="fa fa-check" style="margin-right: 4px;"></i> Guardar');
-                    $('#modalCuentaError').text('Error de comunicaciÃ³n al procesar la cuenta contable.').fadeIn();
+                    $('#modalCuentaError').text('Error de comunicación al procesar la cuenta contable.').fadeIn();
                 }
             });
         });
@@ -281,7 +282,7 @@
         });
 
         // ---------------------------------------------------------------------
-        // CONFIRMAR ELIMINACIÃ“N DE CUENTA
+        // CONFIRMAR ELIMINACIÓN DE CUENTA
         // ---------------------------------------------------------------------
         $('#btnConfirmDeleteCuenta').on('click', function () {
             var cuentaId = $('#deleteCuentaId').val();
@@ -293,7 +294,7 @@
                 type: 'POST',
                 data: { id: cuentaId },
                 success: function (res) {
-                    $btn.prop('disabled', false).html('<i class="fa fa-trash" style="margin-right: 4px;"></i> SÃ­, Eliminar');
+                    $btn.prop('disabled', false).html('<i class="fa fa-trash" style="margin-right: 4px;"></i> Sí, Eliminar');
                     $('#modalDeleteCuenta').modal('hide');
                     if (res.success) {
                         oTableCompany.ajax.reload(null, false);
@@ -303,9 +304,9 @@
                     }
                 },
                 error: function () {
-                    $btn.prop('disabled', false).html('<i class="fa fa-trash" style="margin-right: 4px;"></i> SÃ­, Eliminar');
+                    $btn.prop('disabled', false).html('<i class="fa fa-trash" style="margin-right: 4px;"></i> Sí, Eliminar');
                     $('#modalDeleteCuenta').modal('hide');
-                    window.mostrarToastError('Error de comunicaciÃ³n al intentar eliminar la cuenta contable.');
+                    window.mostrarToastError('Error de comunicación al intentar eliminar la cuenta contable.');
                 }
             });
         });

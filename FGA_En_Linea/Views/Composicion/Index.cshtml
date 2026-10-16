@@ -1,7 +1,7 @@
-﻿@model  FGA.Model.Composicion_cartera
+@model  FGA.Model.Composicion_cartera
 
 @{
-    ViewBag.Title = "DesempeÃ±o";
+    ViewBag.Title = "Desempeño";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="~/Content/multiselect/docs/css/prettify.min.css" type="text/css">
     <script type="text/javascript" src="~/Content/multiselect/docs/js/prettify.min.js"></script>
     <link rel="stylesheet" href="~/Content/multiselect/dist/css/bootstrap-multiselect.css" type="text/css">
-    <script type="text/javascript" src="~/Content/multiselect/dist/js/bootstrap-multiselect.js"></script>
+    <script type="text/javascript" src="~/Content/multiselect/dist/js/bootstrap-multiselect.js"></script>
 }
 
 <section class="content-header" style="padding: 10px 20px 6px 20px;">
@@ -27,7 +27,7 @@
     </div>
     <ol class="breadcrumb" style="top: 8px;">
         <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
-        <li><a href="@Url.Action("Index", "Modulo", new { id = 4000 })" class="breadcrumb-parent-pill" title="Volver al menÃº de Cartera de CrÃ©dito"><i class="fa fa-pie-chart" style="margin-right: 4px;"></i> Cartera de Cr&eacute;dito</a></li>
+        <li><a href="@Url.Action("Index", "Modulo", new { id = 4000 })" class="breadcrumb-parent-pill" title="Volver al menú de Cartera de Crédito"><i class="fa fa-pie-chart" style="margin-right: 4px;"></i> Cartera de Cr&eacute;dito</a></li>
         <li class="active">Desempe&ntilde;o</li>
     </ol>
 </section>
@@ -91,7 +91,7 @@
         </div>
     </div>
 
-    <!-- Nota Informativa al pie de pÃ¡gina -->
+    <!-- Nota Informativa al pie de página -->
     <div class="row">
         <div class="col-xs-12">
             <div class="modern-info-card" style="margin-top: 8px; margin-bottom: 12px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 8px 14px; display: flex; align-items: center; gap: 10px;">
@@ -99,7 +99,7 @@
                     i
                 </div>
                 <div style="font-size: 12px; color: #1e3a8a;">
-                    <strong>Nota:</strong> Toda la informaciÃ³n se presenta en millones de colones y corresponde al perÃ­odo de referencia seleccionado.
+                    <strong>Nota:</strong> Toda la información se presenta en millones de colones y corresponde al período de referencia seleccionado.
                 </div>
             </div>
         </div>
@@ -157,7 +157,7 @@
     });
 
     function refreshGraph() {
-         $('#grafica').html('<div style="text-align: center; padding: 40px 0; color: #64748b;"><i class="fa fa-spinner fa-spin fa-2x"></i><p style="margin-top: 10px; font-size: 13px;">Cargando grÃ¡fico...</p></div>');
+         $('#grafica').html('<div style="text-align: center; padding: 40px 0; color: #64748b;"><i class="fa fa-spinner fa-spin fa-2x"></i><p style="margin-top: 10px; font-size: 13px;">Cargando gráfico...</p></div>');
          $.ajax({
             url: '@Url.Action("GraficaDetalle", "Composicion")',
             type: 'POST',
@@ -190,7 +190,7 @@
                  }, 60);
              },
             error: function () {
-                $('#grafica').html('<div class="alert alert-danger" style="margin: 20px;">OcurriÃ³ un error al cargar el grÃ¡fico.</div>');
+                $('#grafica').html('<div class="alert alert-danger" style="margin: 20px;">Ocurrió un error al cargar el gráfico.</div>');
             }
          });
     }

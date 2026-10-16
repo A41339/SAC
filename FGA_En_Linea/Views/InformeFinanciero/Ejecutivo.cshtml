@@ -1,4 +1,4 @@
-﻿@model FGA.Model.InformeEjecutivoViewModel
+@model FGA.Model.InformeEjecutivoViewModel
 @{
     Layout = null;
     var nombreEntidad = Model != null ? Model.NombreEntidad : "COOPENAE R.L.";
@@ -11,12 +11,12 @@
     <meta charset="utf-8" />
     <title>Informe Ejecutivo - FFC</title>
     <link rel="stylesheet" href="@Url.Content("~/Content/theme/bower_components/bootstrap/dist/css/bootstrap.min.css")" />
-    <link rel="stylesheet" href="@Url.Content("~/Content/theme/bower_components/font-awesome/css/font-awesome.min.css")" />
-    <link rel="stylesheet" href="@Url.Content("~/Content/informe_ejecutivo.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/theme/bower_components/font-awesome/css/font-awesome.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/informe_ejecutivo.css")" />
 </head>
 <body>
 
-    <!-- Documento Informe Ejecutivo con Datos Reales del PerÃ­odo Final Seleccionado -->
+    <!-- Documento Informe Ejecutivo con Datos Reales del Período Final Seleccionado -->
     <div class="executive-report-card">
         
         <!-- Encabezado Institucional -->
@@ -41,7 +41,7 @@
             </div>
         </div>
 
-        <!-- Resumen de CalificaciÃ³n CAMEL -->
+        <!-- Resumen de Calificación CAMEL -->
         <div class="row" style="margin-bottom: 24px;">
             <div class="col-xs-12 col-sm-4 col-md-3" style="margin-bottom: 12px;">
                 @{
@@ -108,7 +108,7 @@
             </div>
         </div>
 
-        <!-- SemÃ¡foros por Pilar CAMEL -->
+        <!-- Semáforos por Pilar CAMEL -->
         <div style="display: flex; justify-content: space-between; align-items: center; margin: 0 0 14px 0;">
             <h3 style="font-size: 15px; font-weight: 700; color: #0f172a; margin: 0; border-left: 4px solid #0284c7; padding-left: 10px;">
                 Evaluaci&oacute;n General por Pilares CAMEL (@periodoActual)
@@ -132,12 +132,12 @@
                         ValorBaseNumerico = Model.SuficienciaPatrimonial,
                         Calificacion = Model.NotaCapital,
                         Semaforo = Model.SemaforoCapital,
-                        Observaciones = "Suficiencia de capital sÃ³lida con reservas patrimoniales en crecimiento.",
-                        Formula = "Capital Base / Activos Ponderados por Riesgo Ã— 100",
-                        ExplicacionCalculo = "Mide la solvencia para amortiguar pÃ©rdidas crediticias u operativas no esperadas. Al situarse en <strong>" + Model.SuficienciaPatrimonial.ToString("N2") + "%</strong>, supera con holgura el umbral Ã³ptimo del 14.00% y el mÃ­nimo legal SUGEF del 10.00%, asignÃ¡ndosele calificaciÃ³n Ã³ptima de <strong>" + Model.NotaCapital.ToString("N2") + "</strong>.",
+                        Observaciones = "Suficiencia de capital sólida con reservas patrimoniales en crecimiento.",
+                        Formula = "Capital Base / Activos Ponderados por Riesgo × 100",
+                        ExplicacionCalculo = "Mide la solvencia para amortiguar pérdidas crediticias u operativas no esperadas. Al situarse en <strong>" + Model.SuficienciaPatrimonial.ToString("N2") + "%</strong>, supera con holgura el umbral óptimo del 14.00% y el mínimo legal SUGEF del 10.00%, asignándosele calificación óptima de <strong>" + Model.NotaCapital.ToString("N2") + "</strong>.",
                         Umbrales = new List<FGA.Model.UmbralItem>
                         {
-                            new FGA.Model.UmbralItem { Rango = "â‰¥ 14.00%", Nota = "1.00", Estado = "Verde", EsActual = Model.SuficienciaPatrimonial >= 14.00m || Model.SuficienciaPatrimonial == 0 },
+                            new FGA.Model.UmbralItem { Rango = "≥ 14.00%", Nota = "1.00", Estado = "Verde", EsActual = Model.SuficienciaPatrimonial >= 14.00m || Model.SuficienciaPatrimonial == 0 },
                             new FGA.Model.UmbralItem { Rango = "12.00% - 13.99%", Nota = "1.01 a 2.00", Estado = "Verde", EsActual = Model.SuficienciaPatrimonial >= 12.00m && Model.SuficienciaPatrimonial < 14.00m },
                             new FGA.Model.UmbralItem { Rango = "10.00% - 11.99%", Nota = "2.01 a 2.50", Estado = "Amarillo", EsActual = Model.SuficienciaPatrimonial >= 10.00m && Model.SuficienciaPatrimonial < 12.00m },
                             new FGA.Model.UmbralItem { Rango = "< 10.00%", Nota = "2.51 a 5.00 (Irregularidad)", Estado = "Rojo", EsActual = Model.SuficienciaPatrimonial > 0 && Model.SuficienciaPatrimonial < 10.00m }
@@ -147,37 +147,37 @@
                     {
                         Clave = "A",
                         NombrePilar = "Activos (A)",
-                        IndicadorBase = "Morosidad > 90 dÃ­as y Cobro Judicial",
+                        IndicadorBase = "Morosidad > 90 días y Cobro Judicial",
                         ValorBaseFormateado = Model.Morosidad90Dias.ToString("N2") + "%",
                         ValorBaseNumerico = Model.Morosidad90Dias,
                         Calificacion = Model.NotaActivos,
                         Semaforo = Model.SemaforoActivos,
-                        Observaciones = "Cartera de crÃ©ditos sana con morosidad controlada bajo el lÃ­mite legal del 3%.",
-                        Formula = "(Cartera Mora > 90 dÃ­as + Cobro Judicial) / Cartera Total Ã— 100",
-                        ExplicacionCalculo = "EvalÃºa el riesgo y deterioro crediticio. Con un valor de <strong>" + Model.Morosidad90Dias.ToString("N2") + "%</strong>, se ubica en el tramo de riesgo bajo (1.01% - 3.00%). Mediante interpolaciÃ³n lineal proporcional SUGEF dentro del rango 1,01 a 2,00, se asigna la calificaciÃ³n exacta de <strong>" + Model.NotaActivos.ToString("N2") + "</strong> (Riesgo Bajo).",
+                        Observaciones = "Cartera de créditos sana con morosidad controlada bajo el límite legal del 3%.",
+                        Formula = "(Cartera Mora > 90 días + Cobro Judicial) / Cartera Total × 100",
+                        ExplicacionCalculo = "Evalúa el riesgo y deterioro crediticio. Con un valor de <strong>" + Model.Morosidad90Dias.ToString("N2") + "%</strong>, se ubica en el tramo de riesgo bajo (1.01% - 3.00%). Mediante interpolación lineal proporcional SUGEF dentro del rango 1,01 a 2,00, se asigna la calificación exacta de <strong>" + Model.NotaActivos.ToString("N2") + "</strong> (Riesgo Bajo).",
                         Umbrales = new List<FGA.Model.UmbralItem>
                         {
-                            new FGA.Model.UmbralItem { Rango = "â‰¤ 1.00%", Nota = "1.00", Estado = "Verde", EsActual = Model.Morosidad90Dias <= 1.00m },
+                            new FGA.Model.UmbralItem { Rango = "≤ 1.00%", Nota = "1.00", Estado = "Verde", EsActual = Model.Morosidad90Dias <= 1.00m },
                             new FGA.Model.UmbralItem { Rango = "1.01% - 3.00%", Nota = "1.01 a 2.00", Estado = "Verde", EsActual = Model.Morosidad90Dias > 1.00m && Model.Morosidad90Dias <= 3.00m },
                             new FGA.Model.UmbralItem { Rango = "3.01% - 5.00%", Nota = "2.01 a 2.50", Estado = "Amarillo", EsActual = Model.Morosidad90Dias > 3.00m && Model.Morosidad90Dias <= 5.00m },
-                            new FGA.Model.UmbralItem { Rango = "> 5.00%", Nota = "2.51 a 5.00 (CrÃ­tico)", Estado = "Rojo", EsActual = Model.Morosidad90Dias > 5.00m }
+                            new FGA.Model.UmbralItem { Rango = "> 5.00%", Nota = "2.51 a 5.00 (Crítico)", Estado = "Rojo", EsActual = Model.Morosidad90Dias > 5.00m }
                         }
                     },
                     new FGA.Model.PilarCamelItem
                     {
                         Clave = "M",
-                        NombrePilar = "Manejo / GestiÃ³n (M)",
+                        NombrePilar = "Manejo / Gestión (M)",
                         IndicadorBase = "Eficiencia Operativa (Gastos Adm. / Margen)",
                         ValorBaseFormateado = Model.EficienciaOperativa.ToString("N2") + "%",
                         ValorBaseNumerico = Model.EficienciaOperativa,
                         Calificacion = Model.NotaManejo,
                         Semaforo = Model.SemaforoManejo,
-                        Observaciones = "Cumplimiento de polÃ­ticas de gobernanza y disciplina en contenciÃ³n de costos operativos.",
-                        Formula = "(Gastos de AdministraciÃ³n + Personal) / Margen Financiero Bruto Ã— 100",
-                        ExplicacionCalculo = "Mide la eficiencia operativa del gasto de administraciÃ³n. Consumiendo el <strong>" + Model.EficienciaOperativa.ToString("N2") + "%</strong> del margen financiero, se califica en <strong>" + Model.NotaManejo.ToString("N2") + "</strong> segÃºn la escala SUGEF e interpolaciÃ³n de absorciÃ³n operativa.",
+                        Observaciones = "Cumplimiento de políticas de gobernanza y disciplina en contención de costos operativos.",
+                        Formula = "(Gastos de Administración + Personal) / Margen Financiero Bruto × 100",
+                        ExplicacionCalculo = "Mide la eficiencia operativa del gasto de administración. Consumiendo el <strong>" + Model.EficienciaOperativa.ToString("N2") + "%</strong> del margen financiero, se califica en <strong>" + Model.NotaManejo.ToString("N2") + "</strong> según la escala SUGEF e interpolación de absorción operativa.",
                         Umbrales = new List<FGA.Model.UmbralItem>
                         {
-                            new FGA.Model.UmbralItem { Rango = "â‰¤ 60.00%", Nota = "1.00 a 1.20", Estado = "Verde", EsActual = Model.EficienciaOperativa <= 60.00m },
+                            new FGA.Model.UmbralItem { Rango = "≤ 60.00%", Nota = "1.00 a 1.20", Estado = "Verde", EsActual = Model.EficienciaOperativa <= 60.00m },
                             new FGA.Model.UmbralItem { Rango = "60.01% - 75.00%", Nota = "1.21 a 2.00", Estado = "Verde", EsActual = Model.EficienciaOperativa > 60.00m && Model.EficienciaOperativa <= 75.00m },
                             new FGA.Model.UmbralItem { Rango = "75.01% - 85.00%", Nota = "2.01 a 2.50", Estado = "Amarillo", EsActual = Model.EficienciaOperativa > 75.00m && Model.EficienciaOperativa <= 85.00m },
                             new FGA.Model.UmbralItem { Rango = "> 85.00%", Nota = "2.51 a 5.00 (Deficiente)", Estado = "Rojo", EsActual = Model.EficienciaOperativa > 85.00m }
@@ -186,18 +186,18 @@
                     new FGA.Model.PilarCamelItem
                     {
                         Clave = "E",
-                        NombrePilar = "EvaluaciÃ³n Rentabilidad (E)",
+                        NombrePilar = "Evaluación Rentabilidad (E)",
                         IndicadorBase = "Rendimiento sobre Activos (ROA)",
                         ValorBaseFormateado = "1.51%",
                         ValorBaseNumerico = 1.51m,
                         Calificacion = Model.NotaEvaluacion,
                         Semaforo = Model.SemaforoEvaluacion,
-                        Observaciones = "Margen financiero estable con capacidad sÃ³lida de generaciÃ³n de excedentes.",
-                        Formula = "Utilidad Neta del PerÃ­odo / Activo Total Promedio Ã— 100",
-                        ExplicacionCalculo = "EvalÃºa la rentabilidad y capacidad de autofinanciamiento patrimonial. Con un ROA de <strong>1.51%</strong>, la entidad genera excedentes estables, obteniendo calificaciÃ³n de <strong>" + Model.NotaEvaluacion.ToString("N2") + "</strong> mediante ponderaciÃ³n de la escala SUGEF.",
+                        Observaciones = "Margen financiero estable con capacidad sólida de generación de excedentes.",
+                        Formula = "Utilidad Neta del Período / Activo Total Promedio × 100",
+                        ExplicacionCalculo = "Evalúa la rentabilidad y capacidad de autofinanciamiento patrimonial. Con un ROA de <strong>1.51%</strong>, la entidad genera excedentes estables, obteniendo calificación de <strong>" + Model.NotaEvaluacion.ToString("N2") + "</strong> mediante ponderación de la escala SUGEF.",
                         Umbrales = new List<FGA.Model.UmbralItem>
                         {
-                            new FGA.Model.UmbralItem { Rango = "â‰¥ 1.50%", Nota = "1.00 a 1.20", Estado = "Verde", EsActual = true },
+                            new FGA.Model.UmbralItem { Rango = "≥ 1.50%", Nota = "1.00 a 1.20", Estado = "Verde", EsActual = true },
                             new FGA.Model.UmbralItem { Rango = "1.00% - 1.49%", Nota = "1.21 a 2.00", Estado = "Verde", EsActual = false },
                             new FGA.Model.UmbralItem { Rango = "0.50% - 0.99%", Nota = "2.01 a 2.50", Estado = "Amarillo", EsActual = false },
                             new FGA.Model.UmbralItem { Rango = "< 0.50%", Nota = "2.51 a 5.00 (Deficiente)", Estado = "Rojo", EsActual = false }
@@ -212,15 +212,15 @@
                         ValorBaseNumerico = 3.48m,
                         Calificacion = Model.NotaLiquidez,
                         Semaforo = Model.SemaforoLiquidez,
-                        Observaciones = "Calce de plazos y cobertura de pasivos a corto plazo en rangos Ã³ptimos.",
-                        Formula = "Activos LÃ­quidos a 30 dÃ­as / Pasivos Exigibles a 30 dÃ­as",
-                        ExplicacionCalculo = "Mide la capacidad de cobertura ante vencimientos a 30 dÃ­as. Con <strong>3.48 veces</strong> (superando el 1.50x), la entidad cubre holgadamente sus obligaciones, obteniendo calificaciÃ³n de <strong>" + Model.NotaLiquidez.ToString("N2") + "</strong> segÃºn interpolaciÃ³n proporcional en el tramo 1,00 a 1,20.",
+                        Observaciones = "Calce de plazos y cobertura de pasivos a corto plazo en rangos óptimos.",
+                        Formula = "Activos Líquidos a 30 días / Pasivos Exigibles a 30 días",
+                        ExplicacionCalculo = "Mide la capacidad de cobertura ante vencimientos a 30 días. Con <strong>3.48 veces</strong> (superando el 1.50x), la entidad cubre holgadamente sus obligaciones, obteniendo calificación de <strong>" + Model.NotaLiquidez.ToString("N2") + "</strong> según interpolación proporcional en el tramo 1,00 a 1,20.",
                         Umbrales = new List<FGA.Model.UmbralItem>
                         {
-                            new FGA.Model.UmbralItem { Rango = "â‰¥ 1.50x", Nota = "1.00 a 1.20", Estado = "Verde", EsActual = true },
+                            new FGA.Model.UmbralItem { Rango = "≥ 1.50x", Nota = "1.00 a 1.20", Estado = "Verde", EsActual = true },
                             new FGA.Model.UmbralItem { Rango = "1.00x - 1.49x", Nota = "1.21 a 2.00", Estado = "Verde", EsActual = false },
                             new FGA.Model.UmbralItem { Rango = "0.80x - 0.99x", Nota = "2.01 a 2.50", Estado = "Amarillo", EsActual = false },
-                            new FGA.Model.UmbralItem { Rango = "< 0.80x", Nota = "2.51 a 5.00 (CrÃ­tico)", Estado = "Rojo", EsActual = false }
+                            new FGA.Model.UmbralItem { Rango = "< 0.80x", Nota = "2.51 a 5.00 (Crítico)", Estado = "Rojo", EsActual = false }
                         }
                     }
                 };
@@ -248,42 +248,42 @@
                             umbralesList = new List<FGA.Model.UmbralItem>();
                             if (item.Clave == "C")
                             {
-                                umbralesList.Add(new FGA.Model.UmbralItem { Rango = "â‰¥ 14.00%", Nota = "1.00", Estado = "Verde", EsActual = item.ValorBaseNumerico >= 14.00m || item.ValorBaseNumerico == 0 });
+                                umbralesList.Add(new FGA.Model.UmbralItem { Rango = "≥ 14.00%", Nota = "1.00", Estado = "Verde", EsActual = item.ValorBaseNumerico >= 14.00m || item.ValorBaseNumerico == 0 });
                                 umbralesList.Add(new FGA.Model.UmbralItem { Rango = "12.00% - 13.99%", Nota = "1.01 a 2.00", Estado = "Verde", EsActual = item.ValorBaseNumerico >= 12.00m && item.ValorBaseNumerico < 14.00m });
                                 umbralesList.Add(new FGA.Model.UmbralItem { Rango = "10.00% - 11.99%", Nota = "2.01 a 2.50", Estado = "Amarillo", EsActual = item.ValorBaseNumerico >= 10.00m && item.ValorBaseNumerico < 12.00m });
                                 umbralesList.Add(new FGA.Model.UmbralItem { Rango = "< 10.00%", Nota = "2.51 a 5.00 (Irregularidad)", Estado = "Rojo", EsActual = item.ValorBaseNumerico > 0 && item.ValorBaseNumerico < 10.00m });
                             }
                             else if (item.Clave == "A")
                             {
-                                umbralesList.Add(new FGA.Model.UmbralItem { Rango = "â‰¤ 1.00%", Nota = "1.00", Estado = "Verde", EsActual = item.ValorBaseNumerico <= 1.00m });
+                                umbralesList.Add(new FGA.Model.UmbralItem { Rango = "≤ 1.00%", Nota = "1.00", Estado = "Verde", EsActual = item.ValorBaseNumerico <= 1.00m });
                                 umbralesList.Add(new FGA.Model.UmbralItem { Rango = "1.01% - 3.00%", Nota = "1.01 a 2.00", Estado = "Verde", EsActual = item.ValorBaseNumerico > 1.00m && item.ValorBaseNumerico <= 3.00m });
                                 umbralesList.Add(new FGA.Model.UmbralItem { Rango = "3.01% - 5.00%", Nota = "2.01 a 2.50", Estado = "Amarillo", EsActual = item.ValorBaseNumerico > 3.00m && item.ValorBaseNumerico <= 5.00m });
-                                umbralesList.Add(new FGA.Model.UmbralItem { Rango = "> 5.00%", Nota = "2.51 a 5.00 (CrÃ­tico)", Estado = "Rojo", EsActual = item.ValorBaseNumerico > 5.00m });
+                                umbralesList.Add(new FGA.Model.UmbralItem { Rango = "> 5.00%", Nota = "2.51 a 5.00 (Crítico)", Estado = "Rojo", EsActual = item.ValorBaseNumerico > 5.00m });
                             }
                             else if (item.Clave == "M")
                             {
-                                umbralesList.Add(new FGA.Model.UmbralItem { Rango = "â‰¤ 60.00%", Nota = "1.00 a 1.20", Estado = "Verde", EsActual = item.ValorBaseNumerico <= 60.00m });
+                                umbralesList.Add(new FGA.Model.UmbralItem { Rango = "≤ 60.00%", Nota = "1.00 a 1.20", Estado = "Verde", EsActual = item.ValorBaseNumerico <= 60.00m });
                                 umbralesList.Add(new FGA.Model.UmbralItem { Rango = "60.01% - 75.00%", Nota = "1.21 a 2.00", Estado = "Verde", EsActual = item.ValorBaseNumerico > 60.00m && item.ValorBaseNumerico <= 75.00m });
                                 umbralesList.Add(new FGA.Model.UmbralItem { Rango = "75.01% - 85.00%", Nota = "2.01 a 2.50", Estado = "Amarillo", EsActual = item.ValorBaseNumerico > 75.00m && item.ValorBaseNumerico <= 85.00m });
                                 umbralesList.Add(new FGA.Model.UmbralItem { Rango = "> 85.00%", Nota = "2.51 a 5.00 (Deficiente)", Estado = "Rojo", EsActual = item.ValorBaseNumerico > 85.00m });
                             }
                             else if (item.Clave == "E")
                             {
-                                umbralesList.Add(new FGA.Model.UmbralItem { Rango = "â‰¥ 1.50%", Nota = "1.00 a 1.20", Estado = "Verde", EsActual = item.ValorBaseNumerico >= 1.50m });
+                                umbralesList.Add(new FGA.Model.UmbralItem { Rango = "≥ 1.50%", Nota = "1.00 a 1.20", Estado = "Verde", EsActual = item.ValorBaseNumerico >= 1.50m });
                                 umbralesList.Add(new FGA.Model.UmbralItem { Rango = "1.00% - 1.49%", Nota = "1.21 a 2.00", Estado = "Verde", EsActual = item.ValorBaseNumerico >= 1.00m && item.ValorBaseNumerico < 1.50m });
                                 umbralesList.Add(new FGA.Model.UmbralItem { Rango = "0.50% - 0.99%", Nota = "2.01 a 2.50", Estado = "Amarillo", EsActual = item.ValorBaseNumerico >= 0.50m && item.ValorBaseNumerico < 1.00m });
                                 umbralesList.Add(new FGA.Model.UmbralItem { Rango = "< 0.50%", Nota = "2.51 a 5.00 (Deficiente)", Estado = "Rojo", EsActual = item.ValorBaseNumerico > 0 && item.ValorBaseNumerico < 0.50m });
                             }
                             else if (item.Clave == "L")
                             {
-                                umbralesList.Add(new FGA.Model.UmbralItem { Rango = "â‰¥ 1.50x", Nota = "1.00 a 1.20", Estado = "Verde", EsActual = item.ValorBaseNumerico >= 1.50m });
+                                umbralesList.Add(new FGA.Model.UmbralItem { Rango = "≥ 1.50x", Nota = "1.00 a 1.20", Estado = "Verde", EsActual = item.ValorBaseNumerico >= 1.50m });
                                 umbralesList.Add(new FGA.Model.UmbralItem { Rango = "1.00x - 1.49x", Nota = "1.21 a 2.00", Estado = "Verde", EsActual = item.ValorBaseNumerico >= 1.00m && item.ValorBaseNumerico < 1.50m });
                                 umbralesList.Add(new FGA.Model.UmbralItem { Rango = "0.80x - 0.99x", Nota = "2.01 a 2.50", Estado = "Amarillo", EsActual = item.ValorBaseNumerico >= 0.80m && item.ValorBaseNumerico < 1.00m });
-                                umbralesList.Add(new FGA.Model.UmbralItem { Rango = "< 0.80x", Nota = "2.51 a 5.00 (CrÃ­tico)", Estado = "Rojo", EsActual = item.ValorBaseNumerico > 0 && item.ValorBaseNumerico < 0.80m });
+                                umbralesList.Add(new FGA.Model.UmbralItem { Rango = "< 0.80x", Nota = "2.51 a 5.00 (Crítico)", Estado = "Rojo", EsActual = item.ValorBaseNumerico > 0 && item.ValorBaseNumerico < 0.80m });
                             }
                         }
 
-                        // Sincronizar el semÃ¡foro y color del pilar con el umbral reglamentario activo
+                        // Sincronizar el semáforo y color del pilar con el umbral reglamentario activo
                         var actualUmbral = umbralesList.FirstOrDefault(u => u.EsActual);
                         if (actualUmbral != null)
                         {
@@ -318,7 +318,7 @@
                                 </button>
                                 <div id="help-content-@item.Clave" style="display: none;">
                                     <div style="font-size: 12px; line-height: 1.5; text-align: left;">
-                                        <!-- Resumen Superior RÃ¡pido del Estado de la Entidad -->
+                                        <!-- Resumen Superior Rápido del Estado de la Entidad -->
                                         <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 7px 10px; margin-bottom: 9px; display: flex; justify-content: space-between; align-items: center;">
                                             <div>
                                                 <span style="color: #64748b; font-size: 10px; text-transform: uppercase; font-weight: 700; display: block; letter-spacing: 0.02em;">Dato Entidad</span>
@@ -334,7 +334,7 @@
                                             </div>
                                         </div>
 
-                                        <!-- FÃ³rmula Base -->
+                                        <!-- Fórmula Base -->
                                         <div style="margin-bottom: 9px;">
                                             <span style="color: #475569; font-size: 10px; text-transform: uppercase; font-weight: 700; letter-spacing: 0.02em;">F&oacute;rmula Base:</span>
                                             <div style="font-size: 11px; margin-top: 3px; background-color: #f0f9ff; color: #0369a1; border: 1px solid #bae6fd; border-radius: 5px; padding: 5px 8px; font-weight: 600; line-height: 1.4;">
@@ -401,19 +401,19 @@
                                             else if (item.Clave == "M")
                                             {
                                                 <a href="https://www.sugef.fi.cr/normativa/normativa_vigente/SUGEF%202-10%20(v29%201%C2%B0%20de%20enero%20de%202024).pdf" target="_blank" rel="noopener noreferrer" style="color: #0284c7; text-decoration: underline; font-weight: 600;">
-                                                    Acuerdo SUGEF 2-10 (AdministraciÃ³n Integral de Riesgos) <i class="fa fa-file-pdf-o text-danger" style="font-size: 10px; margin-left: 2px;"></i> <i class="fa fa-external-link" style="font-size: 9px;"></i>
+                                                    Acuerdo SUGEF 2-10 (Administración Integral de Riesgos) <i class="fa fa-file-pdf-o text-danger" style="font-size: 10px; margin-left: 2px;"></i> <i class="fa fa-external-link" style="font-size: 9px;"></i>
                                                 </a>
                                             }
                                             else if (item.Clave == "E")
                                             {
                                                 <a href="https://www.sugef.fi.cr/normativa/normativa_vigente/SUGEF%2024-22%20(v2%201%C2%B0%20de%20enero%20de%202023).pdf" target="_blank" rel="noopener noreferrer" style="color: #0284c7; text-decoration: underline; font-weight: 600;">
-                                                    Acuerdo SUGEF 24-22 (CalificaciÃ³n de Entidades Supervisadas) <i class="fa fa-file-pdf-o text-danger" style="font-size: 10px; margin-left: 2px;"></i> <i class="fa fa-external-link" style="font-size: 9px;"></i>
+                                                    Acuerdo SUGEF 24-22 (Calificación de Entidades Supervisadas) <i class="fa fa-file-pdf-o text-danger" style="font-size: 10px; margin-left: 2px;"></i> <i class="fa fa-external-link" style="font-size: 9px;"></i>
                                                 </a>
                                             }
                                             else if (item.Clave == "L")
                                             {
                                                 <a href="https://www.sugef.fi.cr/normativa/normativa_vigente/SUGEF%2017-13%20(v18%201%C2%B0%20SET2024).pdf" target="_blank" rel="noopener noreferrer" style="color: #0284c7; text-decoration: underline; font-weight: 600;">
-                                                    Acuerdo SUGEF 17-13 (GestiÃ³n del Riesgo de Liquidez y Cobertura) <i class="fa fa-file-pdf-o text-danger" style="font-size: 10px; margin-left: 2px;"></i> <i class="fa fa-external-link" style="font-size: 9px;"></i>
+                                                    Acuerdo SUGEF 17-13 (Gestión del Riesgo de Liquidez y Cobertura) <i class="fa fa-file-pdf-o text-danger" style="font-size: 10px; margin-left: 2px;"></i> <i class="fa fa-external-link" style="font-size: 9px;"></i>
                                                 </a>
                                             }
                                         </div>
@@ -463,7 +463,7 @@
                 }
             });
 
-            // Permitir mantener abierto el popover cuando el puntero del ratÃ³n ingresa a su contenido
+            // Permitir mantener abierto el popover cuando el puntero del ratón ingresa a su contenido
             $('body').on('mouseenter', '.popover', function () {
                 $(this).addClass('popover-hovered');
             });

@@ -1,7 +1,8 @@
-﻿@{
+@{
     ViewBag.Title = "Secciones del Portal";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
 
 <section class="content-header">
     <div class="sec-header-banner">
@@ -11,14 +12,14 @@
                 Secciones del Portal
             </h1>
             <p class="sec-header-subtitle">
-                Estructura, contenidos y configuraciÃ³n de las secciones pÃºblicas institucionales
+                Estructura, contenidos y configuración de las secciones públicas institucionales
             </p>
         </div>
     </div>
 
     <ol class="breadcrumb">
         <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
-        <li><a href="@Url.Action("Index", "Modulo", new { id = 9200 })" class="breadcrumb-parent-pill" title="Volver a GestiÃ³n Operativa"><i class="fa fa-cogs" style="margin-right: 4px;"></i> Gesti&oacute;n Operativa</a></li>
+        <li><a href="@Url.Action("Index", "Modulo", new { id = 9200 })" class="breadcrumb-parent-pill" title="Volver a Gestión Operativa"><i class="fa fa-cogs" style="margin-right: 4px;"></i> Gesti&oacute;n Operativa</a></li>
         <li class="active">Secciones</li>
     </ol>
 </section>
@@ -30,9 +31,9 @@
                 <table id="tbSeccion" class="table table-striped table-bordered modern-data-table" style="width: 100%;">
                     <thead>
                         <tr>
-                            <th style="width: 110px; text-align: center;">AcciÃ³n</th>
-                            <th style="width: 15%; text-align: center;">CÃ³digo</th>
-                            <th>Nombre de la SecciÃ³n</th>
+                            <th style="width: 110px; text-align: center;">Acción</th>
+                            <th style="width: 15%; text-align: center;">Código</th>
+                            <th>Nombre de la Sección</th>
                         </tr>
                     </thead>
                     <tbody></tbody>
@@ -43,7 +44,7 @@
 </section>
 
 <!-- ======================================================================= -->
-<!-- MODAL CONFIGURAR SECCIÃ“N                                                -->
+<!-- MODAL CONFIGURAR SECCIÓN                                                -->
 <!-- ======================================================================= -->
 <div class="modal fade modal-sec-custom" id="modalSeccion" tabindex="-1" role="dialog" aria-labelledby="lblModalSecTitulo" data-backdrop="static">
     <div class="modal-dialog modal-lg" role="document">
@@ -52,7 +53,7 @@
                 <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title" id="lblModalSecTitulo">
                     <i class="fa fa-pencil" style="color: #0284c7; margin-right: 8px;"></i>
-                    Configurar SecciÃ³n: <span id="lblTituloSecNombre" style="color: #0284c7;"></span>
+                    Configurar Sección: <span id="lblTituloSecNombre" style="color: #0284c7;"></span>
                 </h4>
             </div>
             <form id="frmSeccionModal" autocomplete="off" enctype="multipart/form-data">
@@ -63,7 +64,7 @@
                     <div id="modalSecError" class="alert alert-danger" style="display: none; border-radius: 8px;"></div>
 
                     <div class="form-group form-group-custom">
-                        <label for="secNombre">Nombre de la SecciÃ³n <span class="text-danger">*</span></label>
+                        <label for="secNombre">Nombre de la Sección <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" id="secNombre" maxlength="150" required />
                     </div>
 
@@ -98,9 +99,9 @@
                     </div>
 
                     <div class="form-group form-group-custom" style="margin-top: 16px;">
-                        <label for="secFile">Actualizar Imagen de la SecciÃ³n</label>
+                        <label for="secFile">Actualizar Imagen de la Sección</label>
                         <input type="file" class="form-control" id="secFile" accept="image/jpeg,image/png" />
-                        <small class="text-muted">Formatos admitidos: JPG, PNG. La imagen reemplazarÃ¡ la versiÃ³n activa en el portal.</small>
+                        <small class="text-muted">Formatos admitidos: JPG, PNG. La imagen reemplazará la versión activa en el portal.</small>
                     </div>
                 </div>
 
@@ -118,7 +119,7 @@
 </div>
 
 <!-- ======================================================================= -->
-<!-- MODAL CONSULTAR DETALLE SECCIÃ“N                                         -->
+<!-- MODAL CONSULTAR DETALLE SECCIÓN                                         -->
 <!-- ======================================================================= -->
 <div class="modal fade modal-sec-custom" id="modalDetalleSeccion" tabindex="-1" role="dialog" aria-labelledby="lblModalDetalleTitulo">
     <div class="modal-dialog modal-lg" role="document">
@@ -127,7 +128,7 @@
                 <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title" id="lblModalDetalleTitulo">
                     <i class="fa fa-info-circle" style="color: #0284c7; margin-right: 8px;"></i>
-                    Detalle de la SecciÃ³n
+                    Detalle de la Sección
                 </h4>
             </div>
             <div class="modal-body">
@@ -198,7 +199,7 @@
                         var buttons = '<div class="text-center"><div class="btn-group text-left">' +
                             '<button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" ' +
                             'style="border-radius:6px; border:1px solid #cbd5e1; font-size:12px; padding:4px 10px; color:#374151;">' +
-                            '<i class="fa fa-cog" style="margin-right:4px;"></i> AcciÃ³n <span class="caret"></span></button>' +
+                            '<i class="fa fa-cog" style="margin-right:4px;"></i> Acción <span class="caret"></span></button>' +
                             '<ul class="dropdown-menu pull-left" role="menu">' +
                             '<li><a href="javascript:void(0)" class="btn-edit-sec" data-id="' + id + '"><i class="fa fa-pencil text-primary"></i> Modificar</a></li>' +
                             '<li><a href="javascript:void(0)" class="btn-detail-sec" data-id="' + id + '"><i class="fa fa-info-circle text-info"></i> Consultar</a></li>' +
@@ -223,14 +224,14 @@
                 "sProcessing": "Procesando...",
                 "sLengthMenu": "Mostrar _MENU_ registros",
                 "sZeroRecords": "No se encontraron resultados",
-                "sEmptyTable": "NingÃºn dato disponible en esta tabla",
+                "sEmptyTable": "Ningún dato disponible en esta tabla",
                 "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
                 "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
                 "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
                 "sSearch": "Buscar:",
                 "oPaginate": {
                     "sFirst": "Primero",
-                    "sLast": "Ãšltimo",
+                    "sLast": "Último",
                     "sNext": "Siguiente",
                     "sPrevious": "Anterior"
                 }
@@ -238,7 +239,7 @@
         });
 
         // ---------------------------------------------------------------------
-        // ABRIR MODAL EDITAR SECCIÃ“N
+        // ABRIR MODAL EDITAR SECCIÓN
         // ---------------------------------------------------------------------
         $(document).on('click', '.btn-edit-sec', function () {
             var secId = $(this).data('id');
@@ -267,7 +268,7 @@
                     }
                 },
                 error: function () {
-                    window.mostrarToastError('Error de comunicaciÃ³n al consultar la secciÃ³n.');
+                    window.mostrarToastError('Error de comunicación al consultar la sección.');
                 }
             });
         });
@@ -297,13 +298,13 @@
                     }
                 },
                 error: function () {
-                    window.mostrarToastError('Error de comunicaciÃ³n al consultar el detalle.');
+                    window.mostrarToastError('Error de comunicación al consultar el detalle.');
                 }
             });
         });
 
         // ---------------------------------------------------------------------
-        // GUARDAR SECCIÃ“N (MULTIPART FORMDATA)
+        // GUARDAR SECCIÓN (MULTIPART FORMDATA)
         // ---------------------------------------------------------------------
         $('#frmSeccionModal').on('submit', function (e) {
             e.preventDefault();
@@ -344,7 +345,7 @@
                 },
                 error: function () {
                     $btn.prop('disabled', false).html('<i class="fa fa-check" style="margin-right: 4px;"></i> Guardar');
-                    $('#modalSecError').text('Error interno de comunicaciÃ³n al procesar la solicitud.').fadeIn();
+                    $('#modalSecError').text('Error interno de comunicación al procesar la solicitud.').fadeIn();
                 }
             });
         });
@@ -356,7 +357,7 @@
     if (!window.mostrarToastExito) {
         window.mostrarToastExito = function (mensaje) {
             if (typeof toastr !== 'undefined') {
-                toastr.success(mensaje, 'Ã‰xito');
+                toastr.success(mensaje, 'Éxito');
             } else if ($.notify) {
                 $.notify({ message: mensaje }, { type: 'success', delay: 3500 });
             } else {

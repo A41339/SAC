@@ -1,7 +1,8 @@
-﻿@{
+@{
     ViewBag.Title = "Tipos de XML";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
 
 <section class="content-header">
     <div class="xml-header-banner">
@@ -11,7 +12,7 @@
                 Tipos de Archivos XML
             </h1>
             <p class="xml-header-subtitle">
-                Mantenimiento y definiciÃ³n de estructuras de archivos XML y reglas de exclusiÃ³n por entidad
+                Mantenimiento y definición de estructuras de archivos XML y reglas de exclusión por entidad
             </p>
         </div>
         <div>
@@ -23,7 +24,7 @@
 
     <ol class="breadcrumb">
         <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
-        <li><a href="@Url.Action("Index", "Modulo", new { id = 9200 })" class="breadcrumb-parent-pill" title="Volver a GestiÃ³n Operativa"><i class="fa fa-cogs" style="margin-right: 4px;"></i> Gesti&oacute;n Operativa</a></li>
+        <li><a href="@Url.Action("Index", "Modulo", new { id = 9200 })" class="breadcrumb-parent-pill" title="Volver a Gestión Operativa"><i class="fa fa-cogs" style="margin-right: 4px;"></i> Gesti&oacute;n Operativa</a></li>
         <li class="active">Tipos de XML</li>
     </ol>
 </section>
@@ -35,8 +36,8 @@
                 <table id="tbTipoXML" class="table table-striped table-bordered modern-data-table" style="width: 100%;">
                     <thead>
                         <tr>
-                            <th style="width: 120px; text-align: center;">AcciÃ³n</th>
-                            <th style="width: 25%; text-align: center;">CÃ³digo</th>
+                            <th style="width: 120px; text-align: center;">Acción</th>
+                            <th style="width: 25%; text-align: center;">Código</th>
                             <th style="width: 60%;">Nombre del Tipo de XML</th>
                         </tr>
                     </thead>
@@ -66,14 +67,14 @@
                     <div id="modalXmlError" class="alert alert-danger" style="display: none; border-radius: 8px;"></div>
 
                     <div class="form-group form-group-custom">
-                        <label for="xmlId">CÃ³digo Identificador <span class="text-danger">*</span></label>
+                        <label for="xmlId">Código Identificador <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" id="xmlId" maxlength="50" placeholder="Ej: XML01 o 1" required style="font-family: monospace; font-weight: 600;" />
-                        <small class="text-muted">CÃ³digo Ãºnico utilizado para identificar el tipo de estructura.</small>
+                        <small class="text-muted">Código único utilizado para identificar el tipo de estructura.</small>
                     </div>
 
                     <div class="form-group form-group-custom" style="margin-top: 16px;">
                         <label for="xmlNombre">Nombre Descriptivo <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="xmlNombre" maxlength="150" placeholder="Ej: Balance de SituaciÃ³n Financiera" required />
+                        <input type="text" class="form-control" id="xmlNombre" maxlength="150" placeholder="Ej: Balance de Situación Financiera" required />
                     </div>
                 </div>
 
@@ -91,7 +92,7 @@
 </div>
 
 <!-- ======================================================================= -->
-<!-- MODAL MODIFICAR / GESTIÃ“N DE EXCEPCIONES                                -->
+<!-- MODAL MODIFICAR / GESTIÓN DE EXCEPCIONES                                -->
 <!-- ======================================================================= -->
 <div class="modal fade modal-xml-custom" id="modalExcepcionesXML" tabindex="-1" role="dialog" aria-labelledby="lblModalExcTitulo" data-backdrop="static">
     <div class="modal-dialog modal-lg" role="document">
@@ -113,7 +114,7 @@
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="form-group form-group-custom">
-                                <label>CÃ³digo de XML</label>
+                                <label>Código de XML</label>
                                 <div><span id="badgeEditXmlId" class="code-badge" style="font-size: 14px; padding: 6px 14px;"></span></div>
                             </div>
                         </div>
@@ -137,7 +138,7 @@
                     <div style="margin-bottom: 12px;">
                         <h5 style="margin: 0; font-weight: 700; color: #0f172a; font-size: 15px;">
                             <i class="fa fa-exchange" style="color: #0284c7; margin-right: 6px;"></i>
-                            AsignaciÃ³n y Exclusiones de Cooperativas
+                            Asignación y Exclusiones de Cooperativas
                         </h5>
                         <p style="margin: 4px 0 0 0; font-size: 12.5px; color: #64748b;">
                             Seleccione una o varias entidades y use las flechas para moverlas entre habilitadas y excluidas (se guarda en tiempo real).
@@ -201,7 +202,7 @@
                 <table class="table table-bordered table-striped" style="margin-bottom: 0;">
                     <tbody>
                         <tr>
-                            <th style="width: 35%; color: #475569;">CÃ³digo</th>
+                            <th style="width: 35%; color: #475569;">Código</th>
                             <td><span id="detXmlId" class="code-badge"></span></td>
                         </tr>
                         <tr>
@@ -229,7 +230,7 @@
 </div>
 
 <!-- ======================================================================= -->
-<!-- MODAL CONFIRMAR ELIMINACIÃ“N                                             -->
+<!-- MODAL CONFIRMAR ELIMINACIÓN                                             -->
 <!-- ======================================================================= -->
 <div class="modal fade modal-xml-custom" id="modalDeleteTipoXML" tabindex="-1" role="dialog" aria-labelledby="lblModalDeleteTitulo">
     <div class="modal-dialog modal-sm" role="document">
@@ -244,10 +245,10 @@
             <div class="modal-body" style="padding: 20px;">
                 <input type="hidden" id="deleteXmlId" value="" />
                 <p style="margin: 0; font-size: 14px; color: #334155;">
-                    Â¿EstÃ¡ seguro de que desea eliminar el tipo de XML <strong id="deleteXmlNombre" style="color: #0f172a;"></strong>?
+                    ¿Está seguro de que desea eliminar el tipo de XML <strong id="deleteXmlNombre" style="color: #0f172a;"></strong>?
                 </p>
                 <p style="margin: 8px 0 0 0; font-size: 12.5px; color: #64748b;">
-                    Esta acciÃ³n no se puede deshacer.
+                    Esta acción no se puede deshacer.
                 </p>
             </div>
             <div class="modal-footer" style="padding: 12px 20px;">
@@ -292,7 +293,7 @@
                         var buttons = '<div class="text-center"><div class="btn-group text-left">' +
                             '<button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" ' +
                             'style="border-radius:6px; border:1px solid #cbd5e1; font-size:12px; padding:4px 10px; color:#374151;">' +
-                            '<i class="fa fa-cog" style="margin-right:4px;"></i> AcciÃ³n <span class="caret"></span></button>' +
+                            '<i class="fa fa-cog" style="margin-right:4px;"></i> Acción <span class="caret"></span></button>' +
                             '<ul class="dropdown-menu pull-left" role="menu">' +
                             '<li><a href="javascript:void(0)" class="btn-edit-xml" data-id="' + id + '"><i class="fa fa-pencil text-primary"></i> Modificar / Excepciones</a></li>' +
                             '<li><a href="javascript:void(0)" class="btn-detail-xml" data-id="' + id + '"><i class="fa fa-info-circle text-info"></i> Consultar</a></li>' +
@@ -319,14 +320,14 @@
                 "sProcessing": "Procesando...",
                 "sLengthMenu": "Mostrar _MENU_ registros",
                 "sZeroRecords": "No se encontraron resultados",
-                "sEmptyTable": "NingÃºn dato disponible en esta tabla",
+                "sEmptyTable": "Ningún dato disponible en esta tabla",
                 "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
                 "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
                 "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
                 "sSearch": "Buscar:",
                 "oPaginate": {
                     "sFirst": "Primero",
-                    "sLast": "Ãšltimo",
+                    "sLast": "Último",
                     "sNext": "Siguiente",
                     "sPrevious": "Anterior"
                 }
@@ -382,7 +383,7 @@
                 },
                 error: function () {
                     $btn.prop('disabled', false).html('<i class="fa fa-check" style="margin-right: 4px;"></i> Guardar');
-                    $('#modalXmlError').text('Error interno de comunicaciÃ³n al procesar la solicitud.').fadeIn();
+                    $('#modalXmlError').text('Error interno de comunicación al procesar la solicitud.').fadeIn();
                 }
             });
         });
@@ -426,7 +427,7 @@
                     }
                 },
                 error: function () {
-                    window.mostrarToastError('Error de comunicaciÃ³n al consultar el tipo de XML.');
+                    window.mostrarToastError('Error de comunicación al consultar el tipo de XML.');
                 }
             });
         });
@@ -440,7 +441,7 @@
             var $btn = $(this);
 
             if (!nombre || $.trim(nombre) === '') {
-                window.mostrarToastError('El nombre no puede estar vacÃ­o.');
+                window.mostrarToastError('El nombre no puede estar vacío.');
                 return;
             }
 
@@ -467,7 +468,7 @@
                 },
                 error: function () {
                     $btn.prop('disabled', false).html('<i class="fa fa-save"></i> Actualizar');
-                    window.mostrarToastError('Error de comunicaciÃ³n al actualizar el nombre.');
+                    window.mostrarToastError('Error de comunicación al actualizar el nombre.');
                 }
             });
         });
@@ -557,7 +558,7 @@
                     }
                 },
                 error: function () {
-                    window.mostrarToastError('Error de comunicaciÃ³n al consultar el detalle.');
+                    window.mostrarToastError('Error de comunicación al consultar el detalle.');
                 }
             });
         });
@@ -574,7 +575,7 @@
         });
 
         // ---------------------------------------------------------------------
-        // CONFIRMAR ELIMINACIÃ“N
+        // CONFIRMAR ELIMINACIÓN
         // ---------------------------------------------------------------------
         $('#btnConfirmarEliminarXml').on('click', function () {
             var id = $('#deleteXmlId').val();
@@ -603,7 +604,7 @@
                 error: function () {
                     $btn.prop('disabled', false).html('<i class="fa fa-trash" style="margin-right: 4px;"></i> Eliminar');
                     $('#modalDeleteTipoXML').modal('hide');
-                    window.mostrarToastError('Error de comunicaciÃ³n al eliminar el tipo de XML.');
+                    window.mostrarToastError('Error de comunicación al eliminar el tipo de XML.');
                 }
             });
         });
@@ -615,7 +616,7 @@
     if (!window.mostrarToastExito) {
         window.mostrarToastExito = function (mensaje) {
             if (typeof toastr !== 'undefined') {
-                toastr.success(mensaje, 'Ã‰xito');
+                toastr.success(mensaje, 'Éxito');
             } else if ($.notify) {
                 $.notify({ message: mensaje }, { type: 'success', delay: 3500 });
             } else {

@@ -1,4 +1,4 @@
-﻿@*@model IEnumerable<Entities.Entities.Procedures.FGA_Consultar_Tipos_Indicadores_Result>*@
+@*@model IEnumerable<Entities.Entities.Procedures.FGA_Consultar_Tipos_Indicadores_Result>*@
 @{
     ViewBag.Title = "Indicadores personalizados";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -441,6 +441,7 @@
         </div>
     </div>
 </div>
+
 
 <script type="text/javascript">
 
@@ -494,7 +495,7 @@
     }
 
     function refreshGraph() {
-        $('#grafica').html('<div style="text-align: center; padding: 40px 0; color: #64748b;"><i class="fa fa-spinner fa-spin fa-2x" style="color: #0284c7;"></i><p style="margin-top: 10px; font-size: 13px;">Generando grÃ¡fico...</p></div>');
+        $('#grafica').html('<div style="text-align: center; padding: 40px 0; color: #64748b;"><i class="fa fa-spinner fa-spin fa-2x" style="color: #0284c7;"></i><p style="margin-top: 10px; font-size: 13px;">Generando gráfico...</p></div>');
         $.ajax({
             url: '@Url.Action("GraficaDetalle", "Indicadores")',
             type: 'POST',
@@ -520,7 +521,7 @@
                 }, 80);
             },
             error: function () {
-                $('#grafica').html('<div class="alert alert-danger" style="margin: 20px;">OcurriÃ³ un error al generar el grÃ¡fico.</div>');
+                $('#grafica').html('<div class="alert alert-danger" style="margin: 20px;">Ocurrió un error al generar el gráfico.</div>');
             }
         });
     }

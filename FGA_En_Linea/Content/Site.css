@@ -854,104 +854,121 @@ form ul li {
    ALINEACIONES Y COMPONENTES ESPECÍFICOS DE MÓDULOS (SITE UTILITIES)
    ========================================================================== */
 
-/* Archivo / Explorador */
+/* --- File.cshtml --- */
 #tbFiles th:nth-child(n+2),
-#tbFiles td:nth-child(n+2) {
-    text-align: center !important;
-}
+    #tbFiles td:nth-child(n+2) {
+        text-align: center !important;
+    }
 
+/* --- Index.cshtml --- */
 .modal-body svg {
-    width: 50px;
-    height: 50px;
-}
+        width: 50px;
+        height: 50px;
+    }
 
-.explorer-row {
-    transition: background 0.15s ease;
-    cursor: default;
-}
-.explorer-row:hover {
-    background: #f0f9ff !important;
-}
-.explorer-row.t-state-selected,
-.explorer-row.t-state-selected:hover {
-    background: #e0f2fe !important;
-}
-.explorer-row.t-state-selected td {
-    color: #0284c7 !important;
-    font-weight: 600;
-}
-#listview td {
-    border-top: 1px solid #f1f5f9 !important;
-    border-left: none !important;
-    border-right: none !important;
-    border-bottom: none !important;
-}
-#listview tr:first-child td {
-    border-top: none !important;
-}
-
-/* Cierre / Status y Perfiles */
+/* --- Status.cshtml --- */
 #tbRole th,
-#tbRole td {
-    vertical-align: middle !important;
-}
-#tbRole td:nth-child(n+2),
-#tbRole th:nth-child(n+2) {
-    text-align: center !important;
-}
+    #tbRole td {
+        vertical-align: middle !important;
+    }
+    #tbRole td:nth-child(n+2),
+    #tbRole th:nth-child(n+2) {
+        text-align: center !important;
+    }
 
-.badge-perfil.badge-prudencial {
-    background-color: #eef3f9 !important;
-    color: #2F5597 !important;
-    border: 1px solid #cbdbe9 !important;
-}
-.badge-periodo.badge-periodo-recent {
-    background-color: #eaf4fb !important;
-    color: #0071AD !important;
-    border: 1px solid #bee0f2 !important;
-}
-.badge-periodo.badge-periodo-older {
-    background-color: #fff1eb !important;
-    color: #FE7235 !important;
-    border: 1px solid #ffd0bc !important;
-}
+/* --- StatusPerfiles.cshtml --- */
+/* Estilos institucionales FFC para Perfiles y Períodos (evita problemas de caché de CSS) */
+    .badge-perfil.badge-prudencial {
+        background-color: #eef3f9 !important;
+        color: #2F5597 !important;
+        border: 1px solid #cbdbe9 !important;
+    }
+    .badge-periodo.badge-periodo-recent {
+        background-color: #eaf4fb !important;
+        color: #0071AD !important;
+        border: 1px solid #bee0f2 !important;
+    }
+    .badge-periodo.badge-periodo-older {
+        background-color: #fff1eb !important;
+        color: #FE7235 !important;
+        border: 1px solid #ffd0bc !important;
+    }
 
-/* Explorer Consulta */
+/* --- Consulta.cshtml --- */
 #tbInforme th,
-#tbInforme td {
-    vertical-align: middle !important;
-}
-#tbInforme th:nth-child(n+2),
-#tbInforme td:nth-child(n+2) {
-    text-align: center !important;
-}
+    #tbInforme td {
+        vertical-align: middle !important;
+    }
+    #tbInforme th:nth-child(n+2),
+    #tbInforme td:nth-child(n+2) {
+        text-align: center !important;
+    }
 
-/* Seguridad / Sesiones y Auditoría */
-#tbRole th.mobile,
-#tbRole td.mobile,
-#tbRole th:nth-child(n+3),
-#tbRole td:nth-child(n+3) {
-    text-align: center !important;
-}
-#tbRole th:nth-child(1),
-#tbRole td:nth-child(1) {
-    text-align: center !important;
-    width: 55px !important;
-}
-#tbRole th:nth-child(2),
-#tbRole td:nth-child(2) {
-    text-align: left !important;
-}
-#tbRole td:nth-child(n+3) span {
-    margin: 0 auto !important;
-    text-align: center !important;
-}
-.session-row {
-    transition: background-color 0.15s ease;
-}
-.session-row:hover {
-    background-color: #f8fafc !important;
-}
-#tbRole td, #tbRole th {
-    border-color: #f1f5f9 !important;
-}
+/* --- DetailSession.cshtml --- */
+/* Asegurar que las columnas de cantidad de conexiones estÃÂ©n 100% centradas */
+    #tbRole th.mobile,
+    #tbRole td.mobile,
+    #tbRole th:nth-child(n+3),
+    #tbRole td:nth-child(n+3) {
+        text-align: center !important;
+    }
+    #tbRole th:nth-child(1),
+    #tbRole td:nth-child(1) {
+        text-align: center !important;
+        width: 55px !important;
+    }
+    #tbRole th:nth-child(2),
+    #tbRole td:nth-child(2) {
+        text-align: left !important;
+    }
+    #tbRole td:nth-child(n+3) span {
+        margin: 0 auto !important;
+    }
+    .session-row {
+        transition: background-color 0.15s ease;
+    }
+    .session-row:hover {
+        background-color: #f8fafc !important;
+    }
+    #tbRole td, #tbRole th {
+        border-color: #f1f5f9 !important;
+    }
+
+/* --- Index.cshtml --- */
+/* Centrado de columnas de cantidades y roles en la tabla de sesiones */
+    #tbRole th.mobile,
+    #tbRole td.mobile,
+    #tbRole th:nth-child(n+3),
+    #tbRole td:nth-child(n+3) {
+        text-align: center !important;
+    }
+    #tbRole td:nth-child(n+3) span {
+        margin: 0 auto !important;
+        text-align: center !important;
+    }
+
+/* --- FileList.cshtml --- */
+.explorer-row {
+        transition: background 0.15s ease;
+        cursor: default;
+    }
+    .explorer-row:hover {
+        background: #f0f9ff !important;
+    }
+    .explorer-row.t-state-selected,
+    .explorer-row.t-state-selected:hover {
+        background: #e0f2fe !important;
+    }
+    .explorer-row.t-state-selected td {
+        color: #0284c7 !important;
+        font-weight: 600;
+    }
+    #listview td {
+        border-top: 1px solid #f1f5f9 !important;
+        border-left: none !important;
+        border-right: none !important;
+        border-bottom: none !important;
+    }
+    #listview tr:first-child td {
+        border-top: none !important;
+    }

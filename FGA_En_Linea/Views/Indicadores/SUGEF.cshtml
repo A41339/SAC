@@ -1,4 +1,4 @@
-﻿@{
+@{
     ViewBag.Title = "Indicadores";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -59,7 +59,7 @@
                         <div class="filter-item">
                             <label for="TipoReporte"><i class="fa fa-list"></i> Resumido:</label>
                             @Html.DropDownList("TipoReporte", new List<SelectListItem> {
-                                new SelectListItem { Value = "S", Text = "SÃ­" },
+                                new SelectListItem { Value = "S", Text = "Sí" },
                                 new SelectListItem { Value = "N", Text = "No" }
                             }, new { @id = "TipoReporte", @class = "form-control modern-select", style = "min-width: 100px; height: 38px; font-size: 13px;" })
                         </div>
@@ -216,7 +216,7 @@
                     </div>
                 </div>
 
-                <!-- Nota Informativa al pie de pÃ¡gina idÃ©ntica a Estructura de Fondeo -->
+                <!-- Nota Informativa al pie de página idéntica a Estructura de Fondeo -->
                 <div class="modern-info-card" style="margin-top: 18px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 12px 18px; display: flex; align-items: center; gap: 12px;">
                     <div style="width: 28px; height: 28px; border-radius: 50%; background: #2F5597; color: #ffffff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-weight: 700; font-size: 13px;">
                         <i class="fa fa-info"></i>
@@ -245,6 +245,7 @@
         </div>
     </div>
 </div>
+
 
 <script type="text/javascript">
 
@@ -292,13 +293,13 @@
 
     $(document).ready(function () {
 
-        // Actualizar dinÃ¡micamente nombre de la entidad en encabezados al cambiar combo
+        // Actualizar dinámicamente nombre de la entidad en encabezados al cambiar combo
         $('#IdEntidad').on('change', function () {
             var txt = $(this).find('option:selected').text();
             $('.lblEntidadHeader').text(txt);
         });
 
-        // ConfiguraciÃ³n de botones compartida
+        // Configuración de botones compartida
         var exportButtons = [
              { extend: 'copyHtml5', text: 'Copiar', exportOptions: { columns: ':visible' } }
             ,{ extend: 'excelHtml5', text: 'Excel', exportOptions: { columns: ':visible' } }
@@ -307,7 +308,7 @@
             ,{ extend: 'colvis', text: 'Columnas' }
         ];
 
-        // Idioma en espaÃ±ol compartido
+        // Idioma en español compartido
         var languageConfig = {
             "lengthMenu": "Mostrar _MENU_ registros",
             "zeroRecords": "No se encontraron registros",
@@ -318,13 +319,13 @@
             "searchPlaceholder": "Filtrar indicadores...",
             "paginate": {
                 "first": "Primero",
-                "last": "Ãšltimo",
+                "last": "Último",
                 "next": "Siguiente",
                 "previous": "Anterior"
             }
         };
 
-        // TABLA INDICADORES FINANCIEROS (con rowGroup por tipo y variaciÃ³n dinÃ¡mica)
+        // TABLA INDICADORES FINANCIEROS (con rowGroup por tipo y variación dinámica)
         var tableFinanciero = $("#tbFinancieroSugef").DataTable({
             "bRetrieve": true,
             "bProcessing": true,
@@ -365,7 +366,7 @@
                         }
 
                         var sign = delta > 0 ? '+' : '';
-                        var arrow = delta > 0 ? 'â–²' : 'â–¼';
+                        var arrow = delta > 0 ? '▲' : '▼';
                         var deltaStr = sign + delta.toFixed(2) + (isPercent ? '%' : '');
 
                         var badgeClass = '';
@@ -412,17 +413,17 @@
                         $('#kpiMoraVal').text(d[3] || '--');
                         $('#kpiMoraDelta').removeClass('positive negative neutral')
                             .addClass(delta > 0 ? 'negative' : 'positive')
-                            .text((delta > 0 ? 'â–² ' : 'â–¼ ') + dStr);
+                            .text((delta > 0 ? '▲ ' : '▼ ') + dStr);
                     } else if (nom.indexOf('improductivo') !== -1) {
                         $('#kpiImproductivoVal').text(d[3] || '--');
                         $('#kpiImproductivoDelta').removeClass('positive negative neutral')
                             .addClass(delta > 0 ? 'negative' : 'positive')
-                            .text((delta > 0 ? 'â–² ' : 'â–¼ ') + dStr);
+                            .text((delta > 0 ? '▲ ' : '▼ ') + dStr);
                     } else if (nom.indexOf('capital social') !== -1 && nom.indexOf('vencida') !== -1) {
                         $('#kpiCoberturaVal').text(d[3] || '--');
                         $('#kpiCoberturaDelta').removeClass('positive negative neutral')
                             .addClass(delta > 0 ? 'positive' : 'negative')
-                            .text((delta > 0 ? 'â–² ' : 'â–¼ ') + dStr);
+                            .text((delta > 0 ? '▲ ' : '▼ ') + dStr);
                     }
                 });
             },
@@ -439,7 +440,7 @@
             if (isNaN(v1) && isNaN(v2)) return '<span class="text-muted">-</span>';
             var delta = v2 - v1;
             var sign = delta > 0 ? '+' : '';
-            var arrow = delta > 0 ? 'â–²' : 'â–¼';
+            var arrow = delta > 0 ? '▲' : '▼';
             var dStr = sign + delta.toFixed(2) + '%';
             if (Math.abs(delta) < 0.0001) return '<span class="delta-badge neutral">0.00%</span>';
             var badgeClass = delta > 0 ? 'positive' : 'negative';
@@ -547,7 +548,7 @@
             "language": languageConfig
         });
 
-        // Persistencia de pestaÃ±a activa en SUGEF
+        // Persistencia de pestaña activa en SUGEF
         var lastTabSugef = localStorage.getItem('ffc_active_tab_sugef');
         if (lastTabSugef) {
             $('.nav-tabs a[href="' + lastTabSugef + '"]').tab('show');
