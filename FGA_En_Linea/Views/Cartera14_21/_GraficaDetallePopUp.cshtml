@@ -1,799 +1,36 @@
 @model FGA.Model.Grafico
 
 <script type="text/javascript">
-    function formatMillion() {
-        if (typeof Highcharts !== 'undefined' && Highcharts.numberFormat) {
-            var decimals = (this.value % 1 !== 0) ? 2 : 0;
-            return Highcharts.numberFormat(this.value, decimals, '.', ',');
-        }
-        return this.value;
-    }
-
-    function formatPercent() {
-        if (typeof Highcharts !== 'undefined' && Highcharts.numberFormat) {
-            var decimals = (this.value % 1 !== 0) ? 2 : 0;
-            return Highcharts.numberFormat(this.value, decimals, '.', ',') + ' %';
-        }
-        return this.value + " %";
-    }
-
-    // 10 gradientes de luz volumétrica fotorrealista con brillo especular superior calibrado
-    window.gradientesLuz3D = [
-        {
-            linearGradient: { x1: 0, y1: 0, x2: 1, y2: 0 },
-            stops: [
-                [0, '#004c74'],
-                [0.25, '#0071ad'],
-                [0.6, '#38bdf8'],
-                [0.85, '#0071ad'],
-                [1, '#004c74']
-            ]
-        },
-        {
-            linearGradient: { x1: 0, y1: 0, x2: 1, y2: 0 },
-            stops: [
-                [0, '#52525b'],
-                [0.25, '#71717a'],
-                [0.6, '#d4d4d8'],
-                [0.85, '#71717a'],
-                [1, '#52525b']
-            ]
-        },
-        {
-            linearGradient: { x1: 0, y1: 0, x2: 1, y2: 0 },
-            stops: [
-                [0, '#0369a1'],
-                [0.25, '#0284c7'],
-                [0.6, '#7dd3fc'],
-                [0.85, '#0284c7'],
-                [1, '#0369a1']
-            ]
-        },
-        {
-            linearGradient: { x1: 0, y1: 0, x2: 1, y2: 0 },
-            stops: [
-                [0, '#c2410c'],
-                [0.25, '#ea580c'],
-                [0.6, '#fdba74'],
-                [0.85, '#ea580c'],
-                [1, '#c2410c']
-            ]
-        },
-        {
-            linearGradient: { x1: 0, y1: 0, x2: 1, y2: 0 },
-            stops: [
-                [0, '#0e7490'],
-                [0.25, '#0891b2'],
-                [0.6, '#a5f3fc'],
-                [0.85, '#0891b2'],
-                [1, '#0e7490']
-            ]
-        },
-        {
-            linearGradient: { x1: 0, y1: 0, x2: 1, y2: 0 },
-            stops: [
-                [0, '#27272a'],
-                [0.25, '#3f3f46'],
-                [0.6, '#a1a1aa'],
-                [0.85, '#3f3f46'],
-                [1, '#27272a']
-            ]
-        },
-        {
-            linearGradient: { x1: 0, y1: 0, x2: 1, y2: 0 },
-            stops: [
-                [0, '#0f172a'],
-                [0.25, '#1e3a8a'],
-                [0.6, '#60a5fa'],
-                [0.85, '#1e3a8a'],
-                [1, '#0f172a']
-            ]
-        },
-        {
-            linearGradient: { x1: 0, y1: 0, x2: 1, y2: 0 },
-            stops: [
-                [0, '#0369a1'],
-                [0.25, '#0284c7'],
-                [0.6, '#67e8f9'],
-                [0.85, '#0284c7'],
-                [1, '#0369a1']
-            ]
-        },
-        {
-            linearGradient: { x1: 0, y1: 0, x2: 1, y2: 0 },
-            stops: [
-                [0, '#b45309'],
-                [0.25, '#d97706'],
-                [0.6, '#fde68a'],
-                [0.85, '#d97706'],
-                [1, '#b45309']
-            ]
-        },
-        {
-            linearGradient: { x1: 0, y1: 0, x2: 1, y2: 0 },
-            stops: [
-                [0, '#64748b'],
-                [0.25, '#94a3b8'],
-                [0.6, '#f1f5f9'],
-                [0.85, '#94a3b8'],
-                [1, '#64748b']
-            ]
-        }
-    ];
-
-    window.coloresPlano2D = ['#0071AD', '#959595', '#6DB5CB', '#FE7235', '#B7D8DF', '#565656', '#003F6B', '#0099D6', '#FFB347', '#CFCFCF'];
-    window.cartera3DActivo = (typeof window.cartera3DActivo === 'boolean') ? window.cartera3DActivo : true;
-    window.tipoGraficoActual = window.tipoGraficoActual || 'column';
-
-    window.guardarConfiguracionOriginal = function (chart) {
-        if (!chart || chart._fgaOriginal) return;
-        var origSeries = [];
-        if (chart.series && chart.series.length > 0) {
-            chart.series.forEach(function (s, idx) {
-                var rawData = [];
-                if (s.options && s.options.data) {
-                    rawData = JSON.parse(JSON.stringify(s.options.data));
-                } else if (s.data) {
-                    rawData = s.data.map(function (pt) {
-                        if (pt && typeof pt.y === 'number') return pt.y;
-                        if (Array.isArray(pt)) return pt[1];
-                        return pt;
-                    });
-                }
-                origSeries.push({
-                    name: s.name,
-                    type: s.type || 'column',
-                    color: s.color,
-                    yAxis: (s.yAxis && s.yAxis.options && typeof s.yAxis.options.index === 'number') ? s.yAxis.options.index : 0,
-                    data: rawData,
-                    stack: (s.options && s.options.stack) ? s.options.stack : null,
-                    dashStyle: (s.options && s.options.dashStyle) ? s.options.dashStyle : null,
-                    zIndex: (s.options && s.options.zIndex !== undefined) ? s.options.zIndex : idx
-                });
-            });
-        }
-
-        var origCats = [];
-        if (chart.xAxis && chart.xAxis[0] && chart.xAxis[0].categories) {
-            origCats = chart.xAxis[0].categories.slice();
-        }
-
-        var origXTitle = (chart.xAxis && chart.xAxis[0] && chart.xAxis[0].options && chart.xAxis[0].options.title) ? chart.xAxis[0].options.title.text : null;
-        var origSubTitle = (chart.subtitle && chart.subtitle.textStr) ? chart.subtitle.textStr : '';
-
-        chart._fgaOriginal = {
-            series: origSeries,
-            categories: origCats,
-            xTitle: origXTitle,
-            subTitle: origSubTitle,
-            isPieMode: false
-        };
-    };
-
-    window.habilitarRotacionInteractiva3D = function (chart) {
-        if (!chart || !chart.container) return;
-        var container = chart.container;
-        if (container._hasRotacion3D) {
-            $(container).css('cursor', window.cartera3DActivo ? 'grab' : 'default');
-            return;
-        }
-        container._hasRotacion3D = true;
-        $(container).css('cursor', window.cartera3DActivo ? 'grab' : 'default');
-
-        function drag(eStart) {
-            if (!window.cartera3DActivo) return;
-            if (eStart.type === 'mousedown' && eStart.button !== 0) return;
-            if ($(eStart.target).closest('.highcharts-contextbutton, .highcharts-legend, select, button, a').length) return;
-
-            var startX = (eStart.touches && eStart.touches[0]) ? eStart.touches[0].pageX : (eStart.pageX || eStart.clientX);
-            var startY = (eStart.touches && eStart.touches[0]) ? eStart.touches[0].pageY : (eStart.pageY || eStart.clientY);
-
-            var currentAlpha = 7;
-            var currentBeta = -10;
-            if (chart.options && chart.options.chart && chart.options.chart.options3d) {
-                if (typeof chart.options.chart.options3d.alpha === 'number') currentAlpha = chart.options.chart.options3d.alpha;
-                if (typeof chart.options.chart.options3d.beta === 'number') currentBeta = chart.options.chart.options3d.beta;
-            } else if (chart.chart3d) {
-                if (typeof chart.chart3d.alpha === 'number') currentAlpha = chart.chart3d.alpha;
-                if (typeof chart.chart3d.beta === 'number') currentBeta = chart.chart3d.beta;
-            }
-
-            var sensitivity = 3.6;
-            $(container).css('cursor', 'grabbing');
-            $('body').css('cursor', 'grabbing');
-            if (eStart.type === 'mousedown') {
-                eStart.preventDefault();
-            }
-
-            function mouseMove(eMove) {
-                if (!window.cartera3DActivo) return;
-                var curX = (eMove.touches && eMove.touches[0]) ? eMove.touches[0].pageX : (eMove.pageX || eMove.clientX);
-                var curY = (eMove.touches && eMove.touches[0]) ? eMove.touches[0].pageY : (eMove.pageY || eMove.clientY);
-
-                var deltaX = (curX - startX) / sensitivity;
-                var deltaY = (startY - curY) / sensitivity;
-
-                var newBeta = Math.max(-42, Math.min(42, currentBeta + deltaX));
-                var newAlpha = Math.max(0, Math.min(42, currentAlpha + deltaY));
-
-                if (chart.options && chart.options.chart && chart.options.chart.options3d) {
-                    chart.options.chart.options3d.beta = newBeta;
-                    chart.options.chart.options3d.alpha = newAlpha;
-                }
-                if (chart.chart3d) {
-                    chart.chart3d.alpha = newAlpha;
-                    chart.chart3d.beta = newBeta;
-                }
-                chart.redraw(false);
-            }
-
-            function mouseUp() {
-                $('body').css('cursor', '');
-                $(container).css('cursor', window.cartera3DActivo ? 'grab' : 'default');
-                document.removeEventListener('mousemove', mouseMove);
-                document.removeEventListener('mouseup', mouseUp);
-                document.removeEventListener('touchmove', mouseMove);
-                document.removeEventListener('touchend', mouseUp);
-            }
-
-            document.addEventListener('mousemove', mouseMove);
-            document.addEventListener('mouseup', mouseUp);
-            document.addEventListener('touchmove', mouseMove, { passive: false });
-            document.addEventListener('touchend', mouseUp);
-        }
-
-        container.addEventListener('mousedown', drag);
-        container.addEventListener('touchstart', drag, { passive: true });
-
-        container.addEventListener('dblclick', function () {
-            if (!window.cartera3DActivo) return;
-            var defAlpha = (window.tipoGraficoActual === 'pie') ? 45 : 7;
-            var defBeta = (window.tipoGraficoActual === 'pie') ? 0 : -10;
-            if (chart.options && chart.options.chart && chart.options.chart.options3d) {
-                chart.options.chart.options3d.alpha = defAlpha;
-                chart.options.chart.options3d.beta = defBeta;
-            }
-            if (chart.chart3d) {
-                chart.chart3d.alpha = defAlpha;
-                chart.chart3d.beta = defBeta;
-            }
-            chart.redraw(false);
-        });
-    };
-
-    window.aplicarEstilo3DCartera = function (chart, activo) {
-        if (!chart) return;
-        var is3D = (typeof activo === 'boolean') ? activo : window.cartera3DActivo;
-
-        try {
-            if (chart.options && chart.options.chart) {
-                chart.update({
-                    chart: {
-                        options3d: {
-                            enabled: is3D,
-                            alpha: is3D ? 7 : 0,
-                            beta: is3D ? -10 : 0,
-                            depth: is3D ? 45 : 0,
-                            viewDistance: 0,
-                            fitToPlot: false,
-                            frame: {
-                                bottom: {
-                                    size: is3D ? 3 : 0,
-                                    color: is3D ? 'rgba(203, 213, 225, 0.50)' : 'transparent'
-                                },
-                                back: {
-                                    size: is3D ? 1 : 0,
-                                    color: is3D ? 'rgba(241, 245, 249, 0.40)' : 'transparent'
-                                },
-                                side: {
-                                    size: is3D ? 1 : 0,
-                                    color: is3D ? 'rgba(226, 232, 240, 0.30)' : 'transparent'
-                                }
-                            }
-                        },
-                        spacingLeft: is3D ? 45 : 15,
-                        spacingRight: 30
-                    },
-                    xAxis: {
-                        minPadding: is3D ? 0.02 : 0.01,
-                        maxPadding: is3D ? 0.02 : 0.01
-                    },
-                    exporting: {
-                        buttons: {
-                            contextButton: {
-                                align: 'right',
-                                verticalAlign: 'top',
-                                y: -44,
-                                x: -25,
-                                width: 105
-                            }
-                        }
-                    },
-                    plotOptions: {
-                        column: {
-                            depth: is3D ? 35 : 0,
-                            edgeColor: is3D ? 'rgba(15, 23, 42, 0.28)' : 'none',
-                            edgeWidth: is3D ? 1.4 : 0,
-                            groupZPadding: is3D ? 10 : 0,
-                            pointPadding: is3D ? 0.12 : 0.08,
-                            groupPadding: is3D ? 0.14 : 0.12,
-                            maxPointWidth: 48
-                        },
-                        bar: {
-                            depth: is3D ? 32 : 0,
-                            edgeColor: is3D ? 'rgba(15, 23, 42, 0.28)' : 'none',
-                            edgeWidth: is3D ? 1.4 : 0,
-                            pointPadding: is3D ? 0.10 : 0.08,
-                            groupPadding: is3D ? 0.12 : 0.12,
-                            maxPointWidth: 48
-                        },
-                        line: {
-                            lineWidth: 5,
-                            linecap: 'round',
-                            linejoin: 'round',
-                            shadow: {
-                                color: 'rgba(0, 0, 0, 0.28)',
-                                offsetX: 1,
-                                offsetY: 4,
-                                width: 6,
-                                opacity: 0.25
-                            },
-                            marker: {
-                                enabled: true,
-                                radius: 6,
-                                symbol: 'circle',
-                                lineWidth: 2.5,
-                                lineColor: '#ffffff'
-                            }
-                        },
-                        spline: {
-                            lineWidth: 5,
-                            linecap: 'round',
-                            linejoin: 'round',
-                            shadow: {
-                                color: 'rgba(0, 0, 0, 0.28)',
-                                offsetX: 1,
-                                offsetY: 4,
-                                width: 6,
-                                opacity: 0.25
-                            },
-                            marker: {
-                                enabled: true,
-                                radius: 6,
-                                symbol: 'circle',
-                                lineWidth: 2.5,
-                                lineColor: '#ffffff'
-                            }
-                        }
-                    }
-                }, false);
-
-                if (chart.series && chart.series.length > 0) {
-                    chart.series.forEach(function (s, idx) {
-                        if (s.type === 'column' || s.type === 'bar') {
-                            var colorToUse = is3D ? window.gradientesLuz3D[idx % window.gradientesLuz3D.length] : ((chart._fgaOriginal && chart._fgaOriginal.series[idx] && chart._fgaOriginal.series[idx].color) || window.coloresPlano2D[idx % window.coloresPlano2D.length]);
-                            s.update({
-                                color: colorToUse
-                            }, false);
-                        } else if (s.type === 'line' || s.type === 'spline') {
-                            s.update({
-                                lineWidth: 5,
-                                linecap: 'round',
-                                linejoin: 'round',
-                                shadow: {
-                                    color: 'rgba(0, 0, 0, 0.28)',
-                                    offsetX: 1,
-                                    offsetY: 4,
-                                    width: 6,
-                                    opacity: 0.25
-                                },
-                                marker: {
-                                    enabled: true,
-                                    radius: 6,
-                                    symbol: 'circle',
-                                    lineWidth: 2.5,
-                                    lineColor: '#ffffff'
-                                }
-                            }, false);
-                        }
-                    });
-                }
-
-                chart.redraw();
-                window.habilitarRotacionInteractiva3D(chart);
-
-                try {
-                    var containerElem = document.getElementById('container');
-                    var w = containerElem ? $(containerElem).width() : null;
-                    if (!w || w < 200) {
-                        var pW = $('#grafica').width() || $(chart.container).closest('.modern-table-card').width();
-                        if (pW && pW > 200) w = Math.floor(pW) - 30;
-                    }
-                    if (w && w > 200) {
-                        chart.setSize(w, null, false);
-                    }
-                    chart.reflow();
-                } catch (e) {}
-            }
-        } catch (err) {
-            console.warn('Error al aplicar perspectiva 3D/líneas:', err);
-        }
-    };
-
-    window.aplicarTipoAGrafico = function (chart, tipo) {
-        if (!chart) return;
-        tipo = tipo || window.tipoGraficoActual || 'column';
-        window.guardarConfiguracionOriginal(chart);
-
-        var is3D = (typeof window.cartera3DActivo === 'boolean') ? window.cartera3DActivo : true;
-
-        if (tipo === 'pie') {
-            chart._fgaOriginal.isPieMode = true;
-
-            var pieData = [];
-            var origSeries = chart._fgaOriginal.series;
-            var origCats = chart._fgaOriginal.categories;
-
-            if (origSeries.length > 1) {
-                var seriesParaPie = origSeries.filter(function (s) {
-                    return s.type !== 'spline' && s.type !== 'line';
-                });
-                if (seriesParaPie.length === 0) seriesParaPie = origSeries;
-
-                var lastPeriodLabel = (origCats && origCats.length > 0) ? origCats[origCats.length - 1] : '';
-
-                seriesParaPie.forEach(function (s, pIdx) {
-                    var val = 0;
-                    if (s.data && s.data.length > 0) {
-                        var lastPt = s.data[s.data.length - 1];
-                        if (typeof lastPt === 'number') val = lastPt;
-                        else if (lastPt && typeof lastPt.y === 'number') val = lastPt.y;
-                        else if (Array.isArray(lastPt) && typeof lastPt[1] === 'number') val = lastPt[1];
-                    }
-                    if (val > 0) {
-                        var sliceColor = is3D ? window.gradientesLuz3D[pIdx % window.gradientesLuz3D.length] : (s.color || window.coloresPlano2D[pIdx % window.coloresPlano2D.length]);
-                        pieData.push({
-                            name: s.name,
-                            y: val,
-                            color: sliceColor
-                        });
-                    }
-                });
-
-                if (lastPeriodLabel) {
-                    chart.setTitle(null, { text: 'Distribución al período: ' + lastPeriodLabel, style: { fontSize: '11px', color: '#64748b' } }, false);
-                }
-            } else if (origSeries.length === 1) {
-                var s = origSeries[0];
-                if (s.data && origCats && origCats.length > 0) {
-                    for (var i = 0; i < origCats.length; i++) {
-                        var val = 0;
-                        var pt = s.data[i];
-                        if (typeof pt === 'number') val = pt;
-                        else if (pt && typeof pt.y === 'number') val = pt.y;
-                        else if (Array.isArray(pt) && typeof pt[1] === 'number') val = pt[1];
-                        if (val > 0) {
-                            var sliceColor = is3D ? window.gradientesLuz3D[i % window.gradientesLuz3D.length] : window.coloresPlano2D[i % window.coloresPlano2D.length];
-                            pieData.push({
-                                name: origCats[i],
-                                y: val,
-                                color: sliceColor
-                            });
-                        }
-                    }
-                }
-            }
-
-            while (chart.series.length > 0) {
-                chart.series[0].remove(false);
-            }
-
-            chart.update({
-                chart: {
-                    inverted: false,
-                    options3d: {
-                        enabled: is3D,
-                        alpha: is3D ? 45 : 0,
-                        beta: 0,
-                        depth: is3D ? 35 : 0,
-                        frame: {
-                            bottom: { size: 0 },
-                            back: { size: 0 },
-                            side: { size: 0 }
-                        }
-                    }
-                },
-                xAxis: {
-                    categories: [],
-                    title: { text: null }
-                },
-                plotOptions: {
-                    pie: {
-                        allowPointSelect: true,
-                        cursor: 'pointer',
-                        depth: is3D ? 35 : 0,
-                        dataLabels: {
-                            enabled: true,
-                            format: '<b>{point.name}</b>: {point.percentage:.1f} %',
-                            style: {
-                                fontSize: '11px',
-                                fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif',
-                                textOutline: 'none',
-                                color: '#1e293b'
-                            }
-                        },
-                        showInLegend: true
-                    }
-                }
-            }, false);
-
-            chart.addSeries({
-                type: 'pie',
-                name: 'Participación',
-                data: pieData
-            }, false);
-
-            chart.redraw();
-            window.habilitarRotacionInteractiva3D(chart);
-            return;
-        }
-
-        if (chart._fgaOriginal && chart._fgaOriginal.isPieMode) {
-            chart._fgaOriginal.isPieMode = false;
-
-            while (chart.series.length > 0) {
-                chart.series[0].remove(false);
-            }
-
-            chart.update({
-                xAxis: {
-                    categories: chart._fgaOriginal.categories.slice(),
-                    title: { text: chart._fgaOriginal.xTitle }
-                }
-            }, false);
-
-            if (chart._fgaOriginal.subTitle) {
-                chart.setTitle(null, { text: chart._fgaOriginal.subTitle }, false);
-            } else {
-                chart.setTitle(null, { text: '' }, false);
-            }
-
-            chart._fgaOriginal.series.forEach(function (s) {
-                chart.addSeries({
-                    name: s.name,
-                    type: s.type,
-                    color: s.color,
-                    yAxis: s.yAxis,
-                    data: JSON.parse(JSON.stringify(s.data)),
-                    stack: s.stack,
-                    dashStyle: s.dashStyle,
-                    zIndex: s.zIndex
-                }, false);
-            });
-        }
-
-        if (tipo === 'bar') {
-            chart.update({
-                chart: {
-                    inverted: true,
-                    options3d: {
-                        enabled: is3D,
-                        alpha: is3D ? 7 : 0,
-                        beta: is3D ? -10 : 0,
-                        depth: is3D ? 45 : 0,
-                        viewDistance: 0,
-                        fitToPlot: false,
-                        frame: {
-                            bottom: {
-                                size: is3D ? 3 : 0,
-                                color: is3D ? 'rgba(203, 213, 225, 0.50)' : 'transparent'
-                            },
-                            back: {
-                                size: is3D ? 1 : 0,
-                                color: is3D ? 'rgba(241, 245, 249, 0.40)' : 'transparent'
-                            },
-                            side: {
-                                size: is3D ? 1 : 0,
-                                color: is3D ? 'rgba(226, 232, 240, 0.30)' : 'transparent'
-                            }
-                        }
-                    }
-                }
-            }, false);
-            chart.series.forEach(function (s, idx) {
-                var origType = (chart._fgaOriginal && chart._fgaOriginal.series[idx]) ? chart._fgaOriginal.series[idx].type : 'column';
-                var targetType = (origType === 'spline' || origType === 'line') ? 'spline' : 'bar';
-                var colorToUse = is3D ? window.gradientesLuz3D[idx % window.gradientesLuz3D.length] : ((chart._fgaOriginal && chart._fgaOriginal.series[idx] && chart._fgaOriginal.series[idx].color) || window.coloresPlano2D[idx % window.coloresPlano2D.length]);
-                s.update({ type: targetType, color: colorToUse }, false);
-            });
-        } else if (tipo === 'spline') {
-            chart.update({
-                chart: {
-                    inverted: false,
-                    options3d: { enabled: false }
-                }
-            }, false);
-            chart.series.forEach(function (s, idx) {
-                var origColor = (chart._fgaOriginal && chart._fgaOriginal.series[idx] && chart._fgaOriginal.series[idx].color) || window.coloresPlano2D[idx % window.coloresPlano2D.length];
-                s.update({
-                    type: 'spline',
-                    color: origColor,
-                    lineWidth: 4.5,
-                    marker: { enabled: true, radius: 5.5, symbol: 'circle', lineWidth: 2, lineColor: '#ffffff' }
-                }, false);
-            });
-        } else if (tipo === 'area') {
-            chart.update({
-                chart: {
-                    inverted: false,
-                    options3d: { enabled: false }
-                }
-            }, false);
-            chart.series.forEach(function (s, idx) {
-                var origType = (chart._fgaOriginal && chart._fgaOriginal.series[idx]) ? chart._fgaOriginal.series[idx].type : 'column';
-                var origColor = (chart._fgaOriginal && chart._fgaOriginal.series[idx] && chart._fgaOriginal.series[idx].color) || window.coloresPlano2D[idx % window.coloresPlano2D.length];
-                if (origType === 'spline' || origType === 'line') {
-                    s.update({ type: 'spline', color: origColor, lineWidth: 4 }, false);
-                } else {
-                    s.update({
-                        type: 'areaspline',
-                        color: origColor,
-                        fillOpacity: 0.35,
-                        lineWidth: 3,
-                        marker: { enabled: true, radius: 4 }
-                    }, false);
-                }
-            });
-        } else {
-            // column
-            chart.update({
-                chart: {
-                    inverted: false,
-                    options3d: {
-                        enabled: is3D,
-                        alpha: is3D ? 7 : 0,
-                        beta: is3D ? -10 : 0,
-                        depth: is3D ? 45 : 0,
-                        viewDistance: 0,
-                        fitToPlot: false,
-                        frame: {
-                            bottom: {
-                                size: is3D ? 3 : 0,
-                                color: is3D ? 'rgba(203, 213, 225, 0.50)' : 'transparent'
-                            },
-                            back: {
-                                size: is3D ? 1 : 0,
-                                color: is3D ? 'rgba(241, 245, 249, 0.40)' : 'transparent'
-                            },
-                            side: {
-                                size: is3D ? 1 : 0,
-                                color: is3D ? 'rgba(226, 232, 240, 0.30)' : 'transparent'
-                            }
-                        }
-                    }
-                }
-            }, false);
-            chart.series.forEach(function (s, idx) {
-                var origType = (chart._fgaOriginal && chart._fgaOriginal.series[idx]) ? chart._fgaOriginal.series[idx].type : 'column';
-                var targetType = (origType === 'spline' || origType === 'line') ? 'spline' : 'column';
-                var colorToUse = is3D ? window.gradientesLuz3D[idx % window.gradientesLuz3D.length] : ((chart._fgaOriginal && chart._fgaOriginal.series[idx] && chart._fgaOriginal.series[idx].color) || window.coloresPlano2D[idx % window.coloresPlano2D.length]);
-                s.update({ type: targetType, color: colorToUse }, false);
-            });
-            if (typeof window.aplicarEstilo3DCartera === 'function') {
-                window.aplicarEstilo3DCartera(chart, is3D);
-            }
-        }
-
-        chart.redraw();
-        window.habilitarRotacionInteractiva3D(chart);
-        chart.reflow();
-    };
-
-    window.cambiarTipoGrafico = function (tipo) {
-        if (!tipo) return;
-        window.tipoGraficoActual = tipo;
-
-        $('#selTipoGraficoCartera, #selTipoGraficoComposicion, #selTipoGraficoModal').val(tipo);
-
-        if (typeof Highcharts !== 'undefined' && Highcharts.charts) {
-            Highcharts.charts.forEach(function (chart) {
-                if (!chart) return;
-                window.aplicarTipoAGrafico(chart, tipo);
-            });
-        }
-
-        if ($('#mPopUp').is(':visible') && typeof window.renderCarteraModalKpi === 'function') {
-            window.renderCarteraModalKpi();
-        }
-    };
-
-    window.toggle3DCartera = function (btn) {
-        window.cartera3DActivo = !window.cartera3DActivo;
-        var is3D = window.cartera3DActivo;
-
-        var btnMain = document.getElementById('btnToggle3DCartera') || document.getElementById('btnToggle3DComposicion');
-        var btnModal = document.getElementById('btnToggle3DModal');
-        var lblMain = document.getElementById('lblToggle3D') || document.getElementById('lblToggle3DComposicion');
-        var lblModal = document.getElementById('lblToggle3DModal');
-        var hintMain = document.getElementById('lbl3DRotateHint') || document.getElementById('lbl3DRotateHintComposicion');
-        var hintModal = document.getElementById('lbl3DRotateHintModal');
-
-        var activeStyle = "height: 28px; padding: 0 11px; font-size: 11.5px; font-weight: 600; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid #bae6fd; background: #f0f9ff; color: #0369a1; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 1px 2px rgba(0,0,0,0.04);";
-        var inactiveStyle = "height: 28px; padding: 0 11px; font-size: 11.5px; font-weight: 600; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid #cbd5e1; background: #f1f5f9; color: #475569; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 1px 2px rgba(0,0,0,0.04);";
-
-        var modalActiveStyle = "height: 28px; padding: 0 11px; font-size: 11.5px; font-weight: 600; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid rgba(255,255,255,0.4); background: rgba(255,255,255,0.22); color: #ffffff; cursor: pointer; transition: all 0.2s ease;";
-        var modalInactiveStyle = "height: 28px; padding: 0 11px; font-size: 11.5px; font-weight: 600; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.15); color: rgba(255,255,255,0.75); cursor: pointer; transition: all 0.2s ease;";
-
-        if (btnMain) {
-            btnMain.setAttribute('style', is3D ? activeStyle : inactiveStyle);
-            if (lblMain) lblMain.innerText = is3D ? 'Vista 3D: ON' : 'Vista 2D (Plano)';
-        }
-        if (btnModal) {
-            btnModal.setAttribute('style', is3D ? modalActiveStyle : modalInactiveStyle);
-            if (lblModal) lblModal.innerText = is3D ? 'Vista 3D: ON' : 'Vista 2D (Plano)';
-        }
-        if (hintMain) {
-            hintMain.style.display = is3D ? 'inline-flex' : 'none';
-        }
-        if (hintModal) {
-            hintModal.style.display = is3D ? 'inline-flex' : 'none';
-        }
-
-        if (typeof Highcharts !== 'undefined' && Highcharts.charts) {
-            Highcharts.charts.forEach(function (c) {
-                if (c) {
-                    window.aplicarTipoAGrafico(c, window.tipoGraficoActual);
-                }
-            });
-        }
-    };
-
     if (typeof Highcharts !== 'undefined') {
         Highcharts.setOptions({
-            colors: window.gradientesLuz3D,
+            colors: ['#0071AD', '#959595', '#6DB5CB', '#FE7235', '#B7D8DF', '#565656', '#003F6B', '#0099D6', '#FFB347', '#CFCFCF'],
             chart: {
                 options3d: {
                     enabled: true,
                     alpha: 7,
-                    beta: -10,
-                    depth: 45,
-                    viewDistance: 0,
-                    fitToPlot: false,
-                    frame: {
-                        bottom: {
-                            size: 3,
-                            color: 'rgba(203, 213, 225, 0.50)'
-                        },
-                        back: {
-                            size: 1,
-                            color: 'rgba(241, 245, 249, 0.40)'
-                        },
-                        side: {
-                            size: 1,
-                            color: 'rgba(226, 232, 240, 0.30)'
-                        }
-                    }
-                },
-                spacingLeft: 45,
-                spacingRight: 30
+                    beta: -8,
+                    depth: 35,
+                    viewDistance: 500,
+                    fitToPlot: true
+                }
             },
             plotOptions: {
                 column: {
-                    depth: 35,
-                    edgeColor: 'rgba(15, 23, 42, 0.28)',
-                    edgeWidth: 1.4,
-                    groupZPadding: 10,
-                    pointPadding: 0.12,
-                    groupPadding: 0.14,
-                    maxPointWidth: 48
-                },
-                bar: {
-                    depth: 32,
-                    edgeColor: 'rgba(15, 23, 42, 0.28)',
-                    edgeWidth: 1.4,
+                    depth: 30,
+                    edgeColor: 'rgba(0, 0, 0, 0.16)',
+                    edgeWidth: 1.2,
+                    groupZPadding: 6,
                     pointPadding: 0.10,
                     groupPadding: 0.12,
-                    maxPointWidth: 48
+                    maxPointWidth: 46
+                },
+                bar: {
+                    depth: 28,
+                    edgeColor: 'rgba(0, 0, 0, 0.16)',
+                    edgeWidth: 1.2,
+                    pointPadding: 0.08,
+                    groupPadding: 0.10,
+                    maxPointWidth: 46
                 },
                 line: {
                     lineWidth: 5,
@@ -811,7 +48,13 @@
                         radius: 6,
                         symbol: 'circle',
                         lineWidth: 2.5,
-                        lineColor: '#ffffff'
+                        lineColor: '#ffffff',
+                        shadow: {
+                            color: 'rgba(0, 0, 0, 0.2)',
+                            offsetX: 0,
+                            offsetY: 2,
+                            width: 4
+                        }
                     }
                 },
                 spline: {
@@ -830,7 +73,13 @@
                         radius: 6,
                         symbol: 'circle',
                         lineWidth: 2.5,
-                        lineColor: '#ffffff'
+                        lineColor: '#ffffff',
+                        shadow: {
+                            color: 'rgba(0, 0, 0, 0.2)',
+                            offsetX: 0,
+                            offsetY: 2,
+                            width: 4
+                        }
                     }
                 }
             },
@@ -863,23 +112,10 @@
             <img width="28" height="28" src="@Session["Logo"]" style="border-radius: 6px; background: #ffffff; padding: 2px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); flex-shrink: 0;" />
             <h3 id="entidad" class="box-title" style="margin: 0; font-size: 14px; font-weight: 700; color: #0f172a; text-align: left;"></h3>
         </div>
-        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-            <div style="display: inline-flex; align-items: center; gap: 5px;">
-                <span style="font-size: 11px; font-weight: 600; color: #64748b; white-space: nowrap;"><i class="fa fa-sliders" style="color: #0284c7;"></i> Tipo:</span>
-                <select id="selTipoGraficoCartera" onchange="window.cambiarTipoGrafico(this.value)" class="form-control" style="height: 28px; padding: 2px 8px; font-size: 11.5px; font-weight: 600; border-radius: 6px; border: 1px solid #cbd5e1; color: #0f172a; background: #ffffff; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
-                    <option value="column">📊 Columnas</option>
-                    <option value="bar">📶 Barras</option>
-                    <option value="spline">📈 Líneas</option>
-                    <option value="area">🏔️ Áreas</option>
-                    <option value="pie">🥧 Pastel / Circular</option>
-                </select>
-            </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
             <button type="button" class="btn-toggle-3d" id="btnToggle3DCartera" onclick="window.toggle3DCartera(this)" title="Alternar entre perspectiva 3D volumétrica y 2D clásica" style="height: 28px; padding: 0 11px; font-size: 11.5px; font-weight: 600; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid #bae6fd; background: #f0f9ff; color: #0369a1; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
                 <i class="fa fa-cube" style="color: #0284c7; font-size: 13px;"></i> <span id="lblToggle3D">Vista 3D: ON</span>
             </button>
-            <span id="lbl3DRotateHint" style="font-size: 11px; color: #64748b; font-weight: 500; display: inline-flex; align-items: center; gap: 4px; padding: 0 4px;" title="Haz clic y arrastra sobre el gráfico para rotarlo libremente en 3D. Doble clic para restablecer la vista.">
-                <i class="fa fa-arrows" style="color: #0284c7;"></i> <span class="hidden-xs">Arrastra para rotar</span>
-            </span>
             <a class="btn-ampliar" data-toggle="tooltip" data-placement="top" title="Ampliar gr&aacute;fico" href="javascript:mPopUp()" style="height: 28px; padding: 0 11px; font-size: 11.5px; border-radius: 6px; display: inline-flex; align-items: center; gap: 5px;">
                 <i class="fa fa-line-chart"></i> Ampliar
             </a>
@@ -888,48 +124,6 @@
     <div style="padding: 10px 14px 6px 14px; width: 100%; box-sizing: border-box; overflow: visible;">
         <div id="container" style="width: 100%; min-width: 100%; box-sizing: border-box; overflow: visible;">
             @(Model.detalle)
-            <script type="text/javascript">
-                (function () {
-                    function sincronizarGraficoPantalla() {
-                        var cElem = document.getElementById('container');
-                        var targetWidth = cElem ? $(cElem).width() : null;
-                        if (!targetWidth || targetWidth < 200) {
-                            var gW = $('#grafica').width() || $('#grafica').closest('.col-xs-12').width() || 1100;
-                            targetWidth = Math.floor(gW) - 30;
-                        }
-                        if (typeof Highcharts !== 'undefined' && Highcharts.charts) {
-                            for (var i = Highcharts.charts.length - 1; i >= 0; i--) {
-                                var c = Highcharts.charts[i];
-                                if (!c) continue;
-                                var renderElem = (typeof c.renderTo === 'string') ? document.getElementById(c.renderTo.replace(/^#/, '')) : c.renderTo;
-                                if (renderElem && $(renderElem).closest('#container').length > 0) {
-                                    try {
-                                        if (targetWidth && targetWidth > 200) {
-                                            c.setSize(targetWidth, null, false);
-                                        }
-                                        window.guardarConfiguracionOriginal(c);
-                                        if (window.tipoGraficoActual && window.tipoGraficoActual !== 'column') {
-                                            window.aplicarTipoAGrafico(c, window.tipoGraficoActual);
-                                        } else if (typeof window.aplicarEstilo3DCartera === 'function') {
-                                            window.aplicarEstilo3DCartera(c, window.cartera3DActivo);
-                                        }
-                                        window.habilitarRotacionInteractiva3D(c);
-                                        c.reflow();
-                                    } catch (e) {}
-                                    break;
-                                }
-                            }
-                        }
-                        $('#selTipoGraficoCartera, #selTipoGraficoComposicion, #selTipoGraficoModal').val(window.tipoGraficoActual || 'column');
-                        var hintMain = document.getElementById('lbl3DRotateHint') || document.getElementById('lbl3DRotateHintComposicion');
-                        if (hintMain) hintMain.style.display = window.cartera3DActivo ? 'inline-flex' : 'none';
-                    }
-                    sincronizarGraficoPantalla();
-                    setTimeout(sincronizarGraficoPantalla, 60);
-                    setTimeout(sincronizarGraficoPantalla, 180);
-                    setTimeout(sincronizarGraficoPantalla, 350);
-                })();
-            </script>
         </div>
     </div>
 </div>
@@ -945,23 +139,10 @@
                         <div id="pSubEntidad" style="font-size: 11.5px; color: rgba(255,255,255,0.85); font-weight: 400; margin-top: 1px;"></div>
                     </div>
                 </div>
-                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-                    <div style="display: inline-flex; align-items: center; gap: 5px;">
-                        <span style="font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.9); white-space: nowrap;"><i class="fa fa-sliders" style="color: #38bdf8;"></i> Tipo:</span>
-                        <select id="selTipoGraficoModal" onchange="window.cambiarTipoGrafico(this.value)" class="form-control" style="height: 28px; padding: 2px 8px; font-size: 11.5px; font-weight: 600; border-radius: 6px; border: 1px solid rgba(255,255,255,0.3); color: #0f172a; background: #ffffff; cursor: pointer;">
-                            <option value="column">📊 Columnas</option>
-                            <option value="bar">📶 Barras</option>
-                            <option value="spline">📈 Líneas</option>
-                            <option value="area">🏔️ Áreas</option>
-                            <option value="pie">🥧 Pastel / Circular</option>
-                        </select>
-                    </div>
+                <div style="display: flex; align-items: center; gap: 10px;">
                     <button type="button" class="btn-toggle-3d-modal" id="btnToggle3DModal" onclick="window.toggle3DCartera(this)" title="Alternar entre perspectiva 3D volumétrica y 2D clásica" style="height: 28px; padding: 0 11px; font-size: 11.5px; font-weight: 600; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.18); color: #ffffff; cursor: pointer; transition: all 0.2s ease;">
                         <i class="fa fa-cube" style="color: #38bdf8; font-size: 13px;"></i> <span id="lblToggle3DModal">Vista 3D: ON</span>
                     </button>
-                    <span id="lbl3DRotateHintModal" style="font-size: 11px; color: rgba(255,255,255,0.85); font-weight: 500; display: inline-flex; align-items: center; gap: 4px; padding: 0 4px;" title="Haz clic y arrastra sobre el gráfico para rotarlo libremente en 3D. Doble clic para restablecer la vista.">
-                        <i class="fa fa-arrows" style="color: #38bdf8;"></i> <span class="hidden-xs">Arrastra para rotar</span>
-                    </span>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: #ffffff !important; opacity: 0.9; font-size: 22px; line-height: 1;"><span aria-hidden="true">&times;</span></button>
                 </div>
             </div>
@@ -999,9 +180,7 @@
                 var elem = (typeof getHighchartsRenderElement === 'function') ? getHighchartsRenderElement(chart) : (chart.renderTo ? (typeof chart.renderTo === 'string' ? document.getElementById(chart.renderTo.replace(/^#/, '')) : chart.renderTo) : null);
                 if (elem && $(elem).closest('#mPopUp').length) {
                     chart.hasUserSize = true;
-                    if (typeof window.aplicarTipoAGrafico === 'function') {
-                        window.aplicarTipoAGrafico(chart, window.tipoGraficoActual);
-                    } else if (typeof window.aplicarEstilo3DCartera === 'function') {
+                    if (typeof window.aplicarEstilo3DCartera === 'function') {
                         window.aplicarEstilo3DCartera(chart, window.cartera3DActivo);
                     }
                     chart.reflow();
@@ -1019,15 +198,6 @@
                     var chart = modalCharts[0];
 
                     function renderCarteraKpi(selectedIdx) {
-                        if (window.tipoGraficoActual === 'pie') {
-                            $('#cartera1421ModalKpiStrip').html(
-                                '<div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px 14px; font-size: 12px; color: #475569; display: flex; align-items: center; gap: 8px;">' +
-                                '    <i class="fa fa-pie-chart" style="color: #0284c7; font-size: 14px;"></i>' +
-                                '    <span>Vista de distribución circular activa. Pasa el cursor sobre los segmentos para ver la participación porcentual.</span>' +
-                                '</div>'
-                            );
-                            return;
-                        }
                         var seriesIdx = 0;
                         if (typeof selectedIdx === 'number' && selectedIdx >= 0 && selectedIdx < chart.series.length) {
                             seriesIdx = selectedIdx;
@@ -1147,7 +317,6 @@
                         });
                     }
 
-                    window.renderCarteraModalKpi = renderCarteraKpi;
                     renderCarteraKpi();
                 } catch (e) {
                     console.error(e);
@@ -1155,6 +324,196 @@
             }, 180);
         }
     });
+
+    function formatMillion() {
+        if (typeof Highcharts !== 'undefined' && Highcharts.numberFormat) {
+            var decimals = (this.value % 1 !== 0) ? 2 : 0;
+            return Highcharts.numberFormat(this.value, decimals, '.', ',');
+        }
+        return this.value;
+    }
+
+    function formatPercent() {
+        if (typeof Highcharts !== 'undefined' && Highcharts.numberFormat) {
+            var decimals = (this.value % 1 !== 0) ? 2 : 0;
+            return Highcharts.numberFormat(this.value, decimals, '.', ',') + ' %';
+        }
+        return this.value + " %";
+    }
+
+    window.cartera3DActivo = (typeof window.cartera3DActivo === 'boolean') ? window.cartera3DActivo : true;
+
+    window.aplicarEstilo3DCartera = function (chart, activo) {
+        if (!chart) return;
+        var is3D = (typeof activo === 'boolean') ? activo : window.cartera3DActivo;
+
+        try {
+            if (chart.options && chart.options.chart) {
+                chart.update({
+                    chart: {
+                        options3d: {
+                            enabled: is3D,
+                            alpha: is3D ? 7 : 0,
+                            beta: is3D ? -8 : 0,
+                            depth: is3D ? 35 : 0,
+                            viewDistance: 500,
+                            fitToPlot: true
+                        },
+                        spacingLeft: is3D ? 35 : 15,
+                        spacingRight: 25
+                    },
+                    xAxis: {
+                        minPadding: is3D ? 0.02 : 0.01,
+                        maxPadding: is3D ? 0.02 : 0.01
+                    },
+                    exporting: {
+                        buttons: {
+                            contextButton: {
+                                align: 'right',
+                                verticalAlign: 'top',
+                                y: -44,
+                                x: -25,
+                                width: 105
+                            }
+                        }
+                    },
+                    plotOptions: {
+                        column: {
+                            depth: is3D ? 30 : 0,
+                            edgeColor: is3D ? 'rgba(0, 0, 0, 0.16)' : 'none',
+                            edgeWidth: is3D ? 1.2 : 0,
+                            groupZPadding: is3D ? 6 : 0,
+                            pointPadding: is3D ? 0.10 : 0.08,
+                            groupPadding: is3D ? 0.12 : 0.12,
+                            maxPointWidth: 46
+                        },
+                        bar: {
+                            depth: is3D ? 28 : 0,
+                            edgeColor: is3D ? 'rgba(0, 0, 0, 0.16)' : 'none',
+                            edgeWidth: is3D ? 1.2 : 0,
+                            pointPadding: is3D ? 0.08 : 0.08,
+                            groupPadding: is3D ? 0.10 : 0.12,
+                            maxPointWidth: 46
+                        },
+                        line: {
+                            lineWidth: 5,
+                            linecap: 'round',
+                            linejoin: 'round',
+                            shadow: {
+                                color: 'rgba(0, 0, 0, 0.28)',
+                                offsetX: 1,
+                                offsetY: 4,
+                                width: 6,
+                                opacity: 0.25
+                            },
+                            marker: {
+                                enabled: true,
+                                radius: 6,
+                                symbol: 'circle',
+                                lineWidth: 2.5,
+                                lineColor: '#ffffff'
+                            }
+                        },
+                        spline: {
+                            lineWidth: 5,
+                            linecap: 'round',
+                            linejoin: 'round',
+                            shadow: {
+                                color: 'rgba(0, 0, 0, 0.28)',
+                                offsetX: 1,
+                                offsetY: 4,
+                                width: 6,
+                                opacity: 0.25
+                            },
+                            marker: {
+                                enabled: true,
+                                radius: 6,
+                                symbol: 'circle',
+                                lineWidth: 2.5,
+                                lineColor: '#ffffff'
+                            }
+                        }
+                    }
+                }, false);
+
+                if (chart.series && chart.series.length > 0) {
+                    chart.series.forEach(function (s) {
+                        if (s.type === 'line' || s.type === 'spline') {
+                            s.update({
+                                lineWidth: 5,
+                                linecap: 'round',
+                                linejoin: 'round',
+                                shadow: {
+                                    color: 'rgba(0, 0, 0, 0.28)',
+                                    offsetX: 1,
+                                    offsetY: 4,
+                                    width: 6,
+                                    opacity: 0.25
+                                },
+                                marker: {
+                                    enabled: true,
+                                    radius: 6,
+                                    symbol: 'circle',
+                                    lineWidth: 2.5,
+                                    lineColor: '#ffffff'
+                                }
+                            }, false);
+                        }
+                    });
+                }
+
+                chart.redraw();
+
+                try {
+                    var containerElem = document.getElementById('container');
+                    var w = containerElem ? $(containerElem).width() : null;
+                    if (!w || w < 200) {
+                        var pW = $('#grafica').width() || $(chart.container).closest('.modern-table-card').width();
+                        if (pW && pW > 200) w = Math.floor(pW) - 30;
+                    }
+                    if (w && w > 200) {
+                        chart.setSize(w, null, false);
+                    }
+                    chart.reflow();
+                } catch (e) {}
+            }
+        } catch (err) {
+            console.warn('Error al aplicar perspectiva 3D/líneas:', err);
+        }
+    };
+
+    window.toggle3DCartera = function (btn) {
+        window.cartera3DActivo = !window.cartera3DActivo;
+        var is3D = window.cartera3DActivo;
+
+        var btnMain = document.getElementById('btnToggle3DCartera') || document.getElementById('btnToggle3DComposicion');
+        var btnModal = document.getElementById('btnToggle3DModal');
+        var lblMain = document.getElementById('lblToggle3D') || document.getElementById('lblToggle3DComposicion');
+        var lblModal = document.getElementById('lblToggle3DModal');
+
+        var activeStyle = "height: 28px; padding: 0 11px; font-size: 11.5px; font-weight: 600; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid #bae6fd; background: #f0f9ff; color: #0369a1; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 1px 2px rgba(0,0,0,0.04);";
+        var inactiveStyle = "height: 28px; padding: 0 11px; font-size: 11.5px; font-weight: 600; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid #cbd5e1; background: #f1f5f9; color: #475569; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 1px 2px rgba(0,0,0,0.04);";
+
+        var modalActiveStyle = "height: 28px; padding: 0 11px; font-size: 11.5px; font-weight: 600; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid rgba(255,255,255,0.4); background: rgba(255,255,255,0.22); color: #ffffff; cursor: pointer; transition: all 0.2s ease;";
+        var modalInactiveStyle = "height: 28px; padding: 0 11px; font-size: 11.5px; font-weight: 600; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.15); color: rgba(255,255,255,0.75); cursor: pointer; transition: all 0.2s ease;";
+
+        if (btnMain) {
+            btnMain.setAttribute('style', is3D ? activeStyle : inactiveStyle);
+            if (lblMain) lblMain.innerText = is3D ? 'Vista 3D: ON' : 'Vista 2D (Plano)';
+        }
+        if (btnModal) {
+            btnModal.setAttribute('style', is3D ? modalActiveStyle : modalInactiveStyle);
+            if (lblModal) lblModal.innerText = is3D ? 'Vista 3D: ON' : 'Vista 2D (Plano)';
+        }
+
+        if (typeof Highcharts !== 'undefined' && Highcharts.charts) {
+            Highcharts.charts.forEach(function (c) {
+                if (c) {
+                    window.aplicarEstilo3DCartera(c, is3D);
+                }
+            });
+        }
+    };
 
     $(function () {
         function asegurarAnchoCompleto() {
@@ -1178,23 +537,14 @@
                             if (targetWidth && targetWidth > 200) {
                                 c.setSize(targetWidth, null, false);
                             }
-                            window.guardarConfiguracionOriginal(c);
-                            if (window.tipoGraficoActual && window.tipoGraficoActual !== 'column') {
-                                window.aplicarTipoAGrafico(c, window.tipoGraficoActual);
-                            } else if (typeof window.aplicarEstilo3DCartera === 'function') {
+                            if (typeof window.aplicarEstilo3DCartera === 'function') {
                                 window.aplicarEstilo3DCartera(c, window.cartera3DActivo);
                             }
-                            window.habilitarRotacionInteractiva3D(c);
                             c.reflow();
                         } catch (e) {}
                     }
                 });
             }
-            $('#selTipoGraficoCartera, #selTipoGraficoComposicion, #selTipoGraficoModal').val(window.tipoGraficoActual || 'column');
-            var hintMain = document.getElementById('lbl3DRotateHint') || document.getElementById('lbl3DRotateHintComposicion');
-            var hintModal = document.getElementById('lbl3DRotateHintModal');
-            if (hintMain) hintMain.style.display = window.cartera3DActivo ? 'inline-flex' : 'none';
-            if (hintModal) hintModal.style.display = window.cartera3DActivo ? 'inline-flex' : 'none';
         }
         setTimeout(asegurarAnchoCompleto, 60);
         setTimeout(asegurarAnchoCompleto, 180);
