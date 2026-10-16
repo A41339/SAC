@@ -422,7 +422,8 @@
         if (typeof Highcharts === 'undefined' || !Highcharts.charts) return;
 
         var modalCharts = Highcharts.charts.filter(function (c) {
-            return c && c.renderTo && $(c.renderTo).closest(modalId).length && c.series && c.series.length > 0;
+            var elem = (typeof getHighchartsRenderElement === 'function') ? getHighchartsRenderElement(c) : (c && typeof c.renderTo === 'string' ? document.getElementById(c.renderTo.replace(/^#/, '')) : (c ? c.renderTo : null));
+            return c && elem && $(elem).closest(modalId).length && c.series && c.series.length > 0;
         });
 
         var chart = null;
@@ -572,23 +573,30 @@
         if (!$modal.length) return;
         var $body = $modal.find('.modal-body');
         var targetWidth = $body.width();
-        if (!targetWidth || targetWidth < 200) {
-            targetWidth = $modal.width() ? ($modal.width() - 40) : 1100;
+        if (!targetWidth || targetWidth < 250) {
+            var $dialog = $modal.find('.modal-dialog');
+            targetWidth = $dialog.width() || $modal.width() || $(window).width();
+            targetWidth = Math.max(targetWidth - 40, 600);
         }
         var targetHeight = 480;
 
         // 1. Recorrer Highcharts.charts y redimensionar los que pertenezcan a este modal
         Highcharts.charts.forEach(function (c) {
-            if (c && c.renderTo && $(c.renderTo).closest(modalSelector).length) {
+            if (!c) return;
+            var elem = (typeof getHighchartsRenderElement === 'function') ? getHighchartsRenderElement(c) : (c.renderTo ? (typeof c.renderTo === 'string' ? document.getElementById(c.renderTo.replace(/^#/, '')) : c.renderTo) : null);
+            if (!elem && c.container) elem = c.container.parentNode || c.container;
+            if (!elem) return;
+
+            if ($(elem).closest(modalSelector).length || $.contains($modal[0], elem)) {
                 try {
-                    $(c.renderTo).css({
+                    $(elem).css({
                         'width': '100%',
                         'height': targetHeight + 'px',
                         'min-height': targetHeight + 'px',
                         'display': 'block'
                     });
 
-                    var containerWidth = $(c.renderTo).width() || targetWidth;
+                    var containerWidth = $(elem).width() || targetWidth;
                     var finalWidth = Math.max(containerWidth, targetWidth);
 
                     if (c.options && c.options.chart) {
@@ -596,7 +604,22 @@
                         c.options.chart.height = targetHeight;
                     }
 
+                    c.hasUserSize = true;
                     c.setSize(finalWidth, targetHeight, false);
+
+                    if (c.container) {
+                        $(c.container).css({
+                            'width': '100%',
+                            'height': targetHeight + 'px'
+                        });
+                        $(c.container).find('svg').attr({
+                            'width': finalWidth,
+                            'height': targetHeight
+                        }).css({
+                            'width': '100%',
+                            'height': targetHeight + 'px'
+                        });
+                    }
                 } catch (e) {
                     console.error('Error al redimensionar gráfico en modal ' + modalSelector + ':', e);
                 }
@@ -608,8 +631,9 @@
         if (varName && window[varName] && typeof window[varName].setSize === 'function') {
             try {
                 var inst = window[varName];
-                if (inst.renderTo) {
-                    $(inst.renderTo).css({
+                var instElem = (typeof getHighchartsRenderElement === 'function') ? getHighchartsRenderElement(inst) : (inst.renderTo ? (typeof inst.renderTo === 'string' ? document.getElementById(inst.renderTo.replace(/^#/, '')) : inst.renderTo) : null);
+                if (instElem) {
+                    $(instElem).css({
                         'width': '100%',
                         'height': targetHeight + 'px',
                         'min-height': targetHeight + 'px',
@@ -621,7 +645,21 @@
                     inst.options.chart.width = finalW;
                     inst.options.chart.height = targetHeight;
                 }
+                inst.hasUserSize = true;
                 inst.setSize(finalW, targetHeight, false);
+                if (inst.container) {
+                    $(inst.container).css({
+                        'width': '100%',
+                        'height': targetHeight + 'px'
+                    });
+                    $(inst.container).find('svg').attr({
+                        'width': finalW,
+                        'height': targetHeight
+                    }).css({
+                        'width': '100%',
+                        'height': targetHeight + 'px'
+                    });
+                }
             } catch (ex) {
                 console.error('Error al redimensionar variable global ' + varName + ':', ex);
             }
@@ -635,15 +673,11 @@
         } catch (e) {
             console.error(e);
         }
-        setTimeout(function () {
-            resizeModalChart(modalId);
-        }, 120);
-        setTimeout(function () {
-            resizeModalChart(modalId);
-        }, 280);
-        setTimeout(function () {
-            resizeModalChart(modalId);
-        }, 450);
+        [60, 150, 300, 500].forEach(function (d) {
+            setTimeout(function () {
+                resizeModalChart(modalId);
+            }, d);
+        });
     }
 
     // Modal Diferencial de Tasas
@@ -677,7 +711,9 @@
                 resizeModalChart('#' + this.id);
             });
             Highcharts.charts.forEach(function (c) {
-                if (c && c.renderTo && !$(c.renderTo).closest('.modal').length) {
+                if (!c) return;
+                var elem = (typeof getHighchartsRenderElement === 'function') ? getHighchartsRenderElement(c) : (c.renderTo ? (typeof c.renderTo === 'string' ? document.getElementById(c.renderTo.replace(/^#/, '')) : c.renderTo) : null);
+                if (elem && !$(elem).closest('.modal').length) {
                     try { c.reflow(); } catch (e) {}
                 }
             });

@@ -77,8 +77,14 @@
     }
     $('#mPopUp').on('shown.bs.modal', function () {
         if (typeof Highcharts !== 'undefined') {
+            if (typeof resizeAllChartsInModal === 'function') {
+                resizeAllChartsInModal(this);
+            }
             Highcharts.charts.forEach(function (chart) {
-                if (chart && chart.renderTo && $(chart.renderTo).closest('#mPopUp').length) {
+                if (!chart) return;
+                var elem = (typeof getHighchartsRenderElement === 'function') ? getHighchartsRenderElement(chart) : (chart.renderTo ? (typeof chart.renderTo === 'string' ? document.getElementById(chart.renderTo.replace(/^#/, '')) : chart.renderTo) : null);
+                if (elem && $(elem).closest('#mPopUp').length) {
+                    chart.hasUserSize = true;
                     chart.reflow();
                 }
             });
@@ -87,7 +93,8 @@
                 try {
                     if (typeof Highcharts === 'undefined' || !Highcharts.charts) return;
                     var modalCharts = Highcharts.charts.filter(function (c) {
-                        return c && c.renderTo && $(c.renderTo).closest('#mPopUp').length && c.series && c.series.length > 0;
+                        var elem = (typeof getHighchartsRenderElement === 'function') ? getHighchartsRenderElement(c) : (c && typeof c.renderTo === 'string' ? document.getElementById(c.renderTo.replace(/^#/, '')) : (c ? c.renderTo : null));
+                        return c && elem && $(elem).closest('#mPopUp').length && c.series && c.series.length > 0;
                     });
                     if (modalCharts.length === 0) return;
                     var chart = modalCharts[0];

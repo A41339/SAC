@@ -1585,109 +1585,118 @@
             chartMenuObserver.observe(document.body, { childList: true, subtree: true });
         }
 
-        // Redimensionamiento global garantizado de gráficos Highcharts en cualquier modal al abrirse (en todas las pantallas)
-        $(document).on('show.bs.modal shown.bs.modal', '.modal', function () {
-            var $modal = $(this);
-            if (typeof Highcharts === 'undefined' || !Highcharts.charts) return;
-
-            var resizeModalCharts = function () {
-                var $body = $modal.find('.modal-body');
-                var bodyWidth = $body.width();
-                if (!bodyWidth || bodyWidth < 200) {
-                    bodyWidth = $modal.width() ? ($modal.width() - 40) : 1100;
+        // Helper universal para resolver el elemento DOM del contenedor de cualquier gráfico Highcharts
+        function getHighchartsRenderElement(chart) {
+            if (!chart) return null;
+            if (chart.renderTo) {
+                if (typeof chart.renderTo === 'string') {
+                    var cleanId = chart.renderTo.replace(/^#/, '');
+                    var found = document.getElementById(cleanId);
+                    if (found) return found;
+                } else if (chart.renderTo.nodeType) {
+                    return chart.renderTo;
+                } else if (chart.renderTo.length && chart.renderTo[0] && chart.renderTo[0].nodeType) {
+                    return chart.renderTo[0];
                 }
-                var targetWidth = Math.max(bodyWidth, 600);
+            }
+            if (chart.container) {
+                return chart.container.parentNode || chart.container;
+            }
+            return null;
+        }
 
-                Highcharts.charts.forEach(function (c) {
-                    if (!c) return;
+        // Redimensionamiento universal garantizado de gráficos Highcharts en cualquier modal al abrirse (en todas las pantallas)
+        function resizeAllChartsInModal(modalDom) {
+            if (!modalDom || typeof Highcharts === 'undefined' || !Highcharts.charts) return;
+            var $modal = $(modalDom);
+            if (!$modal.length) return;
 
-                    var renderElem = null;
-                    if (c.renderTo) {
-                        if (typeof c.renderTo === 'string') {
-                            renderElem = document.getElementById(c.renderTo);
-                        } else if (c.renderTo.nodeType) {
-                            renderElem = c.renderTo;
-                        }
-                    }
-                    if (!renderElem && c.container) {
-                        renderElem = c.container.parentNode || c.container;
-                    }
-                    if (!renderElem) return;
+            var $body = $modal.find('.modal-body');
+            var bodyWidth = $body.width();
+            if (!bodyWidth || bodyWidth < 250) {
+                var $dialog = $modal.find('.modal-dialog');
+                bodyWidth = $dialog.width() || $modal.width() || $(window).width();
+                bodyWidth = Math.max(bodyWidth - 40, 600);
+            }
+            var targetWidth = Math.max(bodyWidth, 600);
+            var targetHeight = 480;
 
-                    var isInModal = false;
+            Highcharts.charts.forEach(function (c) {
+                if (!c) return;
+                var renderElem = getHighchartsRenderElement(c);
+                if (!renderElem) return;
+
+                var isInModal = false;
+                try {
+                    isInModal = $.contains($modal[0], renderElem) || $(renderElem).closest($modal).length > 0;
+                } catch (ex) {
+                    isInModal = false;
+                }
+
+                if (isInModal) {
                     try {
-                        isInModal = $.contains($modal[0], renderElem) || $(renderElem).closest('.modal')[0] === $modal[0];
-                    } catch (ex) {
-                        isInModal = $(renderElem).closest($modal).length > 0;
-                    }
+                        var h = (c.options && c.options.chart && c.options.chart.height) || c.chartHeight || targetHeight;
+                        if (!h || h < 380) h = targetHeight;
 
-                    if (isInModal) {
-                        try {
-                            var h = (c.options && c.options.chart && c.options.chart.height) || c.chartHeight || 480;
-                            $(renderElem).css({
-                                'width': '100%',
-                                'height': h + 'px',
-                                'min-height': h + 'px',
-                                'display': 'block'
-                            });
+                        $(renderElem).css({
+                            'width': '100%',
+                            'height': h + 'px',
+                            'min-height': h + 'px',
+                            'display': 'block'
+                        });
 
-                            var finalWidth = Math.max($(renderElem).width() || targetWidth, targetWidth);
+                        var finalWidth = Math.max($(renderElem).width() || targetWidth, targetWidth);
 
-                            if (c.options && c.options.chart) {
-                                c.options.chart.width = finalWidth;
-                                c.options.chart.height = h;
-                            }
-
-                            c.setSize(finalWidth, h, false);
-                        } catch (e) {
-                            console.error('Error al redimensionar gráfico modal global:', e);
+                        if (c.options && c.options.chart) {
+                            c.options.chart.width = finalWidth;
+                            c.options.chart.height = h;
                         }
-                    }
-                });
-                bringExportButtonsToFront();
-            };
 
-            resizeModalCharts();
-            setTimeout(resizeModalCharts, 60);
-            setTimeout(resizeModalCharts, 180);
-            setTimeout(resizeModalCharts, 350);
-            setTimeout(resizeModalCharts, 600);
+                        c.hasUserSize = true;
+                        c.setSize(finalWidth, h, false);
+
+                        if (c.container) {
+                            $(c.container).css({
+                                'width': '100%',
+                                'height': h + 'px'
+                            });
+                            $(c.container).find('svg').attr({
+                                'width': finalWidth,
+                                'height': h
+                            }).css({
+                                'width': '100%',
+                                'height': h + 'px'
+                            });
+                        }
+                    } catch (e) {
+                        console.error('Error al redimensionar gráfico modal universal:', e);
+                    }
+                }
+            });
+            bringExportButtonsToFront();
+        }
+
+        $(document).on('show.bs.modal shown.bs.modal', '.modal', function () {
+            var modalElem = this;
+            resizeAllChartsInModal(modalElem);
+            [50, 120, 250, 450, 700].forEach(function (delay) {
+                setTimeout(function () {
+                    resizeAllChartsInModal(modalElem);
+                }, delay);
+            });
         });
 
         $(window).on('resize', function () {
             if (typeof Highcharts !== 'undefined' && Highcharts.charts) {
                 $('.modal.in, .modal.show').each(function () {
-                    var $openModal = $(this);
-                    var $body = $openModal.find('.modal-body');
-                    var bodyWidth = $body.width();
-                    if (!bodyWidth || bodyWidth < 200) {
-                        bodyWidth = $openModal.width() ? ($openModal.width() - 40) : 1100;
+                    resizeAllChartsInModal(this);
+                });
+                Highcharts.charts.forEach(function (c) {
+                    if (!c) return;
+                    var renderElem = getHighchartsRenderElement(c);
+                    if (renderElem && !$(renderElem).closest('.modal').length) {
+                        try { c.reflow(); } catch (e) {}
                     }
-                    var targetWidth = Math.max(bodyWidth, 600);
-
-                    Highcharts.charts.forEach(function (c) {
-                        if (!c) return;
-                        var renderElem = typeof c.renderTo === 'string' ? document.getElementById(c.renderTo) : (c.renderTo || (c.container && c.container.parentNode));
-                        if (!renderElem) return;
-                        var isInModal = false;
-                        try {
-                            isInModal = $.contains($openModal[0], renderElem) || $(renderElem).closest('.modal')[0] === $openModal[0];
-                        } catch (ex) {
-                            isInModal = $(renderElem).closest($openModal).length > 0;
-                        }
-                        if (isInModal) {
-                            try {
-                                var h = (c.options && c.options.chart && c.options.chart.height) || c.chartHeight || 480;
-                                $(renderElem).css({ 'width': '100%', 'height': h + 'px', 'min-height': h + 'px', 'display': 'block' });
-                                var finalW = Math.max($(renderElem).width() || targetWidth, targetWidth);
-                                if (c.options && c.options.chart) {
-                                    c.options.chart.width = finalW;
-                                    c.options.chart.height = h;
-                                }
-                                c.setSize(finalW, h, false);
-                            } catch (e) {}
-                        }
-                    });
                 });
             }
         });
