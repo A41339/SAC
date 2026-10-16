@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="~/Content/multiselect/docs/css/prettify.min.css" type="text/css">
     <script type="text/javascript" src="~/Content/multiselect/docs/js/prettify.min.js"></script>
     <link rel="stylesheet" href="~/Content/multiselect/dist/css/bootstrap-multiselect.css" type="text/css">
-    <script type="text/javascript" src="~/Content/multiselect/dist/js/bootstrap-multiselect.js"></script>
+    <script type="text/javascript" src="~/Content/multiselect/dist/js/bootstrap-multiselect.js"></script>
 }
 
 <section class="content-header" style="padding: 10px 20px 6px 20px;">
@@ -190,13 +190,21 @@
                          Highcharts.charts.forEach(function (c) {
                              if (!c) return;
                              var elem = (typeof c.renderTo === 'string') ? document.getElementById(c.renderTo.replace(/^#/, '')) : c.renderTo;
-                             if (elem && $(elem).closest('#grafica').length) {
+                             if (elem && $(elem).closest('#container').length) {
                                  try {
                                      if (targetWidth && targetWidth > 200) {
                                          c.setSize(targetWidth, null, false);
                                      }
-                                     if (typeof window.aplicarEstilo3DCartera === 'function') {
+                                     if (typeof window.guardarConfiguracionOriginal === 'function') {
+                                         window.guardarConfiguracionOriginal(c);
+                                     }
+                                     if (typeof window.aplicarTipoAGrafico === 'function') {
+                                         window.aplicarTipoAGrafico(c, window.tipoGraficoActual);
+                                     } else if (typeof window.aplicarEstilo3DCartera === 'function') {
                                          window.aplicarEstilo3DCartera(c, window.cartera3DActivo);
+                                     }
+                                     if (typeof window.habilitarRotacionInteractiva3D === 'function') {
+                                         window.habilitarRotacionInteractiva3D(c);
                                      }
                                      c.reflow();
                                  } catch (e) {}
@@ -229,13 +237,21 @@
             Highcharts.charts.forEach(function (c) {
                 if (!c) return;
                 var elem = (typeof c.renderTo === 'string') ? document.getElementById(c.renderTo.replace(/^#/, '')) : c.renderTo;
-                if (elem && $(elem).closest('#grafica').length) {
+                if (elem && $(elem).closest('#container').length) {
                     try {
                         if (targetWidth && targetWidth > 200) {
                             c.setSize(targetWidth, null, false);
                         }
-                        if (typeof window.aplicarEstilo3DCartera === 'function') {
+                        if (typeof window.guardarConfiguracionOriginal === 'function') {
+                            window.guardarConfiguracionOriginal(c);
+                        }
+                        if (typeof window.aplicarTipoAGrafico === 'function') {
+                            window.aplicarTipoAGrafico(c, window.tipoGraficoActual);
+                        } else if (typeof window.aplicarEstilo3DCartera === 'function') {
                             window.aplicarEstilo3DCartera(c, window.cartera3DActivo);
+                        }
+                        if (typeof window.habilitarRotacionInteractiva3D === 'function') {
+                            window.habilitarRotacionInteractiva3D(c);
                         }
                         c.reflow();
                     } catch (e) {}
