@@ -347,10 +347,14 @@ namespace FGA.Model
                 PlotOptionsLine LineDash = new PlotOptionsLine
                 {
                     DashStyle = DashStyles.LongDash,
-                    LineWidth = 2,
+                    LineWidth = 4,
+                    Shadow = true,
                     Marker = new PlotOptionsLineMarker
                     {
-                        Enabled = System.Web.HttpContext.Current.Session[FGA.Utility.Utilitarios.show_LineDetail] is null ? false : true
+                        Enabled = true,
+                        Radius = 5,
+                        LineWidth = 2,
+                        LineColor = Color.White
                     },
                     DataLabels = new PlotOptionsLineDataLabels
                     {
@@ -374,10 +378,14 @@ namespace FGA.Model
                 PlotOptionsLine LineDash = new PlotOptionsLine
                 {
                     DashStyle = DashStyles.LongDash,
-                    LineWidth = 2,
+                    LineWidth = 4,
+                    Shadow = true,
                     Marker = new PlotOptionsLineMarker
                     {
-                        Enabled = System.Web.HttpContext.Current.Session[FGA.Utility.Utilitarios.show_LineDetail] is null ? false : true
+                        Enabled = true,
+                        Radius = 5,
+                        LineWidth = 2,
+                        LineColor = Color.White
                     },
                     DataLabels = new PlotOptionsLineDataLabels
                     {
@@ -405,10 +413,14 @@ namespace FGA.Model
                 PlotOptionsLine Line = new PlotOptionsLine
                 {
                     DashStyle = DashStyles.Solid,
-                    LineWidth = 2,
+                    LineWidth = 5,
+                    Shadow = true,
                     Marker = new PlotOptionsLineMarker
                     {
-                        Enabled = System.Web.HttpContext.Current.Session[FGA.Utility.Utilitarios.show_LineDetail] is null ? false : true
+                        Enabled = true,
+                        Radius = 6,
+                        LineWidth = 2,
+                        LineColor = Color.White
                     },
                     DataLabels = new PlotOptionsLineDataLabels
                     {
@@ -436,10 +448,14 @@ namespace FGA.Model
                 PlotOptionsLine Line = new PlotOptionsLine
                 {
                     DashStyle = DashStyles.Solid,
-                    LineWidth = 2,
+                    LineWidth = 5,
+                    Shadow = true,
                     Marker = new PlotOptionsLineMarker
                     {
-                        Enabled = System.Web.HttpContext.Current.Session[FGA.Utility.Utilitarios.show_LineDetail] is null ? false : true
+                        Enabled = true,
+                        Radius = 6,
+                        LineWidth = 2,
+                        LineColor = Color.White
                     },
                     DataLabels = new PlotOptionsLineDataLabels
                     {
