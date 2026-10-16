@@ -6,7 +6,7 @@
 <script type="text/javascript">
     if (typeof Highcharts !== 'undefined') {
         Highcharts.setOptions({
-            colors: ['#0071AD', '#475569', '#0d9488', '#ea580c', '#0284c7', '#6366f1', '#1e3a8a', '#d97706', '#059669', '#64748b'],
+            colors: ['#2F5597', '#0284c7', '#959595', '#ea580c', '#565656', '#6DB5CB', '#143750', '#f59e0b', '#0071AD', '#B7D8DF'],
             chart: {
                 options3d: {
                     enabled: false
@@ -221,24 +221,29 @@
     window.echarts3DAlpha = 42;
     window.echarts3DBeta = 0;
     window.echarts3DDistance = 175;
-    window.coloresPlano2D = ['#0071AD', '#475569', '#0d9488', '#ea580c', '#0284c7', '#6366f1', '#1e3a8a', '#d97706', '#059669', '#64748b'];
+    window.coloresPlano2D = ['#2F5597', '#0284c7', '#959595', '#ea580c', '#565656', '#6DB5CB', '#143750', '#f59e0b', '#0071AD', '#B7D8DF'];
+    window.paletaInstitucionalFGA = ['#2F5597', '#0284c7', '#959595', '#ea580c', '#565656', '#6DB5CB', '#143750', '#f59e0b', '#0071AD', '#B7D8DF'];
 
-    // Mapeo de paleta institucional y sobria para tramos de riesgo / morosidad
-    window.obtenerColorInstitucional = function (name, idx) {
+    // Mapeo riguroso de colores institucionales FGA / FFC
+    window.obtenerColorInstitucional = function (name, idx, sColor) {
+        if (sColor && typeof sColor === 'string' && (sColor.charAt(0) === '#' || sColor.indexOf('rgb') === 0)) {
+            return sColor;
+        }
         var n = (name || '').toLowerCase();
         if (n.indexOf('al d') > -1 || n.indexOf('vigente') > -1) {
-            return '#1b3866'; // Azul Marino Institucional FGA
-        } else if (n.indexOf('1 a 30') > -1 || n.indexOf('1-30') > -1 || (n.indexOf('30') > -1 && n.indexOf('60') === -1)) {
-            return '#0284c7'; // Azul Océano Institucional
-        } else if (n.indexOf('31 a 60') > -1 || n.indexOf('31-60') > -1 || (n.indexOf('60') > -1 && n.indexOf('90') === -1)) {
-            return '#d97706'; // Ámbar Institucional (Alerta)
-        } else if (n.indexOf('61 a 90') > -1 || n.indexOf('61-90') > -1) {
-            return '#ea580c'; // Naranja Terracota (Riesgo alto)
+            return '#2F5597'; // Azul Corporativo FFC
+        } else if (n.indexOf('1 a 30') > -1 || n.indexOf('1-30') > -1 || n.indexOf('hasta30') > -1) {
+            return '#0284c7'; // Azul Claro FFC
+        } else if (n.indexOf('31 a 60') > -1 || n.indexOf('31-60') > -1 || n.indexOf('hasta60') > -1) {
+            return '#959595'; // Gris Auxiliar FFC
+        } else if (n.indexOf('61 a 90') > -1 || n.indexOf('61-90') > -1 || n.indexOf('hasta90') > -1) {
+            return '#ea580c'; // Naranja Institucional FFC
         } else if (n.indexOf('90') > -1 || n.indexOf('mayor') > -1 || n.indexOf('vencid') > -1) {
-            return '#b91c1c'; // Rojo Ejecutivo (Mora crítica)
+            return '#565656'; // Gris Principal FFC
+        } else if (n.indexOf('judicial') > -1) {
+            return '#143750'; // Azul Oscuro FFC
         }
-        var paleta = ['#1b3866', '#0284c7', '#d97706', '#ea580c', '#b91c1c', '#475569', '#0d9488', '#2F5597'];
-        return paleta[idx % paleta.length];
+        return window.paletaInstitucionalFGA[idx % window.paletaInstitucionalFGA.length];
     };
 
     window.guardarConfiguracionOriginal = function (chart) {
@@ -369,10 +374,25 @@
             periodTotals[xIdx] = tot;
         });
 
-        // Construir datos en formato [xIdx, yIdx, zVal]
+        // 1. Calcular el valor máximo global entre los tramos a graficar
+        var maxVal = 0;
+        seriesToRender.forEach(function (s) {
+            (s.data || []).forEach(function (pt) {
+                var num = (typeof pt === 'number') ? pt : (pt && typeof pt.y === 'number' ? pt.y : (Array.isArray(pt) ? pt[1] : 0));
+                var val = Math.max(0, parseFloat(num) || 0);
+                if (val > maxVal) maxVal = val;
+            });
+        });
+        if (maxVal <= 0) maxVal = 1;
+
+        // Umbral de altura mínima visible para barras con porcentajes o valores reducidos (aprox 3.5% de la altura máxima)
+        // Garantiza que cualquier barra con valor real > 0 tenga un relieve 3D nítido y visible (nunca plana o invisible)
+        var minVisible3DHeight = maxVal * 0.035;
+
+        // 2. Construir datos en formato [xIdx, yIdx, zVal] respetando colores institucionales
         var data3D = [];
         seriesToRender.forEach(function (s, yIdx) {
-            var col = window.obtenerColorInstitucional(s.name, yIdx);
+            var col = window.obtenerColorInstitucional(s.name, yIdx, s.color);
             cats.forEach(function (cat, xIdx) {
                 var v = 0;
                 if (s.data && s.data.length > xIdx) {
@@ -385,9 +405,13 @@
                 var pTot = periodTotals[xIdx] || 0;
                 var pct = pTot > 0 ? ((v / pTot) * 100) : 0;
 
+                // Si el valor real es mayor a 0 pero su altura sería imperceptible, se le asigna la altura mínima visible en 3D
+                var zRender = (v > 0 && v < minVisible3DHeight) ? minVisible3DHeight : v;
+
                 data3D.push({
                     name: cat + ' - ' + s.name,
-                    value: [xIdx, yIdx, v],
+                    value: [xIdx, yIdx, zRender],
+                    realVal: v,
                     tramo: s.name,
                     mes: cat,
                     pct: pct,
@@ -439,7 +463,8 @@
                 formatter: function (params) {
                     var d = params.data;
                     if (!d) return '';
-                    var valFormatted = (typeof Highcharts !== 'undefined' && Highcharts.numberFormat) ? Highcharts.numberFormat(d.value[2], 2, '.', ',') : d.value[2].toFixed(2);
+                    var valReal = (typeof d.realVal !== 'undefined') ? d.realVal : d.value[2];
+                    var valFormatted = (typeof Highcharts !== 'undefined' && Highcharts.numberFormat) ? Highcharts.numberFormat(valReal, 2, '.', ',') : valReal.toFixed(2);
                     var pctFormatted = (typeof Highcharts !== 'undefined' && Highcharts.numberFormat) ? Highcharts.numberFormat(d.pct, 2, '.', ',') : d.pct.toFixed(2);
                     return '<div style="padding: 6px 10px; font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif;">' +
                            '  <div style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase;">Período: ' + d.mes + '</div>' +
