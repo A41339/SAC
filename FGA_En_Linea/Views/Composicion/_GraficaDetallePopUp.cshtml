@@ -477,17 +477,22 @@
         var dynamicBoxDepth = Math.max(100, Math.min(160, numTramos * 24));
         var dynamicBoxHeight = 65;
 
+        var chartFontFamily = '"Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", Arial, sans-serif';
+
         var option = {
             backgroundColor: '#ffffff',
+            textStyle: {
+                fontFamily: chartFontFamily
+            },
             title: {
                 text: (orig.title ? orig.title : 'Distribución de Riesgo de Cartera') + (window.echartsModoMora === 'vencida' ? ' (Enfoque Mora Vencida)' : ''),
                 left: 'center',
                 top: 10,
                 textStyle: {
-                    color: '#1b3866',
-                    fontSize: 14,
-                    fontWeight: 'bold',
-                    fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'
+                    color: '#0f172a',
+                    fontSize: 15,
+                    fontWeight: '700',
+                    fontFamily: chartFontFamily
                 }
             },
             tooltip: {
@@ -509,7 +514,7 @@
                     var esSoloPorcentaje = (Math.abs(valReal - d.pct) < 0.05 && valReal <= 100);
                     var sColor = (d.itemStyle && d.itemStyle.color) ? d.itemStyle.color : '#0284c7';
 
-                    var html = '<div class="fga-chart-tooltip" style="min-width: 240px; padding: 10px 14px;">';
+                    var html = '<div class="fga-chart-tooltip" style="min-width: 240px; padding: 10px 14px; font-family: ' + chartFontFamily + ';">';
                     html += '<div class="tt-header">Período: ' + d.mes + '</div>';
                     html += '<table class="tt-table">';
                     if (esSoloPorcentaje) {
@@ -540,24 +545,24 @@
                 nameGap: 24,
                 data: cats.map(function (c) { return String(c); }),
                 nameTextStyle: {
-                    color: '#0f172a',
+                    color: '#475569',
                     fontSize: 12,
-                    fontWeight: 'bold',
-                    fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'
+                    fontWeight: '600',
+                    fontFamily: chartFontFamily
                 },
                 axisLabel: {
                     show: true,
                     interval: 0,
                     margin: 10,
-                    color: '#0f172a',
+                    color: '#475569',
                     fontSize: 11,
-                    fontWeight: 'bold',
-                    fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif',
+                    fontWeight: '500',
+                    fontFamily: chartFontFamily,
                     textStyle: {
-                        color: '#0f172a',
+                        color: '#475569',
                         fontSize: 11,
-                        fontWeight: 'bold',
-                        fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'
+                        fontWeight: '500',
+                        fontFamily: chartFontFamily
                     }
                 },
                 axisLine: { show: true, lineStyle: { color: '#94a3b8', width: 1.5 } },
@@ -569,24 +574,24 @@
                 name: 'Tramo',
                 data: tramoNames,
                 nameTextStyle: {
-                    color: '#0f172a',
-                    fontSize: 14,
-                    fontWeight: 'bold',
-                    fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'
+                    color: '#475569',
+                    fontSize: 12,
+                    fontWeight: '600',
+                    fontFamily: chartFontFamily
                 },
                 axisLabel: {
                     show: true,
                     interval: 0,
-                    margin: 16,
-                    color: '#0f172a',
-                    fontSize: 14,
-                    fontWeight: 'bold',
-                    fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif',
+                    margin: 14,
+                    color: '#475569',
+                    fontSize: 11,
+                    fontWeight: '500',
+                    fontFamily: chartFontFamily,
                     textStyle: {
-                        color: '#0f172a',
-                        fontSize: 14,
-                        fontWeight: 'bold',
-                        fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'
+                        color: '#475569',
+                        fontSize: 11,
+                        fontWeight: '500',
+                        fontFamily: chartFontFamily
                     }
                 },
                 axisLine: { lineStyle: { color: '#94a3b8', width: 1.5 } },
@@ -596,22 +601,22 @@
                 type: 'value',
                 name: 'Saldo',
                 nameTextStyle: {
-                    color: '#0f172a',
+                    color: '#475569',
                     fontSize: 12,
-                    fontWeight: 'bold',
-                    fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'
+                    fontWeight: '600',
+                    fontFamily: chartFontFamily
                 },
                 axisLabel: {
                     show: true,
-                    color: '#334155',
+                    color: '#64748b',
                     fontSize: 11,
-                    fontWeight: 'bold',
-                    fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif',
+                    fontWeight: '500',
+                    fontFamily: chartFontFamily,
                     textStyle: {
-                        color: '#334155',
+                        color: '#64748b',
                         fontSize: 11,
-                        fontWeight: 'bold',
-                        fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'
+                        fontWeight: '500',
+                        fontFamily: chartFontFamily
                     }
                 },
                 axisLine: { lineStyle: { color: '#94a3b8', width: 1.5 } },
