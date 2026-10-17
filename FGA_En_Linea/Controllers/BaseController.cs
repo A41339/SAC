@@ -23,11 +23,20 @@ namespace FGA.Controllers
                     Session["AllEntidades"] = rawLista;
                 }
 
+                string currentUid = Env.GetUserInfo("userid");
+                int currentRoleId = 0;
+                int.TryParse(Env.GetUserInfo("roleid"), out currentRoleId);
+
                 Usuario ObjUser = Session["CurrentUserObj"] as Usuario;
-                if (ObjUser == null)
+                if (ObjUser == null || (!string.IsNullOrEmpty(currentUid) && ObjUser.Id.HasValue && ObjUser.Id.Value.ToString() != currentUid)
+                    || (currentRoleId > 0 && ObjUser != null && ObjUser.Role_Usuario_Id != currentRoleId))
                 {
-                    ObjUser = usr.Get(Env.GetUserInfo("userid"));
-                    Session["CurrentUserObj"] = ObjUser;
+                    if (!string.IsNullOrEmpty(currentUid))
+                    {
+                        ObjUser = usr.Get(currentUid);
+                        Session["CurrentUserObj"] = ObjUser;
+                        Session["Usuario"] = ObjUser;
+                    }
                 }
 
                 Entidad[] lista = (Entidad[])rawLista.Clone();
@@ -193,6 +202,20 @@ namespace FGA.Controllers
                 if (IsActionNameEqualToCrudPageName(actionName))
                     menuUrl = AreaName + controllerName;
 
+                // REGLA DINÁMICA DE AUTORIZACIÓN:
+                // Si el controlador pertenece a opciones protegidas del catálogo en BD (está en menuaccess),
+                // pero el rol actual NO tiene asignada NINGUNA opción o acción de este controlador, denegar inmediatamente.
+                bool isProtectedController = menuaccess != null && menuaccess.Any(i => !string.IsNullOrEmpty(i.MenuURL) && (i.MenuURL == controllerName || i.MenuURL.StartsWith(controllerName + "/")));
+                if (isProtectedController)
+                {
+                    bool roleHasControllerAccess = menuaccess.Any(i => i.RoleId == roleid && !string.IsNullOrEmpty(i.MenuURL) && (i.MenuURL == controllerName || i.MenuURL.StartsWith(controllerName + "/")));
+                    if (!roleHasControllerAccess)
+                    {
+                        UnAuthoRedirect(context);
+                        return;
+                    }
+                }
+
                 var checkUrl = menuaccess.FirstOrDefault(i => (i.MenuURL == AreaName + controllerName + "/" + actionName) || i.MenuURL == menuUrl);
                 if (checkUrl != null)
                 {
@@ -240,8 +263,7 @@ namespace FGA.Controllers
                         }
                         else
                         {
-                            if (IsThisAjaxRequest() == false)
-                                UnAuthoRedirect(context);
+                            UnAuthoRedirect(context);
                         }
                     }
                 }
@@ -386,6 +408,16 @@ namespace FGA.Controllers
 
         private void UnAuthoRedirect(ActionExecutingContext context)
         {
+            if (IsThisAjaxRequest())
+            {
+                context.Result = new JsonResult
+                {
+                    Data = new { success = false, mensaje = "No tiene permisos para acceder a esta opción." },
+                    JsonRequestBehavior = JsonRequestBehavior.AllowGet
+                };
+                return;
+            }
+
             int roleid = 0;
             int.TryParse(Env.GetUserInfo("roleid"), out roleid);
             string landingUrl = GetRoleLandingUrl(roleid);

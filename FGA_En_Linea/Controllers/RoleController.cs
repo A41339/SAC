@@ -459,8 +459,8 @@ namespace FGA.Controllers
                     }
                 }
 
-                // Invalidar caché global de menús de BaseController en tiempo real
-                HttpRuntime.Cache.Remove("AllMenuBar");
+                // Invalidar caché global de menús y caché por rol en tiempo real
+                Env.InvalidateRoleMenuCache(rolId);
 
                 return Json(new { success = true, message = "Permisos guardados y sincronizados correctamente." });
             }

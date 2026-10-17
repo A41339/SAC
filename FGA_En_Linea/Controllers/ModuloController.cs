@@ -494,11 +494,15 @@ namespace FGA.Controllers
                         if (m == null || string.IsNullOrWhiteSpace(m.MenuText)) continue;
 
                         bool hasChildren = allPermitted.Any(c => c.Menu_MenuId != null && c.Menu_MenuId.ParentId == m.Id);
-                        bool isSubMenu = string.Equals(m.MenuURL?.Trim(), "root", StringComparison.OrdinalIgnoreCase)
-                                         || string.Equals(m.MenuURL?.Trim(), "filter", StringComparison.OrdinalIgnoreCase)
-                                         || string.IsNullOrWhiteSpace(m.MenuURL)
-                                         || m.MenuURL.Trim() == "#"
-                                         || hasChildren;
+                        string itemUrl = (m.MenuURL ?? "").Trim();
+                        bool hasDirectUrl = !string.IsNullOrEmpty(itemUrl) && !itemUrl.Equals("root", StringComparison.OrdinalIgnoreCase) && !itemUrl.Equals("filter", StringComparison.OrdinalIgnoreCase) && itemUrl != "#";
+
+                        if (!hasDirectUrl && !hasChildren)
+                        {
+                            continue;
+                        }
+
+                        bool isSubMenu = !hasDirectUrl || hasChildren;
 
                         string targetUrl = "";
                         if (isSubMenu)

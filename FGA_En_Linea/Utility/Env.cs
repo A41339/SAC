@@ -72,12 +72,16 @@ namespace FGA
                         }
                         break;
                     case "roleid":
-                        ReturnVal = identity?.Claims?.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).SingleOrDefault();
-                        if (string.IsNullOrEmpty(ReturnVal) && HttpContext.Current?.Session != null)
+                        if (HttpContext.Current?.Session != null)
                         {
                             var usrObj = (HttpContext.Current.Session["CurrentUserObj"] ?? HttpContext.Current.Session["Usuario"]) as FGA.Models.Usuario;
-                            if (usrObj != null && usrObj.Role_Usuario_Id > 0) ReturnVal = usrObj.Role_Usuario_Id.ToString();
+                            if (usrObj != null && usrObj.Role_Usuario_Id > 0)
+                            {
+                                ReturnVal = usrObj.Role_Usuario_Id.ToString();
+                                break;
+                            }
                         }
+                        ReturnVal = identity?.Claims?.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).LastOrDefault();
                         break;
                     case "logo":
                         ReturnVal = identity?.Claims?.Where(c => c.Type == ClaimTypes.UserData).Select(c => c.Value).SingleOrDefault();
@@ -254,9 +258,11 @@ namespace FGA
             if (roleId.HasValue)
             {
                 HttpRuntime.Cache.Remove("RoleMenuStructure_" + roleId.Value);
+                HttpRuntime.Cache.Remove("AllMenuBar");
             }
             else
             {
+                HttpRuntime.Cache.Remove("AllMenuBar");
                 var keysToRemove = new List<string>();
                 var enumerator = HttpRuntime.Cache.GetEnumerator();
                 while (enumerator.MoveNext())
@@ -448,6 +454,12 @@ namespace FGA
                     string itemUrl = (item.Menu_MenuId.MenuURL ?? "").Trim();
                     bool hasDirectUrl = !string.IsNullOrEmpty(itemUrl) && !itemUrl.Equals("root", StringComparison.OrdinalIgnoreCase) && !itemUrl.Equals("filter", StringComparison.OrdinalIgnoreCase) && itemUrl != "#";
 
+                    // REGLA DINÁMICA: Si una opción no tiene URL ejecutable y no tiene ninguna opción hija con permiso para este rol, NO DEBE APARECER
+                    if (!hasDirectUrl && !hasChildren)
+                    {
+                        continue;
+                    }
+
                     if (hasDirectUrl)
                     {
                         // Enlace directo configurado en la base de datos (ej. Evaluacion/Evaluacion, Home/Index)
@@ -460,8 +472,8 @@ namespace FGA
                     }
                     else
                     {
-                        // Opción raíz sin hijos
-                        sb.Append("<li class=\"" + itemStyle + "\"> <a draggable=\"false\" href=\"" + MicrosoftHelper.MSHelper.GetSiteRoot() + "/" + itemUrl + "\">" + menuIcon + "  <span>" + item.Menu_MenuId.MenuText + "</span> <span class=\"pull-right-container\"></span></a></li>");
+                        // Opción raíz sin hijos con URL directa válida
+                        sb.Append("<li class=\"" + itemStyle + "\"> <a draggable=\"false\" href=\"" + MicrosoftHelper.MSHelper.GetSiteRoot() + "/" + itemUrl.TrimStart('~', '/') + "\">" + menuIcon + "  <span>" + item.Menu_MenuId.MenuText + "</span> <span class=\"pull-right-container\"></span></a></li>");
                     }
                 }
                 sb.Append("</ul>");

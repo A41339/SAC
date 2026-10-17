@@ -130,13 +130,15 @@ namespace FGA.Controllers
                             new Claim("EsEntidad", login.Role_Usuario.EsEntidad ? "1" : "0")
                         };
 
+                    Session.Clear();
                     Session["Usuario"] = login;
-                    Session["Ind_Carga"] = login.Entidad_Usuario.Ind_Cargar;
+                    Session["CurrentUserObj"] = login;
+                    Session["Ind_Carga"] = login.Entidad_Usuario != null ? login.Entidad_Usuario.Ind_Cargar : false;
                     string defaultEnt = login.Role_Usuario.EsEntidad ? login.Entidad_Usuario_Id : Utility.Utilitarios.entidadDefault;
                     Session["IdEntidad"] = defaultEnt;
                     Session["IsFGA"] = login.Role_Usuario.EsEntidad ? 0 : 1;
                     HttpRuntime.Cache.Insert("Login_" + login.Id.ToString(), login.Id.ToString(), null, DateTime.Now.AddMinutes(10), System.Web.Caching.Cache.NoSlidingExpiration);
-                    Env.InvalidateRoleMenuCache(login.Role_Usuario_Id);
+                    Env.InvalidateRoleMenuCache();
 
                     try
                     {
@@ -183,6 +185,7 @@ namespace FGA.Controllers
 
                     var identity = new ClaimsIdentity(claims, DefaultAuthenticationTypes.ApplicationCookie);
                     var authenticationManager = Request.GetOwinContext().Authentication;
+                    authenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
                     authenticationManager.SignIn(identity);
                     var claimsPrincipal = new ClaimsPrincipal(identity);
                     Thread.CurrentPrincipal = claimsPrincipal;
