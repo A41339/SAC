@@ -1,4 +1,5 @@
 using System;
+using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 
@@ -6,6 +7,24 @@ namespace FileService.Bulk
 {
     public static class SqlBulkCopyHelper
     {
+        public static SqlConnection CrearConexionSql()
+        {
+            string connStr = null;
+            if (ConfigurationManager.ConnectionStrings["SIConnectionString"] != null)
+            {
+                connStr = ConfigurationManager.ConnectionStrings["SIConnectionString"].ConnectionString;
+            }
+
+            if (string.IsNullOrEmpty(connStr))
+            {
+                throw new InvalidOperationException("No se encontró la cadena de conexión SIConnectionString en el archivo de configuración.");
+            }
+
+            var conn = new SqlConnection(connStr);
+            conn.Open();
+            return conn;
+        }
+
         public static void EjecutarBulkCopy(SqlConnection conn, string tableName, DataTable dt, int timeoutSeconds = 300)
         {
             if (dt == null || dt.Rows.Count == 0) return;

@@ -16,16 +16,14 @@ namespace FileService.Processors
     {
         public void Procesar(XmlReader reader, XML_Encabezado encabezado, SIContext db, long? contableEstadosId = null)
         {
+            int cantidad = 0;
+            decimal totalPasivos = 0;
+            DataTable dt = CrearDataTablePasivos210();
+
             try
             {
-                int cantidad = 0;
-                decimal totalPasivos = 0;
-                DataTable dt = CrearDataTablePasivos210();
-
-                using (SqlConnection conn = new SqlConnection(db.Database.Connection.ConnectionString))
+                using (SqlConnection conn = SqlBulkCopyHelper.CrearConexionSql())
                 {
-                    conn.Open();
-
                     while (reader != null && reader.Read())
                     {
                         try
@@ -123,11 +121,22 @@ namespace FileService.Processors
                         dt.Clear();
                     }
                 }
-
+            }
+            catch (Exception e)
+            {
+                var baseEx = e.GetBaseException() ?? e;
+                XmlErrorLogger.AgregarError("Detalle: " + baseEx.Message, encabezado, db);
+                ServiceLogger.LogError(string.Format("Pasivos210Processor (Encabezado #{0})", encabezado.Id), e);
+            }
+            finally
+            {
                 encabezado.Cantidad = cantidad;
                 db.Entry(encabezado).State = EntityState.Modified;
                 db.SaveChanges();
+            }
 
+            try
+            {
                 var duplicados = db.Database.SqlQuery<string>(
                     @"SELECT TOP 50 IdOperacion 
                       FROM [dbo].[XML_Pasivo_Cuenta_Contable_210] WITH(NOLOCK) 
@@ -156,10 +165,9 @@ namespace FileService.Processors
                     }
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                var baseEx = e.GetBaseException() ?? e;
-                XmlErrorLogger.AgregarError("Detalle: " + baseEx.Message, encabezado, db);
+                ServiceLogger.LogError(string.Format("Pasivos210Processor validaciones posteriores (Encabezado #{0})", encabezado.Id), ex);
             }
         }
 

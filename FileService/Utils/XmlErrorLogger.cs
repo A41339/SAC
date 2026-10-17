@@ -1,5 +1,6 @@
 using FGA.Models;
 using System;
+using System.Configuration;
 
 namespace FileService.Utils
 {
@@ -11,19 +12,30 @@ namespace FileService.Utils
             {
                 if (encabezado != null && (encabezado.IdEntidad == null || encabezado.IdEntidad.Ind_Validar))
                 {
-                    using (var errDb = new SIContext())
+                    if (db != null)
                     {
-                        errDb.Database.CommandTimeout = 60;
-                        var error = new XML_Errores();
-                        error.IdEncabezado_Id = encabezado.Id;
-                        error.Detalle = detalle;
-                        errDb.XML_Errores.Add(error);
-                        errDb.SaveChanges();
+                        db.Database.ExecuteSqlCommand(
+                            "INSERT INTO [dbo].[XML_Errores] ([IdEncabezado_Id], [Detalle]) VALUES (@p0, @p1)",
+                            encabezado.Id, detalle ?? string.Empty);
                     }
+                    else
+                    {
+                        using (var conn = Bulk.SqlBulkCopyHelper.CrearConexionSql())
+                        using (var cmd = conn.CreateCommand())
+                        {
+                            cmd.CommandText = "INSERT INTO [dbo].[XML_Errores] ([IdEncabezado_Id], [Detalle]) VALUES (@p0, @p1)";
+                            cmd.Parameters.AddWithValue("@p0", encabezado.Id);
+                            cmd.Parameters.AddWithValue("@p1", detalle ?? string.Empty);
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
+
+                    ServiceLogger.Log(string.Format("Error registrado en XML_Errores para Encabezado #{0}: {1}", encabezado.Id, detalle));
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                ServiceLogger.LogError(string.Format("XmlErrorLogger falló al guardar error para Encabezado #{0}: {1}", encabezado != null ? encabezado.Id : 0, detalle), ex);
             }
         }
     }

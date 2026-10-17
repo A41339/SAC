@@ -16,15 +16,13 @@ namespace FileService.Processors
     {
         public void Procesar(XmlReader reader, XML_Encabezado encabezado, SIContext db, long? contableEstadosId = null)
         {
+            int cantidad = 0;
+            DataTable dt = CrearDataTableCreditoOperacion();
+
             try
             {
-                int cantidad = 0;
-                DataTable dt = CrearDataTableCreditoOperacion();
-
-                using (SqlConnection conn = new SqlConnection(db.Database.Connection.ConnectionString))
+                using (SqlConnection conn = SqlBulkCopyHelper.CrearConexionSql())
                 {
-                    conn.Open();
-
                     while (reader != null && reader.Read())
                     {
                         try
@@ -38,6 +36,7 @@ namespace FileService.Processors
                                         XDocument xDoc = XDocument.Load(reader.ReadSubtree());
                                         cantidad += 1;
                                         XML_Credito_Operacion_DirInd registro;
+
                                         try
                                         {
                                             registro = xDoc.Elements("Registro").Select(info => new XML_Credito_Operacion_DirInd
@@ -47,15 +46,27 @@ namespace FileService.Processors
                                                 IdOperacion = info.Element("IdOperacion").Value,
                                                 TipoCartera = Utilitarios.ConvertirAEntero(info.Element("TipoCartera").Value),
                                                 EstadoOperacionCrediticia = Utilitarios.ConvertirAEntero(info.Element("EstadoOperacionCrediticia").Value),
-                                                CuentaContablePrincipal = info.Element("CuentaContablePrincipal").Value.Trim(),
-                                                CuentaContableProducto = info.Element("CuentaContableProductos").Value.Trim(),
+                                                CuentaContablePrincipal = info.Element("CuentaContablePrincipal").Value,
                                                 SaldoPrincipal = Utilitarios.ConvertirADecimal(info.Element("SaldoPrincipal").Value, "Id de operación:  " + info.Element("IdOperacion").Value + ". El saldo principal: "),
                                                 SaldoProductos = Utilitarios.ConvertirADecimal(info.Element("SaldoProductos").Value, "Id de operación:  " + info.Element("IdOperacion").Value + ". El saldo productos: "),
-                                                SaldoComisiones = Utilitarios.ConvertirADecimal(info.Element("SaldoComisiones").Value, "Id de operación:  " + info.Element("IdOperacion").Value + ". El saldo comisión: "),
+                                                SaldoComisiones = Utilitarios.ConvertirADecimal(info.Element("SaldoComisiones").Value, "Id de operación:  " + info.Element("IdOperacion").Value + ". El saldo comisiones: "),
                                                 FechaVencimiento = Utilitarios.ConvertirAFecha(info.Element("FechaVencimiento").Value),
-                                                TasaInteresNominalVigente = Utilitarios.ConvertirADecimal(info.Element("TasaInteresNominalVigente").Value, "Id de operación:  " + info.Element("IdOperacion").Value + ". La tasa nominal: "),
-                                                MontoCuotaPrincipalActual = Utilitarios.ConvertirADecimal(info.Element("MontoCuotaPrincipalActual").Value, "Id de operación:  " + info.Element("IdOperacion").Value + ". El monto de cuota: "),
-                                                IndNueva = false,
+                                                TasaInteresNominalVigente = Utilitarios.ConvertirADecimal(info.Element("TasaInteresNominalVigente").Value, "Id de operación:  " + info.Element("IdOperacion").Value + ". La tasa de interés: "),
+                                                MontoCuotaPrincipalActual = Utilitarios.ConvertirADecimal(info.Element("MontoCuotaPrincipalActual").Value, "Id de operación:  " + info.Element("IdOperacion").Value + ". El monto cuota principal: "),
+                                                CuentaContableProducto = info.Element("CuentaContableProducto") != null ? info.Element("CuentaContableProducto").Value : "",
+                                                IndNueva = info.Element("IndNueva") != null && Utilitarios.ConvertirAEntero(info.Element("IndNueva").Value) == 1,
+                                                CodigoCategoriaRiesgo = info.Element("CodigoCategoriaRiesgo") != null ? info.Element("CodigoCategoriaRiesgo").Value : "",
+                                                IndicadorOperacionModificada = info.Element("IndicadorOperacionModificada") != null ? info.Element("IndicadorOperacionModificada").Value : "",
+                                                TipoSegmento = info.Element("TipoSegmento") != null ? info.Element("TipoSegmento").Value : "",
+                                                CodigoEtapa = info.Element("CodigoEtapa") != null ? info.Element("CodigoEtapa").Value : "",
+                                                TipoMonedaOperacion = info.Element("TipoMonedaOperacion") != null ? info.Element("TipoMonedaOperacion").Value : "",
+                                                MontoDesembolsado = info.Element("MontoDesembolsado") != null ? Utilitarios.ConvertirADecimal(info.Element("MontoDesembolsado").Value) : 0,
+                                                FechaFormalizacion = info.Element("FechaFormalizacion") != null ? Utilitarios.ConvertirAFecha(info.Element("FechaFormalizacion").Value) : new DateTime(1900, 1, 1),
+                                                EAD = info.Element("EAD") != null ? Utilitarios.ConvertirADecimal(info.Element("EAD").Value) : 0,
+                                                MontoCuotaInteresesActual = info.Element("MontoCuotaInteresesActual") != null ? Utilitarios.ConvertirADecimal(info.Element("MontoCuotaInteresesActual").Value) : 0,
+                                                IndicadorOperacionNueva = info.Element("IndicadorOperacionNueva") != null ? info.Element("IndicadorOperacionNueva").Value : "",
+                                                MontoEstimacionEspecifica = info.Element("MontoEstimacionEspecifica") != null ? Utilitarios.ConvertirADecimal(info.Element("MontoEstimacionEspecifica").Value) : 0,
+                                                MontoFormalizadoOperacionCrediticia = info.Element("MontoFormalizadoOperacionCrediticia") != null ? Utilitarios.ConvertirADecimal(info.Element("MontoFormalizadoOperacionCrediticia").Value) : 0
                                             }).FirstOrDefault();
                                         }
                                         catch (Exception)
@@ -63,49 +74,33 @@ namespace FileService.Processors
                                             registro = xDoc.Elements("Registro").Select(info => new XML_Credito_Operacion_DirInd
                                             {
                                                 IdEncabezado = encabezado,
-                                                IdDeudor = info.Element("IdDeudor")?.Value ?? "",
-                                                IdOperacion = info.Element("IdOperacionCredito")?.Value ?? "",
-                                                TipoCartera = Utilitarios.ConvertirAEntero(info.Element("TipoCarteraCrediticia")?.Value ?? "0"),
-                                                EstadoOperacionCrediticia = Utilitarios.ConvertirAEntero(info.Element("TipoEstadoOperacionCrediticia")?.Value ?? "0"),
-                                                CodigoCategoriaRiesgo = Utilitarios.ObtenerCategoriaRiesgo(info.Element("CodigoCategoriaRiesgo")?.Value ?? "0"),
-                                                CuentaContablePrincipal = info.Element("CuentaContablePrincipal")?.Value?.Trim() ?? "",
-                                                CuentaContableProducto = info.Element("CuentaContableProductosPorCobrar")?.Value?.Trim() ?? "",
-                                                SaldoPrincipal = Utilitarios.ConvertirADecimal(info.Element("SaldoPrincipalOperacionCrediticia")?.Value ?? "0",
-                                                "Id de operación: " + info.Element("IdOperacionCredito")?.Value + ". El saldo principal: "),
-                                                SaldoProductos = Utilitarios.ConvertirADecimal(info.Element("SaldoProductosPorCobrar")?.Value ?? "0",
-                                                "Id de operación: " + info.Element("IdOperacionCredito")?.Value + ". El saldo productos: "),
-                                                SaldoComisiones = Utilitarios.ConvertirADecimal(info.Element("SaldoComisionesOperacionesContingentes")?.Value ?? "0",
-                                                "Id de operación: " + info.Element("IdOperacionCredito")?.Value + ". El saldo comisión: "),
-                                                FechaVencimiento = Utilitarios.ConvertirAFecha(info.Element("FechaVencimiento")?.Value ?? "01/01/1900"),
-                                                TasaInteresNominalVigente = Utilitarios.ConvertirADecimal(info.Element("TasaInteresNominalVigente")?.Value ?? "0",
-                                                "Id de operación: " + info.Element("IdOperacionCredito")?.Value + ". La tasa nominal: "),
-                                                MontoCuotaPrincipalActual = Utilitarios.ConvertirADecimal(info.Element("MontoCuotaPrincipalActual")?.Value ?? "0",
-                                                "Id de operación: " + info.Element("IdOperacionCredito")?.Value + ". El monto de cuota: "),
+                                                IdDeudor = info.Element("IdDeudor").Value,
+                                                IdOperacion = info.Element("IdOperacion").Value,
+                                                TipoCartera = Utilitarios.ConvertirAEntero(info.Element("TipoCartera").Value),
+                                                EstadoOperacionCrediticia = Utilitarios.ConvertirAEntero(info.Element("EstadoOperacionCrediticia").Value),
+                                                CuentaContablePrincipal = info.Element("CuentaContablePrincipal").Value,
+                                                SaldoPrincipal = Utilitarios.ConvertirADecimal(info.Element("SaldoPrincipal").Value, "Id de operación:  " + info.Element("IdOperacion").Value + ". El saldo principal: "),
+                                                SaldoProductos = Utilitarios.ConvertirADecimal(info.Element("SaldoProductos").Value, "Id de operación:  " + info.Element("IdOperacion").Value + ". El saldo productos: "),
+                                                SaldoComisiones = Utilitarios.ConvertirADecimal(info.Element("SaldoComisiones").Value, "Id de operación:  " + info.Element("IdOperacion").Value + ". El saldo comisiones: "),
+                                                FechaVencimiento = Utilitarios.ConvertirAFecha(info.Element("FechaVencimiento").Value),
+                                                TasaInteresNominalVigente = Utilitarios.ConvertirADecimal(info.Element("TasaInteresNominalVigente").Value, "Id de operación:  " + info.Element("IdOperacion").Value + ". La tasa de interés: "),
+                                                MontoCuotaPrincipalActual = Utilitarios.ConvertirADecimal(info.Element("MontoCuotaPrincipalActual").Value, "Id de operación:  " + info.Element("IdOperacion").Value + ". El monto cuota principal: "),
+                                                CuentaContableProducto = "",
                                                 IndNueva = false,
-                                                IndicadorOperacionModificada = info.Element("IndicadorOperacionModificada")?.Value?.Trim() ?? "",
-                                                TipoSegmento = info.Element("TipoSegmento")?.Value?.Trim() ?? "",
-                                                CodigoEtapa = info.Element("CodigoEtapa")?.Value?.Trim() ?? "",
-                                                TipoMonedaOperacion = info.Element("TipoMonedaOperacion")?.Value?.Trim() ?? "",
-                                                MontoDesembolsado = Utilitarios.ConvertirADecimal(info.Element("MontoDesembolsado")?.Value ?? "0",
-                                                "Id de operación: " + info.Element("IdOperacionCredito")?.Value + ". Monto desembolsado: "),
-                                                FechaFormalizacion = Utilitarios.ConvertirAFecha(info.Element("FechaFormalizacion")?.Value ?? "01/01/1900"),
-                                                EAD = Utilitarios.ConvertirADecimal(info.Element("EAD")?.Value ?? "0",
-                                                "Id de operación: " + info.Element("IdOperacionCredito")?.Value + ". EAD: "),
-                                                MontoCuotaInteresesActual = Utilitarios.ConvertirADecimal(info.Element("MontoCuotaInteresesActual")?.Value ?? "0",
-                                                "Id de operación: " + info.Element("IdOperacionCredito")?.Value + ". El interes actual: "),
-                                                MontoEstimacionEspecifica = Utilitarios.ConvertirADecimal(info.Element("MontoEstimacionEspecifica")?.Value ?? "0",
-                                                "Id de operación: " + info.Element("IdOperacionCredito")?.Value + ". Monto estimación: "),
-                                                MontoFormalizadoOperacionCrediticia = Utilitarios.ConvertirADecimal(info.Element("MontoFormalizadoOperacionCrediticia")?.Value ?? "0",
-                                                "Id de operación: " + info.Element("IdOperacionCredito")?.Value + ". Monto formalizado: "),
-                                                IndicadorOperacionNueva = info.Element("IndicadorOperacionNueva")?.Value?.Trim() ?? "N",
-                                            }).FirstOrDefault();                                        
+                                                CodigoCategoriaRiesgo = "",
+                                                IndicadorOperacionModificada = "",
+                                                TipoSegmento = "",
+                                                CodigoEtapa = "",
+                                                TipoMonedaOperacion = "",
+                                                MontoDesembolsado = 0,
+                                                FechaFormalizacion = new DateTime(1900, 1, 1),
+                                                EAD = 0,
+                                                MontoCuotaInteresesActual = 0,
+                                                IndicadorOperacionNueva = "",
+                                                MontoEstimacionEspecifica = 0,
+                                                MontoFormalizadoOperacionCrediticia = 0
+                                            }).FirstOrDefault();
                                         }
-
-                                        if (registro.TasaInteresNominalVigente < 1)
-                                            registro.TasaInteresNominalVigente *= 100;
-
-                                        if (registro.TasaInteresNominalVigente > 100 || registro.TasaInteresNominalVigente < 0)
-                                            XmlErrorLogger.AgregarError("La tasa de interes nominal debe estar comprendida entre 0 y 100. Valor inválido: " + registro.TasaInteresNominalVigente + " de la operación " + registro.IdOperacion, encabezado, db);
 
                                         if (registro.IdDeudor.Length > 30 || registro.IdDeudor.Length == 0)
                                             XmlErrorLogger.AgregarError("El id del deudor debe tener entre 1 y 30 caracteres. Valor inválido: " + registro.IdDeudor + " de la operación " + registro.IdOperacion, encabezado, db);
@@ -113,26 +108,29 @@ namespace FileService.Processors
                                         if (registro.IdOperacion.Length > 35 || registro.IdOperacion.Length == 0)
                                             XmlErrorLogger.AgregarError("El id de la operación debe tener entre 1 y 35 caracteres. Valor inválido: " + registro.IdOperacion + " del deudor " + registro.IdDeudor, encabezado, db);
 
-                                        if (registro.TipoCartera < 0 || registro.TipoCartera > 11)
-                                            XmlErrorLogger.AgregarError("El tipo de cartera debe tener entre 0 y 11 números. Valor inválido: " + registro.TipoCartera + " de la operación " + registro.IdOperacion, encabezado, db);
+                                        if (registro.TipoCartera < 1 || registro.TipoCartera > 3)
+                                            XmlErrorLogger.AgregarError("El tipo de cartera debe ser 1, 2 o 3. Valor inválido: " + registro.TipoCartera.ToString() + " de la operación " + registro.IdOperacion, encabezado, db);
 
-                                        if (registro.EstadoOperacionCrediticia < 0 || registro.EstadoOperacionCrediticia > 11)
-                                            XmlErrorLogger.AgregarError("El tipo de cartera debe tener entre 0 y 11 números. Valor inválido: " + registro.TipoCartera + " de la operación " + registro.IdOperacion, encabezado, db);
+                                        if (registro.EstadoOperacionCrediticia < 1 || registro.EstadoOperacionCrediticia > 6)
+                                            XmlErrorLogger.AgregarError("El estado de la operación crediticia debe estar entre 1 y 6. Valor inválido: " + registro.EstadoOperacionCrediticia.ToString() + " de la operación " + registro.IdOperacion, encabezado, db);
 
-                                        if (registro.CuentaContablePrincipal.Length != 8 && registro.MontoCuotaPrincipalActual > 0)
-                                            XmlErrorLogger.AgregarError("La cuenta contable principal " + registro.CuentaContablePrincipal + " debe tener longitud de 8. Ya que tiene saldo. Id Operación: " + registro.IdOperacion, encabezado, db);
-                                        else
-                                        {
-                                            if (registro.CuentaContablePrincipal.Length > 0)
-                                            {
-                                                if (registro.CuentaContablePrincipal.StartsWith("0") || registro.CuentaContablePrincipal.StartsWith("9"))
-                                                    XmlErrorLogger.AgregarError("La cuenta contable principal " + registro.CuentaContablePrincipal + " no debe empezar por 8 o 9", encabezado, db);
+                                        if (registro.CuentaContablePrincipal.Length != 8)
+                                            XmlErrorLogger.AgregarError("La cuenta contable principal debe ser de 8 dígitos. Valor inválido: " + registro.CuentaContablePrincipal + " de la operación " + registro.IdOperacion, encabezado, db);
 
-                                                string caracter = registro.CuentaContablePrincipal.Substring(5, 1);
-                                                if (caracter != "0" && caracter != "1" && caracter != "2" && caracter != "3")
-                                                    XmlErrorLogger.AgregarError("El sexto dígito de la cuenta contable principal " + registro.CuentaContablePrincipal + " debe ser 0, 1, 2 o 3", encabezado, db);
-                                            }
-                                        }
+                                        if (registro.SaldoPrincipal < 0)
+                                            XmlErrorLogger.AgregarError("El saldo principal no puede ser negativo. Valor inválido: " + registro.SaldoPrincipal.ToString() + " de la operación " + registro.IdOperacion, encabezado, db);
+
+                                        if (registro.SaldoProductos < 0)
+                                            XmlErrorLogger.AgregarError("El saldo de productos no puede ser negativo. Valor inválido: " + registro.SaldoProductos.ToString() + " de la operación " + registro.IdOperacion, encabezado, db);
+
+                                        if (registro.SaldoComisiones < 0)
+                                            XmlErrorLogger.AgregarError("El saldo de comisiones no puede ser negativo. Valor inválido: " + registro.SaldoComisiones.ToString() + " de la operación " + registro.IdOperacion, encabezado, db);
+
+                                        if (registro.TasaInteresNominalVigente < 0)
+                                            XmlErrorLogger.AgregarError("La tasa de interés nominal no puede ser menor a cero. Valor inválido: " + registro.TasaInteresNominalVigente.ToString() + " de la operación " + registro.IdOperacion, encabezado, db);
+
+                                        if (registro.MontoCuotaPrincipalActual < 0)
+                                            XmlErrorLogger.AgregarError("El monto de la cuota principal no puede ser menor a cero. Valor inválido: " + registro.MontoCuotaPrincipalActual.ToString() + " de la operación " + registro.IdOperacion, encabezado, db);
 
                                         DataRow row = dt.NewRow();
                                         row["IdDeudor"] = (object)registro.IdDeudor ?? DBNull.Value;
@@ -184,18 +182,28 @@ namespace FileService.Processors
                         dt.Clear();
                     }
                 }
-
-                encabezado.Cantidad = cantidad;
-                db.Entry(encabezado).State = EntityState.Modified;
-                db.SaveChanges();
-
-                Entities.Entities.Procedures.FGAEntities sp = new Entities.Entities.Procedures.FGAEntities();
-                sp.FGA_Valida_Operaciones_Dir_Contable(encabezado.Periodo, encabezado.IdEntidad_Id, encabezado.Id);
             }
             catch (Exception e)
             {
                 var baseEx = e.GetBaseException() ?? e;
                 XmlErrorLogger.AgregarError(baseEx.Message, encabezado, db);
+                ServiceLogger.LogError(string.Format("CreditoOperacionProcessor (Encabezado #{0})", encabezado.Id), e);
+            }
+            finally
+            {
+                encabezado.Cantidad = cantidad;
+                db.Entry(encabezado).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+
+            try
+            {
+                Entities.Entities.Procedures.FGAEntities sp = new Entities.Entities.Procedures.FGAEntities();
+                sp.FGA_Valida_Operaciones_Dir_Contable(encabezado.Periodo, encabezado.IdEntidad_Id, encabezado.Id);
+            }
+            catch (Exception ex)
+            {
+                ServiceLogger.LogError(string.Format("CreditoOperacionProcessor validación contable SP (Encabezado #{0})", encabezado.Id), ex);
             }
         }
 

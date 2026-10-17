@@ -16,15 +16,13 @@ namespace FileService.Processors
     {
         public void Procesar(XmlReader reader, XML_Encabezado encabezado, SIContext db, long? contableEstadosId = null)
         {
+            int cantidad = 0;
+            DataTable dt = CrearDataTableCuotaAtrasada();
+
             try
             {
-                int cantidad = 0;
-                DataTable dt = CrearDataTableCuotaAtrasada();
-
-                using (SqlConnection conn = new SqlConnection(db.Database.Connection.ConnectionString))
+                using (SqlConnection conn = SqlBulkCopyHelper.CrearConexionSql())
                 {
-                    conn.Open();
-
                     while (reader != null && reader.Read())
                     {
                         try
@@ -84,15 +82,18 @@ namespace FileService.Processors
                         dt.Clear();
                     }
                 }
-
-                encabezado.Cantidad = cantidad;
-                db.Entry(encabezado).State = EntityState.Modified;
-                db.SaveChanges();
             }
             catch (Exception e)
             {
                 var baseEx = e.GetBaseException() ?? e;
                 XmlErrorLogger.AgregarError(baseEx.Message, encabezado, db);
+                ServiceLogger.LogError(string.Format("CreditoCuotaAtrasadaProcessor (Encabezado #{0})", encabezado.Id), e);
+            }
+            finally
+            {
+                encabezado.Cantidad = cantidad;
+                db.Entry(encabezado).State = EntityState.Modified;
+                db.SaveChanges();
             }
         }
 

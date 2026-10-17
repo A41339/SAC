@@ -18,4 +18,15 @@ namespace FileService.Processors
             }
         }
     }
+
+    public class NoOpXmlProcessor : IXmlProcessor
+    {
+        public void Procesar(XmlReader reader, XML_Encabezado encabezado, SIContext db, long? contableEstadosId = null)
+        {
+            // Archivos sin lógica de inserción activa en FileService (comportamiento original de case vacío)
+            encabezado.Cantidad = 0;
+            db.Entry(encabezado).State = EntityState.Modified;
+            db.SaveChanges();
+        }
+    }
 }

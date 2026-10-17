@@ -33,6 +33,39 @@ namespace FileService.Processors
             Registrar(Utilitarios.xml_flujo_efectivo, new FlujoEfectivoProcessor());
             Registrar(Utilitarios.xml_capital_social, new CapitalSocialProcessor());
             Registrar(Utilitarios.xml_inversiones_activas, new InversionActivaProcessor());
+
+            // Archivos sin lógica de inserción (comportamiento original de case vacío)
+            var noop = new NoOpXmlProcessor();
+            Registrar(Utilitarios.xml_indicador_financiero, noop);
+            Registrar(Utilitarios.xml_credito_garantia_operaciones, noop);
+            Registrar(Utilitarios.xml_credito_cuentas_cobrar, noop);
+            Registrar(Utilitarios.xml_credito_bienes_realizables, noop);
+            Registrar(Utilitarios.xml_credito_informacion_oper_no_reportadas, noop);
+            Registrar(Utilitarios.xml_crediticio_bienesRealizablesNoReportadas_1421, noop);
+            Registrar(Utilitarios.xml_crediticio_bienesRealizables_1421, noop);
+            Registrar(Utilitarios.xml_crediticio_cuentasPorCobrarNoAsociadas_1421, noop);
+            Registrar(Utilitarios.xml_crediticio_garantiasCartasCredito_1421, noop);
+            Registrar(Utilitarios.xml_crediticio_garantiasFacturasCedidas_1421, noop);
+            Registrar(Utilitarios.xml_crediticio_garantiasFiduciarias_1421, noop);
+            Registrar(Utilitarios.xml_crediticio_garantiasPolizas_1421, noop);
+            Registrar(Utilitarios.xml_crediticio_garantiasOperacion_1421, noop);
+            Registrar(Utilitarios.xml_crediticio_garantiasReales_1421, noop);
+            Registrar(Utilitarios.xml_crediticio_garantiasValores_1421, noop);
+            Registrar(Utilitarios.xml_crediticio_operacionesNoReportadas_1421, noop);
+            Registrar(Utilitarios.xml_crediticio_ingresoDeudores_1421, noop);
+            Registrar(Utilitarios.xml_crediticio_origenRecursos_1421, noop);
+            Registrar(Utilitarios.xml_crediticio_actividadEconomica_1421, noop);
+            Registrar(Utilitarios.xml_crediticio_naturalezaGasto_1421, noop);
+            Registrar(Utilitarios.xml_crediticio_cuentasCobrar_1421, noop);
+            Registrar(Utilitarios.xml_crediticio_creditosSindicados_1421, noop);
+            Registrar(Utilitarios.xml_crediticio_codeudores_1421, noop);
+            Registrar(Utilitarios.xml_crediticio_modificacion_1421, noop);
+            Registrar(Utilitarios.xml_crediticio_compradasRefinanciadas_1421, noop);
+            Registrar(Utilitarios.xml_crediticio_cambioClimatico_1421, noop);
+            Registrar(Utilitarios.xml_crediticio_operBienesRealizables_1421, noop);
+            Registrar(Utilitarios.xml_crediticio_fideicomiso_1421, noop);
+            Registrar(Utilitarios.xml_crediticio_gravamenes_1421, noop);
+            Registrar(Utilitarios.xml_crediticio_garantiasMobiliarias_1421, noop);
         }
 
         public void Registrar(string tipoArchivoId, IXmlProcessor processor)
