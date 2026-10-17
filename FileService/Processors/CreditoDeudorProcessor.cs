@@ -38,7 +38,7 @@ namespace FileService.Processors
                                 {
                                     IdEncabezado = encabezado,
                                     IdDeudor = info.GetVal("IdDeudor"),
-                                    CategoriaRiesgo = info.GetVal("CategoriaRiesgo").Trim(),
+                                    CategoriaRiesgo = info.GetVal(new[] { "CategoriaRiesgo", "CodigoCategoriaRiesgo" }).Trim(),
                                     TipoCategoriaRiesgoSBD = 0
                                 };
 

@@ -34,35 +34,45 @@ namespace FileService.Processors
                                 if (info == null) continue;
 
                                 cantidad += 1;
+
+                                string idOperacion = info.GetVal(new[] { "IdOperacionCredito", "IdOperacion" });
+                                string idDeudor = info.GetVal(new[] { "IdDeudor" });
+
                                 var registro = new XML_Credito_Operacion_DirInd
                                 {
                                     IdEncabezado = encabezado,
-                                    IdDeudor = info.GetVal("IdDeudor"),
-                                    IdOperacion = info.GetVal("IdOperacion"),
-                                    TipoCartera = info.GetInt("TipoCartera"),
-                                    EstadoOperacionCrediticia = info.GetInt("EstadoOperacionCrediticia"),
-                                    CuentaContablePrincipal = info.GetVal("CuentaContablePrincipal"),
-                                    SaldoPrincipal = info.GetDecimal("SaldoPrincipal", 0, "Id de operación:  " + info.GetVal("IdOperacion") + ". El saldo principal: "),
-                                    SaldoProductos = info.GetDecimal("SaldoProductos", 0, "Id de operación:  " + info.GetVal("IdOperacion") + ". El saldo productos: "),
-                                    SaldoComisiones = info.GetDecimal("SaldoComisiones", 0, "Id de operación:  " + info.GetVal("IdOperacion") + ". El saldo comisiones: "),
-                                    FechaVencimiento = info.GetDate("FechaVencimiento"),
-                                    TasaInteresNominalVigente = info.GetDecimal("TasaInteresNominalVigente", 0, "Id de operación:  " + info.GetVal("IdOperacion") + ". La tasa de interés: "),
-                                    MontoCuotaPrincipalActual = info.GetDecimal("MontoCuotaPrincipalActual", 0, "Id de operación:  " + info.GetVal("IdOperacion") + ". El monto cuota principal: "),
-                                    CuentaContableProducto = info.GetVal("CuentaContableProducto"),
-                                    IndNueva = info.GetBool("IndNueva"),
-                                    CodigoCategoriaRiesgo = info.GetVal("CodigoCategoriaRiesgo"),
-                                    IndicadorOperacionModificada = info.GetVal("IndicadorOperacionModificada"),
-                                    TipoSegmento = info.GetVal("TipoSegmento"),
-                                    CodigoEtapa = info.GetVal("CodigoEtapa"),
-                                    TipoMonedaOperacion = info.GetVal("TipoMonedaOperacion"),
-                                    MontoDesembolsado = info.GetDecimal("MontoDesembolsado"),
-                                    FechaFormalizacion = info.GetDate("FechaFormalizacion"),
-                                    EAD = info.GetDecimal("EAD"),
-                                    MontoCuotaInteresesActual = info.GetDecimal("MontoCuotaInteresesActual"),
-                                    IndicadorOperacionNueva = info.GetVal("IndicadorOperacionNueva"),
-                                    MontoEstimacionEspecifica = info.GetDecimal("MontoEstimacionEspecifica"),
-                                    MontoFormalizadoOperacionCrediticia = info.GetDecimal("MontoFormalizadoOperacionCrediticia")
+                                    IdDeudor = idDeudor,
+                                    IdOperacion = idOperacion,
+                                    TipoCartera = info.GetInt(new[] { "TipoCarteraCrediticia", "TipoCartera" }),
+                                    EstadoOperacionCrediticia = info.GetInt(new[] { "TipoEstadoOperacionCrediticia", "EstadoOperacionCrediticia" }),
+                                    CuentaContablePrincipal = info.GetVal(new[] { "CuentaContablePrincipal" }).Trim(),
+                                    CuentaContableProducto = info.GetVal(new[] { "CuentaContableProductosPorCobrar", "CuentaContableProductos", "CuentaContableProducto" }).Trim(),
+                                    SaldoPrincipal = info.GetDecimal(new[] { "SaldoPrincipalOperacionCrediticia", "SaldoPrincipal" }, 0, "Id de operación: " + idOperacion + ". El saldo principal: "),
+                                    SaldoProductos = info.GetDecimal(new[] { "SaldoProductosPorCobrar", "SaldoProductos" }, 0, "Id de operación: " + idOperacion + ". El saldo productos: "),
+                                    SaldoComisiones = info.GetDecimal(new[] { "SaldoComisionesOperacionesContingentes", "SaldoComisiones" }, 0, "Id de operación: " + idOperacion + ". El saldo comisión: "),
+                                    FechaVencimiento = info.GetDate(new[] { "FechaVencimiento" }),
+                                    TasaInteresNominalVigente = info.GetDecimal(new[] { "TasaInteresNominalVigente" }, 0, "Id de operación: " + idOperacion + ". La tasa nominal: "),
+                                    MontoCuotaPrincipalActual = info.GetDecimal(new[] { "MontoCuotaPrincipalActual" }, 0, "Id de operación: " + idOperacion + ". El monto cuota principal: "),
+                                    IndNueva = info.GetBool(new[] { "IndNueva" }),
+                                    CodigoCategoriaRiesgo = Utilitarios.ObtenerCategoriaRiesgo(info.GetVal(new[] { "CodigoCategoriaRiesgo" }, "0")),
+                                    IndicadorOperacionModificada = info.GetVal(new[] { "IndicadorOperacionModificada" }).Trim(),
+                                    TipoSegmento = info.GetVal(new[] { "TipoSegmento" }).Trim(),
+                                    CodigoEtapa = info.GetVal(new[] { "CodigoEtapa" }).Trim(),
+                                    TipoMonedaOperacion = info.GetVal(new[] { "TipoMonedaOperacion" }).Trim(),
+                                    MontoDesembolsado = info.GetDecimal(new[] { "MontoDesembolsado" }, 0, "Id de operación: " + idOperacion + ". Monto desembolsado: "),
+                                    FechaFormalizacion = info.GetDate(new[] { "FechaFormalizacion" }),
+                                    EAD = info.GetDecimal(new[] { "EAD" }, 0, "Id de operación: " + idOperacion + ". EAD: "),
+                                    MontoCuotaInteresesActual = info.GetDecimal(new[] { "MontoCuotaInteresesActual" }, 0, "Id de operación: " + idOperacion + ". El interes actual: "),
+                                    MontoEstimacionEspecifica = info.GetDecimal(new[] { "MontoEstimacionEspecifica" }, 0, "Id de operación: " + idOperacion + ". Monto estimación: "),
+                                    MontoFormalizadoOperacionCrediticia = info.GetDecimal(new[] { "MontoFormalizadoOperacionCrediticia" }, 0, "Id de operación: " + idOperacion + ". Monto formalizado: "),
+                                    IndicadorOperacionNueva = info.GetVal(new[] { "IndicadorOperacionNueva" }, "N").Trim()
                                 };
+
+                                if (registro.TasaInteresNominalVigente < 1 && registro.TasaInteresNominalVigente > 0)
+                                    registro.TasaInteresNominalVigente *= 100;
+
+                                if (registro.TasaInteresNominalVigente > 100 || registro.TasaInteresNominalVigente < 0)
+                                    XmlErrorLogger.AgregarError("La tasa de interes nominal debe estar comprendida entre 0 y 100. Valor inválido: " + registro.TasaInteresNominalVigente + " de la operación " + registro.IdOperacion, encabezado, db);
 
                                 if (registro.IdDeudor.Length > 30 || registro.IdDeudor.Length == 0)
                                     XmlErrorLogger.AgregarError("El id del deudor debe tener entre 1 y 30 caracteres. Valor inválido: " + registro.IdDeudor + " de la operación " + registro.IdOperacion, encabezado, db);
@@ -70,29 +80,29 @@ namespace FileService.Processors
                                 if (registro.IdOperacion.Length > 35 || registro.IdOperacion.Length == 0)
                                     XmlErrorLogger.AgregarError("El id de la operación debe tener entre 1 y 35 caracteres. Valor inválido: " + registro.IdOperacion + " del deudor " + registro.IdDeudor, encabezado, db);
 
-                                if (registro.TipoCartera < 1 || registro.TipoCartera > 3)
-                                    XmlErrorLogger.AgregarError("El tipo de cartera debe ser 1, 2 o 3. Valor inválido: " + registro.TipoCartera.ToString() + " de la operación " + registro.IdOperacion, encabezado, db);
+                                if (registro.TipoCartera < 0 || registro.TipoCartera > 11)
+                                    XmlErrorLogger.AgregarError("El tipo de cartera debe tener entre 0 y 11 números. Valor inválido: " + registro.TipoCartera + " de la operación " + registro.IdOperacion, encabezado, db);
 
-                                if (registro.EstadoOperacionCrediticia < 1 || registro.EstadoOperacionCrediticia > 6)
-                                    XmlErrorLogger.AgregarError("El estado de la operación crediticia debe estar entre 1 y 6. Valor inválido: " + registro.EstadoOperacionCrediticia.ToString() + " de la operación " + registro.IdOperacion, encabezado, db);
+                                if (registro.EstadoOperacionCrediticia < 0 || registro.EstadoOperacionCrediticia > 11)
+                                    XmlErrorLogger.AgregarError("El estado de la operación crediticia debe tener entre 0 y 11 números. Valor inválido: " + registro.EstadoOperacionCrediticia + " de la operación " + registro.IdOperacion, encabezado, db);
 
-                                if (registro.CuentaContablePrincipal.Length != 8)
-                                    XmlErrorLogger.AgregarError("La cuenta contable principal debe ser de 8 dígitos. Valor inválido: " + registro.CuentaContablePrincipal + " de la operación " + registro.IdOperacion, encabezado, db);
+                                if (registro.CuentaContablePrincipal.Length != 8 && registro.MontoCuotaPrincipalActual > 0)
+                                    XmlErrorLogger.AgregarError("La cuenta contable principal " + registro.CuentaContablePrincipal + " debe tener longitud de 8. Ya que tiene saldo. Id Operación: " + registro.IdOperacion, encabezado, db);
+                                else
+                                {
+                                    if (registro.CuentaContablePrincipal.Length > 0)
+                                    {
+                                        if (registro.CuentaContablePrincipal.StartsWith("0") || registro.CuentaContablePrincipal.StartsWith("9"))
+                                            XmlErrorLogger.AgregarError("La cuenta contable principal " + registro.CuentaContablePrincipal + " no debe empezar por 8 o 9", encabezado, db);
 
-                                if (registro.SaldoPrincipal < 0)
-                                    XmlErrorLogger.AgregarError("El saldo principal no puede ser negativo. Valor inválido: " + registro.SaldoPrincipal.ToString() + " de la operación " + registro.IdOperacion, encabezado, db);
-
-                                if (registro.SaldoProductos < 0)
-                                    XmlErrorLogger.AgregarError("El saldo de productos no puede ser negativo. Valor inválido: " + registro.SaldoProductos.ToString() + " de la operación " + registro.IdOperacion, encabezado, db);
-
-                                if (registro.SaldoComisiones < 0)
-                                    XmlErrorLogger.AgregarError("El saldo de comisiones no puede ser negativo. Valor inválido: " + registro.SaldoComisiones.ToString() + " de la operación " + registro.IdOperacion, encabezado, db);
-
-                                if (registro.TasaInteresNominalVigente < 0)
-                                    XmlErrorLogger.AgregarError("La tasa de interés nominal no puede ser menor a cero. Valor inválido: " + registro.TasaInteresNominalVigente.ToString() + " de la operación " + registro.IdOperacion, encabezado, db);
-
-                                if (registro.MontoCuotaPrincipalActual < 0)
-                                    XmlErrorLogger.AgregarError("El monto de la cuota principal no puede ser menor a cero. Valor inválido: " + registro.MontoCuotaPrincipalActual.ToString() + " de la operación " + registro.IdOperacion, encabezado, db);
+                                        if (registro.CuentaContablePrincipal.Length >= 6)
+                                        {
+                                            string caracter = registro.CuentaContablePrincipal.Substring(5, 1);
+                                            if (caracter != "0" && caracter != "1" && caracter != "2" && caracter != "3")
+                                                XmlErrorLogger.AgregarError("El sexto dígito de la cuenta contable principal " + registro.CuentaContablePrincipal + " debe ser 0, 1, 2 o 3", encabezado, db);
+                                        }
+                                    }
+                                }
 
                                 DataRow row = dt.NewRow();
                                 row["IdDeudor"] = (object)registro.IdDeudor ?? DBNull.Value;

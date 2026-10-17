@@ -39,8 +39,8 @@ namespace FileService.Processors
                                     IdEncabezado = encabezado,
                                     DiasAtraso = info.GetInt("DiasAtraso"),
                                     IdDeudor = info.GetVal("IdDeudor"),
-                                    IdOperacion = info.GetVal("IdOperacionCredito"),
-                                    MontoCuotaAtrasada = info.GetDecimal("MontoCuotaAtrasada", 0, "Id de operación:  " + info.GetVal("IdOperacionCredito") + ". El monto de cuota: ")
+                                    IdOperacion = info.GetVal(new[] { "IdOperacionCredito", "IdOperacion" }),
+                                    MontoCuotaAtrasada = info.GetDecimal("MontoCuotaAtrasada", 0, "Id de operación:  " + info.GetVal(new[] { "IdOperacionCredito", "IdOperacion" }) + ". El monto de cuota: ")
                                 };
 
                                 if (registro.IdDeudor.Length > 30 || registro.IdDeudor.Length == 0)
