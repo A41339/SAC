@@ -136,6 +136,7 @@ namespace FGA.Controllers
                     Session["IdEntidad"] = defaultEnt;
                     Session["IsFGA"] = login.Role_Usuario.EsEntidad ? 0 : 1;
                     HttpRuntime.Cache.Insert("Login_" + login.Id.ToString(), login.Id.ToString(), null, DateTime.Now.AddMinutes(10), System.Web.Caching.Cache.NoSlidingExpiration);
+                    Env.InvalidateRoleMenuCache(login.Role_Usuario_Id);
 
                     try
                     {
@@ -339,6 +340,7 @@ namespace FGA.Controllers
             AuthenticationManager.SignOut();
             Session.Clear();
             Session.Abandon();
+            Env.InvalidateRoleMenuCache();
             return RedirectToAction("login", "Account");
         }
 
