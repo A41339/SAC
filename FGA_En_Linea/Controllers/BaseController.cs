@@ -161,32 +161,6 @@ namespace FGA.Controllers
                 var descriptor = context.ActionDescriptor;
                 var actionName = descriptor.ActionName.ToLower();
                 var controllerName = descriptor.ControllerDescriptor.ControllerName.ToLower();
-
-                // Bloqueo estricto para Rol 4 (Usuario Carga): Solo tiene acceso a Carga de Datos y Cambio de Clave
-                if (roleid == 4)
-                {
-                    var allowedControllers = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
-                    {
-                        "archivo", "cierre", "explorer", "account", "parameterpartial", "layout"
-                    };
-
-                    bool isAllowed = allowedControllers.Contains(controllerName) ||
-                                     (controllerName == "usuario" && actionName == "changepassword");
-
-                    if (!isAllowed)
-                    {
-                        if (IsThisAjaxRequest())
-                        {
-                            context.Result = new JsonResult { Data = new { error = "No autorizado", exito = false }, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
-                        }
-                        else
-                        {
-                            context.Result = new RedirectResult("~/Archivo/Index");
-                        }
-                        return;
-                    }
-                }
-
                 var GetOrPost = context.HttpContext.Request.HttpMethod.ToString();
                 var checkAreaName = context.HttpContext.Request.RequestContext.RouteData.DataTokens["area"];
                 string AreaName = "";
@@ -365,9 +339,68 @@ namespace FGA.Controllers
             }
         }
 
+        public static string GetRoleLandingUrl(int roleId = 0)
+        {
+            try
+            {
+                if (System.Web.HttpContext.Current?.Session != null)
+                {
+                    var usrObj = (System.Web.HttpContext.Current.Session["CurrentUserObj"] ?? System.Web.HttpContext.Current.Session["Usuario"]) as FGA.Models.Usuario;
+                    if (usrObj?.Role_Usuario != null && !string.IsNullOrEmpty(usrObj.Role_Usuario.Url))
+                    {
+                        return usrObj.Role_Usuario.Url.Trim();
+                    }
+                }
+
+                if (roleId <= 0)
+                {
+                    int.TryParse(Env.GetUserInfo("roleid"), out roleId);
+                }
+
+                if (roleId > 0)
+                {
+                    var roleCache = System.Web.HttpRuntime.Cache?["AllRolesList"] as Role[];
+                    if (roleCache == null)
+                    {
+                        using (var roleClient = new FGA_En_Linea.RoleService.ServiceOf_RoleClient())
+                        {
+                            roleCache = roleClient.GetAll();
+                            if (roleCache != null && System.Web.HttpRuntime.Cache != null)
+                            {
+                                System.Web.HttpRuntime.Cache.Insert("AllRolesList", roleCache, null, DateTime.Now.AddHours(2), System.Web.Caching.Cache.NoSlidingExpiration);
+                            }
+                        }
+                    }
+
+                    var roleObj = roleCache?.FirstOrDefault(r => r.Id == roleId);
+                    if (roleObj != null && !string.IsNullOrEmpty(roleObj.Url))
+                    {
+                        return roleObj.Url.Trim();
+                    }
+                }
+            }
+            catch { }
+
+            return "~/Home/Index";
+        }
+
         private void UnAuthoRedirect(ActionExecutingContext context)
         {
-            context.Result = new RedirectResult("~/Account/unauthorized");
+            int roleid = 0;
+            int.TryParse(Env.GetUserInfo("roleid"), out roleid);
+            string landingUrl = GetRoleLandingUrl(roleid);
+
+            string currentPath = (context.HttpContext.Request.Url?.AbsolutePath ?? "").Trim().Trim('/').ToLower();
+            string landingNorm = landingUrl.Trim().Trim('~', '/').ToLower();
+
+            if (currentPath.Equals(landingNorm, StringComparison.OrdinalIgnoreCase))
+            {
+                context.Result = new RedirectResult("~/Account/unauthorized");
+            }
+            else
+            {
+                context.Result = new RedirectResult(landingUrl);
+            }
         }
 
         private class MenuOfRole

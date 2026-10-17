@@ -35,9 +35,19 @@ namespace FGA.Controllers
         {
             int roleId = 0;
             int.TryParse(Env.GetUserInfo("roleid"), out roleId);
-            if (roleId == 4)
+
+            var allPermitted = Env.GetRoleMenuPermissions(roleId);
+            bool hasHomeAccess = allPermitted.Any(p => p.Menu_MenuId != null &&
+                (p.Menu_MenuId.Id == 1000 ||
+                 (p.Menu_MenuId.MenuURL != null && p.Menu_MenuId.MenuURL.Trim().Trim('/').Equals("home/index", StringComparison.OrdinalIgnoreCase))));
+
+            if (!hasHomeAccess)
             {
-                return RedirectToAction("Index", "Archivo");
+                string landingUrl = BaseController.GetRoleLandingUrl(roleId);
+                if (!landingUrl.Trim().Trim('~', '/').Equals("home/index", StringComparison.OrdinalIgnoreCase))
+                {
+                    return Redirect(landingUrl);
+                }
             }
 
             Load();

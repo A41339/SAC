@@ -11,12 +11,6 @@ namespace FGA.Controllers
     {
         public ActionResult Index(int? id, string modulo = null, string IdEntidad = null, string Periodo = null, string TipoComparacion = null)
         {
-            int roleId = 0;
-            int.TryParse(Env.GetUserInfo("roleid"), out roleId);
-            if (roleId == 4)
-            {
-                return RedirectToAction("Index", "Archivo");
-            }
 
             if (!string.IsNullOrWhiteSpace(IdEntidad))
             {
@@ -132,6 +126,7 @@ namespace FGA.Controllers
             }
             catch { }
 
+            int roleId = 0;
             int.TryParse(Env.GetUserInfo("roleid"), out roleId);
 
             var allPermitted = Env.GetRoleMenuPermissions(roleId).ToList();
@@ -228,13 +223,20 @@ namespace FGA.Controllers
 
                 if (rootPerm == null)
                 {
-                    // Buscar primer menú raíz que tenga hijos
+                    // Si el usuario intentó acceder a un módulo específico (por ID o nombre) y no tiene permisos para él,
+                    // redirigir dinámicamente a la URL de su rol en la base de datos
+                    if (id.HasValue || !string.IsNullOrWhiteSpace(modulo))
+                    {
+                        return Redirect(BaseController.GetRoleLandingUrl(roleId));
+                    }
+
+                    // Buscar primer menú raíz que tenga hijos asignados a este rol
                     rootPerm = allPermitted.FirstOrDefault(p => p.Menu_MenuId != null && p.Menu_MenuId.ParentId == null && allPermitted.Any(c => c.Menu_MenuId != null && c.Menu_MenuId.ParentId == p.Menu_MenuId.Id));
                 }
 
                 if (rootPerm == null || rootPerm.Menu_MenuId == null)
                 {
-                    return RedirectToAction("Index", "Home");
+                    return Redirect(BaseController.GetRoleLandingUrl(roleId));
                 }
 
                 int rootId = rootPerm.Menu_MenuId.Id;
