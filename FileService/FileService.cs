@@ -272,7 +272,7 @@ namespace FileService
             finally
             {
                 db.Configuration.AutoDetectChangesEnabled = true;
-                var errores = db.XML_Errores.Where(o => o.IdEncabezado.Id == encabezado.Id).Count();
+                var errores = db.XML_Errores.Where(o => o.IdEncabezado_Id == encabezado.Id).Count();
 
                 if (errores == 0)
                 {
@@ -283,9 +283,7 @@ namespace FileService
                     encabezado.IdEstado = db.ArchivoEstados.Where(o => o.Id == Utilitarios.archivoErrores).FirstOrDefault();
                     try
                     {
-                       
-
-                        var listaErrores = db.XML_Errores.Where(o => o.IdEncabezado.Id == encabezado.Id);
+                        var listaErrores = db.XML_Errores.Where(o => o.IdEncabezado_Id == encabezado.Id).ToList();
                         string asunto = string.Format(encabezado.IdEntidad.Nombre + ". Notificación de error en carga de archivo XML");
                         string detalle = string.Format("El usuario de carga asignado por la cooperativa subió el archivo {0} " +
                             "y se generaron los siguientes errores: <br/><ul>", encabezado.IdArchivo.Nombre);
@@ -303,21 +301,21 @@ namespace FileService
                             "Viviana Zumbado <a href='mailto:vzumbado@ffc.co.cr'> vzumbado@ffc.co.cr</a>" +
                             "<br/><br/>";
 
-                        MailSend.Email.EnviarCorreoImagenes(asunto, detalle,
-                        db.Parametros.Where(o => o.Llave == Utilitarios.Correo_Error_XML).Select(i => i.Valor).FirstOrDefault(),
-                        db.Parametros.Where(o => o.Llave == Utilitarios.Servidor_Correo).Select(i => i.Valor).FirstOrDefault(),
-                        db.Parametros.Where(o => o.Llave == Utilitarios.Direccion_Correo).Select(i => i.Valor).FirstOrDefault(),
-                        db.Parametros.Where(o => o.Llave == Utilitarios.Direccion_Correo).Select(i => i.Valor).FirstOrDefault(),
-                        db.Parametros.Where(o => o.Llave == Utilitarios.Contrasena_Correo).Select(i => i.Valor).FirstOrDefault());
+                        var clavesParam = new[] { Utilitarios.Correo_Error_XML, Utilitarios.Servidor_Correo, Utilitarios.Direccion_Correo, Utilitarios.Contrasena_Correo };
+                        var paramsDict = db.Parametros.Where(o => clavesParam.Contains(o.Llave)).ToDictionary(i => i.Llave, i => i.Valor);
+
+                        string correoError = paramsDict.ContainsKey(Utilitarios.Correo_Error_XML) ? paramsDict[Utilitarios.Correo_Error_XML] : "";
+                        string servidorCorreo = paramsDict.ContainsKey(Utilitarios.Servidor_Correo) ? paramsDict[Utilitarios.Servidor_Correo] : "";
+                        string direccionCorreo = paramsDict.ContainsKey(Utilitarios.Direccion_Correo) ? paramsDict[Utilitarios.Direccion_Correo] : "";
+                        string contrasenaCorreo = paramsDict.ContainsKey(Utilitarios.Contrasena_Correo) ? paramsDict[Utilitarios.Contrasena_Correo] : "";
+
+                        MailSend.Email.EnviarCorreoImagenes(asunto, detalle, correoError, servidorCorreo, direccionCorreo, direccionCorreo, contrasenaCorreo);
 
                         Entidad entidad = db.Entidades.AsNoTracking().Where(o => o.Contacto != string.Empty && o.Activo == true && o.Id == encabezado.IdEntidad.Id).FirstOrDefault();
-
-                        MailSend.Email.EnviarCorreoImagenes(asunto, detalle,
-                        entidad.Contacto,
-                        db.Parametros.Where(o => o.Llave == Utilitarios.Servidor_Correo).Select(i => i.Valor).FirstOrDefault(),
-                        db.Parametros.Where(o => o.Llave == Utilitarios.Direccion_Correo).Select(i => i.Valor).FirstOrDefault(),
-                        db.Parametros.Where(o => o.Llave == Utilitarios.Direccion_Correo).Select(i => i.Valor).FirstOrDefault(),
-                        db.Parametros.Where(o => o.Llave == Utilitarios.Contrasena_Correo).Select(i => i.Valor).FirstOrDefault());
+                        if (entidad != null && !string.IsNullOrEmpty(entidad.Contacto))
+                        {
+                            MailSend.Email.EnviarCorreoImagenes(asunto, detalle, entidad.Contacto, servidorCorreo, direccionCorreo, direccionCorreo, contrasenaCorreo);
+                        }
                     }
                     catch (Exception)
                     {
@@ -328,6 +326,15 @@ namespace FileService
                 db.SaveChanges();
                 db.Dispose();
                 reader.Dispose();
+            }
+        }
+
+        private void GuardarLote(SIContext db, XML_Encabezado encabezado)
+        {
+            db.SaveChanges();
+            foreach (var entry in db.ChangeTracker.Entries().Where(e => e.Entity != encabezado).ToList())
+            {
+                entry.State = EntityState.Detached;
             }
         }
 
@@ -382,13 +389,11 @@ namespace FileService
                                     else if (registro.CuentaCatalogo == 70000)
                                         S70000 += registro.MontoPonderado;
 
-                                    encabezado.Cantidad = cantidad;
                                     db.XML_Suficiencia_Patrimonial.Add(registro);
 
                                     if (cantidad % Utilitarios.lineasCommit == 0)
                                     {
-                                        db.Entry(encabezado).State = EntityState.Modified;
-                                        db.SaveChanges();
+                                        GuardarLote(db, encabezado);
                                     }
 
                                 }
@@ -401,6 +406,11 @@ namespace FileService
                     }
                 }
 
+                GuardarLote(db, encabezado);
+                encabezado.Cantidad = cantidad;
+                db.Entry(encabezado).State = EntityState.Modified;
+                db.SaveChanges();
+
                 resultado = (S20000 / ((S30000 + S40000) + 10 * (S50000 + S60000 + S70000))) * 100;
 
                 if (Math.Abs(S10000 - resultado) > 0.1M)
@@ -408,7 +418,8 @@ namespace FileService
             }
             catch (Exception e)
             {
-                AgregarError(e.Message, encabezado, db);
+                var baseEx = e.GetBaseException() ?? e;
+                AgregarError(baseEx.Message, encabezado, db);
             }
         }
 
@@ -440,12 +451,10 @@ namespace FileService
                                         MontoPonderado = Utilitarios.ConvertirADecimal(info.Element("MontoPonderado").Value),
                                     }).FirstOrDefault();
 
-                                    encabezado.Cantidad = cantidad;
                                     db.XML_ICLs.Add(registro);
                                     if (cantidad % Utilitarios.lineasCommit == 0)
                                     {
-                                        db.Entry(encabezado).State = EntityState.Modified;
-                                        db.SaveChanges();
+                                        GuardarLote(db, encabezado);
                                     }
                                 }
                                 break;
@@ -456,10 +465,16 @@ namespace FileService
                         AgregarError(e.Message, encabezado, db);
                     }
                 }
+
+                GuardarLote(db, encabezado);
+                encabezado.Cantidad = cantidad;
+                db.Entry(encabezado).State = EntityState.Modified;
+                db.SaveChanges();
             }
             catch (Exception e)
             {
-                AgregarError(e.Message, encabezado, db);
+                var baseEx = e.GetBaseException() ?? e;
+                AgregarError(baseEx.Message, encabezado, db);
             }
         }
 
@@ -490,12 +505,10 @@ namespace FileService
                                         MontoValor = Utilitarios.ConvertirADecimal(info.Element("MontoValor").Value),
                                     }).FirstOrDefault();
 
-                                    encabezado.Cantidad = cantidad;
                                     db.XML_Indicadores_Financieros.Add(registro);
                                     if (cantidad % Utilitarios.lineasCommit == 0)
                                     {
-                                        db.Entry(encabezado).State = EntityState.Modified;
-                                        db.SaveChanges();
+                                        GuardarLote(db, encabezado);
                                     }
                                 }
                                 break;
@@ -506,10 +519,16 @@ namespace FileService
                         AgregarError(e.Message, encabezado, db);
                     }
                 }
+
+                GuardarLote(db, encabezado);
+                encabezado.Cantidad = cantidad;
+                db.Entry(encabezado).State = EntityState.Modified;
+                db.SaveChanges();
             }
             catch (Exception e)
             {
-                AgregarError(e.Message, encabezado, db);
+                var baseEx = e.GetBaseException() ?? e;
+                AgregarError(baseEx.Message, encabezado, db);
             }
         }
 
@@ -540,12 +559,10 @@ namespace FileService
                                         MontoCalcePlazo = Utilitarios.ConvertirADecimal(info.Element("MontoCalcePlazo").Value),
                                     }).FirstOrDefault();
 
-                                    encabezado.Cantidad = cantidad;
                                     db.XML_Rango_Calce_Plazo.Add(registro);
                                     if (cantidad % Utilitarios.lineasCommit == 0)
                                     {
-                                        db.Entry(encabezado).State = EntityState.Modified;
-                                        db.SaveChanges();
+                                        GuardarLote(db, encabezado);
                                     }
                                 }
                                 break;
@@ -556,10 +573,16 @@ namespace FileService
                         AgregarError(e.Message, encabezado, db);
                     }
                 }
+
+                GuardarLote(db, encabezado);
+                encabezado.Cantidad = cantidad;
+                db.Entry(encabezado).State = EntityState.Modified;
+                db.SaveChanges();
             }
             catch (Exception e)
             {
-                AgregarError(e.Message, encabezado, db);
+                var baseEx = e.GetBaseException() ?? e;
+                AgregarError(baseEx.Message, encabezado, db);
             }
         }
 
@@ -626,12 +649,10 @@ namespace FileService
                                     else if (registro.CuentaBrecha == 22223)
                                         B22223 += registro.MontoBrecha;
 
-                                    encabezado.Cantidad = cantidad;
                                     db.XML_Contable_Brecha.Add(registro);
                                     if (cantidad % Utilitarios.lineasCommit == 0)
                                     {
-                                        db.Entry(encabezado).State = EntityState.Modified;
-                                        db.SaveChanges();
+                                        GuardarLote(db, encabezado);
                                     }
                                 }
                                 break;
@@ -642,6 +663,11 @@ namespace FileService
                         AgregarError(e.Message, encabezado, db);
                     }
                 }
+
+                GuardarLote(db, encabezado);
+                encabezado.Cantidad = cantidad;
+                db.Entry(encabezado).State = EntityState.Modified;
+                db.SaveChanges();
 
                 if (Math.Abs(B22110 + B22210 - B22310) > 1)
                     AgregarError("El monto de la cuenta 22310 debe ser igual a la cuenta 22110 + 22210", encabezado, db);
@@ -658,7 +684,8 @@ namespace FileService
             }
             catch (Exception e)
             {
-                AgregarError(e.Message, encabezado, db);
+                var baseEx = e.GetBaseException() ?? e;
+                AgregarError(baseEx.Message, encabezado, db);
             }
         }
 
@@ -802,12 +829,10 @@ namespace FileService
                                     if (registro.CuentaCatalogo == 20189)
                                         D20189 = registro.MontoDatoAdicional;
 
-                                    encabezado.Cantidad = cantidad;
                                     db.XML_Contable_DatosAdicionales.Add(registro);
                                     if (cantidad % Utilitarios.lineasCommit == 0)
                                     {
-                                        db.Entry(encabezado).State = EntityState.Modified;
-                                        db.SaveChanges();
+                                        GuardarLote(db, encabezado);
                                     }
                                 }
                                 break;
@@ -818,6 +843,11 @@ namespace FileService
                         AgregarError(e.Message, encabezado, db);
                     }
                 }
+
+                GuardarLote(db, encabezado);
+                encabezado.Cantidad = cantidad;
+                db.Entry(encabezado).State = EntityState.Modified;
+                db.SaveChanges();
 
                 if (D20189 > D20188)
                     AgregarError("El saldo de D20189 debe ser menor o igual al saldo de la cuenta D20188 ", encabezado, db);
@@ -831,7 +861,8 @@ namespace FileService
             }
             catch (Exception e)
             {
-                AgregarError(e.Message, encabezado, db);
+                var baseEx = e.GetBaseException() ?? e;
+                AgregarError(baseEx.Message, encabezado, db);
             }
         }
 
@@ -876,12 +907,10 @@ namespace FileService
                                     else if (registro.CuentaFlujoEfectivo == 12000)
                                         F12000 = registro.MontoFlujoEfectivo;
 
-                                    encabezado.Cantidad = cantidad;
                                     db.XML_Flujo_EfectivoReal.Add(registro);
                                     if (cantidad % Utilitarios.lineasCommit == 0)
                                     {
-                                        db.Entry(encabezado).State = EntityState.Modified;
-                                        db.SaveChanges();
+                                        GuardarLote(db, encabezado);
                                     }
                                 }
                                 break;
@@ -893,6 +922,11 @@ namespace FileService
                     }
                 }
 
+                GuardarLote(db, encabezado);
+                encabezado.Cantidad = cantidad;
+                db.Entry(encabezado).State = EntityState.Modified;
+                db.SaveChanges();
+
                 if (F10000 != F11000 - F12000)
                     AgregarError("El monto de la cuenta 10000 debe ser igual a la cuenta 11000 - 12000", encabezado, db);
 
@@ -902,55 +936,67 @@ namespace FileService
             }
             catch (Exception e)
             {
-                AgregarError(e.Message, encabezado, db);
+                var baseEx = e.GetBaseException() ?? e;
+                AgregarError(baseEx.Message, encabezado, db);
             }
         }
 
         public void ProcesarCapitalSocial(XmlReader reader, XML_Encabezado encabezado, SIContext db)
         {
-            int cantidad = 0;
-            XML_Capital_Social registro;
-            while (reader != null && reader.Read())
+            try
             {
-                try
+                int cantidad = 0;
+                XML_Capital_Social registro;
+                while (reader != null && reader.Read())
                 {
-                    reader.MoveToAttribute("Registro");
-                    switch (reader.NodeType)
+                    try
                     {
-                        case XmlNodeType.Element:
-                            if (reader.Name.Equals("Registro"))
-                            {
-                                XDocument xDoc = XDocument.Load(reader.ReadSubtree());
-                                cantidad += 1;
-                                registro = xDoc.Elements("Registro").Select(info => new XML_Capital_Social
+                        reader.MoveToAttribute("Registro");
+                        switch (reader.NodeType)
+                        {
+                            case XmlNodeType.Element:
+                                if (reader.Name.Equals("Registro"))
                                 {
-                                    IdEncabezado = encabezado,
-                                    Contrato = info.Element("Contrato").Value,
-                                    Des_Identificacion = info.Element("Des_Identificacion").Value,
-                                    Fechainclusion = Utilitarios.ConvertirAFecha(info.Element("Fechainclusion").Value),
-                                    SaldoReal = Utilitarios.ConvertirADecimal(info.Element("SaldoReal").Value, "Contrato: " + info.Element("Contrato").Value + ". El saldo: "),
-                                }).FirstOrDefault();
+                                    XDocument xDoc = XDocument.Load(reader.ReadSubtree());
+                                    cantidad += 1;
+                                    registro = xDoc.Elements("Registro").Select(info => new XML_Capital_Social
+                                    {
+                                        IdEncabezado = encabezado,
+                                        Contrato = info.Element("Contrato").Value,
+                                        Des_Identificacion = info.Element("Des_Identificacion").Value,
+                                        Fechainclusion = Utilitarios.ConvertirAFecha(info.Element("Fechainclusion").Value),
+                                        SaldoReal = Utilitarios.ConvertirADecimal(info.Element("SaldoReal").Value, "Contrato: " + info.Element("Contrato").Value + ". El saldo: "),
+                                    }).FirstOrDefault();
 
 
-                                if (registro.SaldoReal < 0)
-                                    AgregarError("La saldo real debe ser mayor a 0. Del contrato " + registro.Contrato, encabezado, db);
+                                    if (registro.SaldoReal < 0)
+                                        AgregarError("La saldo real debe ser mayor a 0. Del contrato " + registro.Contrato, encabezado, db);
 
-                                encabezado.Cantidad = cantidad;
-                                db.XML_Capital_Sociales.Add(registro);
+                                    db.XML_Capital_Sociales.Add(registro);
 
-                                if (cantidad % Utilitarios.lineasCommit == 0)
-                                {
-                                    db.Entry(encabezado).State = EntityState.Modified;
-                                    db.SaveChanges();
+                                    if (cantidad % Utilitarios.lineasCommit == 0)
+                                    {
+                                        GuardarLote(db, encabezado);
+                                    }
                                 }
-                            }
-                            break;
+                                break;
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        AgregarError(e.Message, encabezado, db);
                     }
                 }
-                catch (Exception e)
-                {
-                    AgregarError(e.Message, encabezado, db);
-                }
+
+                GuardarLote(db, encabezado);
+                encabezado.Cantidad = cantidad;
+                db.Entry(encabezado).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                var baseEx = e.GetBaseException() ?? e;
+                AgregarError(baseEx.Message, encabezado, db);
             }
         }
 
@@ -1008,13 +1054,11 @@ namespace FileService
                                     if (caracter != "0" && caracter != "1" && caracter != "2" && caracter != "3")
                                         AgregarError("El sexto dígito de la cuenta contable principal " + registro.CuentaContablePrincipal + " debe ser 0, 1, 2 o 3", encabezado, db);
 
-                                    encabezado.Cantidad = cantidad;
                                     db.XML_Inversion_Activas.Add(registro);
 
                                     if (cantidad % Utilitarios.lineasCommit == 0)
                                     {
-                                        db.Entry(encabezado).State = EntityState.Modified;
-                                        db.SaveChanges();
+                                        GuardarLote(db, encabezado);
                                     }
                                 }
                                 break;
@@ -1026,10 +1070,16 @@ namespace FileService
                         AgregarError(e.Message, encabezado, db);
                     }
                 }
+
+                GuardarLote(db, encabezado);
+                encabezado.Cantidad = cantidad;
+                db.Entry(encabezado).State = EntityState.Modified;
+                db.SaveChanges();
             }
             catch (Exception e)
             {
-                AgregarError(e.Message, encabezado, db);
+                var baseEx = e.GetBaseException() ?? e;
+                AgregarError(baseEx.Message, encabezado, db);
             }
         }
 
@@ -1308,12 +1358,10 @@ namespace FileService
                                         }
                                     }
 
-                                    encabezado.Cantidad = cantidad;
                                     db.XML_Credito_Operaciones_DirInds.Add(registro);
                                     if (cantidad % Utilitarios.lineasCommit == 0)
                                     {
-                                        db.Entry(encabezado).State = EntityState.Modified;
-                                        db.SaveChanges();
+                                        GuardarLote(db, encabezado);
                                     }
                                 }
                                 break;
@@ -1325,6 +1373,8 @@ namespace FileService
                     }
                 }
 
+                GuardarLote(db, encabezado);
+                encabezado.Cantidad = cantidad;
                 db.Entry(encabezado).State = EntityState.Modified;
                 db.SaveChanges();
 
@@ -1334,139 +1384,148 @@ namespace FileService
             }
             catch (Exception e)
             {
-                AgregarError(e.Message, encabezado, db);
+                var baseEx = e.GetBaseException() ?? e;
+                AgregarError(baseEx.Message, encabezado, db);
             }
         }
 
         public void ProcesarCredito_Deudor_XML(XmlReader reader, XML_Encabezado encabezado, SIContext db)
         {
-            int cantidad = 0;
-            while (reader != null && reader.Read())
+            try
             {
-                try
+                int cantidad = 0;
+                while (reader != null && reader.Read())
                 {
-                    XML_Credito_Deudor registro;
-                    reader.MoveToAttribute("Registro");
-                    switch (reader.NodeType)
+                    try
                     {
-                        case XmlNodeType.Element:
-                            if (reader.Name.Equals("Registro"))
-                            {
-                                XDocument xDoc = XDocument.Load(reader.ReadSubtree());
-                                cantidad += 1;
-
-
-                                try
+                        XML_Credito_Deudor registro;
+                        reader.MoveToAttribute("Registro");
+                        switch (reader.NodeType)
+                        {
+                            case XmlNodeType.Element:
+                                if (reader.Name.Equals("Registro"))
                                 {
-                                    registro = xDoc.Elements("Registro").Select(info => new XML_Credito_Deudor
+                                    XDocument xDoc = XDocument.Load(reader.ReadSubtree());
+                                    cantidad += 1;
+
+
+                                    try
                                     {
-                                        IdEncabezado = encabezado,
-                                        CategoriaRiesgo = info.Element("CategoriaRiesgo").Value,
-                                        IdDeudor = info.Element("IdDeudor").Value
-                                    }).FirstOrDefault();
+                                        registro = xDoc.Elements("Registro").Select(info => new XML_Credito_Deudor
+                                        {
+                                            IdEncabezado = encabezado,
+                                            CategoriaRiesgo = info.Element("CategoriaRiesgo").Value,
+                                            IdDeudor = info.Element("IdDeudor").Value
+                                        }).FirstOrDefault();
 
-                                    registro.TipoCategoriaRiesgoSBD = 0;
-                                }
-                                catch (Exception)
-                                {
-                                    registro = xDoc.Elements("Registro").Select(info => new XML_Credito_Deudor
+                                        registro.TipoCategoriaRiesgoSBD = 0;
+                                    }
+                                    catch (Exception)
                                     {
-                                        IdEncabezado = encabezado,
-                                        CategoriaRiesgo = "",
-                                        IdDeudor = info.Element("IdDeudor").Value
-                                    }).FirstOrDefault();
+                                        registro = xDoc.Elements("Registro").Select(info => new XML_Credito_Deudor
+                                        {
+                                            IdEncabezado = encabezado,
+                                            CategoriaRiesgo = "",
+                                            IdDeudor = info.Element("IdDeudor").Value
+                                        }).FirstOrDefault();
+                                    }
+
+
+                                    registro.CategoriaRiesgo = registro.CategoriaRiesgo.Trim();
+
+                                    if (registro.IdDeudor.Length > 30 || registro.IdDeudor.Length == 0)
+                                        AgregarError("El id del deudor debe tener entre 1 y 30 caracteres. Valor inválido: " + registro.IdDeudor, encabezado, db);
+
+                                    db.XML_Credito_Deudores.Add(registro);
+
+                                    if (cantidad % Utilitarios.lineasCommit == 0)
+                                    {
+                                        GuardarLote(db, encabezado);
+                                    }
                                 }
-
-
-                                registro.CategoriaRiesgo = registro.CategoriaRiesgo.Trim();
-
-                                if (registro.IdDeudor.Length > 30 || registro.IdDeudor.Length == 0)
-                                    AgregarError("El id del deudor debe tener entre 1 y 30 caracteres. Valor inválido: " + registro.IdDeudor, encabezado, db);
-
-                                //if (registro.TipoCategoriaRiesgoSBD == 0)
-                                //{
-                                //    if (registro.CategoriaRiesgo != "A1" && registro.CategoriaRiesgo != "A2" && registro.CategoriaRiesgo != "B1" && registro.CategoriaRiesgo != "B2"
-                                //        && registro.CategoriaRiesgo != "C1" && registro.CategoriaRiesgo != "C2" && registro.CategoriaRiesgo != "D" && registro.CategoriaRiesgo != "E"))
-                                //        AgregarError("La categoría de riesgo debe ser uno de los siguiente valores (A1, A2, B1, B2, C1, C2, D, E). Valor inválido: " + registro.CategoriaRiesgo + " del deudor " + registro.IdDeudor, encabezado, db);
-                                //}
-                                //else
-                                //{
-                                //    registro.CategoriaRiesgo = registro.TipoCategoriaRiesgoSBD.ToString();
-                                //    if (registro.CategoriaRiesgo != "1" && registro.CategoriaRiesgo != "2" && registro.CategoriaRiesgo != "3"
-                                //        && registro.CategoriaRiesgo != "4" && registro.CategoriaRiesgo != "5" && registro.CategoriaRiesgo != "6")
-                                //        AgregarError("La categoría de riesgo debe ser uno de los siguiente valores (1,2,3,4,5,6). Valor inválido: " + registro.CategoriaRiesgo + " del deudor " + registro.IdDeudor, encabezado, db);
-                                //}
-
-                                encabezado.Cantidad = cantidad;
-                                db.XML_Credito_Deudores.Add(registro);
-
-                                if (cantidad % Utilitarios.lineasCommit == 0)
-                                {
-                                    db.Entry(encabezado).State = EntityState.Modified;
-                                    db.SaveChanges();
-                                }
-                            }
-                            break;
+                                break;
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        AgregarError(e.Message, encabezado, db);
                     }
                 }
-                catch (Exception e)
-                {
-                    AgregarError(e.Message, encabezado, db);
-                }
+
+                GuardarLote(db, encabezado);
+                encabezado.Cantidad = cantidad;
+                db.Entry(encabezado).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                var baseEx = e.GetBaseException() ?? e;
+                AgregarError(baseEx.Message, encabezado, db);
             }
         }
 
         public void ProcesarCuota_Atrasada_XML(XmlReader reader, XML_Encabezado encabezado, SIContext db)
         {
-            int cantidad = 0;
-            while (reader != null && reader.Read())
+            try
             {
-                try
+                int cantidad = 0;
+                while (reader != null && reader.Read())
                 {
-                    reader.MoveToAttribute("Registro");
-                    switch (reader.NodeType)
+                    try
                     {
-                        case XmlNodeType.Element:
-                            if (reader.Name.Equals("Registro"))
-                            {
-                                cantidad += 1;
-                                XDocument xDoc = XDocument.Load(reader.ReadSubtree());
-                                XML_Credito_Cuota_Atrasada registro = new XML_Credito_Cuota_Atrasada();
-
-                                registro = xDoc.Elements("Registro").Select(info => new XML_Credito_Cuota_Atrasada
+                        reader.MoveToAttribute("Registro");
+                        switch (reader.NodeType)
+                        {
+                            case XmlNodeType.Element:
+                                if (reader.Name.Equals("Registro"))
                                 {
-                                    IdEncabezado = encabezado,
-                                    DiasAtraso = Utilitarios.ConvertirAEntero(info.Element("DiasAtraso").Value),
-                                    IdDeudor = info.Element("IdDeudor").Value,
-                                    IdOperacion = info.Element("IdOperacionCredito").Value,
-                                    MontoCuotaAtrasada = Utilitarios.ConvertirADecimal(info.Element("MontoCuotaAtrasada").Value, "Id de operación:  " + info.Element("IdOperacionCredito").Value + ". El monto de cuota: ")
-                                }).FirstOrDefault();
+                                    cantidad += 1;
+                                    XDocument xDoc = XDocument.Load(reader.ReadSubtree());
+                                    XML_Credito_Cuota_Atrasada registro = new XML_Credito_Cuota_Atrasada();
+
+                                    registro = xDoc.Elements("Registro").Select(info => new XML_Credito_Cuota_Atrasada
+                                    {
+                                        IdEncabezado = encabezado,
+                                        DiasAtraso = Utilitarios.ConvertirAEntero(info.Element("DiasAtraso").Value),
+                                        IdDeudor = info.Element("IdDeudor").Value,
+                                        IdOperacion = info.Element("IdOperacionCredito").Value,
+                                        MontoCuotaAtrasada = Utilitarios.ConvertirADecimal(info.Element("MontoCuotaAtrasada").Value, "Id de operación:  " + info.Element("IdOperacionCredito").Value + ". El monto de cuota: ")
+                                    }).FirstOrDefault();
 
 
-                                if (registro.IdDeudor.Length > 30 || registro.IdDeudor.Length == 0)
-                                    AgregarError("El id del deudor debe tener entre 1 y 30 caracteres. Valor inválido: " + registro.IdDeudor + " de la operación " + registro.IdOperacion, encabezado, db);
+                                    if (registro.IdDeudor.Length > 30 || registro.IdDeudor.Length == 0)
+                                        AgregarError("El id del deudor debe tener entre 1 y 30 caracteres. Valor inválido: " + registro.IdDeudor + " de la operación " + registro.IdOperacion, encabezado, db);
 
-                                if (registro.IdOperacion.Length > 35 || registro.IdOperacion.Length == 0)
-                                    AgregarError("El id de la operación debe tener entre 1 y 35 caracteres. Valor inválido: " + registro.IdOperacion + " del deudor " + registro.IdDeudor, encabezado, db);
+                                    if (registro.IdOperacion.Length > 35 || registro.IdOperacion.Length == 0)
+                                        AgregarError("El id de la operación debe tener entre 1 y 35 caracteres. Valor inválido: " + registro.IdOperacion + " del deudor " + registro.IdDeudor, encabezado, db);
 
-                                if (registro.DiasAtraso < 0 || registro.DiasAtraso > 999999)
-                                    AgregarError("Los días de atraso deben tener entre 1 y 6 números. Valor inválido: " + registro.DiasAtraso.ToString() + " de la operación " + registro.IdOperacion, encabezado, db);
+                                    if (registro.DiasAtraso < 0 || registro.DiasAtraso > 999999)
+                                        AgregarError("Los días de atraso deben tener entre 1 y 6 números. Valor inválido: " + registro.DiasAtraso.ToString() + " de la operación " + registro.IdOperacion, encabezado, db);
 
-                                encabezado.Cantidad = cantidad;
-                                db.XML_Credito_Cuotas_Atrasadas.Add(registro);
-                                if (cantidad % Utilitarios.lineasCommit == 0)
-                                {
-                                    db.Entry(encabezado).State = EntityState.Modified;
-                                    db.SaveChanges();
+                                    db.XML_Credito_Cuotas_Atrasadas.Add(registro);
+                                    if (cantidad % Utilitarios.lineasCommit == 0)
+                                    {
+                                        GuardarLote(db, encabezado);
+                                    }
                                 }
-                            }
-                            break;
+                                break;
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        AgregarError(e.Message, encabezado, db);
                     }
                 }
-                catch (Exception e)
-                {
-                    AgregarError(e.Message, encabezado, db);
-                }
+
+                GuardarLote(db, encabezado);
+                encabezado.Cantidad = cantidad;
+                db.Entry(encabezado).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                var baseEx = e.GetBaseException() ?? e;
+                AgregarError(baseEx.Message, encabezado, db);
             }
         }
 

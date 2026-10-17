@@ -12,7 +12,7 @@ namespace FGA.Utility
         public const int idBrechaM = 18;
         public const int idIRLBanda = 19;
         public const int idIRLBandaAcum = 20;
-        public const int lineasCommit = 30;
+        public const int lineasCommit = 1000;
         public const int maxUsuarios = 5;
         public const int monedaLocal = 1;
         public const int monedaDolares = 2;

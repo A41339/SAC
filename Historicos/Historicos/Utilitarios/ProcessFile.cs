@@ -340,6 +340,15 @@ namespace Historicos
             }
         }
 
+        private static void GuardarLote(SIContext db, XML_Encabezado encabezado)
+        {
+            db.SaveChanges();
+            foreach (var entry in db.ChangeTracker.Entries().Where(e => e.Entity != encabezado).ToList())
+            {
+                entry.State = EntityState.Detached;
+            }
+        }
+
         public static void ProcesarCapitalSocial(XmlReader reader, XML_Encabezado encabezado, SIContext db)
         {
 
@@ -904,12 +913,10 @@ namespace Historicos
                                     if (registro.TasaInteresNominalVigente < 1)
                                         registro.TasaInteresNominalVigente = registro.TasaInteresNominalVigente * 100;
 
-                                    encabezado.Cantidad = cantidad;
                                     db.XML_Credito_Operaciones_DirInds.Add(registro);
                                     if (cantidad % Utilitarios.lineasCommit == 0)
                                     {
-                                        db.Entry(encabezado).State = EntityState.Modified;
-                                        db.SaveChanges();
+                                        GuardarLote(db, encabezado);
                                     }
                                 }
                                 break;
@@ -920,144 +927,172 @@ namespace Historicos
                         AgregarError(e.Message, encabezado, db);
                     }
                 }
+
+                GuardarLote(db, encabezado);
+                encabezado.Cantidad = cantidad;
+                db.Entry(encabezado).State = EntityState.Modified;
+                db.SaveChanges();
             }
             catch (Exception e)
             {
-                AgregarError(e.Message, encabezado, db);
+                var baseEx = e.GetBaseException() ?? e;
+                AgregarError(baseEx.Message, encabezado, db);
             }
         }
 
         public static void ProcesarCredito_Deudor_XML(XmlReader reader, XML_Encabezado encabezado, SIContext db)
         {
-            int cantidad = 0;
-            while (reader != null && reader.Read())
+            try
             {
-                try
+                int cantidad = 0;
+                while (reader != null && reader.Read())
                 {
-                    XML_Credito_Deudor registro;
-                    reader.MoveToAttribute("Registro");
-                    switch (reader.NodeType)
+                    try
                     {
-                        case XmlNodeType.Element:
-                            if (reader.Name.Equals("Registro"))
-                            {
-                                XDocument xDoc = XDocument.Load(reader.ReadSubtree());
-                                cantidad += 1;
+                        XML_Credito_Deudor registro;
+                        reader.MoveToAttribute("Registro");
+                        switch (reader.NodeType)
+                        {
+                            case XmlNodeType.Element:
+                                if (reader.Name.Equals("Registro"))
+                                {
+                                    XDocument xDoc = XDocument.Load(reader.ReadSubtree());
+                                    cantidad += 1;
 
-                                try
-                                {
-                                    registro = xDoc.Elements("Registro").Select(info => new XML_Credito_Deudor
-                                    {
-                                        IdEncabezado = encabezado,
-                                        CategoriaRiesgo = info.Element("CategoriaRiesgo").Value,
-                                        TipoCategoriaRiesgoSBD = Utilitarios.ConvertirAEntero(info.Element("TipoCategoriaRiesgoSBD").Value),
-                                        IdDeudor = info.Element("IdDeudor").Value
-                                    }).FirstOrDefault();
-                                }
-                                catch (Exception)
-                                {
                                     try
                                     {
                                         registro = xDoc.Elements("Registro").Select(info => new XML_Credito_Deudor
                                         {
                                             IdEncabezado = encabezado,
                                             CategoriaRiesgo = info.Element("CategoriaRiesgo").Value,
+                                            TipoCategoriaRiesgoSBD = Utilitarios.ConvertirAEntero(info.Element("TipoCategoriaRiesgoSBD").Value),
                                             IdDeudor = info.Element("IdDeudor").Value
                                         }).FirstOrDefault();
                                     }
                                     catch (Exception)
                                     {
-
-                                        registro = xDoc.Elements("Registro").Select(info => new XML_Credito_Deudor
+                                        try
                                         {
-                                            IdEncabezado = encabezado,
-                                            CategoriaRiesgo = "",
-                                            IdDeudor = info.Element("IdDeudor").Value
-                                        }).FirstOrDefault();
+                                            registro = xDoc.Elements("Registro").Select(info => new XML_Credito_Deudor
+                                            {
+                                                IdEncabezado = encabezado,
+                                                CategoriaRiesgo = info.Element("CategoriaRiesgo").Value,
+                                                IdDeudor = info.Element("IdDeudor").Value
+                                            }).FirstOrDefault();
+                                        }
+                                        catch (Exception)
+                                        {
+
+                                            registro = xDoc.Elements("Registro").Select(info => new XML_Credito_Deudor
+                                            {
+                                                IdEncabezado = encabezado,
+                                                CategoriaRiesgo = "",
+                                                IdDeudor = info.Element("IdDeudor").Value
+                                            }).FirstOrDefault();
+                                        }
+
+                                        registro.TipoCategoriaRiesgoSBD = 0;
                                     }
 
-                                    registro.TipoCategoriaRiesgoSBD = 0;
+                                    db.XML_Credito_Deudores.Add(registro);
+
+                                    if (registro.CategoriaRiesgo == "0")
+                                        registro.CategoriaRiesgo = registro.TipoCategoriaRiesgoSBD.ToString();
+
+                                    if (registro.CategoriaRiesgo == "0")
+                                        registro.CategoriaRiesgo = "1";
+
+                                    if (cantidad % Utilitarios.lineasCommit == 0)
+                                    {
+                                        GuardarLote(db, encabezado);
+                                    }
                                 }
-
-                                encabezado.Cantidad = cantidad;
-                                db.XML_Credito_Deudores.Add(registro);
-
-                                if (registro.CategoriaRiesgo == "0")
-                                    registro.CategoriaRiesgo = registro.TipoCategoriaRiesgoSBD.ToString();
-
-                                if (registro.CategoriaRiesgo == "0")
-                                    registro.CategoriaRiesgo = "1";
-
-                                if (cantidad % Utilitarios.lineasCommit == 0)
-                                {
-                                    db.Entry(encabezado).State = EntityState.Modified;
-                                    db.SaveChanges();
-                                }
-                            }
-                            break;
+                                break;
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        AgregarError(e.Message, encabezado, db);
                     }
                 }
-                catch (Exception e)
-                {
-                    AgregarError(e.Message, encabezado, db);
-                }
+
+                GuardarLote(db, encabezado);
+                encabezado.Cantidad = cantidad;
+                db.Entry(encabezado).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                var baseEx = e.GetBaseException() ?? e;
+                AgregarError(baseEx.Message, encabezado, db);
             }
         }
 
         public static void ProcesarCuota_Atrasada_XML(XmlReader reader, XML_Encabezado encabezado, SIContext db)
         {
-            int cantidad = 0;
-            while (reader != null && reader.Read())
+            try
             {
-                try
+                int cantidad = 0;
+                while (reader != null && reader.Read())
                 {
-                    reader.MoveToAttribute("Registro");
-                    switch (reader.NodeType)
+                    try
                     {
-                        case XmlNodeType.Element:
-                            if (reader.Name.Equals("Registro"))
-                            {
-                                cantidad += 1;
-                                XDocument xDoc = XDocument.Load(reader.ReadSubtree());
-                                XML_Credito_Cuota_Atrasada registro = new XML_Credito_Cuota_Atrasada();
-                                try
+                        reader.MoveToAttribute("Registro");
+                        switch (reader.NodeType)
+                        {
+                            case XmlNodeType.Element:
+                                if (reader.Name.Equals("Registro"))
                                 {
-                                    registro = xDoc.Elements("Registro").Select(info => new XML_Credito_Cuota_Atrasada
+                                    cantidad += 1;
+                                    XDocument xDoc = XDocument.Load(reader.ReadSubtree());
+                                    XML_Credito_Cuota_Atrasada registro = new XML_Credito_Cuota_Atrasada();
+                                    try
                                     {
-                                        IdEncabezado = encabezado,
-                                        DiasAtraso = Utilitarios.ConvertirAEntero(info.Element("DiasAtraso").Value),
-                                        IdDeudor = info.Element("IdDeudor").Value,
-                                        IdOperacion = info.Element("IdOperacion").Value,
-                                        MontoCuotaAtrasada = Utilitarios.ConvertirADecimal(info.Element("MontoCuotaAtrasada").Value)
-                                    }).FirstOrDefault();
-                                }
-                                catch (Exception)
-                                {
-                                    registro = xDoc.Elements("Registro").Select(info => new XML_Credito_Cuota_Atrasada
+                                        registro = xDoc.Elements("Registro").Select(info => new XML_Credito_Cuota_Atrasada
+                                        {
+                                            IdEncabezado = encabezado,
+                                            DiasAtraso = Utilitarios.ConvertirAEntero(info.Element("DiasAtraso").Value),
+                                            IdDeudor = info.Element("IdDeudor").Value,
+                                            IdOperacion = info.Element("IdOperacion").Value,
+                                            MontoCuotaAtrasada = Utilitarios.ConvertirADecimal(info.Element("MontoCuotaAtrasada").Value)
+                                        }).FirstOrDefault();
+                                    }
+                                    catch (Exception)
                                     {
-                                        IdEncabezado = encabezado,
-                                        DiasAtraso = Utilitarios.ConvertirAEntero(info.Element("DiasAtraso").Value),
-                                        IdDeudor = info.Element("IdDeudor").Value,
-                                        IdOperacion = info.Element("IdOperacionCredito").Value,
-                                        MontoCuotaAtrasada = Utilitarios.ConvertirADecimal(info.Element("MontoCuotaAtrasada").Value, "Id de operación:  " + info.Element("IdOperacionCredito").Value + ". El monto de cuota: ")
-                                    }).FirstOrDefault();
-                                }
+                                        registro = xDoc.Elements("Registro").Select(info => new XML_Credito_Cuota_Atrasada
+                                        {
+                                            IdEncabezado = encabezado,
+                                            DiasAtraso = Utilitarios.ConvertirAEntero(info.Element("DiasAtraso").Value),
+                                            IdDeudor = info.Element("IdDeudor").Value,
+                                            IdOperacion = info.Element("IdOperacionCredito").Value,
+                                            MontoCuotaAtrasada = Utilitarios.ConvertirADecimal(info.Element("MontoCuotaAtrasada").Value, "Id de operación:  " + info.Element("IdOperacionCredito").Value + ". El monto de cuota: ")
+                                        }).FirstOrDefault();
+                                    }
 
-                                encabezado.Cantidad = cantidad;
-                                db.XML_Credito_Cuotas_Atrasadas.Add(registro);
-                                if (cantidad % Utilitarios.lineasCommit == 0)
-                                {
-                                    db.Entry(encabezado).State = EntityState.Modified;
-                                    db.SaveChanges();
+                                    db.XML_Credito_Cuotas_Atrasadas.Add(registro);
+                                    if (cantidad % Utilitarios.lineasCommit == 0)
+                                    {
+                                        GuardarLote(db, encabezado);
+                                    }
                                 }
-                            }
-                            break;
+                                break;
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        AgregarError(e.Message, encabezado, db);
                     }
                 }
-                catch (Exception e)
-                {
-                    AgregarError(e.Message, encabezado, db);
-                }
+
+                GuardarLote(db, encabezado);
+                encabezado.Cantidad = cantidad;
+                db.Entry(encabezado).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                var baseEx = e.GetBaseException() ?? e;
+                AgregarError(baseEx.Message, encabezado, db);
             }
         }
 
