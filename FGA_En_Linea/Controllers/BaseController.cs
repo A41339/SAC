@@ -165,44 +165,21 @@ namespace FGA.Controllers
                 int userid = 0;
                 int.TryParse(Env.GetUserInfo("userid"), out userid);
 
-                if (userid > 0 && Session != null)
+                if (!context.IsChildAction && userid > 0 && Session != null)
                 {
                     try
                     {
                         var usrObj = Session["CurrentUserObj"] as Usuario;
-                        int currentDbRoleId = 0;
-                        string constr = System.Configuration.ConfigurationManager.ConnectionStrings["FGAConnection"]?.ConnectionString;
-                        if (!string.IsNullOrEmpty(constr))
-                        {
-                            using (var conn = new System.Data.SqlClient.SqlConnection(constr))
-                            {
-                                conn.Open();
-                                using (var cmd = new System.Data.SqlClient.SqlCommand("SELECT Role_Usuario_Id FROM Usuario WHERE Id = @Id", conn))
-                                {
-                                    cmd.Parameters.AddWithValue("@Id", userid);
-                                    var val = cmd.ExecuteScalar();
-                                    if (val != null && val != DBNull.Value)
-                                    {
-                                        currentDbRoleId = Convert.ToInt32(val);
-                                    }
-                                }
-                            }
-                        }
+                        // Sincronización dinámica de usuario y rol exclusivamente a través de DBService (WCF)
+                        var freshUser = WcfHelper.Execute<FGA_En_Linea.UsuarioService.UsuarioServiceClient, FGA.Models.Usuario>(
+                            c => c.Get(userid.ToString())
+                        );
 
-                        if (currentDbRoleId > 0 && (usrObj == null || usrObj.Role_Usuario_Id != currentDbRoleId))
+                        if (freshUser != null && (usrObj == null || usrObj.Role_Usuario_Id != freshUser.Role_Usuario_Id))
                         {
-                            // Sincronización dinámica instantánea: el rol cambió en BD
-                            using (var uClient = new FGA_En_Linea.UsuarioService.UsuarioServiceClient())
-                            {
-                                var freshUser = uClient.Get(userid.ToString());
-                                if (freshUser != null)
-                                {
-                                    freshUser.Role_Usuario_Id = currentDbRoleId;
-                                    Session["CurrentUserObj"] = freshUser;
-                                    Session["Usuario"] = freshUser;
-                                    Session["IsFGA"] = (freshUser.Role_Usuario != null && freshUser.Role_Usuario.EsEntidad) ? 0 : 1;
-                                }
-                            }
+                            Session["CurrentUserObj"] = freshUser;
+                            Session["Usuario"] = freshUser;
+                            Session["IsFGA"] = (freshUser.Role_Usuario != null && freshUser.Role_Usuario.EsEntidad) ? 0 : 1;
                             Env.InvalidateRoleMenuCache();
                         }
                     }

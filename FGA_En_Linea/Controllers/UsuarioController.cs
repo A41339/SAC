@@ -224,6 +224,7 @@ namespace FGA.Controllers
                     usuario.Sexo_Usuario = null;
 
                     usr.Update(usuario);
+                    Env.InvalidateRoleMenuCache(usuario.Role_Usuario_Id);
                     return Json(new { success = true, message = "Usuario actualizado exitosamente." });
                 }
             }
@@ -482,6 +483,7 @@ namespace FGA.Controllers
                     usuario.Role_Usuario = null;
                     usuario.Sexo_Usuario = null;
                     usr.Update(usuario);
+                    Env.InvalidateRoleMenuCache(usuario.Role_Usuario_Id);
                     sb.Append("Sumitted");
                     return Content(sb.ToString());
                 }
