@@ -12,7 +12,6 @@ namespace FGA.Maping
             Property(o => o.Id).HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
             Property(o => o.IdOperacion);
             Property(o => o.IdAcreedor);
-            Property(o => o.IdOperacion);
             Property(o => o.TipoMonedaObligacion);
             Property(o => o.TipoTasa);
             Property(o => o.Tasa);
@@ -22,8 +21,11 @@ namespace FGA.Maping
             Property(o => o.FechaFormalizacion);
             Property(o => o.FechaVencimiento);
             Property(o => o.Condicion);
-            ToTable("XML_Pasivo_Cuenta_Contable_210");
+            Property(o => o.IdEncabezado_Id);
 
+            HasOptional(o => o.IdEncabezado).WithMany().HasForeignKey(o => o.IdEncabezado_Id).WillCascadeOnDelete(false);
+
+            ToTable("XML_Pasivo_Cuenta_Contable_210");
         }
     }
 }

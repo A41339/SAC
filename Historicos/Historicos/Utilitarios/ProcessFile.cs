@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data.Entity;
 using System.IO;
 using System.Linq;
@@ -200,6 +200,7 @@ namespace Historicos
 
             var reader = XmlReader.Create(xmlPath, settings);
             SIContext db = new SIContext();
+            db.Database.CommandTimeout = 300;
             db.Configuration.AutoDetectChangesEnabled = false;
             XML_Encabezado encabezado = db.XML_Encabezados.Include("IdArchivo").FirstOrDefault(o => o.Id == idEncabezado);
 
@@ -772,7 +773,7 @@ namespace Historicos
                                     cantidad += 1;
                                     registro = xDoc.Elements("Registro").Select(info => new XML_Pasivo_Cuenta_Contable_210
                                     {
-                                        IdEncabezado = encabezado,
+                                        IdEncabezado_Id = encabezado.Id,
                                         IdAcreedor = info.Element("IdAcreedor").Value,
                                         IdOperacion = info.Element("IdOperacion").Value,
                                         FechaFormalizacion = Utilitarios.ConvertirAFechaNula(info.Element("FechaFormalizacion").Value),
@@ -785,20 +786,22 @@ namespace Historicos
                                         FechaVencimiento = Utilitarios.ConvertirAFechaNula(info.Element("FechaVencimiento").Value),
                                         Condicion = "NUEVO",
                                         Tipo = "NO APLICA",
-                                        TipoDepositoFGDLEY9816 = Utilitarios.ConvertirAEntero(info.Element("TipoDepositoFGDLEY9816").Value),
+                                        TipoDepositoFGDLEY9816 = info.Element("TipoDepositoFGDLEY9816") != null ? Utilitarios.ConvertirAEntero(info.Element("TipoDepositoFGDLEY9816").Value) : (int?)null,
                                     }).FirstOrDefault();
 
                                     if (registro.Tasa < 1)
                                         registro.Tasa = registro.Tasa * 100;
 
                                     idOperacion = registro.IdOperacion;
-                                    encabezado.Cantidad = cantidad;
                                     db.XML_Pasivo_Cuenta_Contable_210s.Add(registro);
 
-                                    if (cantidad % Utilitarios.lineasCommit == 0)
+                                    if (cantidad % 1000 == 0)
                                     {
-                                        db.Entry(encabezado).State = EntityState.Modified;
                                         db.SaveChanges();
+                                        foreach (var entry in db.ChangeTracker.Entries<XML_Pasivo_Cuenta_Contable_210>().ToList())
+                                        {
+                                            entry.State = EntityState.Detached;
+                                        }
                                     }
                                 }
                                 break;
@@ -809,10 +812,21 @@ namespace Historicos
                         AgregarError(e.Message, encabezado, db);
                     }
                 }
+
+                db.SaveChanges();
+                foreach (var entry in db.ChangeTracker.Entries<XML_Pasivo_Cuenta_Contable_210>().ToList())
+                {
+                    entry.State = EntityState.Detached;
+                }
+
+                encabezado.Cantidad = cantidad;
+                db.Entry(encabezado).State = EntityState.Modified;
+                db.SaveChanges();
             }
             catch (Exception e)
             {
-                AgregarError("El id de operación " + idOperacion + " está duplicado. Detalle: " + e.Message, encabezado, db);
+                var baseEx = e.GetBaseException() ?? e;
+                AgregarError("El id de operación " + idOperacion + " está duplicado. Detalle: " + baseEx.Message, encabezado, db);
             }
         }
 
@@ -1098,11 +1112,18 @@ namespace Historicos
         {
             try
             {
-                XML_Errores error = new XML_Errores();
-                error.IdEncabezado = encabezado;
-                error.Detalle = detalle;
-                db.XML_Errores.Add(error);
-                db.SaveChanges();
+                if (encabezado != null)
+                {
+                    using (var errDb = new SIContext())
+                    {
+                        errDb.Database.CommandTimeout = 60;
+                        XML_Errores error = new XML_Errores();
+                        error.IdEncabezado_Id = encabezado.Id;
+                        error.Detalle = detalle;
+                        errDb.XML_Errores.Add(error);
+                        errDb.SaveChanges();
+                    }
+                }
             }
             catch (Exception)
             {

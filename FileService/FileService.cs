@@ -119,6 +119,7 @@ namespace FileService
 
             var reader = XmlReader.Create(xmlPath, settings);
             SIContext db = new SIContext();
+            db.Database.CommandTimeout = 300;
             db.Configuration.AutoDetectChangesEnabled = false;
             XML_Encabezado encabezado = db.XML_Encabezados.Include("IdUsuario").Include("IdArchivo").Include("IdEntidad").FirstOrDefault(o => o.Id == idEncabezado);
             encabezado.Cantidad = 0;
@@ -1054,7 +1055,7 @@ namespace FileService
                                     cantidad += 1;
                                     registro = xDoc.Elements("Registro").Select(info => new XML_Pasivo_Cuenta_Contable_210
                                     {
-                                        IdEncabezado = encabezado,
+                                        IdEncabezado_Id = encabezado.Id,
                                         IdAcreedor = info.Element("IdAcreedor").Value,
                                         IdOperacion = info.Element("IdOperacion").Value,
                                         FechaFormalizacion = Utilitarios.ConvertirAFecha(info.Element("FechaFormalizacion").Value),
@@ -1067,7 +1068,7 @@ namespace FileService
                                         FechaVencimiento = Utilitarios.ConvertirAFecha(info.Element("FechaVencimiento").Value),
                                         Condicion = "NUEVO",
                                         Tipo = "NO APLICA",
-                                        TipoDepositoFGDLEY9816 = Utilitarios.ConvertirAEntero(info.Element("TipoDepositoFGDLEY9816").Value),
+                                        TipoDepositoFGDLEY9816 = info.Element("TipoDepositoFGDLEY9816") != null ? Utilitarios.ConvertirAEntero(info.Element("TipoDepositoFGDLEY9816").Value) : (int?)null,
                                     }).FirstOrDefault();
 
                                     if (registro.SaldoPrincipal > 0 || registro.SaldoProducto > 0)
@@ -1097,13 +1098,15 @@ namespace FileService
                                         }
 
                                         totalPasivos += registro.SaldoPrincipal + registro.SaldoProducto;
-                                        encabezado.Cantidad = cantidad;
                                         db.XML_Pasivo_Cuenta_Contable_210s.Add(registro);
 
-                                        if (cantidad % Utilitarios.lineasCommit == 0)
+                                        if (cantidad % 1000 == 0)
                                         {
-                                            db.Entry(encabezado).State = EntityState.Modified;
                                             db.SaveChanges();
+                                            foreach (var entry in db.ChangeTracker.Entries<XML_Pasivo_Cuenta_Contable_210>().ToList())
+                                            {
+                                                entry.State = EntityState.Detached;
+                                            }
                                         }
                                     }
                                 }
@@ -1116,12 +1119,22 @@ namespace FileService
                     }
                 }
 
+                db.SaveChanges();
+                foreach (var entry in db.ChangeTracker.Entries<XML_Pasivo_Cuenta_Contable_210>().ToList())
+                {
+                    entry.State = EntityState.Detached;
+                }
+
+                encabezado.Cantidad = cantidad;
                 db.Entry(encabezado).State = EntityState.Modified;
                 db.SaveChanges();
 
-                var duplicados = db.XML_Pasivo_Cuenta_Contable_210s.Include("IdEncabezado").Where(i => i.IdEncabezado.Id == encabezado.Id).GroupBy(i => i.IdOperacion)
-                 .Where(x => x.Count() > 1)
-                 .Select(val => val.Key).ToList();
+                var duplicados = db.Database.SqlQuery<string>(
+                    @"SELECT TOP 50 IdOperacion 
+                      FROM [dbo].[XML_Pasivo_Cuenta_Contable_210] WITH(NOLOCK) 
+                      WHERE IdEncabezado_Id = @p0 
+                      GROUP BY IdOperacion 
+                      HAVING COUNT(*) > 1", encabezado.Id).ToList();
 
                 foreach (var item in duplicados)
                 {
@@ -1129,16 +1142,22 @@ namespace FileService
                 }
 
                 //Valida que el monto del archivo corresponda al monto de las cuentas contables
-                var tablaCuentas = db.XML_Contable_Estados.Include("IdEncabezado").Where(o => o.IdEncabezado.Id == contableEstados && o.Cuenta == Utilitarios.cuentaPasivos210).ToList();
-                var monto210 = tablaCuentas.FirstOrDefault().SaldoFinal;
+                var monto210 = db.Database.SqlQuery<decimal?>(
+                    @"SELECT TOP 1 SaldoFinal 
+                      FROM [dbo].[XML_Contable_Estado] WITH(NOLOCK) 
+                      WHERE IdEncabezado_Id = @p0 AND Cuenta = @p1", 
+                    contableEstados, Utilitarios.cuentaPasivos210).FirstOrDefault();
 
-                if (Math.Abs((totalPasivos - monto210)) > 1000)
-                    AgregarError("El saldo de la cuenta " + Utilitarios.cuentaPasivos210 + ": " + monto210.ToString("N2") + " del XML_Contable_Estados.xml no puede ser diferente en más de 1000 con " +
+                if (monto210.HasValue && Math.Abs((totalPasivos - monto210.Value)) > 1000)
+                {
+                    AgregarError("El saldo de la cuenta " + Utilitarios.cuentaPasivos210 + ": " + monto210.Value.ToString("N2") + " del XML_Contable_Estados.xml no puede ser diferente en más de 1000 con " +
                         "la suma total de todos los pasivos del XML_Pasivos_Cuenta_210.xml: " + totalPasivos.ToString("N2"), encabezado, db);
+                }
             }
             catch (Exception e)
             {
-                AgregarError("Detalle: " + e.Message, encabezado, db);
+                var baseEx = e.GetBaseException() ?? e;
+                AgregarError("Detalle: " + baseEx.Message, encabezado, db);
             }
         }
 
@@ -1455,13 +1474,17 @@ namespace FileService
         {
             try
             {
-                if (encabezado.IdEntidad.Ind_Validar)
+                if (encabezado != null && (encabezado.IdEntidad == null || encabezado.IdEntidad.Ind_Validar))
                 {
-                    var error = new XML_Errores();
-                    error.IdEncabezado = encabezado;
-                    error.Detalle = detalle;
-                    db.XML_Errores.Add(error);
-                    db.SaveChanges();
+                    using (var errDb = new SIContext())
+                    {
+                        errDb.Database.CommandTimeout = 60;
+                        var error = new XML_Errores();
+                        error.IdEncabezado_Id = encabezado.Id;
+                        error.Detalle = detalle;
+                        errDb.XML_Errores.Add(error);
+                        errDb.SaveChanges();
+                    }
                 }
             }
             catch (Exception)

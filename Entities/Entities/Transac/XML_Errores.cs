@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -11,6 +11,7 @@ namespace FGA.Models
     {
         [Key()]
         public Int64 Id { get; set; }
+        public Int64? IdEncabezado_Id { get; set; }
         public virtual XML_Encabezado IdEncabezado { get; set; }
         public string Detalle { get; set; }        
     }

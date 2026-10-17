@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -24,6 +24,7 @@ namespace FGA.Models
         public string Condicion { get; set; }
         public string Tipo { get; set; }
         public int? TipoDepositoFGDLEY9816 { get; set; }
+        public Int64? IdEncabezado_Id { get; set; }
         public virtual XML_Encabezado IdEncabezado { get; set; }
     }
 } 
