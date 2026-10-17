@@ -27,47 +27,44 @@ namespace FileService.Processors
                     {
                         try
                         {
-                            reader.MoveToAttribute("Registro");
-                            switch (reader.NodeType)
+                            if (reader.NodeType == XmlNodeType.Element && reader.LocalName.Equals("Registro", StringComparison.OrdinalIgnoreCase))
                             {
-                                case XmlNodeType.Element:
-                                    if (reader.Name.Equals("Registro"))
-                                    {
-                                        cantidad += 1;
-                                        XDocument xDoc = XDocument.Load(reader.ReadSubtree());
-                                        XML_Credito_Cuota_Atrasada registro = xDoc.Elements("Registro").Select(info => new XML_Credito_Cuota_Atrasada
-                                        {
-                                            IdEncabezado = encabezado,
-                                            DiasAtraso = Utilitarios.ConvertirAEntero(info.Element("DiasAtraso").Value),
-                                            IdDeudor = info.Element("IdDeudor").Value,
-                                            IdOperacion = info.Element("IdOperacionCredito").Value,
-                                            MontoCuotaAtrasada = Utilitarios.ConvertirADecimal(info.Element("MontoCuotaAtrasada").Value, "Id de operación:  " + info.Element("IdOperacionCredito").Value + ". El monto de cuota: ")
-                                        }).FirstOrDefault();
+                                XDocument xDoc = XDocument.Load(reader.ReadSubtree());
+                                var info = XmlRecordHelper.ObtenerElementoRegistro(xDoc);
+                                if (info == null) continue;
 
-                                        if (registro.IdDeudor.Length > 30 || registro.IdDeudor.Length == 0)
-                                            XmlErrorLogger.AgregarError("El id del deudor debe tener entre 1 y 30 caracteres. Valor inválido: " + registro.IdDeudor + " de la operación " + registro.IdOperacion, encabezado, db);
+                                cantidad += 1;
+                                var registro = new XML_Credito_Cuota_Atrasada
+                                {
+                                    IdEncabezado = encabezado,
+                                    DiasAtraso = info.GetInt("DiasAtraso"),
+                                    IdDeudor = info.GetVal("IdDeudor"),
+                                    IdOperacion = info.GetVal("IdOperacionCredito"),
+                                    MontoCuotaAtrasada = info.GetDecimal("MontoCuotaAtrasada", 0, "Id de operación:  " + info.GetVal("IdOperacionCredito") + ". El monto de cuota: ")
+                                };
 
-                                        if (registro.IdOperacion.Length > 35 || registro.IdOperacion.Length == 0)
-                                            XmlErrorLogger.AgregarError("El id de la operación debe tener entre 1 y 35 caracteres. Valor inválido: " + registro.IdOperacion + " del deudor " + registro.IdDeudor, encabezado, db);
+                                if (registro.IdDeudor.Length > 30 || registro.IdDeudor.Length == 0)
+                                    XmlErrorLogger.AgregarError("El id del deudor debe tener entre 1 y 30 caracteres. Valor inválido: " + registro.IdDeudor + " de la operación " + registro.IdOperacion, encabezado, db);
 
-                                        if (registro.DiasAtraso < 0 || registro.DiasAtraso > 999999)
-                                            XmlErrorLogger.AgregarError("Los días de atraso deben tener entre 1 y 6 números. Valor inválido: " + registro.DiasAtraso.ToString() + " de la operación " + registro.IdOperacion, encabezado, db);
+                                if (registro.IdOperacion.Length > 35 || registro.IdOperacion.Length == 0)
+                                    XmlErrorLogger.AgregarError("El id de la operación debe tener entre 1 y 35 caracteres. Valor inválido: " + registro.IdOperacion + " del deudor " + registro.IdDeudor, encabezado, db);
 
-                                        DataRow row = dt.NewRow();
-                                        row["IdDeudor"] = (object)registro.IdDeudor ?? DBNull.Value;
-                                        row["IdOperacion"] = (object)registro.IdOperacion ?? DBNull.Value;
-                                        row["DiasAtraso"] = registro.DiasAtraso;
-                                        row["MontoCuotaAtrasada"] = registro.MontoCuotaAtrasada;
-                                        row["IdEncabezado_Id"] = encabezado.Id;
-                                        dt.Rows.Add(row);
+                                if (registro.DiasAtraso < 0 || registro.DiasAtraso > 999999)
+                                    XmlErrorLogger.AgregarError("Los días de atraso deben tener entre 1 y 6 números. Valor inválido: " + registro.DiasAtraso.ToString() + " de la operación " + registro.IdOperacion, encabezado, db);
 
-                                        if (dt.Rows.Count >= 5000)
-                                        {
-                                            SqlBulkCopyHelper.EjecutarBulkCopy(conn, "XML_Credito_Cuota_Atrasada", dt);
-                                            dt.Clear();
-                                        }
-                                    }
-                                    break;
+                                DataRow row = dt.NewRow();
+                                row["IdDeudor"] = (object)registro.IdDeudor ?? DBNull.Value;
+                                row["IdOperacion"] = (object)registro.IdOperacion ?? DBNull.Value;
+                                row["DiasAtraso"] = registro.DiasAtraso;
+                                row["MontoCuotaAtrasada"] = registro.MontoCuotaAtrasada;
+                                row["IdEncabezado_Id"] = encabezado.Id;
+                                dt.Rows.Add(row);
+
+                                if (dt.Rows.Count >= 5000)
+                                {
+                                    SqlBulkCopyHelper.EjecutarBulkCopy(conn, "XML_Credito_Cuota_Atrasada", dt);
+                                    dt.Clear();
+                                }
                             }
                         }
                         catch (Exception e)

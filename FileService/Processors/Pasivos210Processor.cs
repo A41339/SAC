@@ -28,85 +28,85 @@ namespace FileService.Processors
                     {
                         try
                         {
-                            reader.MoveToAttribute("Registro");
-                            switch (reader.NodeType)
+                            if (reader.NodeType == XmlNodeType.Element && reader.LocalName.Equals("Registro", StringComparison.OrdinalIgnoreCase))
                             {
-                                case XmlNodeType.Element:
-                                    if (reader.Name.Equals("Registro"))
+                                XDocument xDoc = XDocument.Load(reader.ReadSubtree());
+                                var info = XmlRecordHelper.ObtenerElementoRegistro(xDoc);
+                                if (info == null) continue;
+
+                                cantidad += 1;
+                                var registro = new XML_Pasivo_Cuenta_Contable_210
+                                {
+                                    IdEncabezado_Id = encabezado.Id,
+                                    IdAcreedor = info.GetVal("IdAcreedor"),
+                                    IdOperacion = info.GetVal("IdOperacion"),
+                                    FechaFormalizacion = info.GetDate("FechaFormalizacion"),
+                                    Tasa = info.GetDecimal("Tasa", 0, "Id de operación:  " + info.GetVal("IdOperacion") + ". La tasa: "),
+                                    CuentaContablePrincipal = info.GetVal("CuentaContablePrincipal"),
+                                    SaldoPrincipal = info.GetDecimal("SaldoPrincipal", 0, "Id de operación:  " + info.GetVal("IdOperacion") + ". El saldo principal: "),
+                                    SaldoProducto = info.GetDecimal("SaldoProducto", 0, "Id de operación:  " + info.GetVal("IdOperacion") + ". El saldo producto: "),
+                                    TipoMonedaObligacion = info.GetInt("TipoMonedaObligacion"),
+                                    TipoTasa = info.GetVal("TipoTasa"),
+                                    FechaVencimiento = info.GetDate("FechaVencimiento"),
+                                    Condicion = "NUEVO",
+                                    Tipo = "NO APLICA",
+                                    TipoDepositoFGDLEY9816 = info.GetNullableInt("TipoDepositoFGDLEY9816")
+                                };
+
+                                if (registro.SaldoPrincipal > 0 || registro.SaldoProducto > 0)
+                                {
+                                    if (registro.TipoMonedaObligacion != 1 && registro.TipoMonedaObligacion != 2 && registro.TipoMonedaObligacion != 3)
+                                        XmlErrorLogger.AgregarError("El tipo de moneda obligación debe tener un valor de 1, 2 o 3. Valor inválido: " + registro.TipoMonedaObligacion + " del acreedor " + registro.IdAcreedor, encabezado, db);
+
+                                    if (registro.TipoTasa != "F" && registro.TipoTasa != "V")
+                                        XmlErrorLogger.AgregarError("El tipo de tasa debe ser F o V. Valor inválido: " + registro.TipoTasa + " del acreedor " + registro.IdAcreedor, encabezado, db);
+
+                                    if (registro.Tasa < 0)
+                                        XmlErrorLogger.AgregarError("La tasa debe ser mayor a 0. Valor inválido: " + registro.Tasa.ToString() + " del acreedor " + registro.IdAcreedor, encabezado, db);
+
+                                    if (registro.Tasa < 1)
+                                        registro.Tasa *= 100;
+
+                                    if (registro.CuentaContablePrincipal.Length != 8)
+                                        XmlErrorLogger.AgregarError("La cuenta contable principal " + registro.CuentaContablePrincipal + " debe tener longitud de 8. Id operación: " + registro.IdOperacion, encabezado, db);
+                                    else
                                     {
-                                        XDocument xDoc = XDocument.Load(reader.ReadSubtree());
-                                        cantidad += 1;
-                                        var registro = xDoc.Elements("Registro").Select(info => new XML_Pasivo_Cuenta_Contable_210
+                                        if (!registro.CuentaContablePrincipal.StartsWith("21"))
+                                            XmlErrorLogger.AgregarError("La cuenta contable principal " + registro.CuentaContablePrincipal + " debe empezar por 21", encabezado, db);
+
+                                        if (registro.CuentaContablePrincipal.Length >= 6)
                                         {
-                                            IdEncabezado_Id = encabezado.Id,
-                                            IdAcreedor = info.Element("IdAcreedor").Value,
-                                            IdOperacion = info.Element("IdOperacion").Value,
-                                            FechaFormalizacion = Utilitarios.ConvertirAFecha(info.Element("FechaFormalizacion").Value),
-                                            Tasa = Utilitarios.ConvertirADecimal(info.Element("Tasa").Value, "Id de operación:  " + info.Element("IdOperacion").Value + ". La tasa: "),
-                                            CuentaContablePrincipal = info.Element("CuentaContablePrincipal").Value,
-                                            SaldoPrincipal = Utilitarios.ConvertirADecimal(info.Element("SaldoPrincipal").Value, "Id de operación:  " + info.Element("IdOperacion").Value + ". El saldo principal: "),
-                                            SaldoProducto = Utilitarios.ConvertirADecimal(info.Element("SaldoProducto").Value, "Id de operación:  " + info.Element("IdOperacion").Value + ". El saldo principal: "),
-                                            TipoMonedaObligacion = Utilitarios.ConvertirAEntero(info.Element("TipoMonedaObligacion").Value),
-                                            TipoTasa = info.Element("TipoTasa").Value,
-                                            FechaVencimiento = Utilitarios.ConvertirAFecha(info.Element("FechaVencimiento").Value),
-                                            Condicion = "NUEVO",
-                                            Tipo = "NO APLICA",
-                                            TipoDepositoFGDLEY9816 = info.Element("TipoDepositoFGDLEY9816") != null ? Utilitarios.ConvertirAEntero(info.Element("TipoDepositoFGDLEY9816").Value) : (int?)null,
-                                        }).FirstOrDefault();
-
-                                        if (registro.SaldoPrincipal > 0 || registro.SaldoProducto > 0)
-                                        {
-                                            if (registro.TipoMonedaObligacion != 1 && registro.TipoMonedaObligacion != 2 && registro.TipoMonedaObligacion != 3)
-                                                XmlErrorLogger.AgregarError("El tipo de moneda obligación debe tener un valor de 1, 2 o 3. Valor inválido: " + registro.TipoMonedaObligacion + " del acreedor " + registro.IdAcreedor, encabezado, db);
-
-                                            if (registro.TipoTasa != "F" && registro.TipoTasa != "V")
-                                                XmlErrorLogger.AgregarError("El tipo de tasa debe ser F o V. Valor inválido: " + registro.TipoTasa + " del acreedor " + registro.IdAcreedor, encabezado, db);
-
-                                            if (registro.Tasa < 0)
-                                                XmlErrorLogger.AgregarError("La tasa debe ser mayor a 0. Valor inválido: " + registro.Tasa.ToString() + " del acreedor " + registro.IdAcreedor, encabezado, db);
-
-                                            if (registro.Tasa < 1)
-                                                registro.Tasa *= 100;
-
-                                            if (registro.CuentaContablePrincipal.Length != 8)
-                                                XmlErrorLogger.AgregarError("La cuenta contable principal " + registro.CuentaContablePrincipal + " debe tener longitud de 8. Id operación: " + registro.IdOperacion, encabezado, db);
-                                            else
-                                            {
-                                                if (!registro.CuentaContablePrincipal.StartsWith("21"))
-                                                    XmlErrorLogger.AgregarError("La cuenta contable principal " + registro.CuentaContablePrincipal + " debe empezar por 21", encabezado, db);
-
-                                                string caracter = registro.CuentaContablePrincipal.Substring(5, 1);
-                                                if (caracter != "0" && caracter != "1" && caracter != "2" && caracter != "3")
-                                                    XmlErrorLogger.AgregarError("El sexto dígito de la cuenta contable principal " + registro.CuentaContablePrincipal + " debe ser 0, 1, 2 o 3", encabezado, db);
-                                            }
-
-                                            totalPasivos += registro.SaldoPrincipal + registro.SaldoProducto;
-
-                                            DataRow row = dt.NewRow();
-                                            row["IdOperacion"] = (object)registro.IdOperacion ?? DBNull.Value;
-                                            row["IdEncabezado_Id"] = encabezado.Id;
-                                            row["IdAcreedor"] = (object)registro.IdAcreedor ?? DBNull.Value;
-                                            row["TipoMonedaObligacion"] = registro.TipoMonedaObligacion;
-                                            row["TipoTasa"] = (object)registro.TipoTasa ?? DBNull.Value;
-                                            row["Tasa"] = registro.Tasa;
-                                            row["CuentaContablePrincipal"] = (object)registro.CuentaContablePrincipal ?? DBNull.Value;
-                                            row["SaldoPrincipal"] = registro.SaldoPrincipal;
-                                            row["SaldoProducto"] = registro.SaldoProducto;
-                                            row["FechaFormalizacion"] = SqlBulkCopyHelper.ValidarFechaSql(registro.FechaFormalizacion);
-                                            row["FechaVencimiento"] = SqlBulkCopyHelper.ValidarFechaSql(registro.FechaVencimiento);
-                                            row["Condicion"] = (object)registro.Condicion ?? DBNull.Value;
-                                            row["Tipo"] = (object)registro.Tipo ?? DBNull.Value;
-                                            row["TipoDepositoFGDLEY9816"] = registro.TipoDepositoFGDLEY9816.HasValue ? (object)registro.TipoDepositoFGDLEY9816.Value : DBNull.Value;
-                                            dt.Rows.Add(row);
-
-                                            if (dt.Rows.Count >= 5000)
-                                            {
-                                                SqlBulkCopyHelper.EjecutarBulkCopy(conn, "XML_Pasivo_Cuenta_Contable_210", dt);
-                                                dt.Clear();
-                                            }
+                                            string caracter = registro.CuentaContablePrincipal.Substring(5, 1);
+                                            if (caracter != "0" && caracter != "1" && caracter != "2" && caracter != "3")
+                                                XmlErrorLogger.AgregarError("El sexto dígito de la cuenta contable principal " + registro.CuentaContablePrincipal + " debe ser 0, 1, 2 o 3", encabezado, db);
                                         }
                                     }
-                                    break;
+
+                                    totalPasivos += registro.SaldoPrincipal + registro.SaldoProducto;
+
+                                    DataRow row = dt.NewRow();
+                                    row["IdOperacion"] = (object)registro.IdOperacion ?? DBNull.Value;
+                                    row["IdEncabezado_Id"] = encabezado.Id;
+                                    row["IdAcreedor"] = (object)registro.IdAcreedor ?? DBNull.Value;
+                                    row["TipoMonedaObligacion"] = registro.TipoMonedaObligacion;
+                                    row["TipoTasa"] = (object)registro.TipoTasa ?? DBNull.Value;
+                                    row["Tasa"] = registro.Tasa;
+                                    row["CuentaContablePrincipal"] = (object)registro.CuentaContablePrincipal ?? DBNull.Value;
+                                    row["SaldoPrincipal"] = registro.SaldoPrincipal;
+                                    row["SaldoProducto"] = registro.SaldoProducto;
+                                    row["FechaFormalizacion"] = SqlBulkCopyHelper.ValidarFechaSql(registro.FechaFormalizacion);
+                                    row["FechaVencimiento"] = SqlBulkCopyHelper.ValidarFechaSql(registro.FechaVencimiento);
+                                    row["Condicion"] = (object)registro.Condicion ?? DBNull.Value;
+                                    row["Tipo"] = (object)registro.Tipo ?? DBNull.Value;
+                                    row["TipoDepositoFGDLEY9816"] = registro.TipoDepositoFGDLEY9816.HasValue ? (object)registro.TipoDepositoFGDLEY9816.Value : DBNull.Value;
+                                    dt.Rows.Add(row);
+
+                                    if (dt.Rows.Count >= 5000)
+                                    {
+                                        SqlBulkCopyHelper.EjecutarBulkCopy(conn, "XML_Pasivo_Cuenta_Contable_210", dt);
+                                        dt.Clear();
+                                    }
+                                }
                             }
                         }
                         catch (Exception e)

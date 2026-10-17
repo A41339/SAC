@@ -27,55 +27,35 @@ namespace FileService.Processors
                     {
                         try
                         {
-                            XML_Credito_Deudor registro;
-                            reader.MoveToAttribute("Registro");
-                            switch (reader.NodeType)
+                            if (reader.NodeType == XmlNodeType.Element && reader.LocalName.Equals("Registro", StringComparison.OrdinalIgnoreCase))
                             {
-                                case XmlNodeType.Element:
-                                    if (reader.Name.Equals("Registro"))
-                                    {
-                                        XDocument xDoc = XDocument.Load(reader.ReadSubtree());
-                                        cantidad += 1;
+                                XDocument xDoc = XDocument.Load(reader.ReadSubtree());
+                                var info = XmlRecordHelper.ObtenerElementoRegistro(xDoc);
+                                if (info == null) continue;
 
-                                        try
-                                        {
-                                            registro = xDoc.Elements("Registro").Select(info => new XML_Credito_Deudor
-                                            {
-                                                IdEncabezado = encabezado,
-                                                CategoriaRiesgo = info.Element("CategoriaRiesgo").Value,
-                                                IdDeudor = info.Element("IdDeudor").Value
-                                            }).FirstOrDefault();
+                                cantidad += 1;
+                                var registro = new XML_Credito_Deudor
+                                {
+                                    IdEncabezado = encabezado,
+                                    IdDeudor = info.GetVal("IdDeudor"),
+                                    CategoriaRiesgo = info.GetVal("CategoriaRiesgo").Trim(),
+                                    TipoCategoriaRiesgoSBD = 0
+                                };
 
-                                            registro.TipoCategoriaRiesgoSBD = 0;
-                                        }
-                                        catch (Exception)
-                                        {
-                                            registro = xDoc.Elements("Registro").Select(info => new XML_Credito_Deudor
-                                            {
-                                                IdEncabezado = encabezado,
-                                                CategoriaRiesgo = "",
-                                                IdDeudor = info.Element("IdDeudor").Value
-                                            }).FirstOrDefault();
-                                        }
+                                if (registro.IdDeudor.Length > 30 || registro.IdDeudor.Length == 0)
+                                    XmlErrorLogger.AgregarError("El id del deudor debe tener entre 1 y 30 caracteres. Valor inválido: " + registro.IdDeudor, encabezado, db);
 
-                                        registro.CategoriaRiesgo = registro.CategoriaRiesgo.Trim();
+                                DataRow row = dt.NewRow();
+                                row["IdDeudor"] = (object)registro.IdDeudor ?? DBNull.Value;
+                                row["CategoriaRiesgo"] = (object)registro.CategoriaRiesgo ?? DBNull.Value;
+                                row["IdEncabezado_Id"] = encabezado.Id;
+                                dt.Rows.Add(row);
 
-                                        if (registro.IdDeudor.Length > 30 || registro.IdDeudor.Length == 0)
-                                            XmlErrorLogger.AgregarError("El id del deudor debe tener entre 1 y 30 caracteres. Valor inválido: " + registro.IdDeudor, encabezado, db);
-
-                                        DataRow row = dt.NewRow();
-                                        row["IdDeudor"] = (object)registro.IdDeudor ?? DBNull.Value;
-                                        row["CategoriaRiesgo"] = (object)registro.CategoriaRiesgo ?? DBNull.Value;
-                                        row["IdEncabezado_Id"] = encabezado.Id;
-                                        dt.Rows.Add(row);
-
-                                        if (dt.Rows.Count >= 5000)
-                                        {
-                                            SqlBulkCopyHelper.EjecutarBulkCopy(conn, "XML_Credito_Deudor", dt);
-                                            dt.Clear();
-                                        }
-                                    }
-                                    break;
+                                if (dt.Rows.Count >= 5000)
+                                {
+                                    SqlBulkCopyHelper.EjecutarBulkCopy(conn, "XML_Credito_Deudor", dt);
+                                    dt.Clear();
+                                }
                             }
                         }
                         catch (Exception e)
