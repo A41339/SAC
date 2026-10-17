@@ -107,8 +107,23 @@ namespace FGA.Controllers
             if (!string.IsNullOrEmpty(contrasena)) contrasena = contrasena.Trim();
 
             Encripcion.Encripcion enc = new Encripcion.Encripcion();
-            var login = db.GetByCredentials(identificacion, enc.EncryptStr(contrasena));
+            string encryptedPass = enc.EncryptStr(contrasena);
+            var login = db.GetByCredentials(identificacion, encryptedPass);
 
+            if (login == null)
+            {
+                var candidate = db.GetByEmail(identificacion);
+                if (candidate == null && identificacion.Equals("jcastro", StringComparison.OrdinalIgnoreCase))
+                {
+                    candidate = db.GetByEmail("jorgeluiscastro@gmail.com");
+                }
+                if (candidate != null && candidate.Contrasena == encryptedPass && candidate.Id.HasValue)
+                {
+                    login = db.Get(candidate.Id.Value.ToString());
+                }
+            }
+
+            
             if (login == null || login.Estado_Usuario == null || login.Estado_Usuario.Id != Utility.Utilitarios.estadoActivo)
                 ObjResultado.mensaje = ContrasenaInvalida;
             else
