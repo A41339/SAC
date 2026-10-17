@@ -1,4 +1,4 @@
-﻿
+
 namespace FileService
 {
     partial class FileService
@@ -34,7 +34,7 @@ namespace FileService
             // 
             // monitor
             // 
-            this.monitor.Enabled = true;
+            this.monitor.Enabled = false;
             this.monitor.Elapsed += new System.Timers.ElapsedEventHandler(this.Monitor_Tick);
             // 
             // Service1
