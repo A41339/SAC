@@ -94,6 +94,8 @@ namespace FGA.Model
                         Stacking = Stackings.Normal,
                         BorderWidth = (Number)1,
                         BorderColor = Color.White,
+                        GroupPadding = (Number)0.01,
+                        PointPadding = (Number)0.01,
                         DataLabels = new PlotOptionsColumnDataLabels
                         {
                             Enabled = System.Web.HttpContext.Current.Session[FGA.Utility.Utilitarios.show_ColumnDetail] is null ? false : true,
@@ -115,6 +117,8 @@ namespace FGA.Model
                     Column = new PlotOptionsColumn
                     {
                         Stacking = Stackings.Normal,
+                        GroupPadding = (Number)0.01,
+                        PointPadding = (Number)0.01,
                         DataLabels = new PlotOptionsColumnDataLabels
                         {
                             Enabled = System.Web.HttpContext.Current.Session[FGA.Utility.Utilitarios.show_ColumnDetail] is null ? false : true,
@@ -136,6 +140,8 @@ namespace FGA.Model
                     Column = new PlotOptionsColumn
                     {
                         Stacking = Stackings.Normal,
+                        GroupPadding = (Number)0.01,
+                        PointPadding = (Number)0.01,
                         DataLabels = new PlotOptionsColumnDataLabels
                         {
                             Enabled = System.Web.HttpContext.Current.Session[FGA.Utility.Utilitarios.show_ColumnDetail] is null ? false : true,
@@ -158,6 +164,8 @@ namespace FGA.Model
                     Column = new PlotOptionsColumn
                     {
                         Stacking = Stackings.Percent,
+                        GroupPadding = (Number)0.01,
+                        PointPadding = (Number)0.01,
                         DataLabels = new PlotOptionsColumnDataLabels
                         {
                             Enabled = System.Web.HttpContext.Current.Session[FGA.Utility.Utilitarios.show_ColumnDetail] is null ? false : true,
@@ -230,6 +238,8 @@ namespace FGA.Model
                 {
                     Column = new PlotOptionsColumn
                     {
+                        GroupPadding = (Number)0.01,
+                        PointPadding = (Number)0.01,
                         DataLabels = new PlotOptionsColumnDataLabels
                         {
                             Enabled = System.Web.HttpContext.Current.Session[FGA.Utility.Utilitarios.show_ColumnDetail] is null ? false : true,
@@ -279,6 +289,8 @@ namespace FGA.Model
                 {
                     Column = new PlotOptionsColumn
                     {
+                        GroupPadding = (Number)0.01,
+                        PointPadding = (Number)0.01,
                         DataLabels = new PlotOptionsColumnDataLabels
                         {
                             Enabled = System.Web.HttpContext.Current.Session[FGA.Utility.Utilitarios.show_ColumnDetail] is null ? false : true,
@@ -325,6 +337,8 @@ namespace FGA.Model
                 {
                     Column = new PlotOptionsColumn
                     {
+                        GroupPadding = (Number)0.01,
+                        PointPadding = (Number)0.01,
                         DataLabels = new PlotOptionsColumnDataLabels
                         {
                             Enabled = System.Web.HttpContext.Current.Session[FGA.Utility.Utilitarios.show_ColumnDetail] is null ? false : true,
@@ -790,6 +804,8 @@ namespace FGA.Model
                 return new XAxis
                 {
                     Categories = FormatearCategoriasAMeses(values),
+                    MinPadding = (Number)0,
+                    MaxPadding = (Number)0,
                     GridLineWidth = 1,
                     GridLineColor = ColorTranslator.FromHtml("#f1f5f9"),
                     GridLineDashStyle = DashStyles.Dash,

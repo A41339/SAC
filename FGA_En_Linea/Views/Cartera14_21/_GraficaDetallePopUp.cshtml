@@ -23,9 +23,9 @@
             plotOptions: {
                 column: {
                     borderWidth: 0,
-                    pointPadding: 0.02,
-                    groupPadding: 0.04,
-                    maxPointWidth: 72
+                    pointPadding: 0.01,
+                    groupPadding: 0.01,
+                    maxPointWidth: null
                 },
                 line: {
                     lineWidth: 4.5,
@@ -116,8 +116,8 @@
                 <i class="fa fa-refresh" style="color: #0284c7;"></i> <span>Girar 360°</span>
             </button>
             <div style="display: inline-flex; align-items: center; gap: 2px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 2px 4px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
-                <button type="button" class="btn-preset-3d active" onclick="window.setPresetAngulo3D(48, 0, 200, this)" style="height: 24px; padding: 0 10px; font-size: 11px; font-weight: 700; border: none; background: #e0f2fe; color: #0369a1; cursor: pointer; border-radius: 4px; transition: all 0.15s ease;" title="Vista frontal aérea calibrada sin oclusiones">Aérea 48°</button>
-                <button type="button" class="btn-preset-3d" onclick="window.setPresetAngulo3D(75, 0, 205, this)" style="height: 24px; padding: 0 10px; font-size: 11px; font-weight: 600; border: none; background: transparent; color: #475569; cursor: pointer; border-radius: 4px; transition: all 0.15s ease;" title="Vista cenital vertical directa sin solapamiento">Cenital</button>
+                <button type="button" class="btn-preset-3d active" onclick="window.setPresetAngulo3D(48, 0, 225, this)" style="height: 24px; padding: 0 10px; font-size: 11px; font-weight: 700; border: none; background: #e0f2fe; color: #0369a1; cursor: pointer; border-radius: 4px; transition: all 0.15s ease;" title="Vista frontal aérea calibrada sin oclusiones">Aérea 48°</button>
+                <button type="button" class="btn-preset-3d" onclick="window.setPresetAngulo3D(75, 0, 230, this)" style="height: 24px; padding: 0 10px; font-size: 11px; font-weight: 600; border: none; background: transparent; color: #475569; cursor: pointer; border-radius: 4px; transition: all 0.15s ease;" title="Vista cenital vertical directa sin solapamiento">Cenital</button>
             </div>
         </div>
         <div style="display: inline-flex; align-items: center; gap: 6px; background: #ffffff; border: 1px solid #e2e8f0; padding: 4px 11px; border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.02);">
@@ -135,7 +135,7 @@
 </div>
 
 <div class="modal fade" id="mPopUp" tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl" style="width: 96%; max-width: 1440px; margin: 10px auto;">
+    <div class="modal-dialog modal-xl" style="width: 98%; max-width: 1700px; margin: 10px auto;">
         <div class="modal-content" style="border-radius: 12px; overflow: hidden; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.15); background: #ffffff;">
             <div class="modal-header" style="background: linear-gradient(135deg, #1b3866 0%, #2F5597 100%); color: #ffffff; padding: 10px 18px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
                 <div style="display: flex; align-items: center; gap: 10px; background: transparent;">
@@ -169,8 +169,8 @@
                         <i class="fa fa-refresh" style="color: #0284c7;"></i> <span>Girar 360°</span>
                     </button>
                     <div style="display: inline-flex; align-items: center; gap: 2px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 2px 4px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
-                        <button type="button" class="btn-preset-3d active" onclick="window.setPresetAngulo3D(48, 0, 200, this)" style="height: 24px; padding: 0 10px; font-size: 11px; font-weight: 700; border: none; background: #e0f2fe; color: #0369a1; cursor: pointer; border-radius: 4px; transition: all 0.15s ease;" title="Vista frontal aérea calibrada sin oclusiones">Aérea 48°</button>
-                        <button type="button" class="btn-preset-3d" onclick="window.setPresetAngulo3D(75, 0, 205, this)" style="height: 24px; padding: 0 10px; font-size: 11px; font-weight: 600; border: none; background: transparent; color: #475569; cursor: pointer; border-radius: 4px; transition: all 0.15s ease;" title="Vista cenital vertical directa sin solapamiento">Cenital</button>
+                        <button type="button" class="btn-preset-3d active" onclick="window.setPresetAngulo3D(48, 0, 225, this)" style="height: 24px; padding: 0 10px; font-size: 11px; font-weight: 700; border: none; background: #e0f2fe; color: #0369a1; cursor: pointer; border-radius: 4px; transition: all 0.15s ease;" title="Vista frontal aérea calibrada sin oclusiones">Aérea 48°</button>
+                        <button type="button" class="btn-preset-3d" onclick="window.setPresetAngulo3D(75, 0, 230, this)" style="height: 24px; padding: 0 10px; font-size: 11px; font-weight: 600; border: none; background: transparent; color: #475569; cursor: pointer; border-radius: 4px; transition: all 0.15s ease;" title="Vista cenital vertical directa sin solapamiento">Cenital</button>
                     </div>
                 </div>
                 <div style="display: inline-flex; align-items: center; gap: 6px; background: #ffffff; border: 1px solid #e2e8f0; padding: 4px 11px; border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.02);">
@@ -215,7 +215,7 @@
     window.tramosOcultos3D = {};
     window.echarts3DAlpha = 48;
     window.echarts3DBeta = 0;
-    window.echarts3DDistance = 200;
+    window.echarts3DDistance = 225;
     window.coloresPlano2D = ['#2F5597', '#0284c7', '#959595', '#ea580c', '#565656', '#6DB5CB', '#143750', '#f59e0b', '#0071AD', '#B7D8DF'];
     window.paletaInstitucionalFGA = ['#2F5597', '#0284c7', '#959595', '#ea580c', '#565656', '#6DB5CB', '#143750', '#f59e0b', '#0071AD', '#B7D8DF'];
 
@@ -420,9 +420,9 @@
         var numCats = Math.max(1, cats.length);
         var numTramos = Math.max(1, tramoNames.length);
 
-        // Dimensiones calibradas para que el gráfico 3D aproveche ampliamente todo el largo horizontal
-        var dynamicBoxWidth = Math.max(300, Math.min(400, numCats * 28));
-        var dynamicBoxDepth = Math.max(110, Math.min(170, numTramos * 26));
+        // Dimensiones calibradas para que el gráfico 3D aproveche el ancho sin desbordarse
+        var dynamicBoxWidth = Math.max(240, Math.min(295, numCats * 22));
+        var dynamicBoxDepth = Math.max(105, Math.min(150, numTramos * 25));
         var dynamicBoxHeight = 65;
 
         var chartFontFamily = '"Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", Arial, sans-serif';
@@ -482,7 +482,7 @@
             xAxis3D: {
                 type: 'category',
                 name: 'Período',
-                nameGap: 24,
+                nameGap: 18,
                 data: cats.map(function (c) { return String(c); }),
                 nameTextStyle: {
                     color: '#475569',
@@ -493,7 +493,7 @@
                 axisLabel: {
                     show: true,
                     interval: 0,
-                    margin: 10,
+                    margin: 8,
                     color: '#475569',
                     fontSize: 11,
                     fontWeight: '500',
@@ -507,11 +507,12 @@
                 },
                 axisLine: { show: true, lineStyle: { color: '#94a3b8', width: 1.5 } },
                 axisTick: { show: true, lineStyle: { color: '#94a3b8', width: 1.5 } },
-                splitLine: { show: true, lineStyle: { color: '#e2e8f0' } }
+                splitLine: { show: false }
             },
             yAxis3D: {
                 type: 'category',
                 name: 'Tramo',
+                nameGap: 18,
                 data: tramoNames,
                 nameTextStyle: {
                     color: '#475569',
@@ -522,7 +523,7 @@
                 axisLabel: {
                     show: true,
                     interval: 0,
-                    margin: 14,
+                    margin: 12,
                     color: '#475569',
                     fontSize: 11,
                     fontWeight: '500',
@@ -535,7 +536,7 @@
                     }
                 },
                 axisLine: { lineStyle: { color: '#94a3b8', width: 1.5 } },
-                splitLine: { show: true, lineStyle: { color: '#e2e8f0' } }
+                splitLine: { show: false }
             },
             zAxis3D: {
                 type: 'value',
@@ -560,22 +561,22 @@
                     }
                 },
                 axisLine: { lineStyle: { color: '#94a3b8', width: 1.5 } },
-                splitLine: { show: true, lineStyle: { color: '#e2e8f0' } }
+                splitLine: { show: false }
             },
             grid3D: {
                 boxWidth: dynamicBoxWidth,
                 boxDepth: dynamicBoxDepth,
                 boxHeight: dynamicBoxHeight,
                 top: 0,
-                bottom: 10,
+                bottom: 28,
                 axisPointer: {
                     show: false
                 },
                 viewControl: {
                     alpha: (typeof window.echarts3DAlpha !== 'undefined' ? window.echarts3DAlpha : 48),
                     beta: (typeof window.echarts3DBeta !== 'undefined' ? window.echarts3DBeta : 0),
-                    distance: (typeof window.echarts3DDistance !== 'undefined' ? window.echarts3DDistance : 200),
-                    center: [0, -8, 0],
+                    distance: (typeof window.echarts3DDistance !== 'undefined' ? window.echarts3DDistance : 225),
+                    center: [0, 0, 0],
                     minDistance: 80,
                     maxDistance: 500,
                     autoRotate: !!window.echartsAutoRotate,
@@ -710,7 +711,7 @@
     window.setPresetAngulo3D = function (alpha, beta, distance, btnElem) {
         window.echarts3DAlpha = alpha;
         window.echarts3DBeta = beta;
-        window.echarts3DDistance = distance || 200;
+        window.echarts3DDistance = distance || 225;
         if (window.echartsAutoRotate) {
             window.toggleAutoRotar3D();
         }
@@ -728,7 +729,7 @@
         }
 
         if (typeof echarts !== 'undefined') {
-            var opt = { grid3D: { viewControl: { alpha: alpha, beta: beta, distance: window.echarts3DDistance, center: [0, -8, 0], autoRotate: false } } };
+            var opt = { grid3D: { viewControl: { alpha: alpha, beta: beta, distance: window.echarts3DDistance, center: [0, 0, 0], autoRotate: false } } };
             var c1 = echarts.getInstanceByDom(document.getElementById('echartsContainerCartera'));
             if (c1) {
                 c1.setOption(opt);
@@ -803,12 +804,8 @@
             window.toggleAutoRotar3D();
         }
 
-        // Si ya está en este tipo 2D o es la carga inicial de columnas, no destruir y recrear series
+        // Si ya está en este tipo 2D, no destruir y recrear series a menos que sea forzado
         if (!forzar && chart._fgaCurrentTipo === tipo) {
-            return;
-        }
-        if (!forzar && !chart._fgaCurrentTipo && tipo === 'column') {
-            chart._fgaCurrentTipo = 'column';
             return;
         }
         chart._fgaCurrentTipo = tipo;
@@ -987,20 +984,24 @@
                 chart: {
                     type: 'column',
                     inverted: false,
-                    options3d: { enabled: false }
+                    options3d: { enabled: false },
+                    spacingLeft: 6,
+                    spacingRight: 6
                 },
                 plotOptions: {
                     column: {
                         stacking: 'normal',
                         depth: 0,
                         borderWidth: 0,
-                        pointPadding: 0.02,
-                        groupPadding: 0.04,
-                        maxPointWidth: 72
+                        pointPadding: 0.01,
+                        groupPadding: 0.01,
+                        maxPointWidth: null
                     }
                 },
                 xAxis: {
-                    categories: orig.categories.slice()
+                    categories: orig.categories.slice(),
+                    minPadding: 0,
+                    maxPadding: 0
                 },
                 tooltip: {
                     shared: true,
@@ -1067,16 +1068,16 @@
             if (!w || w < 200) {
                 if (isModal) {
                     var mBody = $('#mPopUp .modal-body');
-                    w = (mBody.length && mBody.width() > 200) ? Math.floor(mBody.width()) - 36 : null;
+                    w = (mBody.length && mBody.width() > 200) ? Math.floor(mBody.width()) : null;
                 } else {
                     var pW = $('#grafica').width() || $(chart.container).closest('.modern-table-card').width();
-                    if (pW && pW > 200) w = Math.floor(pW) - 30;
+                    if (pW && pW > 200) w = Math.floor(pW) - 10;
                 }
             }
             if (!w || w < 200) {
                 if (isModal) {
                     var mDialog = $('#mPopUp .modal-dialog');
-                    w = (mDialog.length && mDialog.width() > 200) ? Math.floor(mDialog.width()) - 60 : null;
+                    w = (mDialog.length && mDialog.width() > 200) ? Math.floor(mDialog.width()) - 20 : null;
                 }
             }
             if (w && w > 200) {
@@ -1093,7 +1094,7 @@
                     var curW = cElem ? $(cElem).width() : 0;
                     if (isModal && (!curW || curW < 300)) {
                         var mb = $('#mPopUp .modal-body');
-                        if (mb.length && mb.width() > 300) curW = Math.floor(mb.width()) - 36;
+                        if (mb.length && mb.width() > 300) curW = Math.floor(mb.width());
                     }
                     if (curW && curW > 200) {
                         chart.setSize(curW, targetH, false);
@@ -1103,7 +1104,7 @@
                     }
                     chart.reflow();
                 } catch (ex) {}
-            }, 60);
+            }, 80);
         } catch (e) {}
     };
 
@@ -1197,30 +1198,40 @@
         }
 
         if (typeof Highcharts !== 'undefined') {
-            if (typeof resizeAllChartsInModal === 'function') {
-                resizeAllChartsInModal(this);
-            }
             Highcharts.charts.forEach(function (chart) {
                 if (!chart) return;
                 var elem = (typeof getHighchartsRenderElement === 'function') ? getHighchartsRenderElement(chart) : (chart.renderTo ? (typeof chart.renderTo === 'string' ? document.getElementById(chart.renderTo.replace(/^#/, '')) : chart.renderTo) : null);
                 if ((elem && $(elem).closest('#mPopUp').length) || (chart.container && ($(chart.container).closest('#mPopUp').length || $(chart.container).closest('#modalHighchartsContainer').length))) {
-                    chart.hasUserSize = true;
-                    var mW = $('#modalHighchartsContainer').width() || ($('#mPopUp .modal-body').width() - 36);
+                    window.guardarConfiguracionOriginal(chart);
+                    window.aplicarTipoAGrafico(chart, window.tipoGraficoActual, true);
+                    
+                    var mW = $('#modalHighchartsContainer').width() || $('#mPopUp .modal-body').width();
                     if (mW && mW > 200) {
                         chart.setSize(mW, 600, false);
                     }
                     if (chart.container) {
                         $(chart.container).css({ 'width': '100%', 'height': '600px' });
                     }
-                    window.guardarConfiguracionOriginal(chart);
-                    window.aplicarTipoAGrafico(chart, window.tipoGraficoActual);
                     chart.reflow();
                 }
             });
 
             setTimeout(function () {
+                if (typeof Highcharts !== 'undefined' && Highcharts.charts) {
+                    Highcharts.charts.forEach(function (chart) {
+                        if (!chart) return;
+                        var elem = (typeof getHighchartsRenderElement === 'function') ? getHighchartsRenderElement(chart) : (chart.renderTo ? (typeof chart.renderTo === 'string' ? document.getElementById(chart.renderTo.replace(/^#/, '')) : chart.renderTo) : null);
+                        if ((elem && $(elem).closest('#mPopUp').length) || (chart.container && ($(chart.container).closest('#mPopUp').length || $(chart.container).closest('#modalHighchartsContainer').length))) {
+                            var curW = $('#modalHighchartsContainer').width() || $('#mPopUp .modal-body').width();
+                            if (curW && curW > 200) {
+                                chart.setSize(curW, 600, false);
+                            }
+                            chart.reflow();
+                        }
+                    });
+                }
                 window.actualizarKpiModalCartera();
-            }, 180);
+            }, 120);
         }
     });
 

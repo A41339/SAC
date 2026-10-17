@@ -205,15 +205,19 @@ namespace FGA.Controllers
                     var claimsPrincipal = new ClaimsPrincipal(identity);
                     Thread.CurrentPrincipal = claimsPrincipal;
 
-                    Task.Run(() =>
+                    try
                     {
-                        Bit_Sessiones reg = new Bit_Sessiones();
-                        reg.Fecha = DateTime.Now;
-                        reg.IdEntidad = login.Entidad_Usuario_Id;
-                        reg.IdRole = login.Role_Usuario_Id;
-                        reg.IdUsuario = login.Id.Value;
-                        bit.Add(ref reg);
-                    });
+                        Task.Run(() =>
+                        {
+                            Bit_Sessiones reg = new Bit_Sessiones();
+                            reg.Fecha = DateTime.Now;
+                            reg.IdEntidad = login.Entidad_Usuario_Id;
+                            reg.IdRole = login.Role_Usuario_Id;
+                            reg.IdUsuario = login.Id.Value;
+                            bit.Add(ref reg);
+                        });
+                    }
+                    catch (Exception) { }
 
                     ObjResultado.exito = true;
                     ObjResultado.mensaje = Url.Content(login.CambiarClave == "S" ? "~/Usuario/ChangePassword" : login.Role_Usuario.Url);
