@@ -163,109 +163,165 @@
             <!-- CEJILLA 2: DETALLE DE ARCHIVOS CARGADOS                       -->
             <!-- ============================================================= -->
             <div class="tab-pane" id="tab_archivos">
-                <div class="modern-table-card" style="border: 1px solid #e2e8f0; border-radius: 10px; background: #ffffff; overflow: hidden;">
-                    <div style="padding: 14px 20px; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between; background: #f8fafc;">
-                        <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: #0f172a; display: flex; align-items: center; gap: 8px;">
-                            <i class="fa fa-list-alt" style="color: #0284c7;"></i> Detalle de Archivos Requeridos para el Cierre
-                        </h4>
-                        <span style="font-size: 12.5px; color: #64748b; font-weight: 600;">
-                            Período: @Session["Periodo"]
-                        </span>
+                <div class="table-cierre-wrapper">
+                    <div class="table-cierre-header">
+                        <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                            <h4 class="table-cierre-title">
+                                <i class="fa fa-folder-open-o" style="color: #0284c7; font-size: 18px;"></i>
+                                Detalle de Archivos Requeridos para el Cierre
+                            </h4>
+                            <span class="table-cierre-periodo-badge">
+                                <i class="fa fa-calendar"></i> Período: @Session["Periodo"]
+                            </span>
+                        </div>
+                        <div class="cierre-filter-bar">
+                            <button type="button" class="cierre-filter-btn active" data-filter="all">
+                                Todos <span class="count-badge">@totalArchivos</span>
+                            </button>
+                            <button type="button" class="cierre-filter-btn" data-filter="Aceptado">
+                                <i class="fa fa-check-circle" style="color: #15803d;"></i> Aceptados <span class="count-badge">@aceptados</span>
+                            </button>
+                            @if (conErrores > 0)
+                            {
+                                <button type="button" class="cierre-filter-btn" data-filter="Con Errores">
+                                    <i class="fa fa-times-circle" style="color: #b91c1c;"></i> Con Errores <span class="count-badge">@conErrores</span>
+                                </button>
+                            }
+                            @if (pendientes > 0)
+                            {
+                                <button type="button" class="cierre-filter-btn" data-filter="Pendiente">
+                                    <i class="fa fa-clock-o" style="color: #b45309;"></i> Pendientes <span class="count-badge">@pendientes</span>
+                                </button>
+                            }
+                            @if (procesando > 0)
+                            {
+                                <button type="button" class="cierre-filter-btn" data-filter="Procesando">
+                                    <i class="fa fa-refresh fa-spin" style="color: #0369a1;"></i> Procesando <span class="count-badge">@procesando</span>
+                                </button>
+                            }
+                        </div>
                     </div>
 
-                    <div class="table-responsive" style="padding: 0;">
-                        <table id="tbRole" class="table table-striped modern-data-table" style="width: 100%; margin-bottom: 0;">
+                    <div class="table-responsive" style="padding: 12px 16px;">
+                        <table id="tbArchivosCierre" class="table table-hover modern-data-table" style="width: 100%;">
                             <thead>
-                                <tr style="background: #f8fafc; border-bottom: 2px solid #e2e8f0;">
-                                    <th style="padding: 12px 16px; font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: .03em;">Archivo XML</th>
-                                    <th style="padding: 12px 16px; font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: .03em;" class="mobile">Per&iacute;odo</th>
-                                    <th style="padding: 12px 16px; font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: .03em;">Estado</th>
-                                    <th style="padding: 12px 16px; font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: .03em;" class="mobile">Usuario Responsable</th>
-                                    <th style="padding: 12px 16px; font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: .03em;" class="mobile">Fecha de Carga</th>
-                                    <th style="padding: 12px 16px; font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: .03em;" class="mobile">Registros</th>
-                                    <th style="padding: 12px 16px; font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: .03em;">Acciones</th>
+                                <tr>
+                                    <th class="col-xml">Archivo XML</th>
+                                    <th class="col-periodo">Per&iacute;odo</th>
+                                    <th class="col-estado">Estado</th>
+                                    <th class="col-usuario">Usuario Responsable</th>
+                                    <th class="col-fecha">Fecha Carga</th>
+                                    <th class="col-registros">Registros</th>
+                                    <th class="col-acciones">Acciones</th>
                                 </tr>
                             </thead>
-                            <tbody style="font-size: 13px;">
+                            <tbody>
                                 @if (Model != null && Model.listaArchivos != null)
                                 {
                                     foreach (var item in Model.listaArchivos)
                                     {
-                                        <tr style="border-bottom: 1px solid #f1f5f9; transition: background 0.15s ease;">
-                                            <td style="padding: 12px 16px; vertical-align: middle;">
+                                        <tr>
+                                            <td class="col-xml">
                                                 @Html.HiddenFor(modelItem => item.ID_ENCABEZADO)
-                                                <div style="display: flex; align-items: center; gap: 8px;">
-                                                    <i class="fa fa-file-code-o" style="color: #0284c7; font-size: 15px;"></i>
-                                                    <span style="font-weight: 600; color: #1e293b;">@Html.DisplayFor(modelItem => item.NOMBRE_XML)</span>
+                                                <div class="xml-file-container">
+                                                    <span class="xml-file-icon">
+                                                        <i class="fa fa-file-code-o"></i>
+                                                    </span>
+                                                    <span class="xml-file-name" title="@item.NOMBRE_XML">
+                                                        @item.NOMBRE_XML
+                                                    </span>
                                                 </div>
                                             </td>
-                                            <td class="mobile" style="padding: 12px 16px; vertical-align: middle; color: #64748b;">
-                                                @Html.DisplayFor(modelItem => item.PERIODO)
+                                            <td class="col-periodo">
+                                                @(item.PERIODO.HasValue ? item.PERIODO.Value.ToString("dd/MM/yyyy") : "-")
                                             </td>
-                                            <td style="padding: 12px 16px; vertical-align: middle;">
+                                            <td class="col-estado">
                                                 @if (item.XML_ID == FGA.Utility.Utilitarios.archivoCargado)
                                                 {
-                                                    <span class="file-status-badge status-processing"><i class="fa fa-refresh fa-spin"></i> Procesando</span>
+                                                    <span class="file-status-badge status-processing">
+                                                        <i class="fa fa-refresh fa-spin"></i> Procesando
+                                                    </span>
                                                 }
                                                 else if (item.XML_ID == FGA.Utility.Utilitarios.archivoAceptado)
                                                 {
-                                                    <span class="file-status-badge status-success"><i class="fa fa-check-circle"></i> Aceptado</span>
+                                                    <span class="file-status-badge status-success">
+                                                        <i class="fa fa-check-circle"></i> Aceptado
+                                                    </span>
                                                 }
                                                 else if (item.XML_ID == FGA.Utility.Utilitarios.archivoPendiente)
                                                 {
-                                                    <span class="file-status-badge status-pending"><i class="fa fa-clock-o"></i> Pendiente</span>
+                                                    <span class="file-status-badge status-pending">
+                                                        <i class="fa fa-clock-o"></i> Pendiente
+                                                    </span>
                                                 }
                                                 else
                                                 {
-                                                    <span class="file-status-badge status-error" style="background: #ffedd5; color: #c2410c; border: 1px solid #fed7aa;"><i class="fa fa-times-circle"></i> Con Errores</span>
+                                                    <span class="file-status-badge status-error">
+                                                        <i class="fa fa-times-circle"></i> Con Errores
+                                                    </span>
                                                 }
                                             </td>
-                                            <td class="mobile" style="padding: 12px 16px; vertical-align: middle; color: #475569; font-weight: 500;">
-                                                @Html.DisplayFor(modelItem => item.USUARIO)
+                                            <td class="col-usuario">
+                                                @if (!string.IsNullOrWhiteSpace(item.USUARIO))
+                                                {
+                                                    <div style="display: flex; align-items: center; gap: 6px;">
+                                                        <i class="fa fa-user-circle-o" style="color: #94a3b8; font-size: 13.5px; flex-shrink: 0;"></i>
+                                                        <span style="font-weight: 500; color: #334155;">@item.USUARIO</span>
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <span style="color: #94a3b8; font-style: italic; font-size: 12px;">Sin asignar</span>
+                                                }
                                             </td>
-                                            <td class="mobile" style="padding: 12px 16px; vertical-align: middle; color: #64748b;">
+                                            <td class="col-fecha">
                                                 @if (item.XML_ID == FGA.Utility.Utilitarios.archivoPendiente)
                                                 {
-                                                    <span style="color: #94a3b8; font-style: italic;">Pendiente</span>
+                                                    <span style="color: #94a3b8; font-style: italic; font-size: 12px;">Pendiente</span>
                                                 }
                                                 else
                                                 {
-                                                    @Html.DisplayFor(modelItem => item.FECHACARGA)
+                                                    <div style="font-weight: 600; color: #1e293b; font-size: 12px;">@item.FECHACARGA.ToString("dd/MM/yyyy")</div>
+                                                    <div style="font-size: 11px; color: #64748b;">@item.FECHACARGA.ToString("HH:mm:ss")</div>
                                                 }
                                             </td>
-                                            <td class="mobile" style="padding: 12px 16px; vertical-align: middle; font-weight: 600; color: #334155;">
+                                            <td class="col-registros">
                                                 @if (item.XML_ID == FGA.Utility.Utilitarios.archivoAceptado && item.CANTIDAD == 0)
                                                 {
-                                                    <span style="color: #94a3b8; font-weight: 400;">No Aplica</span>
+                                                    <span style="color: #94a3b8; font-weight: 400; font-size: 12px;">N/A</span>
                                                 }
                                                 else
                                                 {
-                                                    @Html.DisplayFor(modelItem => item.CANTIDAD)
+                                                    @(item.CANTIDAD.HasValue ? item.CANTIDAD.Value.ToString("N0") : "0")
                                                 }
                                             </td>
-                                            <td style="padding: 12px 16px; vertical-align: middle;">
+                                            <td class="col-acciones">
                                                 @if (item.XML_ID != FGA.Utility.Utilitarios.archivoPendiente && item.XML_ID != FGA.Utility.Utilitarios.archivoCargado)
                                                 {
-                                                    <div style="display: inline-flex; align-items: center; gap: 6px; justify-content: center;">
+                                                    <div class="cierre-actions-cell">
                                                         @if (Session["IsFGA"] != null && Session["IsFGA"].ToString() == "1" && item.XML_ID == FGA.Utility.Utilitarios.archivoAceptado)
                                                         {
-                                                            <a href="@Url.Action("Eliminar", "Cierre", new { id = item.ID_ENCABEZADO })" class="btn btn-xs btn-default" style="border-radius: 6px; padding: 4px 10px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; color: #dc2626; border-color: #fecaca;">
-                                                                <i class="fa fa-trash"></i> Borrar
+                                                            <a href="@Url.Action("Eliminar", "Cierre", new { id = item.ID_ENCABEZADO })" class="btn btn-xs btn-cierre-action btn-cierre-delete" title="Borrar archivo" onclick="return confirm('¿Está seguro de que desea eliminar este archivo?');">
+                                                                <i class="fa fa-trash"></i> <span>Borrar</span>
                                                             </a>
                                                         }
                                                         @if (Session["IsFGA"] != null && Session["IsFGA"].ToString() == "1" && item.XML_ID != FGA.Utility.Utilitarios.archivoAceptado)
                                                         {
-                                                            <a href="@Url.Action("AceptarArchivo", "Cierre", new { id = item.ID_ENCABEZADO })" class="btn btn-xs btn-success" style="border-radius: 6px; padding: 4px 10px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">
-                                                                <i class="fa fa-check"></i> Aceptar
+                                                            <a href="@Url.Action("AceptarArchivo", "Cierre", new { id = item.ID_ENCABEZADO })" class="btn btn-xs btn-cierre-action btn-cierre-accept" title="Aceptar archivo">
+                                                                <i class="fa fa-check"></i> <span>Aceptar</span>
                                                             </a>
                                                         }
                                                         @if (item.XML_ID == FGA.Utility.Utilitarios.archivoErrores)
                                                         {
-                                                            <a href="@Url.Action("Details", "Cierre", new { id = item.ID_ENCABEZADO })" class="btn btn-xs btn-default" style="border-radius: 6px; padding: 4px 10px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; color: #c2410c; border-color: #fed7aa; background: #fff7ed;">
-                                                                <i class="fa fa-exclamation-triangle"></i> Ver Errores
+                                                            <a href="@Url.Action("Details", "Cierre", new { id = item.ID_ENCABEZADO })" class="btn btn-xs btn-cierre-action btn-cierre-errors" title="Ver detalle de errores">
+                                                                <i class="fa fa-exclamation-triangle"></i> <span>Ver Errores</span>
                                                             </a>
                                                         }
                                                     </div>
+                                                }
+                                                else
+                                                {
+                                                    <span style="color: #cbd5e1;">-</span>
                                                 }
                                             </td>
                                         </tr>
@@ -282,6 +338,53 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
+        // Inicialización de DataTable en Archivos Cargados
+        var dtArchivos = null;
+        if ($.fn.DataTable && $('#tbArchivosCierre').length) {
+            dtArchivos = $('#tbArchivosCierre').DataTable({
+                "pageLength": 25,
+                "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "Todos"]],
+                "order": [[0, "asc"]],
+                "autoWidth": false,
+                "language": {
+                    "sProcessing": "Procesando...",
+                    "sLengthMenu": "Mostrar _MENU_ archivos",
+                    "sZeroRecords": "No se encontraron archivos que coincidan con la búsqueda",
+                    "sEmptyTable": "No hay archivos registrados para este período",
+                    "sInfo": "Mostrando _START_ a _END_ de _TOTAL_ archivos",
+                    "sInfoEmpty": "Mostrando 0 a 0 de 0 archivos",
+                    "sInfoFiltered": "(filtrado de un total de _MAX_ archivos)",
+                    "sSearch": "<i class='fa fa-search' style='color: #0284c7; margin-right: 4px;'></i>",
+                    "sSearchPlaceholder": "Buscar por archivo, usuario, estado...",
+                    "oPaginate": {
+                        "sFirst": "Primero",
+                        "sLast": "Último",
+                        "sNext": "Siguiente",
+                        "sPrevious": "Anterior"
+                    }
+                }
+            });
+
+            // Botones de filtrado rápido por estado
+            $('.cierre-filter-btn').on('click', function () {
+                $('.cierre-filter-btn').removeClass('active');
+                $(this).addClass('active');
+                var filtro = $(this).data('filter');
+                if (filtro === 'all') {
+                    dtArchivos.column(2).search('').draw();
+                } else {
+                    dtArchivos.column(2).search(filtro).draw();
+                }
+            });
+
+            // Recalcular anchos de columna al mostrar la cejilla
+            $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                if ($(e.target).attr('href') === '#tab_archivos' && dtArchivos) {
+                    dtArchivos.columns.adjust().draw();
+                }
+            });
+        }
+
         function posicionarCalendario() {
             var $input = $('#Periodo');
             var offset = $input.offset();
