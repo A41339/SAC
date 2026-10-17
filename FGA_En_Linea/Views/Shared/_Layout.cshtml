@@ -1623,7 +1623,9 @@
                 bodyWidth = Math.max(bodyWidth - 40, 600);
             }
             var targetWidth = Math.max(bodyWidth, 600);
-            var targetHeight = 480;
+            var isXlModal = $modal.hasClass('modal-xl') || $modal.find('.modal-xl').length > 0 || $modal.attr('id') === 'mPopUp';
+            var defaultModalHeight = isXlModal ? 600 : 500;
+            var targetHeight = defaultModalHeight;
 
             Highcharts.charts.forEach(function (c) {
                 if (!c) return;
@@ -1639,8 +1641,8 @@
 
                 if (isInModal) {
                     try {
-                        var h = (c.options && c.options.chart && c.options.chart.height) || c.chartHeight || targetHeight;
-                        if (!h || h < 380) h = targetHeight;
+                        var customH = (c.options && c.options.chart && c.options.chart.height);
+                        var h = (customH && customH >= 480) ? customH : targetHeight;
 
                         $(renderElem).css({
                             'width': '100%',
