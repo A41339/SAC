@@ -231,11 +231,7 @@ namespace FGA
                     {
                         var m = item.Menu_MenuId;
                         string mUrl = (m.MenuURL ?? "").Trim();
-                        if (m.Id == 3100 || mUrl.IndexOf("Indicadores/Sugef", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                            m.Id == 3110 || mUrl.IndexOf("Indicadores/FGA", StringComparison.OrdinalIgnoreCase) >= 0)
-                        {
-                            m.MenuText = "Indicadores";
-                        }
+                        
                     }
                     var result = globleList.ToArray();
                     if (HttpRuntime.Cache != null)

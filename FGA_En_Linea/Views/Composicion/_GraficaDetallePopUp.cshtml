@@ -110,26 +110,19 @@
     </div>
 
     <!-- PANEL DE CONTROL MATRIZ 3D WEBGL (PANTALLA PRINCIPAL) -->
-    <div id="histograma3DControllerComposicion" style="display: none; align-items: center; justify-content: space-between; padding: 7px 14px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; gap: 10px; flex-wrap: wrap;">
+    <div id="histograma3DControllerComposicion" style="display: none; align-items: center; justify-content: space-between; padding: 8px 14px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; gap: 10px; flex-wrap: wrap;">
         <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-            <div style="display: inline-flex; align-items: center; gap: 4px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 2px 5px;">
-                <span style="font-size: 11px; font-weight: 700; color: #1e3a8a; padding: 0 4px;"><i class="fa fa-filter" style="color: #0284c7;"></i> Eje Y:</span>
-                <button type="button" id="btnModoTodosComposicion" onclick="window.cambiarModoMora3D('completo')" class="btn btn-xs btn-primary" style="height: 22px; padding: 0 8px; font-size: 10.5px; font-weight: 700; border-radius: 4px;" title="Ver todos los tramos de cartera">Todos</button>
-                <button type="button" id="btnModoMoraComposicion" onclick="window.cambiarModoMora3D('vencida')" class="btn btn-xs btn-default" style="height: 22px; padding: 0 8px; font-size: 10.5px; font-weight: 600; border-radius: 4px; color: #c2410c;" title="Ocultar 'Al Día' y mostrar únicamente las barras de cartera vencida">Quitar 'Al Día'</button>
-            </div>
-            <div id="tramosChipsComposicion" style="display: inline-flex; align-items: center; gap: 4px; flex-wrap: wrap;"></div>
-            <button type="button" class="btn btn-sm btn-default btn-orbit-3d" onclick="window.toggleAutoRotar3D()" style="height: 28px; padding: 0 10px; font-size: 11.5px; font-weight: 600; border-radius: 6px; border: 1px solid #cbd5e1; background: #ffffff; color: #475569; cursor: pointer;">
+            <button type="button" class="btn btn-sm btn-default btn-orbit-3d" onclick="window.toggleAutoRotar3D()" style="height: 28px; padding: 0 11px; font-size: 11.5px; font-weight: 600; border-radius: 6px; border: 1px solid #cbd5e1; background: #ffffff; color: #475569; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.03); transition: all 0.2s ease;">
                 <i class="fa fa-refresh" style="color: #0284c7;"></i> <span>Girar 360°</span>
             </button>
-            <div style="display: inline-flex; align-items: center; gap: 2px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 2px 4px;">
-                <button type="button" onclick="window.setPresetAngulo3D(48, 0, 220)" style="height: 22px; padding: 0 8px; font-size: 10.5px; font-weight: 700; border: none; background: transparent; color: #1e3a8a; cursor: pointer; border-radius: 4px;" title="Vista frontal aérea calibrada sin oclusiones">Aérea 48°</button>
-                <button type="button" onclick="window.setPresetAngulo3D(75, 0, 225)" style="height: 22px; padding: 0 8px; font-size: 10.5px; font-weight: 600; border: none; background: transparent; color: #475569; cursor: pointer; border-radius: 4px;" title="Vista cenital vertical directa sin solapamiento">Cenital</button>
-                <button type="button" onclick="window.setPresetAngulo3D(42, 28, 220)" style="height: 22px; padding: 0 8px; font-size: 10.5px; font-weight: 600; border: none; background: transparent; color: #475569; cursor: pointer; border-radius: 4px;" title="Perspectiva diagonal isométrica">Diagonal</button>
+            <div style="display: inline-flex; align-items: center; gap: 2px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 2px 4px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
+                <button type="button" class="btn-preset-3d active" onclick="window.setPresetAngulo3D(48, 0, 220, this)" style="height: 24px; padding: 0 10px; font-size: 11px; font-weight: 700; border: none; background: #e0f2fe; color: #0369a1; cursor: pointer; border-radius: 4px; transition: all 0.15s ease;" title="Vista frontal aérea calibrada sin oclusiones">Aérea 48°</button>
+                <button type="button" class="btn-preset-3d" onclick="window.setPresetAngulo3D(75, 0, 225, this)" style="height: 24px; padding: 0 10px; font-size: 11px; font-weight: 600; border: none; background: transparent; color: #475569; cursor: pointer; border-radius: 4px; transition: all 0.15s ease;" title="Vista cenital vertical directa sin solapamiento">Cenital</button>
             </div>
         </div>
-        <div style="display: inline-flex; align-items: center; gap: 6px; background: #ffffff; border: 1px solid #cbd5e1; padding: 4px 10px; border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
-            <i class="fa fa-cubes" style="color: #1b3866; font-size: 12px;"></i>
-            <span style="font-size: 11px; font-weight: 600; color: #475569;">Ciudad Financiera 3D: Períodos x Tramos de Riesgo | Arrastra para orbitar | Rueda para zoom</span>
+        <div style="display: inline-flex; align-items: center; gap: 6px; background: #ffffff; border: 1px solid #e2e8f0; padding: 4px 11px; border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.02);">
+            <i class="fa fa-mouse-pointer" style="color: #0284c7; font-size: 11px;"></i>
+            <span style="font-size: 11px; font-weight: 600; color: #64748b;">Arrastrar para rotar &bull; Rueda para zoom</span>
         </div>
     </div>
 
@@ -170,26 +163,19 @@
             </div>
 
             <!-- PANEL DE CONTROL MATRIZ 3D WEBGL (MODAL) -->
-            <div id="histograma3DControllerModal" style="display: none; align-items: center; justify-content: space-between; padding: 7px 18px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; gap: 10px; flex-wrap: wrap;">
+            <div id="histograma3DControllerModal" style="display: none; align-items: center; justify-content: space-between; padding: 8px 18px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; gap: 10px; flex-wrap: wrap;">
                 <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-                    <div style="display: inline-flex; align-items: center; gap: 4px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 2px 5px;">
-                        <span style="font-size: 11px; font-weight: 700; color: #1e3a8a; padding: 0 4px;"><i class="fa fa-filter" style="color: #0284c7;"></i> Eje Y:</span>
-                        <button type="button" id="btnModoTodosModal" onclick="window.cambiarModoMora3D('completo')" class="btn btn-xs btn-primary" style="height: 22px; padding: 0 8px; font-size: 10.5px; font-weight: 700; border-radius: 4px;" title="Ver todos los tramos de cartera">Todos</button>
-                        <button type="button" id="btnModoMoraModal" onclick="window.cambiarModoMora3D('vencida')" class="btn btn-xs btn-default" style="height: 22px; padding: 0 8px; font-size: 10.5px; font-weight: 600; border-radius: 4px; color: #c2410c;" title="Ocultar 'Al Día' y mostrar únicamente las barras de cartera vencida">Quitar 'Al Día'</button>
-                    </div>
-                    <div id="tramosChipsModal" style="display: inline-flex; align-items: center; gap: 4px; flex-wrap: wrap;"></div>
-                    <button type="button" class="btn btn-sm btn-default btn-orbit-3d" onclick="window.toggleAutoRotar3D()" style="height: 28px; padding: 0 10px; font-size: 11.5px; font-weight: 600; border-radius: 6px; border: 1px solid #cbd5e1; background: #ffffff; color: #475569; cursor: pointer;">
+                    <button type="button" class="btn btn-sm btn-default btn-orbit-3d" onclick="window.toggleAutoRotar3D()" style="height: 28px; padding: 0 11px; font-size: 11.5px; font-weight: 600; border-radius: 6px; border: 1px solid #cbd5e1; background: #ffffff; color: #475569; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.03); transition: all 0.2s ease;">
                         <i class="fa fa-refresh" style="color: #0284c7;"></i> <span>Girar 360°</span>
                     </button>
-                    <div style="display: inline-flex; align-items: center; gap: 2px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 2px 4px;">
-                        <button type="button" onclick="window.setPresetAngulo3D(48, 0, 220)" style="height: 22px; padding: 0 8px; font-size: 10.5px; font-weight: 700; border: none; background: transparent; color: #1e3a8a; cursor: pointer; border-radius: 4px;" title="Vista frontal aérea calibrada sin oclusiones">Aérea 48°</button>
-                        <button type="button" onclick="window.setPresetAngulo3D(75, 0, 225)" style="height: 22px; padding: 0 8px; font-size: 10.5px; font-weight: 600; border: none; background: transparent; color: #475569; cursor: pointer; border-radius: 4px;" title="Vista cenital vertical directa sin solapamiento">Cenital</button>
-                        <button type="button" onclick="window.setPresetAngulo3D(42, 28, 220)" style="height: 22px; padding: 0 8px; font-size: 10.5px; font-weight: 600; border: none; background: transparent; color: #475569; cursor: pointer; border-radius: 4px;" title="Perspectiva diagonal isométrica">Diagonal</button>
+                    <div style="display: inline-flex; align-items: center; gap: 2px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 2px 4px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
+                        <button type="button" class="btn-preset-3d active" onclick="window.setPresetAngulo3D(48, 0, 220, this)" style="height: 24px; padding: 0 10px; font-size: 11px; font-weight: 700; border: none; background: #e0f2fe; color: #0369a1; cursor: pointer; border-radius: 4px; transition: all 0.15s ease;" title="Vista frontal aérea calibrada sin oclusiones">Aérea 48°</button>
+                        <button type="button" class="btn-preset-3d" onclick="window.setPresetAngulo3D(75, 0, 225, this)" style="height: 24px; padding: 0 10px; font-size: 11px; font-weight: 600; border: none; background: transparent; color: #475569; cursor: pointer; border-radius: 4px; transition: all 0.15s ease;" title="Vista cenital vertical directa sin solapamiento">Cenital</button>
                     </div>
                 </div>
-                <div style="display: inline-flex; align-items: center; gap: 6px; background: #ffffff; border: 1px solid #cbd5e1; padding: 4px 10px; border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
-                    <i class="fa fa-cubes" style="color: #1b3866; font-size: 12px;"></i>
-                    <span style="font-size: 11px; font-weight: 600; color: #475569;">Ciudad Financiera 3D: Períodos x Tramos de Riesgo | Arrastra para orbitar | Rueda para zoom</span>
+                <div style="display: inline-flex; align-items: center; gap: 6px; background: #ffffff; border: 1px solid #e2e8f0; padding: 4px 11px; border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.02);">
+                    <i class="fa fa-mouse-pointer" style="color: #0284c7; font-size: 11px;"></i>
+                    <span style="font-size: 11px; font-weight: 600; color: #64748b;">Arrastrar para rotar &bull; Rueda para zoom</span>
                 </div>
             </div>
 
@@ -342,44 +328,6 @@
 
         // Filtrado por modo: Vista Completa vs Enfoque Cartera Vencida (Quita barras 'Al Día')
         var seriesToRender = colSeries;
-        if (window.echartsModoMora === 'vencida') {
-            var vencidas = colSeries.filter(function (s) {
-                var n = (s.name || '').toLowerCase();
-                return !(n.indexOf('al d') > -1 || n.indexOf('vigente') > -1);
-            });
-            if (vencidas.length > 0) {
-                seriesToRender = vencidas;
-            }
-        }
-
-        // Filtrado individual por tramos del Eje Y
-        if (window.tramosOcultos3D) {
-            var activas = seriesToRender.filter(function (s) {
-                return !window.tramosOcultos3D[s.name];
-            });
-            if (activas.length > 0) {
-                seriesToRender = activas;
-            }
-        }
-
-        // Renderizar chips interactivos para cada tramo del Eje Y
-        try {
-            var chipsHtml = '';
-            colSeries.forEach(function (s, sIdx) {
-                var isOculto = !!(window.tramosOcultos3D && window.tramosOcultos3D[s.name]) ||
-                               (window.echartsModoMora === 'vencida' && ((s.name || '').toLowerCase().indexOf('al d') > -1 || (s.name || '').toLowerCase().indexOf('vigente') > -1));
-                var col = window.obtenerColorInstitucional(s.name, sIdx, s.color);
-                var chipStyle = isOculto
-                    ? 'height: 22px; padding: 0 7px; font-size: 10.5px; font-weight: 500; border-radius: 4px; border: 1px dashed #cbd5e1; background: #f1f5f9; color: #94a3b8; cursor: pointer; text-decoration: line-through; display: inline-flex; align-items: center; gap: 4px;'
-                    : 'height: 22px; padding: 0 7px; font-size: 10.5px; font-weight: 600; border-radius: 4px; border: 1px solid #cbd5e1; background: #ffffff; color: #1e293b; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);';
-                var bulletStyle = 'color: ' + (isOculto ? '#94a3b8' : col) + '; font-size: 11px;';
-                var escName = (s.name || '').replace(/'/g, "\\'");
-                chipsHtml += '<button type="button" onclick="window.toggleTramo3D(\'' + escName + '\')" style="' + chipStyle + '" title="' + (isOculto ? 'Clic para mostrar barra' : 'Clic para quitar barra del eje Y') + '">';
-                chipsHtml += '<span style="' + bulletStyle + '">&#9679;</span> ' + (s.name || 'Tramo');
-                chipsHtml += '</button>';
-            });
-            $('#tramosChipsCartera, #tramosChipsComposicion, #tramosChipsModal').html(chipsHtml);
-        } catch (eChips) {}
 
         // Ordenar tramos de menor a mayor altura promedio (efecto anfiteatro/estadio)
         // para que las barras más pequeñas queden en la fila frontal (Y=0) y las más altas al fondo,
@@ -485,7 +433,7 @@
                 fontFamily: chartFontFamily
             },
             title: {
-                text: (orig.title ? orig.title : 'Distribución de Riesgo de Cartera') + (window.echartsModoMora === 'vencida' ? ' (Enfoque Mora Vencida)' : ''),
+                text: orig.title ? orig.title : 'Distribución de Riesgo de Cartera',
                 left: 'center',
                 top: 10,
                 textStyle: {
@@ -654,7 +602,7 @@
                         beta: -30
                     },
                     ambient: {
-                        intensity: 0.70 // Iluminación ambiental limpia y brillante sobre fondo blanco
+                        intensity: 0.72 // Iluminación ambiental limpia y balanceada
                     }
                 },
                 environment: '#ffffff',
@@ -667,14 +615,14 @@
                 data: data3D,
                 shading: 'realistic',
                 realisticMaterial: {
-                    roughness: 0.32,
-                    metalness: 0.12
+                    roughness: 0.24,
+                    metalness: 0.08
                 },
-                bevelSize: 0,
-                bevelSegments: 0,
+                bevelSize: 0.35,
+                bevelSegments: 3,
                 emphasis: {
                     label: { show: false },
-                    itemStyle: { color: '#f59e0b' }
+                    itemStyle: { color: '#f59e0b', opacity: 1 }
                 }
             }]
         };
@@ -767,12 +715,24 @@
         }
     };
 
-    window.setPresetAngulo3D = function (alpha, beta, distance) {
+    window.setPresetAngulo3D = function (alpha, beta, distance, btnElem) {
         window.echarts3DAlpha = alpha;
         window.echarts3DBeta = beta;
         window.echarts3DDistance = distance || 220;
         if (window.echartsAutoRotate) {
             window.toggleAutoRotar3D();
+        }
+
+        $('.btn-preset-3d').removeClass('active').css({ 'background': 'transparent', 'color': '#475569', 'font-weight': '600' });
+        if (btnElem) {
+            $(btnElem).addClass('active').css({ 'background': '#e0f2fe', 'color': '#0369a1', 'font-weight': '700' });
+        } else {
+            // Activar botón correspondiente por ángulo
+            if (alpha === 48) {
+                $('.btn-preset-3d:contains("Aérea")').addClass('active').css({ 'background': '#e0f2fe', 'color': '#0369a1', 'font-weight': '700' });
+            } else if (alpha === 75) {
+                $('.btn-preset-3d:contains("Cenital")').addClass('active').css({ 'background': '#e0f2fe', 'color': '#0369a1', 'font-weight': '700' });
+            }
         }
 
         if (typeof echarts !== 'undefined') {
