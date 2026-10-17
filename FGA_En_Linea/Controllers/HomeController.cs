@@ -33,6 +33,13 @@ namespace FGA.Controllers
 
         public ActionResult Index()
         {
+            int roleId = 0;
+            int.TryParse(Env.GetUserInfo("roleid"), out roleId);
+            if (roleId == 4)
+            {
+                return RedirectToAction("Index", "Archivo");
+            }
+
             Load();
             Session["Check"] = true;
             DateTime fechaEntidad = Utilitarios.ConvertirAFecha(Session["Periodo"].ToString());

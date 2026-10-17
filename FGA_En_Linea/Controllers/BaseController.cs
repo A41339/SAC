@@ -153,11 +153,40 @@ namespace FGA.Controllers
 
             try
             {
-                int roleid = int.Parse(Env.GetUserInfo("roleid"));
-                int userid = int.Parse(Env.GetUserInfo("userid"));
+                int roleid = 0;
+                int.TryParse(Env.GetUserInfo("roleid"), out roleid);
+                int userid = 0;
+                int.TryParse(Env.GetUserInfo("userid"), out userid);
+
                 var descriptor = context.ActionDescriptor;
                 var actionName = descriptor.ActionName.ToLower();
                 var controllerName = descriptor.ControllerDescriptor.ControllerName.ToLower();
+
+                // Bloqueo estricto para Rol 4 (Usuario Carga): Solo tiene acceso a Carga de Datos y Cambio de Clave
+                if (roleid == 4)
+                {
+                    var allowedControllers = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+                    {
+                        "archivo", "cierre", "explorer", "account", "parameterpartial", "layout"
+                    };
+
+                    bool isAllowed = allowedControllers.Contains(controllerName) ||
+                                     (controllerName == "usuario" && actionName == "changepassword");
+
+                    if (!isAllowed)
+                    {
+                        if (IsThisAjaxRequest())
+                        {
+                            context.Result = new JsonResult { Data = new { error = "No autorizado", exito = false }, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
+                        }
+                        else
+                        {
+                            context.Result = new RedirectResult("~/Archivo/Index");
+                        }
+                        return;
+                    }
+                }
+
                 var GetOrPost = context.HttpContext.Request.HttpMethod.ToString();
                 var checkAreaName = context.HttpContext.Request.RequestContext.RouteData.DataTokens["area"];
                 string AreaName = "";

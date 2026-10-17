@@ -11,6 +11,13 @@ namespace FGA.Controllers
     {
         public ActionResult Index(int? id, string modulo = null, string IdEntidad = null, string Periodo = null, string TipoComparacion = null)
         {
+            int roleId = 0;
+            int.TryParse(Env.GetUserInfo("roleid"), out roleId);
+            if (roleId == 4)
+            {
+                return RedirectToAction("Index", "Archivo");
+            }
+
             if (!string.IsNullOrWhiteSpace(IdEntidad))
             {
                 if (Session["IdEntidad"] != null && Session["IdEntidad"].ToString() != IdEntidad)
@@ -125,7 +132,6 @@ namespace FGA.Controllers
             }
             catch { }
 
-            int roleId = 0;
             int.TryParse(Env.GetUserInfo("roleid"), out roleId);
 
             var allPermitted = Env.GetRoleMenuPermissions(roleId).ToList();

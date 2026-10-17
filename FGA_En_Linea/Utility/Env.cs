@@ -48,7 +48,7 @@ namespace FGA
 
         public static string GetUserInfo(string value)
         {
-            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+            var identity = (HttpContext.Current?.User as ClaimsPrincipal) ?? (Thread.CurrentPrincipal as ClaimsPrincipal);
             string ReturnVal = string.Empty;
 
             try
@@ -56,31 +56,46 @@ namespace FGA
                 switch (value)
                 {
                     case "name":
-                        ReturnVal = identity.Claims.Where(c => c.Type == ClaimTypes.Name).Select(c => c.Value).SingleOrDefault();
+                        ReturnVal = identity?.Claims?.Where(c => c.Type == ClaimTypes.Name).Select(c => c.Value).SingleOrDefault();
+                        if (string.IsNullOrEmpty(ReturnVal) && HttpContext.Current?.Session != null)
+                        {
+                            var usrObj = (HttpContext.Current.Session["CurrentUserObj"] ?? HttpContext.Current.Session["Usuario"]) as FGA.Models.Usuario;
+                            if (usrObj != null && !string.IsNullOrEmpty(usrObj.Nombre)) ReturnVal = usrObj.Nombre;
+                        }
                         break;
                     case "userid":
-                        ReturnVal = identity.Claims.Where(c => c.Type == ClaimTypes.Sid).Select(c => c.Value).SingleOrDefault();
+                        ReturnVal = identity?.Claims?.Where(c => c.Type == ClaimTypes.Sid).Select(c => c.Value).SingleOrDefault();
+                        if (string.IsNullOrEmpty(ReturnVal) && HttpContext.Current?.Session != null)
+                        {
+                            var usrObj = (HttpContext.Current.Session["CurrentUserObj"] ?? HttpContext.Current.Session["Usuario"]) as FGA.Models.Usuario;
+                            if (usrObj != null && usrObj.Id.HasValue) ReturnVal = usrObj.Id.Value.ToString();
+                        }
                         break;
                     case "roleid":
-                        ReturnVal = identity.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).SingleOrDefault();
+                        ReturnVal = identity?.Claims?.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).SingleOrDefault();
+                        if (string.IsNullOrEmpty(ReturnVal) && HttpContext.Current?.Session != null)
+                        {
+                            var usrObj = (HttpContext.Current.Session["CurrentUserObj"] ?? HttpContext.Current.Session["Usuario"]) as FGA.Models.Usuario;
+                            if (usrObj != null && usrObj.Role_Usuario_Id > 0) ReturnVal = usrObj.Role_Usuario_Id.ToString();
+                        }
                         break;
                     case "logo":
-                        ReturnVal = identity.Claims.Where(c => c.Type == ClaimTypes.UserData).Select(c => c.Value).SingleOrDefault();
+                        ReturnVal = identity?.Claims?.Where(c => c.Type == ClaimTypes.UserData).Select(c => c.Value).SingleOrDefault();
                         break;
                     case "entidad":
-                        ReturnVal = identity.Claims.Where(c => c.Type == ClaimTypes.Surname).Select(c => c.Value).SingleOrDefault();
+                        ReturnVal = identity?.Claims?.Where(c => c.Type == ClaimTypes.Surname).Select(c => c.Value).SingleOrDefault();
                         break;
                     case "gender":
-                        ReturnVal = identity.Claims.Where(c => c.Type == ClaimTypes.Gender).Select(c => c.Value).SingleOrDefault();
+                        ReturnVal = identity?.Claims?.Where(c => c.Type == ClaimTypes.Gender).Select(c => c.Value).SingleOrDefault();
                         break;
                     case "cambio":
-                        ReturnVal = identity.Claims.Where(c => c.Type == "CambiarClave").Select(c => c.Value).SingleOrDefault();
+                        ReturnVal = identity?.Claims?.Where(c => c.Type == "CambiarClave").Select(c => c.Value).SingleOrDefault();
                         break;
                     case "evaluacion":
-                        ReturnVal = identity.Claims.Where(c => c.Type == "Evaluacion").Select(c => c.Value).SingleOrDefault();
+                        ReturnVal = identity?.Claims?.Where(c => c.Type == "Evaluacion").Select(c => c.Value).SingleOrDefault();
                         break;
                     case "identidad":
-                        ReturnVal = identity.Claims.Where(c => c.Type == "identidad").Select(c => c.Value).SingleOrDefault();
+                        ReturnVal = identity?.Claims?.Where(c => c.Type == "identidad").Select(c => c.Value).SingleOrDefault();
                         if (string.IsNullOrEmpty(ReturnVal) && HttpContext.Current?.Session != null)
                         {
                             var usrObj = (HttpContext.Current.Session["CurrentUserObj"] ?? HttpContext.Current.Session["Usuario"]) as FGA.Models.Usuario;
@@ -95,7 +110,7 @@ namespace FGA
                         }
                         break;
                     case "esentidad":
-                        ReturnVal = identity.Claims.Where(c => c.Type == "EsEntidad").Select(c => c.Value).SingleOrDefault();
+                        ReturnVal = identity?.Claims?.Where(c => c.Type == "EsEntidad").Select(c => c.Value).SingleOrDefault();
                         if (string.IsNullOrEmpty(ReturnVal) && HttpContext.Current?.Session != null)
                         {
                             if (HttpContext.Current.Session["IsFGA"] != null)
