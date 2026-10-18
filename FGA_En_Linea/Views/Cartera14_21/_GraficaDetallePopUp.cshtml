@@ -283,11 +283,25 @@
                 savedCats = chart.xAxis[0].categories.slice();
             }
 
+            var isPercentChart = false;
+            try {
+                if (chart.options && chart.options.plotOptions && chart.options.plotOptions.column && chart.options.plotOptions.column.stacking === 'percent') {
+                    isPercentChart = true;
+                } else if (chart.options && chart.options.plotOptions && chart.options.plotOptions.series && chart.options.plotOptions.series.stacking === 'percent') {
+                    isPercentChart = true;
+                } else if (chart.yAxis && chart.yAxis[0] && chart.yAxis[0].options && chart.yAxis[0].options.labels && chart.yAxis[0].options.labels.format && chart.yAxis[0].options.labels.format.indexOf('%') > -1) {
+                    isPercentChart = true;
+                } else if (chart.title && chart.title.textStr && (chart.title.textStr.indexOf('Concentrac') > -1 || chart.title.textStr.indexOf('Porcent') > -1 || chart.title.textStr.indexOf('%') > -1)) {
+                    isPercentChart = true;
+                }
+            } catch (e) {}
+
             chart._fgaOriginalConfig = {
                 series: savedSeries,
                 categories: savedCats,
                 title: (chart.title && chart.title.textStr) ? chart.title.textStr : '',
-                subTitle: (chart.subtitle && chart.subtitle.textStr) ? chart.subtitle.textStr : ''
+                subTitle: (chart.subtitle && chart.subtitle.textStr) ? chart.subtitle.textStr : '',
+                isPercent: isPercentChart
             };
         } catch (err) {
             console.warn('Error al guardar configuración original:', err);
@@ -396,6 +410,7 @@
                 // Solo graficar tramos con valor real > 0 para eliminar cubos fantasma en el suelo que desvíen el cursor
                 if (v > 0) {
                     var zRender = (v < minFloor) ? (minFloor + ((v / minFloor) * (minFloor * 0.35))) : v;
+                    var esSoloPorcentaje = (orig.isPercent || (Math.abs(v - pct) < 0.05 && v <= 100));
                     data3D.push({
                         name: cat + ' - ' + s.name,
                         value: [xIdx, yIdx, zRender],
@@ -403,6 +418,7 @@
                         tramo: s.name,
                         mes: cat,
                         pct: pct,
+                        isPercent: esSoloPorcentaje,
                         itemStyle: {
                             color: col,
                             opacity: 0.96
@@ -606,8 +622,98 @@
                 },
                 bevelSize: 0.35,
                 bevelSegments: 3,
+                label: {
+                    show: true,
+                    distance: 2,
+                    formatter: function (params) {
+                        var d = params.data;
+                        if (!d) return ' ';
+                        var valReal = (typeof d.realVal !== 'undefined') ? d.realVal : (d.value ? d.value[2] : 0);
+                        var pctVal = (typeof d.pct !== 'undefined') ? d.pct : 0;
+                        var isPct = d.isPercent || (Math.abs(valReal - pctVal) < 0.05 && valReal <= 100);
+
+                        if (isPct) {
+                            if (pctVal < 0.1 && pctVal > 0) return '<0.1%';
+                            return pctVal.toFixed(1) + '%';
+                        }
+
+                        // Formateo para valores numéricos o saldo
+                        if (valReal >= 1000000) {
+                            var enMillones = (valReal / 1000000);
+                            return enMillones.toLocaleString('es-CR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + 'M';
+                        } else if (valReal >= 1000) {
+                            return Math.round(valReal).toLocaleString('es-CR');
+                        } else if (valReal % 1 !== 0) {
+                            return valReal.toLocaleString('es-CR', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+                        } else {
+                            return Math.round(valReal).toString();
+                        }
+                    },
+                    color: '#0f172a',
+                    fontSize: 10,
+                    fontWeight: '700',
+                    fontFamily: chartFontFamily,
+                    backgroundColor: 'rgba(255, 255, 255, 0.92)',
+                    borderColor: '#cbd5e1',
+                    borderWidth: 1,
+                    borderRadius: 3,
+                    padding: [2, 4],
+                    textStyle: {
+                        color: '#0f172a',
+                        fontSize: 10,
+                        fontWeight: '700',
+                        fontFamily: chartFontFamily,
+                        backgroundColor: 'rgba(255, 255, 255, 0.92)',
+                        borderColor: '#cbd5e1',
+                        borderWidth: 1,
+                        borderRadius: 3,
+                        padding: [2, 4]
+                    }
+                },
                 emphasis: {
-                    label: { show: false },
+                    label: {
+                        show: true,
+                        formatter: function (params) {
+                            var d = params.data;
+                            if (!d) return ' ';
+                            var valReal = (typeof d.realVal !== 'undefined') ? d.realVal : (d.value ? d.value[2] : 0);
+                            var pctVal = (typeof d.pct !== 'undefined') ? d.pct : 0;
+                            var isPct = d.isPercent || (Math.abs(valReal - pctVal) < 0.05 && valReal <= 100);
+
+                            if (isPct) {
+                                return pctVal.toFixed(2) + '%';
+                            }
+
+                            var valFormatted = (typeof Highcharts !== 'undefined' && Highcharts.numberFormat)
+                                ? Highcharts.numberFormat(valReal, 2, '.', ',')
+                                : valReal.toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                            var pctFormatted = (typeof Highcharts !== 'undefined' && Highcharts.numberFormat)
+                                ? Highcharts.numberFormat(pctVal, 2, '.', ',')
+                                : pctVal.toFixed(2);
+
+                            return valFormatted + ' (' + pctFormatted + '%)';
+                        },
+                        color: '#1e3a8a',
+                        fontSize: 11,
+                        fontWeight: '700',
+                        fontFamily: chartFontFamily,
+                        backgroundColor: '#ffffff',
+                        borderColor: '#f59e0b',
+                        borderWidth: 1.5,
+                        borderRadius: 4,
+                        padding: [3, 6],
+                        textStyle: {
+                            color: '#1e3a8a',
+                            fontSize: 11,
+                            fontWeight: '700',
+                            fontFamily: chartFontFamily,
+                            backgroundColor: '#ffffff',
+                            borderColor: '#f59e0b',
+                            borderWidth: 1.5,
+                            borderRadius: 4,
+                            padding: [3, 6]
+                        }
+                    },
                     itemStyle: { color: '#f59e0b', opacity: 1 }
                 }
             }]
