@@ -116,8 +116,8 @@
                 <i class="fa fa-refresh" style="color: #0284c7;"></i> <span>Girar 360°</span>
             </button>
             <div style="display: inline-flex; align-items: center; gap: 2px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 2px 4px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
-                <button type="button" class="btn-preset-3d active" onclick="window.setPresetAngulo3D(48, 0, 165, this)" style="height: 24px; padding: 0 10px; font-size: 11px; font-weight: 700; border: none; background: #e0f2fe; color: #0369a1; cursor: pointer; border-radius: 4px; transition: all 0.15s ease;" title="Vista frontal aérea calibrada sin oclusiones">Aérea 48°</button>
-                <button type="button" class="btn-preset-3d" onclick="window.setPresetAngulo3D(75, 0, 175, this)" style="height: 24px; padding: 0 10px; font-size: 11px; font-weight: 600; border: none; background: transparent; color: #475569; cursor: pointer; border-radius: 4px; transition: all 0.15s ease;" title="Vista cenital vertical directa sin solapamiento">Cenital</button>
+                <button type="button" class="btn-preset-3d active" onclick="window.setPresetAngulo3D(54, 0, null, this)" style="height: 24px; padding: 0 10px; font-size: 11px; font-weight: 700; border: none; background: #e0f2fe; color: #0369a1; cursor: pointer; border-radius: 4px; transition: all 0.15s ease;" title="Vista frontal aérea calibrada sin solapamiento">Aérea 54°</button>
+                <button type="button" class="btn-preset-3d" onclick="window.setPresetAngulo3D(75, 0, null, this)" style="height: 24px; padding: 0 10px; font-size: 11px; font-weight: 600; border: none; background: transparent; color: #475569; cursor: pointer; border-radius: 4px; transition: all 0.15s ease;" title="Vista cenital vertical directa sin solapamiento">Cenital</button>
             </div>
         </div>
         <div style="display: inline-flex; align-items: center; gap: 6px; background: #ffffff; border: 1px solid #e2e8f0; padding: 4px 11px; border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.02);">
@@ -169,8 +169,8 @@
                         <i class="fa fa-refresh" style="color: #0284c7;"></i> <span>Girar 360°</span>
                     </button>
                     <div style="display: inline-flex; align-items: center; gap: 2px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 2px 4px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
-                        <button type="button" class="btn-preset-3d active" onclick="window.setPresetAngulo3D(48, 0, 165, this)" style="height: 24px; padding: 0 10px; font-size: 11px; font-weight: 700; border: none; background: #e0f2fe; color: #0369a1; cursor: pointer; border-radius: 4px; transition: all 0.15s ease;" title="Vista frontal aérea calibrada sin oclusiones">Aérea 48°</button>
-                        <button type="button" class="btn-preset-3d" onclick="window.setPresetAngulo3D(75, 0, 175, this)" style="height: 24px; padding: 0 10px; font-size: 11px; font-weight: 600; border: none; background: transparent; color: #475569; cursor: pointer; border-radius: 4px; transition: all 0.15s ease;" title="Vista cenital vertical directa sin solapamiento">Cenital</button>
+                        <button type="button" class="btn-preset-3d active" onclick="window.setPresetAngulo3D(54, 0, null, this)" style="height: 24px; padding: 0 10px; font-size: 11px; font-weight: 700; border: none; background: #e0f2fe; color: #0369a1; cursor: pointer; border-radius: 4px; transition: all 0.15s ease;" title="Vista frontal aérea calibrada sin solapamiento">Aérea 54°</button>
+                        <button type="button" class="btn-preset-3d" onclick="window.setPresetAngulo3D(75, 0, null, this)" style="height: 24px; padding: 0 10px; font-size: 11px; font-weight: 600; border: none; background: transparent; color: #475569; cursor: pointer; border-radius: 4px; transition: all 0.15s ease;" title="Vista cenital vertical directa sin solapamiento">Cenital</button>
                     </div>
                 </div>
                 <div style="display: inline-flex; align-items: center; gap: 6px; background: #ffffff; border: 1px solid #e2e8f0; padding: 4px 11px; border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.02);">
@@ -213,9 +213,10 @@
     window.echartsAutoRotate = false;
     window.echartsModoMora = 'completo'; // 'completo' | 'vencida'
     window.tramosOcultos3D = {};
-    window.echarts3DAlpha = 48;
+    window.echarts3DAlpha = 54;
     window.echarts3DBeta = 0;
-    window.echarts3DDistance = 165;
+    window.echarts3DDistance = 205;
+    window.calibratedDefaultDistance = 205;
     window.coloresPlano2D = ['#2F5597', '#0284c7', '#959595', '#ea580c', '#565656', '#6DB5CB', '#143750', '#f59e0b', '#0071AD', '#B7D8DF'];
     window.paletaInstitucionalFGA = ['#2F5597', '#0284c7', '#959595', '#ea580c', '#565656', '#6DB5CB', '#143750', '#f59e0b', '#0071AD', '#B7D8DF'];
 
@@ -500,12 +501,16 @@
         }
 
         var numCats = Math.max(1, cats.length);
-        var numTramos = Math.max(1, tramoNames.length);
+        var baseDist = (numTramos > 5 ? 215 : 200);
+        window.calibratedDefaultDistance = baseDist;
+        if (!window.echartsUserInteractedDistance) {
+            window.echarts3DDistance = baseDist;
+        }
 
-        // Dimensiones calibradas para que el gráfico 3D aproveche el ancho completo sin desbordarse
-        var dynamicBoxWidth = Math.max(280, Math.min(365, numCats * 26));
-        var dynamicBoxDepth = Math.max(105, Math.min(150, numTramos * 26));
-        var dynamicBoxHeight = hasNegative ? 85 : 65;
+        // Dimensiones calibradas para que el gráfico 3D aproveche el ancho completo sin desbordarse ni solapar filas
+        var dynamicBoxWidth = Math.max(260, Math.min(320, numCats * 23));
+        var dynamicBoxDepth = Math.max(95, Math.min(135, numTramos * 17));
+        var dynamicBoxHeight = hasNegative ? 50 : 38;
 
         var chartFontFamily = '"Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", Arial, sans-serif';
 
@@ -648,14 +653,14 @@
                 boxDepth: dynamicBoxDepth,
                 boxHeight: dynamicBoxHeight,
                 top: 0,
-                bottom: 28,
+                bottom: 16,
                 axisPointer: {
                     show: false
                 },
                 viewControl: {
-                    alpha: (typeof window.echarts3DAlpha !== 'undefined' ? window.echarts3DAlpha : 48),
+                    alpha: (typeof window.echarts3DAlpha !== 'undefined' ? window.echarts3DAlpha : 54),
                     beta: (typeof window.echarts3DBeta !== 'undefined' ? window.echarts3DBeta : 0),
-                    distance: (typeof window.echarts3DDistance !== 'undefined' ? window.echarts3DDistance : 165),
+                    distance: (typeof window.echarts3DDistance !== 'undefined' ? window.echarts3DDistance : baseDist),
                     center: [0, 0, 0],
                     minDistance: 80,
                     maxDistance: 500,
@@ -891,7 +896,8 @@
     window.setPresetAngulo3D = function (alpha, beta, distance, btnElem) {
         window.echarts3DAlpha = alpha;
         window.echarts3DBeta = beta;
-        window.echarts3DDistance = distance || 165;
+        var defaultDist = (window.calibratedDefaultDistance || 205);
+        window.echarts3DDistance = distance || (alpha >= 70 ? (defaultDist + 10) : defaultDist);
         if (window.echartsAutoRotate) {
             window.toggleAutoRotar3D();
         }
@@ -901,9 +907,9 @@
             $(btnElem).addClass('active').css({ 'background': '#e0f2fe', 'color': '#0369a1', 'font-weight': '700' });
         } else {
             // Activar botón correspondiente por ángulo
-            if (alpha === 48) {
+            if (alpha <= 58) {
                 $('.btn-preset-3d:contains("Aérea")').addClass('active').css({ 'background': '#e0f2fe', 'color': '#0369a1', 'font-weight': '700' });
-            } else if (alpha === 75) {
+            } else if (alpha >= 70) {
                 $('.btn-preset-3d:contains("Cenital")').addClass('active').css({ 'background': '#e0f2fe', 'color': '#0369a1', 'font-weight': '700' });
             }
         }
