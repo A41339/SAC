@@ -130,7 +130,7 @@
         <div id="container" style="width: 100%; min-width: 100%; box-sizing: border-box; overflow: visible;">
             @(Model.detalle)
         </div>
-        <div id="echartsContainerCartera" style="display: none; width: 100%; height: 580px; box-sizing: border-box; border-radius: 6px; overflow: hidden; background: #ffffff;"></div>
+        <div id="echartsContainerCartera" style="display: none; width: 100%; height: 580px; position: relative; box-sizing: border-box; border-radius: 6px; overflow: hidden; background: #ffffff;"></div>
     </div>
 </div>
 
@@ -184,7 +184,7 @@
                 <div id="modalHighchartsContainer" style="width: 100%; min-height: 600px; box-sizing: border-box;">
                     @(Model.pDetalle)
                 </div>
-                <div id="echartsContainerModalCartera" style="display: none; width: 100%; height: 600px; box-sizing: border-box; border-radius: 8px; overflow: hidden; background: #ffffff;"></div>
+                <div id="echartsContainerModalCartera" style="display: none; width: 100%; height: 600px; position: relative; box-sizing: border-box; border-radius: 8px; overflow: hidden; background: #ffffff;"></div>
             </div>
             <div class="modal-footer" style="padding: 8px 18px; background: #f8fafc; border-top: 1px solid #e2e8f0; text-align: right;">
                 <button type="button" class="btn btn-default" data-dismiss="modal" style="border-radius: 6px; font-weight: 600; padding: 4px 14px; font-size: 12.5px;">Cerrar</button>
@@ -522,6 +522,22 @@
                 show: true,
                 confine: true,
                 enterable: false,
+                position: function (point, params, dom, rect, size) {
+                    var x = point[0] + 15;
+                    var y = point[1] - 15;
+                    if (size && size.contentSize && size.viewSize) {
+                        if (x + size.contentSize[0] > size.viewSize[0]) {
+                            x = point[0] - size.contentSize[0] - 15;
+                        }
+                        if (y + size.contentSize[1] > size.viewSize[1]) {
+                            y = size.viewSize[1] - size.contentSize[1] - 10;
+                        }
+                        if (y < 10) {
+                            y = point[1] + 15;
+                        }
+                    }
+                    return [Math.max(10, x), Math.max(10, y)];
+                },
                 padding: 0,
                 backgroundColor: 'transparent',
                 borderColor: 'transparent',
@@ -648,8 +664,6 @@
                 boxWidth: dynamicBoxWidth,
                 boxDepth: dynamicBoxDepth,
                 boxHeight: dynamicBoxHeight,
-                top: 0,
-                bottom: 28,
                 axisPointer: {
                     show: false
                 },
@@ -801,22 +815,31 @@
             }]
         };
 
+        var sincronizarDimensiones3D = function () {
+            if (myChart && dom) {
+                var w = dom.clientWidth;
+                var h = dom.clientHeight;
+                if (w > 0 && h > 0) {
+                    myChart.resize({ width: w, height: h });
+                } else {
+                    myChart.resize();
+                }
+            }
+        };
+
         try {
             myChart.setOption(option, true);
-            myChart.resize();
+            sincronizarDimensiones3D();
         } catch (e) {
             console.warn('Fallo renderizado realista WebGL, intentando modo lambert:', e);
             option.series[0].shading = 'lambert';
             myChart.setOption(option, true);
-            myChart.resize();
+            sincronizarDimensiones3D();
         }
 
-        setTimeout(function () {
-            if (myChart) myChart.resize();
-        }, 120);
-        setTimeout(function () {
-            if (myChart) myChart.resize();
-        }, 300);
+        setTimeout(sincronizarDimensiones3D, 60);
+        setTimeout(sincronizarDimensiones3D, 180);
+        setTimeout(sincronizarDimensiones3D, 350);
 
         return myChart;
     };
