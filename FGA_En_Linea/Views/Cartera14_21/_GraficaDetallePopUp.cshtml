@@ -502,16 +502,23 @@
 
         var numCats = Math.max(1, cats.length);
         var numTramos = Math.max(1, tramoNames.length);
-        var baseDist = (numTramos > 5 ? 215 : 200);
+
+        // Espaciado y dimensiones calibradas según el volumen real de datos
+        // Evita que 1 o 2 categorías se agranden como bloques gigantescos llenando toda la pantalla
+        var slotWidth = Math.max(18, Math.min(26, 280 / numCats));
+        var dynamicBoxWidth = Math.max(80, Math.min(320, numCats * slotWidth));
+        var dynamicBoxDepth = Math.max(30, Math.min(130, numTramos * 20));
+        var dynamicBoxHeight = hasNegative ? 50 : 42;
+
+        // Tamaño proporcional de cada barra (ancho X, profundidad Y)
+        var barSizeX = Math.max(8, Math.min(22, (dynamicBoxWidth / numCats) * 0.62));
+        var barSizeY = Math.max(8, Math.min(22, (dynamicBoxDepth / numTramos) * 0.62));
+
+        var baseDist = (numCats <= 3 ? 190 : (numTramos > 5 ? 215 : 205));
         window.calibratedDefaultDistance = baseDist;
         if (!window.echartsUserInteractedDistance) {
             window.echarts3DDistance = baseDist;
         }
-
-        // Dimensiones calibradas para que el gráfico 3D aproveche el ancho completo sin desbordarse ni solapar filas
-        var dynamicBoxWidth = Math.max(260, Math.min(320, numCats * 23));
-        var dynamicBoxDepth = Math.max(95, Math.min(135, numTramos * 17));
-        var dynamicBoxHeight = hasNegative ? 50 : 38;
 
         var chartFontFamily = '"Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", Arial, sans-serif';
 
@@ -596,8 +603,8 @@
                         fontFamily: chartFontFamily
                     }
                 },
-                axisLine: { show: true, lineStyle: { color: '#94a3b8', width: 1.5 } },
-                axisTick: { show: true, lineStyle: { color: '#94a3b8', width: 1.5 } },
+                axisLine: { show: true, lineStyle: { color: '#cbd5e1', width: 1.5 } },
+                axisTick: { show: true, lineStyle: { color: '#cbd5e1', width: 1.5 } },
                 splitLine: { show: false }
             },
             yAxis3D: {
@@ -605,13 +612,21 @@
                 name: '',
                 data: tramoNames,
                 axisLabel: {
-                    show: true,
+                    show: (numTramos > 1),
                     interval: 0,
-                    margin: 12,
+                    margin: 32,
                     color: '#475569',
                     fontSize: 11,
                     fontWeight: '500',
                     fontFamily: chartFontFamily,
+                    formatter: function (val) {
+                        if (!val) return '';
+                        var s = String(val).trim();
+                        if (s.length > 36) {
+                            return s.substring(0, 33) + '...';
+                        }
+                        return s;
+                    },
                     textStyle: {
                         color: '#475569',
                         fontSize: 11,
@@ -619,34 +634,20 @@
                         fontFamily: chartFontFamily
                     }
                 },
-                axisLine: { lineStyle: { color: '#94a3b8', width: 1.5 } },
+                axisLine: { show: (numTramos > 1), lineStyle: { color: '#cbd5e1', width: 1.5 } },
+                axisTick: { show: (numTramos > 1), lineStyle: { color: '#cbd5e1', width: 1.5 } },
                 splitLine: { show: false }
             },
             zAxis3D: {
                 type: 'value',
-                name: (isChartPercent ? '%' : 'Saldo'),
+                name: '',
                 min: hasNegative ? (minVal < 0 ? Math.floor(minVal - Math.abs(minVal) * 0.1) : 0) : 0,
-                max: hasNegative ? (maxVal > 0 ? Math.ceil(maxVal + Math.abs(maxVal) * 0.1) : 0) : null,
-                nameTextStyle: {
-                    color: '#475569',
-                    fontSize: 12,
-                    fontWeight: '600',
-                    fontFamily: chartFontFamily
-                },
+                max: hasNegative ? (maxVal > 0 ? Math.ceil(maxVal + Math.abs(maxVal) * 0.1) : null) : null,
                 axisLabel: {
-                    show: true,
-                    color: '#64748b',
-                    fontSize: 11,
-                    fontWeight: '500',
-                    fontFamily: chartFontFamily,
-                    textStyle: {
-                        color: '#64748b',
-                        fontSize: 11,
-                        fontWeight: '500',
-                        fontFamily: chartFontFamily
-                    }
+                    show: false
                 },
-                axisLine: { lineStyle: { color: '#94a3b8', width: 1.5 } },
+                axisLine: { show: false },
+                axisTick: { show: false },
                 splitLine: { show: false }
             },
             grid3D: {
@@ -692,6 +693,7 @@
             series: [{
                 type: 'bar3D',
                 data: data3D,
+                barSize: [barSizeX, barSizeY],
                 shading: 'realistic',
                 realisticMaterial: {
                     roughness: 0.24,
