@@ -116,8 +116,8 @@
                 <i class="fa fa-refresh" style="color: #0284c7;"></i> <span>Girar 360°</span>
             </button>
             <div style="display: inline-flex; align-items: center; gap: 2px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 2px 4px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
-                <button type="button" class="btn-preset-3d active" onclick="window.setPresetAngulo3D(54, 0, null, this)" style="height: 24px; padding: 0 10px; font-size: 11px; font-weight: 700; border: none; background: #e0f2fe; color: #0369a1; cursor: pointer; border-radius: 4px; transition: all 0.15s ease;" title="Vista frontal aérea calibrada sin solapamiento">Aérea 54°</button>
-                <button type="button" class="btn-preset-3d" onclick="window.setPresetAngulo3D(75, 0, null, this)" style="height: 24px; padding: 0 10px; font-size: 11px; font-weight: 600; border: none; background: transparent; color: #475569; cursor: pointer; border-radius: 4px; transition: all 0.15s ease;" title="Vista cenital vertical directa sin solapamiento">Cenital</button>
+                <button type="button" class="btn-preset-3d active" onclick="window.setPresetAngulo3D(48, 0, 225, this)" style="height: 24px; padding: 0 10px; font-size: 11px; font-weight: 700; border: none; background: #e0f2fe; color: #0369a1; cursor: pointer; border-radius: 4px; transition: all 0.15s ease;" title="Vista frontal aérea calibrada sin oclusiones">Aérea 48°</button>
+                <button type="button" class="btn-preset-3d" onclick="window.setPresetAngulo3D(75, 0, 230, this)" style="height: 24px; padding: 0 10px; font-size: 11px; font-weight: 600; border: none; background: transparent; color: #475569; cursor: pointer; border-radius: 4px; transition: all 0.15s ease;" title="Vista cenital vertical directa sin solapamiento">Cenital</button>
             </div>
         </div>
         <div style="display: inline-flex; align-items: center; gap: 6px; background: #ffffff; border: 1px solid #e2e8f0; padding: 4px 11px; border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.02);">
@@ -169,8 +169,8 @@
                         <i class="fa fa-refresh" style="color: #0284c7;"></i> <span>Girar 360°</span>
                     </button>
                     <div style="display: inline-flex; align-items: center; gap: 2px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 2px 4px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
-                        <button type="button" class="btn-preset-3d active" onclick="window.setPresetAngulo3D(54, 0, null, this)" style="height: 24px; padding: 0 10px; font-size: 11px; font-weight: 700; border: none; background: #e0f2fe; color: #0369a1; cursor: pointer; border-radius: 4px; transition: all 0.15s ease;" title="Vista frontal aérea calibrada sin solapamiento">Aérea 54°</button>
-                        <button type="button" class="btn-preset-3d" onclick="window.setPresetAngulo3D(75, 0, null, this)" style="height: 24px; padding: 0 10px; font-size: 11px; font-weight: 600; border: none; background: transparent; color: #475569; cursor: pointer; border-radius: 4px; transition: all 0.15s ease;" title="Vista cenital vertical directa sin solapamiento">Cenital</button>
+                        <button type="button" class="btn-preset-3d active" onclick="window.setPresetAngulo3D(48, 0, 225, this)" style="height: 24px; padding: 0 10px; font-size: 11px; font-weight: 700; border: none; background: #e0f2fe; color: #0369a1; cursor: pointer; border-radius: 4px; transition: all 0.15s ease;" title="Vista frontal aérea calibrada sin oclusiones">Aérea 48°</button>
+                        <button type="button" class="btn-preset-3d" onclick="window.setPresetAngulo3D(75, 0, 230, this)" style="height: 24px; padding: 0 10px; font-size: 11px; font-weight: 600; border: none; background: transparent; color: #475569; cursor: pointer; border-radius: 4px; transition: all 0.15s ease;" title="Vista cenital vertical directa sin solapamiento">Cenital</button>
                     </div>
                 </div>
                 <div style="display: inline-flex; align-items: center; gap: 6px; background: #ffffff; border: 1px solid #e2e8f0; padding: 4px 11px; border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.02);">
@@ -195,6 +195,7 @@
 
 <script type="text/javascript">
     function mPopUp() {
+        window._modalSelectedSeriesIdx = undefined;
         var entText = $("#IdEntidad :selected").text() || '';
         var grafText = $("#Grafico :selected").text() || '';
         if (grafText) {
@@ -213,10 +214,9 @@
     window.echartsAutoRotate = false;
     window.echartsModoMora = 'completo'; // 'completo' | 'vencida'
     window.tramosOcultos3D = {};
-    window.echarts3DAlpha = 54;
+    window.echarts3DAlpha = 48;
     window.echarts3DBeta = 0;
-    window.echarts3DDistance = 205;
-    window.calibratedDefaultDistance = 205;
+    window.echarts3DDistance = 225;
     window.coloresPlano2D = ['#2F5597', '#0284c7', '#959595', '#ea580c', '#565656', '#6DB5CB', '#143750', '#f59e0b', '#0071AD', '#B7D8DF'];
     window.paletaInstitucionalFGA = ['#2F5597', '#0284c7', '#959595', '#ea580c', '#565656', '#6DB5CB', '#143750', '#f59e0b', '#0071AD', '#B7D8DF'];
 
@@ -503,22 +503,10 @@
         var numCats = Math.max(1, cats.length);
         var numTramos = Math.max(1, tramoNames.length);
 
-        // Espaciado y dimensiones calibradas según el volumen real de datos
-        // Evita que 1 o 2 categorías se agranden como bloques gigantescos llenando toda la pantalla
-        var slotWidth = Math.max(18, Math.min(26, 280 / numCats));
-        var dynamicBoxWidth = Math.max(80, Math.min(320, numCats * slotWidth));
-        var dynamicBoxDepth = Math.max(30, Math.min(130, numTramos * 20));
-        var dynamicBoxHeight = hasNegative ? 50 : 42;
-
-        // Tamaño proporcional de cada barra (ancho X, profundidad Y)
-        var barSizeX = Math.max(8, Math.min(22, (dynamicBoxWidth / numCats) * 0.62));
-        var barSizeY = Math.max(8, Math.min(22, (dynamicBoxDepth / numTramos) * 0.62));
-
-        var baseDist = (numCats <= 3 ? 190 : (numTramos > 5 ? 215 : 205));
-        window.calibratedDefaultDistance = baseDist;
-        if (!window.echartsUserInteractedDistance) {
-            window.echarts3DDistance = baseDist;
-        }
+        // Dimensiones calibradas para que el gráfico 3D aproveche el ancho sin desbordarse
+        var dynamicBoxWidth = Math.max(240, Math.min(295, numCats * 22));
+        var dynamicBoxDepth = Math.max(105, Math.min(150, numTramos * 25));
+        var dynamicBoxHeight = hasNegative ? 85 : 65;
 
         var chartFontFamily = '"Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", Arial, sans-serif';
 
@@ -603,8 +591,8 @@
                         fontFamily: chartFontFamily
                     }
                 },
-                axisLine: { show: true, lineStyle: { color: '#cbd5e1', width: 1.5 } },
-                axisTick: { show: true, lineStyle: { color: '#cbd5e1', width: 1.5 } },
+                axisLine: { show: true, lineStyle: { color: '#94a3b8', width: 1.5 } },
+                axisTick: { show: true, lineStyle: { color: '#94a3b8', width: 1.5 } },
                 splitLine: { show: false }
             },
             yAxis3D: {
@@ -612,21 +600,13 @@
                 name: '',
                 data: tramoNames,
                 axisLabel: {
-                    show: (numTramos > 1),
+                    show: true,
                     interval: 0,
-                    margin: 32,
+                    margin: 12,
                     color: '#475569',
                     fontSize: 11,
                     fontWeight: '500',
                     fontFamily: chartFontFamily,
-                    formatter: function (val) {
-                        if (!val) return '';
-                        var s = String(val).trim();
-                        if (s.length > 36) {
-                            return s.substring(0, 33) + '...';
-                        }
-                        return s;
-                    },
                     textStyle: {
                         color: '#475569',
                         fontSize: 11,
@@ -634,20 +614,34 @@
                         fontFamily: chartFontFamily
                     }
                 },
-                axisLine: { show: (numTramos > 1), lineStyle: { color: '#cbd5e1', width: 1.5 } },
-                axisTick: { show: (numTramos > 1), lineStyle: { color: '#cbd5e1', width: 1.5 } },
+                axisLine: { lineStyle: { color: '#94a3b8', width: 1.5 } },
                 splitLine: { show: false }
             },
             zAxis3D: {
                 type: 'value',
-                name: '',
+                name: (isChartPercent ? '%' : 'Saldo'),
                 min: hasNegative ? (minVal < 0 ? Math.floor(minVal - Math.abs(minVal) * 0.1) : 0) : 0,
-                max: hasNegative ? (maxVal > 0 ? Math.ceil(maxVal + Math.abs(maxVal) * 0.1) : null) : null,
-                axisLabel: {
-                    show: false
+                max: hasNegative ? (maxVal > 0 ? Math.ceil(maxVal + Math.abs(maxVal) * 0.1) : 0) : null,
+                nameTextStyle: {
+                    color: '#475569',
+                    fontSize: 12,
+                    fontWeight: '600',
+                    fontFamily: chartFontFamily
                 },
-                axisLine: { show: false },
-                axisTick: { show: false },
+                axisLabel: {
+                    show: true,
+                    color: '#64748b',
+                    fontSize: 11,
+                    fontWeight: '500',
+                    fontFamily: chartFontFamily,
+                    textStyle: {
+                        color: '#64748b',
+                        fontSize: 11,
+                        fontWeight: '500',
+                        fontFamily: chartFontFamily
+                    }
+                },
+                axisLine: { lineStyle: { color: '#94a3b8', width: 1.5 } },
                 splitLine: { show: false }
             },
             grid3D: {
@@ -655,14 +649,14 @@
                 boxDepth: dynamicBoxDepth,
                 boxHeight: dynamicBoxHeight,
                 top: 0,
-                bottom: 16,
+                bottom: 28,
                 axisPointer: {
                     show: false
                 },
                 viewControl: {
-                    alpha: (typeof window.echarts3DAlpha !== 'undefined' ? window.echarts3DAlpha : 54),
+                    alpha: (typeof window.echarts3DAlpha !== 'undefined' ? window.echarts3DAlpha : 48),
                     beta: (typeof window.echarts3DBeta !== 'undefined' ? window.echarts3DBeta : 0),
-                    distance: (typeof window.echarts3DDistance !== 'undefined' ? window.echarts3DDistance : baseDist),
+                    distance: (typeof window.echarts3DDistance !== 'undefined' ? window.echarts3DDistance : 225),
                     center: [0, 0, 0],
                     minDistance: 80,
                     maxDistance: 500,
@@ -693,7 +687,6 @@
             series: [{
                 type: 'bar3D',
                 data: data3D,
-                barSize: [barSizeX, barSizeY],
                 shading: 'realistic',
                 realisticMaterial: {
                     roughness: 0.24,
@@ -899,8 +892,7 @@
     window.setPresetAngulo3D = function (alpha, beta, distance, btnElem) {
         window.echarts3DAlpha = alpha;
         window.echarts3DBeta = beta;
-        var defaultDist = (window.calibratedDefaultDistance || 205);
-        window.echarts3DDistance = distance || (alpha >= 70 ? (defaultDist + 10) : defaultDist);
+        window.echarts3DDistance = distance || 225;
         if (window.echartsAutoRotate) {
             window.toggleAutoRotar3D();
         }
@@ -910,9 +902,9 @@
             $(btnElem).addClass('active').css({ 'background': '#e0f2fe', 'color': '#0369a1', 'font-weight': '700' });
         } else {
             // Activar botón correspondiente por ángulo
-            if (alpha <= 58) {
+            if (alpha === 48) {
                 $('.btn-preset-3d:contains("Aérea")').addClass('active').css({ 'background': '#e0f2fe', 'color': '#0369a1', 'font-weight': '700' });
-            } else if (alpha >= 70) {
+            } else if (alpha === 75) {
                 $('.btn-preset-3d:contains("Cenital")').addClass('active').css({ 'background': '#e0f2fe', 'color': '#0369a1', 'font-weight': '700' });
             }
         }
@@ -1439,80 +1431,10 @@
             if (!chartOrig || !chartOrig._fgaOriginalConfig) return;
             var orig = chartOrig._fgaOriginalConfig;
             var cats = orig.categories || [];
-            var colSeries = orig.series.filter(function (s) { return s.origType === 'column'; });
-            if (colSeries.length === 0) colSeries = orig.series;
 
             var formatNum = function (n) {
                 return (typeof n === 'number') ? n.toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : n;
             };
-
-            if (window.tipoGraficoActual === 'matrix3d') {
-                var lastIdx = (cats.length > 0) ? (cats.length - 1) : 0;
-                var lastMonthName = cats[lastIdx] || 'Corte';
-
-                var totMes = 0;
-                var vigVal = 0;
-                var vencVal = 0;
-                var moraCritVal = 0;
-
-                colSeries.forEach(function (s) {
-                    var v = 0;
-                    if (s.data && s.data.length > lastIdx) {
-                        var pt = s.data[lastIdx];
-                        if (typeof pt === 'number') v = pt;
-                        else if (pt && typeof pt.y === 'number') v = pt.y;
-                        else if (Array.isArray(pt) && typeof pt[1] === 'number') v = pt[1];
-                    }
-                    v = Math.max(0, parseFloat(v) || 0);
-                    totMes += v;
-
-                    var n = (s.name || '').toLowerCase();
-                    if (n.indexOf('al d') > -1 || n.indexOf('vigente') > -1) {
-                        vigVal += v;
-                    } else {
-                        vencVal += v;
-                        if (n.indexOf('90') > -1 || n.indexOf('mayor') > -1 || n.indexOf('crit') > -1) {
-                            moraCritVal += v;
-                        }
-                    }
-                });
-
-                var pctVenc = totMes > 0 ? ((vencVal / totMes) * 100) : 0;
-                var pctVig = totMes > 0 ? ((vigVal / totMes) * 100) : 0;
-                var pctCrit = totMes > 0 ? ((moraCritVal / totMes) * 100) : 0;
-
-                $('#cartera1421ModalKpiStrip').html(
-                    '<div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 7px 14px;">' +
-                    '    <div>' +
-                    '        <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block; line-height: 1.2;">Último Período</span>' +
-                    '        <span style="font-size: 14.5px; font-weight: 700; color: #1e3a8a;">' + lastMonthName + '</span>' +
-                    '    </div>' +
-                    '    <div style="border-left: 1px solid #cbd5e1; padding-left: 14px;">' +
-                    '        <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block; line-height: 1.2;">Saldo Total Cartera</span>' +
-                    '        <span style="font-size: 14.5px; font-weight: 700; color: #0f172a;">' + formatNum(totMes) + '</span>' +
-                    '    </div>' +
-                    '    <div style="border-left: 1px solid #cbd5e1; padding-left: 14px;">' +
-                    '        <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block; line-height: 1.2;">Vigente / Al Día</span>' +
-                    '        <span class="badge" style="background-color: #dbeafe; color: #1e40af; font-size: 11.5px; font-weight: 700; padding: 3px 8px; border-radius: 6px;">' +
-                    '            ' + formatNum(pctVig) + '% (' + formatNum(vigVal) + ')' +
-                    '        </span>' +
-                    '    </div>' +
-                    '    <div style="border-left: 1px solid #cbd5e1; padding-left: 14px;">' +
-                    '        <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block; line-height: 1.2;">Cartera Vencida (>0 d)</span>' +
-                    '        <span class="badge" style="background-color: #ffedd5; color: #c2410c; font-size: 11.5px; font-weight: 700; padding: 3px 8px; border-radius: 6px;">' +
-                    '            ' + formatNum(pctVenc) + '% (' + formatNum(vencVal) + ')' +
-                    '        </span>' +
-                    '    </div>' +
-                    '    <div style="border-left: 1px solid #cbd5e1; padding-left: 14px;">' +
-                    '        <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block; line-height: 1.2;">Mora Crítica (>90 d)</span>' +
-                    '        <span class="badge" style="background-color: #fee2e2; color: #991b1b; font-size: 11.5px; font-weight: 700; padding: 3px 8px; border-radius: 6px;">' +
-                    '            ' + formatNum(pctCrit) + '% (' + formatNum(moraCritVal) + ')' +
-                    '        </span>' +
-                    '    </div>' +
-                    '</div>'
-                );
-                return;
-            }
 
             function renderCarteraKpi(selectedIdx) {
                 var modalCharts = Highcharts.charts.filter(function (c) {
@@ -1520,28 +1442,37 @@
                     return c && elem && $(elem).closest('#mPopUp').length && c.series && c.series.length > 0;
                 });
                 var chart = (modalCharts.length > 0) ? modalCharts[0] : chartOrig;
-                if (!chart || !chart.series || chart.series.length === 0) return;
+                if (!chart) return;
+
+                var seriesList = (modalCharts.length > 0 && modalCharts[0].series && modalCharts[0].series.length > 0)
+                    ? modalCharts[0].series
+                    : (orig.series || []);
+                if (seriesList.length === 0) return;
 
                 var seriesIdx = 0;
-                if (typeof selectedIdx === 'number' && selectedIdx >= 0 && selectedIdx < chart.series.length) {
+                if (typeof selectedIdx === 'number' && selectedIdx >= 0 && selectedIdx < seriesList.length) {
                     seriesIdx = selectedIdx;
+                } else if (typeof window._modalSelectedSeriesIdx === 'number' && window._modalSelectedSeriesIdx >= 0 && window._modalSelectedSeriesIdx < seriesList.length) {
+                    seriesIdx = window._modalSelectedSeriesIdx;
                 } else {
-                    for (var k = 0; k < chart.series.length; k++) {
-                        if (chart.series[k].type === 'spline' || chart.series[k].type === 'line') {
+                    for (var k = 0; k < seriesList.length; k++) {
+                        var stype = seriesList[k].type || seriesList[k].origType;
+                        if (stype === 'spline' || stype === 'line') {
                             seriesIdx = k;
                             break;
                         }
                     }
                 }
 
-                var s = chart.series[seriesIdx];
+                var s = seriesList[seriesIdx];
                 if (!s || !s.data || s.data.length === 0) return;
 
-                var rawData = s.data.map(function (pt) {
+                var rawData = (s.data || []).map(function (pt) {
+                    if (typeof pt === 'number') return pt;
                     if (!pt) return 0;
                     if (typeof pt.y === 'number') return pt.y;
                     if (Array.isArray(pt) && typeof pt[1] === 'number') return pt[1];
-                    return parseFloat(pt.y) || 0;
+                    return parseFloat(pt.y !== undefined ? pt.y : pt) || 0;
                 });
 
                 if (rawData.length === 0) return;
@@ -1557,10 +1488,17 @@
                 var maxVal = Math.max.apply(null, rawData);
 
                 var sName = s.name || '';
-                var yLabelsFormatter = (s.yAxis && s.yAxis.options && s.yAxis.options.labels && s.yAxis.options.labels.formatter) ? s.yAxis.options.labels.formatter.toString() : '';
-                var isPct = (sName.indexOf('%') > -1) ||
+                var yLabelsFormatter = '';
+                try {
+                    if (s.yAxis && s.yAxis.options && s.yAxis.options.labels && s.yAxis.options.labels.formatter) {
+                        yLabelsFormatter = s.yAxis.options.labels.formatter.toString();
+                    }
+                } catch (e) {}
+
+                var isPct = !!(orig.isPercent ||
+                            (sName.indexOf('%') > -1) ||
                             (s.yAxis && s.yAxis.options && s.yAxis.options.title && s.yAxis.options.title.text && (s.yAxis.options.title.text.indexOf('Porcent') > -1 || s.yAxis.options.title.text.indexOf('Concentrac') > -1)) ||
-                            (yLabelsFormatter.indexOf('formatPercent') > -1 || yLabelsFormatter.indexOf('%') > -1);
+                            (yLabelsFormatter.indexOf('formatPercent') > -1 || yLabelsFormatter.indexOf('%') > -1));
                 var suf = isPct ? '%' : '';
 
                 var isPos = diff >= 0;
@@ -1570,7 +1508,7 @@
                 var diffFormatted = sign + formatNum(diff) + (isPct ? ' p.p.' : suf);
 
                 var selectorHtml = '';
-                if (chart.series.length > 1) {
+                if (seriesList.length > 1) {
                     selectorHtml =
                         '<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">' +
                         '    <div style="font-size: 12.5px; font-weight: 700; color: #1e3a8a; display: flex; align-items: center; gap: 6px;">' +
@@ -1579,8 +1517,8 @@
                         '    <div>' +
                         '        <select id="cartera1421ModalSeriesSelect" class="form-control" style="height: 28px; font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 6px; border: 1px solid #cbd5e1; color: #1e3a8a; background: #ffffff; min-width: 240px;">';
 
-                    for (var idx = 0; idx < chart.series.length; idx++) {
-                        var ser = chart.series[idx];
+                    for (var idx = 0; idx < seriesList.length; idx++) {
+                        var ser = seriesList[idx];
                         var isSelected = (idx === seriesIdx) ? ' selected' : '';
                         selectorHtml += '<option value="' + idx + '"' + isSelected + '>● ' + (ser.name || ('Serie ' + (idx + 1))) + '</option>';
                     }
@@ -1623,6 +1561,7 @@
 
                 $('#cartera1421ModalSeriesSelect').off('change').on('change', function () {
                     var newIdx = parseInt($(this).val(), 10);
+                    window._modalSelectedSeriesIdx = newIdx;
                     renderCarteraKpi(newIdx);
                 });
             }
