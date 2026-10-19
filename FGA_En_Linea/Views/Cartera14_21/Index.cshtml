@@ -106,14 +106,10 @@
 
     function refreshGraph() {
         if (typeof Highcharts !== 'undefined' && Highcharts.charts) {
-            for (var i = Highcharts.charts.length - 1; i >= 0; i--) {
+            for (var i = 0; i < Highcharts.charts.length; i++) {
                 var c = Highcharts.charts[i];
-                if (c) {
-                    var el = c.container || ((typeof c.renderTo === 'string') ? document.getElementById(c.renderTo.replace(/^#/, '')) : c.renderTo);
-                    if (!el || !document.body.contains(el) || $('#grafica').find(el).length > 0) {
-                        try { c.destroy(); } catch (e) {}
-                        Highcharts.charts.splice(i, 1);
-                    }
+                if (c && c.container && $('#grafica').has(c.container).length > 0) {
+                    try { c.destroy(); } catch (e) {}
                 }
             }
         }

@@ -195,16 +195,23 @@
 
 <script type="text/javascript">
     window.obtenerGraficoActivo = function (containerId) {
+        if (typeof Highcharts === 'undefined' || !Highcharts.charts) return null;
         var cont = document.getElementById(containerId);
         if (!cont) return null;
-        if (typeof Highcharts !== 'undefined' && Highcharts.charts) {
-            for (var i = Highcharts.charts.length - 1; i >= 0; i--) {
-                var ch = Highcharts.charts[i];
-                if (!ch) continue;
-                var elem = ch.container || ((typeof ch.renderTo === 'string') ? document.getElementById(ch.renderTo.replace(/^#/, '')) : ch.renderTo);
-                if (elem && cont.contains(elem)) {
-                    return ch;
-                }
+        var $cont = $(cont);
+
+        for (var i = Highcharts.charts.length - 1; i >= 0; i--) {
+            var ch = Highcharts.charts[i];
+            if (!ch) continue;
+            var elem = ch.container || ((typeof ch.renderTo === 'string') ? document.getElementById(ch.renderTo.replace(/^#/, '')) : ch.renderTo);
+            if (!elem || !document.body.contains(elem)) continue;
+
+            if (cont.contains(elem) || $cont.has(elem).length > 0) {
+                return ch;
+            }
+            var rTo = (ch.options && ch.options.chart && ch.options.chart.renderTo) ? ch.options.chart.renderTo : (typeof ch.renderTo === 'string' ? ch.renderTo : (ch.renderTo ? ch.renderTo.id : ''));
+            if (rTo && ($cont.attr('id') === rTo || $cont.find('#' + rTo.replace(/^#/, '')).length > 0)) {
+                return ch;
             }
         }
         return null;
@@ -277,7 +284,11 @@
                     chart.yAxis.forEach(function (y) {
                         if (!y || !y.options) return;
                         if (y.options.id === 'Concentracion') isPercentChart = true;
-                        var yTitle = (y.options.title && y.options.title.text) ? y.options.title.text.toLowerCase() : '';
+                        var yTitle = '';
+                        if (y.options.title) {
+                            if (typeof y.options.title === 'string') yTitle = y.options.title.toLowerCase();
+                            else if (y.options.title.text) yTitle = y.options.title.text.toLowerCase();
+                        }
                         if (yTitle.indexOf('porcent') > -1 || yTitle.indexOf('concentrac') > -1 || yTitle.indexOf('%') > -1) {
                             isPercentChart = true;
                         }
@@ -287,8 +298,8 @@
                                 isPercentChart = true;
                             }
                             if (yLabels.formatter) {
-                                var fName = (yLabels.formatter.name || '').toLowerCase();
-                                if (fName.indexOf('percent') > -1) {
+                                var fStr = (typeof yLabels.formatter === 'function') ? (yLabels.formatter.name || yLabels.formatter.toString()) : String(yLabels.formatter);
+                                if (fStr.toLowerCase().indexOf('percent') > -1) {
                                     isPercentChart = true;
                                 }
                             }
@@ -318,32 +329,47 @@
                         });
                     }
                     var yAxisIdx = 0;
-                    if (s.yAxis) {
-                        if (typeof s.yAxis.options.index === 'number') yAxisIdx = s.yAxis.options.index;
-                        else if (s.yAxis.options.id === 'Concentracion') yAxisIdx = 0;
-                        else if (chart.yAxis && chart.yAxis.indexOf(s.yAxis) >= 0) yAxisIdx = chart.yAxis.indexOf(s.yAxis);
-                    }
+                    try {
+                        if (s.yAxis && typeof s.yAxis === 'object') {
+                            if (s.yAxis.options && typeof s.yAxis.options.index === 'number') {
+                                yAxisIdx = s.yAxis.options.index;
+                            } else if (s.yAxis.options && s.yAxis.options.id === 'Concentracion') {
+                                yAxisIdx = 0;
+                            } else if (chart.yAxis && chart.yAxis.indexOf(s.yAxis) >= 0) {
+                                yAxisIdx = chart.yAxis.indexOf(s.yAxis);
+                            }
+                        } else if (typeof s.yAxis === 'number') {
+                            yAxisIdx = s.yAxis;
+                        }
+                    } catch (eAxis) {}
 
                     var isSeriesPercent = isPercentChart;
-                    if (s.yAxis && s.yAxis.options) {
-                        var yTitle = (s.yAxis.options.title && s.yAxis.options.title.text) ? s.yAxis.options.title.text.toLowerCase() : '';
-                        if (yTitle.indexOf('porcent') > -1 || yTitle.indexOf('concentrac') > -1 || yTitle.indexOf('%') > -1 || yTitle.indexOf('variacion') > -1) {
+                    try {
+                        if (s.yAxis && typeof s.yAxis === 'object' && s.yAxis.options) {
+                            var yTitle = '';
+                            if (s.yAxis.options.title) {
+                                if (typeof s.yAxis.options.title === 'string') yTitle = s.yAxis.options.title.toLowerCase();
+                                else if (s.yAxis.options.title.text) yTitle = s.yAxis.options.title.text.toLowerCase();
+                            }
+                            if (yTitle.indexOf('porcent') > -1 || yTitle.indexOf('concentrac') > -1 || yTitle.indexOf('%') > -1 || yTitle.indexOf('variacion') > -1) {
+                                isSeriesPercent = true;
+                            }
+                            var yLabels = s.yAxis.options.labels;
+                            if (yLabels && yLabels.formatter) {
+                                var fStr = (typeof yLabels.formatter === 'function') ? (yLabels.formatter.name || yLabels.formatter.toString()) : String(yLabels.formatter);
+                                var fLower = fStr.toLowerCase();
+                                if (fLower.indexOf('percent') > -1) isSeriesPercent = true;
+                                if (fLower.indexOf('million') > -1) isSeriesPercent = false;
+                            }
+                        }
+                        var sNameLower = (s.name || '').toLowerCase();
+                        if (sNameLower.indexOf('en millones') > -1 || sNameLower.indexOf('monto') > -1 || sNameLower.indexOf('saldo') > -1) {
+                            isSeriesPercent = false;
+                        }
+                        if (sNameLower.indexOf('%') > -1 || sNameLower.indexOf('porcent') > -1 || sNameLower.indexOf('variaci') > -1) {
                             isSeriesPercent = true;
                         }
-                        var yLabels = s.yAxis.options.labels;
-                        if (yLabels && yLabels.formatter) {
-                            var fName = (yLabels.formatter.name || '').toLowerCase();
-                            if (fName.indexOf('percent') > -1) isSeriesPercent = true;
-                            if (fName.indexOf('million') > -1) isSeriesPercent = false;
-                        }
-                    }
-                    var sNameLower = (s.name || '').toLowerCase();
-                    if (sNameLower.indexOf('en millones') > -1 || sNameLower.indexOf('monto') > -1 || sNameLower.indexOf('saldo') > -1) {
-                        isSeriesPercent = false;
-                    }
-                    if (sNameLower.indexOf('%') > -1 || sNameLower.indexOf('porcent') > -1 || sNameLower.indexOf('variación') > -1 || sNameLower.indexOf('variacion') > -1) {
-                        isSeriesPercent = true;
-                    }
+                    } catch (ePct) {}
 
                     var sColor = s.color || window.coloresPlano2D[idx % window.coloresPlano2D.length];
                     var sNegColor = (s.options && s.options.negativeColor) ? s.options.negativeColor : s.negativeColor;
@@ -1392,21 +1418,24 @@
             window.aplicarTipoAGrafico(modalChart, tipo);
         }
 
-        if (tipo !== 'matrix3d' && $('#mPopUp').hasClass('in')) {
-            $('#modalHighchartsContainer').show();
-            $('#echartsContainerModalCartera').hide();
-            setTimeout(function () {
-                if (modalChart) {
-                    var mW = $('#modalHighchartsContainer').width() || ($('#mPopUp .modal-body').width() - 36);
-                    if (mW && mW > 200) {
-                        modalChart.setSize(mW, 600, false);
+        if (tipo !== 'matrix3d') {
+            $('#container, #modalHighchartsContainer').show();
+            $('#echartsContainerCartera, #echartsContainerModalCartera').hide();
+            if ($('#mPopUp').hasClass('in')) {
+                setTimeout(function () {
+                    var mC = modalChart || window.obtenerGraficoActivo('modalHighchartsContainer');
+                    if (mC) {
+                        var mW = $('#modalHighchartsContainer').width() || ($('#mPopUp .modal-body').width() - 36);
+                        if (mW && mW > 200) {
+                            mC.setSize(mW, 600, false);
+                        }
+                        if (mC.container) {
+                            $(mC.container).css({ 'width': '100%', 'height': '600px' });
+                        }
+                        mC.reflow();
                     }
-                    if (modalChart.container) {
-                        $(modalChart.container).css({ 'width': '100%', 'height': '600px' });
-                    }
-                    modalChart.reflow();
-                }
-            }, 100);
+                }, 100);
+            }
         }
 
         if ($('#mPopUp').hasClass('in') && typeof window.actualizarKpiModalComposicion === 'function') {
@@ -1467,8 +1496,10 @@
         }
 
         if (modalChart) {
-            window.aplicarTipoAGrafico(modalChart, window.tipoGraficoActual, true);
-            var mW = $('#modalHighchartsContainer').width() || $('#mPopUp .modal-body').width();
+            if (window.tipoGraficoActual && window.tipoGraficoActual !== 'column') {
+                window.aplicarTipoAGrafico(modalChart, window.tipoGraficoActual, true);
+            }
+            var mW = $('#modalHighchartsContainer').width() || ($('#mPopUp .modal-body').width() - 36);
             if (mW && mW > 200) {
                 modalChart.setSize(mW, 600, false);
             }
@@ -1480,7 +1511,7 @@
 
         setTimeout(function () {
             if (modalChart) {
-                var curW = $('#modalHighchartsContainer').width() || $('#mPopUp .modal-body').width();
+                var curW = $('#modalHighchartsContainer').width() || ($('#mPopUp .modal-body').width() - 36);
                 if (curW && curW > 200) {
                     modalChart.setSize(curW, 600, false);
                 }
@@ -1524,8 +1555,11 @@
                 var chart = window.obtenerGraficoActivo('modalHighchartsContainer') || chartOrig;
                 if (!chart) return;
 
-                var seriesList = (orig.series && orig.series.length > 0)
-                    ? orig.series
+                var origConfig = chart._fgaOriginalConfig || (chartOrig ? chartOrig._fgaOriginalConfig : null);
+                if (!origConfig) return;
+
+                var seriesList = (origConfig.series && origConfig.series.length > 0)
+                    ? origConfig.series
                     : (chart.series || []);
                 if (seriesList.length === 0) return;
 
