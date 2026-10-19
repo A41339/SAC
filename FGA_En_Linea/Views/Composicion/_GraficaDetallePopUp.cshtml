@@ -265,10 +265,12 @@
                         else if (chart.yAxis && chart.yAxis.indexOf(s.yAxis) >= 0) yAxisIdx = chart.yAxis.indexOf(s.yAxis);
                     }
                     var sColor = s.color || window.coloresPlano2D[idx % window.coloresPlano2D.length];
+                    var sNegColor = (s.options && s.options.negativeColor) ? s.options.negativeColor : s.negativeColor;
                     savedSeries.push({
                         name: s.name,
                         origType: (s.type === 'line' || s.type === 'spline') ? 'line' : 'column',
                         color: sColor,
+                        negativeColor: sNegColor,
                         data: rawData,
                         yAxis: yAxisIdx,
                         stack: (s.options && s.options.stack) ? s.options.stack : null,
@@ -385,6 +387,31 @@
 
         var tramoNames = seriesToRender.map(function (s) { return s.name; });
 
+        // 1. Calcular el valor máximo y mínimo global entre los tramos a graficar (soportando números negativos)
+        var maxVal = -Infinity;
+        var minVal = Infinity;
+        seriesToRender.forEach(function (s) {
+            (s.data || []).forEach(function (pt) {
+                var num = (typeof pt === 'number') ? pt : (pt && typeof pt.y === 'number' ? pt.y : (Array.isArray(pt) ? pt[1] : 0));
+                var val = parseFloat(num);
+                if (!isNaN(val)) {
+                    if (val > maxVal) maxVal = val;
+                    if (val < minVal) minVal = val;
+                }
+            });
+        });
+        if (maxVal === -Infinity) maxVal = 1;
+        if (minVal === Infinity) minVal = 0;
+
+        var hasNegative = (minVal < -0.000001);
+        var maxMagnitude = Math.max(Math.abs(maxVal), Math.abs(minVal));
+        if (maxMagnitude <= 0) maxMagnitude = 1;
+
+        // Umbral sutil de altura mínima visible para barras pequeñas sin crear muros que tapen filas traseras
+        var minFloor = maxMagnitude * 0.025;
+        var isChartPercent = (orig.isPercent && maxVal <= 100 && minVal >= -100);
+        var numColSeries = colSeries.length;
+
         // Totales periódicos para porcentaje
         var periodTotals = [];
         cats.forEach(function (cat, xIdx) {
@@ -397,31 +424,18 @@
                     else if (pt && typeof pt.y === 'number') v = pt.y;
                     else if (Array.isArray(pt) && typeof pt[1] === 'number') v = pt[1];
                 }
-                tot += Math.max(0, v || 0);
+                var numV = parseFloat(v);
+                if (!isNaN(numV)) {
+                    tot += (!hasNegative ? Math.max(0, numV) : numV);
+                }
             });
             periodTotals[xIdx] = tot;
         });
 
-        // 1. Calcular el valor máximo global entre los tramos a graficar
-        var maxVal = 0;
-        seriesToRender.forEach(function (s) {
-            (s.data || []).forEach(function (pt) {
-                var num = (typeof pt === 'number') ? pt : (pt && typeof pt.y === 'number' ? pt.y : (Array.isArray(pt) ? pt[1] : 0));
-                var val = Math.max(0, parseFloat(num) || 0);
-                if (val > maxVal) maxVal = val;
-            });
-        });
-        if (maxVal <= 0) maxVal = 1;
-
-        // Umbral sutil de altura mínima visible para barras con saldo > 0 sin crear muros que tapen filas traseras
-        var minFloor = maxVal * 0.025;
-        var isChartPercent = (orig.isPercent && maxVal <= 100);
-        var numColSeries = colSeries.length;
-
-        // 2. Construir datos en formato [xIdx, yIdx, zVal] respetando colores institucionales
+        // 2. Construir datos en formato [xIdx, yIdx, zVal] respetando colores institucionales y soporte de negativos
         var data3D = [];
         seriesToRender.forEach(function (s, yIdx) {
-            var col = window.obtenerColorInstitucional(s.name, yIdx, s.color);
+            var colBase = window.obtenerColorInstitucional(s.name, yIdx, s.color);
             cats.forEach(function (cat, xIdx) {
                 var v = 0;
                 if (s.data && s.data.length > xIdx) {
@@ -430,14 +444,37 @@
                     else if (pt && typeof pt.y === 'number') v = pt.y;
                     else if (Array.isArray(pt) && typeof pt[1] === 'number') v = pt[1];
                 }
-                v = Math.max(0, parseFloat(v) || 0);
-                var pTot = periodTotals[xIdx] || 0;
-                var pct = pTot > 0 ? ((v / pTot) * 100) : 0;
+                v = parseFloat(v);
+                if (isNaN(v)) v = 0;
 
-                // Solo graficar tramos con valor real > 0 para eliminar cubos fantasma en el suelo que desvíen el cursor
-                if (v > 0) {
-                    var zRender = (v < minFloor) ? (minFloor + ((v / minFloor) * (minFloor * 0.35))) : v;
-                    var esSoloPorcentaje = isChartPercent || (maxVal <= 100 && (Math.abs(v - pct) < 0.05 || Math.abs(v - pct) < 25));
+                // Solo graficar barras con valor distinto de 0 para eliminar cubos planos fantasma en el suelo
+                if (Math.abs(v) > 0.000001) {
+                    var isNeg = (v < 0);
+                    var zRender = v;
+                    if (isNeg) {
+                        if (Math.abs(v) < minFloor) {
+                            zRender = -(minFloor + ((Math.abs(v) / minFloor) * (minFloor * 0.35)));
+                        }
+                    } else {
+                        if (v < minFloor) {
+                            zRender = (minFloor + ((v / minFloor) * (minFloor * 0.35)));
+                        }
+                    }
+
+                    var pTot = periodTotals[xIdx] || 0;
+                    var pct = (!hasNegative && pTot > 0) ? ((v / pTot) * 100) : 0;
+                    var esSoloPorcentaje = isChartPercent || (maxMagnitude <= 100 && (Math.abs(v - pct) < 0.05 || Math.abs(v - pct) < 25));
+
+                    // Color del punto: respeta negativeColor si existe, o rojo suave institucional para serie única negativa
+                    var col = colBase;
+                    if (isNeg) {
+                        if (s.negativeColor) {
+                            col = s.negativeColor;
+                        } else if (numColSeries === 1) {
+                            col = '#ef4444';
+                        }
+                    }
+
                     data3D.push({
                         name: cat + ' - ' + s.name,
                         value: [xIdx, yIdx, zRender],
@@ -446,7 +483,8 @@
                         mes: cat,
                         pct: pct,
                         isPercent: esSoloPorcentaje,
-                        hasMultipleSeries: (numColSeries > 1),
+                        hasNegative: hasNegative,
+                        hasMultipleSeries: (numColSeries > 1 && !hasNegative),
                         itemStyle: {
                             color: col,
                             opacity: 0.96
@@ -467,7 +505,7 @@
         // Dimensiones calibradas para que el gráfico 3D aproveche el ancho sin desbordarse
         var dynamicBoxWidth = Math.max(240, Math.min(295, numCats * 22));
         var dynamicBoxDepth = Math.max(105, Math.min(150, numTramos * 25));
-        var dynamicBoxHeight = 65;
+        var dynamicBoxHeight = hasNegative ? 85 : 65;
 
         var chartFontFamily = '"Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", Arial, sans-serif';
 
@@ -494,7 +532,7 @@
                     if (!d) return '';
                     var valReal = (typeof d.realVal !== 'undefined') ? d.realVal : d.value[2];
                     var isPct = d.isPercent;
-                    var truePct = (isPct && valReal > 0 && valReal <= 100) ? valReal : (d.pct > 0 ? d.pct : valReal);
+                    var truePct = isPct ? valReal : (d.pct > 0 ? d.pct : valReal);
                     var valFormatted = (typeof Highcharts !== 'undefined' && Highcharts.numberFormat) ? Highcharts.numberFormat(valReal, 2, '.', ',') : valReal.toFixed(2);
                     var pctFormatted = (typeof Highcharts !== 'undefined' && Highcharts.numberFormat) ? Highcharts.numberFormat(truePct, 2, '.', ',') : truePct.toFixed(2);
                     var sColor = (d.itemStyle && d.itemStyle.color) ? d.itemStyle.color : '#0284c7';
@@ -514,7 +552,7 @@
                         html += '<td class="tt-name">' + d.tramo + ':</td>';
                         html += '<td class="tt-val">' + valFormatted + '</td>';
                         html += '</tr>';
-                        if (d.hasMultipleSeries && d.pct > 0 && d.pct < 100) {
+                        if (d.hasMultipleSeries && d.pct > 0 && d.pct < 100 && !d.hasNegative) {
                             html += '<tr>';
                             html += '<td class="tt-bullet" style="color:#0284c7;">&#9679;</td>';
                             html += '<td class="tt-name">Concentración:</td>';
@@ -580,7 +618,9 @@
             },
             zAxis3D: {
                 type: 'value',
-                name: 'Saldo',
+                name: (isChartPercent ? '%' : 'Saldo'),
+                min: hasNegative ? (minVal < 0 ? Math.floor(minVal - Math.abs(minVal) * 0.1) : 0) : 0,
+                max: hasNegative ? (maxVal > 0 ? Math.ceil(maxVal + Math.abs(maxVal) * 0.1) : 0) : null,
                 nameTextStyle: {
                     color: '#475569',
                     fontSize: 12,
@@ -662,20 +702,25 @@
                         var valReal = (typeof d.realVal !== 'undefined') ? d.realVal : (d.value ? d.value[2] : 0);
                         var pctVal = (typeof d.pct !== 'undefined') ? d.pct : 0;
                         var isPct = d.isPercent;
-                        var truePct = (isPct && valReal > 0 && valReal <= 100) ? valReal : pctVal;
+                        var truePct = isPct ? valReal : pctVal;
 
                         if (isPct) {
-                            if (truePct < 0.1 && truePct > 0) return '<0.1%';
+                            var absPct = Math.abs(truePct);
+                            var signPct = truePct < 0 ? '-' : '';
+                            if (absPct < 0.1 && absPct > 0) return signPct + '<0.1%';
                             return truePct.toFixed(1) + '%';
                         }
 
-                        // Formateo para valores numéricos o saldo
-                        if (valReal >= 1000000) {
-                            var enMillones = (valReal / 1000000);
-                            return enMillones.toLocaleString('es-CR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + 'M';
-                        } else if (valReal >= 1000) {
-                            return Math.round(valReal).toLocaleString('es-CR');
-                        } else if (valReal % 1 !== 0) {
+                        // Formateo para valores numéricos o saldo (con soporte de números negativos)
+                        var absVal = Math.abs(valReal);
+                        var sign = valReal < 0 ? '-' : '';
+
+                        if (absVal >= 1000000) {
+                            var enMillones = (absVal / 1000000);
+                            return sign + enMillones.toLocaleString('es-CR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + 'M';
+                        } else if (absVal >= 1000) {
+                            return sign + Math.round(absVal).toLocaleString('es-CR');
+                        } else if (absVal % 1 !== 0) {
                             return valReal.toLocaleString('es-CR', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
                         } else {
                             return Math.round(valReal).toString();
@@ -711,7 +756,7 @@
                             var valReal = (typeof d.realVal !== 'undefined') ? d.realVal : (d.value ? d.value[2] : 0);
                             var pctVal = (typeof d.pct !== 'undefined') ? d.pct : 0;
                             var isPct = d.isPercent;
-                            var truePct = (isPct && valReal > 0 && valReal <= 100) ? valReal : pctVal;
+                            var truePct = isPct ? valReal : pctVal;
 
                             if (isPct) {
                                 return truePct.toFixed(2) + '%';
@@ -724,7 +769,7 @@
                                 ? Highcharts.numberFormat(pctVal, 2, '.', ',')
                                 : pctVal.toFixed(2);
 
-                            if (d.hasMultipleSeries && pctVal > 0 && pctVal < 100) {
+                            if (d.hasMultipleSeries && pctVal > 0 && pctVal < 100 && !d.hasNegative) {
                                 return valFormatted + ' (' + pctFormatted + '%)';
                             }
                             return valFormatted;
