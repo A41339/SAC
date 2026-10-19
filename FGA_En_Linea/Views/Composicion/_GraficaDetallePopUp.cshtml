@@ -196,23 +196,20 @@
 <script type="text/javascript">
     window.obtenerGraficoActivo = function (containerId) {
         if (typeof Highcharts === 'undefined' || !Highcharts.charts) return null;
-        var cont = document.getElementById(containerId);
-        if (!cont) return null;
-        var $cont = $(cont);
+        var sel = (containerId && containerId.charAt(0) === '#') ? containerId : '#' + containerId;
+        var $cont = $(sel);
+        if (!$cont.length) return null;
 
         for (var i = Highcharts.charts.length - 1; i >= 0; i--) {
             var ch = Highcharts.charts[i];
             if (!ch) continue;
-            var elem = ch.container || ((typeof ch.renderTo === 'string') ? document.getElementById(ch.renderTo.replace(/^#/, '')) : ch.renderTo);
-            if (!elem || !document.body.contains(elem)) continue;
-
-            if (cont.contains(elem) || $cont.has(elem).length > 0) {
-                return ch;
-            }
-            var rTo = (ch.options && ch.options.chart && ch.options.chart.renderTo) ? ch.options.chart.renderTo : (typeof ch.renderTo === 'string' ? ch.renderTo : (ch.renderTo ? ch.renderTo.id : ''));
-            if (rTo && ($cont.attr('id') === rTo || $cont.find('#' + rTo.replace(/^#/, '')).length > 0)) {
-                return ch;
-            }
+            var elem = (typeof getHighchartsRenderElement === 'function') ? getHighchartsRenderElement(ch) : (ch.container || ((typeof ch.renderTo === 'string') ? document.getElementById(ch.renderTo.replace(/^#/, '')) : ch.renderTo));
+            if (!elem) continue;
+            try {
+                if ($cont.has(elem).length > 0 || $(elem).closest($cont).length > 0 || elem === $cont[0]) {
+                    return ch;
+                }
+            } catch (ex) {}
         }
         return null;
     };
@@ -226,10 +223,6 @@
         }
         if (entText) {
             $("#pSubEntidad").text(entText);
-        }
-        var mChart = window.obtenerGraficoActivo('modalHighchartsContainer') || window.obtenerGraficoActivo('container');
-        if (mChart) {
-            window.guardarConfiguracionOriginal(mChart);
         }
         $('#mPopUp').modal('show');
     }
@@ -434,8 +427,8 @@
                 for (var i = Highcharts.charts.length - 1; i >= 0; i--) {
                     var ch = Highcharts.charts[i];
                     if (!ch) continue;
-                    var elem = ch.container || ((typeof ch.renderTo === 'string') ? document.getElementById(ch.renderTo.replace(/^#/, '')) : ch.renderTo);
-                    if (elem && document.body.contains(elem)) {
+                    var elem = (typeof getHighchartsRenderElement === 'function') ? getHighchartsRenderElement(ch) : (ch.container || ((typeof ch.renderTo === 'string') ? document.getElementById(ch.renderTo.replace(/^#/, '')) : ch.renderTo));
+                    if (elem && $(document.body).has(elem).length > 0) {
                         window.guardarConfiguracionOriginal(ch);
                         if (ch._fgaOriginalConfig && ch._fgaOriginalConfig.categories && ch._fgaOriginalConfig.categories.length > 0) {
                             chartOrig = ch;
@@ -1532,8 +1525,8 @@
                     for (var i = Highcharts.charts.length - 1; i >= 0; i--) {
                         var c = Highcharts.charts[i];
                         if (!c) continue;
-                        var elem = c.container || ((typeof c.renderTo === 'string') ? document.getElementById(c.renderTo.replace(/^#/, '')) : c.renderTo);
-                        if (elem && document.body.contains(elem)) {
+                        var elem = (typeof getHighchartsRenderElement === 'function') ? getHighchartsRenderElement(c) : (c.container || ((typeof c.renderTo === 'string') ? document.getElementById(c.renderTo.replace(/^#/, '')) : c.renderTo));
+                        if (elem && $(document.body).has(elem).length > 0) {
                             window.guardarConfiguracionOriginal(c);
                             if (c._fgaOriginalConfig && c._fgaOriginalConfig.categories && c._fgaOriginalConfig.categories.length > 0) {
                                 chartOrig = c;
@@ -1724,10 +1717,6 @@
                                 }
                             }
                             c.reflow();
-                        } catch (e) {}
-                    } else if (elem && ($(elem).closest('#modalHighchartsContainer').length || $(elem).closest('#mPopUp').length)) {
-                        try {
-                            window.guardarConfiguracionOriginal(c);
                         } catch (e) {}
                     }
                 });
