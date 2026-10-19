@@ -105,8 +105,26 @@
     });
 
     function refreshGraph() {
-         $('#grafica').html('<div style="text-align: center; padding: 40px 0; color: #64748b;"><i class="fa fa-spinner fa-spin fa-2x"></i><p style="margin-top: 10px; font-size: 13px;">Cargando gráfico...</p></div>');
-         $.ajax({
+        if (typeof Highcharts !== 'undefined' && Highcharts.charts) {
+            for (var i = Highcharts.charts.length - 1; i >= 0; i--) {
+                var c = Highcharts.charts[i];
+                if (c) {
+                    var el = c.container || ((typeof c.renderTo === 'string') ? document.getElementById(c.renderTo.replace(/^#/, '')) : c.renderTo);
+                    if (!el || !document.body.contains(el) || $('#grafica').find(el).length > 0) {
+                        try { c.destroy(); } catch (e) {}
+                        Highcharts.charts.splice(i, 1);
+                    }
+                }
+            }
+        }
+        if (typeof echarts !== 'undefined') {
+            var ec1 = echarts.getInstanceByDom(document.getElementById('echartsContainerCartera'));
+            if (ec1) try { ec1.dispose(); } catch (e) {}
+            var ec2 = echarts.getInstanceByDom(document.getElementById('echartsContainerModalCartera'));
+            if (ec2) try { ec2.dispose(); } catch (e) {}
+        }
+        $('#grafica').html('<div style="text-align: center; padding: 40px 0; color: #64748b;"><i class="fa fa-spinner fa-spin fa-2x"></i><p style="margin-top: 10px; font-size: 13px;">Cargando gráfico...</p></div>');
+        $.ajax({
             url: '@Url.Action("GraficaDetalle", "Cartera14_21")',
             type: 'POST',
             cache: false,

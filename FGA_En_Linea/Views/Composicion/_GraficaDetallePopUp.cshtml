@@ -194,6 +194,22 @@
 </div>
 
 <script type="text/javascript">
+    window.obtenerGraficoActivo = function (containerId) {
+        var cont = document.getElementById(containerId);
+        if (!cont) return null;
+        if (typeof Highcharts !== 'undefined' && Highcharts.charts) {
+            for (var i = Highcharts.charts.length - 1; i >= 0; i--) {
+                var ch = Highcharts.charts[i];
+                if (!ch) continue;
+                var elem = ch.container || ((typeof ch.renderTo === 'string') ? document.getElementById(ch.renderTo.replace(/^#/, '')) : ch.renderTo);
+                if (elem && cont.contains(elem)) {
+                    return ch;
+                }
+            }
+        }
+        return null;
+    };
+
     function mPopUp() {
         window._modalSelectedSeriesIdx = undefined;
         var entText = $("#IdEntidad :selected").text() || '';
@@ -203,6 +219,10 @@
         }
         if (entText) {
             $("#pSubEntidad").text(entText);
+        }
+        var mChart = window.obtenerGraficoActivo('modalHighchartsContainer') || window.obtenerGraficoActivo('container');
+        if (mChart) {
+            window.guardarConfiguracionOriginal(mChart);
         }
         $('#mPopUp').modal('show');
     }
@@ -245,47 +265,6 @@
     window.guardarConfiguracionOriginal = function (chart) {
         if (!chart || chart._fgaOriginalConfig) return;
         try {
-            var savedSeries = [];
-            if (chart.series && chart.series.length > 0) {
-                chart.series.forEach(function (s, idx) {
-                    var rawData = [];
-                    if (s.options && s.options.data) {
-                        rawData = JSON.parse(JSON.stringify(s.options.data));
-                    } else if (s.data) {
-                        rawData = s.data.map(function (pt) {
-                            if (typeof pt === 'number') return pt;
-                            if (pt && typeof pt.y === 'number') return pt.y;
-                            if (Array.isArray(pt)) return pt[1];
-                            return pt;
-                        });
-                    }
-                    var yAxisIdx = 0;
-                    if (s.yAxis) {
-                        if (typeof s.yAxis.options.index === 'number') yAxisIdx = s.yAxis.options.index;
-                        else if (s.yAxis.options.id === 'Concentracion') yAxisIdx = 0;
-                        else if (chart.yAxis && chart.yAxis.indexOf(s.yAxis) >= 0) yAxisIdx = chart.yAxis.indexOf(s.yAxis);
-                    }
-                    var sColor = s.color || window.coloresPlano2D[idx % window.coloresPlano2D.length];
-                    var sNegColor = (s.options && s.options.negativeColor) ? s.options.negativeColor : s.negativeColor;
-                    savedSeries.push({
-                        name: s.name,
-                        origType: (s.type === 'line' || s.type === 'spline') ? 'line' : 'column',
-                        color: sColor,
-                        negativeColor: sNegColor,
-                        data: rawData,
-                        yAxis: yAxisIdx,
-                        stack: (s.options && s.options.stack) ? s.options.stack : null,
-                        dashStyle: (s.options && s.options.dashStyle) ? s.options.dashStyle : null,
-                        zIndex: (s.options && s.options.zIndex !== undefined) ? s.options.zIndex : idx
-                    });
-                });
-            }
-
-            var savedCats = [];
-            if (chart.xAxis && chart.xAxis[0] && chart.xAxis[0].categories) {
-                savedCats = chart.xAxis[0].categories.slice();
-            }
-
             var isPercentChart = false;
             try {
                 if (chart.options && chart.options.plotOptions) {
@@ -324,6 +303,70 @@
                 }
             } catch (e) {}
 
+            var savedSeries = [];
+            if (chart.series && chart.series.length > 0) {
+                chart.series.forEach(function (s, idx) {
+                    var rawData = [];
+                    if (s.options && s.options.data) {
+                        rawData = JSON.parse(JSON.stringify(s.options.data));
+                    } else if (s.data) {
+                        rawData = s.data.map(function (pt) {
+                            if (typeof pt === 'number') return pt;
+                            if (pt && typeof pt.y === 'number') return pt.y;
+                            if (Array.isArray(pt)) return pt[1];
+                            return pt;
+                        });
+                    }
+                    var yAxisIdx = 0;
+                    if (s.yAxis) {
+                        if (typeof s.yAxis.options.index === 'number') yAxisIdx = s.yAxis.options.index;
+                        else if (s.yAxis.options.id === 'Concentracion') yAxisIdx = 0;
+                        else if (chart.yAxis && chart.yAxis.indexOf(s.yAxis) >= 0) yAxisIdx = chart.yAxis.indexOf(s.yAxis);
+                    }
+
+                    var isSeriesPercent = isPercentChart;
+                    if (s.yAxis && s.yAxis.options) {
+                        var yTitle = (s.yAxis.options.title && s.yAxis.options.title.text) ? s.yAxis.options.title.text.toLowerCase() : '';
+                        if (yTitle.indexOf('porcent') > -1 || yTitle.indexOf('concentrac') > -1 || yTitle.indexOf('%') > -1 || yTitle.indexOf('variacion') > -1) {
+                            isSeriesPercent = true;
+                        }
+                        var yLabels = s.yAxis.options.labels;
+                        if (yLabels && yLabels.formatter) {
+                            var fName = (yLabels.formatter.name || '').toLowerCase();
+                            if (fName.indexOf('percent') > -1) isSeriesPercent = true;
+                            if (fName.indexOf('million') > -1) isSeriesPercent = false;
+                        }
+                    }
+                    var sNameLower = (s.name || '').toLowerCase();
+                    if (sNameLower.indexOf('en millones') > -1 || sNameLower.indexOf('monto') > -1 || sNameLower.indexOf('saldo') > -1) {
+                        isSeriesPercent = false;
+                    }
+                    if (sNameLower.indexOf('%') > -1 || sNameLower.indexOf('porcent') > -1 || sNameLower.indexOf('variación') > -1 || sNameLower.indexOf('variacion') > -1) {
+                        isSeriesPercent = true;
+                    }
+
+                    var sColor = s.color || window.coloresPlano2D[idx % window.coloresPlano2D.length];
+                    var sNegColor = (s.options && s.options.negativeColor) ? s.options.negativeColor : s.negativeColor;
+                    savedSeries.push({
+                        name: s.name,
+                        origType: (s.type === 'line' || s.type === 'spline') ? 'line' : 'column',
+                        color: sColor,
+                        negativeColor: sNegColor,
+                        data: rawData,
+                        yAxis: yAxisIdx,
+                        isPercent: isSeriesPercent,
+                        stack: (s.options && s.options.stack) ? s.options.stack : null,
+                        dashStyle: (s.options && s.options.dashStyle) ? s.options.dashStyle : null,
+                        zIndex: (s.options && s.options.zIndex !== undefined) ? s.options.zIndex : idx
+                    });
+                });
+            }
+
+            var savedCats = [];
+            if (chart.xAxis && chart.xAxis[0] && chart.xAxis[0].categories) {
+                savedCats = chart.xAxis[0].categories.slice();
+            }
+
             chart._fgaOriginalConfig = {
                 series: savedSeries,
                 categories: savedCats,
@@ -351,12 +394,27 @@
 
         var chartOrig = chartSource;
         if (!chartOrig || !chartOrig._fgaOriginalConfig) {
+            var preferredContainer = (domId === 'echartsContainerModalCartera') ? 'modalHighchartsContainer' : 'container';
+            chartOrig = window.obtenerGraficoActivo(preferredContainer);
+            if (!chartOrig && domId === 'echartsContainerModalCartera') {
+                chartOrig = window.obtenerGraficoActivo('container');
+            }
+            if (chartOrig && !chartOrig._fgaOriginalConfig) {
+                window.guardarConfiguracionOriginal(chartOrig);
+            }
+        }
+        if (!chartOrig || !chartOrig._fgaOriginalConfig) {
             if (typeof Highcharts !== 'undefined' && Highcharts.charts) {
-                for (var i = 0; i < Highcharts.charts.length; i++) {
+                for (var i = Highcharts.charts.length - 1; i >= 0; i--) {
                     var ch = Highcharts.charts[i];
-                    if (ch && ch._fgaOriginalConfig && ch._fgaOriginalConfig.categories && ch._fgaOriginalConfig.categories.length > 0) {
-                        chartOrig = ch;
-                        break;
+                    if (!ch) continue;
+                    var elem = ch.container || ((typeof ch.renderTo === 'string') ? document.getElementById(ch.renderTo.replace(/^#/, '')) : ch.renderTo);
+                    if (elem && document.body.contains(elem)) {
+                        window.guardarConfiguracionOriginal(ch);
+                        if (ch._fgaOriginalConfig && ch._fgaOriginalConfig.categories && ch._fgaOriginalConfig.categories.length > 0) {
+                            chartOrig = ch;
+                            break;
+                        }
                     }
                 }
             }
@@ -464,7 +522,7 @@
 
                     var pTot = periodTotals[xIdx] || 0;
                     var pct = (!hasNegative && pTot > 0) ? ((v / pTot) * 100) : 0;
-                    var esSoloPorcentaje = isChartPercent || (maxMagnitude <= 100 && (Math.abs(v - pct) < 0.05 || Math.abs(v - pct) < 25));
+                    var esSoloPorcentaje = (typeof s.isPercent === 'boolean') ? s.isPercent : (isChartPercent || (maxMagnitude <= 100 && (Math.abs(v - pct) < 0.05 || Math.abs(v - pct) < 25)));
 
                     // Color del punto: respeta negativeColor si existe, o rojo suave institucional para serie única negativa
                     var col = colBase;
@@ -1322,29 +1380,31 @@
         // Actualizar botones de 3D
         window.actualizarEstiloBotones3D(window.cartera3DActivo);
 
-        if (typeof Highcharts !== 'undefined' && Highcharts.charts) {
-            Highcharts.charts.forEach(function (c) {
-                if (c) {
-                    window.aplicarTipoAGrafico(c, tipo);
-                }
-            });
+        var mainChart = window.obtenerGraficoActivo('container');
+        var modalChart = window.obtenerGraficoActivo('modalHighchartsContainer');
+
+        if (mainChart) {
+            window.guardarConfiguracionOriginal(mainChart);
+            window.aplicarTipoAGrafico(mainChart, tipo);
+        }
+        if (modalChart) {
+            window.guardarConfiguracionOriginal(modalChart);
+            window.aplicarTipoAGrafico(modalChart, tipo);
         }
 
         if (tipo !== 'matrix3d' && $('#mPopUp').hasClass('in')) {
             $('#modalHighchartsContainer').show();
             $('#echartsContainerModalCartera').hide();
             setTimeout(function () {
-                if (typeof Highcharts !== 'undefined' && Highcharts.charts) {
-                    Highcharts.charts.forEach(function (c) {
-                        if (c && c.container && ($(c.container).closest('#mPopUp').length || $(c.container).closest('#modalHighchartsContainer').length)) {
-                            var mW = $('#modalHighchartsContainer').width() || ($('#mPopUp .modal-body').width() - 36);
-                            if (mW && mW > 200) {
-                                c.setSize(mW, 600, false);
-                            }
-                            $(c.container).css({ 'width': '100%', 'height': '600px' });
-                            c.reflow();
-                        }
-                    });
+                if (modalChart) {
+                    var mW = $('#modalHighchartsContainer').width() || ($('#mPopUp .modal-body').width() - 36);
+                    if (mW && mW > 200) {
+                        modalChart.setSize(mW, 600, false);
+                    }
+                    if (modalChart.container) {
+                        $(modalChart.container).css({ 'width': '100%', 'height': '600px' });
+                    }
+                    modalChart.reflow();
                 }
             }, 100);
         }
@@ -1391,63 +1451,64 @@
     };
 
     $('#mPopUp').on('shown.bs.modal', function () {
+        var modalChart = window.obtenerGraficoActivo('modalHighchartsContainer') || window.obtenerGraficoActivo('container');
+        if (modalChart) {
+            window.guardarConfiguracionOriginal(modalChart);
+        }
+
         if (window.tipoGraficoActual === 'matrix3d') {
             $('#modalHighchartsContainer').hide();
             $('#echartsContainerModalCartera').show();
             setTimeout(function () {
-                window.renderEChartsMatrix3D('echartsContainerModalCartera');
+                window.renderEChartsMatrix3D('echartsContainerModalCartera', modalChart);
                 window.actualizarKpiModalComposicion();
             }, 80);
             return;
         }
 
-        if (typeof Highcharts !== 'undefined') {
-            Highcharts.charts.forEach(function (chart) {
-                if (!chart) return;
-                var elem = (typeof getHighchartsRenderElement === 'function') ? getHighchartsRenderElement(chart) : (chart.renderTo ? (typeof chart.renderTo === 'string' ? document.getElementById(chart.renderTo.replace(/^#/, '')) : chart.renderTo) : null);
-                if ((elem && $(elem).closest('#mPopUp').length) || (chart.container && ($(chart.container).closest('#mPopUp').length || $(chart.container).closest('#modalHighchartsContainer').length))) {
-                    window.guardarConfiguracionOriginal(chart);
-                    window.aplicarTipoAGrafico(chart, window.tipoGraficoActual, true);
-                    
-                    var mW = $('#modalHighchartsContainer').width() || $('#mPopUp .modal-body').width();
-                    if (mW && mW > 200) {
-                        chart.setSize(mW, 600, false);
-                    }
-                    if (chart.container) {
-                        $(chart.container).css({ 'width': '100%', 'height': '600px' });
-                    }
-                    chart.reflow();
-                }
-            });
-
-            setTimeout(function () {
-                if (typeof Highcharts !== 'undefined' && Highcharts.charts) {
-                    Highcharts.charts.forEach(function (chart) {
-                        if (!chart) return;
-                        var elem = (typeof getHighchartsRenderElement === 'function') ? getHighchartsRenderElement(chart) : (chart.renderTo ? (typeof chart.renderTo === 'string' ? document.getElementById(chart.renderTo.replace(/^#/, '')) : chart.renderTo) : null);
-                        if ((elem && $(elem).closest('#mPopUp').length) || (chart.container && ($(chart.container).closest('#mPopUp').length || $(chart.container).closest('#modalHighchartsContainer').length))) {
-                            var curW = $('#modalHighchartsContainer').width() || $('#mPopUp .modal-body').width();
-                            if (curW && curW > 200) {
-                                chart.setSize(curW, 600, false);
-                            }
-                            chart.reflow();
-                        }
-                    });
-                }
-                window.actualizarKpiModalComposicion();
-            }, 120);
+        if (modalChart) {
+            window.aplicarTipoAGrafico(modalChart, window.tipoGraficoActual, true);
+            var mW = $('#modalHighchartsContainer').width() || $('#mPopUp .modal-body').width();
+            if (mW && mW > 200) {
+                modalChart.setSize(mW, 600, false);
+            }
+            if (modalChart.container) {
+                $(modalChart.container).css({ 'width': '100%', 'height': '600px' });
+            }
+            modalChart.reflow();
         }
+
+        setTimeout(function () {
+            if (modalChart) {
+                var curW = $('#modalHighchartsContainer').width() || $('#mPopUp .modal-body').width();
+                if (curW && curW > 200) {
+                    modalChart.setSize(curW, 600, false);
+                }
+                modalChart.reflow();
+            }
+            window.actualizarKpiModalComposicion();
+        }, 120);
     });
 
     window.actualizarKpiModalComposicion = function () {
         try {
-            var chartOrig = null;
-            if (typeof Highcharts !== 'undefined' && Highcharts.charts) {
-                for (var i = 0; i < Highcharts.charts.length; i++) {
-                    var c = Highcharts.charts[i];
-                    if (c && c._fgaOriginalConfig && c._fgaOriginalConfig.categories && c._fgaOriginalConfig.categories.length > 0) {
-                        chartOrig = c;
-                        break;
+            var chartOrig = window.obtenerGraficoActivo('modalHighchartsContainer') || window.obtenerGraficoActivo('container');
+            if (chartOrig && !chartOrig._fgaOriginalConfig) {
+                window.guardarConfiguracionOriginal(chartOrig);
+            }
+            if (!chartOrig || !chartOrig._fgaOriginalConfig) {
+                if (typeof Highcharts !== 'undefined' && Highcharts.charts) {
+                    for (var i = Highcharts.charts.length - 1; i >= 0; i--) {
+                        var c = Highcharts.charts[i];
+                        if (!c) continue;
+                        var elem = c.container || ((typeof c.renderTo === 'string') ? document.getElementById(c.renderTo.replace(/^#/, '')) : c.renderTo);
+                        if (elem && document.body.contains(elem)) {
+                            window.guardarConfiguracionOriginal(c);
+                            if (c._fgaOriginalConfig && c._fgaOriginalConfig.categories && c._fgaOriginalConfig.categories.length > 0) {
+                                chartOrig = c;
+                                break;
+                            }
+                        }
                     }
                 }
             }
@@ -1460,16 +1521,12 @@
             };
 
             function renderComposicionKpi(selectedIdx) {
-                var modalCharts = Highcharts.charts.filter(function (c) {
-                    var elem = (typeof getHighchartsRenderElement === 'function') ? getHighchartsRenderElement(c) : (c && typeof c.renderTo === 'string' ? document.getElementById(c.renderTo.replace(/^#/, '')) : (c ? c.renderTo : null));
-                    return c && elem && $(elem).closest('#mPopUp').length && c.series && c.series.length > 0;
-                });
-                var chart = (modalCharts.length > 0) ? modalCharts[0] : chartOrig;
+                var chart = window.obtenerGraficoActivo('modalHighchartsContainer') || chartOrig;
                 if (!chart) return;
 
-                var seriesList = (modalCharts.length > 0 && modalCharts[0].series && modalCharts[0].series.length > 0)
-                    ? modalCharts[0].series
-                    : (orig.series || []);
+                var seriesList = (orig.series && orig.series.length > 0)
+                    ? orig.series
+                    : (chart.series || []);
                 if (seriesList.length === 0) return;
 
                 var seriesIdx = 0;
@@ -1511,17 +1568,7 @@
                 var maxVal = Math.max.apply(null, rawData);
 
                 var sName = s.name || '';
-                var yLabelsFormatter = '';
-                try {
-                    if (s.yAxis && s.yAxis.options && s.yAxis.options.labels && s.yAxis.options.labels.formatter) {
-                        yLabelsFormatter = s.yAxis.options.labels.formatter.toString();
-                    }
-                } catch (e) {}
-
-                var isPct = !!(orig.isPercent ||
-                            (sName.indexOf('%') > -1) ||
-                            (s.yAxis && s.yAxis.options && s.yAxis.options.title && s.yAxis.options.title.text && (s.yAxis.options.title.text.indexOf('Porcent') > -1 || s.yAxis.options.title.text.indexOf('Concentrac') > -1)) ||
-                            (yLabelsFormatter.indexOf('formatPercent') > -1 || yLabelsFormatter.indexOf('%') > -1));
+                var isPct = (typeof s.isPercent === 'boolean') ? s.isPercent : !!(orig.isPercent || (sName.indexOf('%') > -1));
                 var suf = isPct ? '%' : '';
 
                 var isPos = diff >= 0;
@@ -1643,6 +1690,10 @@
                                 }
                             }
                             c.reflow();
+                        } catch (e) {}
+                    } else if (elem && ($(elem).closest('#modalHighchartsContainer').length || $(elem).closest('#mPopUp').length)) {
+                        try {
+                            window.guardarConfiguracionOriginal(c);
                         } catch (e) {}
                     }
                 });
