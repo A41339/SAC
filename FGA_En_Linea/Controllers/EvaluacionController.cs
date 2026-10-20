@@ -9,6 +9,8 @@ using FGA.Model;
 using Newtonsoft.Json;
 using System.IO;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Web.Hosting;
 
 namespace FGA.Controllers
 {
@@ -893,26 +895,53 @@ namespace FGA.Controllers
 
         private string GetPlanRemediacionDir()
         {
-            string path = null;
+            // 1. Intentar leer desde dbo.Parametros
+            string ruta = null;
             try
             {
-                if (System.Web.HttpContext.Current != null && System.Web.HttpContext.Current.Server != null)
-                {
-                    path = System.Web.HttpContext.Current.Server.MapPath("~/Uploads/PlanesRemediacion");
-                }
+                ruta = GetValorParametro(Utility.Utilitarios.Ruta_Planes_Remediacion);
             }
             catch { }
 
-            if (string.IsNullOrEmpty(path))
+            // 2. Si no esta en BD, leer desde Web.config (appSettings)
+            if (string.IsNullOrWhiteSpace(ruta))
             {
-                path = @"C:\inetpub\wwwroot\FFC2\Uploads\PlanesRemediacion";
+                try
+                {
+                    ruta = ConfigurationManager.AppSettings["RutaPlanesRemediacion"];
+                }
+                catch { }
             }
 
-            if (!Directory.Exists(path))
+            // 3. Fallback dinamico relativo si no existe configuracion
+            if (string.IsNullOrWhiteSpace(ruta))
             {
-                Directory.CreateDirectory(path);
+                ruta = "~/Uploads/PlanesRemediacion";
             }
-            return path;
+
+            // 4. Si es ruta virtual relativa de ASP.NET (~/...), mapearla al servidor fisico
+            string rutaFisica = ruta;
+            if (ruta.StartsWith("~"))
+            {
+                try
+                {
+                    if (System.Web.HttpContext.Current != null && System.Web.HttpContext.Current.Server != null)
+                    {
+                        rutaFisica = System.Web.HttpContext.Current.Server.MapPath(ruta);
+                    }
+                    else if (HostingEnvironment.IsHosted)
+                    {
+                        rutaFisica = HostingEnvironment.MapPath(ruta);
+                    }
+                }
+                catch { }
+            }
+
+            if (!Directory.Exists(rutaFisica))
+            {
+                Directory.CreateDirectory(rutaFisica);
+            }
+            return rutaFisica;
         }
 
         private PlanRemediacionMetadata ObtenerMetadataPlan(string idEntidad)
