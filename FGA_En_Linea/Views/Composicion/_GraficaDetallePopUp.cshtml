@@ -118,6 +118,7 @@
             <div style="display: inline-flex; align-items: center; gap: 2px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 2px 4px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
                 <button type="button" class="btn-preset-3d active" onclick="window.setPresetAngulo3D(48, 0, 225, this)" style="height: 24px; padding: 0 10px; font-size: 11px; font-weight: 700; border: none; background: #e0f2fe; color: #0369a1; cursor: pointer; border-radius: 4px; transition: all 0.15s ease;" title="Vista frontal aérea calibrada sin oclusiones">Aérea 48°</button>
                 <button type="button" class="btn-preset-3d" onclick="window.setPresetAngulo3D(15, 0, 235, this)" style="height: 24px; padding: 0 10px; font-size: 11px; font-weight: 600; border: none; background: transparent; color: #475569; cursor: pointer; border-radius: 4px; transition: all 0.15s ease;" title="Vista frontal para comparar alturas de barras">Frontal</button>
+                <button type="button" class="btn-preset-3d" onclick="window.setPresetAngulo3D(28, 40, 230, this)" style="height: 24px; padding: 0 10px; font-size: 11px; font-weight: 600; border: none; background: transparent; color: #475569; cursor: pointer; border-radius: 4px; transition: all 0.15s ease;" title="Vista isométrica tridimensional equilibrada">Isométrica</button>
             </div>
         </div>
         <div style="display: inline-flex; align-items: center; gap: 6px; background: #ffffff; border: 1px solid #e2e8f0; padding: 4px 11px; border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.02);">
@@ -171,6 +172,7 @@
                     <div style="display: inline-flex; align-items: center; gap: 2px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 2px 4px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
                         <button type="button" class="btn-preset-3d active" onclick="window.setPresetAngulo3D(48, 0, 225, this)" style="height: 24px; padding: 0 10px; font-size: 11px; font-weight: 700; border: none; background: #e0f2fe; color: #0369a1; cursor: pointer; border-radius: 4px; transition: all 0.15s ease;" title="Vista frontal aérea calibrada sin oclusiones">Aérea 48°</button>
                         <button type="button" class="btn-preset-3d" onclick="window.setPresetAngulo3D(15, 0, 235, this)" style="height: 24px; padding: 0 10px; font-size: 11px; font-weight: 600; border: none; background: transparent; color: #475569; cursor: pointer; border-radius: 4px; transition: all 0.15s ease;" title="Vista frontal para comparar alturas de barras">Frontal</button>
+                <button type="button" class="btn-preset-3d" onclick="window.setPresetAngulo3D(28, 40, 230, this)" style="height: 24px; padding: 0 10px; font-size: 11px; font-weight: 600; border: none; background: transparent; color: #475569; cursor: pointer; border-radius: 4px; transition: all 0.15s ease;" title="Vista isométrica tridimensional equilibrada">Isométrica</button>
                     </div>
                 </div>
                 <div style="display: inline-flex; align-items: center; gap: 6px; background: #ffffff; border: 1px solid #e2e8f0; padding: 4px 11px; border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.02);">
@@ -565,7 +567,7 @@
                         hasMultipleSeries: (numColSeries > 1 && !hasNegative),
                         itemStyle: {
                             color: col,
-                            opacity: 0.96
+                            opacity: 0.98
                         }
                     });
                 }
@@ -684,9 +686,16 @@
                         fontFamily: chartFontFamily
                     }
                 },
-                axisLine: { show: true, lineStyle: { color: '#94a3b8', width: 1.5 } },
-                axisTick: { show: true, lineStyle: { color: '#94a3b8', width: 1.5 } },
-                splitLine: { show: false }
+                axisLine: { show: true, lineStyle: { color: '#cbd5e1', width: 1.2 } },
+                axisTick: { show: true, lineStyle: { color: '#cbd5e1', width: 1 } },
+                splitLine: {
+                    show: true,
+                    lineStyle: {
+                        color: 'rgba(226, 232, 240, 0.7)',
+                        width: 1,
+                        type: 'dashed'
+                    }
+                }
             },
             yAxis3D: {
                 type: 'category',
@@ -707,8 +716,15 @@
                         fontFamily: chartFontFamily
                     }
                 },
-                axisLine: { lineStyle: { color: '#94a3b8', width: 1.5 } },
-                splitLine: { show: false }
+                axisLine: { lineStyle: { color: '#cbd5e1', width: 1.2 } },
+                splitLine: {
+                    show: true,
+                    lineStyle: {
+                        color: 'rgba(226, 232, 240, 0.7)',
+                        width: 1,
+                        type: 'dashed'
+                    }
+                }
             },
             zAxis3D: {
                 type: 'value',
@@ -734,8 +750,15 @@
                         fontFamily: chartFontFamily
                     }
                 },
-                axisLine: { lineStyle: { color: '#94a3b8', width: 1.5 } },
-                splitLine: { show: false }
+                axisLine: { lineStyle: { color: '#cbd5e1', width: 1.2 } },
+                splitLine: {
+                    show: true,
+                    lineStyle: {
+                        color: 'rgba(226, 232, 240, 0.7)',
+                        width: 1,
+                        type: 'dashed'
+                    }
+                }
             },
             grid3D: {
                 boxWidth: dynamicBoxWidth,
@@ -760,19 +783,22 @@
                 },
                 light: {
                     main: {
-                        intensity: 1.35,
+                        intensity: 1.25,
                         shadow: true,
-                        shadowQuality: 'high',
-                        alpha: 45,
-                        beta: -30
+                        shadowQuality: 'ultra',
+                        alpha: 50,
+                        beta: -25
                     },
                     ambient: {
-                        intensity: 0.72 // Iluminación ambiental limpia y balanceada
+                        intensity: 0.85 // Iluminación ambiental equilibrada estilo estudio
                     }
                 },
                 environment: '#ffffff',
                 postEffect: {
-                    enable: false // Desactivado para garantizar fondo 100% blanco puro sin viñetas oscuras
+                    enable: true,
+                    FXAA: {
+                        enable: true // Antialiasing de alta definición para suavizar aristas en pantalla
+                    }
                 }
             },
             series: [{
@@ -780,14 +806,14 @@
                 data: data3D,
                 shading: 'realistic',
                 realisticMaterial: {
-                    roughness: 0.24,
-                    metalness: 0.08
+                    roughness: 0.36, // Acabado satinado mate de alta definición
+                    metalness: 0.05
                 },
-                bevelSize: 0.35,
-                bevelSegments: 3,
+                bevelSize: 0.45, // Biselado redondeado suave
+                bevelSegments: 5,
                 label: {
                     show: true,
-                    distance: 2,
+                    distance: 3.5,
                     formatter: function (params) {
                         var d = params.data;
                         if (!d) return ' ';
@@ -819,24 +845,30 @@
                         }
                     },
                     color: '#0f172a',
-                    fontSize: 10,
+                    fontSize: 9.5,
                     fontWeight: '700',
                     fontFamily: chartFontFamily,
-                    backgroundColor: 'rgba(255, 255, 255, 0.92)',
-                    borderColor: '#cbd5e1',
+                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                    borderColor: 'rgba(203, 213, 225, 0.85)',
                     borderWidth: 1,
-                    borderRadius: 3,
-                    padding: [2, 4],
+                    borderRadius: 4,
+                    padding: [2, 5],
+                    shadowColor: 'rgba(15, 23, 42, 0.08)',
+                    shadowBlur: 3,
+                    shadowOffsetY: 1,
                     textStyle: {
                         color: '#0f172a',
-                        fontSize: 10,
+                        fontSize: 9.5,
                         fontWeight: '700',
                         fontFamily: chartFontFamily,
-                        backgroundColor: 'rgba(255, 255, 255, 0.92)',
-                        borderColor: '#cbd5e1',
+                        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                        borderColor: 'rgba(203, 213, 225, 0.85)',
                         borderWidth: 1,
-                        borderRadius: 3,
-                        padding: [2, 4]
+                        borderRadius: 4,
+                        padding: [2, 5],
+                        shadowColor: 'rgba(15, 23, 42, 0.08)',
+                        shadowBlur: 3,
+                        shadowOffsetY: 1
                     }
                 },
                 emphasis: {
@@ -876,18 +908,25 @@
                         borderRadius: 4,
                         padding: [3, 6],
                         textStyle: {
-                            color: '#1e3a8a',
-                            fontSize: 11,
-                            fontWeight: '700',
+                            color: '#0369a1',
+                            fontSize: 10.5,
+                            fontWeight: '800',
                             fontFamily: chartFontFamily,
                             backgroundColor: '#ffffff',
-                            borderColor: '#f59e0b',
+                            borderColor: '#0284c7',
                             borderWidth: 1.5,
-                            borderRadius: 4,
-                            padding: [3, 6]
+                            borderRadius: 5,
+                            padding: [3, 7],
+                            shadowColor: 'rgba(2, 132, 199, 0.3)',
+                            shadowBlur: 6,
+                            shadowOffsetY: 2
                         }
                     },
-                    itemStyle: { color: '#f59e0b', opacity: 1 }
+                    itemStyle: {
+                        opacity: 1,
+                        borderWidth: 1.5,
+                        borderColor: '#38bdf8'
+                    }
                 }
             }]
         };
