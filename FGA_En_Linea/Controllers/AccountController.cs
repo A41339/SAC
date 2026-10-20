@@ -142,7 +142,9 @@ namespace FGA.Controllers
                             new Claim("CambiarClave", login.CambiarClave),
                             new Claim("Evaluacion", login.Entidad_Usuario.Ind_Evaluacion ? "S" : "N"),
                             new Claim("identidad", login.Entidad_Usuario_Id ?? ""),
-                            new Claim("EsEntidad", login.Role_Usuario.EsEntidad ? "1" : "0")
+                            new Claim("EsEntidad", login.Role_Usuario.EsEntidad ? "1" : "0"),
+                            new Claim(ClaimTypes.Email, login.Correo ?? ""),
+                            new Claim(ClaimTypes.NameIdentifier, login.Identificacion ?? "")
                         };
 
                     Session.Clear();

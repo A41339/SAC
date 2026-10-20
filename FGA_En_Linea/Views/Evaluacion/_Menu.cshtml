@@ -618,7 +618,7 @@
                             A&uacute;n no se ha cargado el Plan de Remediaci&oacute;n
                         </h4>
                         <p class="modal-solicitar-alert-desc">
-                            Actualmente la entidad <strong><span id="solicitarPlanNombreEntidad"></span></strong> no cuenta con un documento de Plan de Remediaci&oacute;n cargado por el Fondo de Fortalecimiento Cooperativo (FFC).
+                            Actualmente <strong id="solicitarPlanNombreEntidad">su entidad</strong> no cuenta con un documento de Plan de Remediaci&oacute;n cargado por el Fondo de Fortalecimiento Cooperativo (FFC).
                         </p>
                     </div>
                 </div>
@@ -635,12 +635,24 @@
                 <!-- Detalle de destinatarios que recibiran la notificacion -->
                 <div class="modal-solicitar-recipients-box">
                     <div class="modal-solicitar-recipients-header">
-                        <i class="fa fa-envelope-o text-primary"></i> Notificaci&oacute;n por correo electr&oacute;nico a:
+                        <i class="fa fa-envelope-o text-primary"></i> Destinatarios de la notificaci&oacute;n por correo:
                     </div>
                     <div class="modal-solicitar-recipients-list">
-                        <div>&bull; <strong>FFC:</strong> Equipo de Asistencia T&eacute;cnica y Supervisi&oacute;n SBR</div>
-                        <div>&bull; <strong>Contacto(s) de la entidad:</strong> <span id="solicitarPlanContactos" class="modal-solicitar-recipients-bold">(Cargando...)</span></div>
-                        <div>&bull; <strong>Usuario solicitante:</strong> <span id="solicitarPlanUsuario" class="modal-solicitar-recipients-bold">(Cargando...)</span></div>
+                        <div class="modal-solicitar-recipient-item">
+                            <i class="fa fa-university text-primary"></i>
+                            <strong>FFC (Equipo T&eacute;cnico):</strong>&nbsp;
+                            <span id="solicitarPlanCorreoFFC" class="modal-solicitar-recipients-bold">(Cargando...)</span>
+                        </div>
+                        <div class="modal-solicitar-recipient-item">
+                            <i class="fa fa-building-o text-primary"></i>
+                            <strong>Contacto(s) de la entidad (<span id="solicitarPlanTagEntidad">Entidad</span>):</strong>&nbsp;
+                            <span id="solicitarPlanContactos" class="modal-solicitar-recipients-bold">(Cargando...)</span>
+                        </div>
+                        <div class="modal-solicitar-recipient-item">
+                            <i class="fa fa-user text-primary"></i>
+                            <strong>Usuario solicitante:</strong>&nbsp;
+                            <span id="solicitarPlanUsuario" class="modal-solicitar-recipients-bold">(Cargando...)</span>
+                        </div>
                     </div>
                 </div>
 
@@ -705,9 +717,29 @@
 
                     $('#modalVisorPlanRemediacion').modal('show');
                 } else {
-                    $('#solicitarPlanNombreEntidad').text(res.nombreEntidad || 'la entidad');
-                    $('#solicitarPlanContactos').text(res.contactoEntidad || 'No registrado');
-                    $('#solicitarPlanUsuario').text((res.usuarioActual || '') + (res.correoUsuarioActual ? ' (' + res.correoUsuarioActual + ')' : ''));
+                    window._planRemediacionIdEntidad = res.idEntidad || '';
+                    var nomEnt = (res.nombreEntidad && res.nombreEntidad.trim() !== '') ? res.nombreEntidad.trim() : 'su entidad';
+                    $('#solicitarPlanNombreEntidad').text(nomEnt);
+                    $('#solicitarPlanTagEntidad').text(nomEnt);
+
+                    var ffcEmails = (res.correoFFC && res.correoFFC.trim() !== '') ? res.correoFFC.trim() : 'csalazar@ffc.co.cr; vzumbado@ffc.co.cr';
+                    $('#solicitarPlanCorreoFFC').text(ffcEmails);
+
+                    var entEmails = (res.contactoEntidad && res.contactoEntidad.trim() !== '') ? res.contactoEntidad.trim() : 'No registrado en el sistema';
+                    $('#solicitarPlanContactos').text(entEmails);
+
+                    var usrText = '';
+                    if (res.usuarioActual && res.usuarioActual.trim() !== '') {
+                        usrText = res.usuarioActual.trim();
+                    }
+                    if (res.correoUsuarioActual && res.correoUsuarioActual.trim() !== '') {
+                        usrText = usrText ? (usrText + ' (' + res.correoUsuarioActual.trim() + ')') : res.correoUsuarioActual.trim();
+                    }
+                    if (!usrText) {
+                        usrText = 'Usuario en sesión';
+                    }
+                    $('#solicitarPlanUsuario').text(usrText);
+
                     $('#txtMensajeSolicitudPlan').val('');
                     $('#alertSolicitarPlan').addClass('hidden').empty();
                     $('#btnEnviarSolicitudPlan').prop('disabled', false).html('<i class="fa fa-envelope"></i> Solicitar Plan de Remediaci&oacute;n al FFC');
@@ -738,7 +770,7 @@
         $.ajax({
             url: '@Url.Action("SolicitarPlanRemediacion", "Evaluacion")',
             type: 'POST',
-            data: { mensaje: mensaje },
+            data: { idEntidad: window._planRemediacionIdEntidad || '', mensaje: mensaje },
             success: function (res) {
                 if (res.success) {
                     $('#alertSolicitarPlan').removeClass('alert-danger').addClass('alert-success')

@@ -969,20 +969,95 @@ namespace FGA.Controllers
             return (bytes / (1024.0 * 1024.0)).ToString("N2") + " MB";
         }
 
+        private string ResolverIdEntidadActual(string idEntidadParam = null)
+        {
+            string id = idEntidadParam;
+            if (!string.IsNullOrEmpty(id) && id != "0")
+            {
+                return id;
+            }
+
+            var sessId = Session["IdEntidad"]?.ToString();
+            if (!string.IsNullOrEmpty(sessId) && sessId != "0")
+            {
+                id = sessId;
+            }
+
+            if (string.IsNullOrEmpty(id) || id == "0")
+            {
+                string uEnt = Env.GetUserInfo("identidad");
+                if (!string.IsNullOrEmpty(uEnt) && uEnt != "0")
+                {
+                    id = uEnt;
+                }
+            }
+
+            if (string.IsNullOrEmpty(id) || id == "0")
+            {
+                var usrObj = (Session["CurrentUserObj"] ?? Session["Usuario"]) as FGA.Models.Usuario;
+                if (usrObj != null && !string.IsNullOrEmpty(usrObj.Entidad_Usuario_Id) && usrObj.Entidad_Usuario_Id != "0")
+                {
+                    id = usrObj.Entidad_Usuario_Id;
+                }
+            }
+
+            if (string.IsNullOrEmpty(id) || id == "0")
+            {
+                try
+                {
+                    var primera = entidadService.GetAll().FirstOrDefault(o => o.Id != Utility.Utilitarios.entidadAdministradora && o.Activo);
+                    if (primera != null)
+                    {
+                        id = primera.Id;
+                    }
+                }
+                catch { }
+            }
+
+            if (string.IsNullOrEmpty(id) || id == "0")
+            {
+                id = Utility.Utilitarios.entidadDefault;
+            }
+
+            return id;
+        }
+
+        private string ObtenerCorreoContactosFFC()
+        {
+            string correoFFC = "";
+            try
+            {
+                var ffcEnt = entidadService.Get(Utility.Utilitarios.entidadAdministradora);
+                if (ffcEnt != null && !string.IsNullOrWhiteSpace(ffcEnt.Contacto))
+                {
+                    correoFFC = ffcEnt.Contacto.Trim();
+                }
+            }
+            catch { }
+
+            if (string.IsNullOrWhiteSpace(correoFFC))
+            {
+                try
+                {
+                    var paramService = new FGA_En_Linea.ParametrosService.ParametrosServiceClient();
+                    var listParam = paramService.GetAll().ToList();
+                    var dirCorreo = listParam.FirstOrDefault(o => o.Llave == Utility.Utilitarios.Direccion_Correo)?.Valor;
+                    var errCorreo = listParam.FirstOrDefault(o => o.Llave == Utility.Utilitarios.Correo_Error_XML)?.Valor;
+                    paramService.SafeClose();
+
+                    correoFFC = !string.IsNullOrWhiteSpace(errCorreo) ? errCorreo : dirCorreo;
+                }
+                catch { }
+            }
+            return correoFFC ?? "";
+        }
+
         [HttpGet]
         public ActionResult VerificarPlanRemediacion(string idEntidad = null)
         {
             try
             {
-                string id = idEntidad;
-                if (string.IsNullOrEmpty(id) || !IsCurrentUserAdmin)
-                {
-                    id = Session["IdEntidad"]?.ToString();
-                    if (string.IsNullOrEmpty(id))
-                    {
-                        id = Env.GetUserInfo("entidad");
-                    }
-                }
+                string id = ResolverIdEntidadActual(idEntidad);
 
                 if (string.IsNullOrEmpty(id))
                 {
@@ -1000,7 +1075,7 @@ namespace FGA.Controllers
                     var entObj = entidadService.Get(id);
                     if (entObj != null)
                     {
-                        nombreEntidad = entObj.Nombre;
+                        nombreEntidad = entObj.Nombre ?? "";
                         contactoEntidad = entObj.Contacto ?? "";
                     }
                 }
@@ -1010,6 +1085,16 @@ namespace FGA.Controllers
                 {
                     nombreEntidad = Session["NomEntidad"].ToString();
                 }
+
+                string correoFFC = ObtenerCorreoContactosFFC();
+
+                var usrSession = (Session["CurrentUserObj"] ?? Session["Usuario"]) as FGA.Models.Usuario;
+                string usuarioActual = usrSession?.Nombre ?? Env.GetUserInfo("name");
+                if (string.IsNullOrWhiteSpace(usuarioActual)) usuarioActual = Env.GetUserInfo("username");
+                if (string.IsNullOrWhiteSpace(usuarioActual)) usuarioActual = User?.Identity?.Name ?? "Usuario en sesión";
+
+                string correoUsuarioActual = usrSession?.Correo ?? Env.GetUserInfo("email");
+                if (string.IsNullOrWhiteSpace(correoUsuarioActual)) correoUsuarioActual = usrSession?.Correo ?? "";
 
                 if (existe)
                 {
@@ -1021,6 +1106,7 @@ namespace FGA.Controllers
                         idEntidad = id,
                         nombreEntidad = nombreEntidad,
                         contactoEntidad = contactoEntidad,
+                        correoFFC = correoFFC,
                         nombreArchivo = meta?.NombreArchivoOriginal ?? Path.GetFileName(pdfPath),
                         fechaCarga = (meta?.FechaCarga ?? fi.LastWriteTime).ToString("dd/MM/yyyy HH:mm"),
                         usuarioCarga = meta?.UsuarioCarga ?? "FFC",
@@ -1038,8 +1124,9 @@ namespace FGA.Controllers
                         idEntidad = id,
                         nombreEntidad = nombreEntidad,
                         contactoEntidad = contactoEntidad,
-                        usuarioActual = Env.GetUserInfo("name") ?? Env.GetUserInfo("username"),
-                        correoUsuarioActual = Env.GetUserInfo("email")
+                        correoFFC = correoFFC,
+                        usuarioActual = usuarioActual,
+                        correoUsuarioActual = correoUsuarioActual
                     }, JsonRequestBehavior.AllowGet);
                 }
             }
@@ -1052,15 +1139,7 @@ namespace FGA.Controllers
         [HttpGet]
         public ActionResult VerPlanRemediacion(string idEntidad = null)
         {
-            string id = idEntidad;
-            if (string.IsNullOrEmpty(id) || !IsCurrentUserAdmin)
-            {
-                id = Session["IdEntidad"]?.ToString();
-                if (string.IsNullOrEmpty(id))
-                {
-                    id = Env.GetUserInfo("entidad");
-                }
-            }
+            string id = ResolverIdEntidadActual(idEntidad);
 
             if (string.IsNullOrEmpty(id))
             {
@@ -1082,15 +1161,7 @@ namespace FGA.Controllers
         [HttpGet]
         public ActionResult DescargarPlanRemediacion(string idEntidad = null)
         {
-            string id = idEntidad;
-            if (string.IsNullOrEmpty(id) || !IsCurrentUserAdmin)
-            {
-                id = Session["IdEntidad"]?.ToString();
-                if (string.IsNullOrEmpty(id))
-                {
-                    id = Env.GetUserInfo("entidad");
-                }
-            }
+            string id = ResolverIdEntidadActual(idEntidad);
 
             if (string.IsNullOrEmpty(id))
             {
@@ -1118,15 +1189,7 @@ namespace FGA.Controllers
         {
             try
             {
-                string id = idEntidad;
-                if (string.IsNullOrEmpty(id) || !IsCurrentUserAdmin)
-                {
-                    id = Session["IdEntidad"]?.ToString();
-                    if (string.IsNullOrEmpty(id))
-                    {
-                        id = Env.GetUserInfo("entidad");
-                    }
-                }
+                string id = ResolverIdEntidadActual(idEntidad);
 
                 if (string.IsNullOrEmpty(id))
                 {
@@ -1159,19 +1222,18 @@ namespace FGA.Controllers
                 var destinatariosParam = listParam.Where(o => o.Llave == Utility.Utilitarios.Correo_Error_XML).Select(o => o.Valor).FirstOrDefault();
                 paramService.SafeClose();
 
+                string correoFFC = ObtenerCorreoContactosFFC();
                 var listaDest = new System.Collections.Generic.List<string>();
 
-                // 1. Contactos registrados en la entidad
-                if (!string.IsNullOrWhiteSpace(contactoEntidad))
+                // 1. Destinatarios FFC (lista oficial de contactos FFC en Entidades y Parametros)
+                if (!string.IsNullOrWhiteSpace(correoFFC))
                 {
-                    foreach (var c in contactoEntidad.Split(';', ','))
+                    foreach (var d in correoFFC.Split(';', ','))
                     {
-                        if (!string.IsNullOrWhiteSpace(c) && !listaDest.Contains(c.Trim()))
-                            listaDest.Add(c.Trim());
+                        if (!string.IsNullOrWhiteSpace(d) && !listaDest.Contains(d.Trim()))
+                            listaDest.Add(d.Trim());
                     }
                 }
-
-                // 2. Destinatarios FFC (lista de distribución y cuenta emisora)
                 if (!string.IsNullOrWhiteSpace(destinatariosParam))
                 {
                     foreach (var d in destinatariosParam.Split(';', ','))
@@ -1185,15 +1247,27 @@ namespace FGA.Controllers
                     listaDest.Add(cuentaCorreo.Trim());
                 }
 
-                // 3. Usuario solicitante
-                string userEmail = Env.GetUserInfo("email");
+                // 2. Contactos registrados en la entidad supervisada solicitante
+                if (!string.IsNullOrWhiteSpace(contactoEntidad))
+                {
+                    foreach (var c in contactoEntidad.Split(';', ','))
+                    {
+                        if (!string.IsNullOrWhiteSpace(c) && !listaDest.Contains(c.Trim()))
+                            listaDest.Add(c.Trim());
+                    }
+                }
+
+                // 3. Usuario solicitante en sesión
+                var usrSession = (Session["CurrentUserObj"] ?? Session["Usuario"]) as FGA.Models.Usuario;
+                string userEmail = usrSession?.Correo ?? Env.GetUserInfo("email");
                 if (!string.IsNullOrWhiteSpace(userEmail) && !listaDest.Contains(userEmail.Trim()))
                 {
                     listaDest.Add(userEmail.Trim());
                 }
 
-                string userName = Env.GetUserInfo("name");
+                string userName = usrSession?.Nombre ?? Env.GetUserInfo("name");
                 if (string.IsNullOrEmpty(userName)) userName = Env.GetUserInfo("username");
+                if (string.IsNullOrEmpty(userName)) userName = User?.Identity?.Name ?? "Usuario SAC";
 
                 if (listaDest.Count == 0)
                 {
