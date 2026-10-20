@@ -56,9 +56,12 @@
                         <button type="button" class="btn btn-primary" onclick="javascript:back(1)" style="font-weight: 700; font-size: 14px; padding: 10px 24px; border-radius: 8px; background: linear-gradient(135deg, #1e40af 0%, #1d4ed8 100%); border: none; box-shadow: 0 4px 12px rgba(30, 64, 175, 0.25); display: inline-flex; align-items: center; gap: 8px;">
                             <i class="fa fa-pencil-square-o"></i> Autoevaluaci&oacute;n
                         </button>
-                        <button type="button" id="btnAbrirPlanRemediacion" class="btn btn-default btn-eval-plan-remediacion" onclick="abrirPlanRemediacion()">
-                            <i class="fa fa-file-pdf-o text-danger"></i> Plan de remediaci&oacute;n
-                        </button>
+                        @if (ViewBag.MostrarPlanRemediacion == null || (bool)ViewBag.MostrarPlanRemediacion)
+                        {
+                            <button type="button" id="btnAbrirPlanRemediacion" class="btn btn-default btn-eval-plan-remediacion" onclick="abrirPlanRemediacion()">
+                                <i class="fa fa-file-pdf-o text-danger"></i> Plan de remediaci&oacute;n
+                            </button>
+                        }
                     </div>
 
                     <div class="eval-feature-grid">
@@ -76,15 +79,18 @@
                             <h4 class="eval-feature-title">Autodiagn&oacute;stico</h4>
                             <p class="eval-feature-desc">Evaluaci&oacute;n progresiva por componentes y subcomponentes con guardado autom&aacute;tico continuo.</p>
                         </div>
-                        <div class="eval-feature-card" onclick="abrirPlanRemediacion()" style="cursor: pointer;" title="Consultar Plan de Remediaci&oacute;n FFC">
-                            <div class="eval-feature-icon icon-amber">
-                                <i class="fa fa-file-pdf-o"></i>
+                        @if (ViewBag.MostrarPlanRemediacion == null || (bool)ViewBag.MostrarPlanRemediacion)
+                        {
+                            <div class="eval-feature-card" onclick="abrirPlanRemediacion()" style="cursor: pointer;" title="Consultar Plan de Remediaci&oacute;n FFC">
+                                <div class="eval-feature-icon icon-amber">
+                                    <i class="fa fa-file-pdf-o"></i>
+                                </div>
+                                <h4 class="eval-feature-title" style="display: flex; align-items: center; justify-content: center; gap: 6px;">
+                                    Plan de Remediaci&oacute;n <i class="fa fa-external-link" style="font-size: 11px; color: #b45309;"></i>
+                                </h4>
+                                <p class="eval-feature-desc">Recomendaciones y plan elaborado por el FFC para fortalecer indicadores y mitigar riesgos.</p>
                             </div>
-                            <h4 class="eval-feature-title" style="display: flex; align-items: center; justify-content: center; gap: 6px;">
-                                Plan de Remediaci&oacute;n <i class="fa fa-external-link" style="font-size: 11px; color: #b45309;"></i>
-                            </h4>
-                            <p class="eval-feature-desc">Recomendaciones y plan elaborado por el FFC para fortalecer indicadores y mitigar riesgos.</p>
-                        </div>
+                        }
                     </div>
                 </div>
             </div>

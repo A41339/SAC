@@ -40,6 +40,7 @@ namespace FGA.Controllers
         public ActionResult Index()
         {
             Load();
+            ViewBag.MostrarPlanRemediacion = EsPlanRemediacionActivo();
             return View();
         }
 
@@ -121,6 +122,7 @@ namespace FGA.Controllers
         public ActionResult Evaluacion()
         {
             Load();
+            ViewBag.MostrarPlanRemediacion = EsPlanRemediacionActivo();
             if (Session["IdEntidad"] == null)
             {
                 string ent = Env.GetUserInfo("entidad");
@@ -893,6 +895,36 @@ namespace FGA.Controllers
 
         #region Plan de Remediación
 
+        private bool EsPlanRemediacionActivo()
+        {
+            // 1. Intentar leer desde dbo.Parametros
+            string val = null;
+            try
+            {
+                val = GetValorParametro(Utility.Utilitarios.Mostrar_Plan_Remediacion);
+            }
+            catch { }
+
+            // 2. Si no esta en BD, leer desde Web.config (appSettings)
+            if (string.IsNullOrWhiteSpace(val))
+            {
+                try
+                {
+                    val = ConfigurationManager.AppSettings["MostrarPlanRemediacion"];
+                }
+                catch { }
+            }
+
+            // 3. Fallback: visible por defecto
+            if (string.IsNullOrWhiteSpace(val))
+            {
+                return true;
+            }
+
+            val = val.Trim().ToLowerInvariant();
+            return val == "1" || val == "s" || val == "true" || val == "si" || val == "sí";
+        }
+
         private string GetPlanRemediacionDir()
         {
             // 1. Intentar leer desde dbo.Parametros
@@ -1057,6 +1089,11 @@ namespace FGA.Controllers
         {
             try
             {
+                if (!EsPlanRemediacionActivo())
+                {
+                    return Json(new { existe = false, activo = false, message = "El módulo de Plan de Remediación no se encuentra activo actualmente." }, JsonRequestBehavior.AllowGet);
+                }
+
                 string id = ResolverIdEntidadActual(idEntidad);
 
                 if (string.IsNullOrEmpty(id))
@@ -1189,6 +1226,11 @@ namespace FGA.Controllers
         {
             try
             {
+                if (!EsPlanRemediacionActivo())
+                {
+                    return Json(new { success = false, message = "El módulo de Plan de Remediación no se encuentra activo actualmente." });
+                }
+
                 string id = ResolverIdEntidadActual(idEntidad);
 
                 if (string.IsNullOrEmpty(id))

@@ -41,6 +41,7 @@ namespace FGA.Utility
         public const string Notificacion_Carga_Informes = "Notificacion_Carga_Informes";
         public const string Notificar_Entidades_Carga = "Notificar_Entidades_Carga";
         public const string Ruta_Planes_Remediacion = "Ruta_Planes_Remediacion";
+        public const string Mostrar_Plan_Remediacion = "Mostrar_Plan_Remediacion";
 
         public const int archivoCargado = 1;
         public const int archivoValidado = 2;
