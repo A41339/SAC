@@ -893,28 +893,169 @@
 .modal-solicitar-recipients-box {
     background: #f8fafc;
     border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    padding: 14px 16px;
-    margin-bottom: 18px;
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-bottom: 20px;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.02);
 }
 .modal-solicitar-recipients-header {
-    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e2e8f0;
+}
+.modal-solicitar-recipients-header-title {
+    font-size: 11.5px;
     font-weight: 700;
     color: #1e293b;
     text-transform: uppercase;
-    margin-bottom: 8px;
+    letter-spacing: 0.5px;
     display: flex;
     align-items: center;
+    gap: 8px;
+}
+.modal-solicitar-recipients-badge {
+    font-size: 11px;
+    font-weight: 600;
+    color: #0369a1;
+    background: #e0f2fe;
+    border: 1px solid #bae6fd;
+    padding: 2px 8px;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+.modal-solicitar-recipients-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.modal-solicitar-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 10px 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03);
+}
+.modal-solicitar-card:hover {
+    border-color: #cbd5e1;
+    box-shadow: 0 3px 8px rgba(15, 23, 42, 0.06);
+}
+.modal-solicitar-card-icon {
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    margin-top: 2px;
+}
+.modal-solicitar-card-icon.icon-ffc {
+    background: #eff6ff;
+    color: #1d4ed8;
+    border: 1px solid #dbeafe;
+}
+.modal-solicitar-card-icon.icon-entidad {
+    background: #f0fdf4;
+    color: #15803d;
+    border: 1px solid #dcfce7;
+}
+.modal-solicitar-card-icon.icon-usuario {
+    background: #f8fafc;
+    color: #0f766e;
+    border: 1px solid #e2e8f0;
+}
+.modal-solicitar-card-content {
+    flex: 1;
+    min-width: 0;
+}
+.modal-solicitar-card-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
     gap: 6px;
 }
-.modal-solicitar-recipients-list {
-    font-size: 12.5px;
-    color: #475569;
-    line-height: 1.6;
-}
-.modal-solicitar-recipients-bold {
-    color: #0f172a;
+.modal-solicitar-card-tag {
+    font-size: 10.5px;
     font-weight: 600;
+    padding: 1px 7px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+.modal-solicitar-card-tag.tag-ffc {
+    background: #dbeafe;
+    color: #1e40af;
+}
+.modal-solicitar-card-tag.tag-entidad {
+    background: #dcfce7;
+    color: #166534;
+}
+.modal-solicitar-card-tag.tag-usuario {
+    background: #f1f5f9;
+    color: #475569;
+}
+.modal-solicitar-card-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+}
+.recipient-email-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    padding: 3px 9px;
+    font-size: 11.5px;
+    font-weight: 500;
+    color: #1e293b;
+    font-family: inherit;
+    word-break: break-all;
+    transition: background 0.15s ease;
+}
+.recipient-email-chip:hover {
+    background: #f1f5f9;
+    border-color: #94a3b8;
+}
+.recipient-email-chip i {
+    color: #64748b;
+    font-size: 11px;
+}
+.recipient-user-name {
+    display: inline-block;
+    font-weight: 600;
+    font-size: 12px;
+    color: #0f172a;
+    margin-right: 4px;
+}
+.recipient-chip-empty {
+    font-size: 11.5px;
+    color: #94a3b8;
+    font-style: italic;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+.recipient-chip-loading {
+    font-size: 11.5px;
+    color: #64748b;
 }
 .modal-solicitar-label {
     font-size: 13px;
@@ -967,18 +1108,4 @@
     color: #b45309;
 }
 
-.modal-solicitar-recipient-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-    margin-bottom: 8px;
-    word-break: break-word;
-}
-.modal-solicitar-recipient-item:last-child {
-    margin-bottom: 0;
-}
-.modal-solicitar-recipient-item > i {
-    margin-top: 3px;
-    font-size: 13px;
-    min-width: 14px;
-}
+

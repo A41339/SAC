@@ -635,23 +635,61 @@
                 <!-- Detalle de destinatarios que recibiran la notificacion -->
                 <div class="modal-solicitar-recipients-box">
                     <div class="modal-solicitar-recipients-header">
-                        <i class="fa fa-envelope-o text-primary"></i> Destinatarios de la notificaci&oacute;n por correo:
+                        <div class="modal-solicitar-recipients-header-title">
+                            <i class="fa fa-envelope-o text-primary"></i> Destinatarios de la Notificaci&oacute;n
+                        </div>
+                        <span class="modal-solicitar-recipients-badge">
+                            <i class="fa fa-shield"></i> Copia Institucional
+                        </span>
                     </div>
-                    <div class="modal-solicitar-recipients-list">
-                        <div class="modal-solicitar-recipient-item">
-                            <i class="fa fa-university text-primary"></i>
-                            <strong>FFC (Equipo T&eacute;cnico):</strong>&nbsp;
-                            <span id="solicitarPlanCorreoFFC" class="modal-solicitar-recipients-bold">(Cargando...)</span>
+
+                    <div class="modal-solicitar-recipients-grid">
+                        <!-- Tarjeta 1: FFC -->
+                        <div class="modal-solicitar-card">
+                            <div class="modal-solicitar-card-icon icon-ffc">
+                                <i class="fa fa-university"></i>
+                            </div>
+                            <div class="modal-solicitar-card-content">
+                                <div class="modal-solicitar-card-label">
+                                    <span>Fondo de Fortalecimiento Cooperativo (FFC)</span>
+                                    <span class="modal-solicitar-card-tag tag-ffc">Receptor</span>
+                                </div>
+                                <div id="solicitarPlanCorreoFFCContainer" class="modal-solicitar-card-chips">
+                                    <span class="recipient-chip-loading"><i class="fa fa-spinner fa-spin"></i> Cargando...</span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="modal-solicitar-recipient-item">
-                            <i class="fa fa-building-o text-primary"></i>
-                            <strong>Contacto(s) de la entidad (<span id="solicitarPlanTagEntidad">Entidad</span>):</strong>&nbsp;
-                            <span id="solicitarPlanContactos" class="modal-solicitar-recipients-bold">(Cargando...)</span>
+
+                        <!-- Tarjeta 2: Entidad -->
+                        <div class="modal-solicitar-card">
+                            <div class="modal-solicitar-card-icon icon-entidad">
+                                <i class="fa fa-building-o"></i>
+                            </div>
+                            <div class="modal-solicitar-card-content">
+                                <div class="modal-solicitar-card-label">
+                                    <span>Contactos Oficiales: <strong id="solicitarPlanTagEntidad" class="text-primary">Entidad</strong></span>
+                                    <span class="modal-solicitar-card-tag tag-entidad">Supervisada</span>
+                                </div>
+                                <div id="solicitarPlanContactosContainer" class="modal-solicitar-card-chips">
+                                    <span class="recipient-chip-loading"><i class="fa fa-spinner fa-spin"></i> Cargando...</span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="modal-solicitar-recipient-item">
-                            <i class="fa fa-user text-primary"></i>
-                            <strong>Usuario solicitante:</strong>&nbsp;
-                            <span id="solicitarPlanUsuario" class="modal-solicitar-recipients-bold">(Cargando...)</span>
+
+                        <!-- Tarjeta 3: Usuario solicitante -->
+                        <div class="modal-solicitar-card">
+                            <div class="modal-solicitar-card-icon icon-usuario">
+                                <i class="fa fa-user"></i>
+                            </div>
+                            <div class="modal-solicitar-card-content">
+                                <div class="modal-solicitar-card-label">
+                                    <span>Usuario Solicitante</span>
+                                    <span class="modal-solicitar-card-tag tag-usuario">En sesi&oacute;n</span>
+                                </div>
+                                <div id="solicitarPlanUsuarioContainer" class="modal-solicitar-card-chips">
+                                    <span class="recipient-chip-loading"><i class="fa fa-spinner fa-spin"></i> Cargando...</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -681,6 +719,21 @@
 </div>
 
 <script type="text/javascript">
+    function formatearChipsCorreos(correosString, iconoClase) {
+        if (!correosString || correosString.trim() === '') {
+            return '<span class="recipient-chip-empty"><i class="fa fa-info-circle"></i> No registrado en el sistema</span>';
+        }
+        var partes = correosString.split(/[;,]/);
+        var html = '';
+        for (var i = 0; i < partes.length; i++) {
+            var c = partes[i].trim();
+            if (c !== '') {
+                html += '<span class="recipient-email-chip"><i class="fa ' + (iconoClase || 'fa-envelope-o') + '"></i> ' + $('<div>').text(c).html() + '</span>';
+            }
+        }
+        return html || '<span class="recipient-chip-empty"><i class="fa fa-info-circle"></i> No registrado en el sistema</span>';
+    }
+
     function abrirPlanRemediacion() {
         var $btn = $('#btnAbrirPlanRemediacion');
         var originalHtml = $btn.length ? $btn.html() : '';
@@ -723,22 +776,19 @@
                     $('#solicitarPlanTagEntidad').text(nomEnt);
 
                     var ffcEmails = (res.correoFFC && res.correoFFC.trim() !== '') ? res.correoFFC.trim() : 'csalazar@ffc.co.cr; vzumbado@ffc.co.cr';
-                    $('#solicitarPlanCorreoFFC').text(ffcEmails);
+                    $('#solicitarPlanCorreoFFCContainer').html(formatearChipsCorreos(ffcEmails, 'fa-envelope-o'));
 
-                    var entEmails = (res.contactoEntidad && res.contactoEntidad.trim() !== '') ? res.contactoEntidad.trim() : 'No registrado en el sistema';
-                    $('#solicitarPlanContactos').text(entEmails);
+                    var entEmails = (res.contactoEntidad && res.contactoEntidad.trim() !== '') ? res.contactoEntidad.trim() : '';
+                    $('#solicitarPlanContactosContainer').html(formatearChipsCorreos(entEmails, 'fa-envelope-o'));
 
-                    var usrText = '';
-                    if (res.usuarioActual && res.usuarioActual.trim() !== '') {
-                        usrText = res.usuarioActual.trim();
+                    var usrName = (res.usuarioActual && res.usuarioActual.trim() !== '') ? res.usuarioActual.trim() : 'Usuario en sesión';
+                    var usrMail = (res.correoUsuarioActual && res.correoUsuarioActual.trim() !== '') ? res.correoUsuarioActual.trim() : '';
+
+                    var usrHtml = '<span class="recipient-user-name">' + $('<div>').text(usrName).html() + '</span>';
+                    if (usrMail) {
+                        usrHtml += '<span class="recipient-email-chip"><i class="fa fa-envelope-o"></i> ' + $('<div>').text(usrMail).html() + '</span>';
                     }
-                    if (res.correoUsuarioActual && res.correoUsuarioActual.trim() !== '') {
-                        usrText = usrText ? (usrText + ' (' + res.correoUsuarioActual.trim() + ')') : res.correoUsuarioActual.trim();
-                    }
-                    if (!usrText) {
-                        usrText = 'Usuario en sesión';
-                    }
-                    $('#solicitarPlanUsuario').text(usrText);
+                    $('#solicitarPlanUsuarioContainer').html(usrHtml);
 
                     $('#txtMensajeSolicitudPlan').val('');
                     $('#alertSolicitarPlan').addClass('hidden').empty();
