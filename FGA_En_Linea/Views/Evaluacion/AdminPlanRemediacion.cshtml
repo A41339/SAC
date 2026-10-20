@@ -1,0 +1,549 @@
+@model IEnumerable<FGA.Model.AdminPlanRemediacionViewModel>
+
+@{
+    ViewBag.Title = "Administración de Planes de Remediación SBR";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var lista = Model != null ? Model.ToList() : new List<FGA.Model.AdminPlanRemediacionViewModel>();
+    int totalEntidades = lista.Count;
+    int conPlan = lista.Count(x => x.TienePlan);
+    int sinPlan = totalEntidades - conPlan;
+}
+
+<style>
+    .admin-plan-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+        padding: 20px 24px;
+        margin-bottom: 24px;
+    }
+    .stat-metric-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 16px 20px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .stat-metric-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    }
+    .stat-metric-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+    }
+    .badge-con-plan {
+        background-color: #ecfdf5;
+        color: #065f46;
+        border: 1px solid #a7f3d0;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 12px;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+    .badge-sin-plan {
+        background-color: #fef2f2;
+        color: #991b1b;
+        border: 1px solid #fecaca;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 12px;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+    .table-planes th {
+        background: #f8fafc;
+        color: #475569;
+        font-weight: 700;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-bottom: 2px solid #e2e8f0 !important;
+        vertical-align: middle !important;
+    }
+    .table-planes td {
+        vertical-align: middle !important;
+        font-size: 13px;
+        color: #334155;
+    }
+    .btn-action-sm {
+        padding: 5px 10px;
+        font-size: 12px;
+        font-weight: 600;
+        border-radius: 6px;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        transition: all 0.15s ease;
+    }
+    .dropzone-pdf {
+        border: 2px dashed #93c5fd;
+        background: #f8fafc;
+        border-radius: 10px;
+        padding: 24px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    .dropzone-pdf:hover {
+        border-color: #2563eb;
+        background: #eff6ff;
+    }
+</style>
+
+<section class="content-header">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+        <div>
+            <h1 style="margin: 0; font-size: 22px; font-weight: 700; color: #1e293b;">
+                <i class="fa fa-shield" style="color: #2563eb;"></i> Planes de Remediaci&oacute;n SBR
+                <small style="font-size: 14px; color: #64748b; font-weight: normal; margin-left: 8px;">Gesti&oacute;n y carga institucional para entidades supervisadas</small>
+            </h1>
+        </div>
+        <div>
+            <a href="@Url.Action("Evaluacion", "Evaluacion")" class="btn btn-default" style="font-weight: 600; border-radius: 6px;">
+                <i class="fa fa-arrow-left"></i> Volver a Evaluaci&oacute;n SBR
+            </a>
+        </div>
+    </div>
+    <ol class="breadcrumb" style="margin-top: 10px;">
+        <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
+        <li><a href="@Url.Action("Evaluacion", "Evaluacion")">Evaluaci&oacute;n SBR</a></li>
+        <li class="active">Planes de Remediaci&oacute;n</li>
+    </ol>
+</section>
+
+<section class="content">
+
+    <!-- Tarjetas de métricas -->
+    <div class="row" style="margin-bottom: 20px;">
+        <div class="col-md-4 col-sm-6 col-xs-12">
+            <div class="stat-metric-card">
+                <div class="stat-metric-icon" style="background: #eff6ff; color: #2563eb;">
+                    <i class="fa fa-university"></i>
+                </div>
+                <div>
+                    <div style="font-size: 12px; color: #64748b; font-weight: 600; text-transform: uppercase;">Total Entidades</div>
+                    <div style="font-size: 24px; font-weight: 800; color: #0f172a;">@totalEntidades</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-6 col-xs-12">
+            <div class="stat-metric-card">
+                <div class="stat-metric-icon" style="background: #ecfdf5; color: #059669;">
+                    <i class="fa fa-check-circle"></i>
+                </div>
+                <div>
+                    <div style="font-size: 12px; color: #64748b; font-weight: 600; text-transform: uppercase;">Con Plan Cargado</div>
+                    <div style="font-size: 24px; font-weight: 800; color: #059669;">@conPlan</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-6 col-xs-12">
+            <div class="stat-metric-card">
+                <div class="stat-metric-icon" style="background: #fef2f2; color: #dc2626;">
+                    <i class="fa fa-clock-o"></i>
+                </div>
+                <div>
+                    <div style="font-size: 12px; color: #64748b; font-weight: 600; text-transform: uppercase;">Pendientes de Cargar</div>
+                    <div style="font-size: 24px; font-weight: 800; color: #dc2626;">@sinPlan</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Panel principal -->
+    <div class="admin-plan-card">
+        <!-- Barra de filtros y búsqueda -->
+        <div class="row" style="margin-bottom: 18px; align-items: center;">
+            <div class="col-md-6 col-sm-6 col-xs-12" style="margin-bottom: 10px;">
+                <div class="input-group">
+                    <span class="input-group-addon" style="background: #f8fafc; border-color: #cbd5e1;"><i class="fa fa-search text-muted"></i></span>
+                    <input type="text" id="filtroTexto" class="form-control" placeholder="Buscar por c&oacute;digo o nombre de entidad..." style="border-color: #cbd5e1;" onkeyup="filtrarTabla()" />
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-3 col-xs-12" style="margin-bottom: 10px;">
+                <select id="filtroEstado" class="form-control" style="border-color: #cbd5e1;" onchange="filtrarTabla()">
+                    <option value="todos">Todos los estados</option>
+                    <option value="con-plan">Con Plan Cargado</option>
+                    <option value="sin-plan">Pendientes (Sin Plan)</option>
+                </select>
+            </div>
+            <div class="col-md-3 col-sm-3 col-xs-12 text-right" style="margin-bottom: 10px;">
+                <button type="button" class="btn btn-primary" onclick="abrirModalCargaRapida()" style="font-weight: 600; border-radius: 6px; width: 100%;">
+                    <i class="fa fa-upload"></i> Cargar Plan PDF
+                </button>
+            </div>
+        </div>
+
+        <!-- Tabla de entidades -->
+        <div class="table-responsive">
+            <table class="table table-hover table-planes" id="tablaPlanes">
+                <thead>
+                    <tr>
+                        <th style="width: 80px;">C&oacute;digo</th>
+                        <th>Entidad</th>
+                        <th>Contacto Registrado</th>
+                        <th style="width: 140px; text-align: center;">Estado</th>
+                        <th>Archivo / Tama&ntilde;o</th>
+                        <th>Fecha de Carga</th>
+                        <th>Cargado Por</th>
+                        <th style="width: 220px; text-align: center;">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (lista.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="8" class="text-center text-muted" style="padding: 30px;">
+                                <i class="fa fa-info-circle fa-2x" style="display: block; margin-bottom: 8px;"></i>
+                                No se encontraron entidades activas registradas.
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var ent in lista)
+                        {
+                            <tr class="fila-entidad" data-estado="@(ent.TienePlan ? "con-plan" : "sin-plan")" data-codigo="@ent.IdEntidad.ToLower()" data-nombre="@ent.NombreEntidad.ToLower()">
+                                <td><strong style="color: #1e40af;">@ent.IdEntidad</strong></td>
+                                <td>
+                                    <div style="font-weight: 700; color: #1e293b;">@ent.NombreEntidad</div>
+                                    @if (!string.IsNullOrEmpty(ent.Notas))
+                                    {
+                                        <small class="text-muted" title="@ent.Notas" style="display: block; max-width: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                            <i class="fa fa-sticky-note-o"></i> @ent.Notas
+                                        </small>
+                                    }
+                                </td>
+                                <td>
+                                    @if (!string.IsNullOrWhiteSpace(ent.ContactoEntidad))
+                                    {
+                                        <span style="font-size: 12px; color: #475569;" title="@ent.ContactoEntidad">
+                                            <i class="fa fa-envelope-o text-primary"></i> @ent.ContactoEntidad
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted" style="font-style: italic; font-size: 12px;">Sin contacto registrado</span>
+                                    }
+                                </td>
+                                <td style="text-align: center;">
+                                    @if (ent.TienePlan)
+                                    {
+                                        <span class="badge-con-plan"><i class="fa fa-check"></i> Cargado</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge-sin-plan"><i class="fa fa-clock-o"></i> Pendiente</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (ent.TienePlan)
+                                    {
+                                        <div style="font-weight: 600; color: #0284c7;" title="@ent.NombreArchivoOriginal">
+                                            <i class="fa fa-file-pdf-o text-danger"></i> @ent.NombreArchivoOriginal
+                                        </div>
+                                        <small class="text-muted">@ent.TamanioFormato</small>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">&mdash;</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (ent.FechaCarga.HasValue)
+                                    {
+                                        <span>@ent.FechaCarga.Value.ToString("dd/MM/yyyy HH:mm")</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">&mdash;</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(ent.UsuarioCarga))
+                                    {
+                                        <span>@ent.UsuarioCarga</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">&mdash;</span>
+                                    }
+                                </td>
+                                <td style="text-align: center;">
+                                    @if (ent.TienePlan)
+                                    {
+                                        <div class="btn-group" role="group">
+                                            <button type="button" class="btn btn-default btn-action-sm" onclick="verPdfModal('@ent.IdEntidad', '@ent.NombreEntidad.Replace("'", "\\'")')" title="Ver en pantalla">
+                                                <i class="fa fa-eye text-primary"></i> Ver
+                                            </button>
+                                            <a href="@Url.Action("DescargarPlanRemediacion", "Evaluacion", new { idEntidad = ent.IdEntidad })" class="btn btn-default btn-action-sm" title="Descargar PDF">
+                                                <i class="fa fa-download text-success"></i>
+                                            </a>
+                                            <button type="button" class="btn btn-default btn-action-sm" onclick="prepararSubirModal('@ent.IdEntidad', '@ent.NombreEntidad.Replace("'", "\\'")')" title="Reemplazar archivo PDF">
+                                                <i class="fa fa-refresh text-warning"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-default btn-action-sm" onclick="confirmarEliminarPlan('@ent.IdEntidad', '@ent.NombreEntidad.Replace("'", "\\'")')" title="Eliminar plan">
+                                                <i class="fa fa-trash text-danger"></i>
+                                            </button>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <button type="button" class="btn btn-primary btn-action-sm" onclick="prepararSubirModal('@ent.IdEntidad', '@ent.NombreEntidad.Replace("'", "\\'")')">
+                                            <i class="fa fa-upload"></i> Cargar PDF
+                                        </button>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- MODAL PARA CARGAR / REEMPLAZAR PLAN DE REMEDIACIÓN -->
+<div class="modal fade" id="modalSubirPlan" tabindex="-1" role="dialog" aria-labelledby="modalSubirPlanLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" style="border-radius: 12px; overflow: hidden; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+            <div class="modal-header" style="background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%); color: #fff; padding: 18px 24px;">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: #fff; opacity: 0.85; font-size: 24px; text-shadow: none;">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" style="font-weight: 700; display: flex; align-items: center; gap: 8px;">
+                    <i class="fa fa-file-pdf-o" style="color: #fca5a5;"></i> <span id="modalSubirTitulo">Cargar Plan de Remediaci&oacute;n</span>
+                </h4>
+            </div>
+            <form id="formSubirPlan" onsubmit="enviarGuardarPlan(event)">
+                <div class="modal-body" style="padding: 24px; background: #fff;">
+                    <div class="form-group">
+                        <label style="font-weight: 600; color: #334155;">Entidad Destino <span class="text-danger">*</span></label>
+                        <select id="modalSubirIdEntidad" name="idEntidad" class="form-control" required style="border-radius: 6px; font-weight: 600;">
+                            <option value="">-- Seleccione una entidad --</option>
+                            @foreach (var ent in lista)
+                            {
+                                <option value="@ent.IdEntidad">[@ent.IdEntidad] @ent.NombreEntidad</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label style="font-weight: 600; color: #334155;">Archivo PDF del Plan <span class="text-danger">*</span></label>
+                        <div class="dropzone-pdf" onclick="document.getElementById('inputArchivoPdf').click()">
+                            <i class="fa fa-cloud-upload fa-3x" style="color: #3b82f6; margin-bottom: 8px; display: block;"></i>
+                            <div style="font-weight: 600; color: #1e293b; margin-bottom: 4px;" id="lblNombreArchivo">
+                                Haga clic para seleccionar el archivo PDF
+                            </div>
+                            <div style="font-size: 12px; color: #64748b;">
+                                Formato soportado: .pdf (Recomendaciones técnicas FFC SUGEF 24-22)
+                            </div>
+                        </div>
+                        <input type="file" id="inputArchivoPdf" name="archivoPlan" accept=".pdf,application/pdf" style="display: none;" onchange="archivoPdfSeleccionado(this)" required />
+                    </div>
+
+                    <div class="form-group">
+                        <label style="font-weight: 600; color: #334155;">Notas u Observaciones (Opcional)</label>
+                        <textarea id="modalSubirNotas" name="notas" class="form-control" rows="3" placeholder="Detalles de la versión, periodo aplicable o recomendaciones generales..." style="border-radius: 6px;"></textarea>
+                    </div>
+
+                    <div id="alertSubirPlan" style="display: none;" class="alert"></div>
+                </div>
+                <div class="modal-footer" style="background: #f8fafc; border-top: 1px solid #e2e8f0; padding: 14px 24px; display: flex; justify-content: flex-end; gap: 8px;">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" style="border-radius: 6px; font-weight: 600;">
+                        Cancelar
+                    </button>
+                    <button type="submit" id="btnGuardarPlan" class="btn btn-primary" style="border-radius: 6px; font-weight: 700; background: #2563eb; border: none; padding: 8px 20px;">
+                        <i class="fa fa-check"></i> Guardar y Publicar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL VISOR DE PDF EN PANTALLA -->
+<div class="modal fade" id="modalVisorAdmin" tabindex="-1" role="dialog" aria-labelledby="modalVisorAdminLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" style="width: 90%; max-width: 1100px;">
+        <div class="modal-content" style="border-radius: 12px; overflow: hidden; border: none; box-shadow: 0 12px 36px rgba(0,0,0,0.3);">
+            <div class="modal-header" style="background: #0f172a; color: #fff; padding: 14px 20px; display: flex; align-items: center; justify-content: space-between;">
+                <h4 class="modal-title" style="font-weight: 700; font-size: 16px; margin: 0; display: flex; align-items: center; gap: 10px;">
+                    <i class="fa fa-file-pdf-o" style="color: #ef4444;"></i>
+                    <span id="visorAdminTitulo">Plan de Remediaci&oacute;n</span>
+                </h4>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <a id="btnVisorAdminDescargar" href="#" class="btn btn-sm btn-primary" style="font-weight: 600;">
+                        <i class="fa fa-download"></i> Descargar
+                    </a>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: #fff; opacity: 0.85; font-size: 24px; text-shadow: none; margin: 0; padding: 0 4px;">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            </div>
+            <div class="modal-body" style="padding: 0; background: #525659; height: 75vh;">
+                <iframe id="iframeVisorAdmin" src="about:blank" style="width: 100%; height: 100%; border: none;"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    function filtrarTabla() {
+        var texto = ($('#filtroTexto').val() || '').toLowerCase().trim();
+        var estado = $('#filtroEstado').val();
+
+        $('#tablaPlanes tbody tr.fila-entidad').each(function () {
+            var $fila = $(this);
+            var filaEstado = $fila.data('estado');
+            var filaCodigo = String($fila.data('codigo') || '');
+            var filaNombre = String($fila.data('nombre') || '');
+
+            var coincideTexto = (texto === '' || filaCodigo.indexOf(texto) !== -1 || filaNombre.indexOf(texto) !== -1);
+            var coincideEstado = (estado === 'todos' || filaEstado === estado);
+
+            if (coincideTexto && coincideEstado) {
+                $fila.show();
+            } else {
+                $fila.hide();
+            }
+        });
+    }
+
+    function abrirModalCargaRapida() {
+        $('#modalSubirTitulo').text('Cargar Plan de Remediación');
+        $('#modalSubirIdEntidad').val('').prop('disabled', false);
+        $('#modalSubirNotas').val('');
+        $('#inputArchivoPdf').val('');
+        $('#lblNombreArchivo').html('Haga clic para seleccionar el archivo PDF');
+        $('#alertSubirPlan').hide().empty();
+        $('#modalSubirPlan').modal('show');
+    }
+
+    function prepararSubirModal(idEntidad, nombreEntidad) {
+        $('#modalSubirTitulo').text('Cargar Plan de Remediación - ' + nombreEntidad);
+        $('#modalSubirIdEntidad').val(idEntidad).prop('disabled', true);
+        $('#modalSubirNotas').val('');
+        $('#inputArchivoPdf').val('');
+        $('#lblNombreArchivo').html('Haga clic para seleccionar el archivo PDF');
+        $('#alertSubirPlan').hide().empty();
+        $('#modalSubirPlan').modal('show');
+    }
+
+    function archivoPdfSeleccionado(input) {
+        if (input.files && input.files[0]) {
+            var file = input.files[0];
+            if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
+                alert('El archivo seleccionado debe ser un documento PDF (.pdf).');
+                input.value = '';
+                $('#lblNombreArchivo').html('Haga clic para seleccionar el archivo PDF');
+                return;
+            }
+            var sizeKb = (file.size / 1024).toFixed(1);
+            $('#lblNombreArchivo').html('<i class="fa fa-file-pdf-o text-danger"></i> <strong>' + file.name + '</strong> (' + sizeKb + ' KB)');
+        }
+    }
+
+    function enviarGuardarPlan(e) {
+        e.preventDefault();
+        var idEntidad = $('#modalSubirIdEntidad').val();
+        if (!idEntidad) {
+            alert('Debe seleccionar una entidad.');
+            return;
+        }
+
+        var fileInput = document.getElementById('inputArchivoPdf');
+        if (!fileInput.files || fileInput.files.length === 0) {
+            alert('Debe seleccionar el archivo PDF del plan de remediación.');
+            return;
+        }
+
+        var formData = new FormData();
+        formData.append('idEntidad', idEntidad);
+        formData.append('archivoPlan', fileInput.files[0]);
+        formData.append('notas', $('#modalSubirNotas').val());
+
+        var $btn = $('#btnGuardarPlan');
+        var originalText = $btn.html();
+        $btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Guardando...');
+        $('#alertSubirPlan').hide().empty();
+
+        $.ajax({
+            url: '@Url.Action("GuardarPlanRemediacion", "Evaluacion")',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (res) {
+                $btn.prop('disabled', false).html(originalText);
+                if (res.success) {
+                    $('#alertSubirPlan').removeClass('alert-danger').addClass('alert-success')
+                        .html('<i class="fa fa-check-circle"></i> ' + res.message).show();
+                    setTimeout(function () {
+                        window.location.reload();
+                    }, 1200);
+                } else {
+                    $('#alertSubirPlan').removeClass('alert-success').addClass('alert-danger')
+                        .html('<i class="fa fa-exclamation-triangle"></i> ' + res.message).show();
+                }
+            },
+            error: function () {
+                $btn.prop('disabled', false).html(originalText);
+                $('#alertSubirPlan').removeClass('alert-success').addClass('alert-danger')
+                    .html('<i class="fa fa-exclamation-triangle"></i> Error de comunicación con el servidor.').show();
+            }
+        });
+    }
+
+    function verPdfModal(idEntidad, nombreEntidad) {
+        $('#visorAdminTitulo').html('<i class="fa fa-file-pdf-o" style="color: #ef4444;"></i> Plan de Remediación - ' + nombreEntidad);
+        var urlVer = '@Url.Action("VerPlanRemediacion", "Evaluacion")?idEntidad=' + encodeURIComponent(idEntidad) + '&t=' + new Date().getTime();
+        var urlDescargar = '@Url.Action("DescargarPlanRemediacion", "Evaluacion")?idEntidad=' + encodeURIComponent(idEntidad);
+        $('#btnVisorAdminDescargar').attr('href', urlDescargar);
+        $('#iframeVisorAdmin').attr('src', urlVer);
+        $('#modalVisorAdmin').modal('show');
+    }
+
+    $('#modalVisorAdmin').on('hidden.bs.modal', function () {
+        $('#iframeVisorAdmin').attr('src', 'about:blank');
+    });
+
+    function confirmarEliminarPlan(idEntidad, nombreEntidad) {
+        if (!confirm('¿Está seguro de que desea eliminar el Plan de Remediación de ' + nombreEntidad + '? Esta acción no se puede deshacer.')) {
+            return;
+        }
+
+        $.ajax({
+            url: '@Url.Action("EliminarPlanRemediacion", "Evaluacion")',
+            type: 'POST',
+            data: { idEntidad: idEntidad },
+            success: function (res) {
+                if (res.success) {
+                    alert(res.message);
+                    window.location.reload();
+                } else {
+                    alert('Error: ' + res.message);
+                }
+            },
+            error: function () {
+                alert('Ocurrió un error al intentar eliminar el plan.');
+            }
+        });
+    }
+</script>
