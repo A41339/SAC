@@ -594,10 +594,17 @@
     width: 100% !important;
 }
 
-/* Casos adaptativos según cantidad de tarjetas */
+/* Casos adaptativos según cantidad de tarjetas (mínimo 3 por fila en desktop) */
 .hub-cards-grid[data-count="4"],
 .sbr-cards-grid[data-count="4"] {
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
+}
+
+@media (min-width: 1200px) {
+    .hub-cards-grid[data-count="4"],
+    .sbr-cards-grid[data-count="4"] {
+        grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    }
 }
 
 .hub-cards-grid[data-count="2"],
