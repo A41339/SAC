@@ -689,12 +689,7 @@
                 axisLine: { show: true, lineStyle: { color: '#cbd5e1', width: 1.2 } },
                 axisTick: { show: true, lineStyle: { color: '#cbd5e1', width: 1 } },
                 splitLine: {
-                    show: true,
-                    lineStyle: {
-                        color: 'rgba(226, 232, 240, 0.7)',
-                        width: 1,
-                        type: 'dashed'
-                    }
+                    show: false
                 }
             },
             yAxis3D: {
@@ -718,12 +713,7 @@
                 },
                 axisLine: { lineStyle: { color: '#cbd5e1', width: 1.2 } },
                 splitLine: {
-                    show: true,
-                    lineStyle: {
-                        color: 'rgba(226, 232, 240, 0.7)',
-                        width: 1,
-                        type: 'dashed'
-                    }
+                    show: false
                 }
             },
             zAxis3D: {
@@ -752,12 +742,7 @@
                 },
                 axisLine: { lineStyle: { color: '#cbd5e1', width: 1.2 } },
                 splitLine: {
-                    show: true,
-                    lineStyle: {
-                        color: 'rgba(226, 232, 240, 0.7)',
-                        width: 1,
-                        type: 'dashed'
-                    }
+                    show: false
                 }
             },
             grid3D: {
@@ -784,21 +769,17 @@
                 light: {
                     main: {
                         intensity: 1.25,
-                        shadow: true,
-                        shadowQuality: 'ultra',
+                        shadow: false, // Desactivado para eliminar manchas/planos grises en el suelo
                         alpha: 50,
                         beta: -25
                     },
                     ambient: {
-                        intensity: 0.85 // Iluminación ambiental equilibrada estilo estudio
+                        intensity: 0.85 // Iluminación ambiental uniforme estilo estudio
                     }
                 },
                 environment: '#ffffff',
                 postEffect: {
-                    enable: true,
-                    FXAA: {
-                        enable: true // Antialiasing de alta definición para suavizar aristas en pantalla
-                    }
+                    enable: false // Desactivado para garantizar fondo 100% blanco puro sin viñetas ni matices grises
                 }
             },
             series: [{
@@ -806,11 +787,11 @@
                 data: data3D,
                 shading: 'realistic',
                 realisticMaterial: {
-                    roughness: 0.36, // Acabado satinado mate de alta definición
+                    roughness: 0.32, // Acabado satinado mate de alta definición
                     metalness: 0.05
                 },
-                bevelSize: 0.45, // Biselado redondeado suave
-                bevelSegments: 5,
+                bevelSize: 0.35, // Biselado redondeado suave
+                bevelSegments: 4,
                 label: {
                     show: true,
                     distance: 3.5,
