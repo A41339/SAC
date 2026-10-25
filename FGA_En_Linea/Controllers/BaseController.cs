@@ -51,16 +51,19 @@ namespace FGA.Controllers
                     ViewBag.Entidades = new SelectList(lista, "Id", "Nombre", Session["IdEntidad"]);
                     string idAdminEnt = Session["IdEntidad"].ToString();
                     string nomEnt = rawLista.FirstOrDefault(o => o.Id == idAdminEnt)?.Nombre ?? (ent.Get(idAdminEnt)?.Nombre ?? "");
-                    ruta = MicrosoftHelper.MSHelper.GetSiteRoot() + "/Content/images/" + nomEnt + ".jpg";
+                    string fallbackLogoAdmin = MicrosoftHelper.MSHelper.GetSiteRoot() + "/Content/images/" + nomEnt + ".jpg";
+                    ruta = Env.ResolverUrlLogoIcono(nomEnt, fallbackLogoAdmin);
                     Session["NomEntidad"] = nomEnt;
                 }
                 else
                 {
                     ViewBag.Entidades = new SelectList(lista.Where(o => o.Id == ObjUser.Entidad_Usuario_Id), "Id", "Nombre");
                     Session["IdEntidad"] = ObjUser.Entidad_Usuario_Id;
-                    ruta = MicrosoftHelper.MSHelper.GetSiteRoot() + "/Content/images/" + Env.GetUserInfo("logo");
                     string idEnt = Session["IdEntidad"].ToString();
-                    Session["NomEntidad"] = rawLista.FirstOrDefault(o => o.Id == idEnt)?.Nombre ?? (ent.Get(idEnt)?.Nombre ?? "");
+                    string nomEntUser = rawLista.FirstOrDefault(o => o.Id == idEnt)?.Nombre ?? (ent.Get(idEnt)?.Nombre ?? "");
+                    Session["NomEntidad"] = nomEntUser;
+                    string fallbackLogoUser = MicrosoftHelper.MSHelper.GetSiteRoot() + "/Content/images/" + Env.GetUserInfo("logo");
+                    ruta = Env.ResolverUrlLogoIcono(!string.IsNullOrEmpty(nomEntUser) ? nomEntUser : Env.GetUserInfo("logo"), fallbackLogoUser);
                 }
 
                 string idActual = GetSessionString(FGAConstants.Sesion.IdEntidad, ObjUser?.Entidad_Usuario_Id ?? FGAConstants.Entidades.Administradora);
@@ -109,7 +112,8 @@ namespace FGA.Controllers
                 {
                     Session["NomEntidad"] = rawLista.FirstOrDefault(o => o.Id == idActual)?.Nombre ?? (ent.Get(idActual)?.Nombre ?? "");
                 }
-                Session["RutaLogo"] = Server.MapPath("~/Content/images/" + Session["NomEntidad"] + ".jpg");
+                string fallbackPath = Server.MapPath("~/Content/images/" + Session["NomEntidad"] + ".jpg");
+                Session["RutaLogo"] = Env.ResolverRutaFisicaLogoIcono(Session["NomEntidad"]?.ToString(), fallbackPath);
             }
             catch (Exception)
             {

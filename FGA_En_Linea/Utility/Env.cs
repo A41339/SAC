@@ -520,6 +520,146 @@ namespace FGA
             return rutaReporte;
         }
 
+        
+        #region Resolucion de Logotipos e Iconos Transparentes de Cooperativas
+
+        private static string NormalizarTextoParaMatchLogo(string texto)
+        {
+            if (string.IsNullOrWhiteSpace(texto)) return string.Empty;
+
+            string nombre = System.IO.Path.GetFileNameWithoutExtension(texto).Trim();
+            string normalized = nombre.Normalize(System.Text.NormalizationForm.FormD);
+            var sb = new System.Text.StringBuilder();
+            foreach (char c in normalized)
+            {
+                var cat = System.Globalization.CharUnicodeInfo.GetUnicodeCategory(c);
+                if (cat != System.Globalization.UnicodeCategory.NonSpacingMark && char.IsLetterOrDigit(c))
+                {
+                    sb.Append(char.ToLowerInvariant(c));
+                }
+            }
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// Resuelve la URL del logotipo/icono transparente de una cooperativa en ~/Content/images/logos_cooperativas/[Nombre]_Icono.png.
+        /// Si no existe un icono para la entidad, retorna el fallback proporcionado o el logo estándar en /Content/images/.
+        /// </summary>
+        public static string ResolverUrlLogoIcono(string nombreEntidad, string fallbackUrl = null)
+        {
+            try
+            {
+                string siteRoot = MicrosoftHelper.MSHelper.GetSiteRoot();
+                string normalizado = NormalizarTextoParaMatchLogo(nombreEntidad);
+
+                if (!string.IsNullOrEmpty(normalizado))
+                {
+                    // Excepción explícita para Coopepruebas (mantener sin modificaciones)
+                    if (!normalizado.Contains("coopeprueba"))
+                    {
+                        string dirFisica = null;
+                        var ctx = System.Web.HttpContext.Current;
+                        if (ctx != null && ctx.Server != null)
+                        {
+                            dirFisica = ctx.Server.MapPath("~/Content/images/logos_cooperativas");
+                        }
+                        else
+                        {
+                            dirFisica = System.Web.Hosting.HostingEnvironment.MapPath("~/Content/images/logos_cooperativas");
+                        }
+
+                        if (!string.IsNullOrEmpty(dirFisica) && System.IO.Directory.Exists(dirFisica))
+                        {
+                            var archivos = System.IO.Directory.GetFiles(dirFisica, "*_Icono.png");
+                            foreach (var arch in archivos)
+                            {
+                                string fileName = System.IO.Path.GetFileName(arch);
+                                string cleanFile = NormalizarTextoParaMatchLogo(fileName.Replace("_Icono.png", ""));
+                                if (!string.IsNullOrEmpty(cleanFile) && (normalizado.Contains(cleanFile) || cleanFile.Contains(normalizado)))
+                                {
+                                    string versionParam = "";
+                                    try
+                                    {
+                                        long ticks = System.IO.File.GetLastWriteTimeUtc(arch).Ticks;
+                                        versionParam = "?v=" + ticks;
+                                    }
+                                    catch { }
+
+                                    try
+                                    {
+                                        if (System.Web.Hosting.HostingEnvironment.IsHosted)
+                                        {
+                                            return System.Web.VirtualPathUtility.ToAbsolute("~/Content/images/logos_cooperativas/" + fileName) + versionParam;
+                                        }
+                                    }
+                                    catch { }
+
+                                    return siteRoot + "/Content/images/logos_cooperativas/" + fileName + versionParam;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(fallbackUrl))
+                {
+                    return fallbackUrl;
+                }
+
+                return siteRoot + "/Content/images/default.png";
+            }
+            catch
+            {
+                return !string.IsNullOrEmpty(fallbackUrl) ? fallbackUrl : (MicrosoftHelper.MSHelper.GetSiteRoot() + "/Content/images/default.png");
+            }
+        }
+
+        /// <summary>
+        /// Resuelve la ruta física en disco del icono transparente de la cooperativa.
+        /// </summary>
+        public static string ResolverRutaFisicaLogoIcono(string nombreEntidad, string fallbackPath = null)
+        {
+            try
+            {
+                string normalizado = NormalizarTextoParaMatchLogo(nombreEntidad);
+                if (!string.IsNullOrEmpty(normalizado) && !normalizado.Contains("coopeprueba"))
+                {
+                    string dirFisica = null;
+                    var ctx = System.Web.HttpContext.Current;
+                    if (ctx != null && ctx.Server != null)
+                    {
+                        dirFisica = ctx.Server.MapPath("~/Content/images/logos_cooperativas");
+                    }
+                    else
+                    {
+                        dirFisica = System.Web.Hosting.HostingEnvironment.MapPath("~/Content/images/logos_cooperativas");
+                    }
+
+                    if (!string.IsNullOrEmpty(dirFisica) && System.IO.Directory.Exists(dirFisica))
+                    {
+                        var archivos = System.IO.Directory.GetFiles(dirFisica, "*_Icono.png");
+                        foreach (var arch in archivos)
+                        {
+                            string fileName = System.IO.Path.GetFileName(arch);
+                            string cleanFile = NormalizarTextoParaMatchLogo(fileName.Replace("_Icono.png", ""));
+                            if (!string.IsNullOrEmpty(cleanFile) && (normalizado.Contains(cleanFile) || cleanFile.Contains(normalizado)))
+                            {
+                                return arch;
+                            }
+                        }
+                    }
+                }
+
+                return fallbackPath;
+            }
+            catch
+            {
+                return fallbackPath;
+            }
+        }
+
+        #endregion
+
         public static bool IsChatbotEnabled()
         {
             try

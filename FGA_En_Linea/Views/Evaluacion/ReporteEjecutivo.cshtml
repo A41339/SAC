@@ -21,8 +21,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=1" />
     <title>Reporte Ejecutivo de Evaluaci&oacute;n - @nombreEntidad</title>
     <link rel="icon" href="~/favicon.ico" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
-    <link rel="stylesheet" href="@Url.Content("~/Content/evaluacion_reporte.css")" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+
+    <link rel="stylesheet" href="@Url.Content("~/Content/evaluacion_reporte.css")" />
+
 </head>
 <body>
 
@@ -53,7 +55,7 @@
             </div>
             <div class="entity-logo-box">
                 @{
-                    string rutaLogoEntidad = Url.Content("~/Content/images/" + nombreEntidad + ".jpg");
+                    string rutaLogoEntidad = FGA.Env.ResolverUrlLogoIcono(nombreEntidad, Url.Content("~/Content/images/" + nombreEntidad + ".jpg"));
                 }
                 <img src="@rutaLogoEntidad" alt="@nombreEntidad" onerror="this.style.display='none'" />
             </div>

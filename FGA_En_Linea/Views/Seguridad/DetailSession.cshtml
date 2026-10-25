@@ -24,7 +24,7 @@
                         <td style="text-align: center !important; vertical-align: middle; padding: 8px;">
                             @Html.HiddenFor(modelItem => item.IDENTIDAD)
                             @{
-                                string ruta = Url.Content("~/Content/images/" + @item.NOMBRE + ".jpg");
+                                string ruta = FGA.Env.ResolverUrlLogoIcono(item.NOMBRE, Url.Content("~/Content/images/" + item.NOMBRE + ".jpg"));
                                 <img width="36" height="36" src="@ruta" style="border-radius: 8px; object-fit: contain; background: #ffffff; border: 1px solid #e2e8f0; padding: 2px;" onerror="this.style.display='none';" />
                             }
                         </td>
@@ -93,4 +93,5 @@
         </tbody>
     </table>
 </div>
-
+
+

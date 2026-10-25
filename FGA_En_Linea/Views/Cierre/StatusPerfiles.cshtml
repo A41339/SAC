@@ -1,7 +1,8 @@
 @model IEnumerable<Entities.Entities.Procedures.FGA_Consultar_Monitor_Result>
 
 <div id="dialog"></div>
-
+
+
 
 @using (Html.BeginForm("CargarEntidad", "Cierre", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmPerfil" }))
 {
@@ -43,7 +44,7 @@
                                 @Html.HiddenFor(modelItem => item.IDENTIDAD)
                                 <div class="entity-cell-group" onclick="javascript:CargarEntidad(@(item.IDENTIDAD))" style="cursor: pointer;">
                                     <div class="entity-logo-box">
-                                        <img src="@Url.Content("~/Content/images/" + item.NOMBRE + ".jpg")" alt="@item.NOMBRE" />
+                                        <img src="@FGA.Env.ResolverUrlLogoIcono(item.NOMBRE, Url.Content("~/Content/images/" + item.NOMBRE + ".jpg"))" alt="@item.NOMBRE" />
                                     </div>
                                     <span class="entity-name-text">@item.NOMBRE</span>
                                 </div>

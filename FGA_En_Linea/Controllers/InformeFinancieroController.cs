@@ -137,7 +137,7 @@ namespace FGA.Controllers
                     if (entItem != null)
                     {
                         Session["NomEntidad"] = entItem.Nombre;
-                        Session["Logo"] = MicrosoftHelper.MSHelper.GetSiteRoot() + "/Content/images/" + entItem.Nombre + ".jpg";
+                        Session["Logo"] = Env.ResolverUrlLogoIcono(entItem.Nombre, MicrosoftHelper.MSHelper.GetSiteRoot() + "/Content/images/" + entItem.Nombre + ".jpg");
                     }
                     ConfigurarComboEntidades(entidadId);
                 }
@@ -442,7 +442,7 @@ namespace FGA.Controllers
                     if (entItem != null)
                     {
                         Session["NomEntidad"] = entItem.Nombre;
-                        Session["Logo"] = MicrosoftHelper.MSHelper.GetSiteRoot() + "/Content/images/" + entItem.Nombre + ".jpg";
+                        Session["Logo"] = Env.ResolverUrlLogoIcono(entItem.Nombre, MicrosoftHelper.MSHelper.GetSiteRoot() + "/Content/images/" + entItem.Nombre + ".jpg");
                     }
                     ConfigurarComboEntidades(entidadId);
                 }
@@ -687,7 +687,7 @@ namespace FGA.Controllers
                     if (entItem != null)
                     {
                         Session["NomEntidad"] = entItem.Nombre;
-                        Session["Logo"] = MicrosoftHelper.MSHelper.GetSiteRoot() + "/Content/images/" + entItem.Nombre + ".jpg";
+                        Session["Logo"] = Env.ResolverUrlLogoIcono(entItem.Nombre, MicrosoftHelper.MSHelper.GetSiteRoot() + "/Content/images/" + entItem.Nombre + ".jpg");
                     }
                     ConfigurarComboEntidades(entidadId);
                 }
@@ -934,7 +934,7 @@ namespace FGA.Controllers
                     if (entItem != null)
                     {
                         Session["NomEntidad"] = entItem.Nombre;
-                        Session["Logo"] = MicrosoftHelper.MSHelper.GetSiteRoot() + "/Content/images/" + entItem.Nombre + ".jpg";
+                        Session["Logo"] = Env.ResolverUrlLogoIcono(entItem.Nombre, MicrosoftHelper.MSHelper.GetSiteRoot() + "/Content/images/" + entItem.Nombre + ".jpg");
                     }
                     ConfigurarComboEntidades(entidadId);
                 }
