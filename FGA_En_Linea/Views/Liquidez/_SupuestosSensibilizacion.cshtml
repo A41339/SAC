@@ -83,9 +83,9 @@
                         <option value="Manual">Dato Manual</option>
                     </select>
                 </td>
-                <td style="background-color: #f8fafc; padding: 8px 14px;"><input type="number" step="0.01" id="txtCDP_Base" class="form-control input-sm text-right font-weight-bold input-base-editable" value="@(Model.Supuestos.RenovacionCDP_Base * 100m)" /></td>
-                <td style="background-color: #fffbeb; padding: 8px 14px;"><input type="number" step="0.01" id="txtCDP_Mod" class="form-control input-sm text-right" value="@(Model.Supuestos.RenovacionCDP_Moderado * 100m)" readonly /></td>
-                <td style="background-color: #fef2f2; padding: 8px 16px;"><input type="number" step="0.01" id="txtCDP_Sev" class="form-control input-sm text-right" value="@(Model.Supuestos.RenovacionCDP_Severo * 100m)" readonly /></td>
+                <td style="background-color: #f8fafc; padding: 8px 14px;"><input type="text" id="txtCDP_Base" class="form-control input-sm text-right font-mono font-weight-bold input-base-editable formato-monto" value="@((Model.Supuestos.RenovacionCDP_Base * 100m).ToString("N2"))" /></td>
+                <td style="background-color: #fffbeb; padding: 8px 14px;"><input type="text" id="txtCDP_Mod" class="form-control input-sm text-right font-mono" value="@((Model.Supuestos.RenovacionCDP_Moderado * 100m).ToString("N2"))" readonly /></td>
+                <td style="background-color: #fef2f2; padding: 8px 16px;"><input type="text" id="txtCDP_Sev" class="form-control input-sm text-right font-mono" value="@((Model.Supuestos.RenovacionCDP_Severo * 100m).ToString("N2"))" readonly /></td>
             </tr>
 
             <!-- 2. Salida Ahorros a la Vista (VaR) -->
@@ -99,9 +99,9 @@
                         <option value="Manual">Dato Manual</option>
                     </select>
                 </td>
-                <td style="background-color: #f8fafc; padding: 8px 14px;"><input type="number" step="0.01" id="txtVaR_Base" class="form-control input-sm text-right font-weight-bold input-base-editable" value="@(Model.Supuestos.SalidaVista_Base * 100m)" /></td>
-                <td style="background-color: #fffbeb; padding: 8px 14px;"><input type="number" step="0.01" id="txtVaR_Mod" class="form-control input-sm text-right" value="@(Model.Supuestos.SalidaVista_Moderado * 100m)" readonly /></td>
-                <td style="background-color: #fef2f2; padding: 8px 16px;"><input type="number" step="0.01" id="txtVaR_Sev" class="form-control input-sm text-right" value="@(Model.Supuestos.SalidaVista_Severo * 100m)" readonly /></td>
+                <td style="background-color: #f8fafc; padding: 8px 14px;"><input type="text" id="txtVaR_Base" class="form-control input-sm text-right font-mono font-weight-bold input-base-editable formato-monto" value="@((Model.Supuestos.SalidaVista_Base * 100m).ToString("N2"))" /></td>
+                <td style="background-color: #fffbeb; padding: 8px 14px;"><input type="text" id="txtVaR_Mod" class="form-control input-sm text-right font-mono" value="@((Model.Supuestos.SalidaVista_Moderado * 100m).ToString("N2"))" readonly /></td>
+                <td style="background-color: #fef2f2; padding: 8px 16px;"><input type="text" id="txtVaR_Sev" class="form-control input-sm text-right font-mono" value="@((Model.Supuestos.SalidaVista_Severo * 100m).ToString("N2"))" readonly /></td>
             </tr>
 
             <!-- 3. Crecimiento Cartera de Crédito -->
@@ -115,18 +115,18 @@
                         <option value="Manual">Dato Manual</option>
                     </select>
                 </td>
-                <td style="background-color: #f8fafc; padding: 8px 14px;"><input type="number" step="0.01" id="txtCartera_Base" class="form-control input-sm text-right font-weight-bold input-base-editable" value="@(Model.Supuestos.CrecimientoCartera_Base * 100m)" /></td>
-                <td style="background-color: #fffbeb; padding: 8px 14px;"><input type="number" step="0.01" id="txtCartera_Mod" class="form-control input-sm text-right" value="@(Model.Supuestos.CrecimientoCartera_Moderado * 100m)" readonly /></td>
-                <td style="background-color: #fef2f2; padding: 8px 16px;"><input type="number" step="0.01" id="txtCartera_Sev" class="form-control input-sm text-right" value="@(Model.Supuestos.CrecimientoCartera_Severo * 100m)" readonly /></td>
+                <td style="background-color: #f8fafc; padding: 8px 14px;"><input type="text" id="txtCartera_Base" class="form-control input-sm text-right font-mono font-weight-bold input-base-editable formato-monto" value="@((Model.Supuestos.CrecimientoCartera_Base * 100m).ToString("N2"))" /></td>
+                <td style="background-color: #fffbeb; padding: 8px 14px;"><input type="text" id="txtCartera_Mod" class="form-control input-sm text-right font-mono" value="@((Model.Supuestos.CrecimientoCartera_Moderado * 100m).ToString("N2"))" readonly /></td>
+                <td style="background-color: #fef2f2; padding: 8px 16px;"><input type="text" id="txtCartera_Sev" class="form-control input-sm text-right font-mono" value="@((Model.Supuestos.CrecimientoCartera_Severo * 100m).ToString("N2"))" readonly /></td>
             </tr>
 
             <!-- 4. Disminución en recaudo mensual -->
             <tr>
                 <td style="font-weight: 600; color: #1e3a8a; padding: 10px 16px; vertical-align: middle;">Disminución en el recaudo mensual de cartera</td>
                 <td style="padding: 10px 14px; vertical-align: middle;"><span class="badge" style="background-color: #f1f5f9; color: #475569; font-weight: normal; padding: 5px 10px;">Dato Manual</span></td>
-                <td style="background-color: #f8fafc; padding: 8px 14px;"><input type="number" step="0.01" id="txtRecaudo_Base" class="form-control input-sm text-right font-weight-bold input-base-editable" value="@(Model.Supuestos.DisminucionRecaudo_Base * 100m)" /></td>
-                <td style="background-color: #fffbeb; padding: 8px 14px;"><input type="number" step="0.01" id="txtRecaudo_Mod" class="form-control input-sm text-right" value="@(Model.Supuestos.DisminucionRecaudo_Moderado * 100m)" /></td>
-                <td style="background-color: #fef2f2; padding: 8px 16px;"><input type="number" step="0.01" id="txtRecaudo_Sev" class="form-control input-sm text-right" value="@(Model.Supuestos.DisminucionRecaudo_Severo * 100m)" /></td>
+                <td style="background-color: #f8fafc; padding: 8px 14px;"><input type="text" id="txtRecaudo_Base" class="form-control input-sm text-right font-mono font-weight-bold input-base-editable formato-monto" value="@((Model.Supuestos.DisminucionRecaudo_Base * 100m).ToString("N2"))" /></td>
+                <td style="background-color: #fffbeb; padding: 8px 14px;"><input type="text" id="txtRecaudo_Mod" class="form-control input-sm text-right font-mono" value="@((Model.Supuestos.DisminucionRecaudo_Moderado * 100m).ToString("N2"))" /></td>
+                <td style="background-color: #fef2f2; padding: 8px 16px;"><input type="text" id="txtRecaudo_Sev" class="form-control input-sm text-right font-mono" value="@((Model.Supuestos.DisminucionRecaudo_Severo * 100m).ToString("N2"))" /></td>
             </tr>
 
             <!-- 5. Haircut Inversiones Líquidas -->
@@ -138,45 +138,45 @@
                         <option value="Manual">Dato Manual</option>
                     </select>
                 </td>
-                <td style="background-color: #f8fafc; padding: 8px 14px;"><input type="number" step="1" id="txtHaircut_Base" class="form-control input-sm text-right font-weight-bold input-base-editable" value="@Model.Supuestos.Haircut_Base.ToString("F0")" /></td>
-                <td style="background-color: #fffbeb; padding: 8px 14px;"><input type="number" step="1" id="txtHaircut_Mod" class="form-control input-sm text-right" value="@Model.Supuestos.Haircut_Moderado.ToString("F0")" /></td>
-                <td style="background-color: #fef2f2; padding: 8px 16px;"><input type="number" step="1" id="txtHaircut_Sev" class="form-control input-sm text-right" value="@Model.Supuestos.Haircut_Severo.ToString("F0")" /></td>
+                <td style="background-color: #f8fafc; padding: 8px 14px;"><input type="text" id="txtHaircut_Base" class="form-control input-sm text-right font-mono font-weight-bold input-base-editable formato-monto" value="@Model.Supuestos.Haircut_Base.ToString("N2")" /></td>
+                <td style="background-color: #fffbeb; padding: 8px 14px;"><input type="text" id="txtHaircut_Mod" class="form-control input-sm text-right font-mono" value="@Model.Supuestos.Haircut_Moderado.ToString("N2")" /></td>
+                <td style="background-color: #fef2f2; padding: 8px 16px;"><input type="text" id="txtHaircut_Sev" class="form-control input-sm text-right font-mono" value="@Model.Supuestos.Haircut_Severo.ToString("N2")" /></td>
             </tr>
 
             <!-- 6. Salida Top 20 Depositantes -->
             <tr>
                 <td style="font-weight: 600; color: #1e3a8a; padding: 10px 16px; vertical-align: middle;">Salida Top 20 depositantes</td>
                 <td style="padding: 10px 14px; vertical-align: middle;"><span class="badge" style="background-color: #f1f5f9; color: #475569; font-weight: normal; padding: 5px 10px;">% Disminución fija</span></td>
-                <td style="background-color: #f8fafc; padding: 8px 14px;"><input type="number" step="0.01" id="txtTop20_Base" class="form-control input-sm text-right font-weight-bold input-base-editable" value="@(Model.Supuestos.SalidaTop20_Base * 100m)" /></td>
-                <td style="background-color: #fffbeb; padding: 8px 14px;"><input type="number" step="0.01" id="txtTop20_Mod" class="form-control input-sm text-right" value="@(Model.Supuestos.SalidaTop20_Moderado * 100m)" readonly /></td>
-                <td style="background-color: #fef2f2; padding: 8px 16px;"><input type="number" step="0.01" id="txtTop20_Sev" class="form-control input-sm text-right" value="@(Model.Supuestos.SalidaTop20_Severo * 100m)" readonly /></td>
+                <td style="background-color: #f8fafc; padding: 8px 14px;"><input type="text" id="txtTop20_Base" class="form-control input-sm text-right font-mono font-weight-bold input-base-editable formato-monto" value="@((Model.Supuestos.SalidaTop20_Base * 100m).ToString("N2"))" /></td>
+                <td style="background-color: #fffbeb; padding: 8px 14px;"><input type="text" id="txtTop20_Mod" class="form-control input-sm text-right font-mono formato-monto" value="@((Model.Supuestos.SalidaTop20_Moderado * 100m).ToString("N2"))" readonly /></td>
+                <td style="background-color: #fef2f2; padding: 8px 16px;"><input type="text" id="txtTop20_Sev" class="form-control input-sm text-right font-mono formato-monto" value="@((Model.Supuestos.SalidaTop20_Severo * 100m).ToString("N2"))" readonly /></td>
             </tr>
 
             <!-- 7. Líneas de Financiamiento -->
             <tr>
                 <td style="font-weight: 600; color: #1e3a8a; padding: 10px 16px; vertical-align: middle;">Disponibilidad de líneas de financiamiento mensual (¢)</td>
                 <td style="padding: 10px 14px; vertical-align: middle;"><span class="badge" style="background-color: #f1f5f9; color: #475569; font-weight: normal; padding: 5px 10px;">Dato Manual</span></td>
-                <td style="background-color: #f8fafc; padding: 8px 14px;"><input type="number" step="1000000" id="txtLineas_Base" class="form-control input-sm text-right font-weight-bold input-base-editable" value="@Model.Supuestos.DisponibilidadLineas_Base.ToString("F0")" /></td>
-                <td style="background-color: #fffbeb; padding: 8px 14px;"><input type="number" step="1000000" id="txtLineas_Mod" class="form-control input-sm text-right" value="@Model.Supuestos.DisponibilidadLineas_Moderado.ToString("F0")" /></td>
-                <td style="background-color: #fef2f2; padding: 8px 16px;"><input type="number" step="1000000" id="txtLineas_Sev" class="form-control input-sm text-right" value="@Model.Supuestos.DisponibilidadLineas_Severo.ToString("F0")" /></td>
+                <td style="background-color: #f8fafc; padding: 8px 14px;"><input type="text" id="txtLineas_Base" class="form-control input-sm text-right font-mono font-weight-bold input-base-editable formato-monto" value="@Model.Supuestos.DisponibilidadLineas_Base.ToString("N2")" /></td>
+                <td style="background-color: #fffbeb; padding: 8px 14px;"><input type="text" id="txtLineas_Mod" class="form-control input-sm text-right font-mono formato-monto" value="@Model.Supuestos.DisponibilidadLineas_Moderado.ToString("N2")" /></td>
+                <td style="background-color: #fef2f2; padding: 8px 16px;"><input type="text" id="txtLineas_Sev" class="form-control input-sm text-right font-mono formato-monto" value="@Model.Supuestos.DisponibilidadLineas_Severo.ToString("N2")" /></td>
             </tr>
 
             <!-- 8. Pago de Principal de Obligaciones -->
             <tr>
                 <td style="font-weight: 600; color: #1e3a8a; padding: 10px 16px; vertical-align: middle;">Pago principal de obligaciones por deuda mensual (¢)</td>
                 <td style="padding: 10px 14px; vertical-align: middle;"><span class="badge" style="background-color: #f1f5f9; color: #475569; font-weight: normal; padding: 5px 10px;">Dato Manual</span></td>
-                <td style="background-color: #f8fafc; padding: 8px 14px;"><input type="number" step="1000000" id="txtDeuda_Base" class="form-control input-sm text-right font-weight-bold input-base-editable" value="@Model.Supuestos.PagoObligaciones_Base.ToString("F0")" /></td>
-                <td style="background-color: #fffbeb; padding: 8px 14px;"><input type="number" step="1000000" id="txtDeuda_Mod" class="form-control input-sm text-right" value="@Model.Supuestos.PagoObligaciones_Moderado.ToString("F0")" /></td>
-                <td style="background-color: #fef2f2; padding: 8px 16px;"><input type="number" step="1000000" id="txtDeuda_Sev" class="form-control input-sm text-right" value="@Model.Supuestos.PagoObligaciones_Severo.ToString("F0")" /></td>
+                <td style="background-color: #f8fafc; padding: 8px 14px;"><input type="text" id="txtDeuda_Base" class="form-control input-sm text-right font-mono font-weight-bold input-base-editable formato-monto" value="@Model.Supuestos.PagoObligaciones_Base.ToString("N2")" /></td>
+                <td style="background-color: #fffbeb; padding: 8px 14px;"><input type="text" id="txtDeuda_Mod" class="form-control input-sm text-right font-mono formato-monto" value="@Model.Supuestos.PagoObligaciones_Moderado.ToString("N2")" /></td>
+                <td style="background-color: #fef2f2; padding: 8px 16px;"><input type="text" id="txtDeuda_Sev" class="form-control input-sm text-right font-mono formato-monto" value="@Model.Supuestos.PagoObligaciones_Severo.ToString("N2")" /></td>
             </tr>
 
             <!-- 9. Cupones Mensuales -->
             <tr>
                 <td style="font-weight: 600; color: #1e3a8a; padding: 10px 16px; vertical-align: middle;">Cupones mensuales (¢)</td>
                 <td style="padding: 10px 14px; vertical-align: middle;"><span class="badge" style="background-color: #f1f5f9; color: #475569; font-weight: normal; padding: 5px 10px;">Dato Manual</span></td>
-                <td style="background-color: #f8fafc; padding: 8px 14px;"><input type="number" step="100000" id="txtCupones_Base" class="form-control input-sm text-right font-weight-bold input-base-editable" value="@Model.Supuestos.Cupones_Base.ToString("F0")" /></td>
-                <td style="background-color: #fffbeb; padding: 8px 14px;"><input type="number" step="100000" id="txtCupones_Mod" class="form-control input-sm text-right" value="@Model.Supuestos.Cupones_Moderado.ToString("F0")" /></td>
-                <td style="background-color: #fef2f2; padding: 8px 16px;"><input type="number" step="100000" id="txtCupones_Sev" class="form-control input-sm text-right" value="@Model.Supuestos.Cupones_Severo.ToString("F0")" /></td>
+                <td style="background-color: #f8fafc; padding: 8px 14px;"><input type="text" id="txtCupones_Base" class="form-control input-sm text-right font-mono font-weight-bold input-base-editable formato-monto" value="@Model.Supuestos.Cupones_Base.ToString("N2")" /></td>
+                <td style="background-color: #fffbeb; padding: 8px 14px;"><input type="text" id="txtCupones_Mod" class="form-control input-sm text-right font-mono formato-monto" value="@Model.Supuestos.Cupones_Moderado.ToString("N2")" /></td>
+                <td style="background-color: #fef2f2; padding: 8px 16px;"><input type="text" id="txtCupones_Sev" class="form-control input-sm text-right font-mono formato-monto" value="@Model.Supuestos.Cupones_Severo.ToString("N2")" /></td>
             </tr>
 
             <!-- 10. Capital Social -->
@@ -189,36 +189,36 @@
                         <option value="Manual">Dato Manual</option>
                     </select>
                 </td>
-                <td style="background-color: #f8fafc; padding: 8px 14px;"><input type="number" step="0.01" id="txtCapital_Base" class="form-control input-sm text-right font-weight-bold input-base-editable" value="@(Model.Supuestos.CapitalSocial_Base * 100m)" /></td>
-                <td style="background-color: #fffbeb; padding: 8px 14px;"><input type="number" step="0.01" id="txtCapital_Mod" class="form-control input-sm text-right" value="@(Model.Supuestos.CapitalSocial_Moderado * 100m)" readonly /></td>
-                <td style="background-color: #fef2f2; padding: 8px 16px;"><input type="number" step="0.01" id="txtCapital_Sev" class="form-control input-sm text-right" value="@(Model.Supuestos.CapitalSocial_Severo * 100m)" readonly /></td>
+                <td style="background-color: #f8fafc; padding: 8px 14px;"><input type="text" id="txtCapital_Base" class="form-control input-sm text-right font-mono font-weight-bold input-base-editable formato-monto" value="@((Model.Supuestos.CapitalSocial_Base * 100m).ToString("N2"))" /></td>
+                <td style="background-color: #fffbeb; padding: 8px 14px;"><input type="text" id="txtCapital_Mod" class="form-control input-sm text-right font-mono formato-monto" value="@((Model.Supuestos.CapitalSocial_Moderado * 100m).ToString("N2"))" readonly /></td>
+                <td style="background-color: #fef2f2; padding: 8px 16px;"><input type="text" id="txtCapital_Sev" class="form-control input-sm text-right font-mono formato-monto" value="@((Model.Supuestos.CapitalSocial_Severo * 100m).ToString("N2"))" readonly /></td>
             </tr>
 
             <!-- 11. Otros Ingresos Mensual -->
             <tr>
                 <td style="font-weight: 600; color: #1e3a8a; padding: 10px 16px; vertical-align: middle;">Otros ingresos mensual</td>
                 <td style="padding: 10px 14px; vertical-align: middle;"><span class="badge" style="background-color: #f1f5f9; color: #475569; font-weight: normal; padding: 5px 10px;">Promedio 6 meses</span></td>
-                <td style="background-color: #f8fafc; padding: 8px 14px;"><input type="number" step="0.01" id="txtOtrosIng_Base" class="form-control input-sm text-right font-weight-bold input-base-editable" value="@(Model.Supuestos.OtrosIngresos_Base * 100m)" /></td>
-                <td style="background-color: #fffbeb; padding: 8px 14px;"><input type="number" step="0.01" id="txtOtrosIng_Mod" class="form-control input-sm text-right" value="@(Model.Supuestos.OtrosIngresos_Moderado * 100m)" readonly /></td>
-                <td style="background-color: #fef2f2; padding: 8px 16px;"><input type="number" step="0.01" id="txtOtrosIng_Sev" class="form-control input-sm text-right" value="@(Model.Supuestos.OtrosIngresos_Severo * 100m)" readonly /></td>
+                <td style="background-color: #f8fafc; padding: 8px 14px;"><input type="text" id="txtOtrosIng_Base" class="form-control input-sm text-right font-mono font-weight-bold input-base-editable formato-monto" value="@((Model.Supuestos.OtrosIngresos_Base * 100m).ToString("N2"))" /></td>
+                <td style="background-color: #fffbeb; padding: 8px 14px;"><input type="text" id="txtOtrosIng_Mod" class="form-control input-sm text-right font-mono formato-monto" value="@((Model.Supuestos.OtrosIngresos_Moderado * 100m).ToString("N2"))" readonly /></td>
+                <td style="background-color: #fef2f2; padding: 8px 16px;"><input type="text" id="txtOtrosIng_Sev" class="form-control input-sm text-right font-mono formato-monto" value="@((Model.Supuestos.OtrosIngresos_Severo * 100m).ToString("N2"))" readonly /></td>
             </tr>
 
             <!-- 12. Egresos Financieros Mensual -->
             <tr>
                 <td style="font-weight: 600; color: #1e3a8a; padding: 10px 16px; vertical-align: middle;">Egresos financieros mensual</td>
                 <td style="padding: 10px 14px; vertical-align: middle;"><span class="badge" style="background-color: #f1f5f9; color: #475569; font-weight: normal; padding: 5px 10px;">Dato Manual</span></td>
-                <td style="background-color: #f8fafc; padding: 8px 14px;"><input type="number" step="0.01" id="txtEgFin_Base" class="form-control input-sm text-right font-weight-bold input-base-editable" value="@(Model.Supuestos.EgresosFinancieros_Base * 100m)" /></td>
-                <td style="background-color: #fffbeb; padding: 8px 14px;"><input type="number" step="0.01" id="txtEgFin_Mod" class="form-control input-sm text-right" value="@(Model.Supuestos.EgresosFinancieros_Moderado * 100m)" /></td>
-                <td style="background-color: #fef2f2; padding: 8px 16px;"><input type="number" step="0.01" id="txtEgFin_Sev" class="form-control input-sm text-right" value="@(Model.Supuestos.EgresosFinancieros_Severo * 100m)" /></td>
+                <td style="background-color: #f8fafc; padding: 8px 14px;"><input type="text" id="txtEgFin_Base" class="form-control input-sm text-right font-mono font-weight-bold input-base-editable formato-monto" value="@((Model.Supuestos.EgresosFinancieros_Base * 100m).ToString("N2"))" /></td>
+                <td style="background-color: #fffbeb; padding: 8px 14px;"><input type="text" id="txtEgFin_Mod" class="form-control input-sm text-right font-mono formato-monto" value="@((Model.Supuestos.EgresosFinancieros_Moderado * 100m).ToString("N2"))" /></td>
+                <td style="background-color: #fef2f2; padding: 8px 16px;"><input type="text" id="txtEgFin_Sev" class="form-control input-sm text-right font-mono formato-monto" value="@((Model.Supuestos.EgresosFinancieros_Severo * 100m).ToString("N2"))" /></td>
             </tr>
 
             <!-- 13. Gastos Administrativos Mensual -->
             <tr>
                 <td style="font-weight: 600; color: #1e3a8a; padding: 10px 16px; vertical-align: middle;">Gastos administrativos mensual</td>
                 <td style="padding: 10px 14px; vertical-align: middle;"><span class="badge" style="background-color: #f1f5f9; color: #475569; font-weight: normal; padding: 5px 10px;">Dato Manual</span></td>
-                <td style="background-color: #f8fafc; padding: 8px 14px;"><input type="number" step="0.01" id="txtAdm_Base" class="form-control input-sm text-right font-weight-bold input-base-editable" value="@(Model.Supuestos.GastosAdministrativos_Base * 100m)" /></td>
-                <td style="background-color: #fffbeb; padding: 8px 14px;"><input type="number" step="0.01" id="txtAdm_Mod" class="form-control input-sm text-right" value="@(Model.Supuestos.GastosAdministrativos_Moderado * 100m)" /></td>
-                <td style="background-color: #fef2f2; padding: 8px 16px;"><input type="number" step="0.01" id="txtAdm_Sev" class="form-control input-sm text-right" value="@(Model.Supuestos.GastosAdministrativos_Severo * 100m)" /></td>
+                <td style="background-color: #f8fafc; padding: 8px 14px;"><input type="text" id="txtAdm_Base" class="form-control input-sm text-right font-mono font-weight-bold input-base-editable formato-monto" value="@((Model.Supuestos.GastosAdministrativos_Base * 100m).ToString("N2"))" /></td>
+                <td style="background-color: #fffbeb; padding: 8px 14px;"><input type="text" id="txtAdm_Mod" class="form-control input-sm text-right font-mono formato-monto" value="@((Model.Supuestos.GastosAdministrativos_Moderado * 100m).ToString("N2"))" /></td>
+                <td style="background-color: #fef2f2; padding: 8px 16px;"><input type="text" id="txtAdm_Sev" class="form-control input-sm text-right font-mono formato-monto" value="@((Model.Supuestos.GastosAdministrativos_Severo * 100m).ToString("N2"))" /></td>
             </tr>
         </tbody>
     </table>
@@ -273,35 +273,77 @@
 </div>
 
 <script>
+    function parseMonto(val) {
+        if (val === null || val === undefined) return 0;
+        var s = val.toString().trim();
+        if (!s) return 0;
+
+        var lastComma = s.lastIndexOf(',');
+        var lastDot = s.lastIndexOf('.');
+
+        if (lastComma > -1 && lastDot > -1) {
+            if (lastDot > lastComma) {
+                s = s.replace(/,/g, '');
+            } else {
+                s = s.replace(/\./g, '').replace(',', '.');
+            }
+        } else if (lastComma > -1) {
+            var commaCount = (s.match(/,/g) || []).length;
+            if (commaCount > 1) {
+                s = s.replace(/,/g, '');
+            } else {
+                var parts = s.split(',');
+                if (parts[1].length <= 2) {
+                    s = parts[0] + '.' + parts[1];
+                } else {
+                    s = s.replace(/,/g, '');
+                }
+            }
+        } else {
+            var dotCount = (s.match(/\./g) || []).length;
+            if (dotCount > 1) {
+                s = s.replace(/\./g, '');
+            }
+        }
+
+        var n = parseFloat(s);
+        return isNaN(n) ? 0 : n;
+    }
+
+    function formatMonto(val) {
+        var n = parseMonto(val);
+        return n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
     function recopilarSupuestos() {
         return {
-            RenovacionCDP_Base: (parseFloat($('#txtCDP_Base').val()) || 0) / 100,
-            SalidaVista_Base: (parseFloat($('#txtVaR_Base').val()) || 0) / 100,
-            CrecimientoCartera_Base: (parseFloat($('#txtCartera_Base').val()) || 0) / 100,
-            DisminucionRecaudo_Base: (parseFloat($('#txtRecaudo_Base').val()) || 0) / 100,
-            DisminucionRecaudo_Moderado: (parseFloat($('#txtRecaudo_Mod').val()) || 0) / 100,
-            DisminucionRecaudo_Severo: (parseFloat($('#txtRecaudo_Sev').val()) || 0) / 100,
-            Haircut_Base: parseFloat($('#txtHaircut_Base').val()) || 0,
-            Haircut_Moderado: parseFloat($('#txtHaircut_Mod').val()) || 0,
-            Haircut_Severo: parseFloat($('#txtHaircut_Sev').val()) || 0,
-            SalidaTop20_Base: (parseFloat($('#txtTop20_Base').val()) || 0) / 100,
-            DisponibilidadLineas_Base: parseFloat($('#txtLineas_Base').val()) || 0,
-            DisponibilidadLineas_Moderado: parseFloat($('#txtLineas_Mod').val()) || 0,
-            DisponibilidadLineas_Severo: parseFloat($('#txtLineas_Sev').val()) || 0,
-            PagoObligaciones_Base: parseFloat($('#txtDeuda_Base').val()) || 0,
-            PagoObligaciones_Moderado: parseFloat($('#txtDeuda_Mod').val()) || 0,
-            PagoObligaciones_Severo: parseFloat($('#txtDeuda_Sev').val()) || 0,
-            Cupones_Base: parseFloat($('#txtCupones_Base').val()) || 0,
-            Cupones_Moderado: parseFloat($('#txtCupones_Mod').val()) || 0,
-            Cupones_Severo: parseFloat($('#txtCupones_Sev').val()) || 0,
-            CapitalSocial_Base: (parseFloat($('#txtCapital_Base').val()) || 0) / 100,
-            OtrosIngresos_Base: (parseFloat($('#txtOtrosIng_Base').val()) || 0) / 100,
-            EgresosFinancieros_Base: (parseFloat($('#txtEgFin_Base').val()) || 0) / 100,
-            EgresosFinancieros_Moderado: (parseFloat($('#txtEgFin_Mod').val()) || 0) / 100,
-            EgresosFinancieros_Severo: (parseFloat($('#txtEgFin_Sev').val()) || 0) / 100,
-            GastosAdministrativos_Base: (parseFloat($('#txtAdm_Base').val()) || 0) / 100,
-            GastosAdministrativos_Moderado: (parseFloat($('#txtAdm_Mod').val()) || 0) / 100,
-            GastosAdministrativos_Severo: (parseFloat($('#txtAdm_Sev').val()) || 0) / 100
+            RenovacionCDP_Base: parseMonto($('#txtCDP_Base').val()) / 100,
+            SalidaVista_Base: parseMonto($('#txtVaR_Base').val()) / 100,
+            CrecimientoCartera_Base: parseMonto($('#txtCartera_Base').val()) / 100,
+            DisminucionRecaudo_Base: parseMonto($('#txtRecaudo_Base').val()) / 100,
+            DisminucionRecaudo_Moderado: parseMonto($('#txtRecaudo_Mod').val()) / 100,
+            DisminucionRecaudo_Severo: parseMonto($('#txtRecaudo_Sev').val()) / 100,
+            Haircut_Base: parseMonto($('#txtHaircut_Base').val()),
+            Haircut_Moderado: parseMonto($('#txtHaircut_Mod').val()),
+            Haircut_Severo: parseMonto($('#txtHaircut_Sev').val()),
+            SalidaTop20_Base: parseMonto($('#txtTop20_Base').val()) / 100,
+            DisponibilidadLineas_Base: parseMonto($('#txtLineas_Base').val()),
+            DisponibilidadLineas_Moderado: parseMonto($('#txtLineas_Mod').val()),
+            DisponibilidadLineas_Severo: parseMonto($('#txtLineas_Sev').val()),
+            PagoObligaciones_Base: parseMonto($('#txtDeuda_Base').val()),
+            PagoObligaciones_Moderado: parseMonto($('#txtDeuda_Mod').val()),
+            PagoObligaciones_Severo: parseMonto($('#txtDeuda_Sev').val()),
+            Cupones_Base: parseMonto($('#txtCupones_Base').val()),
+            Cupones_Moderado: parseMonto($('#txtCupones_Mod').val()),
+            Cupones_Severo: parseMonto($('#txtCupones_Sev').val()),
+            CapitalSocial_Base: parseMonto($('#txtCapital_Base').val()) / 100,
+            OtrosIngresos_Base: parseMonto($('#txtOtrosIng_Base').val()) / 100,
+            EgresosFinancieros_Base: parseMonto($('#txtEgFin_Base').val()) / 100,
+            EgresosFinancieros_Moderado: parseMonto($('#txtEgFin_Mod').val()) / 100,
+            EgresosFinancieros_Severo: parseMonto($('#txtEgFin_Sev').val()) / 100,
+            GastosAdministrativos_Base: parseMonto($('#txtAdm_Base').val()) / 100,
+            GastosAdministrativos_Moderado: parseMonto($('#txtAdm_Mod').val()) / 100,
+            GastosAdministrativos_Severo: parseMonto($('#txtAdm_Sev').val()) / 100
         };
     }
 
@@ -465,6 +507,20 @@
         // Detectar cambios en cualquier parámetro del Escenario Base para activar aviso visual
         $('input.input-base-editable, select[id^="selProyector"]').on('input change', function() {
             $('#bannerSimulacionActiva').slideDown(150);
+        });
+
+        // Formateo interactivo de montos y porcentajes con separador de miles y 2 decimales
+        $(document).on('focus', '.formato-monto:not([readonly])', function() {
+            var n = parseMonto($(this).val());
+            if (!isNaN(n)) {
+                $(this).val(n);
+            }
+            $(this).select();
+        });
+
+        $(document).on('blur', '.formato-monto:not([readonly])', function() {
+            var n = parseMonto($(this).val());
+            $(this).val(n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
         });
     });
 </script>
