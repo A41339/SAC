@@ -341,8 +341,8 @@
                         }
                     },
                     series: [
-                        { name: 'Entradas', data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.GapDatos.Entradas)), color: '#10b981' },
-                        { name: 'Salidas', data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.GapDatos.Salidas)), color: '#f97316' }
+                        { name: 'Entradas', data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.GapDatos.Entradas)), color: '#2b579a' },
+                        { name: 'Salidas', data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.GapDatos.Salidas)), color: '#64748b' }
                     ],
                     credits: { enabled: false }
                 });
@@ -356,8 +356,8 @@
                     xAxis: { categories: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.GapDatos.Bandas)) },
                     yAxis: { title: { text: 'Monto (MM ¢)' } },
                     series: [
-                        { type: 'column', name: 'GAP por Banda', data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.GapDatos.BrechasBanda)), color: '#0284c7' },
-                        { type: 'spline', name: 'GAP Acumulado', data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.GapDatos.BrechasAcumuladas)), color: '#dc2626', lineWidth: 3, marker: { radius: 4 } }
+                        { type: 'column', name: 'GAP por Banda', data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.GapDatos.BrechasBanda)), color: '#2b579a' },
+                        { type: 'spline', name: 'GAP Acumulado', data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.GapDatos.BrechasAcumuladas)), color: '#475569', lineWidth: 3, marker: { radius: 4 } }
                     ],
                     credits: { enabled: false }
                 });
@@ -416,68 +416,75 @@
                 var seriesData = [];
                 var htmlTabla = '';
 
+                function fmtMonto(v) {
+                    var n = parseFloat(v) || 0;
+                    return '¢' + n.toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                }
+
                 if (esEntradas) {
                     seriesData = [
-                        { name: 'Disponibilidades (11000000)', data: gapModelData.disponibilidades, color: '#0284c7' },
-                        { name: 'Recuperación de Cartera', data: gapModelData.recaudoCartera, color: '#16a34a' },
-                        { name: 'Vencimiento Inversiones', data: gapModelData.vencimientoInversiones, color: '#2b579a' }
+                        { name: 'Disponibilidades (11000000)', data: gapModelData.disponibilidades, color: '#2b579a' },
+                        { name: 'Recuperación de Cartera', data: gapModelData.recaudoCartera, color: '#475569' },
+                        { name: 'Vencimiento Inversiones', data: gapModelData.vencimientoInversiones, color: '#94a3b8' }
                     ];
 
-                    htmlTabla = '<table class="table table-bordered table-striped tabla-liquidez-azul" style="width: 100%; font-size: 12.5px; margin-bottom: 0;">' +
+                    htmlTabla = '<div class="table-responsive" style="border: 1px solid #cbd5e1; border-radius: 6px; overflow-x: auto;">' +
+                        '<table class="table table-bordered table-striped tabla-liquidez-azul" style="width: 100%; font-size: 12px; margin-bottom: 0;">' +
                         '<thead><tr>' +
-                        '<th style="text-align: left; background: #2b579a !important; color: #fff !important; padding: 8px 12px;">Concepto</th>';
+                        '<th style="text-align: left; background: #2b579a !important; color: #fff !important; padding: 10px 14px; min-width: 190px;">Concepto</th>';
                     for (var i = 0; i < gapModelData.bandas.length; i++) {
-                        htmlTabla += '<th style="text-align: right; background: #2b579a !important; color: #fff !important; padding: 8px 10px;">' + gapModelData.bandas[i] + '</th>';
+                        htmlTabla += '<th style="text-align: right; background: #2b579a !important; color: #fff !important; padding: 10px 10px; min-width: 105px; white-space: nowrap;">' + gapModelData.bandas[i] + '</th>';
                     }
                     htmlTabla += '</tr></thead><tbody>' +
-                        '<tr><td style="font-weight: 600; color: #0284c7;">Disponibilidades</td>';
+                        '<tr><td style="font-weight: 600; color: #1e3a8a; white-space: nowrap;"><i class="fa fa-circle" style="color: #2b579a; font-size: 10px; margin-right: 6px;"></i> Disponibilidades</td>';
                     for (var i = 0; i < gapModelData.bandas.length; i++) {
-                        htmlTabla += '<td style="text-align: right; font-family: monospace;">¢' + (gapModelData.disponibilidades[i] || 0).toFixed(2) + '</td>';
+                        htmlTabla += '<td style="text-align: right; font-family: monospace; white-space: nowrap; padding: 8px 10px;">' + fmtMonto(gapModelData.disponibilidades[i]) + '</td>';
                     }
-                    htmlTabla += '</tr><tr><td style="font-weight: 600; color: #16a34a;">Recuperación de Cartera</td>';
+                    htmlTabla += '</tr><tr><td style="font-weight: 600; color: #334155; white-space: nowrap;"><i class="fa fa-circle" style="color: #475569; font-size: 10px; margin-right: 6px;"></i> Recuperación de Cartera</td>';
                     for (var i = 0; i < gapModelData.bandas.length; i++) {
-                        htmlTabla += '<td style="text-align: right; font-family: monospace;">¢' + (gapModelData.recaudoCartera[i] || 0).toFixed(2) + '</td>';
+                        htmlTabla += '<td style="text-align: right; font-family: monospace; white-space: nowrap; padding: 8px 10px;">' + fmtMonto(gapModelData.recaudoCartera[i]) + '</td>';
                     }
-                    htmlTabla += '</tr><tr><td style="font-weight: 600; color: #2b579a;">Vencimiento Inversiones</td>';
+                    htmlTabla += '</tr><tr><td style="font-weight: 600; color: #475569; white-space: nowrap;"><i class="fa fa-circle" style="color: #94a3b8; font-size: 10px; margin-right: 6px;"></i> Vencimiento Inversiones</td>';
                     for (var i = 0; i < gapModelData.bandas.length; i++) {
-                        htmlTabla += '<td style="text-align: right; font-family: monospace;">¢' + (gapModelData.vencimientoInversiones[i] || 0).toFixed(2) + '</td>';
+                        htmlTabla += '<td style="text-align: right; font-family: monospace; white-space: nowrap; padding: 8px 10px;">' + fmtMonto(gapModelData.vencimientoInversiones[i]) + '</td>';
                     }
-                    htmlTabla += '</tr><tr style="background: #ecfdf5; font-weight: 700;"><td style="color: #065f46;">Total Entradas</td>';
+                    htmlTabla += '</tr><tr style="background: #eff6ff; font-weight: 700; border-top: 2px solid #2b579a;"><td style="color: #1e3a8a; white-space: nowrap;">Total Entradas</td>';
                     for (var i = 0; i < gapModelData.bandas.length; i++) {
-                        htmlTabla += '<td style="text-align: right; font-family: monospace; color: #065f46;">¢' + (gapModelData.entradasTotales[i] || 0).toFixed(2) + '</td>';
+                        htmlTabla += '<td style="text-align: right; font-family: monospace; color: #1e3a8a; font-weight: 800; white-space: nowrap; padding: 8px 10px;">' + fmtMonto(gapModelData.entradasTotales[i]) + '</td>';
                     }
-                    htmlTabla += '</tr></tbody></table>';
+                    htmlTabla += '</tr></tbody></table></div>';
                 } else {
                     seriesData = [
-                        { name: "Vencimientos de CDP's", data: gapModelData.cdps, color: '#dc2626' },
-                        { name: 'Obligaciones con Entidades', data: gapModelData.obligaciones, color: '#ea580c' },
-                        { name: 'Otras Cuentas por Pagar', data: gapModelData.otrasCuentas, color: '#64748b' }
+                        { name: "Vencimientos de CDP's", data: gapModelData.cdps, color: '#2b579a' },
+                        { name: 'Obligaciones con Entidades', data: gapModelData.obligaciones, color: '#475569' },
+                        { name: 'Otras Cuentas por Pagar', data: gapModelData.otrasCuentas, color: '#94a3b8' }
                     ];
 
-                    htmlTabla = '<table class="table table-bordered table-striped tabla-liquidez-azul" style="width: 100%; font-size: 12.5px; margin-bottom: 0;">' +
+                    htmlTabla = '<div class="table-responsive" style="border: 1px solid #cbd5e1; border-radius: 6px; overflow-x: auto;">' +
+                        '<table class="table table-bordered table-striped tabla-liquidez-azul" style="width: 100%; font-size: 12px; margin-bottom: 0;">' +
                         '<thead><tr>' +
-                        '<th style="text-align: left; background: #2b579a !important; color: #fff !important; padding: 8px 12px;">Concepto</th>';
+                        '<th style="text-align: left; background: #2b579a !important; color: #fff !important; padding: 10px 14px; min-width: 190px;">Concepto</th>';
                     for (var i = 0; i < gapModelData.bandas.length; i++) {
-                        htmlTabla += '<th style="text-align: right; background: #2b579a !important; color: #fff !important; padding: 8px 10px;">' + gapModelData.bandas[i] + '</th>';
+                        htmlTabla += '<th style="text-align: right; background: #2b579a !important; color: #fff !important; padding: 10px 10px; min-width: 105px; white-space: nowrap;">' + gapModelData.bandas[i] + '</th>';
                     }
                     htmlTabla += '</tr></thead><tbody>' +
-                        '<tr><td style="font-weight: 600; color: #dc2626;">Vencimientos CDP\'s</td>';
+                        '<tr><td style="font-weight: 600; color: #1e3a8a; white-space: nowrap;"><i class="fa fa-circle" style="color: #2b579a; font-size: 10px; margin-right: 6px;"></i> Vencimientos CDP\'s</td>';
                     for (var i = 0; i < gapModelData.bandas.length; i++) {
-                        htmlTabla += '<td style="text-align: right; font-family: monospace;">¢' + (gapModelData.cdps[i] || 0).toFixed(2) + '</td>';
+                        htmlTabla += '<td style="text-align: right; font-family: monospace; white-space: nowrap; padding: 8px 10px;">' + fmtMonto(gapModelData.cdps[i]) + '</td>';
                     }
-                    htmlTabla += '</tr><tr><td style="font-weight: 600; color: #ea580c;">Obligaciones con Entidades</td>';
+                    htmlTabla += '</tr><tr><td style="font-weight: 600; color: #334155; white-space: nowrap;"><i class="fa fa-circle" style="color: #475569; font-size: 10px; margin-right: 6px;"></i> Obligaciones con Entidades</td>';
                     for (var i = 0; i < gapModelData.bandas.length; i++) {
-                        htmlTabla += '<td style="text-align: right; font-family: monospace;">¢' + (gapModelData.obligaciones[i] || 0).toFixed(2) + '</td>';
+                        htmlTabla += '<td style="text-align: right; font-family: monospace; white-space: nowrap; padding: 8px 10px;">' + fmtMonto(gapModelData.obligaciones[i]) + '</td>';
                     }
-                    htmlTabla += '</tr><tr><td style="font-weight: 600; color: #64748b;">Otras Cuentas por Pagar</td>';
+                    htmlTabla += '</tr><tr><td style="font-weight: 600; color: #475569; white-space: nowrap;"><i class="fa fa-circle" style="color: #94a3b8; font-size: 10px; margin-right: 6px;"></i> Otras Cuentas por Pagar</td>';
                     for (var i = 0; i < gapModelData.bandas.length; i++) {
-                        htmlTabla += '<td style="text-align: right; font-family: monospace;">¢' + (gapModelData.otrasCuentas[i] || 0).toFixed(2) + '</td>';
+                        htmlTabla += '<td style="text-align: right; font-family: monospace; white-space: nowrap; padding: 8px 10px;">' + fmtMonto(gapModelData.otrasCuentas[i]) + '</td>';
                     }
-                    htmlTabla += '</tr><tr style="background: #fff7ed; font-weight: 700;"><td style="color: #9a3412;">Total Salidas</td>';
+                    htmlTabla += '</tr><tr style="background: #eff6ff; font-weight: 700; border-top: 2px solid #2b579a;"><td style="color: #1e3a8a; white-space: nowrap;">Total Salidas</td>';
                     for (var i = 0; i < gapModelData.bandas.length; i++) {
-                        htmlTabla += '<td style="text-align: right; font-family: monospace; color: #9a3412;">¢' + (gapModelData.salidasTotales[i] || 0).toFixed(2) + '</td>';
+                        htmlTabla += '<td style="text-align: right; font-family: monospace; color: #1e3a8a; font-weight: 800; white-space: nowrap; padding: 8px 10px;">' + fmtMonto(gapModelData.salidasTotales[i]) + '</td>';
                     }
-                    htmlTabla += '</tr></tbody></table>';
+                    htmlTabla += '</tr></tbody></table></div>';
                 }
 
                 $('#contenedorTablaDetalleModal').html(htmlTabla);
@@ -487,10 +494,27 @@
                     title: { text: titulo, style: { fontWeight: '700', color: '#143750', fontSize: '15px' } },
                     subtitle: { text: 'Desglose detallado por banda temporal (Millones de ¢)' },
                     xAxis: { categories: gapModelData.bandas },
-                    yAxis: { title: { text: 'Monto en Millones (¢)' }, stackLabels: { enabled: true, style: { fontWeight: 'bold', color: '#475569' } } },
+                    yAxis: {
+                        title: { text: 'Monto en Millones (¢)' },
+                        stackLabels: {
+                            enabled: true,
+                            formatter: function() {
+                                return '¢' + this.total.toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                            },
+                            style: { fontWeight: 'bold', color: '#143750', fontSize: '11px' }
+                        }
+                    },
+                    tooltip: {
+                        shared: true,
+                        valueDecimals: 2,
+                        valuePrefix: '¢',
+                        valueSuffix: ' MM'
+                    },
                     plotOptions: {
                         column: {
                             stacking: 'normal',
+                            borderWidth: 0,
+                            borderRadius: 2,
                             dataLabels: { enabled: false }
                         }
                     },
