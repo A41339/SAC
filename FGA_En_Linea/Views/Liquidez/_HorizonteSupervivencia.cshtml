@@ -144,50 +144,69 @@
     </div>
 </div>
 
-<!-- Tabla Detallada de Horizonte de Supervivencia -->
-<div class="panel panel-default" style="border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-    <div class="panel-heading" style="background: #ffffff; border-bottom: 1px solid #e2e8f0; padding: 14px 18px;">
-        <h5 style="margin: 0; font-weight: 700; color: #1e3a8a;"><i class="fa fa-table" style="color: #0284c7; margin-right: 8px;"></i> Tabla Comparativa por Escenario de Estrés</h5>
+<!-- Tabla Detallada de Horizonte de Supervivencia Colapsable -->
+<div class="panel panel-default" style="border: 1px solid #cbd5e1; border-radius: 8px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); overflow: hidden;">
+    <div class="panel-heading" style="background: #ffffff; border-bottom: 1px solid #e2e8f0; padding: 12px 18px; cursor: pointer; display: flex; align-items: center; justify-content: space-between;" data-toggle="collapse" data-target="#collapseTblHorizonte">
+        <h5 style="margin: 0; font-weight: 700; color: #1e3a8a; display: flex; align-items: center; gap: 8px;">
+            <i class="fa fa-table" style="color: #2b579a;"></i> Tabla Comparativa por Escenario de Estrés
+        </h5>
+        <button type="button" class="btn btn-xs btn-default" style="border-radius: 5px; font-weight: 600; font-size: 11.5px; color: #334155; padding: 4px 10px; display: inline-flex; align-items: center; gap: 6px;">
+            <i class="fa fa-chevron-down" id="iconChevronHz"></i> <span id="textToggleHz">Ver Tabla Comparativa</span>
+        </button>
     </div>
-    <div class="panel-body" style="padding: 0;">
-        <div class="table-responsive">
-            <table class="table table-bordered table-hover tabla-liquidez-azul" style="margin: 0; font-size: 13px;">
-                <thead>
-                    <tr>
-                        <th style="background: #2b579a !important; color: #ffffff !important; text-align: left; padding: 10px 14px;">Escenario</th>
-                        <th style="background: #2b579a !important; color: #ffffff !important; text-align: right; padding: 10px 14px;">Banda Acumulada (¢ MM)</th>
-                        <th style="background: #2b579a !important; color: #ffffff !important; text-align: center; padding: 10px 14px;">Brecha en Días</th>
-                        <th style="background: #2b579a !important; color: #ffffff !important; text-align: right; padding: 10px 14px;">Horizonte Estimado</th>
-                        <th style="background: #2b579a !important; color: #ffffff !important; text-align: center; padding: 10px 14px;">Supervivencia</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td style="font-weight: 700; color: #1e3a8a;"><i class="fa fa-circle" style="color: #2b579a; font-size: 10px; margin-right: 6px;"></i> Base</td>
-                        <td style="text-align: right; font-weight: 600; color: #1e40af;">¢@Model.Horizonte.SaldoFinalBase.ToString("N2")</td>
-                        <td style="text-align: center; font-weight: 600;">@Model.Horizonte.HorizonteBase</td>
-                        <td style="text-align: right; font-weight: 600;">¢@Model.Horizonte.BufferRemanenteBase.ToString("N2") MM</td>
-                        <td style="text-align: center;"><span class="badge" style="background: #dbeafe; color: #1e40af; font-weight: 700; font-size: 12px; padding: 4px 10px;">> 90 días (@Model.Horizonte.DiasSupervivenciaBase.ToString("N0")d)</span></td>
-                    </tr>
-                    <tr>
-                        <td style="font-weight: 700; color: #475569;"><i class="fa fa-circle" style="color: #64748b; font-size: 10px; margin-right: 6px;"></i> Moderado</td>
-                        <td style="text-align: right; font-weight: 600; color: #475569;">¢@Model.Horizonte.SaldoFinalModerado.ToString("N2")</td>
-                        <td style="text-align: center; font-weight: 600;">@Model.Horizonte.HorizonteModerado</td>
-                        <td style="text-align: right; font-weight: 600;">¢@Model.Horizonte.BufferRemanenteModerado.ToString("N2") MM</td>
-                        <td style="text-align: center;"><span class="badge" style="background: #f1f5f9; color: #475569; font-weight: 700; font-size: 12px; padding: 4px 10px; border: 1px solid #cbd5e1;">@Model.Horizonte.DiasSupervivenciaModerado.ToString("N0") días</span></td>
-                    </tr>
-                    <tr>
-                        <td style="font-weight: 700; color: #9a3412;"><i class="fa fa-circle" style="color: #ea580c; font-size: 10px; margin-right: 6px;"></i> Severo</td>
-                        <td style="text-align: right; font-weight: 600; color: #ea580c;">¢@Model.Horizonte.SaldoFinalSevero.ToString("N2")</td>
-                        <td style="text-align: center; font-weight: 600;">@Model.Horizonte.HorizonteSevero</td>
-                        <td style="text-align: right; font-weight: 600;">¢@Model.Horizonte.BufferRemanenteSevero.ToString("N2") MM</td>
-                        <td style="text-align: center;"><span class="badge" style="background: #ffedd5; color: #c2410c; font-weight: 700; font-size: 12px; padding: 4px 10px; border: 1px solid #fed7aa;">@Model.Horizonte.DiasSupervivenciaSevero.ToString("N0") días</span></td>
-                    </tr>
-                </tbody>
-            </table>
+    <div id="collapseTblHorizonte" class="panel-collapse collapse">
+        <div class="panel-body" style="padding: 0;">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover tabla-liquidez-azul" style="margin: 0; font-size: 13px;">
+                    <thead>
+                        <tr>
+                            <th style="background: #2b579a !important; color: #ffffff !important; text-align: left; padding: 10px 14px;">Escenario</th>
+                            <th style="background: #2b579a !important; color: #ffffff !important; text-align: right; padding: 10px 14px;">Banda Acumulada (¢ MM)</th>
+                            <th style="background: #2b579a !important; color: #ffffff !important; text-align: center; padding: 10px 14px;">Brecha en Días</th>
+                            <th style="background: #2b579a !important; color: #ffffff !important; text-align: right; padding: 10px 14px;">Horizonte Estimado</th>
+                            <th style="background: #2b579a !important; color: #ffffff !important; text-align: center; padding: 10px 14px;">Supervivencia</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="font-weight: 700; color: #1e3a8a;"><i class="fa fa-circle" style="color: #2b579a; font-size: 10px; margin-right: 6px;"></i> Base</td>
+                            <td style="text-align: right; font-weight: 600; color: #1e40af;">¢@Model.Horizonte.SaldoFinalBase.ToString("N2")</td>
+                            <td style="text-align: center; font-weight: 600;">@Model.Horizonte.HorizonteBase</td>
+                            <td style="text-align: right; font-weight: 600;">¢@Model.Horizonte.BufferRemanenteBase.ToString("N2") MM</td>
+                            <td style="text-align: center;"><span class="badge" style="background: #dbeafe; color: #1e40af; font-weight: 700; font-size: 12px; padding: 4px 10px;">> 90 días (@Model.Horizonte.DiasSupervivenciaBase.ToString("N0")d)</span></td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: 700; color: #475569;"><i class="fa fa-circle" style="color: #64748b; font-size: 10px; margin-right: 6px;"></i> Moderado</td>
+                            <td style="text-align: right; font-weight: 600; color: #475569;">¢@Model.Horizonte.SaldoFinalModerado.ToString("N2")</td>
+                            <td style="text-align: center; font-weight: 600;">@Model.Horizonte.HorizonteModerado</td>
+                            <td style="text-align: right; font-weight: 600;">¢@Model.Horizonte.BufferRemanenteModerado.ToString("N2") MM</td>
+                            <td style="text-align: center;"><span class="badge" style="background: #f1f5f9; color: #475569; font-weight: 700; font-size: 12px; padding: 4px 10px; border: 1px solid #cbd5e1;">@Model.Horizonte.DiasSupervivenciaModerado.ToString("N0") días</span></td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: 700; color: #9a3412;"><i class="fa fa-circle" style="color: #ea580c; font-size: 10px; margin-right: 6px;"></i> Severo</td>
+                            <td style="text-align: right; font-weight: 600; color: #ea580c;">¢@Model.Horizonte.SaldoFinalSevero.ToString("N2")</td>
+                            <td style="text-align: center; font-weight: 600;">@Model.Horizonte.HorizonteSevero</td>
+                            <td style="text-align: right; font-weight: 600;">¢@Model.Horizonte.BufferRemanenteSevero.ToString("N2") MM</td>
+                            <td style="text-align: center;"><span class="badge" style="background: #ffedd5; color: #c2410c; font-weight: 700; font-size: 12px; padding: 4px 10px; border: 1px solid #fed7aa;">@Model.Horizonte.DiasSupervivenciaSevero.ToString("N0") días</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
+
+<script>
+    $(document).ready(function() {
+        $('#collapseTblHorizonte').on('show.bs.collapse', function() {
+            $('#iconChevronHz').removeClass('fa-chevron-down').addClass('fa-chevron-up');
+            $('#textToggleHz').text('Ocultar Tabla');
+        }).on('hide.bs.collapse', function() {
+            $('#iconChevronHz').removeClass('fa-chevron-up').addClass('fa-chevron-down');
+            $('#textToggleHz').text('Ver Tabla Comparativa');
+        });
+    });
+</script>
 
 <div style="padding: 16px; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;">
     <h5 style="margin: 0 0 8px 0; font-weight: 700; color: #1e3a8a;"><i class="fa fa-lightbulb-o" style="color: #f59e0b; margin-right: 6px;"></i> Interpretación del Horizonte de Supervivencia</h5>

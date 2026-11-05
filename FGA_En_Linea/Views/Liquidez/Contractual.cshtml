@@ -97,102 +97,87 @@
 </section>
 
 <section class="content" style="padding: 0 20px 14px 20px;">
-    <!-- Barra Superior de Integridad, Gobernanza y Exportación Ejecutiva -->
+    <!-- Barra Unificada y Compacta de Controles y Filtros -->
     <div class="row no-print" style="margin-bottom: 12px;">
         <div class="col-xs-12">
-            <div style="background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
-                <div style="display: flex; align-items: center; gap: 18px; flex-wrap: wrap;">
-                    <div style="display: flex; align-items: center; gap: 6px; font-size: 12px; color: #475569;">
-                        <i class="fa fa-database" style="color: #2b579a;"></i>
-                        <span style="font-weight: 600;">Fuente:</span> <span>@Model.FuenteDatos</span>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 6px; font-size: 12px; color: #475569;">
-                        <i class="fa fa-calendar-check-o" style="color: #0284c7;"></i>
-                        <span style="font-weight: 600;">Corte:</span> <span>@Model.Periodo2</span>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 6px; font-size: 12px; color: #475569;">
-                        <i class="fa fa-clock-o" style="color: #64748b;"></i>
-                        <span style="font-weight: 600;">Ejecución:</span> <span>@Model.FechaCalculo.ToString("dd/MM/yyyy HH:mm")</span>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 6px; font-size: 12px; color: #475569;">
-                        <i class="fa fa-user-circle" style="color: #64748b;"></i>
-                        <span style="font-weight: 600;">Usuario:</span> <span>@Model.UsuarioActual</span>
-                    </div>
-                    <span class="badge" style="background: #dcfce7; color: #15803d; font-size: 11px; font-weight: 700; padding: 4px 8px; border: 1px solid #bbf7d0;">
-                        <i class="fa fa-check-circle"></i> Integridad Validada
-                    </span>
-                </div>
-
-                <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-                    <!-- Toggle Unidades -->
-                    <div class="btn-group btn-group-sm" role="group" aria-label="Unidades de medida">
-                        <button type="button" class="btn btn-primary active" id="btnUnidadMM" onclick="setUnidadDisplay('MM')" style="font-weight: 700; font-size: 11.5px; border-color: #cbd5e1;">
-                            ¢ MM
-                        </button>
-                        <button type="button" class="btn btn-default" id="btnUnidadUnidades" onclick="setUnidadDisplay('Unidades')" style="font-weight: 600; font-size: 11.5px; border-color: #cbd5e1;">
-                            ¢ Unidades
-                        </button>
-                    </div>
-
-                    <!-- Exportar a Excel -->
-                    <a href="@Url.Action("ExportarExcelContractual", "Liquidez", new { idEntidad = Model.IdEntidad, periodo1 = Model.Periodo1, periodo2 = Model.Periodo2 })" class="btn btn-sm btn-success" style="background-color: #16a34a; border-color: #15803d; font-weight: 600; font-size: 12px; border-radius: 6px; padding: 5px 12px; display: inline-flex; align-items: center; gap: 6px;">
-                        <i class="fa fa-file-excel-o"></i> Exportar a Excel
-                    </a>
-
-                    <!-- Imprimir / PDF -->
-                    <button type="button" class="btn btn-sm btn-default" onclick="window.print()" style="border-color: #cbd5e1; font-weight: 600; font-size: 12px; border-radius: 6px; padding: 5px 12px; display: inline-flex; align-items: center; gap: 6px; color: #1e293b;">
-                        <i class="fa fa-print"></i> Imprimir / PDF
-                    </button>
-
-                    <!-- Glosario de Conceptos -->
-                    <button type="button" class="btn btn-sm btn-default" data-toggle="modal" data-target="#modalGlosarioLiquidez" style="border-color: #cbd5e1; font-weight: 600; font-size: 12px; border-radius: 6px; padding: 5px 12px; display: inline-flex; align-items: center; gap: 6px; color: #1e3a8a;">
-                        <i class="fa fa-question-circle" style="color: #2b579a;"></i> Glosario
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Selector General de Filtros -->
-    <div class="row">
-        <div class="col-xs-12">
-            <div class="modern-filter-card" style="margin-bottom: 14px; padding: 10px 18px; background: #ffffff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;">
-                <div class="modern-filter-toolbar" style="display: flex; align-items: center; justify-content: flex-start; flex-wrap: wrap; gap: 14px;">
-                    <!-- Entidad -->
-                    <div class="filter-item" style="display: flex; flex-direction: column; gap: 4px;">
-                        <label for="ddlEntidad" style="margin: 0; font-size: 12px; font-weight: 700; color: #1e3a8a; display: flex; align-items: center; gap: 5px; white-space: nowrap;">
-                            <i class="fa fa-university" style="color: #2F5597;"></i> Entidad:
-                        </label>
-                        <div style="min-width: 220px;">
-                            @Html.DropDownList("Entidades", null, new { @id = "ddlEntidad", @class = "form-control modern-select", style = "width: 100%; height: 34px; font-size: 12.5px; font-weight: 500; border-radius: 6px; border: 1px solid #cbd5e1; padding: 4px 8px;" })
+            <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); padding: 8px 14px;">
+                <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+                    <!-- Lado Izquierdo: Filtros Operativos en línea -->
+                    <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 10px;">
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <label for="ddlEntidad" style="margin: 0; font-size: 12px; font-weight: 700; color: #1e3a8a; white-space: nowrap;">
+                                <i class="fa fa-university" style="color: #2F5597;"></i> Entidad:
+                            </label>
+                            <div style="min-width: 200px; max-width: 260px;">
+                                @Html.DropDownList("Entidades", null, new { @id = "ddlEntidad", @class = "form-control modern-select", style = "width: 100%; height: 32px; font-size: 12px; font-weight: 500; border-radius: 6px; border: 1px solid #cbd5e1; padding: 3px 8px;" })
+                            </div>
                         </div>
-                    </div>
 
-                    <!-- Periodo Inicial -->
-                    <div class="filter-item" style="display: flex; flex-direction: column; gap: 4px;">
-                        <label for="Periodo1" style="margin: 0; font-size: 12px; font-weight: 600; color: #475569; display: flex; align-items: center; gap: 4px; white-space: nowrap;">
-                            <i class="fa fa-calendar" style="color: #2F5597;"></i> Periodo Inicial:
-                        </label>
-                        <div class="modern-input-wrapper">
-                            <input name="Periodo1" id="Periodo1" class="datecontrol form-control modern-date-input" value="@Model.Periodo1" style="min-width: 120px; height: 34px; font-size: 12.5px; padding: 4px 8px;" />
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <label for="Periodo1" style="margin: 0; font-size: 12px; font-weight: 600; color: #475569; white-space: nowrap;">
+                                <i class="fa fa-calendar" style="color: #2F5597;"></i> Inicio:
+                            </label>
+                            <input name="Periodo1" id="Periodo1" class="datecontrol form-control modern-date-input" value="@Model.Periodo1" style="width: 105px; height: 32px; font-size: 12px; padding: 3px 6px;" />
                         </div>
-                    </div>
 
-                    <!-- Periodo Final -->
-                    <div class="filter-item" style="display: flex; flex-direction: column; gap: 4px;">
-                        <label for="Periodo2" style="margin: 0; font-size: 12px; font-weight: 600; color: #475569; display: flex; align-items: center; gap: 4px; white-space: nowrap;">
-                            <i class="fa fa-calendar-check-o" style="color: #2F5597;"></i> Periodo Final:
-                        </label>
-                        <div class="modern-input-wrapper">
-                            <input name="Periodo2" id="Periodo2" class="datecontrol form-control modern-date-input" value="@Model.Periodo2" style="min-width: 120px; height: 34px; font-size: 12.5px; padding: 4px 8px;" />
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <label for="Periodo2" style="margin: 0; font-size: 12px; font-weight: 600; color: #475569; white-space: nowrap;">
+                                <i class="fa fa-calendar-check-o" style="color: #2F5597;"></i> Corte:
+                            </label>
+                            <input name="Periodo2" id="Periodo2" class="datecontrol form-control modern-date-input" value="@Model.Periodo2" style="width: 105px; height: 32px; font-size: 12px; padding: 3px 6px;" />
                         </div>
-                    </div>
 
-                    <!-- Botón Generar -->
-                    <div class="filter-item" style="margin-left: auto; align-self: flex-end; padding-bottom: 1px;">
-                        <button type="button" id="btnGenerarContractual" class="btn-modern-generate" style="height: 34px; padding: 0 18px; font-size: 12.5px; white-space: nowrap;" onclick="cargarDatosContractual()">
+                        <button type="button" id="btnGenerarContractual" class="btn-modern-generate" style="height: 32px; padding: 0 14px; font-size: 12px; border-radius: 6px;" onclick="cargarDatosContractual()">
                             <i class="fa fa-search"></i> Generar
                         </button>
+                    </div>
+
+                    <!-- Lado Derecho: Acciones Ejecutivas y Metadatos -->
+                    <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                        <!-- Toggle Unidades -->
+                        <div class="btn-group btn-group-sm" role="group" aria-label="Unidades de medida">
+                            <button type="button" class="btn btn-primary active" id="btnUnidadMM" onclick="setUnidadDisplay('MM')" style="font-weight: 700; font-size: 11px; padding: 4px 8px; border-color: #cbd5e1;">
+                                ¢ MM
+                            </button>
+                            <button type="button" class="btn btn-default" id="btnUnidadUnidades" onclick="setUnidadDisplay('Unidades')" style="font-weight: 600; font-size: 11px; padding: 4px 8px; border-color: #cbd5e1;">
+                                ¢ Unid
+                            </button>
+                        </div>
+
+                        <!-- Exportar a Excel -->
+                        <a href="@Url.Action("ExportarExcelContractual", "Liquidez", new { idEntidad = Model.IdEntidad, periodo1 = Model.Periodo1, periodo2 = Model.Periodo2 })" class="btn btn-sm btn-success" style="background-color: #16a34a; border-color: #15803d; font-weight: 600; font-size: 11.5px; border-radius: 6px; padding: 4px 10px; display: inline-flex; align-items: center; gap: 5px;">
+                            <i class="fa fa-file-excel-o"></i> Excel
+                        </a>
+
+                        <!-- Imprimir / PDF -->
+                        <button type="button" class="btn btn-sm btn-default" onclick="window.print()" style="border-color: #cbd5e1; font-weight: 600; font-size: 11.5px; border-radius: 6px; padding: 4px 10px; display: inline-flex; align-items: center; gap: 5px; color: #1e293b;">
+                            <i class="fa fa-print"></i> PDF
+                        </button>
+
+                        <!-- Glosario de Conceptos -->
+                        <button type="button" class="btn btn-sm btn-default" data-toggle="modal" data-target="#modalGlosarioLiquidez" style="border-color: #cbd5e1; font-weight: 600; font-size: 11.5px; border-radius: 6px; padding: 4px 10px; display: inline-flex; align-items: center; gap: 5px; color: #1e3a8a;">
+                            <i class="fa fa-question-circle" style="color: #2b579a;"></i> Glosario
+                        </button>
+
+                        <!-- Botón desplegable de Metadatos de Auditoría -->
+                        <button type="button" class="btn btn-sm btn-default" data-toggle="collapse" data-target="#infoGobernanzaContractual" style="border-color: #cbd5e1; font-weight: 600; font-size: 11.5px; border-radius: 6px; padding: 4px 8px; color: #64748b;" title="Ver información de fuente, calibración y usuario">
+                            <i class="fa fa-info-circle" style="color: #0284c7;"></i> Info <i class="fa fa-caret-down" style="font-size: 10px;"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Desplegable compacto de Gobernanza e Integridad -->
+                <div id="infoGobernanzaContractual" class="collapse" style="margin-top: 8px; padding-top: 8px; border-top: 1px dashed #cbd5e1; font-size: 11.5px; color: #475569;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+                        <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
+                            <div><i class="fa fa-database" style="color: #2b579a;"></i> <strong>Fuente:</strong> @Model.FuenteDatos</div>
+                            <div><i class="fa fa-calendar-check-o" style="color: #0284c7;"></i> <strong>Corte:</strong> @Model.Periodo2</div>
+                            <div><i class="fa fa-clock-o" style="color: #64748b;"></i> <strong>Ejecución:</strong> @Model.FechaCalculo.ToString("dd/MM/yyyy HH:mm")</div>
+                            <div><i class="fa fa-user-circle" style="color: #64748b;"></i> <strong>Usuario:</strong> @Model.UsuarioActual</div>
+                        </div>
+                        <span class="badge" style="background: #dcfce7; color: #15803d; font-size: 11px; font-weight: 700; padding: 3px 8px; border: 1px solid #bbf7d0;">
+                            <i class="fa fa-check-circle"></i> Integridad Validada
+                        </span>
                     </div>
                 </div>
             </div>

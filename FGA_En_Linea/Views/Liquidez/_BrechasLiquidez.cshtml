@@ -10,48 +10,54 @@
     </div>
 
     <!-- Selector de Escenario Activo (Requerimiento imagen 19) -->
-    <div style="display: inline-flex; align-items: center; background: #f1f5f9; padding: 4px; border-radius: 8px; border: 1px solid #cbd5e1;">
-        <button type="button" id="btnEscenarioBase" class="btn btn-xs active" onclick="seleccionarEscenarioBrechas('base')" style="padding: 6px 14px; font-weight: 700; font-size: 12px; border-radius: 6px; border: none; background: #2b579a; color: #ffffff;">
+    <div style="display: inline-flex; align-items: center; background: #e2e8f0; padding: 3px; border-radius: 8px; border: 1px solid #cbd5e1;">
+        <button type="button" id="btnEscenarioBase" class="btn btn-xs active" onclick="seleccionarEscenarioBrechas('base')" style="padding: 5px 14px; font-weight: 700; font-size: 12px; border-radius: 6px; border: none; background: #2b579a; color: #ffffff; box-shadow: 0 1px 3px rgba(43,87,154,0.3);">
             Escenario Base
         </button>
-        <button type="button" id="btnEscenarioMod" class="btn btn-xs" onclick="seleccionarEscenarioBrechas('moderado')" style="padding: 6px 14px; font-weight: 700; font-size: 12px; border-radius: 6px; border: none; margin-left: 4px; background: transparent; color: #64748b;">
+        <button type="button" id="btnEscenarioMod" class="btn btn-xs" onclick="seleccionarEscenarioBrechas('moderado')" style="padding: 5px 14px; font-weight: 600; font-size: 12px; border-radius: 6px; border: none; margin-left: 3px; background: #ffffff; color: #334155;">
             Escenario Moderado
         </button>
-        <button type="button" id="btnEscenarioSev" class="btn btn-xs" onclick="seleccionarEscenarioBrechas('severo')" style="padding: 6px 14px; font-weight: 700; font-size: 12px; border-radius: 6px; border: none; margin-left: 4px; background: transparent; color: #64748b;">
+        <button type="button" id="btnEscenarioSev" class="btn btn-xs" onclick="seleccionarEscenarioBrechas('severo')" style="padding: 5px 14px; font-weight: 600; font-size: 12px; border-radius: 6px; border: none; margin-left: 3px; background: #ffffff; color: #334155;">
             Escenario Severo
         </button>
     </div>
 </div>
 
-<!-- 3 Tarjetas KPI Resumen del Escenario Activo (Requerimiento imagen 19) -->
-<div class="row" style="margin-bottom: 20px;">
+<!-- 3 Tarjetas KPI Minimalistas del Escenario Activo -->
+<div class="row" style="margin-bottom: 18px;">
     <div class="col-md-4 col-sm-4 col-xs-12">
-        <div class="info-box" style="border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); border: 1px solid #cbd5e1; background: #f8fafc;">
-            <span class="info-box-icon" style="background-color: #64748b; color: #ffffff; border-top-left-radius: 8px; border-bottom-left-radius: 8px;"><i class="fa fa-calendar-minus-o"></i></span>
-            <div class="info-box-content" style="padding: 10px 14px;">
-                <span class="info-box-text" style="font-size: 12px; color: #475569; font-weight: 700;">GAP 30 DÍAS (BAJO ESTRÉS)</span>
-                <span class="info-box-number" id="lblBrecha30d" style="font-size: 22px; font-weight: 800; color: #334155;">¢-22,72 MM</span>
-                <span id="lblBrecha30dDesc" style="font-size: 11px; color: #64748b;">Flujo neto inicial a 30 días</span>
+        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-left: 4px solid #64748b; border-radius: 8px; padding: 12px 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); display: flex; align-items: center; justify-content: space-between;">
+            <div>
+                <div style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.3px;">GAP 30 Días (Estrés)</div>
+                <div id="lblBrecha30d" class="font-mono" style="font-size: 22px; font-weight: 800; color: #334155; margin: 2px 0;">¢-22,72 MM</div>
+                <div id="lblBrecha30dDesc" style="font-size: 11px; color: #94a3b8;">Flujo neto inicial a 30 días</div>
+            </div>
+            <div style="width: 38px; height: 38px; border-radius: 8px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; color: #64748b; font-size: 16px;">
+                <i class="fa fa-calendar-minus-o"></i>
             </div>
         </div>
     </div>
     <div class="col-md-4 col-sm-4 col-xs-12">
-        <div class="info-box" style="border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); border: 1px solid #fed7aa; background: #fff7ed;">
-            <span class="info-box-icon" style="background-color: #ea580c; color: #ffffff; border-top-left-radius: 8px; border-bottom-left-radius: 8px;"><i class="fa fa-calendar"></i></span>
-            <div class="info-box-content" style="padding: 10px 14px;">
-                <span class="info-box-text" style="font-size: 12px; color: #9a3412; font-weight: 700;">GAP 90 DÍAS (BAJO ESTRÉS)</span>
-                <span class="info-box-number" id="lblBrecha90d" style="font-size: 22px; font-weight: 800; color: #c2410c;">¢-461,02 MM</span>
-                <span id="lblBrecha90dDesc" style="font-size: 11px; color: #9a3412;">Flujo neto en banda 61-90 días</span>
+        <div style="background: #ffffff; border: 1px solid #fed7aa; border-left: 4px solid #ea580c; border-radius: 8px; padding: 12px 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); display: flex; align-items: center; justify-content: space-between;">
+            <div>
+                <div style="font-size: 11px; font-weight: 700; color: #9a3412; text-transform: uppercase; letter-spacing: 0.3px;">GAP 90 Días (Estrés)</div>
+                <div id="lblBrecha90d" class="font-mono" style="font-size: 22px; font-weight: 800; color: #c2410c; margin: 2px 0;">¢-461,02 MM</div>
+                <div id="lblBrecha90dDesc" style="font-size: 11px; color: #9a3412;">Flujo neto en banda 61-90 días</div>
+            </div>
+            <div style="width: 38px; height: 38px; border-radius: 8px; background: #fff7ed; display: flex; align-items: center; justify-content: center; color: #ea580c; font-size: 16px;">
+                <i class="fa fa-calendar"></i>
             </div>
         </div>
     </div>
     <div class="col-md-4 col-sm-4 col-xs-12">
-        <div class="info-box" style="border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); border: 1px solid #bfdbfe; background: #eff6ff;">
-            <span class="info-box-icon" style="background-color: #2b579a; color: #ffffff; border-top-left-radius: 8px; border-bottom-left-radius: 8px;"><i class="fa fa-cubes"></i></span>
-            <div class="info-box-content" style="padding: 10px 14px;">
-                <span class="info-box-text" style="font-size: 12px; color: #1e3a8a; font-weight: 700;">FAL BAJO ESTRÉS</span>
-                <span class="info-box-number" id="lblFALEstres" style="font-size: 22px; font-weight: 800; color: #1e40af;">¢1.203,53 MM</span>
-                <span style="font-size: 11px; color: #1e3a8a;">Activos líquidos disponibles</span>
+        <div style="background: #ffffff; border: 1px solid #bfdbfe; border-left: 4px solid #2b579a; border-radius: 8px; padding: 12px 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); display: flex; align-items: center; justify-content: space-between;">
+            <div>
+                <div style="font-size: 11px; font-weight: 700; color: #1e3a8a; text-transform: uppercase; letter-spacing: 0.3px;">FAL Bajo Estrés</div>
+                <div id="lblFALEstres" class="font-mono" style="font-size: 22px; font-weight: 800; color: #1e40af; margin: 2px 0;">¢1.203,53 MM</div>
+                <div style="font-size: 11px; color: #64748b;">Activos líquidos disponibles</div>
+            </div>
+            <div style="width: 38px; height: 38px; border-radius: 8px; background: #eff6ff; display: flex; align-items: center; justify-content: center; color: #2b579a; font-size: 16px;">
+                <i class="fa fa-cubes"></i>
             </div>
         </div>
     </div>
@@ -80,63 +86,76 @@
     </div>
 </div>
 
-<!-- Tabla Detallada por Banda Temporal bajo Estrés (Requerimiento imagen 19) -->
-<h5 style="margin: 18px 0 10px 0; font-size: 14px; font-weight: 700; color: #143750; display: flex; align-items: center; gap: 6px;">
-    <i class="fa fa-table" style="color: #2b579a;"></i> Flujos Estresados y Brechas de Liquidez por Banda Temporal (Millones de ¢)
-</h5>
-<div class="table-responsive" style="border-radius: 6px; overflow: hidden; border: 1px solid #cbd5e1; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
-    <table id="tblBrechasEstres" class="table table-striped modern-data-table tabla-liquidez-azul" style="width: 100%; margin-bottom: 0; border-collapse: collapse;">
-        <thead style="background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important;">
-            <tr style="background-color: #2b579a !important; background: #2b579a !important;">
-                <th class="text-left" style="width: 23%; text-align: left !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 16px; font-weight: 700; font-size: 12.5px; border: none;">Banda Temporal</th>
-                <th class="text-right" style="width: 11%; text-align: right !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 10px; font-weight: 700; font-size: 12.5px; border: none;">1 a 30 d</th>
-                <th class="text-right" style="width: 11%; text-align: right !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 10px; font-weight: 700; font-size: 12.5px; border: none;">31 a 60 d</th>
-                <th class="text-right" style="width: 11%; text-align: right !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 10px; font-weight: 700; font-size: 12.5px; border: none;">61 a 90 d</th>
-                <th class="text-right" style="width: 11%; text-align: right !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 10px; font-weight: 700; font-size: 12.5px; border: none;">91 a 180 d</th>
-                <th class="text-right" style="width: 11%; text-align: right !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 10px; font-weight: 700; font-size: 12.5px; border: none;">181 a 270 d</th>
-                <th class="text-right" style="width: 11%; text-align: right !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 10px; font-weight: 700; font-size: 12.5px; border: none;">271 a 360 d</th>
-                <th class="text-right" style="width: 11%; text-align: right !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 12px; font-weight: 700; font-size: 12.5px; border: none;">(+) 360 d</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr style="background-color: #eff6ff; font-weight: 700;">
-                <td class="text-left" style="color: #1e3a8a; padding-left: 16px;"><i class="fa fa-arrow-down" style="color: #2b579a; margin-right: 6px;"></i> Entradas estresadas</td>
-                @for (int i = 0; i < 7; i++)
-                {
-                    decimal val = (i < Model.BrechasEstres.EntradasBase.Count) ? Model.BrechasEstres.EntradasBase[i] : 0m;
-                    <td class="text-right font-mono" id="tdEnt@(i)">¢@val.ToString("N2")</td>
-                }
-            </tr>
-            <tr style="background-color: #fff7ed; font-weight: 700;">
-                <td class="text-left" style="color: #9a3412; padding-left: 16px;"><i class="fa fa-arrow-up" style="color: #f97316; margin-right: 6px;"></i> Salidas estresadas</td>
-                @for (int i = 0; i < 7; i++)
-                {
-                    decimal val = (i < Model.BrechasEstres.SalidasBase.Count) ? Model.BrechasEstres.SalidasBase[i] : 0m;
-                    <td class="text-right font-mono" id="tdSal@(i)">¢@val.ToString("N2")</td>
-                }
-            </tr>
-            <tr style="background-color: #f8fafc; font-weight: 700; border-top: 2px solid #cbd5e1;">
-                <td class="text-left" style="color: #1e3a8a; padding-left: 16px;">GAP por Banda</td>
-                @for (int i = 0; i < 7; i++)
-                {
-                    decimal val = (i < Model.BrechasEstres.BrechasBase.Count) ? Model.BrechasEstres.BrechasBase[i] : 0m;
-                    string col = val >= 0 ? "#1e40af" : "#ea580c";
-                    string sig = val >= 0 ? "+¢" : "-¢";
-                    <td class="text-right font-mono" id="tdGap@(i)" style="color: @col;">@sig@Math.Abs(val).ToString("N2")</td>
-                }
-            </tr>
-            <tr style="background-color: #eff6ff; font-weight: 800; border-top: 1px solid #bfdbfe; border-bottom: 2px solid #2b579a;">
-                <td class="text-left" style="color: #1e40af; padding-left: 16px;">GAP Acumulado</td>
-                @for (int i = 0; i < 7; i++)
-                {
-                    decimal val = (i < Model.BrechasEstres.AcumuladoBase.Count) ? Model.BrechasEstres.AcumuladoBase[i] : 0m;
-                    string col = val >= 0 ? "#1e40af" : "#ea580c";
-                    string sig = val >= 0 ? "+¢" : "-¢";
-                    <td class="text-right font-mono" id="tdAcum@(i)" style="color: @col;">@sig@Math.Abs(val).ToString("N2")</td>
-                }
-            </tr>
-        </tbody>
-    </table>
+<!-- Panel Colapsable: Detalle Tabular por Banda Temporal -->
+<div class="panel panel-default" style="border: 1px solid #cbd5e1; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); margin-top: 14px; margin-bottom: 20px; overflow: hidden;">
+    <div class="panel-heading" style="background: #ffffff; border-bottom: 1px solid #e2e8f0; padding: 12px 18px; cursor: pointer; display: flex; align-items: center; justify-content: space-between;" data-toggle="collapse" data-target="#collapseTblBrechas">
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <i class="fa fa-table" style="color: #2b579a; font-size: 14px;"></i>
+            <span style="font-size: 13.5px; font-weight: 700; color: #143750;">Flujos Estresados y Brechas de Liquidez por Banda Temporal (Millones de ¢)</span>
+            <span class="badge" style="background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; font-size: 10.5px; font-weight: 600; padding: 2px 7px;">7 Bandas</span>
+        </div>
+        <button type="button" class="btn btn-xs btn-default" style="border-radius: 5px; font-weight: 600; font-size: 11.5px; color: #334155; padding: 4px 10px; display: inline-flex; align-items: center; gap: 6px;">
+            <i class="fa fa-chevron-down" id="iconChevronBrechas"></i> <span id="textToggleBrechas">Ver Detalle Tabular</span>
+        </button>
+    </div>
+    <div id="collapseTblBrechas" class="panel-collapse collapse">
+        <div class="panel-body" style="padding: 0;">
+            <div class="table-responsive">
+                <table id="tblBrechasEstres" class="table table-striped modern-data-table tabla-liquidez-azul" style="width: 100%; margin-bottom: 0; border-collapse: collapse;">
+                    <thead style="background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important;">
+                        <tr style="background-color: #2b579a !important; background: #2b579a !important;">
+                            <th class="text-left" style="width: 23%; text-align: left !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 16px; font-weight: 700; font-size: 12.5px; border: none;">Banda Temporal</th>
+                            <th class="text-right" style="width: 11%; text-align: right !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 10px; font-weight: 700; font-size: 12.5px; border: none;">1 a 30 d</th>
+                            <th class="text-right" style="width: 11%; text-align: right !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 10px; font-weight: 700; font-size: 12.5px; border: none;">31 a 60 d</th>
+                            <th class="text-right" style="width: 11%; text-align: right !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 10px; font-weight: 700; font-size: 12.5px; border: none;">61 a 90 d</th>
+                            <th class="text-right" style="width: 11%; text-align: right !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 10px; font-weight: 700; font-size: 12.5px; border: none;">91 a 180 d</th>
+                            <th class="text-right" style="width: 11%; text-align: right !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 10px; font-weight: 700; font-size: 12.5px; border: none;">181 a 270 d</th>
+                            <th class="text-right" style="width: 11%; text-align: right !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 10px; font-weight: 700; font-size: 12.5px; border: none;">271 a 360 d</th>
+                            <th class="text-right" style="width: 11%; text-align: right !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 12px; font-weight: 700; font-size: 12.5px; border: none;">(+) 360 d</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="background-color: #eff6ff; font-weight: 700;">
+                            <td class="text-left" style="color: #1e3a8a; padding-left: 16px;"><i class="fa fa-arrow-down" style="color: #2b579a; margin-right: 6px;"></i> Entradas estresadas</td>
+                            @for (int i = 0; i < 7; i++)
+                            {
+                                decimal val = (i < Model.BrechasEstres.EntradasBase.Count) ? Model.BrechasEstres.EntradasBase[i] : 0m;
+                                <td class="text-right font-mono" id="tdEnt@(i)">¢@val.ToString("N2")</td>
+                            }
+                        </tr>
+                        <tr style="background-color: #fff7ed; font-weight: 700;">
+                            <td class="text-left" style="color: #9a3412; padding-left: 16px;"><i class="fa fa-arrow-up" style="color: #f97316; margin-right: 6px;"></i> Salidas estresadas</td>
+                            @for (int i = 0; i < 7; i++)
+                            {
+                                decimal val = (i < Model.BrechasEstres.SalidasBase.Count) ? Model.BrechasEstres.SalidasBase[i] : 0m;
+                                <td class="text-right font-mono" id="tdSal@(i)">¢@val.ToString("N2")</td>
+                            }
+                        </tr>
+                        <tr style="background-color: #f8fafc; font-weight: 700; border-top: 2px solid #cbd5e1;">
+                            <td class="text-left" style="color: #1e3a8a; padding-left: 16px;">GAP por Banda</td>
+                            @for (int i = 0; i < 7; i++)
+                            {
+                                decimal val = (i < Model.BrechasEstres.BrechasBase.Count) ? Model.BrechasEstres.BrechasBase[i] : 0m;
+                                string col = val >= 0 ? "#1e40af" : "#ea580c";
+                                string sig = val >= 0 ? "+¢" : "-¢";
+                                <td class="text-right font-mono" id="tdGap@(i)" style="color: @col;">@sig@Math.Abs(val).ToString("N2")</td>
+                            }
+                        </tr>
+                        <tr style="background-color: #eff6ff; font-weight: 800; border-top: 1px solid #bfdbfe; border-bottom: 2px solid #2b579a;">
+                            <td class="text-left" style="color: #1e40af; padding-left: 16px;">GAP Acumulado</td>
+                            @for (int i = 0; i < 7; i++)
+                            {
+                                decimal val = (i < Model.BrechasEstres.AcumuladoBase.Count) ? Model.BrechasEstres.AcumuladoBase[i] : 0m;
+                                string col = val >= 0 ? "#1e40af" : "#ea580c";
+                                string sig = val >= 0 ? "+¢" : "-¢";
+                                <td class="text-right font-mono" id="tdAcum@(i)" style="color: @col;">@sig@Math.Abs(val).ToString("N2")</td>
+                            }
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -178,16 +197,17 @@
     }
 
     function seleccionarEscenarioBrechas(escenario) {
-        $('#btnEscenarioBase, #btnEscenarioMod, #btnEscenarioSev').css({ 'background': 'transparent', 'color': '#64748b' });
+        $('#btnEscenarioBase, #btnEscenarioMod, #btnEscenarioSev')
+            .css({ 'background': '#ffffff', 'color': '#334155', 'font-weight': '600', 'box-shadow': 'none' });
         var d = datosEscenariosBrechas[escenario];
         if (!d) return;
 
         if (escenario === 'base') {
-            $('#btnEscenarioBase').css({ 'background': '#2b579a', 'color': '#ffffff' });
+            $('#btnEscenarioBase').css({ 'background': '#2b579a', 'color': '#ffffff', 'font-weight': '700', 'box-shadow': '0 2px 4px rgba(43,87,154,0.3)' });
         } else if (escenario === 'moderado') {
-            $('#btnEscenarioMod').css({ 'background': '#64748b', 'color': '#ffffff' });
+            $('#btnEscenarioMod').css({ 'background': '#64748b', 'color': '#ffffff', 'font-weight': '700', 'box-shadow': '0 2px 4px rgba(100,116,139,0.3)' });
         } else {
-            $('#btnEscenarioSev').css({ 'background': '#ea580c', 'color': '#ffffff' });
+            $('#btnEscenarioSev').css({ 'background': '#ea580c', 'color': '#ffffff', 'font-weight': '700', 'box-shadow': '0 2px 4px rgba(234,88,12,0.3)' });
         }
 
         $('#lblBrecha30d').text(d.kpi30);
@@ -216,4 +236,14 @@
             chartBanda.redraw();
         }
     }
+
+    $(document).ready(function() {
+        $('#collapseTblBrechas').on('show.bs.collapse', function() {
+            $('#iconChevronBrechas').removeClass('fa-chevron-down').addClass('fa-chevron-up');
+            $('#textToggleBrechas').text('Ocultar Detalle Tabular');
+        }).on('hide.bs.collapse', function() {
+            $('#iconChevronBrechas').removeClass('fa-chevron-up').addClass('fa-chevron-down');
+            $('#textToggleBrechas').text('Ver Detalle Tabular');
+        });
+    });
 </script>
