@@ -192,6 +192,13 @@
             window.location.href = '@Url.Action("Contractual", "Liquidez")' + '?idEntidad=' + encodeURIComponent(ent) + '&periodo1=' + encodeURIComponent(p1) + '&periodo2=' + encodeURIComponent(p2);
         }
 
+        function cargarGapContractual() {
+            var ent = $('#ddlEntidad').val();
+            var p1 = $('#Periodo1').val();
+            var p2 = $('#txtFechaCorteGap').val() || $('#Periodo2').val();
+            window.location.href = '@Url.Action("Contractual", "Liquidez")' + '?idEntidad=' + encodeURIComponent(ent) + '&periodo1=' + encodeURIComponent(p1) + '&periodo2=' + encodeURIComponent(p2);
+        }
+
         function cambiarMonedaICL(moneda) {
             $('.btn-moneda-icl').removeClass('active').css({ 'background': 'transparent', 'color': '#64748b' });
             if (moneda === 1) {
@@ -232,7 +239,7 @@
                     chart: { type: 'column' },
                     title: { text: 'Entradas y Salidas Contractuales por Banda', style: { fontWeight: '700', color: '#143750', fontSize: '15px' } },
                     subtitle: { text: 'Comparación de flujos contractuales (Millones de ¢)' },
-                    xAxis: { categories: ['1 a 30 d', '31 a 60 d', '61 a 90 d', '91 a 180 d', '181 a 270 d', '271 a 360 d', '(+) 360 d'] },
+                    xAxis: { categories: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.GapDatos.Bandas)) },
                     yAxis: { title: { text: 'Monto en Millones (¢)' } },
                     plotOptions: {
                         column: {
@@ -247,8 +254,8 @@
                         }
                     },
                     series: [
-                        { name: 'Entradas', data: [693.8, 120.5, 95.3, 210.0, 180.2, 115.0, 310.5], color: '#10b981' },
-                        { name: 'Salidas', data: [739.9, 215.0, 180.4, 305.2, 220.1, 140.0, 250.0], color: '#f97316' }
+                        { name: 'Entradas', data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.GapDatos.Entradas)), color: '#10b981' },
+                        { name: 'Salidas', data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.GapDatos.Salidas)), color: '#f97316' }
                     ],
                     credits: { enabled: false }
                 });
@@ -259,11 +266,11 @@
                 Highcharts.chart('chartGapEvolucion', {
                     title: { text: 'Evolución del GAP Contractual', style: { fontWeight: '700', color: '#143750', fontSize: '15px' } },
                     subtitle: { text: 'Brecha individual por banda y brecha acumulada (Millones de ¢)' },
-                    xAxis: { categories: ['1 a 30 d', '31 a 60 d', '61 a 90 d', '91 a 180 d', '181 a 270 d', '271 a 360 d', '(+) 360 d'] },
+                    xAxis: { categories: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.GapDatos.Bandas)) },
                     yAxis: { title: { text: 'Monto (MM ¢)' } },
                     series: [
-                        { type: 'column', name: 'GAP por Banda', data: [-802.8, -2016.9, -831.4, -95.2, -39.9, -25.0, 60.5], color: '#0284c7' },
-                        { type: 'spline', name: 'GAP Acumulado', data: [-802.8, -2888.3, -3719.7, -3814.9, -3854.8, -3879.8, -3819.3], color: '#dc2626', lineWidth: 3, marker: { radius: 4 } }
+                        { type: 'column', name: 'GAP por Banda', data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.GapDatos.BrechasBanda)), color: '#0284c7' },
+                        { type: 'spline', name: 'GAP Acumulado', data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.GapDatos.BrechasAcumuladas)), color: '#dc2626', lineWidth: 3, marker: { radius: 4 } }
                     ],
                     credits: { enabled: false }
                 });

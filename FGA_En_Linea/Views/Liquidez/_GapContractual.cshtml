@@ -48,7 +48,7 @@
             <div class="info-box-content" style="padding: 10px 14px;">
                 <span class="info-box-text" style="font-size: 12px; color: #991b1b; font-weight: 700;">MÁXIMA BRECHA</span>
                 <span class="info-box-number" style="font-size: 22px; font-weight: 800; color: #b91c1c;">¢@(Model.GapDatos.MaximaBrecha.ToString("N2")) MM</span>
-                <span style="font-size: 11px; color: #991b1b;">Banda 1 a 30 días</span>
+                <span style="font-size: 11px; color: #991b1b;">Banda: @Model.GapDatos.BandaCritica</span>
             </div>
         </div>
     </div>
@@ -106,13 +106,11 @@
             <!-- ENTRADAS CONTRACTUALES -->
             <tr style="background-color: #ecfdf5; font-weight: 700; border-top: 1px solid #cbd5e1;">
                 <td class="text-left" style="color: #065f46; padding-left: 16px;"><i class="fa fa-arrow-down" style="color: #10b981; margin-right: 6px;"></i> Entradas contractuales</td>
-                <td class="text-right">¢1,902.13</td>
-                <td class="text-right">¢680.23</td>
-                <td class="text-right">¢666.85</td>
-                <td class="text-right">¢210.20</td>
-                <td class="text-right">¢180.20</td>
-                <td class="text-right">¢115.00</td>
-                <td class="text-right">¢310.50</td>
+                @for (int b = 0; b < 7; b++)
+                {
+                    decimal val = (b < Model.GapDatos.Entradas.Count) ? Model.GapDatos.Entradas[b] : 0m;
+                    <td class="text-right font-mono">¢@val.ToString("N2")</td>
+                }
             </tr>
             <tr>
                 <td class="text-left" style="padding-left: 32px; color: #475569;">Disponibilidades (11000000)</td>
@@ -148,13 +146,11 @@
             <!-- SALIDAS CONTRACTUALES -->
             <tr style="background-color: #fff7ed; font-weight: 700; border-top: 2px solid #e2e8f0;">
                 <td class="text-left" style="color: #9a3412; padding-left: 16px;"><i class="fa fa-arrow-up" style="color: #f97316; margin-right: 6px;"></i> Salidas contractuales</td>
-                <td class="text-right">¢2,697.89</td>
-                <td class="text-right">¢2,697.17</td>
-                <td class="text-right">¢487.31</td>
-                <td class="text-right">¢1,135.13</td>
-                <td class="text-right">¢2,189.84</td>
-                <td class="text-right">¢3,895.07</td>
-                <td class="text-right">¢3,496.21</td>
+                @for (int b = 0; b < 7; b++)
+                {
+                    decimal val = (b < Model.GapDatos.Salidas.Count) ? Model.GapDatos.Salidas[b] : 0m;
+                    <td class="text-right font-mono">¢@val.ToString("N2")</td>
+                }
             </tr>
             <tr>
                 <td class="text-left" style="padding-left: 32px; color: #475569;">Vencimientos de CDP's (21300000)</td>
@@ -190,25 +186,25 @@
             <!-- GAP POR BANDA -->
             <tr style="background-color: #f8fafc; font-weight: 700; border-top: 2px solid #cbd5e1;">
                 <td class="text-left" style="color: #1e3a8a; padding-left: 16px;">GAP por Banda</td>
-                <td class="text-right font-mono" style="color: #b91c1c;">-¢802.84</td>
-                <td class="text-right font-mono" style="color: #b91c1c;">-¢2,016.97</td>
-                <td class="text-right font-mono" style="color: #047857;">+¢179.54</td>
-                <td class="text-right font-mono" style="color: #b91c1c;">-¢924.93</td>
-                <td class="text-right font-mono" style="color: #b91c1c;">-¢2,009.64</td>
-                <td class="text-right font-mono" style="color: #b91c1c;">-¢3,780.07</td>
-                <td class="text-right font-mono" style="color: #b91c1c;">-¢3,185.71</td>
+                @for (int b = 0; b < 7; b++)
+                {
+                    decimal val = (b < Model.GapDatos.BrechasBanda.Count) ? Model.GapDatos.BrechasBanda[b] : 0m;
+                    string color = val >= 0 ? "#047857" : "#b91c1c";
+                    string sign = val >= 0 ? "+¢" : "-¢";
+                    <td class="text-right font-mono" style="color: @color;">@sign@Math.Abs(val).ToString("N2")</td>
+                }
             </tr>
 
             <!-- GAP ACUMULADO -->
             <tr style="background-color: #eff6ff; font-weight: 800; border-top: 1px solid #bfdbfe; border-bottom: 2px solid #2b579a;">
                 <td class="text-left" style="color: #1e40af; padding-left: 16px;">GAP Acumulado</td>
-                <td class="text-right font-mono" style="color: #dc2626;">-¢802.84</td>
-                <td class="text-right font-mono" style="color: #dc2626;">-¢2,888.37</td>
-                <td class="text-right font-mono" style="color: #dc2626;">-¢2,708.83</td>
-                <td class="text-right font-mono" style="color: #dc2626;">-¢3,633.76</td>
-                <td class="text-right font-mono" style="color: #dc2626;">-¢5,643.40</td>
-                <td class="text-right font-mono" style="color: #dc2626;">-¢9,423.47</td>
-                <td class="text-right font-mono" style="color: #dc2626;">-¢12,609.18</td>
+                @for (int b = 0; b < 7; b++)
+                {
+                    decimal val = (b < Model.GapDatos.BrechasAcumuladas.Count) ? Model.GapDatos.BrechasAcumuladas[b] : 0m;
+                    string color = val >= 0 ? "#15803d" : "#dc2626";
+                    string sign = val >= 0 ? "+¢" : "-¢";
+                    <td class="text-right font-mono" style="color: @color;">@sign@Math.Abs(val).ToString("N2")</td>
+                }
             </tr>
         </tbody>
     </table>

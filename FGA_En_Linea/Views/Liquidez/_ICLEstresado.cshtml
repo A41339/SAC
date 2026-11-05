@@ -17,8 +17,8 @@
             <span class="info-box-icon" style="background-color: #16a34a; color: #ffffff; border-top-left-radius: 8px; border-bottom-left-radius: 8px;"><i class="fa fa-shield"></i></span>
             <div class="info-box-content" style="padding: 10px 14px;">
                 <span class="info-box-text" style="font-size: 11.5px; color: #166534; font-weight: 700;">ICL BASE</span>
-                <span class="info-box-number" style="font-size: 22px; font-weight: 800; color: #15803d;">1,55x</span>
-                <span style="font-size: 11px; color: #166534;">Meta > 1.00x</span>
+                <span class="info-box-number" style="font-size: 22px; font-weight: 800; color: #15803d;">@(Model.ICLEstresado.ICL_Base.ToString("N2"))x</span>
+                <span style="font-size: 11px; color: #166534;">Meta regulatoria > 1.00x</span>
             </div>
         </div>
     </div>
@@ -27,7 +27,7 @@
             <span class="info-box-icon" style="background-color: #ea580c; color: #ffffff; border-top-left-radius: 8px; border-bottom-left-radius: 8px;"><i class="fa fa-exclamation-circle"></i></span>
             <div class="info-box-content" style="padding: 10px 14px;">
                 <span class="info-box-text" style="font-size: 11.5px; color: #9a3412; font-weight: 700;">ICL MODERADO</span>
-                <span class="info-box-number" style="font-size: 22px; font-weight: 800; color: #c2410c;">1,18x</span>
+                <span class="info-box-number" style="font-size: 22px; font-weight: 800; color: #c2410c;">@(Model.ICLEstresado.ICL_Moderado.ToString("N2"))x</span>
                 <span style="font-size: 11px; color: #9a3412;">Top 20 (-25%) / FAL (-20%)</span>
             </div>
         </div>
@@ -37,7 +37,7 @@
             <span class="info-box-icon" style="background-color: #dc2626; color: #ffffff; border-top-left-radius: 8px; border-bottom-left-radius: 8px;"><i class="fa fa-warning"></i></span>
             <div class="info-box-content" style="padding: 10px 14px;">
                 <span class="info-box-text" style="font-size: 11.5px; color: #991b1b; font-weight: 700;">ICL SEVERO</span>
-                <span class="info-box-number" style="font-size: 22px; font-weight: 800; color: #b91c1c;">0,82x</span>
+                <span class="info-box-number" style="font-size: 22px; font-weight: 800; color: #b91c1c;">@(Model.ICLEstresado.ICL_Severo.ToString("N2"))x</span>
                 <span style="font-size: 11px; color: #991b1b;">Bajo límite normativo</span>
             </div>
         </div>
@@ -47,7 +47,7 @@
             <span class="info-box-icon" style="background-color: #64748b; color: #ffffff; border-top-left-radius: 8px; border-bottom-left-radius: 8px;"><i class="fa fa-line-chart"></i></span>
             <div class="info-box-content" style="padding: 10px 14px;">
                 <span class="info-box-text" style="font-size: 11.5px; color: #475569; font-weight: 700;">VARIACIÓN SEVERA</span>
-                <span class="info-box-number" style="font-size: 22px; font-weight: 800; color: #b91c1c;">-0,73x</span>
+                <span class="info-box-number" style="font-size: 22px; font-weight: 800; color: #b91c1c;">@((Model.ICLEstresado.ICL_Severo - Model.ICLEstresado.ICL_Base).ToString("N2"))x</span>
                 <span style="font-size: 11px; color: #64748b;">Caída total de cobertura</span>
             </div>
         </div>
@@ -80,21 +80,21 @@
         <tbody>
             <tr>
                 <td style="font-weight: 600; color: #1e3a8a; padding: 11px 16px;"><i class="fa fa-cubes" style="color: #10b981; margin-right: 6px;"></i> Fondo de Activos Líquidos (FAL)</td>
-                <td class="text-right font-mono" style="font-size: 13.5px;">¢1,203.53 MM</td>
-                <td class="text-right font-mono" style="font-size: 13.5px;">¢1,103.53 MM</td>
-                <td class="text-right font-mono" style="font-size: 13.5px;">¢933.53 MM</td>
+                <td class="text-right font-mono" style="font-size: 13.5px;">¢1.203,53 MM</td>
+                <td class="text-right font-mono" style="font-size: 13.5px;">¢1.103,53 MM</td>
+                <td class="text-right font-mono" style="font-size: 13.5px;">¢933,53 MM</td>
             </tr>
             <tr>
                 <td style="font-weight: 600; color: #1e3a8a; padding: 11px 16px;"><i class="fa fa-sign-out" style="color: #f97316; margin-right: 6px;"></i> Salidas Netas a 30 días</td>
-                <td class="text-right font-mono" style="font-size: 13.5px;">¢360.12 MM</td>
-                <td class="text-right font-mono" style="font-size: 13.5px;">¢684.18 MM</td>
-                <td class="text-right font-mono" style="font-size: 13.5px;">¢1,332.31 MM</td>
+                <td class="text-right font-mono" style="font-size: 13.5px;">¢360,12 MM</td>
+                <td class="text-right font-mono" style="font-size: 13.5px;">¢684,18 MM</td>
+                <td class="text-right font-mono" style="font-size: 13.5px;">¢1.332,31 MM</td>
             </tr>
             <tr style="background-color: #eff6ff; font-weight: 800; border-top: 2px solid #2b579a; border-bottom: 2px solid #2b579a;">
                 <td style="color: #1e40af; font-size: 14px; padding: 12px 16px;"><i class="fa fa-shield" style="color: #0284c7; margin-right: 6px;"></i> ICL Resultante (Estresado)</td>
-                <td class="text-right font-mono" style="font-size: 16px; color: #15803d;">1,55x (155%)</td>
-                <td class="text-right font-mono" style="font-size: 16px; color: #c2410c;">1,18x (118%)</td>
-                <td class="text-right font-mono" style="font-size: 16px; color: #b91c1c;">0,82x (82%)</td>
+                <td class="text-right font-mono" style="font-size: 16px; color: #15803d;">@(Model.ICLEstresado.ICL_Base.ToString("N2"))x (@((Model.ICLEstresado.ICL_Base * 100m).ToString("N0"))%)</td>
+                <td class="text-right font-mono" style="font-size: 16px; color: #c2410c;">@(Model.ICLEstresado.ICL_Moderado.ToString("N2"))x (@((Model.ICLEstresado.ICL_Moderado * 100m).ToString("N0"))%)</td>
+                <td class="text-right font-mono" style="font-size: 16px; color: #b91c1c;">@(Model.ICLEstresado.ICL_Severo.ToString("N2"))x (@((Model.ICLEstresado.ICL_Severo * 100m).ToString("N0"))%)</td>
             </tr>
         </tbody>
     </table>

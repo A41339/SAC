@@ -318,7 +318,16 @@ namespace FGA.Controllers
                 Cupones_Severo = 1000000m,
                 CapitalSocial_Base = 0.035m,
                 CapitalSocial_Moderado = 0.028m,
-                CapitalSocial_Severo = 0.0175m
+                CapitalSocial_Severo = 0.0175m,
+                OtrosIngresos_Base = 0.0394m,
+                OtrosIngresos_Moderado = 0.0315m,
+                OtrosIngresos_Severo = 0.0197m,
+                EgresosFinancieros_Base = 0.0100m,
+                EgresosFinancieros_Moderado = 0.0200m,
+                EgresosFinancieros_Severo = 0.0300m,
+                GastosAdministrativos_Base = 0.0150m,
+                GastosAdministrativos_Moderado = 0.0250m,
+                GastosAdministrativos_Severo = 0.0400m
             };
         }
 

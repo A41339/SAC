@@ -191,6 +191,22 @@ namespace FGA.Model
         public decimal CapitalSocial_Base { get; set; } = 0.035m;
         public decimal CapitalSocial_Moderado { get; set; } = 0.028m;
         public decimal CapitalSocial_Severo { get; set; } = 0.0175m;
+
+        // 11. Otros ingresos mensual (Promedio 6 meses)
+        public string ProyectorOtrosIngresos { get; set; } = "Promedio 6 meses";
+        public decimal OtrosIngresos_Base { get; set; } = 0.0394m;
+        public decimal OtrosIngresos_Moderado { get; set; } = 0.0315m;
+        public decimal OtrosIngresos_Severo { get; set; } = 0.0197m;
+
+        // 12. Egresos financieros mensual (Dato Manual)
+        public decimal EgresosFinancieros_Base { get; set; } = 0.0100m;
+        public decimal EgresosFinancieros_Moderado { get; set; } = 0.0200m;
+        public decimal EgresosFinancieros_Severo { get; set; } = 0.0300m;
+
+        // 13. Gastos administrativos mensual (Dato Manual)
+        public decimal GastosAdministrativos_Base { get; set; } = 0.0150m;
+        public decimal GastosAdministrativos_Moderado { get; set; } = 0.0250m;
+        public decimal GastosAdministrativos_Severo { get; set; } = 0.0400m;
     }
 
     #endregion
