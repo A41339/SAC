@@ -1,10 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Web.Mvc;
 using FGA.Model;
 using FGA.Utility;
+using OfficeOpenXml;
+using OfficeOpenXml.Style;
 
 namespace FGA.Controllers
 {
@@ -196,6 +200,23 @@ namespace FGA.Controllers
                 var brechasEstres = CalcularBrechasEstres(gapDatos, saldos, supuestos, razonCobertura);
                 var horizonte = CalcularHorizonteSupervivencia(brechasEstres, razonCobertura.ActivosLiquidos_Base);
 
+                // Calcular horizonte del mes anterior para comparativa y gobernanza de tendencia
+                try
+                {
+                    DateTime pAntDate = p2Date.AddMonths(-1);
+                    var saldosAnt = ObtenerSaldosContables(currentEntidad, pAntDate);
+                    var gapAnt = ObtenerDatosGap(currentEntidad, pAntDate);
+                    var supAnt = ObtenerSupuestosPorDefecto(currentEntidad, pAntDate);
+                    var rcAnt = CalcularRazonCobertura(saldosAnt, gapAnt, supAnt);
+                    var beAnt = CalcularBrechasEstres(gapAnt, saldosAnt, supAnt, rcAnt);
+                    var hAnt = CalcularHorizonteSupervivencia(beAnt, rcAnt.ActivosLiquidos_Base);
+
+                    horizonte.DiasSupervivenciaMesAnteriorBase = hAnt.DiasSupervivenciaBase;
+                    horizonte.DiasSupervivenciaMesAnteriorModerado = hAnt.DiasSupervivenciaModerado;
+                    horizonte.DiasSupervivenciaMesAnteriorSevero = hAnt.DiasSupervivenciaSevero;
+                }
+                catch { }
+
                 return new LiquidezIndexViewModel
                 {
                     IdEntidad = currentEntidad,
@@ -213,7 +234,10 @@ namespace FGA.Controllers
                     RazonCobertura = razonCobertura,
                     ICLEstresado = iclEstresado,
                     BrechasEstres = brechasEstres,
-                    Horizonte = horizonte
+                    Horizonte = horizonte,
+                    FuenteDatos = "Balanza de Comprobación SUGEF y Calce de Plazos XML",
+                    FechaCalculo = DateTime.Now,
+                    UsuarioActual = User?.Identity?.Name ?? Session["Usuario"]?.ToString() ?? "Comité de Riesgos"
                 };
             }
             catch (Exception ex)
@@ -222,6 +246,390 @@ namespace FGA.Controllers
                 return new LiquidezIndexViewModel();
             }
         }
+
+        #region Interactividad, Simulación What-If y Gobernanza
+
+        [HttpPost]
+        public JsonResult SimularEstres(string idEntidad, string periodo2, SupuestosSensibilizacionViewModel supuestos)
+        {
+            try
+            {
+                string currentEntidad = string.IsNullOrWhiteSpace(idEntidad) ? (Session["IdEntidad"]?.ToString() ?? "2") : idEntidad;
+                DateTime fechaReferencia = spClient.FGA_Consultar_FechaCierre(currentEntidad);
+                DateTime fechaCorte = Utilitarios.ConvertirAFechaSegura(periodo2, fechaReferencia.AddMonths(-1));
+
+                var saldos = ObtenerSaldosContables(currentEntidad, fechaCorte);
+                var gapDatos = ObtenerDatosGap(currentEntidad, fechaCorte);
+                var icl = ObtenerDatosICL(currentEntidad, fechaCorte);
+
+                if (supuestos == null)
+                    supuestos = ObtenerSupuestosPorDefecto(currentEntidad, fechaCorte);
+
+                var razonCobertura = CalcularRazonCobertura(saldos, gapDatos, supuestos);
+                var iclEstresado = CalcularICLEstresado(icl, saldos, supuestos, razonCobertura);
+                var brechasEstres = CalcularBrechasEstres(gapDatos, saldos, supuestos, razonCobertura);
+                var horizonte = CalcularHorizonteSupervivencia(brechasEstres, razonCobertura.ActivosLiquidos_Base);
+
+                return Json(new
+                {
+                    success = true,
+                    razonCobertura = razonCobertura,
+                    iclEstresado = iclEstresado,
+                    brechasEstres = brechasEstres,
+                    horizonte = horizonte
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public JsonResult GuardarParametrosLiquidez(string idEntidad, SupuestosSensibilizacionViewModel supuestos)
+        {
+            try
+            {
+                string currentEntidad = string.IsNullOrWhiteSpace(idEntidad) ? (Session["IdEntidad"]?.ToString() ?? "2") : idEntidad;
+                string usuario = User?.Identity?.Name ?? Session["Usuario"]?.ToString() ?? "Comité de Riesgos";
+
+                int res = spClient.FGA_Guardar_Parametros_Liquidez(
+                    currentEntidad,
+                    supuestos.RenovacionCDP_Base,
+                    supuestos.DisminucionRecaudo_Base,
+                    supuestos.DisponibilidadLineas_Base,
+                    supuestos.PagoObligaciones_Base,
+                    supuestos.Cupones_Base,
+                    usuario
+                );
+
+                return Json(new { success = true, message = "Supuestos institucionales guardados correctamente en la entidad." });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error al guardar parámetros: " + ex.Message });
+            }
+        }
+
+        [HttpGet]
+        public ActionResult ExportarExcelContractual(string idEntidad = null, string periodo1 = null, string periodo2 = null)
+        {
+            try
+            {
+                var model = ConstruirModelo(idEntidad, "contractual", periodo1, periodo2);
+                ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+
+                using (var package = new ExcelPackage())
+                {
+                    // 1. Hoja Indicadores
+                    var wsInd = package.Workbook.Worksheets.Add("Indicadores de Liquidez");
+                    wsInd.View.ShowGridLines = true;
+                    AplicarCabeceraReporte(wsInd, "INDICADORES NORMATIVOS Y DE GESTIÓN DE LIQUIDEZ", model.NombreEntidad, model.Periodo2);
+
+                    wsInd.Cells[5, 1].Value = "#";
+                    wsInd.Cells[5, 2].Value = "Indicador";
+                    wsInd.Cells[5, 3].Value = "Fórmula / Cuentas";
+                    wsInd.Cells[5, 4].Value = "Objetivo / Qué Mide";
+                    wsInd.Cells[5, 5].Value = model.Periodo1Header;
+                    wsInd.Cells[5, 6].Value = model.Periodo2Header;
+                    wsInd.Cells[5, 7].Value = "Variación";
+                    FormatearRangoEncabezado(wsInd.Cells[5, 1, 5, 7]);
+
+                    int r = 6;
+                    foreach (var item in model.Indicadores)
+                    {
+                        wsInd.Cells[r, 1].Value = item.Orden;
+                        wsInd.Cells[r, 2].Value = item.Nombre;
+                        wsInd.Cells[r, 3].Value = item.Formula;
+                        wsInd.Cells[r, 4].Value = item.QueMide;
+                        wsInd.Cells[r, 5].Value = item.ValorP1;
+                        wsInd.Cells[r, 6].Value = item.ValorP2;
+                        wsInd.Cells[r, 7].Value = item.Variacion;
+
+                        if (item.EsPorcentaje)
+                        {
+                            wsInd.Cells[r, 5].Style.Numberformat.Format = "0.00%";
+                            wsInd.Cells[r, 6].Style.Numberformat.Format = "0.00%";
+                            wsInd.Cells[r, 7].Style.Numberformat.Format = "+0.00%;-0.00%;0.00%";
+                        }
+                        else
+                        {
+                            wsInd.Cells[r, 5].Style.Numberformat.Format = "#,##0.00";
+                            wsInd.Cells[r, 6].Style.Numberformat.Format = "#,##0.00";
+                            wsInd.Cells[r, 7].Style.Numberformat.Format = "+#,##0.00;-#,##0.00;0.00";
+                        }
+                        r++;
+                    }
+                    wsInd.Cells.AutoFitColumns();
+
+                    // 2. Hoja GAP Contractual
+                    var wsGap = package.Workbook.Worksheets.Add("GAP Contractual");
+                    wsGap.View.ShowGridLines = true;
+                    AplicarCabeceraReporte(wsGap, "CALCE DE PLAZOS Y GAP CONTRACTUAL", model.NombreEntidad, model.Periodo2);
+
+                    wsGap.Cells[5, 1].Value = "Banda Temporal";
+                    wsGap.Cells[5, 2].Value = "Entradas (₡ MM)";
+                    wsGap.Cells[5, 3].Value = "Salidas (₡ MM)";
+                    wsGap.Cells[5, 4].Value = "Brecha por Banda (₡ MM)";
+                    wsGap.Cells[5, 5].Value = "Brecha Acumulada (₡ MM)";
+                    FormatearRangoEncabezado(wsGap.Cells[5, 1, 5, 5]);
+
+                    r = 6;
+                    for (int i = 0; i < model.GapDatos.Bandas.Count; i++)
+                    {
+                        wsGap.Cells[r, 1].Value = model.GapDatos.Bandas[i];
+                        wsGap.Cells[r, 2].Value = model.GapDatos.Entradas.Count > i ? model.GapDatos.Entradas[i] : 0m;
+                        wsGap.Cells[r, 3].Value = model.GapDatos.Salidas.Count > i ? model.GapDatos.Salidas[i] : 0m;
+                        wsGap.Cells[r, 4].Value = model.GapDatos.BrechasBanda.Count > i ? model.GapDatos.BrechasBanda[i] : 0m;
+                        wsGap.Cells[r, 5].Value = model.GapDatos.BrechasAcumuladas.Count > i ? model.GapDatos.BrechasAcumuladas[i] : 0m;
+
+                        wsGap.Cells[r, 2, r, 5].Style.Numberformat.Format = "#,##0.00";
+                        r++;
+                    }
+                    wsGap.Cells.AutoFitColumns();
+
+                    // 3. Hoja ICL Normativo
+                    var wsIcl = package.Workbook.Worksheets.Add("ICL Normativo");
+                    wsIcl.View.ShowGridLines = true;
+                    AplicarCabeceraReporte(wsIcl, "ÍNDICE DE COBERTURA DE LIQUIDEZ (ICL)", model.NombreEntidad, model.Periodo2);
+
+                    wsIcl.Cells[5, 1].Value = "Código";
+                    wsIcl.Cells[5, 2].Value = "Concepto Normativo";
+                    wsIcl.Cells[5, 3].Value = "Saldo Bruto (₡)";
+                    wsIcl.Cells[5, 4].Value = "Ponderador";
+                    wsIcl.Cells[5, 5].Value = "Saldo Ponderado (₡)";
+                    FormatearRangoEncabezado(wsIcl.Cells[5, 1, 5, 5]);
+
+                    r = 6;
+                    foreach (var item in model.ICLDatos.Items)
+                    {
+                        wsIcl.Cells[r, 1].Value = item.Codigo;
+                        wsIcl.Cells[r, 2].Value = item.Concepto;
+                        wsIcl.Cells[r, 3].Value = item.SaldoBruto;
+                        wsIcl.Cells[r, 4].Value = item.Ponderador;
+                        wsIcl.Cells[r, 5].Value = item.SaldoPonderado;
+
+                        wsIcl.Cells[r, 3].Style.Numberformat.Format = "#,##0.00";
+                        wsIcl.Cells[r, 4].Style.Numberformat.Format = "0.00%";
+                        wsIcl.Cells[r, 5].Style.Numberformat.Format = "#,##0.00";
+
+                        if (item.EsTotalizador)
+                        {
+                            wsIcl.Cells[r, 1, r, 5].Style.Font.Bold = true;
+                            wsIcl.Cells[r, 1, r, 5].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                            wsIcl.Cells[r, 1, r, 5].Style.Fill.BackgroundColor.SetColor(Color.FromArgb(240, 249, 255));
+                        }
+                        r++;
+                    }
+                    wsIcl.Cells.AutoFitColumns();
+
+                    var bytes = package.GetAsByteArray();
+                    string fileName = $"Liquidez_Contractual_{model.IdEntidad}_{DateTime.Now:yyyyMMdd}.xlsx";
+                    return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
+            }
+            catch (Exception ex)
+            {
+                return Content("Error al exportar a Excel: " + ex.Message);
+            }
+        }
+
+        [HttpGet]
+        public ActionResult ExportarExcelEstres(string idEntidad = null, string periodo1 = null, string periodo2 = null)
+        {
+            try
+            {
+                var model = ConstruirModelo(idEntidad, "estres", periodo1, periodo2);
+                ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+
+                using (var package = new ExcelPackage())
+                {
+                    // 1. Hoja Horizonte de Supervivencia
+                    var wsH = package.Workbook.Worksheets.Add("Horizonte Supervivencia");
+                    wsH.View.ShowGridLines = true;
+                    AplicarCabeceraReporte(wsH, "HORIZONTE DE SUPERVIVENCIA MULTIESCENARIO", model.NombreEntidad, model.Periodo2);
+
+                    wsH.Cells[5, 1].Value = "Escenario";
+                    wsH.Cells[5, 2].Value = "Días de Supervivencia";
+                    wsH.Cells[5, 3].Value = "Buffer Remanente (₡ MM)";
+                    wsH.Cells[5, 4].Value = "Banda de Inflexión";
+                    wsH.Cells[5, 5].Value = "Saldo Final Inflexión (₡ MM)";
+                    wsH.Cells[5, 6].Value = "Variación vs Mes Ant. (días)";
+                    FormatearRangoEncabezado(wsH.Cells[5, 1, 5, 6]);
+
+                    wsH.Cells[6, 1].Value = "Base";
+                    wsH.Cells[6, 2].Value = model.Horizonte.DiasSupervivenciaBase;
+                    wsH.Cells[6, 3].Value = model.Horizonte.BufferRemanenteBase;
+                    wsH.Cells[6, 4].Value = model.Horizonte.HorizonteBase;
+                    wsH.Cells[6, 5].Value = model.Horizonte.SaldoFinalBase;
+                    wsH.Cells[6, 6].Value = model.Horizonte.VariacionDiasBase;
+
+                    wsH.Cells[7, 1].Value = "Moderado";
+                    wsH.Cells[7, 2].Value = model.Horizonte.DiasSupervivenciaModerado;
+                    wsH.Cells[7, 3].Value = model.Horizonte.BufferRemanenteModerado;
+                    wsH.Cells[7, 4].Value = model.Horizonte.HorizonteModerado;
+                    wsH.Cells[7, 5].Value = model.Horizonte.SaldoFinalModerado;
+                    wsH.Cells[7, 6].Value = model.Horizonte.VariacionDiasModerado;
+
+                    wsH.Cells[8, 1].Value = "Severo";
+                    wsH.Cells[8, 2].Value = model.Horizonte.DiasSupervivenciaSevero;
+                    wsH.Cells[8, 3].Value = model.Horizonte.BufferRemanenteSevero;
+                    wsH.Cells[8, 4].Value = model.Horizonte.HorizonteSevero;
+                    wsH.Cells[8, 5].Value = model.Horizonte.SaldoFinalSevero;
+                    wsH.Cells[8, 6].Value = model.Horizonte.VariacionDiasSevero;
+
+                    wsH.Cells[6, 2, 8, 2].Style.Numberformat.Format = "#,##0";
+                    wsH.Cells[6, 3, 8, 3].Style.Numberformat.Format = "#,##0.00";
+                    wsH.Cells[6, 5, 8, 5].Style.Numberformat.Format = "#,##0.00";
+                    wsH.Cells[6, 6, 8, 6].Style.Numberformat.Format = "+#,##0;-#,##0;0";
+                    wsH.Cells.AutoFitColumns();
+
+                    // 2. Hoja Razón de Cobertura
+                    var wsRc = package.Workbook.Worksheets.Add("Razón de Cobertura");
+                    wsRc.View.ShowGridLines = true;
+                    AplicarCabeceraReporte(wsRc, "RAZÓN DE COBERTURA DE LIQUIDEZ BAJO ESTRÉS", model.NombreEntidad, model.Periodo2);
+
+                    wsRc.Cells[5, 1].Value = "Componente (₡ MM)";
+                    wsRc.Cells[5, 2].Value = "Escenario Base";
+                    wsRc.Cells[5, 3].Value = "Escenario Moderado";
+                    wsRc.Cells[5, 4].Value = "Escenario Severo";
+                    FormatearRangoEncabezado(wsRc.Cells[5, 1, 5, 4]);
+
+                    int r = 6;
+                    Action<string, decimal, decimal, decimal, bool> agregarFilaRc = (titulo, vB, vM, vS, bold) =>
+                    {
+                        wsRc.Cells[r, 1].Value = titulo;
+                        wsRc.Cells[r, 2].Value = vB;
+                        wsRc.Cells[r, 3].Value = vM;
+                        wsRc.Cells[r, 4].Value = vS;
+                        wsRc.Cells[r, 2, r, 4].Style.Numberformat.Format = "#,##0.00";
+                        if (bold)
+                        {
+                            wsRc.Cells[r, 1, r, 4].Style.Font.Bold = true;
+                            wsRc.Cells[r, 1, r, 4].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                            wsRc.Cells[r, 1, r, 4].Style.Fill.BackgroundColor.SetColor(Color.FromArgb(241, 245, 249));
+                        }
+                        r++;
+                    };
+
+                    agregarFilaRc("Activos Líquidos (FAL)", model.RazonCobertura.ActivosLiquidos_Base, model.RazonCobertura.ActivosLiquidos_Moderado, model.RazonCobertura.ActivosLiquidos_Severo, true);
+                    agregarFilaRc("Total Ingresos Contractuales", model.RazonCobertura.IngresosContractuales_Base, model.RazonCobertura.IngresosContractuales_Moderado, model.RazonCobertura.IngresosContractuales_Severo, true);
+                    agregarFilaRc("Total Egresos Contractuales", model.RazonCobertura.EgresosContractuales_Base, model.RazonCobertura.EgresosContractuales_Moderado, model.RazonCobertura.EgresosContractuales_Severo, true);
+                    agregarFilaRc("Razón de Cobertura (veces)", model.RazonCobertura.RazonCobertura_Base, model.RazonCobertura.RazonCobertura_Moderado, model.RazonCobertura.RazonCobertura_Severo, true);
+                    wsRc.Cells.AutoFitColumns();
+
+                    // 3. Hoja ICL Estresado
+                    var wsIcl = package.Workbook.Worksheets.Add("ICL Estresado");
+                    wsIcl.View.ShowGridLines = true;
+                    AplicarCabeceraReporte(wsIcl, "ÍNDICE DE COBERTURA DE LIQUIDEZ ESTRESADO", model.NombreEntidad, model.Periodo2);
+
+                    wsIcl.Cells[5, 1].Value = "Concepto (₡ MM)";
+                    wsIcl.Cells[5, 2].Value = "Contractual";
+                    wsIcl.Cells[5, 3].Value = "Base";
+                    wsIcl.Cells[5, 4].Value = "Moderado";
+                    wsIcl.Cells[5, 5].Value = "Severo";
+                    FormatearRangoEncabezado(wsIcl.Cells[5, 1, 5, 5]);
+
+                    wsIcl.Cells[6, 1].Value = "Fondo de Activos Líquidos (FAL)";
+                    wsIcl.Cells[6, 2].Value = model.ICLEstresado.FALContractual;
+                    wsIcl.Cells[6, 3].Value = model.ICLEstresado.FALBase;
+                    wsIcl.Cells[6, 4].Value = model.ICLEstresado.FALModerado;
+                    wsIcl.Cells[6, 5].Value = model.ICLEstresado.FALSevero;
+
+                    wsIcl.Cells[7, 1].Value = "Salidas Netas de Efectivo (30d)";
+                    wsIcl.Cells[7, 2].Value = model.ICLEstresado.SalidasContractual;
+                    wsIcl.Cells[7, 3].Value = model.ICLEstresado.SalidasBase;
+                    wsIcl.Cells[7, 4].Value = model.ICLEstresado.SalidasModerado;
+                    wsIcl.Cells[7, 5].Value = model.ICLEstresado.SalidasSevero;
+
+                    wsIcl.Cells[8, 1].Value = "ICL Estresado (veces)";
+                    wsIcl.Cells[8, 2].Value = model.ICLEstresado.ICLContractual;
+                    wsIcl.Cells[8, 3].Value = model.ICLEstresado.ICLBase;
+                    wsIcl.Cells[8, 4].Value = model.ICLEstresado.ICLModerado;
+                    wsIcl.Cells[8, 5].Value = model.ICLEstresado.ICLSevero;
+
+                    wsIcl.Cells[6, 2, 8, 5].Style.Numberformat.Format = "#,##0.00";
+                    wsIcl.Cells[8, 1, 8, 5].Style.Font.Bold = true;
+                    wsIcl.Cells.AutoFitColumns();
+
+                    // 4. Hoja Brechas Estresadas
+                    var wsB = package.Workbook.Worksheets.Add("Brechas Estresadas");
+                    wsB.View.ShowGridLines = true;
+                    AplicarCabeceraReporte(wsB, "BRECHAS DE LIQUIDEZ Y ACUMULADO POR ESCENARIO", model.NombreEntidad, model.Periodo2);
+
+                    wsB.Cells[5, 1].Value = "Banda Temporal";
+                    wsB.Cells[5, 2].Value = "Entradas Base";
+                    wsB.Cells[5, 3].Value = "Salidas Base";
+                    wsB.Cells[5, 4].Value = "Acum. Base";
+                    wsB.Cells[5, 5].Value = "Entradas Mod.";
+                    wsB.Cells[5, 6].Value = "Salidas Mod.";
+                    wsB.Cells[5, 7].Value = "Acum. Mod.";
+                    wsB.Cells[5, 8].Value = "Entradas Sev.";
+                    wsB.Cells[5, 9].Value = "Salidas Sev.";
+                    wsB.Cells[5, 10].Value = "Acum. Sev.";
+                    FormatearRangoEncabezado(wsB.Cells[5, 1, 5, 10]);
+
+                    r = 6;
+                    for (int i = 0; i < model.BrechasEstres.Bandas.Count; i++)
+                    {
+                        wsB.Cells[r, 1].Value = model.BrechasEstres.Bandas[i];
+                        wsB.Cells[r, 2].Value = model.BrechasEstres.EntradasBase.Count > i ? model.BrechasEstres.EntradasBase[i] : 0m;
+                        wsB.Cells[r, 3].Value = model.BrechasEstres.SalidasBase.Count > i ? model.BrechasEstres.SalidasBase[i] : 0m;
+                        wsB.Cells[r, 4].Value = model.BrechasEstres.AcumuladoBase.Count > i ? model.BrechasEstres.AcumuladoBase[i] : 0m;
+
+                        wsB.Cells[r, 5].Value = model.BrechasEstres.EntradasModerado.Count > i ? model.BrechasEstres.EntradasModerado[i] : 0m;
+                        wsB.Cells[r, 6].Value = model.BrechasEstres.SalidasModerado.Count > i ? model.BrechasEstres.SalidasModerado[i] : 0m;
+                        wsB.Cells[r, 7].Value = model.BrechasEstres.AcumuladoModerado.Count > i ? model.BrechasEstres.AcumuladoModerado[i] : 0m;
+
+                        wsB.Cells[r, 8].Value = model.BrechasEstres.EntradasSevero.Count > i ? model.BrechasEstres.EntradasSevero[i] : 0m;
+                        wsB.Cells[r, 9].Value = model.BrechasEstres.SalidasSevero.Count > i ? model.BrechasEstres.SalidasSevero[i] : 0m;
+                        wsB.Cells[r, 10].Value = model.BrechasEstres.AcumuladoSevero.Count > i ? model.BrechasEstres.AcumuladoSevero[i] : 0m;
+
+                        wsB.Cells[r, 2, r, 10].Style.Numberformat.Format = "#,##0.00";
+                        r++;
+                    }
+                    wsB.Cells.AutoFitColumns();
+
+                    var bytes = package.GetAsByteArray();
+                    string fileName = $"Escenarios_Estres_Liquidez_{model.IdEntidad}_{DateTime.Now:yyyyMMdd}.xlsx";
+                    return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
+            }
+            catch (Exception ex)
+            {
+                return Content("Error al exportar a Excel: " + ex.Message);
+            }
+        }
+
+        private void AplicarCabeceraReporte(ExcelWorksheet ws, string modulo, string entidad, string periodo)
+        {
+            ws.Cells[1, 1].Value = "SISTEMA DE ALERTAS Y CALIFICACIÓN - SAC";
+            ws.Cells[1, 1].Style.Font.Bold = true;
+            ws.Cells[1, 1].Style.Font.Size = 13;
+            ws.Cells[1, 1].Style.Font.Color.SetColor(Color.FromArgb(20, 55, 80));
+
+            ws.Cells[2, 1].Value = modulo;
+            ws.Cells[2, 1].Style.Font.Bold = true;
+            ws.Cells[2, 1].Style.Font.Size = 11;
+            ws.Cells[2, 1].Style.Font.Color.SetColor(Color.FromArgb(2, 132, 199));
+
+            ws.Cells[3, 1].Value = $"Entidad: {entidad} | Corte: {periodo} | Generado: {DateTime.Now:dd/MM/yyyy HH:mm}";
+            ws.Cells[3, 1].Style.Font.Italic = true;
+            ws.Cells[3, 1].Style.Font.Size = 10;
+            ws.Cells[3, 1].Style.Font.Color.SetColor(Color.FromArgb(100, 116, 139));
+        }
+
+        private void FormatearRangoEncabezado(ExcelRange range)
+        {
+            range.Style.Font.Bold = true;
+            range.Style.Font.Color.SetColor(Color.White);
+            range.Style.Fill.PatternType = ExcelFillStyle.Solid;
+            range.Style.Fill.BackgroundColor.SetColor(Color.FromArgb(43, 87, 154)); // #2b579a
+            range.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+            range.Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+        }
+
+        #endregion
 
         #region Métodos de Negocio y Cálculo Normativo
 

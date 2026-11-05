@@ -26,6 +26,11 @@ namespace FGA.Model
         public ICLEstresadoViewModel ICLEstresado { get; set; } = new ICLEstresadoViewModel();
         public BrechasLiquidezViewModel BrechasEstres { get; set; } = new BrechasLiquidezViewModel();
         public HorizonteSupervivenciaViewModel Horizonte { get; set; } = new HorizonteSupervivenciaViewModel();
+
+        // Trazabilidad, Auditoría y Gobernanza
+        public string FuenteDatos { get; set; } = "Balanza de Comprobación y Calce de Plazos XML";
+        public DateTime FechaCalculo { get; set; } = DateTime.Now;
+        public string UsuarioActual { get; set; }
     }
 
     #endregion
@@ -369,6 +374,14 @@ namespace FGA.Model
         public decimal SaldoFinalSevero { get; set; }
 
         public decimal ReduccionDias { get; set; }
+
+        // Comparativa mensual vs mes anterior (Trazabilidad y tendencia)
+        public decimal DiasSupervivenciaMesAnteriorBase { get; set; }
+        public decimal DiasSupervivenciaMesAnteriorModerado { get; set; }
+        public decimal DiasSupervivenciaMesAnteriorSevero { get; set; }
+        public decimal VariacionDiasBase => DiasSupervivenciaBase - DiasSupervivenciaMesAnteriorBase;
+        public decimal VariacionDiasModerado => DiasSupervivenciaModerado - DiasSupervivenciaMesAnteriorModerado;
+        public decimal VariacionDiasSevero => DiasSupervivenciaSevero - DiasSupervivenciaMesAnteriorSevero;
 
         // Trayectoria multiescenario para Highcharts
         public List<string> TrayectoriaCategorias { get; set; } = new List<string>();

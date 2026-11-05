@@ -36,6 +36,18 @@
                 <div class="info-box-content" style="padding: 10px 14px;">
                     <span class="info-box-text" style="font-size: 12px; color: #64748b; font-weight: 600;">Índice ICL</span>
                     <span class="info-box-number" id="lblICLRatio" style="font-size: 22px; font-weight: 700; color: #1e3a8a;">@(Model.ICLDatos.ICLRatio.ToString("N2"))%</span>
+                    @if (Model.ICLDatos.ICLRatio >= 100m)
+                    {
+                        <span class="badge" style="background: #dcfce7; color: #15803d; font-size: 11px; font-weight: 700; padding: 2px 8px; border: 1px solid #bbf7d0; margin-top: 3px; display: inline-block;">
+                            <i class="fa fa-check-circle"></i> Cumple SUGEF (&ge; 100%)
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="badge" style="background: #fee2e2; color: #b91c1c; font-size: 11px; font-weight: 700; padding: 2px 8px; border: 1px solid #fecaca; margin-top: 3px; display: inline-block;">
+                            <i class="fa fa-exclamation-triangle"></i> Déficit Normativo (&lt; 100%)
+                        </span>
+                    }
                 </div>
             </div>
         </div>

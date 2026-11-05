@@ -9,9 +9,15 @@
         </div>
     </div>
 
-    <div>
-        <button type="button" class="btn btn-sm btn-primary" onclick="recalcularEscenarios()" style="background-color: #0284c7; border-color: #0284c7; font-weight: 600; border-radius: 6px; padding: 7px 18px;">
-            <i class="fa fa-calculator"></i> Aplicar y Proyectar Escenarios
+    <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+        <button type="button" class="btn btn-sm btn-primary" onclick="recalcularEscenarios()" style="background-color: #0284c7; border-color: #0284c7; font-weight: 600; border-radius: 6px; padding: 7px 16px; display: inline-flex; align-items: center; gap: 6px;">
+            <i class="fa fa-calculator"></i> Aplicar y Proyectar
+        </button>
+        <button type="button" class="btn btn-sm btn-success" onclick="guardarParametrosEntidad()" style="background-color: #16a34a; border-color: #15803d; font-weight: 600; border-radius: 6px; padding: 7px 16px; display: inline-flex; align-items: center; gap: 6px;">
+            <i class="fa fa-save"></i> Guardar Parámetros
+        </button>
+        <button type="button" class="btn btn-sm btn-default" onclick="restablecerSupuestos()" style="border-color: #cbd5e1; font-weight: 600; border-radius: 6px; padding: 7px 14px; display: inline-flex; align-items: center; gap: 6px; color: #475569;">
+            <i class="fa fa-refresh"></i> Restablecer
         </button>
     </div>
 </div>
@@ -201,37 +207,212 @@
             <tr>
                 <td style="font-weight: 600; color: #1e3a8a; padding: 10px 16px;"><i class="fa fa-money" style="color: #10b981; margin-right: 6px;"></i> Efectivo y disponibilidades</td>
                 <td class="text-center font-mono">1.00</td>
-                <td class="text-right font-mono">¢33,53 MM</td>
-                <td class="text-right font-mono">¢33,53 MM</td>
-                <td class="text-right font-mono">¢33,53 MM</td>
+                <td class="text-right font-mono" id="tdFalEfBase">¢@Model.RazonCobertura.Disponibilidades110_Base.ToString("N2") MM</td>
+                <td class="text-right font-mono" id="tdFalEfMod">¢@Model.RazonCobertura.Disponibilidades110_Moderado.ToString("N2") MM</td>
+                <td class="text-right font-mono" id="tdFalEfSev">¢@Model.RazonCobertura.Disponibilidades110_Severo.ToString("N2") MM</td>
             </tr>
             <tr>
                 <td style="font-weight: 600; color: #1e3a8a; padding: 10px 16px;"><i class="fa fa-university" style="color: #0284c7; margin-right: 6px;"></i> Depósitos vista en el BCCR</td>
                 <td class="text-center font-mono">1.00</td>
-                <td class="text-right font-mono">¢0,00 MM</td>
-                <td class="text-right font-mono">¢0,00 MM</td>
-                <td class="text-right font-mono">¢0,00 MM</td>
+                <td class="text-right font-mono" id="tdFalBccrBase">¢0,00 MM</td>
+                <td class="text-right font-mono" id="tdFalBccrMod">¢0,00 MM</td>
+                <td class="text-right font-mono" id="tdFalBccrSev">¢0,00 MM</td>
             </tr>
             <tr>
                 <td style="font-weight: 600; color: #1e3a8a; padding: 10px 16px;"><i class="fa fa-file-text-o" style="color: #f59e0b; margin-right: 6px;"></i> Instrumentos de deuda Gobierno / BCCR</td>
                 <td class="text-center font-mono">0.90</td>
-                <td class="text-right font-mono">¢1.170,00 MM</td>
-                <td class="text-right font-mono">¢1.070,00 MM</td>
-                <td class="text-right font-mono">¢900,00 MM</td>
+                <td class="text-right font-mono" id="tdFalInvBase">¢@Model.RazonCobertura.Inversiones120_Base.ToString("N2") MM</td>
+                <td class="text-right font-mono" id="tdFalInvMod">¢@Model.RazonCobertura.Inversiones120_Moderado.ToString("N2") MM</td>
+                <td class="text-right font-mono" id="tdFalInvSev">¢@Model.RazonCobertura.Inversiones120_Severo.ToString("N2") MM</td>
             </tr>
             <tr style="background-color: #eff6ff; font-weight: 800; border-top: 2px solid #2b579a; border-bottom: 2px solid #2b579a;">
                 <td style="color: #1e40af; padding: 12px 16px;"><i class="fa fa-cubes" style="color: #0284c7; margin-right: 6px;"></i> Total de Activos Líquidos (FAL)</td>
                 <td class="text-center font-mono">-</td>
-                <td class="text-right font-mono" style="font-size: 14px; color: #15803d;">¢1.203,53 MM</td>
-                <td class="text-right font-mono" style="font-size: 14px; color: #c2410c;">¢1.103,53 MM</td>
-                <td class="text-right font-mono" style="font-size: 14px; color: #b91c1c;">¢933,53 MM</td>
+                <td class="text-right font-mono" id="tdFalTotBase" style="font-size: 14px; color: #15803d;">¢@Model.RazonCobertura.ActivosLiquidos_Base.ToString("N2") MM</td>
+                <td class="text-right font-mono" id="tdFalTotMod" style="font-size: 14px; color: #c2410c;">¢@Model.RazonCobertura.ActivosLiquidos_Moderado.ToString("N2") MM</td>
+                <td class="text-right font-mono" id="tdFalTotSev" style="font-size: 14px; color: #b91c1c;">¢@Model.RazonCobertura.ActivosLiquidos_Severo.ToString("N2") MM</td>
             </tr>
         </tbody>
     </table>
 </div>
 
 <script>
+    function recopilarSupuestos() {
+        return {
+            RenovacionCDP_Base: (parseFloat($('#txtCDP_Base').val()) || 0) / 100,
+            SalidaVista_Base: (parseFloat($('#txtVaR_Base').val()) || 0) / 100,
+            CrecimientoCartera_Base: (parseFloat($('#txtCartera_Base').val()) || 0) / 100,
+            DisminucionRecaudo_Base: (parseFloat($('#txtRecaudo_Base').val()) || 0) / 100,
+            DisminucionRecaudo_Moderado: (parseFloat($('#txtRecaudo_Mod').val()) || 0) / 100,
+            DisminucionRecaudo_Severo: (parseFloat($('#txtRecaudo_Sev').val()) || 0) / 100,
+            Haircut_Base: parseFloat($('#txtHaircut_Base').val()) || 0,
+            Haircut_Moderado: parseFloat($('#txtHaircut_Mod').val()) || 0,
+            Haircut_Severo: parseFloat($('#txtHaircut_Sev').val()) || 0,
+            SalidaTop20_Base: (parseFloat($('#txtTop20_Base').val()) || 0) / 100,
+            DisponibilidadLineas_Base: parseFloat($('#txtLineas_Base').val()) || 0,
+            DisponibilidadLineas_Moderado: parseFloat($('#txtLineas_Mod').val()) || 0,
+            DisponibilidadLineas_Severo: parseFloat($('#txtLineas_Sev').val()) || 0,
+            PagoObligaciones_Base: parseFloat($('#txtDeuda_Base').val()) || 0,
+            PagoObligaciones_Moderado: parseFloat($('#txtDeuda_Mod').val()) || 0,
+            PagoObligaciones_Severo: parseFloat($('#txtDeuda_Sev').val()) || 0,
+            Cupones_Base: parseFloat($('#txtCupones_Base').val()) || 0,
+            Cupones_Moderado: parseFloat($('#txtCupones_Mod').val()) || 0,
+            Cupones_Severo: parseFloat($('#txtCupones_Sev').val()) || 0,
+            CapitalSocial_Base: (parseFloat($('#txtCapital_Base').val()) || 0) / 100,
+            OtrosIngresos_Base: (parseFloat($('#txtOtrosIng_Base').val()) || 0) / 100,
+            EgresosFinancieros_Base: (parseFloat($('#txtEgFin_Base').val()) || 0) / 100,
+            EgresosFinancieros_Moderado: (parseFloat($('#txtEgFin_Mod').val()) || 0) / 100,
+            EgresosFinancieros_Severo: (parseFloat($('#txtEgFin_Sev').val()) || 0) / 100,
+            GastosAdministrativos_Base: (parseFloat($('#txtAdm_Base').val()) || 0) / 100,
+            GastosAdministrativos_Moderado: (parseFloat($('#txtAdm_Mod').val()) || 0) / 100,
+            GastosAdministrativos_Severo: (parseFloat($('#txtAdm_Sev').val()) || 0) / 100
+        };
+    }
+
     function recalcularEscenarios() {
-        alert('Supuestos aplicados exitosamente. Los modelos de Razón de Cobertura, ICL Estresado, Brechas y Horizonte han sido actualizados con los nuevos proyectores.');
+        var postData = {
+            idEntidad: $('#ddlEntidad').val(),
+            periodo2: $('#Periodo2').val(),
+            supuestos: recopilarSupuestos()
+        };
+
+        $.ajax({
+            url: '@Url.Action("SimularEstres", "Liquidez")',
+            type: 'POST',
+            data: postData,
+            success: function(resp) {
+                if (resp && resp.success) {
+                    // 1. Actualizar Tabla FAL
+                    if (resp.razonCobertura) {
+                        var rc = resp.razonCobertura;
+                        $('#tdFalEfBase').text('¢' + (rc.Disponibilidades110_Base || 0).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' MM');
+                        $('#tdFalEfMod').text('¢' + (rc.Disponibilidades110_Moderado || 0).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' MM');
+                        $('#tdFalEfSev').text('¢' + (rc.Disponibilidades110_Severo || 0).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' MM');
+
+                        $('#tdFalInvBase').text('¢' + (rc.Inversiones120_Base || 0).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' MM');
+                        $('#tdFalInvMod').text('¢' + (rc.Inversiones120_Moderado || 0).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' MM');
+                        $('#tdFalInvSev').text('¢' + (rc.Inversiones120_Severo || 0).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' MM');
+
+                        $('#tdFalTotBase').text('¢' + (rc.ActivosLiquidos_Base || 0).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' MM');
+                        $('#tdFalTotMod').text('¢' + (rc.ActivosLiquidos_Moderado || 0).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' MM');
+                        $('#tdFalTotSev').text('¢' + (rc.ActivosLiquidos_Severo || 0).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' MM');
+
+                        // Actualizar Razón de Cobertura
+                        $('#lblRCBase').text((rc.RazonCobertura_Base || 0).toFixed(2) + 'x');
+                        $('#lblRCMod').text((rc.RazonCobertura_Moderado || 0).toFixed(2) + 'x');
+                        $('#lblRCSevero').text((rc.RazonCobertura_Severo || 0).toFixed(2) + 'x');
+
+                        var chartRc = $('#chartRazonCoberturaComparativo').highcharts();
+                        if (chartRc && chartRc.series && chartRc.series[0]) {
+                            chartRc.series[0].setData([
+                                { y: rc.RazonCobertura_Base, color: '#16a34a' },
+                                { y: rc.RazonCobertura_Moderado, color: '#ea580c' },
+                                { y: rc.RazonCobertura_Severo, color: '#dc2626' }
+                            ], true);
+                        }
+                    }
+
+                    // 2. Actualizar ICL Estresado
+                    if (resp.iclEstresado) {
+                        var icl = resp.iclEstresado;
+                        var chartIcl = $('#chartICLEstresadoComparativo').highcharts();
+                        if (chartIcl && chartIcl.series && chartIcl.series[0]) {
+                            chartIcl.series[0].setData([
+                                { y: icl.ICLBase, color: '#16a34a' },
+                                { y: icl.ICLModerado, color: '#ea580c' },
+                                { y: icl.ICLSevero, color: '#dc2626' }
+                            ], true);
+                        }
+                    }
+
+                    // 3. Actualizar Brechas y FAL
+                    if (resp.brechasEstres && window.datosEscenariosBrechas) {
+                        var be = resp.brechasEstres;
+                        window.datosEscenariosBrechas.base.entradas = be.EntradasBase;
+                        window.datosEscenariosBrechas.base.salidas = be.SalidasBase;
+                        window.datosEscenariosBrechas.base.gapBanda = be.BrechasBase;
+                        window.datosEscenariosBrechas.base.gapAcum = be.AcumuladoBase;
+
+                        window.datosEscenariosBrechas.moderado.entradas = be.EntradasModerado;
+                        window.datosEscenariosBrechas.moderado.salidas = be.SalidasModerado;
+                        window.datosEscenariosBrechas.moderado.gapBanda = be.BrechasModerado;
+                        window.datosEscenariosBrechas.moderado.gapAcum = be.AcumuladoModerado;
+
+                        window.datosEscenariosBrechas.severo.entradas = be.EntradasSevero;
+                        window.datosEscenariosBrechas.severo.salidas = be.SalidasSevero;
+                        window.datosEscenariosBrechas.severo.gapBanda = be.BrechasSevero;
+                        window.datosEscenariosBrechas.severo.gapAcum = be.AcumuladoSevero;
+
+                        if (typeof seleccionarEscenarioBrechas === 'function') {
+                            seleccionarEscenarioBrechas('base');
+                        }
+
+                        var chartFal = $('#chartBrechasAcumuladoFAL').highcharts();
+                        if (chartFal && chartFal.series && chartFal.series.length >= 3) {
+                            chartFal.series[0].setData(be.AcumuladoBase, false);
+                            chartFal.series[1].setData(be.AcumuladoModerado, false);
+                            chartFal.series[2].setData(be.AcumuladoSevero, true);
+                        }
+                    }
+
+                    // 4. Actualizar Horizonte de Supervivencia
+                    if (resp.horizonte) {
+                        var hz = resp.horizonte;
+                        $('#lblDiasBase').text('> 90 días (' + hz.DiasSupervivenciaBase.toFixed(0) + 'd)');
+                        $('#lblDiasMod').text(hz.DiasSupervivenciaModerado.toFixed(0) + ' días');
+                        $('#lblDiasSev').text(hz.DiasSupervivenciaSevero.toFixed(0) + ' días');
+
+                        $('#lblInflexionBase').text(hz.HorizonteBase);
+                        $('#lblInflexionMod').text(hz.HorizonteModerado);
+                        $('#lblInflexionSev').text(hz.HorizonteSevero);
+
+                        $('#lblBufferBase').text('Buffer: ¢' + (hz.BufferRemanenteBase || 0).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' MM');
+                        $('#lblBufferMod').text('Buffer: ¢' + (hz.BufferRemanenteModerado || 0).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' MM');
+
+                        var chartHz = $('#chartTrayectoriaSupervivencia').highcharts();
+                        if (chartHz && chartHz.series && chartHz.series.length >= 3) {
+                            chartHz.series[0].setData(hz.TrayectoriaBase, false);
+                            chartHz.series[1].setData(hz.TrayectoriaModerado, false);
+                            chartHz.series[2].setData(hz.TrayectoriaSevero, true);
+                        }
+                    }
+
+                    alert('Simulación What-If completada exitosamente. Todos los modelos han sido proyectados en tiempo real.');
+                } else {
+                    alert('Error en la simulación: ' + (resp ? resp.message : 'Error desconocido'));
+                }
+            },
+            error: function(err) {
+                alert('Ocurrió un error al procesar la simulación en el servidor.');
+            }
+        });
+    }
+
+    function guardarParametrosEntidad() {
+        if (!confirm('¿Desea guardar estos parámetros como los supuestos oficiales para esta entidad?')) return;
+        var postData = {
+            idEntidad: $('#ddlEntidad').val(),
+            supuestos: recopilarSupuestos()
+        };
+
+        $.ajax({
+            url: '@Url.Action("GuardarParametrosLiquidez", "Liquidez")',
+            type: 'POST',
+            data: postData,
+            success: function(resp) {
+                if (resp && resp.success) {
+                    alert(resp.message);
+                } else {
+                    alert('Error al guardar: ' + (resp ? resp.message : 'Error desconocido'));
+                }
+            },
+            error: function() {
+                alert('No fue posible contactar el servidor para guardar los parámetros.');
+            }
+        });
+    }
+
+    function restablecerSupuestos() {
+        cargarDatosEstres();
     }
 </script>
