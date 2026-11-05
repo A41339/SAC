@@ -330,3 +330,15 @@ END
 GO
 PRINT 'SP [dbo].[FGA_Guardar_Parametros_Liquidez] creado exitosamente.';
 GO
+
+-- =====================================================================================
+-- 6. ASIGNACIÓN DE PERMISOS (GRANT) AL ROL DE BASE DE DATOS [FGA]
+-- =====================================================================================
+PRINT 'Asignando permisos (GRANT) al rol de base de datos [FGA]...';
+GRANT EXECUTE ON [dbo].[FGA_Consultar_Indicadores_Liquidez] TO [FGA];
+GRANT EXECUTE ON [dbo].[FGA_Consultar_Serie_VaR_Liquidez] TO [FGA];
+GRANT EXECUTE ON [dbo].[FGA_Consultar_GAP_Contractual] TO [FGA];
+GRANT EXECUTE ON [dbo].[FGA_Guardar_Parametros_Liquidez] TO [FGA];
+GRANT SELECT, INSERT, UPDATE, DELETE ON [dbo].[FGA_Parametros_Liquidez_Entidad] TO [FGA];
+GO
+PRINT 'Permisos asignados exitosamente.';

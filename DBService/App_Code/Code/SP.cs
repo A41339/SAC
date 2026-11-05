@@ -461,6 +461,26 @@ public class SP : ISP
         return sp.FGA_Consultar_Indicadores_Fondeo(iDENTIDAD, pERIODO1, pERIODO2).ToList();
     }
 
+    public List<FGA_Consultar_Indicadores_Liquidez_Result> FGA_Consultar_Indicadores_Liquidez(string iDENTIDAD, DateTime? pERIODO1, DateTime? pERIODO2)
+    {
+        return sp.FGA_Consultar_Indicadores_Liquidez(iDENTIDAD, pERIODO1, pERIODO2).ToList();
+    }
+
+    public List<FGA_Consultar_Serie_VaR_Liquidez_Result> FGA_Consultar_Serie_VaR_Liquidez(string iDENTIDAD, DateTime? pERIODOCORTE, int? cANTIDAD)
+    {
+        return sp.FGA_Consultar_Serie_VaR_Liquidez(iDENTIDAD, pERIODOCORTE, cANTIDAD).ToList();
+    }
+
+    public List<FGA_Consultar_GAP_Contractual_Result> FGA_Consultar_GAP_Contractual(string iDENTIDAD, DateTime? pERIODOCORTE)
+    {
+        return sp.FGA_Consultar_GAP_Contractual(iDENTIDAD, pERIODOCORTE).ToList();
+    }
+
+    public int FGA_Guardar_Parametros_Liquidez(string iDENTIDAD, decimal? rENOVACION_CDP, decimal? dISMINUCION_RECAUDO, decimal? dISPONIBILIDAD_LINEAS, decimal? pAGO_DEUDA, decimal? cUPONES, string uSUARIO)
+    {
+        return sp.FGA_Guardar_Parametros_Liquidez(iDENTIDAD, rENOVACION_CDP, dISMINUCION_RECAUDO, dISPONIBILIDAD_LINEAS, pAGO_DEUDA, cUPONES, uSUARIO);
+    }
+
     public int FGA_Generar_Estructura_Fondeo(string iDENTIDAD, DateTime? pERIODO)
     {
         return sp.FGA_Generar_Estructura_Fondeo(iDENTIDAD, pERIODO);

@@ -546,6 +546,18 @@ namespace FGA_En_Linea.SPService {
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISP/FGA_Consultar_Indicadores_Fondeo", ReplyAction="http://tempuri.org/ISP/FGA_Consultar_Indicadores_FondeoResponse")]
         System.Threading.Tasks.Task<Entities.Entities.Procedures.FGA_Consultar_Indicadores_Fondeo_Result[]> FGA_Consultar_Indicadores_FondeoAsync(string iDENTIDAD, System.Nullable<System.DateTime> pERIODO1, System.Nullable<System.DateTime> pERIODO2);
 
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISP/FGA_Consultar_Indicadores_Liquidez", ReplyAction="http://tempuri.org/ISP/FGA_Consultar_Indicadores_LiquidezResponse")]
+        Entities.Entities.Procedures.FGA_Consultar_Indicadores_Liquidez_Result[] FGA_Consultar_Indicadores_Liquidez(string iDENTIDAD, System.Nullable<System.DateTime> pERIODO1, System.Nullable<System.DateTime> pERIODO2);
+
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISP/FGA_Consultar_Serie_VaR_Liquidez", ReplyAction="http://tempuri.org/ISP/FGA_Consultar_Serie_VaR_LiquidezResponse")]
+        Entities.Entities.Procedures.FGA_Consultar_Serie_VaR_Liquidez_Result[] FGA_Consultar_Serie_VaR_Liquidez(string iDENTIDAD, System.Nullable<System.DateTime> pERIODOCORTE, System.Nullable<int> cANTIDAD);
+
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISP/FGA_Consultar_GAP_Contractual", ReplyAction="http://tempuri.org/ISP/FGA_Consultar_GAP_ContractualResponse")]
+        Entities.Entities.Procedures.FGA_Consultar_GAP_Contractual_Result[] FGA_Consultar_GAP_Contractual(string iDENTIDAD, System.Nullable<System.DateTime> pERIODOCORTE);
+
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISP/FGA_Guardar_Parametros_Liquidez", ReplyAction="http://tempuri.org/ISP/FGA_Guardar_Parametros_LiquidezResponse")]
+        int FGA_Guardar_Parametros_Liquidez(string iDENTIDAD, System.Nullable<decimal> rENOVACION_CDP, System.Nullable<decimal> dISMINUCION_RECAUDO, System.Nullable<decimal> dISPONIBILIDAD_LINEAS, System.Nullable<decimal> pAGO_DEUDA, System.Nullable<decimal> cUPONES, string uSUARIO);
+
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISP/FGA_Generar_Estructura_Fondeo", ReplyAction="http://tempuri.org/ISP/FGA_Generar_Estructura_FondeoResponse")]
         int FGA_Generar_Estructura_Fondeo(string iDENTIDAD, System.Nullable<System.DateTime> pERIODO);
 
@@ -1742,6 +1754,22 @@ namespace FGA_En_Linea.SPService {
 
         public System.Threading.Tasks.Task<Entities.Entities.Procedures.FGA_Consultar_Indicadores_Fondeo_Result[]> FGA_Consultar_Indicadores_FondeoAsync(string iDENTIDAD, System.Nullable<System.DateTime> pERIODO1, System.Nullable<System.DateTime> pERIODO2) {
             return base.Channel.FGA_Consultar_Indicadores_FondeoAsync(iDENTIDAD, pERIODO1, pERIODO2);
+        }
+
+        public Entities.Entities.Procedures.FGA_Consultar_Indicadores_Liquidez_Result[] FGA_Consultar_Indicadores_Liquidez(string iDENTIDAD, System.Nullable<System.DateTime> pERIODO1, System.Nullable<System.DateTime> pERIODO2) {
+            return base.Channel.FGA_Consultar_Indicadores_Liquidez(iDENTIDAD, pERIODO1, pERIODO2);
+        }
+
+        public Entities.Entities.Procedures.FGA_Consultar_Serie_VaR_Liquidez_Result[] FGA_Consultar_Serie_VaR_Liquidez(string iDENTIDAD, System.Nullable<System.DateTime> pERIODOCORTE, System.Nullable<int> cANTIDAD) {
+            return base.Channel.FGA_Consultar_Serie_VaR_Liquidez(iDENTIDAD, pERIODOCORTE, cANTIDAD);
+        }
+
+        public Entities.Entities.Procedures.FGA_Consultar_GAP_Contractual_Result[] FGA_Consultar_GAP_Contractual(string iDENTIDAD, System.Nullable<System.DateTime> pERIODOCORTE) {
+            return base.Channel.FGA_Consultar_GAP_Contractual(iDENTIDAD, pERIODOCORTE);
+        }
+
+        public int FGA_Guardar_Parametros_Liquidez(string iDENTIDAD, System.Nullable<decimal> rENOVACION_CDP, System.Nullable<decimal> dISMINUCION_RECAUDO, System.Nullable<decimal> dISPONIBILIDAD_LINEAS, System.Nullable<decimal> pAGO_DEUDA, System.Nullable<decimal> cUPONES, string uSUARIO) {
+            return base.Channel.FGA_Guardar_Parametros_Liquidez(iDENTIDAD, rENOVACION_CDP, dISMINUCION_RECAUDO, dISPONIBILIDAD_LINEAS, pAGO_DEUDA, cUPONES, uSUARIO);
         }
 
         public int FGA_Generar_Estructura_Fondeo(string iDENTIDAD, System.Nullable<System.DateTime> pERIODO) {

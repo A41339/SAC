@@ -366,7 +366,19 @@ public interface ISP
 
     [OperationContract]
     [ReferencePreservingDataContractFormat]
-    List<FGA_Consultar_Indicadores_Fondeo_Result> FGA_Consultar_Indicadores_Fondeo(string iDENTIDAD, DateTime? pERIODO1, DateTime? pERIODO2);
+    List<FGA_Consultar_Indicadores_Fondeo_Result> FGA_Consultar_Indicadores_Fondeo(string iDENTIDAD, DateTime? pERIODO1, DateTime? pERIODO2);
+
+    [OperationContract]
+    List<FGA_Consultar_Indicadores_Liquidez_Result> FGA_Consultar_Indicadores_Liquidez(string iDENTIDAD, DateTime? pERIODO1, DateTime? pERIODO2);
+
+    [OperationContract]
+    List<FGA_Consultar_Serie_VaR_Liquidez_Result> FGA_Consultar_Serie_VaR_Liquidez(string iDENTIDAD, DateTime? pERIODOCORTE, int? cANTIDAD);
+
+    [OperationContract]
+    List<FGA_Consultar_GAP_Contractual_Result> FGA_Consultar_GAP_Contractual(string iDENTIDAD, DateTime? pERIODOCORTE);
+
+    [OperationContract]
+    int FGA_Guardar_Parametros_Liquidez(string iDENTIDAD, decimal? rENOVACION_CDP, decimal? dISMINUCION_RECAUDO, decimal? dISPONIBILIDAD_LINEAS, decimal? pAGO_DEUDA, decimal? cUPONES, string uSUARIO);
 
     [OperationContract]
     [ReferencePreservingDataContractFormat]
