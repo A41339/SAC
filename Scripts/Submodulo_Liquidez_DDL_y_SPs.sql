@@ -14,8 +14,8 @@ BEGIN
     CREATE TABLE [dbo].[FGA_Parametros_Liquidez_Entidad](
         [Id] [int] IDENTITY(1,1) NOT NULL,
         [IdEntidad] [nvarchar](10) NOT NULL,
-        [RenovacionCDP_Historica] [decimal](8, 4) NOT NULL DEFAULT (0.8500), -- Ej: 85%
-        [DisminucionRecaudoManual] [decimal](8, 4) NOT NULL DEFAULT (0.0350), -- 3.5%
+        [RenovacionCDP_Historica] [decimal](8, 4) NOT NULL DEFAULT (0.8500),
+        [DisminucionRecaudoManual] [decimal](8, 4) NOT NULL DEFAULT (0.0350),
         [DisponibilidadLineasMes] [decimal](18, 2) NOT NULL DEFAULT (75000000.00),
         [PagoPrincipalDeudaMes] [decimal](18, 2) NOT NULL DEFAULT (10000000.00),
         [CuponesMes] [decimal](18, 2) NOT NULL DEFAULT (2500000.00),
@@ -37,234 +37,401 @@ END
 GO
 
 -- =====================================================================================
--- 2. PROCEDIMIENTO ALMACENADO: FGA_Consultar_Indicadores_Liquidez
--- Calcula los 8 indicadores normativos para dos fechas comparativas (P1 y P2)
+-- 2. PROCEDIMIENTO ALMACENADO: FGA_Consultar_Indicadores_Liquidez (100% DINÁMICO)
+-- Consulta saldos de [SALIDA_BALANCE_COMPROBACION], [XML_ICL] y [Salida_Concentracion_Ahorrantes]
 -- =====================================================================================
 IF OBJECT_ID('[dbo].[FGA_Consultar_Indicadores_Liquidez]', 'P') IS NOT NULL
     DROP PROCEDURE [dbo].[FGA_Consultar_Indicadores_Liquidez];
 GO
 
 CREATE PROCEDURE [dbo].[FGA_Consultar_Indicadores_Liquidez]
-    @IdEntidad NVARCHAR(10),
-    @Periodo1 DATE,
-    @Periodo2 DATE
+    @IDENTIDAD NVARCHAR(5),
+    @PERIODO1 DATE,
+    @PERIODO2 DATE
 AS
 BEGIN
     SET NOCOUNT ON;
 
-    -- CTE para saldos contables agrupados por prefijos clave
-    ;WITH SaldosContables AS (
-        SELECT 
-            b.Periodo,
-            SUM(CASE WHEN b.Cuenta LIKE '11000000%' THEN ABS(ISNULL(b.SaldoFinal, 0)) ELSE 0 END) AS Disponibilidades_11,
-            SUM(CASE WHEN b.Cuenta LIKE '21100000%' THEN ABS(ISNULL(b.SaldoFinal, 0)) ELSE 0 END) AS CaptacionesVista_211,
-            SUM(CASE WHEN b.Cuenta LIKE '21300000%' THEN ABS(ISNULL(b.SaldoFinal, 0)) ELSE 0 END) AS CaptacionesPlazo_213,
-            SUM(CASE WHEN b.Cuenta LIKE '21000000%' THEN ABS(ISNULL(b.SaldoFinal, 0)) ELSE 0 END) AS CaptacionesTotal_210,
-            SUM(CASE WHEN b.Cuenta LIKE '13000000%' THEN ABS(ISNULL(b.SaldoFinal, 0)) ELSE 0 END) AS CarteraNeta_13,
-            SUM(CASE WHEN b.Cuenta LIKE '10000000%' THEN ABS(ISNULL(b.SaldoFinal, 0)) ELSE 0 END) AS ActivoTotal_10,
-            SUM(CASE WHEN b.Cuenta LIKE '23200000%' THEN ABS(ISNULL(b.SaldoFinal, 0)) ELSE 0 END) AS DeudaLP_232,
-            SUM(CASE WHEN b.Cuenta LIKE '23000000%' THEN ABS(ISNULL(b.SaldoFinal, 0)) ELSE 0 END) AS DeudaTotal_230,
-            SUM(CASE WHEN b.Cuenta LIKE '31000000%' THEN ABS(ISNULL(b.SaldoFinal, 0)) ELSE 0 END) AS CapitalSocial_31
-        FROM [dbo].[Sugef_Info_Contable] b WITH (NOLOCK)
-        WHERE b.IdEntidad = @IdEntidad 
-          AND b.Periodo IN (@Periodo1, @Periodo2)
-        GROUP BY b.Periodo
-    ),
-    DatosFAL AS (
-        -- Obtiene el Fondo de Activos Líquidos del XML ICL si existe
-        SELECT 
-            Periodo,
-            ISNULL(SUM(CASE WHEN Concepto LIKE '%Fondo de Activos Líquidos%' OR Codigo = '200000' THEN SaldoBruto END), 1203529297.63) AS FAL,
-            ISNULL(SUM(CASE WHEN Concepto LIKE '%Salidas Netas%' OR Codigo = '300000' THEN SaldoBruto END), 810345620.10) AS SalidasICL
-        FROM [dbo].[XML_ICL] WITH (NOLOCK)
-        WHERE IdEntidad = @IdEntidad AND Periodo IN (@Periodo1, @Periodo2) AND Moneda = 1
-        GROUP BY Periodo
-    ),
-    DatosTop20 AS (
-        SELECT 
-            Periodo,
-            ISNULL(MontoTop20, 2904322867.90) AS MontoTop20
-        FROM [dbo].[Salida_Concentracion_Ahorrantes] WITH (NOLOCK)
-        WHERE IdEntidad = @IdEntidad AND Periodo IN (@Periodo1, @Periodo2)
-    )
-    SELECT 
-        1 AS Orden,
-        'Liquidez inmediata' AS Indicador,
-        'Disponibilidades (11000000) / Captaciones a la vista (21100000)' AS Formula,
-        'Capacidad de atender retiros inmediatos' AS QueMide,
-        CASE WHEN s1.CaptacionesVista_211 > 0 THEN (s1.Disponibilidades_11 / s1.CaptacionesVista_211) ELSE 0.6973 END AS ValorP1,
-        CASE WHEN s2.CaptacionesVista_211 > 0 THEN (s2.Disponibilidades_11 / s2.CaptacionesVista_211) ELSE 0.6845 END AS ValorP2,
-        1 AS EsPorcentaje
-    FROM SaldosContables s1
-    CROSS JOIN SaldosContables s2
-    WHERE s1.Periodo = @Periodo1 AND s2.Periodo = @Periodo2
+    -- Normalizar a inicio de mes
+    SET @PERIODO1 = DATEFROMPARTS(YEAR(@PERIODO1), MONTH(@PERIODO1), 1);
+    SET @PERIODO2 = DATEFROMPARTS(YEAR(@PERIODO2), MONTH(@PERIODO2), 1);
 
-    UNION ALL
+    -- 1. Tabla temporal para cuentas de balance
+    CREATE TABLE #CuentasBalance (
+        Cuenta NVARCHAR(8),
+        SaldoP1 DECIMAL(25, 2) DEFAULT 0,
+        SaldoP2 DECIMAL(25, 2) DEFAULT 0
+    );
 
-    SELECT 
-        2 AS Orden,
-        'Activos líquidos / Captaciones' AS Indicador,
-        'Fondo de Activos Líquidos ICL / Saldo captaciones totales (21000000)' AS Formula,
-        'Cobertura general de depósitos con activos líquidos' AS QueMide,
-        CASE WHEN s1.CaptacionesTotal_210 > 0 THEN (ISNULL(f1.FAL, 1203529297.63) / s1.CaptacionesTotal_210) ELSE 0.1384 END AS ValorP1,
-        CASE WHEN s2.CaptacionesTotal_210 > 0 THEN (ISNULL(f2.FAL, 893297120.50) / s2.CaptacionesTotal_210) ELSE 0.0992 END AS ValorP2,
-        1 AS EsPorcentaje
-    FROM SaldosContables s1
-    CROSS JOIN SaldosContables s2
-    LEFT JOIN DatosFAL f1 ON f1.Periodo = s1.Periodo
-    LEFT JOIN DatosFAL f2 ON f2.Periodo = s2.Periodo
-    WHERE s1.Periodo = @Periodo1 AND s2.Periodo = @Periodo2
+    INSERT INTO #CuentasBalance (Cuenta)
+    VALUES ('10000000'), ('11000000'), ('13000000'), ('20000000'), ('21000000'),
+           ('21100000'), ('21300000'), ('23000000'), ('23200000'), ('31000000');
 
-    UNION ALL
+    -- Poblar SaldoP1 desde SALIDA_BALANCE_COMPROBACION
+    UPDATE C
+    SET C.SaldoP1 = ABS(ISNULL(S.SALDOFINAL, 0))
+    FROM #CuentasBalance C
+    INNER JOIN [dbo].[SALIDA_BALANCE_COMPROBACION] S WITH(NOLOCK)
+        ON S.CUENTA = C.Cuenta AND S.IDENTIDAD = @IDENTIDAD AND S.PERIODO = @PERIODO1;
 
-    SELECT 
-        3 AS Orden,
-        'Activos líquidos / Pasivos exigibles CP' AS Indicador,
-        'Activos líquidos (FAL ICL) / Pasivos exigibles <= 30 días' AS Formula,
-        'Cobertura de obligaciones de corto plazo' AS QueMide,
-        0.4461 AS ValorP1,
-        0.3311 AS ValorP2,
-        1 AS EsPorcentaje
+    -- Poblar SaldoP2 desde SALIDA_BALANCE_COMPROBACION
+    UPDATE C
+    SET C.SaldoP2 = ABS(ISNULL(S.SALDOFINAL, 0))
+    FROM #CuentasBalance C
+    INNER JOIN [dbo].[SALIDA_BALANCE_COMPROBACION] S WITH(NOLOCK)
+        ON S.CUENTA = C.Cuenta AND S.IDENTIDAD = @IDENTIDAD AND S.PERIODO = @PERIODO2;
 
-    UNION ALL
+    -- Variables de balance P1
+    DECLARE @C10_P1 DECIMAL(25,2) = ISNULL((SELECT SaldoP1 FROM #CuentasBalance WHERE Cuenta = '10000000'), 0);
+    DECLARE @C11_P1 DECIMAL(25,2) = ISNULL((SELECT SaldoP1 FROM #CuentasBalance WHERE Cuenta = '11000000'), 0);
+    DECLARE @C13_P1 DECIMAL(25,2) = ISNULL((SELECT SaldoP1 FROM #CuentasBalance WHERE Cuenta = '13000000'), 0);
+    DECLARE @C210_P1 DECIMAL(25,2) = ISNULL((SELECT SaldoP1 FROM #CuentasBalance WHERE Cuenta = '21000000'), 0);
+    DECLARE @C211_P1 DECIMAL(25,2) = ISNULL((SELECT SaldoP1 FROM #CuentasBalance WHERE Cuenta = '21100000'), 0);
+    DECLARE @C213_P1 DECIMAL(25,2) = ISNULL((SELECT SaldoP1 FROM #CuentasBalance WHERE Cuenta = '21300000'), 0);
+    DECLARE @C230_P1 DECIMAL(25,2) = ISNULL((SELECT SaldoP1 FROM #CuentasBalance WHERE Cuenta = '23000000'), 0);
+    DECLARE @C232_P1 DECIMAL(25,2) = ISNULL((SELECT SaldoP1 FROM #CuentasBalance WHERE Cuenta = '23200000'), 0);
+    DECLARE @C31_P1 DECIMAL(25,2) = ISNULL((SELECT SaldoP1 FROM #CuentasBalance WHERE Cuenta = '31000000'), 0);
 
-    SELECT 
-        4 AS Orden,
-        'Cartera / Captaciones' AS Indicador,
-        'Cartera neta (13000000) / (21300000 + 21100000)' AS Formula,
-        'Qué proporción de los depósitos está colocada en cartera' AS QueMide,
-        CASE WHEN (s1.CaptacionesPlazo_213 + s1.CaptacionesVista_211) > 0 THEN (s1.CarteraNeta_13 / (s1.CaptacionesPlazo_213 + s1.CaptacionesVista_211)) ELSE 0.9851 END AS ValorP1,
-        CASE WHEN (s2.CaptacionesPlazo_213 + s2.CaptacionesVista_211) > 0 THEN (s2.CarteraNeta_13 / (s2.CaptacionesPlazo_213 + s2.CaptacionesVista_211)) ELSE 0.9776 END AS ValorP2,
-        1 AS EsPorcentaje
-    FROM SaldosContables s1
-    CROSS JOIN SaldosContables s2
-    WHERE s1.Periodo = @Periodo1 AND s2.Periodo = @Periodo2
+    -- Variables de balance P2
+    DECLARE @C10_P2 DECIMAL(25,2) = ISNULL((SELECT SaldoP2 FROM #CuentasBalance WHERE Cuenta = '10000000'), 0);
+    DECLARE @C11_P2 DECIMAL(25,2) = ISNULL((SELECT SaldoP2 FROM #CuentasBalance WHERE Cuenta = '11000000'), 0);
+    DECLARE @C13_P2 DECIMAL(25,2) = ISNULL((SELECT SaldoP2 FROM #CuentasBalance WHERE Cuenta = '13000000'), 0);
+    DECLARE @C210_P2 DECIMAL(25,2) = ISNULL((SELECT SaldoP2 FROM #CuentasBalance WHERE Cuenta = '21000000'), 0);
+    DECLARE @C211_P2 DECIMAL(25,2) = ISNULL((SELECT SaldoP2 FROM #CuentasBalance WHERE Cuenta = '21100000'), 0);
+    DECLARE @C213_P2 DECIMAL(25,2) = ISNULL((SELECT SaldoP2 FROM #CuentasBalance WHERE Cuenta = '21300000'), 0);
+    DECLARE @C230_P2 DECIMAL(25,2) = ISNULL((SELECT SaldoP2 FROM #CuentasBalance WHERE Cuenta = '23000000'), 0);
+    DECLARE @C232_P2 DECIMAL(25,2) = ISNULL((SELECT SaldoP2 FROM #CuentasBalance WHERE Cuenta = '23200000'), 0);
+    DECLARE @C31_P2 DECIMAL(25,2) = ISNULL((SELECT SaldoP2 FROM #CuentasBalance WHERE Cuenta = '31000000'), 0);
 
-    UNION ALL
+    -- 2. Consultar dinámicamente FAL de XML_ICL (CuentaCatalogo = '200000' o '100000')
+    DECLARE @FAL_P1 DECIMAL(25,2) = 0;
+    DECLARE @FAL_P2 DECIMAL(25,2) = 0;
 
-    SELECT 
-        5 AS Orden,
-        'Cartera / Fondeo estable' AS Indicador,
-        'Cartera neta / (Captaciones LP + deuda LP + patrimonio)' AS Formula,
-        'Dependencia de fondeo estable para financiar cartera' AS QueMide,
-        CASE WHEN (s1.CaptacionesPlazo_213 + s1.DeudaLP_232 + s1.CapitalSocial_31) > 0 THEN (s1.CarteraNeta_13 / (s1.CaptacionesPlazo_213 + s1.DeudaLP_232 + s1.CapitalSocial_31)) ELSE 0.9620 END AS ValorP1,
-        CASE WHEN (s2.CaptacionesPlazo_213 + s2.DeudaLP_232 + s2.CapitalSocial_31) > 0 THEN (s2.CarteraNeta_13 / (s2.CaptacionesPlazo_213 + s2.DeudaLP_232 + s2.CapitalSocial_31)) ELSE 0.9176 END AS ValorP2,
-        1 AS EsPorcentaje
-    FROM SaldosContables s1
-    CROSS JOIN SaldosContables s2
-    WHERE s1.Periodo = @Periodo1 AND s2.Periodo = @Periodo2
+    SELECT TOP 1 @FAL_P1 = ISNULL(B.MontoPonderado, B.Monto)
+    FROM [dbo].[XML_ICL] B WITH(NOLOCK)
+    INNER JOIN [dbo].[XML_Encabezado] A WITH(NOLOCK) ON A.Id = B.IdEncabezado_Id
+    WHERE (B.CuentaCatalogo = '200000' OR B.CuentaCatalogo = '100000')
+      AND A.IdEntidad_Id = @IDENTIDAD AND A.Periodo = @PERIODO1;
 
-    UNION ALL
+    IF @FAL_P1 = 0
+    BEGIN
+        SELECT TOP 1 @FAL_P1 = ISNULL(B.MontoPonderado, B.Monto)
+        FROM [dbo].[XML_ICL_His] B WITH(NOLOCK)
+        INNER JOIN [dbo].[XML_Encabezado_His] A WITH(NOLOCK) ON A.Id = B.IdEncabezado_Id
+        WHERE (B.CuentaCatalogo = '200000' OR B.CuentaCatalogo = '100000')
+          AND A.IdEntidad_Id = @IDENTIDAD AND A.Periodo = @PERIODO1;
+    END
 
-    SELECT 
-        6 AS Orden,
-        'Activos líquidos / Activos' AS Indicador,
-        'FAL ICL / Activo total' AS Formula,
-        'Buffer de liquidez respecto al tamaño de la entidad' AS QueMide,
-        CASE WHEN s1.ActivoTotal_10 > 0 THEN (ISNULL(f1.FAL, 1203529297.63) / s1.ActivoTotal_10) ELSE 0.1039 END AS ValorP1,
-        CASE WHEN s2.ActivoTotal_10 > 0 THEN (ISNULL(f2.FAL, 893297120.50) / s2.ActivoTotal_10) ELSE 0.0733 END AS ValorP2,
-        1 AS EsPorcentaje
-    FROM SaldosContables s1
-    CROSS JOIN SaldosContables s2
-    LEFT JOIN DatosFAL f1 ON f1.Periodo = s1.Periodo
-    LEFT JOIN DatosFAL f2 ON f2.Periodo = s2.Periodo
-    WHERE s1.Periodo = @Periodo1 AND s2.Periodo = @Periodo2
+    SELECT TOP 1 @FAL_P2 = ISNULL(B.MontoPonderado, B.Monto)
+    FROM [dbo].[XML_ICL] B WITH(NOLOCK)
+    INNER JOIN [dbo].[XML_Encabezado] A WITH(NOLOCK) ON A.Id = B.IdEncabezado_Id
+    WHERE (B.CuentaCatalogo = '200000' OR B.CuentaCatalogo = '100000')
+      AND A.IdEntidad_Id = @IDENTIDAD AND A.Periodo = @PERIODO2;
 
-    UNION ALL
+    IF @FAL_P2 = 0
+    BEGIN
+        SELECT TOP 1 @FAL_P2 = ISNULL(B.MontoPonderado, B.Monto)
+        FROM [dbo].[XML_ICL_His] B WITH(NOLOCK)
+        INNER JOIN [dbo].[XML_Encabezado_His] A WITH(NOLOCK) ON A.Id = B.IdEncabezado_Id
+        WHERE (B.CuentaCatalogo = '200000' OR B.CuentaCatalogo = '100000')
+          AND A.IdEntidad_Id = @IDENTIDAD AND A.Periodo = @PERIODO2;
+    END
 
-    SELECT 
-        7 AS Orden,
-        'Activos líquidos / 20 mayores depositantes' AS Indicador,
-        'Activos líquidos (FAL ICL) / Saldo Top 20' AS Formula,
-        'Capacidad de absorber concentración de fondeo' AS QueMide,
-        CASE WHEN ISNULL(t1.MontoTop20, 0) > 0 THEN (ISNULL(f1.FAL, 1203529297.63) / t1.MontoTop20) ELSE 0.4144 END AS ValorP1,
-        CASE WHEN ISNULL(t2.MontoTop20, 0) > 0 THEN (ISNULL(f2.FAL, 893297120.50) / t2.MontoTop20) ELSE 0.2757 END AS ValorP2,
-        1 AS EsPorcentaje
-    FROM SaldosContables s1
-    CROSS JOIN SaldosContables s2
-    LEFT JOIN DatosFAL f1 ON f1.Periodo = s1.Periodo
-    LEFT JOIN DatosFAL f2 ON f2.Periodo = s2.Periodo
-    LEFT JOIN DatosTop20 t1 ON t1.Periodo = s1.Periodo
-    LEFT JOIN DatosTop20 t2 ON t2.Periodo = s2.Periodo
-    WHERE s1.Periodo = @Periodo1 AND s2.Periodo = @Periodo2
+    -- 3. Consultar dinámicamente Top 20 depositantes desde Salida_Concentracion_Ahorrantes
+    DECLARE @Top20_P1 DECIMAL(25,2) = 0;
+    DECLARE @Top20_P2 DECIMAL(25,2) = 0;
 
-    UNION ALL
+    SELECT @Top20_P1 = ISNULL(MontoTop20, 0)
+    FROM [dbo].[Salida_Concentracion_Ahorrantes] WITH(NOLOCK)
+    WHERE IdEntidad = @IDENTIDAD AND Periodo = @PERIODO1;
 
-    SELECT 
-        8 AS Orden,
-        'Fondeo mayorista / Captaciones totales' AS Indicador,
-        'Deuda institucional (230000000) / Fondeo total (210000000)' AS Formula,
-        'Dependencia de fuentes institucionales' AS QueMide,
-        CASE WHEN s1.CaptacionesTotal_210 > 0 THEN (s1.DeudaTotal_230 / s1.CaptacionesTotal_210) ELSE 0.0106 END AS ValorP1,
-        CASE WHEN s2.CaptacionesTotal_210 > 0 THEN (s2.DeudaTotal_230 / s2.CaptacionesTotal_210) ELSE 0.0309 END AS ValorP2,
-        1 AS EsPorcentaje
-    FROM SaldosContables s1
-    CROSS JOIN SaldosContables s2
-    WHERE s1.Periodo = @Periodo1 AND s2.Periodo = @Periodo2;
+    SELECT @Top20_P2 = ISNULL(MontoTop20, 0)
+    FROM [dbo].[Salida_Concentracion_Ahorrantes] WITH(NOLOCK)
+    WHERE IdEntidad = @IDENTIDAD AND Periodo = @PERIODO2;
+
+    -- 4. Consultar dinámicamente Pasivos exigibles CP (<= 30 días) desde Salida_Concentracion_Vencimiento
+    DECLARE @PasCP_P1 DECIMAL(25,2) = 0;
+    DECLARE @PasCP_P2 DECIMAL(25,2) = 0;
+
+    SELECT @PasCP_P1 = ISNULL(Tramo1_Vista, 0)
+    FROM [dbo].[Salida_Concentracion_Vencimiento] WITH(NOLOCK)
+    WHERE IdEntidad = @IDENTIDAD AND Periodo = @PERIODO1;
+
+    SELECT @PasCP_P2 = ISNULL(Tramo1_Vista, 0)
+    FROM [dbo].[Salida_Concentracion_Vencimiento] WITH(NOLOCK)
+    WHERE IdEntidad = @IDENTIDAD AND Periodo = @PERIODO2;
+
+    -- Si no está calculado el vencimiento en la tabla de salida, calcularlo dinámicamente desde XML_Pasivo_Cuenta_Contable_210
+    IF @PasCP_P2 = 0
+    BEGIN
+        SELECT @PasCP_P2 = ISNULL(SUM(A.SaldoPrincipal), 0)
+        FROM [dbo].[XML_Pasivo_Cuenta_Contable_210] A WITH(NOLOCK)
+        INNER JOIN [dbo].[XML_Encabezado] B WITH(NOLOCK) ON B.Id = A.IdEncabezado_Id
+        WHERE B.IdEntidad_Id = @IDENTIDAD AND B.Periodo = @PERIODO2
+          AND (A.CuentaContablePrincipal LIKE '211%' OR A.FechaVencimiento IS NULL OR A.FechaVencimiento <= DATEADD(DAY, 30, @PERIODO2));
+    END
+
+    IF @PasCP_P1 = 0
+    BEGIN
+        SELECT @PasCP_P1 = ISNULL(SUM(A.SaldoPrincipal), 0)
+        FROM [dbo].[XML_Pasivo_Cuenta_Contable_210] A WITH(NOLOCK)
+        INNER JOIN [dbo].[XML_Encabezado] B WITH(NOLOCK) ON B.Id = A.IdEncabezado_Id
+        WHERE B.IdEntidad_Id = @IDENTIDAD AND B.Periodo = @PERIODO1
+          AND (A.CuentaContablePrincipal LIKE '211%' OR A.FechaVencimiento IS NULL OR A.FechaVencimiento <= DATEADD(DAY, 30, @PERIODO1));
+    END
+
+    -- 5. Armar resultado con los 8 indicadores normativos de Liquidez
+    CREATE TABLE #Resultados (
+        Orden INT,
+        Indicador NVARCHAR(150),
+        Formula NVARCHAR(250),
+        QueMide NVARCHAR(250),
+        ValorP1 DECIMAL(18, 6),
+        ValorP2 DECIMAL(18, 6),
+        EsPorcentaje BIT
+    );
+
+    -- 1. Liquidez inmediata: 11000000 / 21100000
+    INSERT INTO #Resultados VALUES (
+        1, 'Liquidez inmediata', 'Disponibilidades (11000000) / Captaciones a la vista (21100000)',
+        'Capacidad de atender retiros inmediatos',
+        CASE WHEN @C211_P1 > 0 THEN (@C11_P1 / @C211_P1) ELSE 0 END,
+        CASE WHEN @C211_P2 > 0 THEN (@C11_P2 / @C211_P2) ELSE 0 END,
+        1
+    );
+
+    -- 2. Activos líquidos / Captaciones: FAL / 21000000
+    INSERT INTO #Resultados VALUES (
+        2, 'Activos líquidos / Captaciones', 'Fondo de Activos Líquidos ICL / Saldo captaciones totales (21000000)',
+        'Cobertura general de depósitos con activos líquidos',
+        CASE WHEN @C210_P1 > 0 THEN (@FAL_P1 / @C210_P1) ELSE 0 END,
+        CASE WHEN @C210_P2 > 0 THEN (@FAL_P2 / @C210_P2) ELSE 0 END,
+        1
+    );
+
+    -- 3. Activos líquidos / Pasivos exigibles CP
+    INSERT INTO #Resultados VALUES (
+        3, 'Activos líquidos / Pasivos exigibles CP', 'Activos líquidos (FAL ICL) / Pasivos exigibles <= 30 días',
+        'Cobertura de obligaciones de corto plazo',
+        CASE WHEN @PasCP_P1 > 0 THEN (@FAL_P1 / @PasCP_P1) ELSE 0 END,
+        CASE WHEN @PasCP_P2 > 0 THEN (@FAL_P2 / @PasCP_P2) ELSE 0 END,
+        1
+    );
+
+    -- 4. Cartera / Captaciones: 13000000 / (21300000 + 21100000)
+    DECLARE @Den4_P1 DECIMAL(25,2) = @C213_P1 + @C211_P1;
+    DECLARE @Den4_P2 DECIMAL(25,2) = @C213_P2 + @C211_P2;
+    INSERT INTO #Resultados VALUES (
+        4, 'Cartera / Captaciones', 'Cartera neta (13000000) / (21300000 + 21100000)',
+        'Qué proporción de los depósitos está colocada en cartera',
+        CASE WHEN @Den4_P1 > 0 THEN (@C13_P1 / @Den4_P1) ELSE 0 END,
+        CASE WHEN @Den4_P2 > 0 THEN (@C13_P2 / @Den4_P2) ELSE 0 END,
+        1
+    );
+
+    -- 5. Cartera / Fondeo estable: 13000000 / (21300000 + 23200000 + 31000000)
+    DECLARE @Den5_P1 DECIMAL(25,2) = @C213_P1 + @C232_P1 + @C31_P1;
+    DECLARE @Den5_P2 DECIMAL(25,2) = @C213_P2 + @C232_P2 + @C31_P2;
+    INSERT INTO #Resultados VALUES (
+        5, 'Cartera / Fondeo estable', 'Cartera neta / (Captaciones LP + deuda LP + patrimonio)',
+        'Dependencia de fondeo estable para financiar cartera',
+        CASE WHEN @Den5_P1 > 0 THEN (@C13_P1 / @Den5_P1) ELSE 0 END,
+        CASE WHEN @Den5_P2 > 0 THEN (@C13_P2 / @Den5_P2) ELSE 0 END,
+        1
+    );
+
+    -- 6. Activos líquidos / Activos: FAL / 10000000
+    INSERT INTO #Resultados VALUES (
+        6, 'Activos líquidos / Activos', 'FAL ICL / Activo total',
+        'Buffer de liquidez respecto al tamaño de la entidad',
+        CASE WHEN @C10_P1 > 0 THEN (@FAL_P1 / @C10_P1) ELSE 0 END,
+        CASE WHEN @C10_P2 > 0 THEN (@FAL_P2 / @C10_P2) ELSE 0 END,
+        1
+    );
+
+    -- 7. Activos líquidos / 20 mayores depositantes
+    INSERT INTO #Resultados VALUES (
+        7, 'Activos líquidos / 20 mayores depositantes', 'Activos líquidos (FAL ICL) / Saldo Top 20',
+        'Capacidad de absorber concentración de fondeo',
+        CASE WHEN @Top20_P1 > 0 THEN (@FAL_P1 / @Top20_P1) ELSE 0 END,
+        CASE WHEN @Top20_P2 > 0 THEN (@FAL_P2 / @Top20_P2) ELSE 0 END,
+        1
+    );
+
+    -- 8. Fondeo mayorista / Captaciones totales: 23000000 / 21000000
+    INSERT INTO #Resultados VALUES (
+        8, 'Fondeo mayorista / Captaciones totales', 'Deuda institucional (23000000) / Fondeo total (21000000)',
+        'Dependencia de fuentes institucionales',
+        CASE WHEN @C210_P1 > 0 THEN (@C230_P1 / @C210_P1) ELSE 0 END,
+        CASE WHEN @C210_P2 > 0 THEN (@C230_P2 / @C210_P2) ELSE 0 END,
+        1
+    );
+
+    SELECT Orden, Indicador, Formula, QueMide, ValorP1, ValorP2, EsPorcentaje
+    FROM #Resultados
+    ORDER BY Orden ASC;
+
+    DROP TABLE #CuentasBalance;
+    DROP TABLE #Resultados;
 END
 GO
 PRINT 'SP [dbo].[FGA_Consultar_Indicadores_Liquidez] creado exitosamente.';
 GO
 
 -- =====================================================================================
--- 3. PROCEDIMIENTO ALMACENADO: FGA_Consultar_Serie_VaR_Liquidez
--- Extrae los últimos 100 cierres históricos de la cuenta 21103000 para el VaR
+-- 3. PROCEDIMIENTO ALMACENADO: FGA_Consultar_Serie_VaR_Liquidez (100% DINÁMICO)
+-- Extrae los últimos N cierres de la cuenta 21103000 desde [SALIDA_BALANCE_COMPROBACION]
 -- =====================================================================================
 IF OBJECT_ID('[dbo].[FGA_Consultar_Serie_VaR_Liquidez]', 'P') IS NOT NULL
     DROP PROCEDURE [dbo].[FGA_Consultar_Serie_VaR_Liquidez];
 GO
 
 CREATE PROCEDURE [dbo].[FGA_Consultar_Serie_VaR_Liquidez]
-    @IdEntidad NVARCHAR(10),
-    @PeriodoCorte DATE,
-    @CantidadPeriodos INT = 100
+    @IDENTIDAD NVARCHAR(5),
+    @PERIODO_CORTE DATE,
+    @CANTIDAD INT = 100
 AS
 BEGIN
     SET NOCOUNT ON;
 
-    SELECT TOP (@CantidadPeriodos)
-        c.Periodo,
-        ABS(ISNULL(c.SaldoFinal, 0)) AS SaldoAhorroVista
-    FROM [dbo].[Sugef_Info_Contable] c WITH (NOLOCK)
-    WHERE c.IdEntidad = @IdEntidad
-      AND c.Cuenta LIKE '21103000%'
-      AND c.Periodo <= @PeriodoCorte
-    ORDER BY c.Periodo DESC;
+    SELECT TOP (@CANTIDAD)
+        S.PERIODO AS Periodo,
+        ABS(ISNULL(S.SALDOFINAL, 0)) AS SaldoAhorroVista
+    FROM [dbo].[SALIDA_BALANCE_COMPROBACION] S WITH(NOLOCK)
+    WHERE S.IDENTIDAD = @IDENTIDAD
+      AND (S.CUENTA LIKE '21103%' OR S.CUENTA LIKE '211%')
+      AND S.PERIODO <= @PERIODO_CORTE
+    ORDER BY S.PERIODO DESC;
 END
 GO
 PRINT 'SP [dbo].[FGA_Consultar_Serie_VaR_Liquidez] creado exitosamente.';
 GO
 
 -- =====================================================================================
--- 4. PROCEDIMIENTO ALMACENADO: FGA_Consultar_GAP_Contractual
--- Calcula entradas, salidas y brechas por bandas temporales para la fecha de corte
+-- 4. PROCEDIMIENTO ALMACENADO: FGA_Consultar_GAP_Contractual (100% DINÁMICO)
+-- Agrupa dinámicamente las entradas de inversiones y salidas de pasivos 210
 -- =====================================================================================
 IF OBJECT_ID('[dbo].[FGA_Consultar_GAP_Contractual]', 'P') IS NOT NULL
     DROP PROCEDURE [dbo].[FGA_Consultar_GAP_Contractual];
 GO
 
 CREATE PROCEDURE [dbo].[FGA_Consultar_GAP_Contractual]
-    @IdEntidad NVARCHAR(10),
-    @PeriodoCorte DATE
+    @IDENTIDAD NVARCHAR(5),
+    @PERIODO_CORTE DATE
 AS
 BEGIN
     SET NOCOUNT ON;
 
-    -- Datos basados en las bandas del anexo técnico
-    SELECT 1 AS BandaId, '1 a 30 días' AS Banda, 693.81 AS Entradas, 739.91 AS Salidas, -46.10 AS BrechaBanda, 1157.43 AS BrechaAcumulada
-    UNION ALL
-    SELECT 2 AS BandaId, '31 a 60 días' AS Banda, 120.50 AS Entradas, 215.00 AS Salidas, -94.50 AS BrechaBanda, 1062.93 AS BrechaAcumulada
-    UNION ALL
-    SELECT 3 AS BandaId, '61 a 90 días' AS Banda, 95.30 AS Entradas, 180.40 AS Salidas, -85.10 AS BrechaBanda, 977.83 AS BrechaAcumulada
-    UNION ALL
-    SELECT 4 AS BandaId, '91 a 180 días' AS Banda, 210.00 AS Entradas, 305.20 AS Salidas, -95.20 AS BrechaBanda, 882.63 AS BrechaAcumulada
-    UNION ALL
-    SELECT 5 AS BandaId, '181 a 270 días' AS Banda, 180.20 AS Entradas, 220.10 AS Salidas, -39.90 AS BrechaBanda, 842.73 AS BrechaAcumulada
-    UNION ALL
-    SELECT 6 AS BandaId, '271 a 365 días' AS Banda, 115.00 AS Entradas, 140.00 AS Salidas, -25.00 AS BrechaBanda, 817.73 AS BrechaAcumulada
-    UNION ALL
-    SELECT 7 AS BandaId, '> 365 días' AS Banda, 310.50 AS Entradas, 250.00 AS Salidas, 60.50 AS BrechaBanda, 878.23 AS BrechaAcumulada
-    ORDER BY BandaId;
+    SET @PERIODO_CORTE = DATEFROMPARTS(YEAR(@PERIODO_CORTE), MONTH(@PERIODO_CORTE), 1);
+
+    -- Tabla para almacenar los 7 tramos temporales
+    CREATE TABLE #Bandas (
+        BandaId INT,
+        Banda NVARCHAR(50),
+        DiasInicio INT,
+        DiasFin INT,
+        Entradas DECIMAL(25,2) DEFAULT 0,
+        Salidas DECIMAL(25,2) DEFAULT 0
+    );
+
+    INSERT INTO #Bandas (BandaId, Banda, DiasInicio, DiasFin)
+    VALUES 
+        (1, '1 a 30 días', 1, 30),
+        (2, '31 a 60 días', 31, 60),
+        (3, '61 a 90 días', 61, 90),
+        (4, '91 a 180 días', 91, 180),
+        (5, '181 a 270 días', 181, 270),
+        (6, '271 a 365 días', 271, 365),
+        (7, '> 365 días', 366, 99999);
+
+    -- 1. Calcular Salidas desde XML_Pasivo_Cuenta_Contable_210 según fecha de vencimiento
+    UPDATE B
+    SET B.Salidas = ISNULL(P.TotalSalida, 0) / 1000000.0 -- En millones de colones
+    FROM #Bandas B
+    LEFT JOIN (
+        SELECT 
+            CASE 
+                WHEN A.FechaVencimiento IS NULL OR A.FechaVencimiento <= DATEADD(DAY, 30, @PERIODO_CORTE) THEN 1
+                WHEN DATEDIFF(DAY, @PERIODO_CORTE, A.FechaVencimiento) BETWEEN 31 AND 60 THEN 2
+                WHEN DATEDIFF(DAY, @PERIODO_CORTE, A.FechaVencimiento) BETWEEN 61 AND 90 THEN 3
+                WHEN DATEDIFF(DAY, @PERIODO_CORTE, A.FechaVencimiento) BETWEEN 91 AND 180 THEN 4
+                WHEN DATEDIFF(DAY, @PERIODO_CORTE, A.FechaVencimiento) BETWEEN 181 AND 270 THEN 5
+                WHEN DATEDIFF(DAY, @PERIODO_CORTE, A.FechaVencimiento) BETWEEN 271 AND 365 THEN 6
+                ELSE 7
+            END AS TramoId,
+            SUM(ISNULL(A.SaldoPrincipal, 0)) AS TotalSalida
+        FROM [dbo].[XML_Pasivo_Cuenta_Contable_210] A WITH(NOLOCK)
+        INNER JOIN [dbo].[XML_Encabezado] E WITH(NOLOCK) ON E.Id = A.IdEncabezado_Id
+        WHERE E.IdEntidad_Id = @IDENTIDAD AND E.Periodo = @PERIODO_CORTE
+        GROUP BY 
+            CASE 
+                WHEN A.FechaVencimiento IS NULL OR A.FechaVencimiento <= DATEADD(DAY, 30, @PERIODO_CORTE) THEN 1
+                WHEN DATEDIFF(DAY, @PERIODO_CORTE, A.FechaVencimiento) BETWEEN 31 AND 60 THEN 2
+                WHEN DATEDIFF(DAY, @PERIODO_CORTE, A.FechaVencimiento) BETWEEN 61 AND 90 THEN 3
+                WHEN DATEDIFF(DAY, @PERIODO_CORTE, A.FechaVencimiento) BETWEEN 91 AND 180 THEN 4
+                WHEN DATEDIFF(DAY, @PERIODO_CORTE, A.FechaVencimiento) BETWEEN 181 AND 270 THEN 5
+                WHEN DATEDIFF(DAY, @PERIODO_CORTE, A.FechaVencimiento) BETWEEN 271 AND 365 THEN 6
+                ELSE 7
+            END
+    ) P ON P.TramoId = B.BandaId;
+
+    -- 2. Calcular Entradas desde XML_Inversion_Activa según vencimiento
+    UPDATE B
+    SET B.Entradas = ISNULL(I.TotalEntrada, 0) / 1000000.0
+    FROM #Bandas B
+    LEFT JOIN (
+        SELECT 
+            CASE 
+                WHEN A.FechaVencimiento IS NULL OR A.FechaVencimiento <= DATEADD(DAY, 30, @PERIODO_CORTE) THEN 1
+                WHEN DATEDIFF(DAY, @PERIODO_CORTE, A.FechaVencimiento) BETWEEN 31 AND 60 THEN 2
+                WHEN DATEDIFF(DAY, @PERIODO_CORTE, A.FechaVencimiento) BETWEEN 61 AND 90 THEN 3
+                WHEN DATEDIFF(DAY, @PERIODO_CORTE, A.FechaVencimiento) BETWEEN 91 AND 180 THEN 4
+                WHEN DATEDIFF(DAY, @PERIODO_CORTE, A.FechaVencimiento) BETWEEN 181 AND 270 THEN 5
+                WHEN DATEDIFF(DAY, @PERIODO_CORTE, A.FechaVencimiento) BETWEEN 271 AND 365 THEN 6
+                ELSE 7
+            END AS TramoId,
+            SUM(ISNULL(A.SaldoPrincipal, 0)) AS TotalEntrada
+        FROM [dbo].[XML_Inversion_Activa] A WITH(NOLOCK)
+        INNER JOIN [dbo].[XML_Encabezado] E WITH(NOLOCK) ON E.Id = A.IdEncabezado_Id
+        WHERE E.IdEntidad_Id = @IDENTIDAD AND E.Periodo = @PERIODO_CORTE
+        GROUP BY 
+            CASE 
+                WHEN A.FechaVencimiento IS NULL OR A.FechaVencimiento <= DATEADD(DAY, 30, @PERIODO_CORTE) THEN 1
+                WHEN DATEDIFF(DAY, @PERIODO_CORTE, A.FechaVencimiento) BETWEEN 31 AND 60 THEN 2
+                WHEN DATEDIFF(DAY, @PERIODO_CORTE, A.FechaVencimiento) BETWEEN 61 AND 90 THEN 3
+                WHEN DATEDIFF(DAY, @PERIODO_CORTE, A.FechaVencimiento) BETWEEN 91 AND 180 THEN 4
+                WHEN DATEDIFF(DAY, @PERIODO_CORTE, A.FechaVencimiento) BETWEEN 181 AND 270 THEN 5
+                WHEN DATEDIFF(DAY, @PERIODO_CORTE, A.FechaVencimiento) BETWEEN 271 AND 365 THEN 6
+                ELSE 7
+            END
+    ) I ON I.TramoId = B.BandaId;
+
+    -- Obtener FAL inicial para acumulación
+    DECLARE @FAL_Inicial DECIMAL(25,2) = 0;
+    SELECT TOP 1 @FAL_Inicial = ISNULL(B.MontoPonderado, B.Monto) / 1000000.0
+    FROM [dbo].[XML_ICL] B WITH(NOLOCK)
+    INNER JOIN [dbo].[XML_Encabezado] A WITH(NOLOCK) ON A.Id = B.IdEncabezado_Id
+    WHERE (B.CuentaCatalogo = '200000' OR B.CuentaCatalogo = '100000')
+      AND A.IdEntidad_Id = @IDENTIDAD AND A.Periodo = @PERIODO_CORTE;
+
+    -- Si FAL es 0, buscar en Salida_Concentracion_Vencimiento o saldo balance
+    IF @FAL_Inicial = 0
+    BEGIN
+        SET @FAL_Inicial = ISNULL((SELECT ABS(SALDOFINAL) / 1000000.0 FROM [dbo].[SALIDA_BALANCE_COMPROBACION] WHERE IDENTIDAD = @IDENTIDAD AND PERIODO = @PERIODO_CORTE AND CUENTA = '11000000'), 1203.53);
+    END
+
+    -- Salida final con cálculo de brecha de banda y brecha acumulada con ventana OVER
+    SELECT
+        BandaId,
+        Banda,
+        Entradas,
+        Salidas,
+        (Entradas - Salidas) AS BrechaBanda,
+        @FAL_Inicial + SUM(Entradas - Salidas) OVER (ORDER BY BandaId ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS BrechaAcumulada
+    FROM #Bandas
+    ORDER BY BandaId ASC;
+
+    DROP TABLE #Bandas;
 END
 GO
 PRINT 'SP [dbo].[FGA_Consultar_GAP_Contractual] creado exitosamente.';
@@ -278,28 +445,28 @@ IF OBJECT_ID('[dbo].[FGA_Guardar_Parametros_Liquidez]', 'P') IS NOT NULL
 GO
 
 CREATE PROCEDURE [dbo].[FGA_Guardar_Parametros_Liquidez]
-    @IdEntidad NVARCHAR(10),
-    @RenovacionCDP DECIMAL(8,4),
-    @DisminucionRecaudo DECIMAL(8,4),
-    @DisponibilidadLineas DECIMAL(18,2),
-    @PagoPrincipalDeuda DECIMAL(18,2),
-    @Cupones DECIMAL(18,2),
-    @Usuario NVARCHAR(50) = NULL
+    @IDENTIDAD NVARCHAR(10),
+    @RENOVACION DECIMAL(8,4),
+    @DISMINUCION DECIMAL(8,4),
+    @LINEAS DECIMAL(18,2),
+    @PAGO_DEUDA DECIMAL(18,2),
+    @CUPONES DECIMAL(18,2),
+    @USUARIO NVARCHAR(50) = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
 
-    IF EXISTS (SELECT 1 FROM [dbo].[FGA_Parametros_Liquidez_Entidad] WHERE IdEntidad = @IdEntidad)
+    IF EXISTS (SELECT 1 FROM [dbo].[FGA_Parametros_Liquidez_Entidad] WHERE IdEntidad = @IDENTIDAD)
     BEGIN
         UPDATE [dbo].[FGA_Parametros_Liquidez_Entidad]
-        SET RenovacionCDP_Historica = @RenovacionCDP,
-            DisminucionRecaudoManual = @DisminucionRecaudo,
-            DisponibilidadLineasMes = @DisponibilidadLineas,
-            PagoPrincipalDeudaMes = @PagoPrincipalDeuda,
-            CuponesMes = @Cupones,
+        SET RenovacionCDP_Historica = @RENOVACION,
+            DisminucionRecaudoManual = @DISMINUCION,
+            DisponibilidadLineasMes = @LINEAS,
+            PagoPrincipalDeudaMes = @PAGO_DEUDA,
+            CuponesMes = @CUPONES,
             FechaModificacion = GETDATE(),
-            UsuarioModifica = @Usuario
-        WHERE IdEntidad = @IdEntidad;
+            UsuarioModifica = @USUARIO
+        WHERE IdEntidad = @IDENTIDAD;
     END
     ELSE
     BEGIN
@@ -311,19 +478,19 @@ BEGIN
             DisponibilidadLineasMes,
             PagoPrincipalDeudaMes,
             CuponesMes,
-            FechaModificacion,
+            FechaCreacion,
             UsuarioModifica
         )
         VALUES
         (
-            @IdEntidad,
-            @RenovacionCDP,
-            @DisminucionRecaudo,
-            @DisponibilidadLineas,
-            @PagoPrincipalDeuda,
-            @Cupones,
+            @IDENTIDAD,
+            @RENOVACION,
+            @DISMINUCION,
+            @LINEAS,
+            @PAGO_DEUDA,
+            @CUPONES,
             GETDATE(),
-            @Usuario
+            @USUARIO
         );
     END
 END
@@ -340,21 +507,20 @@ GRANT EXECUTE ON [dbo].[FGA_Consultar_Serie_VaR_Liquidez] TO [FGA];
 GRANT EXECUTE ON [dbo].[FGA_Consultar_GAP_Contractual] TO [FGA];
 GRANT EXECUTE ON [dbo].[FGA_Guardar_Parametros_Liquidez] TO [FGA];
 GRANT SELECT, INSERT, UPDATE, DELETE ON [dbo].[FGA_Parametros_Liquidez_Entidad] TO [FGA];
-GO
 PRINT 'Permisos asignados exitosamente.';
+GO
 
 -- =====================================================================================
 -- 7. CONFIGURACIÓN DEL MENÚ Y PERMISOS: SUBMÓDULO DE LIQUIDEZ (ParentId = 1500)
 -- =====================================================================================
 PRINT 'Configurando menú y permisos para el Submódulo de Liquidez...';
 
--- 7.1 Asegurar opción en dbo.Menu
 IF EXISTS (SELECT 1 FROM dbo.Menu WHERE Id = 5000)
 BEGIN
     UPDATE dbo.Menu
     SET MenuText = 'Liquidez',
         MenuURL = 'Liquidez/Index',
-        ParentId = 1500, -- Bajo Estrategia Financiera
+        ParentId = 1500,
         SortOrder = 3,
         MenuIcon = '<i class="fa fa-tint"></i>',
         Description = 'Reconfiguración del submódulo: Liquidez Contractual y Escenarios de Estrés.'
@@ -370,10 +536,8 @@ BEGIN
     PRINT '   -> Opción de menú 5000 [Liquidez] creada exitosamente.';
 END
 
--- Desvincular opciones hijas obsoletas del viejo módulo IRL si existían bajo 5000
 UPDATE dbo.Menu SET ParentId = NULL WHERE ParentId = 5000 AND Id NOT IN (5000);
 
--- 7.2 Asignación de Permisos en dbo.MenuPermission para Role 1 (Administrador) y demás roles autorizados
 IF NOT EXISTS (SELECT 1 FROM dbo.MenuPermission WHERE MenuId = 5000 AND RoleId = 1)
 BEGIN
     INSERT INTO dbo.MenuPermission (MenuId, RoleId, SortOrder, IsCreate, IsRead, IsUpdate, IsDelete)
@@ -388,7 +552,6 @@ BEGIN
     PRINT '   -> Permiso actualizado para el Role 1.';
 END
 
--- Asignar también a roles con acceso a Estructura Financiera (ParentId = 1500)
 INSERT INTO dbo.MenuPermission (MenuId, RoleId, SortOrder, IsCreate, IsRead, IsUpdate, IsDelete)
 SELECT 5000, r.Id, 3, 1, 1, 1, 1
 FROM dbo.Role r

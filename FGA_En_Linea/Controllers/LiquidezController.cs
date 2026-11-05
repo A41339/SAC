@@ -91,6 +91,31 @@ namespace FGA.Controllers
 
         private List<IndicadorLiquidezItem> CalcularIndicadores(string entidad, DateTime p1, DateTime p2)
         {
+            try
+            {
+                var spRes = spClient.FGA_Consultar_Indicadores_Liquidez(entidad, p1, p2);
+                if (spRes != null && spRes.Length > 0)
+                {
+                    var list = new List<IndicadorLiquidezItem>();
+                    foreach (var item in spRes)
+                    {
+                        list.Add(new IndicadorLiquidezItem
+                        {
+                            Orden = item.Orden ?? 0,
+                            Nombre = item.Indicador,
+                            Formula = item.Formula,
+                            QueMide = item.QueMide,
+                            ValorP1 = item.ValorP1 ?? 0m,
+                            ValorP2 = item.ValorP2 ?? 0m,
+                            EsPorcentaje = item.EsPorcentaje ?? true,
+                            TipoGraficoAsociado = 1
+                        });
+                    }
+                    return list;
+                }
+            }
+            catch { }
+
             var result = new List<IndicadorLiquidezItem>();
 
             // Cargar saldos de balance
@@ -204,6 +229,24 @@ namespace FGA.Controllers
 
         private GapContractualViewModel ObtenerDatosGap(string entidad, DateTime fecha)
         {
+            try
+            {
+                var spRes = spClient.FGA_Consultar_GAP_Contractual(entidad, fecha);
+                if (spRes != null && spRes.Length > 0)
+                {
+                    return new GapContractualViewModel
+                    {
+                        PeriodoCorte = fecha.ToString("dd/MM/yyyy"),
+                        Bandas = spRes.Select(x => x.Banda).ToList(),
+                        Entradas = spRes.Select(x => x.Entradas ?? 0m).ToList(),
+                        Salidas = spRes.Select(x => x.Salidas ?? 0m).ToList(),
+                        BrechasBanda = spRes.Select(x => x.BrechaBanda ?? 0m).ToList(),
+                        BrechasAcumuladas = spRes.Select(x => x.BrechaAcumulada ?? 0m).ToList()
+                    };
+                }
+            }
+            catch { }
+
             return new GapContractualViewModel
             {
                 PeriodoCorte = fecha.ToString("dd/MM/yyyy"),
