@@ -82,12 +82,12 @@ namespace FGA.Controllers
                     Horizonte = ObtenerHorizonteDefecto()
                 };
 
-                return View(model);
+                return View("Index", model);
             }
             catch (Exception ex)
             {
                 ViewBag.Error = ex.Message;
-                return View(new LiquidezIndexViewModel());
+                return View("Index", new LiquidezIndexViewModel());
             }
         }
 
