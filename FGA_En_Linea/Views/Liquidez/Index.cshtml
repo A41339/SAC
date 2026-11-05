@@ -1,6 +1,10 @@
 @model FGA.Model.LiquidezIndexViewModel
 @{
-    ViewBag.Title = "Módulo de Liquidez";
+    bool esHub = string.IsNullOrEmpty(Model.MacroSeccion) || Model.MacroSeccion == "hub";
+    bool esContractual = Model.MacroSeccion == "contractual";
+    bool esEstres = Model.MacroSeccion == "estres";
+
+    ViewBag.Title = esHub ? "Submódulo de Liquidez" : (esContractual ? "Liquidez Contractual" : "Escenarios de Estrés");
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -40,32 +44,166 @@
         color: #0284c7 !important;
         border-bottom-color: transparent !important;
     }
+    .liquidez-hub-card {
+        text-decoration: none !important;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        background: #ffffff;
+        border: 1px solid #cbd5e1;
+        border-radius: 12px;
+        padding: 24px 26px;
+        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+        transition: all 0.25s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    .liquidez-hub-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 24px rgba(15, 23, 42, 0.12) !important;
+        border-color: #94a3b8 !important;
+    }
+    .header-back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #0284c7;
+        text-decoration: none !important;
+        margin-bottom: 6px;
+        transition: color 0.15s ease;
+    }
+    .header-back-link:hover {
+        color: #0369a1;
+        text-decoration: underline !important;
+    }
 </style>
 
-<section class="content-header" style="padding: 10px 20px 6px 20px;">
+<section class="content-header" style="padding: 12px 20px 8px 20px;">
     <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
         <div>
-            <h1 style="margin: 0; font-size: 18px; font-weight: 700; color: #143750; display: flex; align-items: center; gap: 8px;">
+            @if (!esHub)
+            {
+                <a href="@Url.Action("Index", "Liquidez", new { idEntidad = Model.IdEntidad })" class="header-back-link">
+                    <i class="fa fa-arrow-left"></i> Volver a Liquidez
+                </a>
+            }
+            <h1 style="margin: 0; font-size: 20px; font-weight: 700; color: #143750; display: flex; align-items: center; gap: 8px;">
                 <i class="fa fa-tint" style="color: #0284c7;"></i>
-                Módulo de Liquidez
+                @(esHub ? "Submódulo de Liquidez" : (esContractual ? "Liquidez Contractual" : "Escenarios de Estrés"))
             </h1>
-            <p style="margin: 2px 0 0 0; font-size: 12px; color: #64748b;">
-                Reconfiguración del submódulo: Liquidez Contractual y Escenarios de Estrés
+            <p style="margin: 3px 0 0 0; font-size: 12.5px; color: #64748b;">
+                @(esHub ? "Seleccione la consulta o análisis de liquidez que desea realizar:" : (esContractual ? "Cálculo normativo e insumos del Indicador de Riesgo de Liquidez (IRL), ICL, GAP Contractual e IFNE." : "Modelos proyectados de liquidez: Supuestos, Razón de Cobertura a 30 días, ICL Estresado, Brechas y Horizonte."))
             </p>
         </div>
     </div>
-    <ol class="breadcrumb" style="top: 8px;">
+    <ol class="breadcrumb" style="top: 10px;">
         <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
         <li><a href="@Url.Action("Index", "Modulo", new { id = 1500 })" class="breadcrumb-parent-pill" title="Volver al menú de Estructura Financiera"><i class="fa fa-file-text-o" style="margin-right: 4px;"></i> Estructura Financiera</a></li>
-        <li class="active">Liquidez</li>
+        @if (esHub)
+        {
+            <li class="active">Liquidez</li>
+        }
+        else
+        {
+            <li><a href="@Url.Action("Index", "Liquidez", new { idEntidad = Model.IdEntidad })">Liquidez</a></li>
+            <li class="active">@(esContractual ? "Liquidez Contractual" : "Escenarios de Estrés")</li>
+        }
     </ol>
 </section>
 
 <section class="content" style="padding: 0 20px 14px 20px;">
+
+@if (esHub)
+{
+    <!-- ================================================================================= -->
+    <!-- 1. VISTA LANDING / HUB: 2 MACRO-OPCIONES (REQUERIMIENTO OFICIAL)                   -->
+    <!-- ================================================================================= -->
+    <div class="row" style="margin-top: 6px; margin-bottom: 24px;">
+        <div class="col-xs-12">
+            <!-- Selector de Entidad para la vista Landing -->
+            <div class="modern-filter-card" style="margin-bottom: 22px; padding: 12px 18px; background: #ffffff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;">
+                <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <label for="ddlEntidadHub" style="margin: 0; font-size: 13px; font-weight: 700; color: #1e3a8a; display: flex; align-items: center; gap: 6px;">
+                            <i class="fa fa-university" style="color: #2F5597;"></i> Entidad:
+                        </label>
+                        <div style="min-width: 280px;">
+                            @Html.DropDownList("Entidades", null, new { @id = "ddlEntidadHub", @class = "form-control modern-select", style = "height: 36px; font-size: 13px; font-weight: 600; border-radius: 6px;", onchange = "cambiarEntidadHub(this.value)" })
+                        </div>
+                    </div>
+                    <span style="font-size: 13px; color: #64748b; font-weight: 500;">
+                        Entidad activa: <strong>@Model.NombreEntidad</strong>
+                    </span>
+                </div>
+            </div>
+
+            <!-- Contenedor con las 2 Tarjetas Oficiales -->
+            <div class="row">
+                <!-- TARJETA 1: LIQUIDEZ CONTRACTUAL -->
+                <div class="col-md-6 col-sm-6 col-xs-12" style="margin-bottom: 18px;">
+                    <a href="@Url.Action("Contractual", "Liquidez", new { idEntidad = Model.IdEntidad })" class="liquidez-hub-card" style="border-top: 4px solid #0284c7;">
+                        <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 16px;">
+                            <div style="width: 54px; height: 54px; border-radius: 12px; background: #e0f2fe; display: flex; align-items: center; justify-content: center; color: #0284c7; font-size: 24px; box-shadow: 0 2px 6px rgba(2, 132, 199, 0.2);">
+                                <i class="fa fa-book"></i>
+                            </div>
+                            <span style="display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 700; color: #0369a1; background: #f0f9ff; border: 1px solid #bae6fd; padding: 4px 10px; border-radius: 20px;">
+                                <i class="fa fa-shield"></i> Normativo SUGEF
+                            </span>
+                        </div>
+                        <h2 style="margin: 0 0 10px 0; font-size: 20px; font-weight: 700; color: #0f172a; display: flex; align-items: center; justify-content: space-between;">
+                            Liquidez Contractual
+                            <i class="fa fa-arrow-circle-right" style="color: #0284c7; font-size: 22px;"></i>
+                        </h2>
+                        <p style="margin: 0 0 20px 0; font-size: 13.5px; line-height: 1.55; color: #475569; flex: 1;">
+                            Cálculo e insumos del Indicador de Riesgo de Liquidez: indicadores normativos (8 ratios), Índice de Cobertura de Liquidez (ICL en colones y dólares con selector), modelo de GAP Contractual por 7 bandas temporales con drill-down a entradas y salidas, e IFNE.
+                        </p>
+                        <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 14px; border-top: 1px solid #f1f5f9; font-size: 12.5px; font-weight: 600; color: #0284c7;">
+                            <span><i class="fa fa-check-circle" style="color: #10b981; margin-right: 4px;"></i> 4 Componentes Activos</span>
+                            <span style="font-weight: 700;">Ingresar a Liquidez Contractual <i class="fa fa-chevron-right" style="font-size: 11px; margin-left: 3px;"></i></span>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- TARJETA 2: ESCENARIOS DE ESTRÉS -->
+                <div class="col-md-6 col-sm-6 col-xs-12" style="margin-bottom: 18px;">
+                    <a href="@Url.Action("Estres", "Liquidez", new { idEntidad = Model.IdEntidad })" class="liquidez-hub-card" style="border-top: 4px solid #d97706;">
+                        <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 16px;">
+                            <div style="width: 54px; height: 54px; border-radius: 12px; background: #fef3c7; display: flex; align-items: center; justify-content: center; color: #d97706; font-size: 24px; box-shadow: 0 2px 6px rgba(217, 119, 6, 0.2);">
+                                <i class="fa fa-bolt"></i>
+                            </div>
+                            <span style="display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 700; color: #b45309; background: #fffbeb; border: 1px solid #fde68a; padding: 4px 10px; border-radius: 20px;">
+                                <i class="fa fa-line-chart"></i> Sensibilización & VaR
+                            </span>
+                        </div>
+                        <h2 style="margin: 0 0 10px 0; font-size: 20px; font-weight: 700; color: #0f172a; display: flex; align-items: center; justify-content: space-between;">
+                            Escenarios de Estrés
+                            <i class="fa fa-arrow-circle-right" style="color: #d97706; font-size: 22px;"></i>
+                        </h2>
+                        <p style="margin: 0 0 20px 0; font-size: 13.5px; line-height: 1.55; color: #475569; flex: 1;">
+                            Modelos proyectados de liquidez: Supuestos de sensibilización configurables (Manual, Histórico, VaR 95%/99% y crecimiento), Razón de Cobertura a 30 días, ICL Estresado (FAL y salida Top 20), Brechas de Liquidez estresadas y Horizonte de Supervivencia.
+                        </p>
+                        <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 14px; border-top: 1px solid #f1f5f9; font-size: 12.5px; font-weight: 600; color: #d97706;">
+                            <span><i class="fa fa-sliders" style="color: #d97706; margin-right: 4px;"></i> 5 Modelos Proyectados</span>
+                            <span style="font-weight: 700;">Ingresar a Escenarios de Estrés <i class="fa fa-chevron-right" style="font-size: 11px; margin-left: 3px;"></i></span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <!-- ================================================================================= -->
+    <!-- 2. VISTAS DE DETALLE: LIQUIDEZ CONTRACTUAL O ESCENARIOS DE ESTRÉS                  -->
+    <!-- ================================================================================= -->
+
     <!-- Selector General de Filtros -->
     <div class="row">
         <div class="col-xs-12">
-            <div class="modern-filter-card" style="margin-bottom: 8px; padding: 7px 14px; background: #ffffff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;">
+            <div class="modern-filter-card" style="margin-bottom: 12px; padding: 8px 16px; background: #ffffff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;">
                 <div class="modern-filter-toolbar" style="display: flex; align-items: center; justify-content: flex-start; flex-wrap: wrap; gap: 14px;">
                     <!-- Entidad -->
                     <div class="filter-item" style="display: flex; flex-direction: column; gap: 4px;">
@@ -108,118 +246,131 @@
         </div>
     </div>
 
-    <!-- Toggle de Macro-Sección (Liquidez Contractual vs Escenarios de Estrés) -->
-    <div class="row" style="margin-bottom: 12px;">
+    <!-- Barra de Alternancia entre las dos Macro-Secciones -->
+    <div class="row" style="margin-bottom: 14px;">
         <div class="col-xs-12">
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <a href="javascript:void(0)" id="btnMacroContractual" class="macro-nav-pill active" onclick="cambiarMacroSeccion('contractual')">
-                    <i class="fa fa-book"></i> 1. Liquidez Contractual
-                </a>
-                <a href="javascript:void(0)" id="btnMacroEstres" class="macro-nav-pill" onclick="cambiarMacroSeccion('estres')">
-                    <i class="fa fa-bolt"></i> 2. Escenarios de Estrés
-                </a>
+            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <a href="@Url.Action("Contractual", "Liquidez", new { idEntidad = Model.IdEntidad, periodo1 = Model.Periodo1, periodo2 = Model.Periodo2 })" id="btnMacroContractual" class="macro-nav-pill @(esContractual ? "active" : "")">
+                        <i class="fa fa-book"></i> 1. Liquidez Contractual
+                    </a>
+                    <a href="@Url.Action("Estres", "Liquidez", new { idEntidad = Model.IdEntidad, periodo1 = Model.Periodo1, periodo2 = Model.Periodo2 })" id="btnMacroEstres" class="macro-nav-pill @(esEstres ? "active" : "")">
+                        <i class="fa fa-bolt"></i> 2. Escenarios de Estrés
+                    </a>
+                </div>
+                <div>
+                    <a href="@Url.Action("Index", "Liquidez", new { idEntidad = Model.IdEntidad })" class="btn btn-default btn-sm" style="font-weight: 600; color: #475569; border-radius: 6px;">
+                        <i class="fa fa-th-large" style="margin-right: 4px;"></i> Ver ambas opciones (Hub)
+                    </a>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Card Principal con Pestañas -->
+    <!-- Contenedor Principal con Pestañas según la sección activa -->
     <div class="row">
         <div class="col-xs-12">
-            <div class="modern-table-card" style="border: 1px solid #e2e8f0; border-radius: 10px; background: #ffffff; box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04); overflow: hidden; padding: 12px 16px; margin-bottom: 12px;">
-                
-                <!-- Pestañas de Liquidez Contractual -->
-                <div id="seccionContractual">
-                    <ul class="nav nav-tabs" id="tabsContractual" style="border-bottom: 1px solid #e2e8f0; margin-bottom: 16px;">
-                        <li class="active">
-                            <a href="#tab-indicadores" data-toggle="tab" class="sub-tab-link">
-                                <i class="fa fa-pie-chart" style="color: #0284c7; margin-right: 5px;"></i> Indicadores
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#tab-icl" data-toggle="tab" class="sub-tab-link">
-                                <i class="fa fa-shield" style="color: #10b981; margin-right: 5px;"></i> ICL (Colones / Dólares)
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#tab-gap" data-toggle="tab" class="sub-tab-link">
-                                <i class="fa fa-exchange" style="color: #ea580c; margin-right: 5px;"></i> GAP Contractual
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#tab-ifne" data-toggle="tab" class="sub-tab-link">
-                                <i class="fa fa-balance-scale" style="color: #6366f1; margin-right: 5px;"></i> IFNE
-                            </a>
-                        </li>
-                    </ul>
+            <div class="modern-table-card" style="border: 1px solid #e2e8f0; border-radius: 10px; background: #ffffff; box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04); overflow: hidden; padding: 14px 18px; margin-bottom: 14px;">
 
-                    <div class="tab-content">
-                        <div class="tab-pane active" id="tab-indicadores">
-                            @Html.Partial("_Indicadores", Model)
-                        </div>
-                        <div class="tab-pane" id="tab-icl">
-                            @Html.Partial("_ICL", Model)
-                        </div>
-                        <div class="tab-pane" id="tab-gap">
-                            @Html.Partial("_GapContractual", Model)
-                        </div>
-                        <div class="tab-pane" id="tab-ifne">
-                            @Html.Partial("_IFNE", Model)
+                @if (esContractual)
+                {
+                    <!-- PESTAÑAS: LIQUIDEZ CONTRACTUAL -->
+                    <div id="seccionContractual">
+                        <ul class="nav nav-tabs" id="tabsContractual" style="border-bottom: 1px solid #e2e8f0; margin-bottom: 16px;">
+                            <li class="active">
+                                <a href="#tab-indicadores" data-toggle="tab" class="sub-tab-link">
+                                    <i class="fa fa-pie-chart" style="color: #0284c7; margin-right: 5px;"></i> Indicadores
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#tab-icl" data-toggle="tab" class="sub-tab-link">
+                                    <i class="fa fa-shield" style="color: #10b981; margin-right: 5px;"></i> ICL (Colones / Dólares)
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#tab-gap" data-toggle="tab" class="sub-tab-link">
+                                    <i class="fa fa-exchange" style="color: #ea580c; margin-right: 5px;"></i> GAP Contractual
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#tab-ifne" data-toggle="tab" class="sub-tab-link">
+                                    <i class="fa fa-balance-scale" style="color: #6366f1; margin-right: 5px;"></i> IFNE
+                                </a>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="tab-indicadores">
+                                @Html.Partial("_Indicadores", Model)
+                            </div>
+                            <div class="tab-pane" id="tab-icl">
+                                @Html.Partial("_ICL", Model)
+                            </div>
+                            <div class="tab-pane" id="tab-gap">
+                                @Html.Partial("_GapContractual", Model)
+                            </div>
+                            <div class="tab-pane" id="tab-ifne">
+                                @Html.Partial("_IFNE", Model)
+                            </div>
                         </div>
                     </div>
-                </div>
+                }
+                else if (esEstres)
+                {
+                    <!-- PESTAÑAS: ESCENARIOS DE ESTRÉS -->
+                    <div id="seccionEstres">
+                        <ul class="nav nav-tabs" id="tabsEstres" style="border-bottom: 1px solid #e2e8f0; margin-bottom: 16px;">
+                            <li class="active">
+                                <a href="#tab-supuestos" data-toggle="tab" class="sub-tab-link">
+                                    <i class="fa fa-sliders" style="color: #0284c7; margin-right: 5px;"></i> Supuestos de Sensibilización
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#tab-razon-cobertura" data-toggle="tab" class="sub-tab-link">
+                                    <i class="fa fa-check-square-o" style="color: #16a34a; margin-right: 5px;"></i> Razón de Cobertura
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#tab-icl-estresado" data-toggle="tab" class="sub-tab-link">
+                                    <i class="fa fa-fire" style="color: #ea580c; margin-right: 5px;"></i> ICL Estresado
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#tab-brechas-estres" data-toggle="tab" class="sub-tab-link">
+                                    <i class="fa fa-bar-chart" style="color: #8b5cf6; margin-right: 5px;"></i> Brechas de Liquidez
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#tab-horizonte" data-toggle="tab" class="sub-tab-link">
+                                    <i class="fa fa-hourglass-end" style="color: #dc2626; margin-right: 5px;"></i> Horizonte de Supervivencia
+                                </a>
+                            </li>
+                        </ul>
 
-                <!-- Pestañas de Escenarios de Estrés -->
-                <div id="seccionEstres" style="display: none;">
-                    <ul class="nav nav-tabs" id="tabsEstres" style="border-bottom: 1px solid #e2e8f0; margin-bottom: 16px;">
-                        <li class="active">
-                            <a href="#tab-supuestos" data-toggle="tab" class="sub-tab-link">
-                                <i class="fa fa-sliders" style="color: #0284c7; margin-right: 5px;"></i> Supuestos de Sensibilización
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#tab-razon-cobertura" data-toggle="tab" class="sub-tab-link">
-                                <i class="fa fa-check-square-o" style="color: #16a34a; margin-right: 5px;"></i> Razón de Cobertura
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#tab-icl-estresado" data-toggle="tab" class="sub-tab-link">
-                                <i class="fa fa-fire" style="color: #ea580c; margin-right: 5px;"></i> ICL Estresado
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#tab-brechas-estres" data-toggle="tab" class="sub-tab-link">
-                                <i class="fa fa-bar-chart" style="color: #8b5cf6; margin-right: 5px;"></i> Brechas de Liquidez
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#tab-horizonte" data-toggle="tab" class="sub-tab-link">
-                                <i class="fa fa-hourglass-end" style="color: #dc2626; margin-right: 5px;"></i> Horizonte de Supervivencia
-                            </a>
-                        </li>
-                    </ul>
-
-                    <div class="tab-content">
-                        <div class="tab-pane active" id="tab-supuestos">
-                            @Html.Partial("_SupuestosSensibilizacion", Model)
-                        </div>
-                        <div class="tab-pane" id="tab-razon-cobertura">
-                            @Html.Partial("_RazonCobertura", Model)
-                        </div>
-                        <div class="tab-pane" id="tab-icl-estresado">
-                            @Html.Partial("_ICLEstresado", Model)
-                        </div>
-                        <div class="tab-pane" id="tab-brechas-estres">
-                            @Html.Partial("_BrechasLiquidez", Model)
-                        </div>
-                        <div class="tab-pane" id="tab-horizonte">
-                            @Html.Partial("_HorizonteSupervivencia", Model)
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="tab-supuestos">
+                                @Html.Partial("_SupuestosSensibilizacion", Model)
+                            </div>
+                            <div class="tab-pane" id="tab-razon-cobertura">
+                                @Html.Partial("_RazonCobertura", Model)
+                            </div>
+                            <div class="tab-pane" id="tab-icl-estresado">
+                                @Html.Partial("_ICLEstresado", Model)
+                            </div>
+                            <div class="tab-pane" id="tab-brechas-estres">
+                                @Html.Partial("_BrechasLiquidez", Model)
+                            </div>
+                            <div class="tab-pane" id="tab-horizonte">
+                                @Html.Partial("_HorizonteSupervivencia", Model)
+                            </div>
                         </div>
                     </div>
-                </div>
+                }
 
             </div>
         </div>
     </div>
+}
 </section>
 
 <!-- Modal Gráfico Histórico de Indicador (como en Fondeo) -->
@@ -242,18 +393,17 @@
 
 @section scripts {
     <script>
-        function cambiarMacroSeccion(seccion) {
-            if (seccion === 'contractual') {
-                $('#btnMacroContractual').addClass('active');
-                $('#btnMacroEstres').removeClass('active');
-                $('#seccionContractual').show();
-                $('#seccionEstres').hide();
-            } else {
-                $('#btnMacroContractual').removeClass('active');
-                $('#btnMacroEstres').addClass('active');
-                $('#seccionContractual').hide();
-                $('#seccionEstres').show();
-            }
+        function cambiarEntidadHub(id) {
+            window.location.href = '@Url.Action("Index", "Liquidez")' + '?idEntidad=' + encodeURIComponent(id);
+        }
+
+        function cargarDatosGeneralesLiquidez() {
+            var ent = $('#ddlEntidad').val();
+            var p1 = $('#Periodo1').val();
+            var p2 = $('#Periodo2').val();
+            var seccion = '@Model.MacroSeccion';
+            var actionName = (seccion === 'estres') ? 'Estres' : 'Contractual';
+            window.location.href = '@Url.Action("Index", "Liquidez")'.replace('Index', actionName) + '?idEntidad=' + encodeURIComponent(ent) + '&periodo1=' + encodeURIComponent(p1) + '&periodo2=' + encodeURIComponent(p2);
         }
 
         function cambiarMonedaICL(moneda) {
@@ -290,27 +440,33 @@
         }
 
         function renderGraficosGap() {
-            Highcharts.chart('chartGapContractualBarras', {
-                chart: { type: 'column' },
-                title: { text: 'Brechas Contractuales por Banda Temporal', style: { fontWeight: '700', color: '#143750' } },
-                xAxis: { categories: ['1 a 30 d', '31 a 60 d', '61 a 90 d', '91 a 180 d', '181 a 270 d', '271 a 365 d', '> 365 d'] },
-                yAxis: { title: { text: 'Monto en Millones (¢)' } },
-                series: [
-                    { name: 'Entradas', data: [693.8, 120.5, 95.3, 210.0, 180.2, 115.0, 310.5], color: '#10b981' },
-                    { name: 'Salidas', data: [739.9, 215.0, 180.4, 305.2, 220.1, 140.0, 250.0], color: '#f97316' },
-                    { name: 'Brecha', data: [-46.1, -94.5, -85.1, -95.2, -39.9, -25.0, 60.5], color: '#0284c7' }
-                ],
-                credits: { enabled: false }
-            });
+            var chartBarrasEl = document.getElementById('chartGapContractualBarras');
+            if (chartBarrasEl) {
+                Highcharts.chart('chartGapContractualBarras', {
+                    chart: { type: 'column' },
+                    title: { text: 'Brechas Contractuales por Banda Temporal', style: { fontWeight: '700', color: '#143750' } },
+                    xAxis: { categories: ['1 a 30 d', '31 a 60 d', '61 a 90 d', '91 a 180 d', '181 a 270 d', '271 a 365 d', '> 365 d'] },
+                    yAxis: { title: { text: 'Monto en Millones (¢)' } },
+                    series: [
+                        { name: 'Entradas', data: [693.8, 120.5, 95.3, 210.0, 180.2, 115.0, 310.5], color: '#10b981' },
+                        { name: 'Salidas', data: [739.9, 215.0, 180.4, 305.2, 220.1, 140.0, 250.0], color: '#f97316' },
+                        { name: 'Brecha', data: [-46.1, -94.5, -85.1, -95.2, -39.9, -25.0, 60.5], color: '#0284c7' }
+                    ],
+                    credits: { enabled: false }
+                });
+            }
 
-            Highcharts.chart('chartGapAcumuladoLinea', {
-                chart: { type: 'area' },
-                title: { text: 'Brecha Acumulada', style: { fontWeight: '700', color: '#143750' } },
-                xAxis: { categories: ['1 a 30 d', '31 a 60 d', '61 a 90 d', '91 a 180 d', '181 a 270 d', '271 a 365 d', '> 365 d'] },
-                yAxis: { title: { text: 'Acumulado (MM ¢)' } },
-                series: [{ name: 'Acumulado', data: [1157.4, 1062.9, 977.8, 882.6, 842.7, 817.7, 878.2], color: '#0284c7', fillColor: 'rgba(2, 132, 199, 0.15)' }],
-                credits: { enabled: false }
-            });
+            var chartAcumEl = document.getElementById('chartGapAcumuladoLinea');
+            if (chartAcumEl) {
+                Highcharts.chart('chartGapAcumuladoLinea', {
+                    chart: { type: 'area' },
+                    title: { text: 'Brecha Acumulada', style: { fontWeight: '700', color: '#143750' } },
+                    xAxis: { categories: ['1 a 30 d', '31 a 60 d', '61 a 90 d', '91 a 180 d', '181 a 270 d', '271 a 365 d', '> 365 d'] },
+                    yAxis: { title: { text: 'Acumulado (MM ¢)' } },
+                    series: [{ name: 'Acumulado', data: [1157.4, 1062.9, 977.8, 882.6, 842.7, 817.7, 878.2], color: '#0284c7', fillColor: 'rgba(2, 132, 199, 0.15)' }],
+                    credits: { enabled: false }
+                });
+            }
         }
 
         function verDetalleEntradasSalidas(tipo, banda) {

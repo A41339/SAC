@@ -14,7 +14,7 @@ namespace FGA.Controllers
         private readonly FGA_En_Linea.SPService.SPClient spClient = new FGA_En_Linea.SPService.SPClient();
 
         // GET: Liquidez
-        public ActionResult Index(string idEntidad = null, string periodo1 = null, string periodo2 = null)
+        public ActionResult Index(string idEntidad = null, string seccion = null, string periodo1 = null, string periodo2 = null)
         {
             try
             {
@@ -58,6 +58,9 @@ namespace FGA.Controllers
                     }
                 }
 
+                // Determinar macro sección: hub (menú de 2 opciones), contractual o estres
+                string macroSec = string.IsNullOrWhiteSpace(seccion) ? "hub" : seccion.ToLowerInvariant();
+
                 // Instanciar y llenar el modelo
                 var model = new LiquidezIndexViewModel
                 {
@@ -68,6 +71,7 @@ namespace FGA.Controllers
                     Periodo1Header = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(p1Date.ToString("MMMM yyyy", new CultureInfo("es-ES"))),
                     Periodo2Header = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(p2Date.ToString("MMMM yyyy", new CultureInfo("es-ES"))),
                     PeriodoCorteGap = strP2,
+                    MacroSeccion = macroSec,
                     Indicadores = CalcularIndicadores(currentEntidad, p1Date, p2Date),
                     ICLDatos = ObtenerDatosICL(currentEntidad, p2Date),
                     GapDatos = ObtenerDatosGap(currentEntidad, p2Date),
@@ -85,6 +89,18 @@ namespace FGA.Controllers
                 ViewBag.Error = ex.Message;
                 return View(new LiquidezIndexViewModel());
             }
+        }
+
+        // GET: Liquidez/Contractual
+        public ActionResult Contractual(string idEntidad = null, string periodo1 = null, string periodo2 = null)
+        {
+            return Index(idEntidad, "contractual", periodo1, periodo2);
+        }
+
+        // GET: Liquidez/Estres
+        public ActionResult Estres(string idEntidad = null, string periodo1 = null, string periodo2 = null)
+        {
+            return Index(idEntidad, "estres", periodo1, periodo2);
         }
 
         #region Métodos de Negocio y Cálculo Normativo

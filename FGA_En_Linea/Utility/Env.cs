@@ -241,7 +241,7 @@ namespace FGA
                 {
                     var rawList = men.GetMenu(roleId) ?? new MenuPermission[0];
                     var evaluacion = Env.GetUserInfo("evaluacion") == "S" ? -1 : Utility.Utilitarios.opcionEvaluacion;
-                    var globleList = rawList.Where(o => o.MenuId != evaluacion).ToList();
+                    var globleList = rawList.Where(o => o.MenuId != evaluacion && (o.Menu_MenuId == null || (!string.Equals(o.Menu_MenuId.MenuText, "IRL", StringComparison.OrdinalIgnoreCase) && !(o.Menu_MenuId.MenuURL ?? "").StartsWith("IRL/", StringComparison.OrdinalIgnoreCase)))).ToList();
 
                     // Homologación de texto visual para SUGEF y FFC ("Indicadores") si vienen en la base de datos
                     foreach (var item in globleList.Where(p => p.Menu_MenuId != null))
