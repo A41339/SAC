@@ -47,10 +47,8 @@ BEGIN
 END
 ELSE
 BEGIN
-    SET IDENTITY_INSERT dbo.Menu ON;
     INSERT INTO dbo.Menu (Id, MenuText, MenuURL, ParentId, SortOrder, MenuIcon, Description)
     VALUES (5000, 'Liquidez', 'Liquidez/Index', 1500, 3, '<i class="fa fa-tint"></i>', 'Reconfiguración del submódulo: Liquidez Contractual y Escenarios de Estrés.');
-    SET IDENTITY_INSERT dbo.Menu OFF;
     PRINT '   -> Opción 5000 [Liquidez] creada exitosamente.';
 END
 
@@ -72,10 +70,8 @@ BEGIN
 END
 ELSE
 BEGIN
-    SET IDENTITY_INSERT dbo.Menu ON;
     INSERT INTO dbo.Menu (Id, MenuText, MenuURL, ParentId, SortOrder, MenuIcon, Description)
     VALUES (5010, 'Liquidez Contractual', 'Liquidez/Contractual', 5000, 1, '<i class="fa fa-book"></i>', 'Cálculo e insumos del Indicador de Riesgo de Liquidez: Indicadores normativos, ICL, GAP Contractual e IFNE.');
-    SET IDENTITY_INSERT dbo.Menu OFF;
     PRINT '   -> Opción 5010 [Liquidez Contractual] creada exitosamente.';
 END
 
@@ -94,10 +90,8 @@ BEGIN
 END
 ELSE
 BEGIN
-    SET IDENTITY_INSERT dbo.Menu ON;
     INSERT INTO dbo.Menu (Id, MenuText, MenuURL, ParentId, SortOrder, MenuIcon, Description)
     VALUES (5020, 'Escenarios de Estrés', 'Liquidez/Estres', 5000, 2, '<i class="fa fa-bolt"></i>', 'Modelos proyectados de liquidez: Supuestos, Razón de Cobertura a 30 días, ICL Estresado, Brechas y Horizonte.');
-    SET IDENTITY_INSERT dbo.Menu OFF;
     PRINT '   -> Opción 5020 [Escenarios de Estrés] creada exitosamente.';
 END
 

@@ -622,10 +622,8 @@ BEGIN
 END
 ELSE
 BEGIN
-    SET IDENTITY_INSERT dbo.Menu ON;
     INSERT INTO dbo.Menu (Id, MenuText, MenuURL, ParentId, SortOrder, MenuIcon, Description)
     VALUES (5000, 'Liquidez', 'Liquidez/Index', 1500, 3, '<i class="fa fa-tint"></i>', 'Reconfiguración del submódulo: Liquidez Contractual y Escenarios de Estrés.');
-    SET IDENTITY_INSERT dbo.Menu OFF;
     PRINT '   -> Opción de menú 5000 [Liquidez] creada exitosamente.';
 END
 
