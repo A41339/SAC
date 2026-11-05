@@ -93,25 +93,25 @@
 
     <!-- Severo -->
     <div class="col-md-4 col-sm-6 col-xs-12">
-        <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 10px; padding: 18px 20px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); position: relative;">
+        <div style="background: #fff7ed; border: 1px solid #fed7aa; border-radius: 10px; padding: 18px 20px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); position: relative;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                <span style="font-size: 12px; font-weight: 800; color: #991b1b; text-transform: uppercase;">Escenario Severo</span>
-                <span class="badge" id="badgeSemaforoSev" style="background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; font-size: 10.5px; font-weight: 700;">
+                <span style="font-size: 12px; font-weight: 800; color: #9a3412; text-transform: uppercase;">Escenario Severo</span>
+                <span class="badge" id="badgeSemaforoSev" style="background: #ffedd5; color: #c2410c; border: 1px solid #fed7aa; font-size: 10.5px; font-weight: 700;">
                     <i class="fa fa-fire"></i> Acción Contingente
                 </span>
             </div>
-            <div id="lblDiasSev" style="font-size: 28px; font-weight: 800; color: #dc2626; margin-bottom: 4px;">@Model.Horizonte.DiasSupervivenciaSevero.ToString("N0") días</div>
-            <p style="font-size: 12px; color: #991b1b; margin: 0;">Banda de inflexión: <strong id="lblInflexionSev">@Model.Horizonte.HorizonteSevero</strong></p>
+            <div id="lblDiasSev" style="font-size: 28px; font-weight: 800; color: #ea580c; margin-bottom: 4px;">@Model.Horizonte.DiasSupervivenciaSevero.ToString("N0") días</div>
+            <p style="font-size: 12px; color: #9a3412; margin: 0;">Banda de inflexión: <strong id="lblInflexionSev">@Model.Horizonte.HorizonteSevero</strong></p>
             <div style="margin-top: 10px; display: flex; justify-content: center; align-items: center; gap: 8px; flex-wrap: wrap;">
-                <div id="lblBufferSev" style="font-size: 11px; font-weight: 700; color: #ffffff; background: #dc2626; padding: 4px 10px; border-radius: 6px;">
+                <div id="lblBufferSev" style="font-size: 11px; font-weight: 700; color: #ffffff; background: #ea580c; padding: 4px 10px; border-radius: 6px;">
                     <i class="fa fa-arrow-down"></i> Reducción: @Model.Horizonte.ReduccionDias.ToString("N0") días
                 </div>
-                <div style="font-size: 11px; font-weight: 600; color: #b91c1c; background: #ffffff; border: 1px solid #fecaca; padding: 4px 8px; border-radius: 6px;" title="Mes anterior: @Model.Horizonte.DiasSupervivenciaMesAnteriorSevero.ToString("N0") días">
+                <div style="font-size: 11px; font-weight: 600; color: #c2410c; background: #ffffff; border: 1px solid #fed7aa; padding: 4px 8px; border-radius: 6px;" title="Mes anterior: @Model.Horizonte.DiasSupervivenciaMesAnteriorSevero.ToString("N0") días">
                     <i class="fa fa-line-chart"></i> @(Model.Horizonte.VariacionDiasSevero >= 0 ? "+" + Model.Horizonte.VariacionDiasSevero.ToString("N0") : Model.Horizonte.VariacionDiasSevero.ToString("N0"))d vs mes ant.
                 </div>
             </div>
             <!-- Timeline Visual de Supervivencia (0 a 90+ días) -->
-            <div style="margin-top: 14px; text-align: left; background: #ffffff; border-radius: 8px; padding: 8px 12px; border: 1px solid #fecaca;">
+            <div style="margin-top: 14px; text-align: left; background: #ffffff; border-radius: 8px; padding: 8px 12px; border: 1px solid #fed7aa;">
                 <div style="display: flex; justify-content: space-between; font-size: 10px; color: #64748b; font-weight: 700; margin-bottom: 4px;">
                     <span>0d (Agotamiento)</span>
                     <span>30d</span>
@@ -121,9 +121,9 @@
                 <div style="height: 10px; background: #f1f5f9; border-radius: 5px; overflow: hidden; position: relative; border: 1px solid #cbd5e1;">
                     <div style="position: absolute; left: 33.3%; top: 0; bottom: 0; width: 1px; background: #94a3b8; z-index: 2;"></div>
                     <div style="position: absolute; left: 66.6%; top: 0; bottom: 0; width: 1px; background: #94a3b8; z-index: 2;"></div>
-                    <div id="progresoBarraSev" style="height: 100%; width: @(Math.Min(100, Math.Max(0, (double)Model.Horizonte.DiasSupervivenciaSevero / 90.0 * 100)).ToString("0.0", System.Globalization.CultureInfo.InvariantCulture))%; background: #dc2626; border-radius: 4px; transition: width 0.5s ease;"></div>
+                    <div id="progresoBarraSev" style="height: 100%; width: @(Math.Min(100, Math.Max(0, (double)Model.Horizonte.DiasSupervivenciaSevero / 90.0 * 100)).ToString("0.0", System.Globalization.CultureInfo.InvariantCulture))%; background: #ea580c; border-radius: 4px; transition: width 0.5s ease;"></div>
                 </div>
-                <div style="display: flex; justify-content: space-between; font-size: 9.5px; color: #991b1b; font-weight: 600; margin-top: 3px;">
+                <div style="display: flex; justify-content: space-between; font-size: 9.5px; color: #9a3412; font-weight: 600; margin-top: 3px;">
                     <span>Holgura estimada:</span>
                     <strong>@(Model.Horizonte.DiasSupervivenciaSevero.ToString("N0")) días de cobertura</strong>
                 </div>
@@ -164,24 +164,24 @@
                 <tbody>
                     <tr>
                         <td style="font-weight: 700; color: #1e3a8a;"><i class="fa fa-circle" style="color: #2b579a; font-size: 10px; margin-right: 6px;"></i> Base</td>
-                        <td style="text-align: right; font-weight: 600; color: #dc2626;">¢@Model.Horizonte.SaldoFinalBase.ToString("N2")</td>
+                        <td style="text-align: right; font-weight: 600; color: #1e40af;">¢@Model.Horizonte.SaldoFinalBase.ToString("N2")</td>
                         <td style="text-align: center; font-weight: 600;">@Model.Horizonte.HorizonteBase</td>
                         <td style="text-align: right; font-weight: 600;">¢@Model.Horizonte.BufferRemanenteBase.ToString("N2") MM</td>
                         <td style="text-align: center;"><span class="badge" style="background: #dbeafe; color: #1e40af; font-weight: 700; font-size: 12px; padding: 4px 10px;">> 90 días (@Model.Horizonte.DiasSupervivenciaBase.ToString("N0")d)</span></td>
                     </tr>
                     <tr>
-                        <td style="font-weight: 700; color: #92400e;"><i class="fa fa-circle" style="color: #f59e0b; font-size: 10px; margin-right: 6px;"></i> Moderado</td>
-                        <td style="text-align: right; font-weight: 600; color: #dc2626;">¢@Model.Horizonte.SaldoFinalModerado.ToString("N2")</td>
+                        <td style="font-weight: 700; color: #475569;"><i class="fa fa-circle" style="color: #64748b; font-size: 10px; margin-right: 6px;"></i> Moderado</td>
+                        <td style="text-align: right; font-weight: 600; color: #475569;">¢@Model.Horizonte.SaldoFinalModerado.ToString("N2")</td>
                         <td style="text-align: center; font-weight: 600;">@Model.Horizonte.HorizonteModerado</td>
                         <td style="text-align: right; font-weight: 600;">¢@Model.Horizonte.BufferRemanenteModerado.ToString("N2") MM</td>
-                        <td style="text-align: center;"><span class="badge" style="background: #fef3c7; color: #b45309; font-weight: 700; font-size: 12px; padding: 4px 10px;">@Model.Horizonte.DiasSupervivenciaModerado.ToString("N0") días</span></td>
+                        <td style="text-align: center;"><span class="badge" style="background: #f1f5f9; color: #475569; font-weight: 700; font-size: 12px; padding: 4px 10px; border: 1px solid #cbd5e1;">@Model.Horizonte.DiasSupervivenciaModerado.ToString("N0") días</span></td>
                     </tr>
                     <tr>
-                        <td style="font-weight: 700; color: #991b1b;"><i class="fa fa-circle" style="color: #ef4444; font-size: 10px; margin-right: 6px;"></i> Severo</td>
-                        <td style="text-align: right; font-weight: 600; color: #dc2626;">¢@Model.Horizonte.SaldoFinalSevero.ToString("N2")</td>
+                        <td style="font-weight: 700; color: #9a3412;"><i class="fa fa-circle" style="color: #ea580c; font-size: 10px; margin-right: 6px;"></i> Severo</td>
+                        <td style="text-align: right; font-weight: 600; color: #ea580c;">¢@Model.Horizonte.SaldoFinalSevero.ToString("N2")</td>
                         <td style="text-align: center; font-weight: 600;">@Model.Horizonte.HorizonteSevero</td>
                         <td style="text-align: right; font-weight: 600;">¢@Model.Horizonte.BufferRemanenteSevero.ToString("N2") MM</td>
-                        <td style="text-align: center;"><span class="badge" style="background: #fee2e2; color: #b91c1c; font-weight: 700; font-size: 12px; padding: 4px 10px;">@Model.Horizonte.DiasSupervivenciaSevero.ToString("N0") días</span></td>
+                        <td style="text-align: center;"><span class="badge" style="background: #ffedd5; color: #c2410c; font-weight: 700; font-size: 12px; padding: 4px 10px; border: 1px solid #fed7aa;">@Model.Horizonte.DiasSupervivenciaSevero.ToString("N0") días</span></td>
                     </tr>
                 </tbody>
             </table>

@@ -26,22 +26,22 @@
 <!-- 3 Tarjetas KPI Resumen del Escenario Activo (Requerimiento imagen 19) -->
 <div class="row" style="margin-bottom: 20px;">
     <div class="col-md-4 col-sm-4 col-xs-12">
-        <div class="info-box" style="border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); border: 1px solid #fed7aa; background: #fff7ed;">
-            <span class="info-box-icon" style="background-color: #ea580c; color: #ffffff; border-top-left-radius: 8px; border-bottom-left-radius: 8px;"><i class="fa fa-calendar-minus-o"></i></span>
+        <div class="info-box" style="border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); border: 1px solid #cbd5e1; background: #f8fafc;">
+            <span class="info-box-icon" style="background-color: #64748b; color: #ffffff; border-top-left-radius: 8px; border-bottom-left-radius: 8px;"><i class="fa fa-calendar-minus-o"></i></span>
             <div class="info-box-content" style="padding: 10px 14px;">
-                <span class="info-box-text" style="font-size: 12px; color: #9a3412; font-weight: 700;">GAP 30 DÍAS (BAJO ESTRÉS)</span>
-                <span class="info-box-number" id="lblBrecha30d" style="font-size: 22px; font-weight: 800; color: #c2410c;">¢-22,72 MM</span>
-                <span id="lblBrecha30dDesc" style="font-size: 11px; color: #9a3412;">Flujo neto inicial a 30 días</span>
+                <span class="info-box-text" style="font-size: 12px; color: #475569; font-weight: 700;">GAP 30 DÍAS (BAJO ESTRÉS)</span>
+                <span class="info-box-number" id="lblBrecha30d" style="font-size: 22px; font-weight: 800; color: #334155;">¢-22,72 MM</span>
+                <span id="lblBrecha30dDesc" style="font-size: 11px; color: #64748b;">Flujo neto inicial a 30 días</span>
             </div>
         </div>
     </div>
     <div class="col-md-4 col-sm-4 col-xs-12">
-        <div class="info-box" style="border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); border: 1px solid #fecaca; background: #fef2f2;">
-            <span class="info-box-icon" style="background-color: #dc2626; color: #ffffff; border-top-left-radius: 8px; border-bottom-left-radius: 8px;"><i class="fa fa-calendar"></i></span>
+        <div class="info-box" style="border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); border: 1px solid #fed7aa; background: #fff7ed;">
+            <span class="info-box-icon" style="background-color: #ea580c; color: #ffffff; border-top-left-radius: 8px; border-bottom-left-radius: 8px;"><i class="fa fa-calendar"></i></span>
             <div class="info-box-content" style="padding: 10px 14px;">
-                <span class="info-box-text" style="font-size: 12px; color: #991b1b; font-weight: 700;">GAP 90 DÍAS (BAJO ESTRÉS)</span>
-                <span class="info-box-number" id="lblBrecha90d" style="font-size: 22px; font-weight: 800; color: #b91c1c;">¢-461,02 MM</span>
-                <span id="lblBrecha90dDesc" style="font-size: 11px; color: #991b1b;">Flujo neto en banda 61-90 días</span>
+                <span class="info-box-text" style="font-size: 12px; color: #9a3412; font-weight: 700;">GAP 90 DÍAS (BAJO ESTRÉS)</span>
+                <span class="info-box-number" id="lblBrecha90d" style="font-size: 22px; font-weight: 800; color: #c2410c;">¢-461,02 MM</span>
+                <span id="lblBrecha90dDesc" style="font-size: 11px; color: #9a3412;">Flujo neto en banda 61-90 días</span>
             </div>
         </div>
     </div>
@@ -120,7 +120,7 @@
                 @for (int i = 0; i < 7; i++)
                 {
                     decimal val = (i < Model.BrechasEstres.BrechasBase.Count) ? Model.BrechasEstres.BrechasBase[i] : 0m;
-                    string col = val >= 0 ? "#1e40af" : "#b91c1c";
+                    string col = val >= 0 ? "#1e40af" : "#ea580c";
                     string sig = val >= 0 ? "+¢" : "-¢";
                     <td class="text-right font-mono" id="tdGap@(i)" style="color: @col;">@sig@Math.Abs(val).ToString("N2")</td>
                 }
@@ -130,7 +130,7 @@
                 @for (int i = 0; i < 7; i++)
                 {
                     decimal val = (i < Model.BrechasEstres.AcumuladoBase.Count) ? Model.BrechasEstres.AcumuladoBase[i] : 0m;
-                    string col = val >= 0 ? "#1e40af" : "#dc2626";
+                    string col = val >= 0 ? "#1e40af" : "#ea580c";
                     string sig = val >= 0 ? "+¢" : "-¢";
                     <td class="text-right font-mono" id="tdAcum@(i)" style="color: @col;">@sig@Math.Abs(val).ToString("N2")</td>
                 }
@@ -187,7 +187,7 @@
         } else if (escenario === 'moderado') {
             $('#btnEscenarioMod').css({ 'background': '#64748b', 'color': '#ffffff' });
         } else {
-            $('#btnEscenarioSev').css({ 'background': '#dc2626', 'color': '#ffffff' });
+            $('#btnEscenarioSev').css({ 'background': '#ea580c', 'color': '#ffffff' });
         }
 
         $('#lblBrecha30d').text(d.kpi30);
@@ -200,11 +200,11 @@
             
             var gapB = d.gapBanda[i];
             $('#tdGap' + i).text(formatearMontoCelda(gapB, true))
-                           .css('color', gapB >= 0 ? '#1e40af' : '#b91c1c');
+                           .css('color', gapB >= 0 ? '#1e40af' : '#ea580c');
 
             var gapA = d.gapAcum[i];
             $('#tdAcum' + i).text(formatearMontoCelda(gapA, true))
-                            .css('color', gapA >= 0 ? '#1e40af' : '#dc2626');
+                            .css('color', gapA >= 0 ? '#1e40af' : '#ea580c');
         }
 
         // Actualizar gráfico Highcharts de Brechas por Banda

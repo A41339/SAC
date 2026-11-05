@@ -226,7 +226,7 @@
                     </li>
                     <li>
                         <a href="#tab-horizonte" data-toggle="tab" class="sub-tab-link">
-                            <i class="fa fa-hourglass-end" style="color: #dc2626; margin-right: 5px;"></i> Horizonte de Supervivencia
+                            <i class="fa fa-hourglass-end" style="color: #ea580c; margin-right: 5px;"></i> Horizonte de Supervivencia
                         </a>
                     </li>
                 </ul>
@@ -349,14 +349,14 @@
                         title: { text: 'Ratio de Cobertura (x)' },
                         plotLines: [{
                             value: 1.0,
-                            color: '#dc2626',
+                            color: '#ea580c',
                             dashStyle: 'dash',
                             width: 2,
                             zIndex: 5,
-                            label: { text: 'Límite Cobertura (1.00x)', align: 'right', style: { color: '#dc2626', fontWeight: 'bold' } }
+                            label: { text: 'Límite Cobertura (1.00x)', align: 'right', style: { color: '#ea580c', fontWeight: 'bold' } }
                         }],
                         plotBands: [
-                            { from: 0, to: 1.0, color: 'rgba(220, 38, 38, 0.05)', label: { text: 'Zona de Déficit (< 1.00x)', style: { color: '#dc2626', fontSize: '10.5px', fontWeight: 'bold' } } },
+                            { from: 0, to: 1.0, color: 'rgba(234, 88, 12, 0.05)', label: { text: 'Zona de Déficit (< 1.00x)', style: { color: '#ea580c', fontSize: '10.5px', fontWeight: 'bold' } } },
                             { from: 1.0, to: 10.0, color: 'rgba(43, 87, 154, 0.03)', label: { text: 'Zona Adecuada (≥ 1.00x)', style: { color: '#2b579a', fontSize: '10.5px', fontWeight: 'bold' } } }
                         ]
                     },
@@ -364,7 +364,7 @@
                         useHTML: true,
                         formatter: function () {
                             var val = this.y;
-                            var estado = val >= 1.0 ? '<span style="color:#2b579a;font-weight:700;"><i class="fa fa-check-circle"></i> Cobertura Conforme (≥ 1.00x)</span>' : '<span style="color:#dc2626;font-weight:700;"><i class="fa fa-warning"></i> Presión de Liquidez (< 1.00x)</span>';
+                            var estado = val >= 1.0 ? '<span style="color:#2b579a;font-weight:700;"><i class="fa fa-check-circle"></i> Cobertura Conforme (≥ 1.00x)</span>' : '<span style="color:#ea580c;font-weight:700;"><i class="fa fa-warning"></i> Presión de Liquidez (< 1.00x)</span>';
                             return '<div style="font-size:12px; font-weight:700; color:#143750; margin-bottom:4px;">' + this.x + '</div>' +
                                    '<div style="margin:4px 0; font-size:13px;">Ratio: <strong style="font-family:monospace; font-size:14px;">' + val.toFixed(2) + 'x</strong></div>' +
                                    '<div style="font-size:11px; margin-top:4px;">' + estado + '</div>';
@@ -375,7 +375,7 @@
                         data: [
                             { y: @Model.RazonCobertura.RazonCobertura_Base.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture), color: '#2b579a' },
                             { y: @Model.RazonCobertura.RazonCobertura_Moderado.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture), color: '#64748b' },
-                            { y: @Model.RazonCobertura.RazonCobertura_Severo.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture), color: '#dc2626' }
+                            { y: @Model.RazonCobertura.RazonCobertura_Severo.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture), color: '#ea580c' }
                         ],
                         dataLabels: { enabled: true, format: '{y:.2f}x' }
                     }],
@@ -397,14 +397,14 @@
                         title: { text: 'Ratio ICL (x)' },
                         plotLines: [{
                             value: 1.0,
-                            color: '#dc2626',
+                            color: '#ea580c',
                             dashStyle: 'dash',
                             width: 2,
                             zIndex: 5,
-                            label: { text: 'Mínimo SUGEF (1.00x / 100%)', align: 'right', style: { color: '#dc2626', fontWeight: 'bold' } }
+                            label: { text: 'Mínimo SUGEF (1.00x / 100%)', align: 'right', style: { color: '#ea580c', fontWeight: 'bold' } }
                         }],
                         plotBands: [
-                            { from: 0, to: 1.0, color: 'rgba(220, 38, 38, 0.05)', label: { text: 'Déficit Normativo (< 1.00x)', style: { color: '#dc2626', fontSize: '10.5px', fontWeight: 'bold' } } },
+                            { from: 0, to: 1.0, color: 'rgba(234, 88, 12, 0.05)', label: { text: 'Déficit Normativo (< 1.00x)', style: { color: '#ea580c', fontSize: '10.5px', fontWeight: 'bold' } } },
                             { from: 1.0, to: 10.0, color: 'rgba(43, 87, 154, 0.03)', label: { text: 'Cumplimiento SUGEF (≥ 1.00x)', style: { color: '#2b579a', fontSize: '10.5px', fontWeight: 'bold' } } }
                         ]
                     },
@@ -413,7 +413,7 @@
                         formatter: function () {
                             var val = this.y;
                             var pct = (val * 100).toFixed(0);
-                            var estado = val >= 1.0 ? '<span style="color:#2b579a;font-weight:700;"><i class="fa fa-check-circle"></i> Cumple Meta Regulatoria</span>' : '<span style="color:#dc2626;font-weight:700;"><i class="fa fa-exclamation-triangle"></i> Incumplimiento Normativo</span>';
+                            var estado = val >= 1.0 ? '<span style="color:#2b579a;font-weight:700;"><i class="fa fa-check-circle"></i> Cumple Meta Regulatoria</span>' : '<span style="color:#ea580c;font-weight:700;"><i class="fa fa-exclamation-triangle"></i> Incumplimiento Normativo</span>';
                             return '<div style="font-size:12px; font-weight:700; color:#143750; margin-bottom:4px;">' + this.x + '</div>' +
                                    '<div style="margin:4px 0; font-size:13px;">ICL: <strong style="font-family:monospace; font-size:14px;">' + val.toFixed(2) + 'x (' + pct + '%)</strong></div>' +
                                    '<div style="font-size:11px; margin-top:4px;">' + estado + '</div>';
@@ -424,7 +424,7 @@
                         data: [
                             { y: @Model.ICLEstresado.ICLBase.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture), color: '#2b579a' },
                             { y: @Model.ICLEstresado.ICLModerado.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture), color: '#64748b' },
-                            { y: @Model.ICLEstresado.ICLSevero.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture), color: '#dc2626' }
+                            { y: @Model.ICLEstresado.ICLSevero.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture), color: '#ea580c' }
                         ],
                         dataLabels: { enabled: true, format: '{y:.2f}x' }
                     }],
@@ -464,10 +464,10 @@
                         title: { text: 'GAP Acumulado con FAL (MM ¢)' },
                         plotLines: [{
                             value: 0,
-                            color: '#dc2626',
+                            color: '#ea580c',
                             dashStyle: 'shortdash',
                             width: 2,
-                            label: { text: 'Agotamiento FAL (¢0)', align: 'right', style: { color: '#dc2626', fontWeight: 'bold' } }
+                            label: { text: 'Agotamiento FAL (¢0)', align: 'right', style: { color: '#ea580c', fontWeight: 'bold' } }
                         }]
                     },
                     tooltip: {
@@ -479,7 +479,7 @@
                     series: [
                         { name: 'Escenario Base', data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.BrechasEstres.AcumuladoBase)), color: '#2b579a', lineWidth: 3, marker: { symbol: 'circle', radius: 4 } },
                         { name: 'Escenario Moderado', data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.BrechasEstres.AcumuladoModerado)), color: '#64748b', lineWidth: 3, marker: { symbol: 'diamond', radius: 5 } },
-                        { name: 'Escenario Severo', data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.BrechasEstres.AcumuladoSevero)), color: '#dc2626', lineWidth: 3, marker: { symbol: 'square', radius: 4 } }
+                        { name: 'Escenario Severo', data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.BrechasEstres.AcumuladoSevero)), color: '#ea580c', lineWidth: 3, marker: { symbol: 'square', radius: 4 } }
                     ],
                     exporting: { enabled: true },
                     credits: { enabled: false }
@@ -499,10 +499,10 @@
                         title: { text: 'Recursos Líquidos (MM ¢)' },
                         plotLines: [{
                             value: 0,
-                            color: '#dc2626',
+                            color: '#ea580c',
                             dashStyle: 'solid',
                             width: 2,
-                            label: { text: 'Agotamiento de Liquidez (¢0)', align: 'left', style: { color: '#dc2626', fontWeight: 'bold' } }
+                            label: { text: 'Agotamiento de Liquidez (¢0)', align: 'left', style: { color: '#ea580c', fontWeight: 'bold' } }
                         }]
                     },
                     tooltip: {
@@ -514,7 +514,7 @@
                     series: [
                         { name: 'Escenario Base (@Model.Horizonte.DiasSupervivenciaBase.ToString("N0")d)', data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Horizonte.TrayectoriaBase)), color: '#2b579a', fillColor: 'rgba(43, 87, 154, 0.12)' },
                         { name: 'Escenario Moderado (@Model.Horizonte.DiasSupervivenciaModerado.ToString("N0")d)', data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Horizonte.TrayectoriaModerado)), color: '#64748b', fillColor: 'rgba(100, 116, 139, 0.12)' },
-                        { name: 'Escenario Severo (@Model.Horizonte.DiasSupervivenciaSevero.ToString("N0")d)', data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Horizonte.TrayectoriaSevero)), color: '#dc2626', fillColor: 'rgba(220, 38, 38, 0.12)' }
+                        { name: 'Escenario Severo (@Model.Horizonte.DiasSupervivenciaSevero.ToString("N0")d)', data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Horizonte.TrayectoriaSevero)), color: '#ea580c', fillColor: 'rgba(234, 88, 12, 0.12)' }
                     ],
                     exporting: { enabled: true },
                     credits: { enabled: false }

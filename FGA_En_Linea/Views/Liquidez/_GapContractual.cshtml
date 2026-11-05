@@ -21,32 +21,32 @@
 <!-- 4 Tarjetas KPI Resumen del GAP Contractual (Requerimiento imagen 7) -->
 <div class="row" style="margin-bottom: 20px;">
     <div class="col-md-3 col-sm-6 col-xs-12">
-        <div class="info-box" style="border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); border: 1px solid #fed7aa; background: #fff7ed;">
-            <span class="info-box-icon" style="background-color: #ea580c; color: #ffffff; border-top-left-radius: 8px; border-bottom-left-radius: 8px;"><i class="fa fa-calendar-minus-o"></i></span>
+        <div class="info-box" style="border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); border: 1px solid #cbd5e1; background: #f8fafc;">
+            <span class="info-box-icon" style="background-color: #64748b; color: #ffffff; border-top-left-radius: 8px; border-bottom-left-radius: 8px;"><i class="fa fa-calendar-minus-o"></i></span>
             <div class="info-box-content" style="padding: 10px 14px;">
-                <span class="info-box-text" style="font-size: 11.5px; color: #9a3412; font-weight: 700;">GAP ACUMULADO 30 DÍAS</span>
-                <span class="info-box-number" style="font-size: 20px; font-weight: 800; color: #c2410c;">¢@(Model.GapDatos.BrechasBanda[0].ToString("N2")) MM</span>
-                <span style="font-size: 11px; color: #9a3412; font-weight: 600;">(Acum: ¢@Model.GapDatos.GapAcumulado30d.ToString("N2") MM)</span>
+                <span class="info-box-text" style="font-size: 11.5px; color: #475569; font-weight: 700;">GAP ACUMULADO 30 DÍAS</span>
+                <span class="info-box-number" style="font-size: 20px; font-weight: 800; color: #334155;">¢@(Model.GapDatos.BrechasBanda[0].ToString("N2")) MM</span>
+                <span style="font-size: 11px; color: #64748b; font-weight: 600;">(Acum: ¢@Model.GapDatos.GapAcumulado30d.ToString("N2") MM)</span>
             </div>
         </div>
     </div>
     <div class="col-md-3 col-sm-6 col-xs-12">
         <div class="info-box" style="border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); border: 1px solid #fed7aa; background: #fff7ed;">
-            <span class="info-box-icon" style="background-color: #f97316; color: #ffffff; border-top-left-radius: 8px; border-bottom-left-radius: 8px;"><i class="fa fa-calendar"></i></span>
+            <span class="info-box-icon" style="background-color: #ea580c; color: #ffffff; border-top-left-radius: 8px; border-bottom-left-radius: 8px;"><i class="fa fa-calendar"></i></span>
             <div class="info-box-content" style="padding: 10px 14px;">
                 <span class="info-box-text" style="font-size: 11.5px; color: #9a3412; font-weight: 700;">GAP ACUMULADO 90 DÍAS</span>
-                <span class="info-box-number" style="font-size: 20px; font-weight: 800; color: #ea580c;">¢@(Model.GapDatos.BrechasBanda[2].ToString("N2")) MM</span>
+                <span class="info-box-number" style="font-size: 20px; font-weight: 800; color: #c2410c;">¢@(Model.GapDatos.BrechasBanda[2].ToString("N2")) MM</span>
                 <span style="font-size: 11px; color: #9a3412; font-weight: 600;">(Acum: ¢@Model.GapDatos.GapAcumulado90d.ToString("N2") MM)</span>
             </div>
         </div>
     </div>
     <div class="col-md-3 col-sm-6 col-xs-12">
-        <div class="info-box" style="border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); border: 1px solid #fecaca; background: #fef2f2;">
-            <span class="info-box-icon" style="background-color: #dc2626; color: #ffffff; border-top-left-radius: 8px; border-bottom-left-radius: 8px;"><i class="fa fa-exclamation-triangle"></i></span>
+        <div class="info-box" style="border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); border: 1px solid #fed7aa; background: #fff7ed;">
+            <span class="info-box-icon" style="background-color: #f97316; color: #ffffff; border-top-left-radius: 8px; border-bottom-left-radius: 8px;"><i class="fa fa-exclamation-triangle"></i></span>
             <div class="info-box-content" style="padding: 10px 14px;">
-                <span class="info-box-text" style="font-size: 11.5px; color: #991b1b; font-weight: 700;">MÁXIMA BRECHA</span>
-                <span class="info-box-number" style="font-size: 20px; font-weight: 800; color: #b91c1c;">¢@(Model.GapDatos.MaximaBrecha.ToString("N2")) MM</span>
-                <span style="font-size: 11px; color: #991b1b; font-weight: 600;">Banda: @Model.GapDatos.BandaCritica</span>
+                <span class="info-box-text" style="font-size: 11.5px; color: #9a3412; font-weight: 700;">MÁXIMA BRECHA</span>
+                <span class="info-box-number" style="font-size: 20px; font-weight: 800; color: #c2410c;">¢@(Model.GapDatos.MaximaBrecha.ToString("N2")) MM</span>
+                <span style="font-size: 11px; color: #9a3412; font-weight: 600;">Banda: @Model.GapDatos.BandaCritica</span>
             </div>
         </div>
     </div>
@@ -196,7 +196,7 @@
                 @for (int b = 0; b < 7; b++)
                 {
                     decimal val = (b < Model.GapDatos.BrechasBanda.Count) ? Model.GapDatos.BrechasBanda[b] : 0m;
-                    string color = val >= 0 ? "#1e40af" : "#b91c1c";
+                    string color = val >= 0 ? "#1e40af" : "#ea580c";
                     string sign = val >= 0 ? "+¢" : "-¢";
                     <td class="text-right font-mono" style="color: @color;">@sign@Math.Abs(val).ToString("N2")</td>
                 }
@@ -208,7 +208,7 @@
                 @for (int b = 0; b < 7; b++)
                 {
                     decimal val = (b < Model.GapDatos.BrechasAcumuladas.Count) ? Model.GapDatos.BrechasAcumuladas[b] : 0m;
-                    string color = val >= 0 ? "#1e40af" : "#dc2626";
+                    string color = val >= 0 ? "#1e40af" : "#ea580c";
                     string sign = val >= 0 ? "+¢" : "-¢";
                     <td class="text-right font-mono" style="color: @color;">@sign@Math.Abs(val).ToString("N2")</td>
                 }

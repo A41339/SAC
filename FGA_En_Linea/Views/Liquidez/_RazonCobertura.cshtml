@@ -24,23 +24,23 @@
     </div>
 
     <div class="col-md-4 col-sm-4 col-xs-12">
-        <div class="info-box" style="border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); border: 1px solid #fed7aa; background: #fff7ed;">
-            <span class="info-box-icon" style="background-color: #ea580c; color: #ffffff; border-top-left-radius: 8px; border-bottom-left-radius: 8px;"><i class="fa fa-exclamation-circle"></i></span>
+        <div class="info-box" style="border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); border: 1px solid #cbd5e1; background: #f8fafc;">
+            <span class="info-box-icon" style="background-color: #64748b; color: #ffffff; border-top-left-radius: 8px; border-bottom-left-radius: 8px;"><i class="fa fa-sliders"></i></span>
             <div class="info-box-content" style="padding: 10px 14px;">
-                <span class="info-box-text" style="font-size: 12px; color: #9a3412; font-weight: 700;">SIMULACIÓN MODERADA (30 DÍAS)</span>
-                <span class="info-box-number" id="lblRCMod" style="font-size: 24px; font-weight: 800; color: #c2410c;">@(Model.RazonCobertura.RazonCobertura_Moderado.ToString("N2"))x</span>
-                <span style="font-size: 11.5px; color: #9a3412;">Sensibilidad media</span>
+                <span class="info-box-text" style="font-size: 12px; color: #475569; font-weight: 700;">SIMULACIÓN MODERADA (30 DÍAS)</span>
+                <span class="info-box-number" id="lblRCMod" style="font-size: 24px; font-weight: 800; color: #334155;">@(Model.RazonCobertura.RazonCobertura_Moderado.ToString("N2"))x</span>
+                <span style="font-size: 11.5px; color: #64748b;">Sensibilidad media</span>
             </div>
         </div>
     </div>
 
     <div class="col-md-4 col-sm-4 col-xs-12">
-        <div class="info-box" style="border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); border: 1px solid #fecaca; background: #fef2f2;">
-            <span class="info-box-icon" style="background-color: #dc2626; color: #ffffff; border-top-left-radius: 8px; border-bottom-left-radius: 8px;"><i class="fa fa-warning"></i></span>
+        <div class="info-box" style="border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); border: 1px solid #fed7aa; background: #fff7ed;">
+            <span class="info-box-icon" style="background-color: #ea580c; color: #ffffff; border-top-left-radius: 8px; border-bottom-left-radius: 8px;"><i class="fa fa-warning"></i></span>
             <div class="info-box-content" style="padding: 10px 14px;">
-                <span class="info-box-text" style="font-size: 12px; color: #991b1b; font-weight: 700;">SIMULACIÓN SEVERA (30 DÍAS)</span>
-                <span class="info-box-number" id="lblRCSevero" style="font-size: 24px; font-weight: 800; color: #b91c1c;">@(Model.RazonCobertura.RazonCobertura_Severo.ToString("N2"))x</span>
-                <span style="font-size: 11.5px; color: #991b1b;">Presión extrema de liquidez</span>
+                <span class="info-box-text" style="font-size: 12px; color: #9a3412; font-weight: 700;">SIMULACIÓN SEVERA (30 DÍAS)</span>
+                <span class="info-box-number" id="lblRCSevero" style="font-size: 24px; font-weight: 800; color: #c2410c;">@(Model.RazonCobertura.RazonCobertura_Severo.ToString("N2"))x</span>
+                <span style="font-size: 11.5px; color: #9a3412;">Presión extrema de liquidez</span>
             </div>
         </div>
     </div>
@@ -159,8 +159,8 @@
                 decimal difTotalMod = Model.RazonCobertura.CDPDiferencia_Moderado + Model.RazonCobertura.SalidaTop20Diferencia_Moderado + Model.RazonCobertura.CorridaVistaDiferencia_Moderado + Model.RazonCobertura.DesembolsoCarteraDiferencia_Moderado;
                 decimal difTotalSev = Model.RazonCobertura.CDPDiferencia_Severo + Model.RazonCobertura.SalidaTop20Diferencia_Severo + Model.RazonCobertura.CorridaVistaDiferencia_Severo + Model.RazonCobertura.DesembolsoCarteraDiferencia_Severo;
             }
-            <tr style="background-color: #fef2f2; font-weight: 700; border-top: 2px solid #e2e8f0;">
-                <td style="color: #991b1b; padding: 10px 16px;"><i class="fa fa-sliders" style="color: #ef4444; margin-right: 6px;"></i> Variables Proyectivas (Diferencia de Escenarios)</td>
+            <tr style="background-color: #fff7ed; font-weight: 700; border-top: 2px solid #e2e8f0;">
+                <td style="color: #9a3412; padding: 10px 16px;"><i class="fa fa-sliders" style="color: #ea580c; margin-right: 6px;"></i> Variables Proyectivas (Diferencia de Escenarios)</td>
                 <td class="text-right font-mono">¢0.00</td>
                 <td class="text-right font-mono">¢@difTotalMod.ToString("N2")</td>
                 <td class="text-right font-mono">¢@difTotalSev.ToString("N2")</td>
@@ -195,19 +195,19 @@
                 <td style="color: #1e40af; font-size: 14px; padding: 12px 16px;">Razón de Cobertura (30 días)</td>
                 <td class="text-right font-mono" style="font-size: 15px; color: #1e40af;">
                     @(Model.RazonCobertura.RazonCobertura_Base.ToString("N2"))x
-                    <div style="font-size: 10.5px; font-weight: 700; color: @(Model.RazonCobertura.RazonCobertura_Base >= 1.0m ? "#1e40af" : "#dc2626"); margin-top: 2px;">
+                    <div style="font-size: 10.5px; font-weight: 700; color: @(Model.RazonCobertura.RazonCobertura_Base >= 1.0m ? "#1e40af" : "#ea580c"); margin-top: 2px;">
                         @(Model.RazonCobertura.RazonCobertura_Base >= 1.0m ? "Conforme" : "Déficit")
                     </div>
                 </td>
                 <td class="text-right font-mono" style="font-size: 15px; color: #475569;">
                     @(Model.RazonCobertura.RazonCobertura_Moderado.ToString("N2"))x
-                    <div style="font-size: 10.5px; font-weight: 700; color: @(Model.RazonCobertura.RazonCobertura_Moderado >= 1.0m ? "#475569" : "#dc2626"); margin-top: 2px;">
+                    <div style="font-size: 10.5px; font-weight: 700; color: @(Model.RazonCobertura.RazonCobertura_Moderado >= 1.0m ? "#475569" : "#ea580c"); margin-top: 2px;">
                         @(Model.RazonCobertura.RazonCobertura_Moderado >= 1.0m ? "Conforme" : "Déficit")
                     </div>
                 </td>
-                <td class="text-right font-mono" style="font-size: 15px; color: #b91c1c;">
+                <td class="text-right font-mono" style="font-size: 15px; color: #c2410c;">
                     @(Model.RazonCobertura.RazonCobertura_Severo.ToString("N2"))x
-                    <div style="font-size: 10.5px; font-weight: 700; color: @(Model.RazonCobertura.RazonCobertura_Severo >= 1.0m ? "#475569" : "#dc2626"); margin-top: 2px;">
+                    <div style="font-size: 10.5px; font-weight: 700; color: @(Model.RazonCobertura.RazonCobertura_Severo >= 1.0m ? "#475569" : "#ea580c"); margin-top: 2px;">
                         @(Model.RazonCobertura.RazonCobertura_Severo >= 1.0m ? "Conforme" : "Déficit")
                     </div>
                 </td>
