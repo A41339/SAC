@@ -484,8 +484,36 @@ else
             }, 300);
         }
 
+        function renderGraficoBrechasEstres() {
+            var el = document.getElementById('chartBrechasEstresComparativo');
+            if (el) {
+                Highcharts.chart('chartBrechasEstresComparativo', {
+                    chart: { type: 'column' },
+                    title: { text: 'Comparativo de Brechas de Liquidez por Escenario', style: { fontWeight: '700', color: '#143750' } },
+                    xAxis: { categories: ['1 a 30 d', '31 a 60 d', '61 a 90 d', '91 a 180 d', '181 a 270 d', '271 a 365 d', '> 365 d'] },
+                    yAxis: { title: { text: 'Millones de Colones (¢)' } },
+                    series: [
+                        { name: 'Escenario Base', data: [-46.1, -94.5, -85.1, -95.2, -39.9, -25.0, 60.5], color: '#16a34a' },
+                        { name: 'Escenario Moderado', data: [-78.4, -135.2, -112.0, -120.4, -65.0, -42.1, 35.0], color: '#ea580c' },
+                        { name: 'Escenario Severo', data: [-125.0, -190.5, -155.3, -160.8, -98.2, -70.4, 10.2], color: '#dc2626' }
+                    ],
+                    credits: { enabled: false }
+                });
+            }
+        }
+
         $(document).ready(function() {
             renderGraficosGap();
+            renderGraficoBrechasEstres();
+
+            $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                var target = $(e.target).attr('href');
+                if (target === '#tab-gap') {
+                    renderGraficosGap();
+                } else if (target === '#tab-brechas-estres') {
+                    renderGraficoBrechasEstres();
+                }
+            });
         });
     </script>
 }

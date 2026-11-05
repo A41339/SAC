@@ -34,16 +34,16 @@
     </div>
 </div>
 
-<!-- Tabla Resumen de Brechas por Banda -->
-<div class="table-responsive" style="margin-top: 10px;">
-    <table id="tblGapResumen" class="table table-bordered table-striped modern-data-table" style="width: 100%;">
-        <thead>
-            <tr style="background-color: #f1f5f9;">
-                <th class="text-left">Banda Temporal</th>
-                <th class="text-right">Entradas (MM ¢)</th>
-                <th class="text-right">Salidas (MM ¢)</th>
-                <th class="text-right">Brecha de Banda (MM ¢)</th>
-                <th class="text-right">Brecha Acumulada (MM ¢)</th>
+<!-- Tabla Resumen de Brechas por Banda con diseño oficial (#2b579a) -->
+<div class="table-responsive" style="border-radius: 6px; overflow: hidden; border: 1px solid #cbd5e1; box-shadow: 0 1px 3px rgba(0,0,0,0.04); margin-top: 10px;">
+    <table id="tblGapResumen" class="table table-striped modern-data-table" style="width: 100%; margin-bottom: 0; border-collapse: collapse;">
+        <thead style="background-color: #2b579a; color: #ffffff;">
+            <tr>
+                <th class="text-left" style="width: 24%; text-align: left !important; color: #ffffff !important; padding: 11px 16px; font-weight: 700; font-size: 13px; border: none;">Banda Temporal</th>
+                <th class="text-right" style="width: 19%; text-align: right !important; color: #ffffff !important; padding: 11px 14px; font-weight: 700; font-size: 13px; border: none; white-space: nowrap;">Entradas (MM ¢)</th>
+                <th class="text-right" style="width: 19%; text-align: right !important; color: #ffffff !important; padding: 11px 14px; font-weight: 700; font-size: 13px; border: none; white-space: nowrap;">Salidas (MM ¢)</th>
+                <th class="text-right" style="width: 19%; text-align: right !important; color: #ffffff !important; padding: 11px 14px; font-weight: 700; font-size: 13px; border: none; white-space: nowrap;">Brecha de Banda (MM ¢)</th>
+                <th class="text-right" style="width: 19%; text-align: right !important; color: #ffffff !important; padding: 11px 16px; font-weight: 700; font-size: 13px; border: none; white-space: nowrap;">Brecha Acumulada (MM ¢)</th>
             </tr>
         </thead>
         <tbody>
@@ -56,16 +56,16 @@
                     decimal bBanda = Model.GapDatos.BrechasBanda.Count > i ? Model.GapDatos.BrechasBanda[i] : (ent - sal);
                     decimal bAcum = Model.GapDatos.BrechasAcumuladas.Count > i ? Model.GapDatos.BrechasAcumuladas[i] : 0m;
 
-                    <tr>
-                        <td class="text-left" style="font-weight: 600; color: #1e3a8a;">@Model.GapDatos.Bandas[i]</td>
-                        <td class="text-right" style="color: #047857; font-weight: 600; cursor: pointer;" onclick="verDetalleEntradasSalidas('entradas', '@Model.GapDatos.Bandas[i]')">
+                    <tr style="border-bottom: 1px solid #e2e8f0;">
+                        <td class="text-left" style="padding: 10px 16px; vertical-align: middle; font-weight: 700; color: #1e3a8a; font-size: 13px;">@Model.GapDatos.Bandas[i]</td>
+                        <td class="text-right" style="padding: 10px 14px; vertical-align: middle; color: #047857; font-weight: 600; font-size: 13px; font-variant-numeric: tabular-nums; cursor: pointer;" onclick="verDetalleEntradasSalidas('entradas', '@Model.GapDatos.Bandas[i]')" title="Haga clic para ver detalle de entradas">
                             <i class="fa fa-search-plus" style="font-size: 11px; margin-right: 4px; color: #10b981;"></i> @ent.ToString("N2")
                         </td>
-                        <td class="text-right" style="color: #c2410c; font-weight: 600; cursor: pointer;" onclick="verDetalleEntradasSalidas('salidas', '@Model.GapDatos.Bandas[i]')">
+                        <td class="text-right" style="padding: 10px 14px; vertical-align: middle; color: #c2410c; font-weight: 600; font-size: 13px; font-variant-numeric: tabular-nums; cursor: pointer;" onclick="verDetalleEntradasSalidas('salidas', '@Model.GapDatos.Bandas[i]')" title="Haga clic para ver detalle de salidas">
                             <i class="fa fa-search-plus" style="font-size: 11px; margin-right: 4px; color: #f97316;"></i> @sal.ToString("N2")
                         </td>
-                        <td class="text-right" style="font-weight: 700; color: @(bBanda >= 0 ? "#047857" : "#b91c1c");">@bBanda.ToString("N2")</td>
-                        <td class="text-right" style="font-weight: 700; color: @(bAcum >= 0 ? "#0284c7" : "#dc2626"); background-color: #f8fafc;">@bAcum.ToString("N2")</td>
+                        <td class="text-right" style="padding: 10px 14px; vertical-align: middle; font-weight: 700; font-size: 13px; font-variant-numeric: tabular-nums; color: @(bBanda >= 0 ? "#047857" : "#b91c1c");">@bBanda.ToString("N2")</td>
+                        <td class="text-right" style="padding: 10px 16px; vertical-align: middle; font-weight: 700; font-size: 13px; font-variant-numeric: tabular-nums; color: @(bAcum >= 0 ? "#0284c7" : "#dc2626"); background-color: #f8fafc;">@bAcum.ToString("N2")</td>
                     </tr>
                 }
             }
