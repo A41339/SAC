@@ -245,17 +245,50 @@
         }
 
         function renderGraficoBrechasEstres() {
-            var el = document.getElementById('chartBrechasEstresComparativo');
-            if (el) {
-                Highcharts.chart('chartBrechasEstresComparativo', {
+            var elBanda = document.getElementById('chartBrechasBanda');
+            if (elBanda) {
+                Highcharts.chart('chartBrechasBanda', {
                     chart: { type: 'column' },
-                    title: { text: 'Flujos Estresados y GAP Acumulado por Banda', style: { fontWeight: '700', color: '#143750', fontSize: '15px' } },
+                    title: { text: 'Brechas de Liquidez por Banda', style: { fontWeight: '700', color: '#143750', fontSize: '15px' } },
+                    subtitle: { text: 'Entradas vs Salidas estresadas y GAP de la banda (Millones de ¢)' },
                     xAxis: { categories: ['1 a 30 d', '31 a 60 d', '61 a 90 d', '91 a 180 d', '181 a 270 d', '271 a 360 d', '(+) 360 d'] },
                     yAxis: { title: { text: 'Millones de Colones (¢)' } },
                     series: [
-                        { type: 'column', name: 'Entradas', data: [767.14, 867.73, 218.32, 706.75, 891.61, 1096.19, 5671.70], color: '#10b981' },
-                        { type: 'column', name: 'Salidas Estresadas', data: [789.86, 686.40, 679.33, 2018.24, 1965.48, 2032.98, 7598.20], color: '#f97316' },
-                        { type: 'spline', name: 'GAP Acumulado', data: [1180.81, 1362.14, 901.12, -410.37, -1484.25, -2421.04, -4347.54], color: '#0284c7', lineWidth: 3, marker: { radius: 4 } }
+                        { type: 'column', name: 'Entradas Estresadas', data: [767.14, 867.73, 218.32, 706.75, 891.61, 1096.19, 5671.70], color: '#16a34a' },
+                        { type: 'column', name: 'Salidas Estresadas', data: [789.86, 686.40, 679.33, 2018.24, 1965.48, 2032.98, 7598.20], color: '#ea580c' },
+                        { type: 'spline', name: 'GAP por Banda', data: [-22.72, 181.33, -461.02, -1311.49, -1073.88, -936.79, -1926.50], color: '#2b579a', lineWidth: 2, marker: { radius: 4 } }
+                    ],
+                    credits: { enabled: false }
+                });
+            }
+
+            var elFAL = document.getElementById('chartBrechasAcumuladoFAL');
+            if (elFAL) {
+                Highcharts.chart('chartBrechasAcumuladoFAL', {
+                    chart: { type: 'spline' },
+                    title: { text: 'Brecha Acumulada considera el FAL de Liquidez bajo Estrés', style: { fontWeight: '700', color: '#143750', fontSize: '15px' } },
+                    subtitle: { text: 'Trayectoria multiescenario de acumulación de liquidez (Millones de ¢)' },
+                    xAxis: { categories: ['1 a 30 d', '31 a 60 d', '61 a 90 d', '91 a 180 d', '181 a 270 d', '271 a 360 d', '(+) 360 d'] },
+                    yAxis: {
+                        title: { text: 'GAP Acumulado con FAL (MM ¢)' },
+                        plotLines: [{
+                            value: 0,
+                            color: '#dc2626',
+                            dashStyle: 'shortdash',
+                            width: 2,
+                            label: { text: 'Agotamiento FAL (¢0)', align: 'right', style: { color: '#dc2626', fontWeight: 'bold' } }
+                        }]
+                    },
+                    tooltip: {
+                        shared: true,
+                        valueDecimals: 2,
+                        valuePrefix: '¢',
+                        valueSuffix: ' MM'
+                    },
+                    series: [
+                        { name: 'Escenario Base', data: [1180.81, 1362.14, 901.12, -410.37, -1484.25, -2421.04, -4347.54], color: '#16a34a', lineWidth: 3, marker: { symbol: 'circle', radius: 4 } },
+                        { name: 'Escenario Moderado', data: [643.35, 347.87, -581.94, -3300.11, -5721.13, -7997.05, -11262.69], color: '#ea580c', lineWidth: 3, marker: { symbol: 'diamond', radius: 5 } },
+                        { name: 'Escenario Severo', data: [-380.08, -1608.01, -3458.26, -8938.16, -14031.63, -18980.00, -24918.08], color: '#dc2626', lineWidth: 3, marker: { symbol: 'square', radius: 4 } }
                     ],
                     credits: { enabled: false }
                 });
@@ -281,8 +314,8 @@
                     },
                     series: [
                         { name: 'Escenario Base (> 90d)', data: [1203.5, 1150.0, 1050.0, 850.0, 600.0, 250.0], color: '#16a34a', fillColor: 'rgba(22, 163, 74, 0.12)' },
-                        { name: 'Escenario Moderado (71d)', data: [1203.5, 950.0, 720.0, 20.0, -180.0, -500.0], color: '#ea580c', fillColor: 'rgba(234, 88, 12, 0.12)' },
-                        { name: 'Escenario Severo (24d)', data: [1203.5, 680.0, 80.0, -350.0, -850.0, -1600.0], color: '#dc2626', fillColor: 'rgba(220, 38, 38, 0.12)' }
+                        { name: 'Escenario Moderado (58d)', data: [1203.5, 950.0, 720.0, 20.0, -180.0, -500.0], color: '#ea580c', fillColor: 'rgba(234, 88, 12, 0.12)' },
+                        { name: 'Escenario Severo (32d)', data: [1203.5, 680.0, 80.0, -350.0, -850.0, -1600.0], color: '#dc2626', fillColor: 'rgba(220, 38, 38, 0.12)' }
                     ],
                     credits: { enabled: false }
                 });

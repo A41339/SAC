@@ -300,16 +300,107 @@
             }
         }
 
-        function verDetalleEntradasSalidas(tipo, banda) {
-            $('#tituloModalEntradasSalidas').text('Detalle de ' + (tipo === 'entradas' ? 'Entradas' : 'Salidas') + ' - Banda: ' + banda);
+        var gapModelData = {
+            bandas: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.GapDatos.Bandas)),
+            entradasTotales: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.GapDatos.Entradas)),
+            salidasTotales: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.GapDatos.Salidas)),
+            disponibilidades: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.GapDatos.Disponibilidades)),
+            recaudoCartera: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.GapDatos.RecuperacionCartera)),
+            vencimientoInversiones: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.GapDatos.VencimientoInversiones)),
+            cdps: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.GapDatos.VencimientosCDP)),
+            obligaciones: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.GapDatos.ObligacionesEntidades)),
+            otrasCuentas: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.GapDatos.OtrasCuentasPagar))
+        };
+
+        function verDetalleEntradasSalidas(tipo, bandaSeleccionada) {
+            var esEntradas = (tipo === 'entradas');
+            var titulo = esEntradas ? 'Composición de Entradas de Efectivo Contractuales' : 'Composición de Salidas Contractuales';
+            $('#tituloModalEntradasSalidas').html('<i class="fa ' + (esEntradas ? 'fa-arrow-down' : 'fa-arrow-up') + '" style="margin-right: 6px;"></i> ' + titulo);
+            
             $('#modalDetalleEntradasSalidas').modal('show');
             setTimeout(function() {
+                var seriesData = [];
+                var htmlTabla = '';
+
+                if (esEntradas) {
+                    seriesData = [
+                        { name: 'Disponibilidades (11000000)', data: gapModelData.disponibilidades, color: '#0284c7' },
+                        { name: 'Recuperación de Cartera', data: gapModelData.recaudoCartera, color: '#16a34a' },
+                        { name: 'Vencimiento Inversiones', data: gapModelData.vencimientoInversiones, color: '#2b579a' }
+                    ];
+
+                    htmlTabla = '<table class="table table-bordered table-striped tabla-liquidez-azul" style="width: 100%; font-size: 12.5px; margin-bottom: 0;">' +
+                        '<thead><tr>' +
+                        '<th style="text-align: left; background: #2b579a !important; color: #fff !important; padding: 8px 12px;">Concepto</th>';
+                    for (var i = 0; i < gapModelData.bandas.length; i++) {
+                        htmlTabla += '<th style="text-align: right; background: #2b579a !important; color: #fff !important; padding: 8px 10px;">' + gapModelData.bandas[i] + '</th>';
+                    }
+                    htmlTabla += '</tr></thead><tbody>' +
+                        '<tr><td style="font-weight: 600; color: #0284c7;">Disponibilidades</td>';
+                    for (var i = 0; i < gapModelData.bandas.length; i++) {
+                        htmlTabla += '<td style="text-align: right; font-family: monospace;">¢' + (gapModelData.disponibilidades[i] || 0).toFixed(2) + '</td>';
+                    }
+                    htmlTabla += '</tr><tr><td style="font-weight: 600; color: #16a34a;">Recuperación de Cartera</td>';
+                    for (var i = 0; i < gapModelData.bandas.length; i++) {
+                        htmlTabla += '<td style="text-align: right; font-family: monospace;">¢' + (gapModelData.recaudoCartera[i] || 0).toFixed(2) + '</td>';
+                    }
+                    htmlTabla += '</tr><tr><td style="font-weight: 600; color: #2b579a;">Vencimiento Inversiones</td>';
+                    for (var i = 0; i < gapModelData.bandas.length; i++) {
+                        htmlTabla += '<td style="text-align: right; font-family: monospace;">¢' + (gapModelData.vencimientoInversiones[i] || 0).toFixed(2) + '</td>';
+                    }
+                    htmlTabla += '</tr><tr style="background: #ecfdf5; font-weight: 700;"><td style="color: #065f46;">Total Entradas</td>';
+                    for (var i = 0; i < gapModelData.bandas.length; i++) {
+                        htmlTabla += '<td style="text-align: right; font-family: monospace; color: #065f46;">¢' + (gapModelData.entradasTotales[i] || 0).toFixed(2) + '</td>';
+                    }
+                    htmlTabla += '</tr></tbody></table>';
+                } else {
+                    seriesData = [
+                        { name: "Vencimientos de CDP's", data: gapModelData.cdps, color: '#dc2626' },
+                        { name: 'Obligaciones con Entidades', data: gapModelData.obligaciones, color: '#ea580c' },
+                        { name: 'Otras Cuentas por Pagar', data: gapModelData.otrasCuentas, color: '#64748b' }
+                    ];
+
+                    htmlTabla = '<table class="table table-bordered table-striped tabla-liquidez-azul" style="width: 100%; font-size: 12.5px; margin-bottom: 0;">' +
+                        '<thead><tr>' +
+                        '<th style="text-align: left; background: #2b579a !important; color: #fff !important; padding: 8px 12px;">Concepto</th>';
+                    for (var i = 0; i < gapModelData.bandas.length; i++) {
+                        htmlTabla += '<th style="text-align: right; background: #2b579a !important; color: #fff !important; padding: 8px 10px;">' + gapModelData.bandas[i] + '</th>';
+                    }
+                    htmlTabla += '</tr></thead><tbody>' +
+                        '<tr><td style="font-weight: 600; color: #dc2626;">Vencimientos CDP\'s</td>';
+                    for (var i = 0; i < gapModelData.bandas.length; i++) {
+                        htmlTabla += '<td style="text-align: right; font-family: monospace;">¢' + (gapModelData.cdps[i] || 0).toFixed(2) + '</td>';
+                    }
+                    htmlTabla += '</tr><tr><td style="font-weight: 600; color: #ea580c;">Obligaciones con Entidades</td>';
+                    for (var i = 0; i < gapModelData.bandas.length; i++) {
+                        htmlTabla += '<td style="text-align: right; font-family: monospace;">¢' + (gapModelData.obligaciones[i] || 0).toFixed(2) + '</td>';
+                    }
+                    htmlTabla += '</tr><tr><td style="font-weight: 600; color: #64748b;">Otras Cuentas por Pagar</td>';
+                    for (var i = 0; i < gapModelData.bandas.length; i++) {
+                        htmlTabla += '<td style="text-align: right; font-family: monospace;">¢' + (gapModelData.otrasCuentas[i] || 0).toFixed(2) + '</td>';
+                    }
+                    htmlTabla += '</tr><tr style="background: #fff7ed; font-weight: 700;"><td style="color: #9a3412;">Total Salidas</td>';
+                    for (var i = 0; i < gapModelData.bandas.length; i++) {
+                        htmlTabla += '<td style="text-align: right; font-family: monospace; color: #9a3412;">¢' + (gapModelData.salidasTotales[i] || 0).toFixed(2) + '</td>';
+                    }
+                    htmlTabla += '</tr></tbody></table>';
+                }
+
+                $('#contenedorTablaDetalleModal').html(htmlTabla);
+
                 Highcharts.chart('chartDetalleEntradasSalidas', {
-                    chart: { type: 'bar' },
-                    title: { text: tipo === 'entradas' ? 'Composición de Entradas Contractuales' : 'Composición de Salidas Contractuales' },
-                    xAxis: { categories: tipo === 'entradas' ? ['Disponibilidades', 'Recuperación Cartera', 'Inversiones (Venc./Cupones)'] : ['Vencimientos CDP', 'Obligaciones Terceros', 'Otras Cuentas por Pagar'] },
-                    yAxis: { title: { text: 'Millones de Colones (¢)' } },
-                    series: [{ name: 'Monto', data: tipo === 'entradas' ? [1214.1, 135.5, 552.5] : [127.5, 10.0, 87.1], color: tipo === 'entradas' ? '#10b981' : '#f97316' }],
+                    chart: { type: 'column' },
+                    title: { text: titulo, style: { fontWeight: '700', color: '#143750', fontSize: '15px' } },
+                    subtitle: { text: 'Desglose detallado por banda temporal (Millones de ¢)' },
+                    xAxis: { categories: gapModelData.bandas },
+                    yAxis: { title: { text: 'Monto en Millones (¢)' }, stackLabels: { enabled: true, style: { fontWeight: 'bold', color: '#475569' } } },
+                    plotOptions: {
+                        column: {
+                            stacking: 'normal',
+                            dataLabels: { enabled: false }
+                        }
+                    },
+                    series: seriesData,
                     credits: { enabled: false }
                 });
             }, 300);

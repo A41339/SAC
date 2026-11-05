@@ -57,11 +57,25 @@
     </div>
 </div>
 
-<!-- Gráfico de Flujos y GAP Acumulado bajo Estrés (Requerimiento imagen 19) -->
+<!-- 2 Gráficos de Brechas bajo Estrés (Requerimiento imagen 19 y Anexo Excel chart5 y chart6) -->
 <div class="row" style="margin-bottom: 20px;">
-    <div class="col-md-12">
+    <!-- Gráfico 1 (chart6.xml): Brechas de liquidez por banda -->
+    <div class="col-md-6 col-xs-12">
         <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
-            <div id="chartBrechasEstresComparativo" style="height: 350px; width: 100%;"></div>
+            <div id="chartBrechasBanda" style="height: 350px; width: 100%;"></div>
+            <div style="font-size: 11.5px; color: #64748b; text-align: center; margin-top: 6px;">
+                <i class="fa fa-bar-chart"></i> Flujos contractuales estresados y brecha neta para el escenario activo.
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráfico 2 (chart5.xml): Brecha acumulada considera el FAL de liquidez bajo estrés (3 curvas simultáneas) -->
+    <div class="col-md-6 col-xs-12">
+        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+            <div id="chartBrechasAcumuladoFAL" style="height: 350px; width: 100%;"></div>
+            <div style="font-size: 11.5px; color: #64748b; text-align: center; margin-top: 6px;">
+                <i class="fa fa-line-chart"></i> Comparación simultánea de los tres escenarios considerando el FAL.
+            </div>
         </div>
     </div>
 </div>
@@ -197,13 +211,13 @@
                             .css('color', gapA >= 0 ? '#15803d' : '#dc2626');
         }
 
-        // Actualizar gráfico Highcharts
-        var chart = $('#chartBrechasEstresComparativo').highcharts();
-        if (chart) {
-            chart.series[0].setData(d.entradas, false);
-            chart.series[1].setData(d.salidas, false);
-            chart.series[2].setData(d.gapAcum, false);
-            chart.redraw();
+        // Actualizar gráfico Highcharts de Brechas por Banda
+        var chartBanda = $('#chartBrechasBanda').highcharts();
+        if (chartBanda) {
+            chartBanda.series[0].setData(d.entradas, false);
+            chartBanda.series[1].setData(d.salidas, false);
+            chartBanda.series[2].setData(d.gapBanda, false);
+            chartBanda.redraw();
         }
     }
 </script>
