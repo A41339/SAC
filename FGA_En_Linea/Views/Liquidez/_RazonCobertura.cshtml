@@ -155,11 +155,15 @@
             </tr>
 
             <!-- 4. VARIABLES PROYECTIVAS (DIFERENCIA DE ESCENARIOS) -->
+            @{
+                decimal difTotalMod = Model.RazonCobertura.CDPDiferencia_Moderado + Model.RazonCobertura.SalidaTop20Diferencia_Moderado + Model.RazonCobertura.CorridaVistaDiferencia_Moderado + Model.RazonCobertura.DesembolsoCarteraDiferencia_Moderado;
+                decimal difTotalSev = Model.RazonCobertura.CDPDiferencia_Severo + Model.RazonCobertura.SalidaTop20Diferencia_Severo + Model.RazonCobertura.CorridaVistaDiferencia_Severo + Model.RazonCobertura.DesembolsoCarteraDiferencia_Severo;
+            }
             <tr style="background-color: #fef2f2; font-weight: 700; border-top: 2px solid #e2e8f0;">
                 <td style="color: #991b1b; padding: 10px 16px;"><i class="fa fa-sliders" style="color: #ef4444; margin-right: 6px;"></i> Variables Proyectivas (Diferencia de Escenarios)</td>
-                <td class="text-right">¢0.00</td>
-                <td class="text-right">¢485.18</td>
-                <td class="text-right">¢1,401.05</td>
+                <td class="text-right font-mono">¢0.00</td>
+                <td class="text-right font-mono">¢@difTotalMod.ToString("N2")</td>
+                <td class="text-right font-mono">¢@difTotalSev.ToString("N2")</td>
             </tr>
             <tr>
                 <td style="color: #475569; padding-left: 32px;">CDP's (diferencia de escenarios)</td>

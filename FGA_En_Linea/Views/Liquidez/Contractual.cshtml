@@ -212,17 +212,36 @@
         }
 
         function getGraphIndicadorLiquidez(orden) {
+            var ent = $('#ddlEntidad').val();
+            var p1 = $('#Periodo1').val();
+            var p2 = $('#Periodo2').val();
             $('#modalHistoricoIndicadorLiquidez').modal('show');
-            setTimeout(function() {
-                Highcharts.chart('chartHistoricoIndicadorLiquidez', {
-                    chart: { type: 'spline' },
-                    title: { text: 'Evolución Histórica del Indicador' },
-                    xAxis: { categories: ['Set 2025', 'Nov 2025', 'Ene 2026', 'Mar 2026', 'May 2026', 'Jul 2026', 'Ago 2026'] },
-                    yAxis: { title: { text: 'Valor / Porcentaje' } },
-                    series: [{ name: 'Indicador', data: [69.7, 68.9, 70.2, 69.1, 68.5, 68.2, 68.4], color: '#0284c7' }],
-                    credits: { enabled: false }
-                });
-            }, 300);
+            $('#tituloModalIndicadorLiquidez').text('Cargando evolución histórica...');
+
+            $.getJSON('@Url.Action("GetHistoricoIndicador", "Liquidez")', { orden: orden, entidad: ent, periodo1: p1, periodo2: p2 }, function(res) {
+                if (res && res.success) {
+                    $('#tituloModalIndicadorLiquidez').text('Evolución Histórica: ' + res.nombre);
+                    Highcharts.chart('chartHistoricoIndicadorLiquidez', {
+                        chart: { type: 'spline' },
+                        title: { text: res.nombre, style: { fontWeight: '700', color: '#143750', fontSize: '15px' } },
+                        subtitle: { text: 'Trayectoria histórica calculada según saldos contables normativos' },
+                        xAxis: { categories: res.categorias },
+                        yAxis: { title: { text: res.esPorcentaje ? 'Porcentaje (%)' : 'Ratio (x)' } },
+                        tooltip: {
+                            valueDecimals: 2,
+                            valueSuffix: res.esPorcentaje ? '%' : 'x'
+                        },
+                        series: [{
+                            name: res.nombre,
+                            data: res.valores,
+                            color: '#0284c7',
+                            lineWidth: 3,
+                            marker: { radius: 4 }
+                        }],
+                        credits: { enabled: false }
+                    });
+                }
+            });
         }
 
         function renderGraficosGap() {

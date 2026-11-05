@@ -101,43 +101,39 @@
         <tbody>
             <tr style="background-color: #ecfdf5; font-weight: 700;">
                 <td class="text-left" style="color: #065f46; padding-left: 16px;"><i class="fa fa-arrow-down" style="color: #10b981; margin-right: 6px;"></i> Entradas estresadas</td>
-                <td class="text-right font-mono" id="tdEnt0">¢767,14</td>
-                <td class="text-right font-mono" id="tdEnt1">¢867,73</td>
-                <td class="text-right font-mono" id="tdEnt2">¢218,32</td>
-                <td class="text-right font-mono" id="tdEnt3">¢706,75</td>
-                <td class="text-right font-mono" id="tdEnt4">¢891,61</td>
-                <td class="text-right font-mono" id="tdEnt5">¢1.096,19</td>
-                <td class="text-right font-mono" id="tdEnt6">¢5.671,70</td>
+                @for (int i = 0; i < 7; i++)
+                {
+                    decimal val = (i < Model.BrechasEstres.EntradasBase.Count) ? Model.BrechasEstres.EntradasBase[i] : 0m;
+                    <td class="text-right font-mono" id="tdEnt@(i)">¢@val.ToString("N2")</td>
+                }
             </tr>
             <tr style="background-color: #fff7ed; font-weight: 700;">
                 <td class="text-left" style="color: #9a3412; padding-left: 16px;"><i class="fa fa-arrow-up" style="color: #f97316; margin-right: 6px;"></i> Salidas estresadas</td>
-                <td class="text-right font-mono" id="tdSal0">¢789,86</td>
-                <td class="text-right font-mono" id="tdSal1">¢686,40</td>
-                <td class="text-right font-mono" id="tdSal2">¢679,33</td>
-                <td class="text-right font-mono" id="tdSal3">¢2.018,24</td>
-                <td class="text-right font-mono" id="tdSal4">¢1.965,48</td>
-                <td class="text-right font-mono" id="tdSal5">¢2.032,98</td>
-                <td class="text-right font-mono" id="tdSal6">¢7.598,20</td>
+                @for (int i = 0; i < 7; i++)
+                {
+                    decimal val = (i < Model.BrechasEstres.SalidasBase.Count) ? Model.BrechasEstres.SalidasBase[i] : 0m;
+                    <td class="text-right font-mono" id="tdSal@(i)">¢@val.ToString("N2")</td>
+                }
             </tr>
             <tr style="background-color: #f8fafc; font-weight: 700; border-top: 2px solid #cbd5e1;">
                 <td class="text-left" style="color: #1e3a8a; padding-left: 16px;">GAP por Banda</td>
-                <td class="text-right font-mono" id="tdGap0" style="color: #b91c1c;">-¢22,72</td>
-                <td class="text-right font-mono" id="tdGap1" style="color: #047857;">+¢181,33</td>
-                <td class="text-right font-mono" id="tdGap2" style="color: #b91c1c;">-¢461,02</td>
-                <td class="text-right font-mono" id="tdGap3" style="color: #b91c1c;">-¢1.311,49</td>
-                <td class="text-right font-mono" id="tdGap4" style="color: #b91c1c;">-¢1.073,88</td>
-                <td class="text-right font-mono" id="tdGap5" style="color: #b91c1c;">-¢936,79</td>
-                <td class="text-right font-mono" id="tdGap6" style="color: #b91c1c;">-¢1.926,50</td>
+                @for (int i = 0; i < 7; i++)
+                {
+                    decimal val = (i < Model.BrechasEstres.BrechasBase.Count) ? Model.BrechasEstres.BrechasBase[i] : 0m;
+                    string col = val >= 0 ? "#047857" : "#b91c1c";
+                    string sig = val >= 0 ? "+¢" : "-¢";
+                    <td class="text-right font-mono" id="tdGap@(i)" style="color: @col;">@sig@Math.Abs(val).ToString("N2")</td>
+                }
             </tr>
             <tr style="background-color: #eff6ff; font-weight: 800; border-top: 1px solid #bfdbfe; border-bottom: 2px solid #2b579a;">
                 <td class="text-left" style="color: #1e40af; padding-left: 16px;">GAP Acumulado</td>
-                <td class="text-right font-mono" id="tdAcum0" style="color: #15803d;">+¢1.180,81</td>
-                <td class="text-right font-mono" id="tdAcum1" style="color: #15803d;">+¢1.362,14</td>
-                <td class="text-right font-mono" id="tdAcum2" style="color: #15803d;">+¢901,12</td>
-                <td class="text-right font-mono" id="tdAcum3" style="color: #dc2626;">-¢410,37</td>
-                <td class="text-right font-mono" id="tdAcum4" style="color: #dc2626;">-¢1.484,25</td>
-                <td class="text-right font-mono" id="tdAcum5" style="color: #dc2626;">-¢2.421,04</td>
-                <td class="text-right font-mono" id="tdAcum6" style="color: #dc2626;">-¢4.347,54</td>
+                @for (int i = 0; i < 7; i++)
+                {
+                    decimal val = (i < Model.BrechasEstres.AcumuladoBase.Count) ? Model.BrechasEstres.AcumuladoBase[i] : 0m;
+                    string col = val >= 0 ? "#15803d" : "#dc2626";
+                    string sig = val >= 0 ? "+¢" : "-¢";
+                    <td class="text-right font-mono" id="tdAcum@(i)" style="color: @col;">@sig@Math.Abs(val).ToString("N2")</td>
+                }
             </tr>
         </tbody>
     </table>
@@ -146,31 +142,31 @@
 <script>
     var datosEscenariosBrechas = {
         base: {
-            kpi30: '¢-22,72 MM',
-            kpi90: '¢-461,02 MM',
-            fal: '¢1.203,53 MM',
-            entradas: [767.14, 867.73, 218.32, 706.75, 891.61, 1096.19, 5671.70],
-            salidas: [789.86, 686.40, 679.33, 2018.24, 1965.48, 2032.98, 7598.20],
-            gapBanda: [-22.72, 181.33, -461.02, -1311.49, -1073.88, -936.79, -1926.50],
-            gapAcum: [1180.81, 1362.14, 901.12, -410.37, -1484.25, -2421.04, -4347.54]
+            kpi30: '¢@Model.BrechasEstres.Gap30d_Base.ToString("N2") MM',
+            kpi90: '¢@Model.BrechasEstres.Gap90d_Base.ToString("N2") MM',
+            fal: '¢@Model.BrechasEstres.FAL_Base.ToString("N2") MM',
+            entradas: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.BrechasEstres.EntradasBase)),
+            salidas: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.BrechasEstres.SalidasBase)),
+            gapBanda: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.BrechasEstres.BrechasBase)),
+            gapAcum: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.BrechasEstres.AcumuladoBase))
         },
         moderado: {
-            kpi30: '¢-560,18 MM',
-            kpi90: '¢-929,81 MM',
-            fal: '¢1.103,53 MM',
-            entradas: [744.77, 845.36, 195.95, 639.65, 824.25, 1028.85, 5604.36],
-            salidas: [1304.95, 1140.84, 1125.76, 3357.82, 3245.27, 3304.77, 8870.00],
-            gapBanda: [-560.18, -295.48, -929.81, -2718.17, -2421.02, -2275.92, -3265.64],
-            gapAcum: [643.35, 347.87, -581.94, -3300.11, -5721.13, -7997.05, -11262.69]
+            kpi30: '¢@Model.BrechasEstres.Gap30d_Moderado.ToString("N2") MM',
+            kpi90: '¢@Model.BrechasEstres.Gap90d_Moderado.ToString("N2") MM',
+            fal: '¢@Model.BrechasEstres.FAL_Moderado.ToString("N2") MM',
+            entradas: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.BrechasEstres.EntradasModerado)),
+            salidas: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.BrechasEstres.SalidasModerado)),
+            gapBanda: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.BrechasEstres.BrechasModerado)),
+            gapAcum: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.BrechasEstres.AcumuladoModerado))
         },
         severo: {
-            kpi30: '¢-1.583,61 MM',
-            kpi90: '¢-1.850,25 MM',
-            fal: '¢933,53 MM',
-            entradas: [709.51, 810.10, 160.69, 533.87, 718.07, 922.67, 5498.19],
-            salidas: [2293.12, 2038.03, 2010.95, 6013.78, 5811.54, 5871.04, 11436.27],
-            gapBanda: [-1583.61, -1227.93, -1850.25, -5479.90, -5093.47, -4948.37, -5938.08],
-            gapAcum: [-380.08, -1608.01, -3458.26, -8938.16, -14031.63, -18980.00, -24918.08]
+            kpi30: '¢@Model.BrechasEstres.Gap30d_Severo.ToString("N2") MM',
+            kpi90: '¢@Model.BrechasEstres.Gap90d_Severo.ToString("N2") MM',
+            fal: '¢@Model.BrechasEstres.FAL_Severo.ToString("N2") MM',
+            entradas: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.BrechasEstres.EntradasSevero)),
+            salidas: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.BrechasEstres.SalidasSevero)),
+            gapBanda: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.BrechasEstres.BrechasSevero)),
+            gapAcum: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.BrechasEstres.AcumuladoSevero))
         }
     };
 

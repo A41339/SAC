@@ -323,34 +323,58 @@ namespace FGA.Model
         
         // Resumen KPIs imagen 19
         public decimal Gap30d_Base { get; set; } = -22.72m;
-        public decimal Gap90d_Base { get; set; } = -481.02m;
+        public decimal Gap90d_Base { get; set; } = -461.02m;
         public decimal FAL_Base { get; set; } = 1203.53m;
 
-        public List<decimal> EntradasBase { get; set; } = new List<decimal> { 693.81m, 120.50m, 95.30m, 210.00m, 180.20m, 115.00m, 310.50m };
-        public List<decimal> SalidasBase { get; set; } = new List<decimal> { 716.53m, 218.32m, 708.75m, 1098.19m, 887.73m, 1203.53m, 7598.20m };
-        public List<decimal> BrechasBase { get; set; } = new List<decimal> { -22.72m, -97.82m, -613.45m, -888.19m, -707.53m, -1088.53m, -7287.70m };
-        public List<decimal> AcumuladoBase { get; set; } = new List<decimal> { 1180.81m, 1082.99m, 469.54m, -418.65m, -1126.18m, -2214.71m, -9502.41m };
+        public decimal Gap30d_Moderado { get; set; } = -560.18m;
+        public decimal Gap90d_Moderado { get; set; } = -929.81m;
+        public decimal FAL_Moderado { get; set; } = 1103.53m;
 
-        public List<decimal> EntradasModerado { get; set; } = new List<decimal> { 685.99m, 115.00m, 90.00m, 200.00m, 170.00m, 105.00m, 290.00m };
-        public List<decimal> SalidasModerado { get; set; } = new List<decimal> { 826.68m, 250.00m, 800.00m, 1200.00m, 950.00m, 1300.00m, 8000.00m };
-        public List<decimal> BrechasModerado { get; set; } = new List<decimal> { -140.69m, -135.00m, -710.00m, -1000.00m, -780.00m, -1195.00m, -7710.00m };
-        public List<decimal> AcumuladoModerado { get; set; } = new List<decimal> { 1062.84m, 927.84m, 217.84m, -782.16m, -1562.16m, -2757.16m, -10467.16m };
+        public decimal Gap30d_Severo { get; set; } = -1583.61m;
+        public decimal Gap90d_Severo { get; set; } = -1850.25m;
+        public decimal FAL_Severo { get; set; } = 933.53m;
 
-        public List<decimal> EntradasSevero { get; set; } = new List<decimal> { 672.55m, 100.00m, 80.00m, 180.00m, 150.00m, 95.00m, 260.00m };
-        public List<decimal> SalidasSevero { get; set; } = new List<decimal> { 1621.54m, 300.00m, 950.00m, 1400.00m, 1100.00m, 1500.00m, 9000.00m };
-        public List<decimal> BrechasSevero { get; set; } = new List<decimal> { -948.99m, -200.00m, -870.00m, -1220.00m, -950.00m, -1405.00m, -8740.00m };
-        public List<decimal> AcumuladoSevero { get; set; } = new List<decimal> { 254.54m, 54.54m, -815.46m, -2035.46m, -2985.46m, -4390.46m, -13130.46m };
+        public List<decimal> EntradasBase { get; set; } = new List<decimal> { 767.14m, 867.73m, 218.32m, 706.75m, 891.61m, 1096.19m, 5671.70m };
+        public List<decimal> SalidasBase { get; set; } = new List<decimal> { 789.86m, 686.40m, 679.33m, 2018.24m, 1965.48m, 2032.98m, 7598.20m };
+        public List<decimal> BrechasBase { get; set; } = new List<decimal> { -22.72m, 181.33m, -461.02m, -1311.49m, -1073.88m, -936.79m, -1926.50m };
+        public List<decimal> AcumuladoBase { get; set; } = new List<decimal> { 1180.81m, 1362.14m, 901.12m, -410.37m, -1484.25m, -2421.04m, -4347.54m };
+
+        public List<decimal> EntradasModerado { get; set; } = new List<decimal> { 744.77m, 845.36m, 195.95m, 639.65m, 824.25m, 1028.85m, 5604.36m };
+        public List<decimal> SalidasModerado { get; set; } = new List<decimal> { 1304.95m, 1140.84m, 1125.76m, 3357.82m, 3245.27m, 3304.77m, 8870.00m };
+        public List<decimal> BrechasModerado { get; set; } = new List<decimal> { -560.18m, -295.48m, -929.81m, -2718.17m, -2421.02m, -2275.92m, -3265.64m };
+        public List<decimal> AcumuladoModerado { get; set; } = new List<decimal> { 643.35m, 347.87m, -581.94m, -3300.11m, -5721.13m, -7997.05m, -11262.69m };
+
+        public List<decimal> EntradasSevero { get; set; } = new List<decimal> { 709.51m, 810.10m, 160.69m, 533.87m, 718.07m, 922.67m, 5498.19m };
+        public List<decimal> SalidasSevero { get; set; } = new List<decimal> { 2293.12m, 2038.03m, 2010.95m, 6013.78m, 5811.54m, 5871.04m, 11436.27m };
+        public List<decimal> BrechasSevero { get; set; } = new List<decimal> { -1583.61m, -1227.93m, -1850.25m, -5479.90m, -5093.47m, -4948.37m, -5938.08m };
+        public List<decimal> AcumuladoSevero { get; set; } = new List<decimal> { -380.08m, -1608.01m, -3458.26m, -8938.16m, -14031.63m, -18980.00m, -24918.08m };
     }
 
     public class HorizonteSupervivenciaViewModel
     {
-        public string HorizonteBase { get; set; }
-        public string HorizonteModerado { get; set; }
-        public string HorizonteSevero { get; set; }
+        public string HorizonteBase { get; set; } = "91 a 180 días";
+        public string HorizonteModerado { get; set; } = "61 a 90 días";
+        public string HorizonteSevero { get; set; } = "1 a 30 días";
 
-        public decimal SaldoFinalBase { get; set; }
-        public decimal SaldoFinalModerado { get; set; }
-        public decimal SaldoFinalSevero { get; set; }
+        public decimal DiasSupervivenciaBase { get; set; } = 111m;
+        public decimal DiasSupervivenciaModerado { get; set; } = 58m;
+        public decimal DiasSupervivenciaSevero { get; set; } = 32m;
+
+        public decimal BufferRemanenteBase { get; set; } = 901.12m;
+        public decimal BufferRemanenteModerado { get; set; } = 347.87m;
+        public decimal BufferRemanenteSevero { get; set; } = 1203.53m;
+
+        public decimal SaldoFinalBase { get; set; } = -410.37m;
+        public decimal SaldoFinalModerado { get; set; } = -581.94m;
+        public decimal SaldoFinalSevero { get; set; } = -380.08m;
+
+        public decimal ReduccionDias { get; set; } = -26m;
+
+        // Trayectoria multiescenario para Highcharts
+        public List<string> TrayectoriaCategorias { get; set; } = new List<string> { "Día 0", "Día 30", "Día 60", "Día 90", "Día 180", "Día 270", "Día 360" };
+        public List<decimal> TrayectoriaBase { get; set; } = new List<decimal> { 1203.53m, 1180.81m, 1362.14m, 901.12m, -410.37m, -1484.25m, -2421.04m };
+        public List<decimal> TrayectoriaModerado { get; set; } = new List<decimal> { 1103.53m, 643.35m, 347.87m, -581.94m, -3300.11m, -5721.13m, -7997.05m };
+        public List<decimal> TrayectoriaSevero { get; set; } = new List<decimal> { 933.53m, -380.08m, -1608.01m, -3458.26m, -8938.16m, -14031.63m, -18980.00m };
     }
 
     #endregion
