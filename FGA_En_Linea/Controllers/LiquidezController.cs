@@ -69,54 +69,59 @@ namespace FGA.Controllers
                                 nombreIndicador = "Liquidez Inmediata";
                                 decimal disp = ObtenerSaldoCta(saldosMes, "11000000");
                                 decimal vista = ObtenerSaldoCta(saldosMes, "21100000");
-                                val = vista > 0 ? (disp / vista) * 100m : 69.73m - (m * 0.2m);
+                                val = vista > 0 ? (disp / vista) * 100m : 0m;
                                 break;
                             case 2: // Activos líquidos / Captaciones
                                 nombreIndicador = "Activos Líquidos / Captaciones";
                                 decimal capt = ObtenerSaldoCta(saldosMes, "21000000");
                                 decimal fal = (ObtenerSaldoCta(saldosMes, "11000000") + ObtenerSaldoCta(saldosMes, "12000000"));
-                                val = capt > 0 ? (fal / capt) * 100m : 13.84m - (m * 0.15m);
+                                val = capt > 0 ? (fal / capt) * 100m : 0m;
                                 break;
                             case 3: // Activos líquidos / Pasivos exigibles CP
                                 nombreIndicador = "Activos Líquidos / Pasivos Exigibles CP";
-                                decimal pasCP = ObtenerSaldoCta(saldosMes, "21300000") * 0.35m;
-                                val = pasCP > 0 ? ((ObtenerSaldoCta(saldosMes, "11000000") + ObtenerSaldoCta(saldosMes, "12000000")) / pasCP) * 100m : 44.61m - (m * 0.4m);
+                                decimal pasCP = ObtenerSaldoCta(saldosMes, "21100000") + (ObtenerSaldoCta(saldosMes, "21300000") * 0.35m);
+                                decimal fal3 = (ObtenerSaldoCta(saldosMes, "11000000") + ObtenerSaldoCta(saldosMes, "12000000"));
+                                val = pasCP > 0 ? (fal3 / pasCP) * 100m : 0m;
                                 break;
                             case 4: // Cartera / Captaciones
                                 nombreIndicador = "Cartera / Captaciones";
                                 decimal cta130 = ObtenerSaldoCta(saldosMes, "13000000");
                                 decimal cta210 = ObtenerSaldoCta(saldosMes, "21000000");
-                                val = cta210 > 0 ? (cta130 / cta210) * 100m : 98.51m - (m * 0.1m);
+                                val = cta210 > 0 ? (cta130 / cta210) * 100m : 0m;
                                 break;
                             case 5: // Cartera / Fondeo estable
                                 nombreIndicador = "Cartera / Fondeo Estable";
+                                decimal cta130_5 = ObtenerSaldoCta(saldosMes, "13000000");
                                 decimal fondeoEst = ObtenerSaldoCta(saldosMes, "21300000") + ObtenerSaldoCta(saldosMes, "23200000") + ObtenerSaldoCta(saldosMes, "31000000");
-                                val = fondeoEst > 0 ? (ObtenerSaldoCta(saldosMes, "13000000") / fondeoEst) * 100m : 96.20m - (m * 0.2m);
+                                val = fondeoEst > 0 ? (cta130_5 / fondeoEst) * 100m : 0m;
                                 break;
                             case 6: // Activos líquidos / Activos
                                 nombreIndicador = "Activos Líquidos / Activo Total";
                                 decimal actTot = ObtenerSaldoCta(saldosMes, "10000000");
-                                val = actTot > 0 ? ((ObtenerSaldoCta(saldosMes, "11000000") + ObtenerSaldoCta(saldosMes, "12000000")) / actTot) * 100m : 10.39m - (m * 0.1m);
+                                decimal fal6 = (ObtenerSaldoCta(saldosMes, "11000000") + ObtenerSaldoCta(saldosMes, "12000000"));
+                                val = actTot > 0 ? (fal6 / actTot) * 100m : 0m;
                                 break;
                             case 7: // Activos líquidos / Top 20
                                 nombreIndicador = "Activos Líquidos / 20 Mayores Depositantes";
-                                val = 41.44m - (m * 0.8m);
+                                decimal top20 = ObtenerSaldoCta(saldosMes, "21000000") * 0.25m;
+                                decimal fal7 = (ObtenerSaldoCta(saldosMes, "11000000") + ObtenerSaldoCta(saldosMes, "12000000"));
+                                val = top20 > 0 ? (fal7 / top20) * 100m : 0m;
                                 break;
                             case 8: // Fondeo mayorista / Captaciones
                                 nombreIndicador = "Fondeo Mayorista / Captaciones Totales";
-                                decimal deuTot = ObtenerSaldoCta(saldosMes, "230000000");
+                                decimal deuTot = ObtenerSaldoCta(saldosMes, "23000000");
                                 decimal captTot = ObtenerSaldoCta(saldosMes, "21000000");
-                                val = captTot > 0 ? (deuTot / captTot) * 100m : 1.06m + (m * 0.1m);
+                                val = captTot > 0 ? (deuTot / captTot) * 100m : 0m;
                                 break;
                             default:
-                                val = 50m;
+                                val = 0m;
                                 break;
                         }
                         valores.Add(Math.Round(val, 2));
                     }
                     catch
                     {
-                        valores.Add(50m);
+                        valores.Add(0m);
                     }
                 }
 
@@ -187,7 +192,7 @@ namespace FGA.Controllers
                 var icl = ObtenerDatosICL(currentEntidad, p2Date);
 
                 var razonCobertura = CalcularRazonCobertura(saldos, gapDatos, supuestos);
-                var iclEstresado = CalcularICLEstresado(icl, saldos, supuestos);
+                var iclEstresado = CalcularICLEstresado(icl, saldos, supuestos, razonCobertura);
                 var brechasEstres = CalcularBrechasEstres(gapDatos, saldos, supuestos, razonCobertura);
                 var horizonte = CalcularHorizonteSupervivencia(brechasEstres, razonCobertura.ActivosLiquidos_Base);
 
@@ -255,142 +260,248 @@ namespace FGA.Controllers
 
             // Valores de balance P1
             decimal disp_p1 = ObtenerSaldoCta(saldosP1, "11000000");
+            decimal inv_p1 = ObtenerSaldoCta(saldosP1, "12000000");
             decimal capVista_p1 = ObtenerSaldoCta(saldosP1, "21100000");
             decimal capPlazo_p1 = ObtenerSaldoCta(saldosP1, "21300000");
             decimal capTotal_p1 = ObtenerSaldoCta(saldosP1, "21000000");
             decimal cartNeta_p1 = ObtenerSaldoCta(saldosP1, "13000000");
             decimal actTotal_p1 = ObtenerSaldoCta(saldosP1, "10000000");
             decimal deuLP_p1 = ObtenerSaldoCta(saldosP1, "23200000");
-            decimal deuTotal_p1 = ObtenerSaldoCta(saldosP1, "230000000");
+            decimal deuTotal_p1 = ObtenerSaldoCta(saldosP1, "23000000");
             decimal pat_p1 = ObtenerSaldoCta(saldosP1, "31000000");
 
             // Valores de balance P2
             decimal disp_p2 = ObtenerSaldoCta(saldosP2, "11000000");
+            decimal inv_p2 = ObtenerSaldoCta(saldosP2, "12000000");
             decimal capVista_p2 = ObtenerSaldoCta(saldosP2, "21100000");
             decimal capPlazo_p2 = ObtenerSaldoCta(saldosP2, "21300000");
             decimal capTotal_p2 = ObtenerSaldoCta(saldosP2, "21000000");
             decimal cartNeta_p2 = ObtenerSaldoCta(saldosP2, "13000000");
             decimal actTotal_p2 = ObtenerSaldoCta(saldosP2, "10000000");
             decimal deuLP_p2 = ObtenerSaldoCta(saldosP2, "23200000");
-            decimal deuTotal_p2 = ObtenerSaldoCta(saldosP2, "230000000");
+            decimal deuTotal_p2 = ObtenerSaldoCta(saldosP2, "23000000");
             decimal pat_p2 = ObtenerSaldoCta(saldosP2, "31000000");
 
-            // FAL ICL por defecto de Coopecar si no hay XML cargado
-            decimal fal_p1 = 1203529297.63m;
-            decimal fal_p2 = 893297120.50m;
-            decimal pasCP_p1 = 2697887850.12m;
-            decimal pasCP_p2 = 2697887850.12m;
-            decimal top20_p1 = 2904322867.90m;
-            decimal top20_p2 = 3240645735.80m;
+            // FAL ICL directamente de saldos contables
+            decimal fal_p1 = disp_p1 + inv_p1;
+            decimal fal_p2 = disp_p2 + inv_p2;
+            decimal pasCP_p1 = capVista_p1 + (capPlazo_p1 * 0.35m);
+            decimal pasCP_p2 = capVista_p2 + (capPlazo_p2 * 0.35m);
+            decimal top20_p1 = capTotal_p1 * 0.25m;
+            decimal top20_p2 = capTotal_p2 * 0.25m;
 
             // 1. Liquidez inmediata: 11000000 / 21100000
-            decimal v1_p1 = capVista_p1 > 0 ? (disp_p1 / capVista_p1) : 0.6973m;
-            decimal v1_p2 = capVista_p2 > 0 ? (disp_p2 / capVista_p2) : 0.6845m;
+            decimal v1_p1 = capVista_p1 > 0 ? (disp_p1 / capVista_p1) : 0m;
+            decimal v1_p2 = capVista_p2 > 0 ? (disp_p2 / capVista_p2) : 0m;
             result.Add(new IndicadorLiquidezItem { Orden = 1, Nombre = "Liquidez inmediata", Formula = "Disponibilidades (11000000) / Captaciones a la vista (21100000)", QueMide = "Capacidad de atender retiros inmediatos", ValorP1 = v1_p1, ValorP2 = v1_p2, EsPorcentaje = true, TipoGraficoAsociado = 1 });
 
             // 2. Activos líquidos / Captaciones: FAL / 21000000
-            decimal v2_p1 = capTotal_p1 > 0 ? (fal_p1 / capTotal_p1) : 0.1384m;
-            decimal v2_p2 = capTotal_p2 > 0 ? (fal_p2 / capTotal_p2) : 0.0992m;
+            decimal v2_p1 = capTotal_p1 > 0 ? (fal_p1 / capTotal_p1) : 0m;
+            decimal v2_p2 = capTotal_p2 > 0 ? (fal_p2 / capTotal_p2) : 0m;
             result.Add(new IndicadorLiquidezItem { Orden = 2, Nombre = "Activos líquidos / Captaciones", Formula = "FAL ICL / Saldo captaciones totales (21000000)", QueMide = "Cobertura general de depósitos con activos líquidos", ValorP1 = v2_p1, ValorP2 = v2_p2, EsPorcentaje = true, TipoGraficoAsociado = 1 });
 
             // 3. Activos líquidos / Pasivos exigibles CP
-            decimal v3_p1 = pasCP_p1 > 0 ? (fal_p1 / pasCP_p1) : 0.4461m;
-            decimal v3_p2 = pasCP_p2 > 0 ? (fal_p2 / pasCP_p2) : 0.3311m;
+            decimal v3_p1 = pasCP_p1 > 0 ? (fal_p1 / pasCP_p1) : 0m;
+            decimal v3_p2 = pasCP_p2 > 0 ? (fal_p2 / pasCP_p2) : 0m;
             result.Add(new IndicadorLiquidezItem { Orden = 3, Nombre = "Activos líquidos / Pasivos exigibles CP", Formula = "Activos líquidos (FAL ICL) / Pasivos exigibles ≤ 30 días", QueMide = "Cobertura de obligaciones de corto plazo", ValorP1 = v3_p1, ValorP2 = v3_p2, EsPorcentaje = true, TipoGraficoAsociado = 1 });
 
             // 4. Cartera / Captaciones: 13000000 / (21300000 + 21100000)
             decimal den4_p1 = capPlazo_p1 + capVista_p1;
             decimal den4_p2 = capPlazo_p2 + capVista_p2;
-            decimal v4_p1 = den4_p1 > 0 ? (cartNeta_p1 / den4_p1) : 0.9851m;
-            decimal v4_p2 = den4_p2 > 0 ? (cartNeta_p2 / den4_p2) : 0.9776m;
+            decimal v4_p1 = den4_p1 > 0 ? (cartNeta_p1 / den4_p1) : 0m;
+            decimal v4_p2 = den4_p2 > 0 ? (cartNeta_p2 / den4_p2) : 0m;
             result.Add(new IndicadorLiquidezItem { Orden = 4, Nombre = "Cartera / Captaciones", Formula = "Cartera neta (13000000) / (21300000 + 21100000)", QueMide = "Qué proporción de los depósitos está colocada en cartera", ValorP1 = v4_p1, ValorP2 = v4_p2, EsPorcentaje = true, TipoGraficoAsociado = 1 });
 
             // 5. Cartera / Fondeo estable: 13000000 / (21300000 + 23200000 + 31000000)
             decimal den5_p1 = capPlazo_p1 + deuLP_p1 + pat_p1;
             decimal den5_p2 = capPlazo_p2 + deuLP_p2 + pat_p2;
-            decimal v5_p1 = den5_p1 > 0 ? (cartNeta_p1 / den5_p1) : 0.9620m;
-            decimal v5_p2 = den5_p2 > 0 ? (cartNeta_p2 / den5_p2) : 0.9176m;
+            decimal v5_p1 = den5_p1 > 0 ? (cartNeta_p1 / den5_p1) : 0m;
+            decimal v5_p2 = den5_p2 > 0 ? (cartNeta_p2 / den5_p2) : 0m;
             result.Add(new IndicadorLiquidezItem { Orden = 5, Nombre = "Cartera / Fondeo estable", Formula = "Cartera neta / (Captaciones LP + deuda LP + patrimonio)", QueMide = "Dependencia de fondeo estable para financiar cartera", ValorP1 = v5_p1, ValorP2 = v5_p2, EsPorcentaje = true, TipoGraficoAsociado = 1 });
 
             // 6. Activos líquidos / Activos: FAL / Activo Total
-            decimal v6_p1 = actTotal_p1 > 0 ? (fal_p1 / actTotal_p1) : 0.1039m;
-            decimal v6_p2 = actTotal_p2 > 0 ? (fal_p2 / actTotal_p2) : 0.0733m;
+            decimal v6_p1 = actTotal_p1 > 0 ? (fal_p1 / actTotal_p1) : 0m;
+            decimal v6_p2 = actTotal_p2 > 0 ? (fal_p2 / actTotal_p2) : 0m;
             result.Add(new IndicadorLiquidezItem { Orden = 6, Nombre = "Activos líquidos / Activos", Formula = "FAL ICL / Activo total", QueMide = "Buffer de liquidez respecto al tamaño de la entidad", ValorP1 = v6_p1, ValorP2 = v6_p2, EsPorcentaje = true, TipoGraficoAsociado = 1 });
 
             // 7. Activos líquidos / 20 mayores depositantes
-            decimal v7_p1 = top20_p1 > 0 ? (fal_p1 / top20_p1) : 0.4144m;
-            decimal v7_p2 = top20_p2 > 0 ? (fal_p2 / top20_p2) : 0.2757m;
+            decimal v7_p1 = top20_p1 > 0 ? (fal_p1 / top20_p1) : 0m;
+            decimal v7_p2 = top20_p2 > 0 ? (fal_p2 / top20_p2) : 0m;
             result.Add(new IndicadorLiquidezItem { Orden = 7, Nombre = "Activos líquidos / 20 mayores depositantes", Formula = "Activos líquidos (FAL ICL) / Saldo Top 20 depositantes", QueMide = "Capacidad de absorber concentración de fondeo", ValorP1 = v7_p1, ValorP2 = v7_p2, EsPorcentaje = true, TipoGraficoAsociado = 1 });
 
-            // 8. Fondeo mayorista / Captaciones totales: 230000000 / 210000000
-            decimal v8_p1 = capTotal_p1 > 0 ? (deuTotal_p1 / capTotal_p1) : 0.0106m;
-            decimal v8_p2 = capTotal_p2 > 0 ? (deuTotal_p2 / capTotal_p2) : 0.0309m;
-            result.Add(new IndicadorLiquidezItem { Orden = 8, Nombre = "Fondeo mayorista / Captaciones totales", Formula = "Deuda institucional (230000000) / Fondeo total (210000000)", QueMide = "Dependencia de fuentes institucionales", ValorP1 = v8_p1, ValorP2 = v8_p2, EsPorcentaje = true, TipoGraficoAsociado = 1 });
+            // 8. Fondeo mayorista / Captaciones totales: 23000000 / 21000000
+            decimal v8_p1 = capTotal_p1 > 0 ? (deuTotal_p1 / capTotal_p1) : 0m;
+            decimal v8_p2 = capTotal_p2 > 0 ? (deuTotal_p2 / capTotal_p2) : 0m;
+            result.Add(new IndicadorLiquidezItem { Orden = 8, Nombre = "Fondeo mayorista / Captaciones totales", Formula = "Deuda institucional (23000000) / Fondeo total (21000000)", QueMide = "Dependencia de fuentes institucionales", ValorP1 = v8_p1, ValorP2 = v8_p2, EsPorcentaje = true, TipoGraficoAsociado = 1 });
 
             return result;
         }
 
         private ICLViewModel ObtenerDatosICL(string entidad, DateTime fecha)
         {
+            var saldos = ObtenerSaldosContables(entidad, fecha);
+            decimal disp = ObtenerSaldoCta(saldos, "11000000");
+            decimal inv = ObtenerSaldoCta(saldos, "12000000");
+            decimal fal = disp + inv;
+
+            decimal depVista = ObtenerSaldoCta(saldos, "21100000");
+            decimal depPlazo = ObtenerSaldoCta(saldos, "21300000");
+            decimal depTotal = depVista + depPlazo;
+            decimal top20 = depTotal * 0.20m;
+
+            decimal salidaVistaPond = depVista * 0.10m;
+            decimal salidaTop20Pond = top20 * 0.50m;
+            decimal salidasNetas = salidaVistaPond + salidaTop20Pond;
+
+            decimal iclRatio = salidasNetas > 0 ? Math.Round((fal / salidasNetas), 2) : 0m;
+
             var icl = new ICLViewModel
             {
                 Periodo = fecha.ToString("MM/yyyy"),
                 MonedaTipo = 1,
-                TieneDolares = false, // Las cooperativas ejemplo no reportan ICL en USD
-                ICLRatio = 148.52m,
-                FondoActivosLiquidos = 1203529297.63m,
-                SalidasNetasEfectivo = 810345620.10m
+                TieneDolares = false,
+                ICLRatio = iclRatio,
+                FondoActivosLiquidos = fal,
+                SalidasNetasEfectivo = salidasNetas,
+                Items = new List<ICLDetalleItem>
+                {
+                    new ICLDetalleItem { Codigo = "100000", Nivel = 0, Concepto = "ÍNDICE DE COBERTURA DE LIQUIDEZ (ICL)", SaldoBruto = iclRatio, Ponderador = 1m, SaldoPonderado = iclRatio, EsTotalizador = true },
+                    new ICLDetalleItem { Codigo = "200000", Nivel = 1, Concepto = "Fondo de Activos Líquidos (FAL)", SaldoBruto = fal, Ponderador = 1m, SaldoPonderado = fal, EsTotalizador = true },
+                    new ICLDetalleItem { Codigo = "210000", Nivel = 2, Concepto = "Activos Nivel 1", SaldoBruto = fal, Ponderador = 1m, SaldoPonderado = fal, EsTotalizador = false },
+                    new ICLDetalleItem { Codigo = "210110", Nivel = 3, Concepto = "Efectivo y disponibilidades", SaldoBruto = disp, Ponderador = 1m, SaldoPonderado = disp, EsTotalizador = false },
+                    new ICLDetalleItem { Codigo = "210120", Nivel = 3, Concepto = "Valores de deuda del BCCR o Gobierno", SaldoBruto = inv, Ponderador = 1m, SaldoPonderado = inv, EsTotalizador = false },
+                    new ICLDetalleItem { Codigo = "220000", Nivel = 2, Concepto = "Activos Nivel 2A y 2B", SaldoBruto = 0m, Ponderador = 0.85m, SaldoPonderado = 0m, EsTotalizador = false },
+                    new ICLDetalleItem { Codigo = "300000", Nivel = 1, Concepto = "Salidas Netas de Efectivo (30 días)", SaldoBruto = depVista + top20, Ponderador = 1m, SaldoPonderado = salidasNetas, EsTotalizador = true },
+                    new ICLDetalleItem { Codigo = "310000", Nivel = 2, Concepto = "Salidas de depósitos minoristas", SaldoBruto = depVista, Ponderador = 0.10m, SaldoPonderado = salidaVistaPond, EsTotalizador = false },
+                    new ICLDetalleItem { Codigo = "320000", Nivel = 2, Concepto = "Salidas de depósitos no garantizados (Top 20)", SaldoBruto = top20, Ponderador = 0.50m, SaldoPonderado = salidaTop20Pond, EsTotalizador = false }
+                },
+                HistoricoMeses = new List<string>(),
+                HistoricoValores = new List<decimal>()
             };
 
-            icl.Items = new List<ICLDetalleItem>
+            for (int m = 11; m >= 0; m--)
             {
-                new ICLDetalleItem { Codigo = "100000", Nivel = 0, Concepto = "ÍNDICE DE COBERTURA DE LIQUIDEZ (ICL)", SaldoBruto = 148.52m, Ponderador = 1m, SaldoPonderado = 148.52m, EsTotalizador = true },
-                new ICLDetalleItem { Codigo = "200000", Nivel = 1, Concepto = "Fondo de Activos Líquidos (FAL)", SaldoBruto = 1203529297.63m, Ponderador = 1m, SaldoPonderado = 1203529297.63m, EsTotalizador = true },
-                new ICLDetalleItem { Codigo = "210000", Nivel = 2, Concepto = "Activos Nivel 1", SaldoBruto = 1150000000.00m, Ponderador = 1m, SaldoPonderado = 1150000000.00m, EsTotalizador = false },
-                new ICLDetalleItem { Codigo = "210110", Nivel = 3, Concepto = "Efectivo y disponibilidades", SaldoBruto = 550000000.00m, Ponderador = 1m, SaldoPonderado = 550000000.00m, EsTotalizador = false },
-                new ICLDetalleItem { Codigo = "210120", Nivel = 3, Concepto = "Valores de deuda del BCCR o Gobierno", SaldoBruto = 600000000.00m, Ponderador = 1m, SaldoPonderado = 600000000.00m, EsTotalizador = false },
-                new ICLDetalleItem { Codigo = "220000", Nivel = 2, Concepto = "Activos Nivel 2A y 2B", SaldoBruto = 62975644.27m, Ponderador = 0.85m, SaldoPonderado = 53529297.63m, EsTotalizador = false },
-                new ICLDetalleItem { Codigo = "300000", Nivel = 1, Concepto = "Salidas Netas de Efectivo (30 días)", SaldoBruto = 953347788.35m, Ponderador = 1m, SaldoPonderado = 810345620.10m, EsTotalizador = true },
-                new ICLDetalleItem { Codigo = "310000", Nivel = 2, Concepto = "Salidas de depósitos minoristas", SaldoBruto = 450000000.00m, Ponderador = 0.10m, SaldoPonderado = 45000000.00m, EsTotalizador = false },
-                new ICLDetalleItem { Codigo = "320000", Nivel = 2, Concepto = "Salidas de depósitos no garantizados (Top 20)", SaldoBruto = 324064573.58m, Ponderador = 0.50m, SaldoPonderado = 162032286.79m, EsTotalizador = false }
-            };
+                DateTime fM = fecha.AddMonths(-m);
+                icl.HistoricoMeses.Add(fM.ToString("MMM yy", new CultureInfo("es-CR")));
+                try
+                {
+                    var sM = ObtenerSaldosContables(entidad, fM);
+                    decimal dM = ObtenerSaldoCta(sM, "11000000");
+                    decimal iM = ObtenerSaldoCta(sM, "12000000");
+                    decimal fM_fal = dM + iM;
+                    decimal depVM = ObtenerSaldoCta(sM, "21100000");
+                    decimal topM = (depVM + ObtenerSaldoCta(sM, "21300000")) * 0.20m;
+                    decimal salM = (depVM * 0.10m) + (topM * 0.50m);
+                    decimal ratM = salM > 0 ? Math.Round((fM_fal / salM), 2) : 0m;
+                    icl.HistoricoValores.Add(ratM);
+                }
+                catch
+                {
+                    icl.HistoricoValores.Add(0m);
+                }
+            }
 
             return icl;
         }
 
         private GapContractualViewModel ObtenerDatosGap(string entidad, DateTime fecha)
         {
+            var vm = new GapContractualViewModel
+            {
+                PeriodoCorte = fecha.ToString("dd/MM/yyyy"),
+                Bandas = new List<string> { "1 a 30 días", "31 a 60 días", "61 a 90 días", "91 a 180 días", "181 a 270 días", "271 a 365 días", "(+) 360 días" },
+                Entradas = new List<decimal>(),
+                Salidas = new List<decimal>(),
+                BrechasBanda = new List<decimal>(),
+                BrechasAcumuladas = new List<decimal>(),
+                Disponibilidades = new List<decimal>(),
+                RecuperacionCartera = new List<decimal>(),
+                VencimientoInversiones = new List<decimal>(),
+                VencimientosCDP = new List<decimal>(),
+                ObligacionesEntidades = new List<decimal>(),
+                OtrasCuentasPagar = new List<decimal>()
+            };
+
             try
             {
                 var spRes = spClient.FGA_Consultar_GAP_Contractual(entidad, fecha);
                 if (spRes != null && spRes.Length > 0)
                 {
-                    return new GapContractualViewModel
-                    {
-                        PeriodoCorte = fecha.ToString("dd/MM/yyyy"),
-                        Bandas = spRes.Select(x => x.Banda).ToList(),
-                        Entradas = spRes.Select(x => x.Entradas ?? 0m).ToList(),
-                        Salidas = spRes.Select(x => x.Salidas ?? 0m).ToList(),
-                        BrechasBanda = spRes.Select(x => x.BrechaBanda ?? 0m).ToList(),
-                        BrechasAcumuladas = spRes.Select(x => x.BrechaAcumulada ?? 0m).ToList()
-                    };
+                    vm.Bandas = spRes.Select(x => x.Banda).ToList();
+                    vm.Entradas = spRes.Select(x => x.Entradas ?? 0m).ToList();
+                    vm.Salidas = spRes.Select(x => x.Salidas ?? 0m).ToList();
+                    vm.BrechasBanda = spRes.Select(x => x.BrechaBanda ?? 0m).ToList();
+                    vm.BrechasAcumuladas = spRes.Select(x => x.BrechaAcumulada ?? 0m).ToList();
                 }
             }
             catch { }
 
-            return new GapContractualViewModel
+            // Si no hay datos en base de datos de GAP, calcular a partir de saldos de balance
+            var saldos = ObtenerSaldosContables(entidad, fecha);
+            decimal disp = ObtenerSaldoCta(saldos, "11000000") / 1000000m;
+            decimal inv = ObtenerSaldoCta(saldos, "12000000") / 1000000m;
+            decimal cart = ObtenerSaldoCta(saldos, "13000000") / 1000000m;
+            decimal cdp = ObtenerSaldoCta(saldos, "21300000") / 1000000m;
+            decimal oblig = ObtenerSaldoCta(saldos, "23000000") / 1000000m;
+            decimal otrasPagar = ObtenerSaldoCta(saldos, "24000000") / 1000000m;
+
+            // Desglose de partidas por banda (7 bandas)
+            vm.Disponibilidades = new List<decimal> { disp, 0m, 0m, 0m, 0m, 0m, 0m };
+            decimal invMes = inv > 0 ? inv / 6m : 0m;
+            vm.VencimientoInversiones = new List<decimal> { invMes, invMes, invMes, invMes, invMes, invMes, 0m };
+            decimal cartMes = cart > 0 ? (cart * 0.025m) : 0m;
+            vm.RecuperacionCartera = new List<decimal> { cartMes, cartMes, cartMes, cartMes * 3m, cartMes * 3m, cartMes * 3m, cart > 0 ? cart * 0.3m : 0m };
+            decimal cdpMes = cdp > 0 ? (cdp / 12m) : 0m;
+            vm.VencimientosCDP = new List<decimal> { cdpMes, cdpMes, cdpMes, cdpMes * 3m, cdpMes * 3m, cdpMes * 3m, cdp > 0 ? cdp * 0.25m : 0m };
+            decimal obligMes = oblig > 0 ? (oblig / 12m) : 0m;
+            vm.ObligacionesEntidades = new List<decimal> { obligMes, obligMes, obligMes, obligMes * 3m, obligMes * 3m, obligMes * 3m, oblig > 0 ? oblig * 0.25m : 0m };
+            decimal opMes = otrasPagar > 0 ? (otrasPagar / 6m) : 0m;
+            vm.OtrasCuentasPagar = new List<decimal> { opMes, opMes, opMes, opMes, opMes, opMes, 0m };
+
+            if (vm.Entradas.Count == 0 || vm.Entradas.All(x => x == 0m))
             {
-                PeriodoCorte = fecha.ToString("dd/MM/yyyy"),
-                Bandas = new List<string> { "1 a 30 días", "31 a 60 días", "61 a 90 días", "91 a 180 días", "181 a 270 días", "271 a 365 días", "> 365 días" },
-                Entradas = new List<decimal> { 693.81m, 120.50m, 95.30m, 210.00m, 180.20m, 115.00m, 310.50m },
-                Salidas = new List<decimal> { 739.91m, 215.00m, 180.40m, 305.20m, 220.10m, 140.00m, 250.00m },
-                BrechasBanda = new List<decimal> { -46.10m, -94.50m, -85.10m, -95.20m, -39.90m, -25.00m, 60.50m },
-                BrechasAcumuladas = new List<decimal> { 1157.43m, 1062.93m, 977.83m, 882.63m, 842.73m, 817.73m, 878.23m }
-            };
+                vm.Entradas.Clear();
+                vm.Salidas.Clear();
+                vm.BrechasBanda.Clear();
+                vm.BrechasAcumuladas.Clear();
+                decimal acum = disp + inv;
+                for (int i = 0; i < 7; i++)
+                {
+                    decimal ent = vm.Disponibilidades[i] + vm.VencimientoInversiones[i] + vm.RecuperacionCartera[i];
+                    decimal sal = vm.VencimientosCDP[i] + vm.ObligacionesEntidades[i] + vm.OtrasCuentasPagar[i];
+                    decimal brecha = ent - sal;
+                    acum += brecha;
+
+                    vm.Entradas.Add(Math.Round(ent, 2));
+                    vm.Salidas.Add(Math.Round(sal, 2));
+                    vm.BrechasBanda.Add(Math.Round(brecha, 2));
+                    vm.BrechasAcumuladas.Add(Math.Round(acum, 2));
+                }
+            }
+
+            if (vm.BrechasAcumuladas.Count > 0) vm.GapAcumulado30d = vm.BrechasAcumuladas[0];
+            if (vm.BrechasAcumuladas.Count > 2) vm.GapAcumulado90d = vm.BrechasAcumuladas[2];
+            if (vm.BrechasBanda.Count > 0)
+            {
+                vm.MaximaBrecha = vm.BrechasBanda.Min();
+                int idxMin = vm.BrechasBanda.IndexOf(vm.MaximaBrecha);
+                vm.BandaCritica = (idxMin >= 0 && idxMin < vm.Bandas.Count) ? vm.Bandas[idxMin] : "";
+            }
+
+            return vm;
         }
 
         private SupuestosSensibilizacionViewModel ObtenerSupuestosPorDefecto(string entidad, DateTime fecha)
         {
+            var saldos = ObtenerSaldosContables(entidad, fecha);
+            decimal disp = ObtenerSaldoCta(saldos, "11000000");
+            decimal inv = ObtenerSaldoCta(saldos, "12000000");
+            decimal fal = disp + inv;
+
+            decimal obligTotal = ObtenerSaldoCta(saldos, "23000000");
+            decimal pagoDeudaMes = obligTotal > 0 ? Math.Round(obligTotal / 12m, 2) : 0m;
+            decimal cuponesMes = inv > 0 ? Math.Round((inv * 0.05m) / 12m, 2) : 0m;
+
             return new SupuestosSensibilizacionViewModel
             {
                 Entidad = entidad,
@@ -407,21 +518,21 @@ namespace FGA.Controllers
                 DisminucionRecaudo_Base = 0.035m,
                 DisminucionRecaudo_Moderado = 0.05m,
                 DisminucionRecaudo_Severo = 0.10m,
-                Haircut_Base = 1203529297.63m,
-                Haircut_Moderado = 1103529297.63m,
-                Haircut_Severo = 933529297.63m,
+                Haircut_Base = fal,
+                Haircut_Moderado = Math.Round(fal * 0.9169m, 2),
+                Haircut_Severo = Math.Round(fal * 0.7757m, 2),
                 SalidaTop20_Base = 0.05m,
                 SalidaTop20_Moderado = 0.15m,
                 SalidaTop20_Severo = 0.35m,
-                DisponibilidadLineas_Base = 75000000m,
-                DisponibilidadLineas_Moderado = 50000000m,
-                DisponibilidadLineas_Severo = 30000000m,
-                PagoObligaciones_Base = 10000000m,
-                PagoObligaciones_Moderado = 10000000m,
-                PagoObligaciones_Severo = 10000000m,
-                Cupones_Base = 2500000m,
-                Cupones_Moderado = 1500000m,
-                Cupones_Severo = 1000000m,
+                DisponibilidadLineas_Base = 0m,
+                DisponibilidadLineas_Moderado = 0m,
+                DisponibilidadLineas_Severo = 0m,
+                PagoObligaciones_Base = pagoDeudaMes,
+                PagoObligaciones_Moderado = pagoDeudaMes,
+                PagoObligaciones_Severo = pagoDeudaMes,
+                Cupones_Base = cuponesMes,
+                Cupones_Moderado = Math.Round(cuponesMes * 0.60m, 2),
+                Cupones_Severo = Math.Round(cuponesMes * 0.40m, 2),
                 CapitalSocial_Base = 0.035m,
                 CapitalSocial_Moderado = 0.028m,
                 CapitalSocial_Severo = 0.0175m,
@@ -444,62 +555,70 @@ namespace FGA.Controllers
             decimal disp = ObtenerSaldoCta(saldos, "11000000") / 1000000m;
             decimal invLiq = ObtenerSaldoCta(saldos, "12000000") / 1000000m;
             decimal fal = (disp + invLiq);
-            if (fal <= 0m) fal = 1203.53m;
 
             rc.ActivosLiquidos_Base = fal;
-            rc.ActivosLiquidos_Moderado = fal;
-            rc.ActivosLiquidos_Severo = fal;
+            rc.ActivosLiquidos_Moderado = supuestos.Haircut_Moderado > 0 ? Math.Round(supuestos.Haircut_Moderado / 1000000m, 2) : Math.Round(fal * 0.9169m, 2);
+            rc.ActivosLiquidos_Severo = supuestos.Haircut_Severo > 0 ? Math.Round(supuestos.Haircut_Severo / 1000000m, 2) : Math.Round(fal * 0.7757m, 2);
 
             // Ingresos Contractuales (Requerimiento imagen 16 y Anexo Excel Hoja Razón de cobertura)
-            decimal recCarteraBase = gap.RecuperacionCartera.Count > 0 ? gap.RecuperacionCartera[0] : 135.50m;
-            rc.CarteraRecuperacion_Base = recCarteraBase;
-            rc.CarteraRecuperacion_Moderado = recCarteraBase * (1m - supuestos.DisminucionRecaudo_Moderado);
-            rc.CarteraRecuperacion_Severo = rc.CarteraRecuperacion_Moderado * (1m - supuestos.DisminucionRecaudo_Severo);
+            decimal cartNeta = ObtenerSaldoCta(saldos, "13000000") / 1000000m;
+            decimal recCarteraBase = (gap.RecuperacionCartera != null && gap.RecuperacionCartera.Count > 0 && gap.RecuperacionCartera[0] > 0)
+                ? gap.RecuperacionCartera[0]
+                : (cartNeta > 0 ? (cartNeta * 0.025m) : 0m);
 
-            decimal invBase = gap.VencimientoInversiones.Count > 0 ? gap.VencimientoInversiones[0] : 550.00m;
-            rc.Inversiones_Base = invBase + (supuestos.Cupones_Base / 1000000m);
-            rc.Inversiones_Moderado = invBase + (supuestos.Cupones_Moderado / 1000000m);
-            rc.Inversiones_Severo = invBase + (supuestos.Cupones_Severo / 1000000m);
+            rc.CarteraRecuperacion_Base = Math.Round(recCarteraBase, 2);
+            rc.CarteraRecuperacion_Moderado = Math.Round(recCarteraBase * (1m - supuestos.DisminucionRecaudo_Moderado), 2);
+            rc.CarteraRecuperacion_Severo = Math.Round(rc.CarteraRecuperacion_Moderado * (1m - supuestos.DisminucionRecaudo_Severo), 2);
 
-            decimal comisiones = 5.81m;
-            rc.Comisiones_Base = comisiones * (1m + supuestos.OtrosIngresos_Base);
-            rc.Comisiones_Moderado = comisiones * (1m + supuestos.OtrosIngresos_Moderado);
-            rc.Comisiones_Severo = comisiones * (1m + supuestos.OtrosIngresos_Severo);
+            decimal invBase = (gap.VencimientoInversiones != null && gap.VencimientoInversiones.Count > 0 && gap.VencimientoInversiones[0] > 0)
+                ? gap.VencimientoInversiones[0]
+                : (invLiq > 0 ? invLiq / 6m : 0m);
+
+            rc.Inversiones_Base = Math.Round(invBase + (supuestos.Cupones_Base / 1000000m), 2);
+            rc.Inversiones_Moderado = Math.Round(invBase + (supuestos.Cupones_Moderado / 1000000m), 2);
+            rc.Inversiones_Severo = Math.Round(invBase + (supuestos.Cupones_Severo / 1000000m), 2);
+
+            decimal comisiones = ObtenerSaldoCta(saldos, "52000000") / 1000000m;
+            if (comisiones <= 0m) comisiones = ObtenerSaldoCta(saldos, "51000000") / 1000000m * 0.05m;
+            rc.Comisiones_Base = Math.Round(comisiones * (1m + supuestos.OtrosIngresos_Base), 2);
+            rc.Comisiones_Moderado = Math.Round(comisiones * (1m + supuestos.OtrosIngresos_Moderado), 2);
+            rc.Comisiones_Severo = Math.Round(comisiones * (1m + supuestos.OtrosIngresos_Severo), 2);
 
             rc.IngresosContractuales_Base = Math.Round(rc.CarteraRecuperacion_Base + rc.Inversiones_Base + rc.Comisiones_Base, 2);
             rc.IngresosContractuales_Moderado = Math.Round(rc.CarteraRecuperacion_Moderado + rc.Inversiones_Moderado + rc.Comisiones_Moderado, 2);
             rc.IngresosContractuales_Severo = Math.Round(rc.CarteraRecuperacion_Severo + rc.Inversiones_Severo + rc.Comisiones_Severo, 2);
 
             // Egresos Contractuales
-            decimal cdp1Mes = (gap.VencimientosCDP.Count > 0 ? gap.VencimientosCDP[0] : 849.95m);
-            if (cdp1Mes < 100m) cdp1Mes = 849.95m; // Respaldo volumen 1 mes
+            decimal cdpTotal = ObtenerSaldoCta(saldos, "21300000") / 1000000m;
+            decimal cdp1Mes = (gap.VencimientosCDP != null && gap.VencimientosCDP.Count > 0 && gap.VencimientosCDP[0] > 0)
+                ? gap.VencimientosCDP[0]
+                : (cdpTotal > 0 ? (cdpTotal / 12m) : 0m);
+
             rc.CDPContractuales_Base = Math.Round(cdp1Mes * (1m - supuestos.RenovacionCDP_Base), 2);
             rc.CDPContractuales_Moderado = Math.Round(cdp1Mes * (1m - supuestos.RenovacionCDP_Moderado), 2);
             rc.CDPContractuales_Severo = Math.Round(cdp1Mes * (1m - supuestos.RenovacionCDP_Severo), 2);
 
-            decimal top20Total = 3240.65m;
+            decimal capTotal = ObtenerSaldoCta(saldos, "21000000") / 1000000m;
+            decimal top20Total = capTotal * 0.25m;
             rc.SalidaTop20_Base = Math.Round(top20Total * supuestos.SalidaTop20_Base, 2);
             rc.SalidaTop20_Moderado = Math.Round(top20Total * supuestos.SalidaTop20_Moderado, 2);
             rc.SalidaTop20_Severo = Math.Round(top20Total * supuestos.SalidaTop20_Severo, 2);
 
-            rc.PagoObligaciones_Base = supuestos.PagoObligaciones_Base / 1000000m;
-            rc.PagoObligaciones_Moderado = supuestos.PagoObligaciones_Moderado / 1000000m;
-            rc.PagoObligaciones_Severo = supuestos.PagoObligaciones_Severo / 1000000m;
+            rc.PagoObligaciones_Base = Math.Round(supuestos.PagoObligaciones_Base / 1000000m, 2);
+            rc.PagoObligaciones_Moderado = Math.Round(supuestos.PagoObligaciones_Moderado / 1000000m, 2);
+            rc.PagoObligaciones_Severo = Math.Round(supuestos.PagoObligaciones_Severo / 1000000m, 2);
 
             decimal egresosFinAdm = (ObtenerSaldoCta(saldos, "41000000") + ObtenerSaldoCta(saldos, "42000000")) / 1000000m;
-            if (egresosFinAdm <= 0m) egresosFinAdm = 76.37m;
             rc.EgresosFinAdm_Base = Math.Round(egresosFinAdm * (1m + supuestos.EgresosFinancieros_Base + supuestos.GastosAdministrativos_Base), 2);
             rc.EgresosFinAdm_Moderado = Math.Round(egresosFinAdm * (1m + supuestos.EgresosFinancieros_Moderado + supuestos.GastosAdministrativos_Moderado), 2);
             rc.EgresosFinAdm_Severo = Math.Round(egresosFinAdm * (1m + supuestos.EgresosFinancieros_Severo + supuestos.GastosAdministrativos_Severo), 2);
 
-            decimal cartNeta = ObtenerSaldoCta(saldos, "13000000") / 1000000m;
-            if (cartNeta <= 0m) cartNeta = 8713.44m;
-            rc.DesembolsosCartera_Base = Math.Round((cartNeta * (supuestos.CrecimientoCartera_Base / 12m)) + 75.0m, 2);
-            rc.DesembolsosCartera_Moderado = Math.Round((cartNeta * (supuestos.CrecimientoCartera_Moderado / 12m)) + 75.0m, 2);
-            rc.DesembolsosCartera_Severo = Math.Round((cartNeta * (supuestos.CrecimientoCartera_Severo / 12m)) + 75.0m, 2);
+            decimal lineas = (supuestos.DisponibilidadLineas_Base / 1000000m);
+            rc.DesembolsosCartera_Base = Math.Round((cartNeta * (supuestos.CrecimientoCartera_Base / 12m)) + lineas, 2);
+            rc.DesembolsosCartera_Moderado = Math.Round((cartNeta * (supuestos.CrecimientoCartera_Moderado / 12m)) + (supuestos.DisponibilidadLineas_Moderado / 1000000m), 2);
+            rc.DesembolsosCartera_Severo = Math.Round((cartNeta * (supuestos.CrecimientoCartera_Severo / 12m)) + (supuestos.DisponibilidadLineas_Severo / 1000000m), 2);
 
             decimal vistaTotal = ObtenerSaldoCta(saldos, "21100000") / 1000000m;
-            if (vistaTotal <= 0m) vistaTotal = 2364.05m;
             rc.CorridaDepositosVista_Base = Math.Round(vistaTotal * supuestos.SalidaVista_Base, 2);
             rc.CorridaDepositosVista_Moderado = Math.Round(vistaTotal * supuestos.SalidaVista_Moderado, 2);
             rc.CorridaDepositosVista_Severo = Math.Round(vistaTotal * supuestos.SalidaVista_Severo, 2);
@@ -510,13 +629,13 @@ namespace FGA.Controllers
 
             // Razón de Cobertura oficial Excel F16 / (F22 - F18)
             decimal netoBase = rc.EgresosContractuales_Base - rc.IngresosContractuales_Base;
-            rc.RazonCobertura_Base = netoBase > 0 ? Math.Round(rc.ActivosLiquidos_Base / netoBase, 2) : 26.11m;
+            rc.RazonCobertura_Base = netoBase > 0 ? Math.Round(rc.ActivosLiquidos_Base / netoBase, 2) : 0m;
 
             decimal netoMod = rc.EgresosContractuales_Moderado - rc.IngresosContractuales_Moderado;
-            rc.RazonCobertura_Moderado = netoMod > 0 ? Math.Round(rc.ActivosLiquidos_Moderado / netoMod, 2) : 2.23m;
+            rc.RazonCobertura_Moderado = netoMod > 0 ? Math.Round(rc.ActivosLiquidos_Moderado / netoMod, 2) : 0m;
 
             decimal netoSev = rc.EgresosContractuales_Severo - rc.IngresosContractuales_Severo;
-            rc.RazonCobertura_Severo = netoSev > 0 ? Math.Round(rc.ActivosLiquidos_Severo / netoSev, 2) : 0.82m;
+            rc.RazonCobertura_Severo = netoSev > 0 ? Math.Round(rc.ActivosLiquidos_Severo / netoSev, 2) : 0m;
 
             // Diferencia de Escenarios
             rc.CDPDiferencia_Base = 0m;
@@ -538,26 +657,28 @@ namespace FGA.Controllers
             return rc;
         }
 
-        private ICLEstresadoViewModel CalcularICLEstresado(ICLViewModel icl, Dictionary<string, decimal> saldos, SupuestosSensibilizacionViewModel supuestos)
+        private ICLEstresadoViewModel CalcularICLEstresado(ICLViewModel icl, Dictionary<string, decimal> saldos, SupuestosSensibilizacionViewModel supuestos, RazonCoberturaViewModel rc)
         {
             var vm = new ICLEstresadoViewModel();
-            decimal fal = (icl != null && icl.FondoActivosLiquidos > 0) ? (icl.FondoActivosLiquidos / 1000000m) : 1203.53m;
+            decimal disp = ObtenerSaldoCta(saldos, "11000000") / 1000000m;
+            decimal invLiq = ObtenerSaldoCta(saldos, "12000000") / 1000000m;
+            decimal fal = (icl != null && icl.FondoActivosLiquidos > 0) ? (icl.FondoActivosLiquidos / 1000000m) : (disp + invLiq);
 
             vm.FALContractual = Math.Round(fal, 2);
-            vm.FALBase = Math.Round(fal, 2);
-            vm.FALModerado = Math.Round(fal * 0.9169m, 2); // Haircut moderado 1103.53 MM
-            vm.FALSevero = Math.Round(fal * 0.7757m, 2);   // Haircut severo 933.53 MM
+            vm.FALBase = Math.Round(supuestos.Haircut_Base > 0 ? supuestos.Haircut_Base / 1000000m : fal, 2);
+            vm.FALModerado = Math.Round(supuestos.Haircut_Moderado > 0 ? supuestos.Haircut_Moderado / 1000000m : fal * 0.9169m, 2);
+            vm.FALSevero = Math.Round(supuestos.Haircut_Severo > 0 ? supuestos.Haircut_Severo / 1000000m : fal * 0.7757m, 2);
 
-            decimal salNetas = (icl != null && icl.SalidasNetasEfectivo > 0) ? (icl.SalidasNetasEfectivo / 1000000m) : 360.12m;
-            vm.SalidasContractual = Math.Round(salNetas, 2);
-            vm.SalidasBase = Math.Round(salNetas, 2);
-            vm.SalidasModerado = Math.Round(salNetas + 324.06m, 2);  // 684.18 MM
-            vm.SalidasSevero = Math.Round(salNetas + 972.19m, 2);   // 1332.31 MM
+            decimal salContractual = (icl != null && icl.SalidasNetasEfectivo > 0) ? (icl.SalidasNetasEfectivo / 1000000m) : rc.EgresosContractuales_Base;
+            vm.SalidasContractual = Math.Round(salContractual, 2);
+            vm.SalidasBase = Math.Round(salContractual + rc.SalidaTop20_Base, 2);
+            vm.SalidasModerado = Math.Round(salContractual + rc.SalidaTop20_Moderado, 2);
+            vm.SalidasSevero = Math.Round(salContractual + rc.SalidaTop20_Severo, 2);
 
-            vm.ICLContractual = vm.SalidasContractual > 0 ? Math.Round(vm.FALContractual / vm.SalidasContractual, 2) : 1.55m;
-            vm.ICLBase = vm.ICLContractual;
-            vm.ICLModerado = vm.SalidasModerado > 0 ? Math.Round(vm.FALModerado / vm.SalidasModerado, 2) : 1.18m;
-            vm.ICLSevero = vm.SalidasSevero > 0 ? Math.Round(vm.FALSevero / vm.SalidasSevero, 2) : 0.82m;
+            vm.ICLContractual = vm.SalidasContractual > 0 ? Math.Round(vm.FALContractual / vm.SalidasContractual, 2) : 0m;
+            vm.ICLBase = vm.SalidasBase > 0 ? Math.Round(vm.FALBase / vm.SalidasBase, 2) : 0m;
+            vm.ICLModerado = vm.SalidasModerado > 0 ? Math.Round(vm.FALModerado / vm.SalidasModerado, 2) : 0m;
+            vm.ICLSevero = vm.SalidasSevero > 0 ? Math.Round(vm.FALSevero / vm.SalidasSevero, 2) : 0m;
 
             return vm;
         }
@@ -566,53 +687,117 @@ namespace FGA.Controllers
         {
             var vm = new BrechasLiquidezViewModel();
             decimal fal = rc.ActivosLiquidos_Base;
-            decimal falMod = Math.Round(fal * 0.9169m, 2); // 1103.53m
-            decimal falSev = Math.Round(fal * 0.7757m, 2); // 933.53m
+            decimal falMod = rc.ActivosLiquidos_Moderado;
+            decimal falSev = rc.ActivosLiquidos_Severo;
 
             vm.FAL_Base = fal;
             vm.FAL_Moderado = falMod;
             vm.FAL_Severo = falSev;
 
-            // Flujos estresados calculados según el anexo Excel Hoja Brechas de Liquidez
-            vm.EntradasBase = new List<decimal> { 767.14m, 867.73m, 218.32m, 706.75m, 891.61m, 1096.19m, 5671.70m };
-            vm.SalidasBase = new List<decimal> { 789.86m, 686.40m, 679.33m, 2018.24m, 1965.48m, 2032.98m, 7598.20m };
+            vm.EntradasBase = new List<decimal>();
+            vm.SalidasBase = new List<decimal>();
             vm.BrechasBase = new List<decimal>();
             vm.AcumuladoBase = new List<decimal>();
 
-            decimal acumB = fal;
-            for (int i = 0; i < 7; i++)
-            {
-                decimal g = vm.EntradasBase[i] - vm.SalidasBase[i];
-                vm.BrechasBase.Add(Math.Round(g, 2));
-                acumB += g;
-                vm.AcumuladoBase.Add(Math.Round(acumB, 2));
-            }
-
-            vm.EntradasModerado = new List<decimal> { 744.77m, 845.36m, 195.95m, 639.65m, 824.25m, 1028.85m, 5604.36m };
-            vm.SalidasModerado = new List<decimal> { 1304.95m, 1140.84m, 1125.76m, 3357.82m, 3245.27m, 3304.77m, 8870.00m };
+            vm.EntradasModerado = new List<decimal>();
+            vm.SalidasModerado = new List<decimal>();
             vm.BrechasModerado = new List<decimal>();
             vm.AcumuladoModerado = new List<decimal>();
 
-            decimal acumM = falMod;
-            for (int i = 0; i < 7; i++)
-            {
-                decimal g = vm.EntradasModerado[i] - vm.SalidasModerado[i];
-                vm.BrechasModerado.Add(Math.Round(g, 2));
-                acumM += g;
-                vm.AcumuladoModerado.Add(Math.Round(acumM, 2));
-            }
-
-            vm.EntradasSevero = new List<decimal> { 709.51m, 810.10m, 160.69m, 533.87m, 718.07m, 922.67m, 5498.19m };
-            vm.SalidasSevero = new List<decimal> { 2293.12m, 2038.03m, 2010.95m, 6013.78m, 5811.54m, 5871.04m, 11436.27m };
+            vm.EntradasSevero = new List<decimal>();
+            vm.SalidasSevero = new List<decimal>();
             vm.BrechasSevero = new List<decimal>();
             vm.AcumuladoSevero = new List<decimal>();
 
+            decimal capSocialSaldo = ObtenerSaldoCta(saldos, "31000000") / 1000000m;
+            decimal cuponBase = supuestos.Cupones_Base / 1000000m;
+            decimal cuponMod = supuestos.Cupones_Moderado / 1000000m;
+            decimal cuponSev = supuestos.Cupones_Severo / 1000000m;
+
+            // Factores mensuales por banda (7 bandas: 1m, 1m, 1m, 3m, 3m, 3m, 12m)
+            decimal[] factores = { 1m, 1m, 1m, 3m, 3m, 3m, 12m };
+
+            decimal acumB = fal;
+            decimal acumM = falMod;
             decimal acumS = falSev;
+
             for (int i = 0; i < 7; i++)
             {
-                decimal g = vm.EntradasSevero[i] - vm.SalidasSevero[i];
-                vm.BrechasSevero.Add(Math.Round(g, 2));
-                acumS += g;
+                decimal factor = factores[i];
+
+                // 1. Entradas por banda
+                decimal recCarteraB = (i == 0) ? rc.CarteraRecuperacion_Base : ((gap.RecuperacionCartera != null && gap.RecuperacionCartera.Count > i && gap.RecuperacionCartera[i] > 0) ? gap.RecuperacionCartera[i] : rc.CarteraRecuperacion_Base * factor);
+                decimal recCarteraM = recCarteraB * (1m - supuestos.DisminucionRecaudo_Moderado);
+                decimal recCarteraS = recCarteraM * (1m - supuestos.DisminucionRecaudo_Severo);
+
+                decimal invBanda = (gap.VencimientoInversiones != null && gap.VencimientoInversiones.Count > i) ? gap.VencimientoInversiones[i] : 0m;
+                decimal comisionesB = rc.Comisiones_Base * factor;
+                decimal comisionesM = rc.Comisiones_Moderado * factor;
+                decimal comisionesS = rc.Comisiones_Severo * factor;
+
+                decimal capSocialB = (capSocialSaldo * (supuestos.CapitalSocial_Base / 12m)) * factor;
+                decimal capSocialM = (capSocialSaldo * (supuestos.CapitalSocial_Moderado / 12m)) * factor;
+                decimal capSocialS = (capSocialSaldo * (supuestos.CapitalSocial_Severo / 12m)) * factor;
+
+                decimal entB = Math.Round(recCarteraB + invBanda + comisionesB + capSocialB + (cuponBase * factor), 2);
+                decimal entM = Math.Round(recCarteraM + invBanda + comisionesM + capSocialM + (cuponMod * factor), 2);
+                decimal entS = Math.Round(recCarteraS + invBanda + comisionesS + capSocialS + (cuponSev * factor), 2);
+
+                vm.EntradasBase.Add(entB);
+                vm.EntradasModerado.Add(entM);
+                vm.EntradasSevero.Add(entS);
+
+                // 2. Salidas por banda
+                decimal cdpBanda = (gap.VencimientosCDP != null && gap.VencimientosCDP.Count > i && gap.VencimientosCDP[i] > 0)
+                    ? gap.VencimientosCDP[i]
+                    : ((i == 0) ? (rc.CDPContractuales_Base / (1m - supuestos.RenovacionCDP_Base > 0 ? (1m - supuestos.RenovacionCDP_Base) : 1m)) : (rc.CDPContractuales_Base * factor));
+
+                decimal cdpSalidaB = cdpBanda * (1m - supuestos.RenovacionCDP_Base);
+                decimal cdpSalidaM = cdpBanda * (1m - supuestos.RenovacionCDP_Moderado);
+                decimal cdpSalidaS = cdpBanda * (1m - supuestos.RenovacionCDP_Severo);
+
+                decimal vistaSalidaB = rc.CorridaDepositosVista_Base * factor;
+                decimal vistaSalidaM = rc.CorridaDepositosVista_Moderado * factor;
+                decimal vistaSalidaS = rc.CorridaDepositosVista_Severo * factor;
+
+                decimal top20SalidaB = rc.SalidaTop20_Base * factor;
+                decimal top20SalidaM = rc.SalidaTop20_Moderado * factor;
+                decimal top20SalidaS = rc.SalidaTop20_Severo * factor;
+
+                decimal finAdmSalidaB = rc.EgresosFinAdm_Base * factor;
+                decimal finAdmSalidaM = rc.EgresosFinAdm_Moderado * factor;
+                decimal finAdmSalidaS = rc.EgresosFinAdm_Severo * factor;
+
+                decimal pagoObligB = rc.PagoObligaciones_Base * factor;
+                decimal pagoObligM = rc.PagoObligaciones_Moderado * factor;
+                decimal pagoObligS = rc.PagoObligaciones_Severo * factor;
+
+                decimal desembCartB = rc.DesembolsosCartera_Base * factor;
+                decimal desembCartM = rc.DesembolsosCartera_Moderado * factor;
+                decimal desembCartS = rc.DesembolsosCartera_Severo * factor;
+
+                decimal salB = Math.Round(cdpSalidaB + vistaSalidaB + top20SalidaB + finAdmSalidaB + pagoObligB + desembCartB, 2);
+                decimal salM = Math.Round(cdpSalidaM + vistaSalidaM + top20SalidaM + finAdmSalidaM + pagoObligM + desembCartM, 2);
+                decimal salS = Math.Round(cdpSalidaS + vistaSalidaS + top20SalidaS + finAdmSalidaS + pagoObligS + desembCartS, 2);
+
+                vm.SalidasBase.Add(salB);
+                vm.SalidasModerado.Add(salM);
+                vm.SalidasSevero.Add(salS);
+
+                // 3. Brechas y Acumulado
+                decimal gB = entB - salB;
+                acumB += gB;
+                vm.BrechasBase.Add(Math.Round(gB, 2));
+                vm.AcumuladoBase.Add(Math.Round(acumB, 2));
+
+                decimal gM = entM - salM;
+                acumM += gM;
+                vm.BrechasModerado.Add(Math.Round(gM, 2));
+                vm.AcumuladoModerado.Add(Math.Round(acumM, 2));
+
+                decimal gS = entS - salS;
+                acumS += gS;
+                vm.BrechasSevero.Add(Math.Round(gS, 2));
                 vm.AcumuladoSevero.Add(Math.Round(acumS, 2));
             }
 
