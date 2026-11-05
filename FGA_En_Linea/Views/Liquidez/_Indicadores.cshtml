@@ -11,15 +11,15 @@
 
 <!-- Tabla con diseño oficial del requerimiento (Cabecera azul #2b579a, anchos fijos y sin cortes de texto) -->
 <div class="table-responsive" style="border-radius: 6px; overflow: hidden; border: 1px solid #cbd5e1; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
-    <table id="tblIndicadoresLiquidez" class="table table-striped modern-data-table" style="width: 100%; margin-bottom: 0; border-collapse: collapse;">
-        <thead style="background-color: #2b579a; color: #ffffff;">
-            <tr>
-                <th class="text-left" style="width: 27%; text-align: left !important; color: #ffffff !important; padding: 11px 16px; font-weight: 700; font-size: 13px; border: none;">Indicador</th>
-                <th class="text-left" style="width: 35%; text-align: left !important; color: #ffffff !important; padding: 11px 14px; font-weight: 700; font-size: 13px; border: none;">Que mide</th>
-                <th id="thPeriodo1" class="text-right" style="width: 12%; text-align: right !important; color: #ffffff !important; padding: 11px 14px; font-weight: 700; font-size: 13px; border: none; white-space: nowrap;">@(Model.Periodo1Header ?? Model.Periodo1)</th>
-                <th id="thPeriodo2" class="text-right" style="width: 12%; text-align: right !important; color: #ffffff !important; padding: 11px 14px; font-weight: 700; font-size: 13px; border: none; white-space: nowrap;">@(Model.Periodo2Header ?? Model.Periodo2)</th>
-                <th class="text-center" style="width: 10%; text-align: center !important; color: #ffffff !important; padding: 11px 12px; font-weight: 700; font-size: 13px; border: none; white-space: nowrap;">Variación (p.p.)</th>
-                <th class="text-center" style="width: 4%; text-align: center !important; color: #ffffff !important; padding: 11px 8px; font-weight: 700; font-size: 13px; border: none;"></th>
+    <table id="tblIndicadoresLiquidez" class="table table-striped modern-data-table tabla-liquidez-azul" style="width: 100%; margin-bottom: 0; border-collapse: collapse;">
+        <thead style="background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important;">
+            <tr style="background-color: #2b579a !important; background: #2b579a !important;">
+                <th class="text-left" style="width: 27%; text-align: left !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 16px; font-weight: 700; font-size: 13px; border: none;">Indicador</th>
+                <th class="text-left" style="width: 35%; text-align: left !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 14px; font-weight: 700; font-size: 13px; border: none;">Que mide</th>
+                <th id="thPeriodo1" class="text-right" style="width: 12%; text-align: right !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 14px; font-weight: 700; font-size: 13px; border: none; white-space: nowrap;">@(Model.Periodo1Header ?? Model.Periodo1)</th>
+                <th id="thPeriodo2" class="text-right" style="width: 12%; text-align: right !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 14px; font-weight: 700; font-size: 13px; border: none; white-space: nowrap;">@(Model.Periodo2Header ?? Model.Periodo2)</th>
+                <th class="text-center" style="width: 10%; text-align: center !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 12px; font-weight: 700; font-size: 13px; border: none; white-space: nowrap;">Variación (p.p.)</th>
+                <th class="text-center" style="width: 4%; text-align: center !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 8px; font-weight: 700; font-size: 13px; border: none;"></th>
             </tr>
         </thead>
         <tbody id="tbodyIndicadoresLiquidez">
@@ -61,7 +61,7 @@
                             @if (ind.Variacion > 0)
                             {
                                 <span class="badge" style="background-color: #dbeafe; color: #1e40af; font-size: 12px; font-weight: 700; padding: 4px 8px; border-radius: 6px; display: inline-block; min-width: 70px; text-align: center; border: 1px solid #bfdbfe;">
-                                    +@ind.VariacionFormateada
+                                    @ind.VariacionFormateada
                                 </span>
                             }
                             else if (ind.Variacion < 0)
