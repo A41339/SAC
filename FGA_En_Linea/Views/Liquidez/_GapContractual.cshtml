@@ -10,13 +10,11 @@
         </div>
     </div>
 
-    <!-- Selector de Fecha de Corte (último mes cargado) y Generar -->
-    <div style="display: inline-flex; align-items: center; gap: 8px;">
-        <label for="txtFechaCorteGap" style="margin: 0; font-size: 12px; font-weight: 600; color: #475569;">Fecha de corte:</label>
-        <input type="text" id="txtFechaCorteGap" class="form-control modern-date-input datecontrol" value="@(Model.PeriodoCorteGap ?? Model.Periodo2)" style="width: 130px; height: 34px; font-size: 12.5px;" />
-        <button type="button" id="btnGenerarGap" class="btn-modern-generate" style="height: 34px; padding: 0 16px; font-size: 12.5px;" onclick="cargarGapContractual()">
-            <i class="fa fa-refresh"></i> Generar
-        </button>
+    <!-- Indicador de Fecha de Corte (Toma el Periodo Final seleccionado en el filtro superior) -->
+    <div>
+        <span class="badge" style="background: #f1f5f9; color: #1e3a8a; border: 1px solid #cbd5e1; font-size: 12.5px; font-weight: 600; padding: 6px 14px; border-radius: 6px;">
+            <i class="fa fa-calendar-check-o" style="color: #2b579a; margin-right: 5px;"></i> Fecha de corte: <strong>@Model.Periodo2</strong>
+        </span>
     </div>
 </div>
 
