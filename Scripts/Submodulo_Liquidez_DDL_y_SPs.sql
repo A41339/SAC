@@ -569,7 +569,7 @@ BEGIN
             DisponibilidadLineasMes,
             PagoPrincipalDeudaMes,
             CuponesMes,
-            FechaCreacion,
+            FechaModificacion,
             UsuarioModifica
         )
         VALUES
