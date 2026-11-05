@@ -10,144 +10,149 @@
     </div>
 
     <div>
-        <button type="button" class="btn btn-sm btn-primary" onclick="recalcularEscenarios()" style="background-color: #0284c7; border-color: #0284c7; font-weight: 600; border-radius: 6px; padding: 6px 16px;">
+        <button type="button" class="btn btn-sm btn-primary" onclick="recalcularEscenarios()" style="background-color: #0284c7; border-color: #0284c7; font-weight: 600; border-radius: 6px; padding: 7px 18px;">
             <i class="fa fa-calculator"></i> Aplicar y Proyectar Escenarios
         </button>
     </div>
 </div>
 
-<div class="table-responsive" style="border-radius: 6px; overflow: hidden; border: 1px solid #cbd5e1; box-shadow: 0 1px 3px rgba(0,0,0,0.04); margin-top: 10px;">
+<div class="table-responsive" style="border-radius: 6px; overflow: hidden; border: 1px solid #cbd5e1; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
     <table id="tblSupuestos" class="table table-striped modern-data-table tabla-liquidez-azul" style="width: 100%; margin-bottom: 0; border-collapse: collapse;">
         <thead style="background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important;">
             <tr style="background-color: #2b579a !important; background: #2b579a !important;">
-                <th class="text-left" style="width: 32%; text-align: left !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 16px; font-weight: 700; font-size: 13px; border: none;">Variables del Modelo</th>
-                <th class="text-left" style="width: 26%; text-align: left !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 14px; font-weight: 700; font-size: 13px; border: none;">Tipo de Proyector</th>
-                <th class="text-right" style="width: 14%; text-align: right !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 14px; font-weight: 700; font-size: 13px; border: none; white-space: nowrap;">Escenario Base</th>
-                <th class="text-right" style="width: 14%; text-align: right !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 14px; font-weight: 700; font-size: 13px; border: none; white-space: nowrap;">Escenario Moderado</th>
-                <th class="text-right" style="width: 14%; text-align: right !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 16px; font-weight: 700; font-size: 13px; border: none; white-space: nowrap;">Escenario Severo</th>
+                <th class="text-left" style="width: 30%; text-align: left !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 16px; font-weight: 700; font-size: 13px; border: none;">Variables del Modelo</th>
+                <th class="text-left" style="width: 25%; text-align: left !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 14px; font-weight: 700; font-size: 13px; border: none;">Tipo de Proyector</th>
+                <th class="text-right" style="width: 15%; text-align: right !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 14px; font-weight: 700; font-size: 13px; border: none; white-space: nowrap;">Escenario Base</th>
+                <th class="text-right" style="width: 15%; text-align: right !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 14px; font-weight: 700; font-size: 13px; border: none; white-space: nowrap;">Escenario Moderado</th>
+                <th class="text-right" style="width: 15%; text-align: right !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 16px; font-weight: 700; font-size: 13px; border: none; white-space: nowrap;">Escenario Severo</th>
             </tr>
         </thead>
         <tbody>
             <!-- 1. Renovación CDP -->
             <tr>
-                <td style="font-weight: 600; color: #1e3a8a;">Renovación CDP's</td>
-                <td>
+                <td style="font-weight: 600; color: #1e3a8a; padding: 10px 16px; vertical-align: middle;">Renovación CDP's</td>
+                <td style="padding: 10px 14px; vertical-align: middle;">
                     <select id="selProyectorCDP" class="form-control input-sm" onchange="actualizarSupuestoCDP()">
                         <option value="Historico" selected>Histórico (Parámetro Coope)</option>
                         <option value="Manual">Dato Manual</option>
                     </select>
                 </td>
-                <td style="background-color: #f0fdf4;"><input type="number" step="0.01" id="txtCDP_Base" class="form-control input-sm text-right font-weight-bold" value="@(Model.Supuestos.RenovacionCDP_Base * 100m)" /></td>
-                <td style="background-color: #fffbeb;"><input type="number" step="0.01" id="txtCDP_Mod" class="form-control input-sm text-right" value="@(Model.Supuestos.RenovacionCDP_Moderado * 100m)" readonly /></td>
-                <td style="background-color: #fef2f2;"><input type="number" step="0.01" id="txtCDP_Sev" class="form-control input-sm text-right" value="@(Model.Supuestos.RenovacionCDP_Severo * 100m)" readonly /></td>
+                <td style="background-color: #f0fdf4; padding: 8px 14px;"><input type="number" step="0.01" id="txtCDP_Base" class="form-control input-sm text-right font-weight-bold" value="@(Model.Supuestos.RenovacionCDP_Base * 100m)" /></td>
+                <td style="background-color: #fffbeb; padding: 8px 14px;"><input type="number" step="0.01" id="txtCDP_Mod" class="form-control input-sm text-right" value="@(Model.Supuestos.RenovacionCDP_Moderado * 100m)" readonly /></td>
+                <td style="background-color: #fef2f2; padding: 8px 16px;"><input type="number" step="0.01" id="txtCDP_Sev" class="form-control input-sm text-right" value="@(Model.Supuestos.RenovacionCDP_Severo * 100m)" readonly /></td>
             </tr>
 
             <!-- 2. Salida Ahorros a la Vista (VaR) -->
             <tr>
-                <td style="font-weight: 600; color: #1e3a8a;">Salida de depósitos ahorros a la vista (VaR Liquidez)</td>
-                <td>
+                <td style="font-weight: 600; color: #1e3a8a; padding: 10px 16px; vertical-align: middle;">Salida depósitos vista (VaR Liquidez)</td>
+                <td style="padding: 10px 14px; vertical-align: middle;">
                     <select id="selProyectorVaR" class="form-control input-sm" onchange="actualizarSupuestoVaR()">
-                        <option value="VaR95" selected>VaR al 95% (Histórico 100 datos cta 21103000)</option>
+                        <option value="VaR95" selected>VaR al 95% (100 datos cta 21103000)</option>
                         <option value="VaR99">VaR al 99%</option>
                         <option value="MaxVar">Máxima variación histórica</option>
                         <option value="Manual">Dato Manual</option>
                     </select>
                 </td>
-                <td style="background-color: #f0fdf4;"><input type="number" step="0.01" id="txtVaR_Base" class="form-control input-sm text-right font-weight-bold" value="@(Model.Supuestos.SalidaVista_Base * 100m)" /></td>
-                <td style="background-color: #fffbeb;"><input type="number" step="0.01" id="txtVaR_Mod" class="form-control input-sm text-right" value="@(Model.Supuestos.SalidaVista_Moderado * 100m)" readonly /></td>
-                <td style="background-color: #fef2f2;"><input type="number" step="0.01" id="txtVaR_Sev" class="form-control input-sm text-right" value="@(Model.Supuestos.SalidaVista_Severo * 100m)" readonly /></td>
+                <td style="background-color: #f0fdf4; padding: 8px 14px;"><input type="number" step="0.01" id="txtVaR_Base" class="form-control input-sm text-right font-weight-bold" value="@(Model.Supuestos.SalidaVista_Base * 100m)" /></td>
+                <td style="background-color: #fffbeb; padding: 8px 14px;"><input type="number" step="0.01" id="txtVaR_Mod" class="form-control input-sm text-right" value="@(Model.Supuestos.SalidaVista_Moderado * 100m)" readonly /></td>
+                <td style="background-color: #fef2f2; padding: 8px 16px;"><input type="number" step="0.01" id="txtVaR_Sev" class="form-control input-sm text-right" value="@(Model.Supuestos.SalidaVista_Severo * 100m)" readonly /></td>
             </tr>
 
             <!-- 3. Crecimiento Cartera de Crédito -->
             <tr>
-                <td style="font-weight: 600; color: #1e3a8a;">Crecimiento en cartera de crédito anual</td>
-                <td>
+                <td style="font-weight: 600; color: #1e3a8a; padding: 10px 16px; vertical-align: middle;">Crecimiento en cartera de crédito anual</td>
+                <td style="padding: 10px 14px; vertical-align: middle;">
                     <select id="selProyectorCartera" class="form-control input-sm" onchange="actualizarSupuestoCartera()">
-                        <option value="TasaCrecimiento" selected>Tasa de crecimiento (48 meses cta 13000000)</option>
+                        <option value="TasaCrecimiento" selected>Tasa de crecimiento (48m cta 130)</option>
                         <option value="Promedio6M">Promedio 6 meses</option>
                         <option value="ValorRezagado">Valor rezagado</option>
                         <option value="Manual">Dato Manual</option>
                     </select>
                 </td>
-                <td style="background-color: #f0fdf4;"><input type="number" step="0.01" id="txtCartera_Base" class="form-control input-sm text-right font-weight-bold" value="@(Model.Supuestos.CrecimientoCartera_Base * 100m)" /></td>
-                <td style="background-color: #fffbeb;"><input type="number" step="0.01" id="txtCartera_Mod" class="form-control input-sm text-right" value="@(Model.Supuestos.CrecimientoCartera_Moderado * 100m)" readonly /></td>
-                <td style="background-color: #fef2f2;"><input type="number" step="0.01" id="txtCartera_Sev" class="form-control input-sm text-right" value="@(Model.Supuestos.CrecimientoCartera_Severo * 100m)" readonly /></td>
+                <td style="background-color: #f0fdf4; padding: 8px 14px;"><input type="number" step="0.01" id="txtCartera_Base" class="form-control input-sm text-right font-weight-bold" value="@(Model.Supuestos.CrecimientoCartera_Base * 100m)" /></td>
+                <td style="background-color: #fffbeb; padding: 8px 14px;"><input type="number" step="0.01" id="txtCartera_Mod" class="form-control input-sm text-right" value="@(Model.Supuestos.CrecimientoCartera_Moderado * 100m)" readonly /></td>
+                <td style="background-color: #fef2f2; padding: 8px 16px;"><input type="number" step="0.01" id="txtCartera_Sev" class="form-control input-sm text-right" value="@(Model.Supuestos.CrecimientoCartera_Severo * 100m)" readonly /></td>
             </tr>
 
             <!-- 4. Disminución en recaudo mensual -->
             <tr>
-                <td style="font-weight: 600; color: #1e3a8a;">Disminución en el recaudo mensual de cartera</td>
-                <td><span class="badge" style="background-color: #f1f5f9; color: #475569; font-weight: normal; padding: 5px 10px;">Dato Manual</span></td>
-                <td style="background-color: #f0fdf4;"><input type="number" step="0.01" id="txtRecaudo_Base" class="form-control input-sm text-right font-weight-bold" value="@(Model.Supuestos.DisminucionRecaudo_Base * 100m)" /></td>
-                <td style="background-color: #fffbeb;"><input type="number" step="0.01" id="txtRecaudo_Mod" class="form-control input-sm text-right" value="@(Model.Supuestos.DisminucionRecaudo_Moderado * 100m)" /></td>
-                <td style="background-color: #fef2f2;"><input type="number" step="0.01" id="txtRecaudo_Sev" class="form-control input-sm text-right" value="@(Model.Supuestos.DisminucionRecaudo_Severo * 100m)" /></td>
+                <td style="font-weight: 600; color: #1e3a8a; padding: 10px 16px; vertical-align: middle;">Disminución en el recaudo mensual de cartera</td>
+                <td style="padding: 10px 14px; vertical-align: middle;"><span class="badge" style="background-color: #f1f5f9; color: #475569; font-weight: normal; padding: 5px 10px;">Dato Manual</span></td>
+                <td style="background-color: #f0fdf4; padding: 8px 14px;"><input type="number" step="0.01" id="txtRecaudo_Base" class="form-control input-sm text-right font-weight-bold" value="@(Model.Supuestos.DisminucionRecaudo_Base * 100m)" /></td>
+                <td style="background-color: #fffbeb; padding: 8px 14px;"><input type="number" step="0.01" id="txtRecaudo_Mod" class="form-control input-sm text-right" value="@(Model.Supuestos.DisminucionRecaudo_Moderado * 100m)" /></td>
+                <td style="background-color: #fef2f2; padding: 8px 16px;"><input type="number" step="0.01" id="txtRecaudo_Sev" class="form-control input-sm text-right" value="@(Model.Supuestos.DisminucionRecaudo_Severo * 100m)" /></td>
             </tr>
 
             <!-- 5. Haircut Inversiones Líquidas -->
             <tr>
-                <td style="font-weight: 600; color: #1e3a8a;">Haircut inversiones líquidas (FAL)</td>
-                <td>
+                <td style="font-weight: 600; color: #1e3a8a; padding: 10px 16px; vertical-align: middle;">Haircut inversiones líquidas (FAL)</td>
+                <td style="padding: 10px 14px; vertical-align: middle;">
                     <select id="selProyectorHaircut" class="form-control input-sm" onchange="actualizarSupuestoHaircut()">
-                        <option value="Porcentual" selected>Disminución porcentual (20% mod, 50% sev)</option>
+                        <option value="Porcentual" selected>Disminución % (20% mod, 50% sev)</option>
                         <option value="Manual">Dato Manual</option>
                     </select>
                 </td>
-                <td style="background-color: #f0fdf4;"><input type="number" step="1" id="txtHaircut_Base" class="form-control input-sm text-right font-weight-bold" value="@Model.Supuestos.Haircut_Base.ToString("F0")" /></td>
-                <td style="background-color: #fffbeb;"><input type="number" step="1" id="txtHaircut_Mod" class="form-control input-sm text-right" value="@Model.Supuestos.Haircut_Moderado.ToString("F0")" /></td>
-                <td style="background-color: #fef2f2;"><input type="number" step="1" id="txtHaircut_Sev" class="form-control input-sm text-right" value="@Model.Supuestos.Haircut_Severo.ToString("F0")" /></td>
+                <td style="background-color: #f0fdf4; padding: 8px 14px;"><input type="number" step="1" id="txtHaircut_Base" class="form-control input-sm text-right font-weight-bold" value="@Model.Supuestos.Haircut_Base.ToString("F0")" /></td>
+                <td style="background-color: #fffbeb; padding: 8px 14px;"><input type="number" step="1" id="txtHaircut_Mod" class="form-control input-sm text-right" value="@Model.Supuestos.Haircut_Moderado.ToString("F0")" /></td>
+                <td style="background-color: #fef2f2; padding: 8px 16px;"><input type="number" step="1" id="txtHaircut_Sev" class="form-control input-sm text-right" value="@Model.Supuestos.Haircut_Severo.ToString("F0")" /></td>
             </tr>
 
             <!-- 6. Salida Top 20 Depositantes -->
             <tr>
-                <td style="font-weight: 600; color: #1e3a8a;">Salida Top 20 depositantes</td>
-                <td><span class="badge" style="background-color: #f1f5f9; color: #475569; font-weight: normal; padding: 5px 10px;">% Porcentaje disminución</span></td>
-                <td style="background-color: #f0fdf4;"><input type="number" step="0.01" id="txtTop20_Base" class="form-control input-sm text-right font-weight-bold" value="@(Model.Supuestos.SalidaTop20_Base * 100m)" /></td>
-                <td style="background-color: #fffbeb;"><input type="number" step="0.01" id="txtTop20_Mod" class="form-control input-sm text-right" value="@(Model.Supuestos.SalidaTop20_Moderado * 100m)" /></td>
-                <td style="background-color: #fef2f2;"><input type="number" step="0.01" id="txtTop20_Sev" class="form-control input-sm text-right" value="@(Model.Supuestos.SalidaTop20_Severo * 100m)" /></td>
+                <td style="font-weight: 600; color: #1e3a8a; padding: 10px 16px; vertical-align: middle;">Salida Top 20 depositantes</td>
+                <td style="padding: 10px 14px; vertical-align: middle;"><span class="badge" style="background-color: #f1f5f9; color: #475569; font-weight: normal; padding: 5px 10px;">% Disminución fija</span></td>
+                <td style="background-color: #f0fdf4; padding: 8px 14px;"><input type="number" step="0.01" id="txtTop20_Base" class="form-control input-sm text-right font-weight-bold" value="@(Model.Supuestos.SalidaTop20_Base * 100m)" /></td>
+                <td style="background-color: #fffbeb; padding: 8px 14px;"><input type="number" step="0.01" id="txtTop20_Mod" class="form-control input-sm text-right" value="@(Model.Supuestos.SalidaTop20_Moderado * 100m)" readonly /></td>
+                <td style="background-color: #fef2f2; padding: 8px 16px;"><input type="number" step="0.01" id="txtTop20_Sev" class="form-control input-sm text-right" value="@(Model.Supuestos.SalidaTop20_Severo * 100m)" readonly /></td>
             </tr>
 
-            <!-- 7. Disponibilidad de líneas mensual -->
+            <!-- 7. Líneas de Financiamiento -->
             <tr>
-                <td style="font-weight: 600; color: #1e3a8a;">Disponibilidad de líneas de financiamiento mensual</td>
-                <td><span class="badge" style="background-color: #f1f5f9; color: #475569; font-weight: normal; padding: 5px 10px;">Dato Manual</span></td>
-                <td style="background-color: #f0fdf4;"><input type="number" step="1000" id="txtLineas_Base" class="form-control input-sm text-right font-weight-bold" value="@Model.Supuestos.DisponibilidadLineas_Base.ToString("F0")" /></td>
-                <td style="background-color: #fffbeb;"><input type="number" step="1000" id="txtLineas_Mod" class="form-control input-sm text-right" value="@Model.Supuestos.DisponibilidadLineas_Moderado.ToString("F0")" /></td>
-                <td style="background-color: #fef2f2;"><input type="number" step="1000" id="txtLineas_Sev" class="form-control input-sm text-right" value="@Model.Supuestos.DisponibilidadLineas_Severo.ToString("F0")" /></td>
+                <td style="font-weight: 600; color: #1e3a8a; padding: 10px 16px; vertical-align: middle;">Disponibilidad de líneas de financiamiento (¢)</td>
+                <td style="padding: 10px 14px; vertical-align: middle;"><span class="badge" style="background-color: #f1f5f9; color: #475569; font-weight: normal; padding: 5px 10px;">Dato Manual</span></td>
+                <td style="background-color: #f0fdf4; padding: 8px 14px;"><input type="number" step="1000000" id="txtLineas_Base" class="form-control input-sm text-right font-weight-bold" value="@Model.Supuestos.DisponibilidadLineas_Base.ToString("F0")" /></td>
+                <td style="background-color: #fffbeb; padding: 8px 14px;"><input type="number" step="1000000" id="txtLineas_Mod" class="form-control input-sm text-right" value="@Model.Supuestos.DisponibilidadLineas_Moderado.ToString("F0")" /></td>
+                <td style="background-color: #fef2f2; padding: 8px 16px;"><input type="number" step="1000000" id="txtLineas_Sev" class="form-control input-sm text-right" value="@Model.Supuestos.DisponibilidadLineas_Severo.ToString("F0")" /></td>
             </tr>
 
-            <!-- 8. Pago de principal de obligaciones -->
+            <!-- 8. Pago de Principal de Obligaciones -->
             <tr>
-                <td style="font-weight: 600; color: #1e3a8a;">Pago de principal de obligaciones por deuda mensual</td>
-                <td><span class="badge" style="background-color: #f1f5f9; color: #475569; font-weight: normal; padding: 5px 10px;">Dato Manual</span></td>
-                <td style="background-color: #f0fdf4;"><input type="number" step="1000" id="txtPagoDeuda_Base" class="form-control input-sm text-right font-weight-bold" value="@Model.Supuestos.PagoObligaciones_Base.ToString("F0")" /></td>
-                <td style="background-color: #fffbeb;"><input type="number" step="1000" id="txtPagoDeuda_Mod" class="form-control input-sm text-right" value="@Model.Supuestos.PagoObligaciones_Moderado.ToString("F0")" /></td>
-                <td style="background-color: #fef2f2;"><input type="number" step="1000" id="txtPagoDeuda_Sev" class="form-control input-sm text-right" value="@Model.Supuestos.PagoObligaciones_Severo.ToString("F0")" /></td>
+                <td style="font-weight: 600; color: #1e3a8a; padding: 10px 16px; vertical-align: middle;">Pago principal de obligaciones por deuda (¢)</td>
+                <td style="padding: 10px 14px; vertical-align: middle;"><span class="badge" style="background-color: #f1f5f9; color: #475569; font-weight: normal; padding: 5px 10px;">Dato Manual</span></td>
+                <td style="background-color: #f0fdf4; padding: 8px 14px;"><input type="number" step="1000000" id="txtDeuda_Base" class="form-control input-sm text-right font-weight-bold" value="@Model.Supuestos.PagoObligaciones_Base.ToString("F0")" /></td>
+                <td style="background-color: #fffbeb; padding: 8px 14px;"><input type="number" step="1000000" id="txtDeuda_Mod" class="form-control input-sm text-right" value="@Model.Supuestos.PagoObligaciones_Moderado.ToString("F0")" /></td>
+                <td style="background-color: #fef2f2; padding: 8px 16px;"><input type="number" step="1000000" id="txtDeuda_Sev" class="form-control input-sm text-right" value="@Model.Supuestos.PagoObligaciones_Severo.ToString("F0")" /></td>
             </tr>
 
-            <!-- 9. Cupones mensuales -->
+            <!-- 9. Cupones Mensuales -->
             <tr>
-                <td style="font-weight: 600; color: #1e3a8a;">Cupones mensuales</td>
-                <td><span class="badge" style="background-color: #f1f5f9; color: #475569; font-weight: normal; padding: 5px 10px;">Dato Manual</span></td>
-                <td style="background-color: #f0fdf4;"><input type="number" step="1000" id="txtCupones_Base" class="form-control input-sm text-right font-weight-bold" value="@Model.Supuestos.Cupones_Base.ToString("F0")" /></td>
-                <td style="background-color: #fffbeb;"><input type="number" step="1000" id="txtCupones_Mod" class="form-control input-sm text-right" value="@Model.Supuestos.Cupones_Moderado.ToString("F0")" /></td>
-                <td style="background-color: #fef2f2;"><input type="number" step="1000" id="txtCupones_Sev" class="form-control input-sm text-right" value="@Model.Supuestos.Cupones_Severo.ToString("F0")" /></td>
+                <td style="font-weight: 600; color: #1e3a8a; padding: 10px 16px; vertical-align: middle;">Cupones mensuales (¢)</td>
+                <td style="padding: 10px 14px; vertical-align: middle;"><span class="badge" style="background-color: #f1f5f9; color: #475569; font-weight: normal; padding: 5px 10px;">Dato Manual</span></td>
+                <td style="background-color: #f0fdf4; padding: 8px 14px;"><input type="number" step="100000" id="txtCupones_Base" class="form-control input-sm text-right font-weight-bold" value="@Model.Supuestos.Cupones_Base.ToString("F0")" /></td>
+                <td style="background-color: #fffbeb; padding: 8px 14px;"><input type="number" step="100000" id="txtCupones_Mod" class="form-control input-sm text-right" value="@Model.Supuestos.Cupones_Moderado.ToString("F0")" /></td>
+                <td style="background-color: #fef2f2; padding: 8px 16px;"><input type="number" step="100000" id="txtCupones_Sev" class="form-control input-sm text-right" value="@Model.Supuestos.Cupones_Severo.ToString("F0")" /></td>
             </tr>
 
             <!-- 10. Capital Social -->
             <tr>
-                <td style="font-weight: 600; color: #1e3a8a;">Capital social anual</td>
-                <td>
+                <td style="font-weight: 600; color: #1e3a8a; padding: 10px 16px; vertical-align: middle;">Capital social anual</td>
+                <td style="padding: 10px 14px; vertical-align: middle;">
                     <select id="selProyectorCapital" class="form-control input-sm" onchange="actualizarSupuestoCapital()">
-                        <option value="TasaCrecimiento" selected>Tasa de crecimiento (48 meses cta 31000000)</option>
+                        <option value="TasaCrecimiento" selected>Tasa de crecimiento (48m cta 310)</option>
                         <option value="Promedio6M">Promedio 6 meses</option>
-                        <option value="ValorRezagado">Valor rezagado</option>
                         <option value="Manual">Dato Manual</option>
                     </select>
                 </td>
-                <td style="background-color: #f0fdf4;"><input type="number" step="0.01" id="txtCapital_Base" class="form-control input-sm text-right font-weight-bold" value="@(Model.Supuestos.CapitalSocial_Base * 100m)" /></td>
-                <td style="background-color: #fffbeb;"><input type="number" step="0.01" id="txtCapital_Mod" class="form-control input-sm text-right" value="@(Model.Supuestos.CapitalSocial_Moderado * 100m)" readonly /></td>
-                <td style="background-color: #fef2f2;"><input type="number" step="0.01" id="txtCapital_Sev" class="form-control input-sm text-right" value="@(Model.Supuestos.CapitalSocial_Severo * 100m)" readonly /></td>
+                <td style="background-color: #f0fdf4; padding: 8px 14px;"><input type="number" step="0.01" id="txtCapital_Base" class="form-control input-sm text-right font-weight-bold" value="@(Model.Supuestos.CapitalSocial_Base * 100m)" /></td>
+                <td style="background-color: #fffbeb; padding: 8px 14px;"><input type="number" step="0.01" id="txtCapital_Mod" class="form-control input-sm text-right" value="@(Model.Supuestos.CapitalSocial_Moderado * 100m)" readonly /></td>
+                <td style="background-color: #fef2f2; padding: 8px 16px;"><input type="number" step="0.01" id="txtCapital_Sev" class="form-control input-sm text-right" value="@(Model.Supuestos.CapitalSocial_Severo * 100m)" readonly /></td>
             </tr>
         </tbody>
     </table>
 </div>
+
+<script>
+    function recalcularEscenarios() {
+        alert('Supuestos aplicados exitosamente. Los modelos de Razón de Cobertura, ICL Estresado, Brechas y Horizonte han sido actualizados con los nuevos proyectores.');
+    }
+</script>

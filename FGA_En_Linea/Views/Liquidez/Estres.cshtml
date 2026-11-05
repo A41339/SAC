@@ -1,0 +1,307 @@
+@model FGA.Model.LiquidezIndexViewModel
+@{
+    ViewBag.Title = "Escenarios de Estrés";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .sub-tab-link {
+        font-weight: 700;
+        font-size: 13px;
+        color: #475569;
+        border-radius: 6px 6px 0 0;
+        padding: 9px 18px;
+    }
+    .nav-tabs > li.active > a, .nav-tabs > li.active > a:focus, .nav-tabs > li.active > a:hover {
+        color: #d97706 !important;
+        border-bottom-color: transparent !important;
+    }
+    .header-back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #0284c7;
+        text-decoration: none !important;
+        margin-bottom: 6px;
+        transition: color 0.15s ease;
+    }
+    .header-back-link:hover {
+        color: #0369a1;
+        text-decoration: underline !important;
+    }
+
+    /* Estilos forzados de cabecera azul corporativa (#2b579a) para tablas de Liquidez */
+    table.tabla-liquidez-azul thead,
+    table.tabla-liquidez-azul thead tr,
+    table.tabla-liquidez-azul thead th,
+    .modern-data-table.tabla-liquidez-azul thead tr,
+    .modern-data-table.tabla-liquidez-azul thead th {
+        background: #2b579a !important;
+        background-color: #2b579a !important;
+        color: #ffffff !important;
+        border: none !important;
+        border-bottom: 2px solid #1e3f70 !important;
+        font-weight: 700 !important;
+        vertical-align: middle !important;
+        text-shadow: none !important;
+    }
+</style>
+
+<section class="content-header" style="padding: 12px 20px 8px 20px;">
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+        <div>
+            <a href="@Url.Action("Index", "Liquidez", new { idEntidad = Model.IdEntidad })" class="header-back-link">
+                <i class="fa fa-arrow-left"></i> Volver a Liquidez
+            </a>
+            <h1 style="margin: 0; font-size: 20px; font-weight: 700; color: #143750; display: flex; align-items: center; gap: 8px;">
+                <i class="fa fa-bolt" style="color: #d97706;"></i>
+                Escenarios de Estrés
+            </h1>
+            <p style="margin: 3px 0 0 0; font-size: 12.5px; color: #64748b;">
+                Modelos proyectados de liquidez: Supuestos, Razón de Cobertura a 30 días, ICL Estresado, Brechas y Horizonte.
+            </p>
+        </div>
+    </div>
+    <ol class="breadcrumb" style="top: 10px;">
+        <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
+        <li><a href="@Url.Action("Index", "Modulo", new { id = 1500 })" class="breadcrumb-parent-pill" title="Volver al menú de Estructura Financiera"><i class="fa fa-file-text-o" style="margin-right: 4px;"></i> Estructura Financiera</a></li>
+        <li><a href="@Url.Action("Index", "Liquidez", new { idEntidad = Model.IdEntidad })">Liquidez</a></li>
+        <li class="active">Escenarios de Estrés</li>
+    </ol>
+</section>
+
+<section class="content" style="padding: 0 20px 14px 20px;">
+    <!-- Selector General de Filtros -->
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="modern-filter-card" style="margin-bottom: 14px; padding: 10px 18px; background: #ffffff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;">
+                <div class="modern-filter-toolbar" style="display: flex; align-items: center; justify-content: flex-start; flex-wrap: wrap; gap: 14px;">
+                    <!-- Entidad -->
+                    <div class="filter-item" style="display: flex; flex-direction: column; gap: 4px;">
+                        <label for="ddlEntidad" style="margin: 0; font-size: 12px; font-weight: 700; color: #1e3a8a; display: flex; align-items: center; gap: 5px; white-space: nowrap;">
+                            <i class="fa fa-university" style="color: #2F5597;"></i> Entidad:
+                        </label>
+                        <div style="min-width: 220px;">
+                            @Html.DropDownList("Entidades", null, new { @id = "ddlEntidad", @class = "form-control modern-select", style = "width: 100%; height: 34px; font-size: 12.5px; font-weight: 500; border-radius: 6px; border: 1px solid #cbd5e1; padding: 4px 8px;" })
+                        </div>
+                    </div>
+
+                    <!-- Periodo Inicial -->
+                    <div class="filter-item" style="display: flex; flex-direction: column; gap: 4px;">
+                        <label for="Periodo1" style="margin: 0; font-size: 12px; font-weight: 600; color: #475569; display: flex; align-items: center; gap: 4px; white-space: nowrap;">
+                            <i class="fa fa-calendar" style="color: #2F5597;"></i> Periodo Inicial:
+                        </label>
+                        <div class="modern-input-wrapper">
+                            <input name="Periodo1" id="Periodo1" class="datecontrol form-control modern-date-input" value="@Model.Periodo1" style="min-width: 120px; height: 34px; font-size: 12.5px; padding: 4px 8px;" />
+                        </div>
+                    </div>
+
+                    <!-- Periodo Final -->
+                    <div class="filter-item" style="display: flex; flex-direction: column; gap: 4px;">
+                        <label for="Periodo2" style="margin: 0; font-size: 12px; font-weight: 600; color: #475569; display: flex; align-items: center; gap: 4px; white-space: nowrap;">
+                            <i class="fa fa-calendar-check-o" style="color: #2F5597;"></i> Periodo Final:
+                        </label>
+                        <div class="modern-input-wrapper">
+                            <input name="Periodo2" id="Periodo2" class="datecontrol form-control modern-date-input" value="@Model.Periodo2" style="min-width: 120px; height: 34px; font-size: 12.5px; padding: 4px 8px;" />
+                        </div>
+                    </div>
+
+                    <!-- Botón Generar -->
+                    <div class="filter-item" style="margin-left: auto; align-self: flex-end; padding-bottom: 1px;">
+                        <button type="button" id="btnGenerarEstres" class="btn-modern-generate" style="height: 34px; padding: 0 18px; font-size: 12.5px; white-space: nowrap;" onclick="cargarDatosEstres()">
+                            <i class="fa fa-search"></i> Generar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenedor de Pestañas de Escenarios de Estrés -->
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="modern-table-card" style="border: 1px solid #e2e8f0; border-radius: 10px; background: #ffffff; box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04); overflow: hidden; padding: 14px 18px; margin-bottom: 14px;">
+                <ul class="nav nav-tabs" id="tabsEstres" style="border-bottom: 1px solid #e2e8f0; margin-bottom: 16px;">
+                    <li class="active">
+                        <a href="#tab-supuestos" data-toggle="tab" class="sub-tab-link">
+                            <i class="fa fa-sliders" style="color: #0284c7; margin-right: 5px;"></i> Supuestos de Sensibilización
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#tab-razon-cobertura" data-toggle="tab" class="sub-tab-link">
+                            <i class="fa fa-check-square-o" style="color: #16a34a; margin-right: 5px;"></i> Razón de Cobertura
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#tab-icl-estresado" data-toggle="tab" class="sub-tab-link">
+                            <i class="fa fa-fire" style="color: #ea580c; margin-right: 5px;"></i> ICL Estresado
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#tab-brechas-estres" data-toggle="tab" class="sub-tab-link">
+                            <i class="fa fa-bar-chart" style="color: #8b5cf6; margin-right: 5px;"></i> Brechas de Liquidez
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#tab-horizonte" data-toggle="tab" class="sub-tab-link">
+                            <i class="fa fa-hourglass-end" style="color: #dc2626; margin-right: 5px;"></i> Horizonte de Supervivencia
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="tab-content">
+                    <div class="tab-pane active" id="tab-supuestos">
+                        @Html.Partial("_SupuestosSensibilizacion", Model)
+                    </div>
+                    <div class="tab-pane" id="tab-razon-cobertura">
+                        @Html.Partial("_RazonCobertura", Model)
+                    </div>
+                    <div class="tab-pane" id="tab-icl-estresado">
+                        @Html.Partial("_ICLEstresado", Model)
+                    </div>
+                    <div class="tab-pane" id="tab-brechas-estres">
+                        @Html.Partial("_BrechasLiquidez", Model)
+                    </div>
+                    <div class="tab-pane" id="tab-horizonte">
+                        @Html.Partial("_HorizonteSupervivencia", Model)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section scripts {
+    <script>
+        function cargarDatosEstres() {
+            var ent = $('#ddlEntidad').val();
+            var p1 = $('#Periodo1').val();
+            var p2 = $('#Periodo2').val();
+            window.location.href = '@Url.Action("Estres", "Liquidez")' + '?idEntidad=' + encodeURIComponent(ent) + '&periodo1=' + encodeURIComponent(p1) + '&periodo2=' + encodeURIComponent(p2);
+        }
+
+        function renderGraficoCobertura() {
+            var el = document.getElementById('chartRazonCoberturaComparativo');
+            if (el) {
+                Highcharts.chart('chartRazonCoberturaComparativo', {
+                    chart: { type: 'column' },
+                    title: { text: 'Razón de Cobertura a 30 Días por Escenario', style: { fontWeight: '700', color: '#143750', fontSize: '15px' } },
+                    xAxis: { categories: ['Contractual', 'Simulación Moderada', 'Simulación Severa'] },
+                    yAxis: {
+                        title: { text: 'Ratio de Cobertura (x)' },
+                        plotLines: [{
+                            value: 1.0,
+                            color: '#dc2626',
+                            dashStyle: 'shortdash',
+                            width: 2,
+                            label: { text: 'Meta Cobertura 1.00x', align: 'right', style: { color: '#dc2626', fontWeight: 'bold' } }
+                        }]
+                    },
+                    series: [{
+                        name: 'Razón Cobertura',
+                        data: [
+                            { y: 2.23, color: '#16a34a' },
+                            { y: 1.18, color: '#ea580c' },
+                            { y: 0.82, color: '#dc2626' }
+                        ],
+                        dataLabels: { enabled: true, format: '{y:.2f}x' }
+                    }],
+                    credits: { enabled: false }
+                });
+            }
+        }
+
+        function renderGraficoICLEstresado() {
+            var el = document.getElementById('chartICLEstresadoComparativo');
+            if (el) {
+                Highcharts.chart('chartICLEstresadoComparativo', {
+                    chart: { type: 'column' },
+                    title: { text: 'ICL bajo Escenarios de Estrés (Haircut FAL & Salida Top 20)', style: { fontWeight: '700', color: '#143750', fontSize: '15px' } },
+                    xAxis: { categories: ['Contractual / Base', 'Moderado (FAL -20%, Top 20 -25%)', 'Severo (FAL -50%, Top 20 -50%)'] },
+                    yAxis: {
+                        title: { text: 'Ratio ICL (x)' },
+                        plotLines: [{
+                            value: 1.0,
+                            color: '#dc2626',
+                            dashStyle: 'shortdash',
+                            width: 2,
+                            label: { text: 'Mínimo Regulatorio (1.00x)', align: 'right', style: { color: '#dc2626', fontWeight: 'bold' } }
+                        }]
+                    },
+                    series: [{
+                        name: 'ICL Estresado',
+                        data: [
+                            { y: 1.55, color: '#16a34a' },
+                            { y: 1.18, color: '#ea580c' },
+                            { y: 0.82, color: '#dc2626' }
+                        ],
+                        dataLabels: { enabled: true, format: '{y:.2f}x' }
+                    }],
+                    credits: { enabled: false }
+                });
+            }
+        }
+
+        function renderGraficoBrechasEstres() {
+            var el = document.getElementById('chartBrechasEstresComparativo');
+            if (el) {
+                Highcharts.chart('chartBrechasEstresComparativo', {
+                    chart: { type: 'column' },
+                    title: { text: 'Flujos Estresados y GAP Acumulado por Banda', style: { fontWeight: '700', color: '#143750', fontSize: '15px' } },
+                    xAxis: { categories: ['1 a 30 d', '31 a 60 d', '61 a 90 d', '91 a 180 d', '181 a 270 d', '271 a 360 d', '(+) 360 d'] },
+                    yAxis: { title: { text: 'Millones de Colones (¢)' } },
+                    series: [
+                        { type: 'column', name: 'Entradas', data: [693.8, 120.5, 95.3, 210.0, 180.2, 115.0, 310.5], color: '#10b981' },
+                        { type: 'column', name: 'Salidas Estresadas', data: [716.5, 218.3, 708.8, 1098.2, 887.7, 1203.5, 7598.2], color: '#f97316' },
+                        { type: 'spline', name: 'GAP Acumulado', data: [1180.8, 1083.0, 469.5, -418.7, -1126.2, -2214.7, -9502.4], color: '#0284c7', lineWidth: 3, marker: { radius: 4 } }
+                    ],
+                    credits: { enabled: false }
+                });
+            }
+        }
+
+        function renderGraficoSupervivencia() {
+            var el = document.getElementById('chartTrayectoriaSupervivencia');
+            if (el) {
+                Highcharts.chart('chartTrayectoriaSupervivencia', {
+                    chart: { type: 'areaspline' },
+                    title: { text: 'Evolución de Recursos Líquidos Disponibles hasta Agotamiento', style: { fontWeight: '700', color: '#143750', fontSize: '15px' } },
+                    xAxis: { categories: ['Día 0', 'Día 15', 'Día 30', 'Día 60', 'Día 90', 'Día 180'] },
+                    yAxis: {
+                        title: { text: 'Recursos Líquidos (MM ¢)' },
+                        plotLines: [{
+                            value: 0,
+                            color: '#dc2626',
+                            dashStyle: 'solid',
+                            width: 2,
+                            label: { text: 'Agotamiento de Liquidez', align: 'left', style: { color: '#dc2626', fontWeight: 'bold' } }
+                        }]
+                    },
+                    series: [
+                        { name: 'Escenario Base (> 90d)', data: [1203.5, 1150.0, 1050.0, 850.0, 600.0, 250.0], color: '#16a34a', fillColor: 'rgba(22, 163, 74, 0.12)' },
+                        { name: 'Escenario Moderado (58d)', data: [1203.5, 950.0, 720.0, 20.0, -180.0, -500.0], color: '#ea580c', fillColor: 'rgba(234, 88, 12, 0.12)' },
+                        { name: 'Escenario Severo (32d)', data: [1203.5, 680.0, 80.0, -350.0, -850.0, -1600.0], color: '#dc2626', fillColor: 'rgba(220, 38, 38, 0.12)' }
+                    ],
+                    credits: { enabled: false }
+                });
+            }
+        }
+
+        $(document).ready(function() {
+            renderGraficoCobertura();
+            renderGraficoICLEstresado();
+            renderGraficoBrechasEstres();
+            renderGraficoSupervivencia();
+
+            $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                var target = $(e.target).attr('href');
+                if (target === '#tab-razon-cobertura') renderGraficoCobertura();
+                else if (target === '#tab-icl-estresado') renderGraficoICLEstresado();
+                else if (target === '#tab-brechas-estres') renderGraficoBrechasEstres();
+                else if (target === '#tab-horizonte') renderGraficoSupervivencia();
+            });
+        });
+    </script>
+}

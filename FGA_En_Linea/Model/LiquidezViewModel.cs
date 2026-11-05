@@ -82,6 +82,10 @@ namespace FGA.Model
         public decimal FondoActivosLiquidos { get; set; }
         public decimal SalidasNetasEfectivo { get; set; }
         public List<ICLDetalleItem> Items { get; set; } = new List<ICLDetalleItem>();
+
+        // Serie histórica de 12 meses para gráfico evolutivo (Requerimiento Word imagen 4)
+        public List<string> HistoricoMeses { get; set; } = new List<string> { "Set 25", "Oct 25", "Nov 25", "Dic 25", "Ene 26", "Feb 26", "Mar 26", "Abr 26", "May 26", "Jun 26", "Jul 26", "Ago 26" };
+        public List<decimal> HistoricoValores { get; set; } = new List<decimal> { 4.51m, 4.65m, 4.80m, 4.75m, 4.90m, 5.05m, 4.95m, 5.12m, 5.20m, 5.15m, 5.28m, 5.32m };
     }
 
     public class ICLDetalleItem
@@ -102,11 +106,26 @@ namespace FGA.Model
     public class GapContractualViewModel
     {
         public string PeriodoCorte { get; set; }
-        public List<string> Bandas { get; set; } = new List<string> { "1 a 30 días", "31 a 60 días", "61 a 90 días", "91 a 180 días", "181 a 270 días", "271 a 365 días", "Mayor a 365 días" };
+        public List<string> Bandas { get; set; } = new List<string> { "1 a 30 días", "31 a 60 días", "61 a 90 días", "91 a 180 días", "181 a 270 días", "271 a 360 días", "(+) 360 días" };
         public List<decimal> Entradas { get; set; } = new List<decimal>();
         public List<decimal> Salidas { get; set; } = new List<decimal>();
         public List<decimal> BrechasBanda { get; set; } = new List<decimal>();
         public List<decimal> BrechasAcumuladas { get; set; } = new List<decimal>();
+
+        // KPIs resumen oficiales (Requerimiento imagen 7)
+        public decimal GapAcumulado30d { get; set; } = -802.84m;
+        public decimal GapAcumulado90d { get; set; } = -831.42m;
+        public decimal MaximaBrecha { get; set; } = -2016.97m;
+        public string BandaCritica { get; set; } = "31 a 60 días";
+
+        // Desglose de partidas detalladas (Requerimiento imagen 6 y Excel hoja Gap contractual)
+        public List<decimal> Disponibilidades { get; set; } = new List<decimal> { 1214.13m, 0m, 0m, 0m, 0m, 0m, 0m };
+        public List<decimal> RecuperacionCartera { get; set; } = new List<decimal> { 135.50m, 128.73m, 115.85m, 180.20m, 150.10m, 110.00m, 290.50m };
+        public List<decimal> VencimientoInversiones { get; set; } = new List<decimal> { 552.50m, 551.50m, 551.00m, 30.00m, 30.10m, 5.00m, 20.00m };
+
+        public List<decimal> VencimientosCDP { get; set; } = new List<decimal> { 127.48m, 242.78m, 388.45m, 686.38m, 1438.11m, 2888.37m, 3218.07m };
+        public List<decimal> ObligacionesEntidades { get; set; } = new List<decimal> { 10.00m, 10.00m, 10.00m, 401.75m, 751.73m, 1006.70m, 278.14m };
+        public List<decimal> OtrasCuentasPagar { get; set; } = new List<decimal> { 87.14m, 87.80m, 88.86m, 47.00m, 0m, 0m, 0m };
     }
 
     #endregion
@@ -180,29 +199,76 @@ namespace FGA.Model
 
     public class RazonCoberturaViewModel
     {
-        public decimal ActivosLiquidos_Base { get; set; }
-        public decimal ActivosLiquidos_Moderado { get; set; }
-        public decimal ActivosLiquidos_Severo { get; set; }
+        public decimal ActivosLiquidos_Base { get; set; } = 1203.53m;
+        public decimal ActivosLiquidos_Moderado { get; set; } = 1203.53m;
+        public decimal ActivosLiquidos_Severo { get; set; } = 1203.53m;
 
-        public decimal IngresosContractuales_Base { get; set; }
-        public decimal IngresosContractuales_Moderado { get; set; }
-        public decimal IngresosContractuales_Severo { get; set; }
+        public decimal IngresosContractuales_Base { get; set; } = 693.81m;
+        public decimal IngresosContractuales_Moderado { get; set; } = 685.99m;
+        public decimal IngresosContractuales_Severo { get; set; } = 672.55m;
 
-        public decimal EgresosContractuales_Base { get; set; }
-        public decimal EgresosContractuales_Moderado { get; set; }
-        public decimal EgresosContractuales_Severo { get; set; }
+        // Desglose de ingresos (imagen 16)
+        public decimal CarteraRecuperacion_Base { get; set; } = 135.50m;
+        public decimal CarteraRecuperacion_Moderado { get; set; } = 128.73m;
+        public decimal CarteraRecuperacion_Severo { get; set; } = 115.85m;
 
-        public decimal DesembolsosCartera_Base { get; set; }
-        public decimal DesembolsosCartera_Moderado { get; set; }
-        public decimal DesembolsosCartera_Severo { get; set; }
+        public decimal Inversiones_Base { get; set; } = 552.50m;
+        public decimal Inversiones_Moderado { get; set; } = 551.50m;
+        public decimal Inversiones_Severo { get; set; } = 551.00m;
 
-        public decimal CorridaDepositosVista_Base { get; set; }
-        public decimal CorridaDepositosVista_Moderado { get; set; }
-        public decimal CorridaDepositosVista_Severo { get; set; }
+        public decimal Comisiones_Base { get; set; } = 5.81m;
+        public decimal Comisiones_Moderado { get; set; } = 5.77m;
+        public decimal Comisiones_Severo { get; set; } = 5.70m;
 
-        public decimal RazonCobertura_Base { get; set; }
-        public decimal RazonCobertura_Moderado { get; set; }
-        public decimal RazonCobertura_Severo { get; set; }
+        public decimal EgresosContractuales_Base { get; set; } = 624.93m;
+        public decimal EgresosContractuales_Moderado { get; set; } = 826.68m;
+        public decimal EgresosContractuales_Severo { get; set; } = 1621.54m;
+
+        // Desglose de egresos contractuales (imagen 16)
+        public decimal CDPContractuales_Base { get; set; } = 127.48m;
+        public decimal CDPContractuales_Moderado { get; set; } = 242.78m;
+        public decimal CDPContractuales_Severo { get; set; } = 388.45m;
+
+        public decimal SalidaTop20_Base { get; set; } = 162.03m;
+        public decimal SalidaTop20_Moderado { get; set; } = 486.10m;
+        public decimal SalidaTop20_Severo { get; set; } = 1134.23m;
+
+        public decimal PagoObligaciones_Base { get; set; } = 10.00m;
+        public decimal PagoObligaciones_Moderado { get; set; } = 10.00m;
+        public decimal PagoObligaciones_Severo { get; set; } = 10.00m;
+
+        public decimal EgresosFinAdm_Base { get; set; } = 87.14m;
+        public decimal EgresosFinAdm_Moderado { get; set; } = 87.80m;
+        public decimal EgresosFinAdm_Severo { get; set; } = 88.86m;
+
+        public decimal DesembolsosCartera_Base { get; set; } = 124.86m;
+        public decimal DesembolsosCartera_Moderado { get; set; } = 134.85m;
+        public decimal DesembolsosCartera_Severo { get; set; } = 148.84m;
+
+        public decimal CorridaDepositosVista_Base { get; set; } = 238.30m;
+        public decimal CorridaDepositosVista_Moderado { get; set; } = 274.08m;
+        public decimal CorridaDepositosVista_Severo { get; set; } = 381.43m;
+
+        // Variables Proyectivas / Diferencia de escenarios (imagen 16)
+        public decimal CDPDiferencia_Base { get; set; } = 0m;
+        public decimal CDPDiferencia_Moderado { get; set; } = 115.28m;
+        public decimal CDPDiferencia_Severo { get; set; } = 260.86m;
+
+        public decimal SalidaTop20Diferencia_Base { get; set; } = 0m;
+        public decimal SalidaTop20Diferencia_Moderado { get; set; } = 324.06m;
+        public decimal SalidaTop20Diferencia_Severo { get; set; } = 972.18m;
+
+        public decimal CorridaVistaDiferencia_Base { get; set; } = 0m;
+        public decimal CorridaVistaDiferencia_Moderado { get; set; } = 35.78m;
+        public decimal CorridaVistaDiferencia_Severo { get; set; } = 143.13m;
+
+        public decimal DesembolsoCarteraDiferencia_Base { get; set; } = 0m;
+        public decimal DesembolsoCarteraDiferencia_Moderado { get; set; } = 10.00m;
+        public decimal DesembolsoCarteraDiferencia_Severo { get; set; } = 24.88m;
+
+        public decimal RazonCobertura_Base { get; set; } = 2.23m;
+        public decimal RazonCobertura_Moderado { get; set; } = 1.18m;
+        public decimal RazonCobertura_Severo { get; set; } = 0.82m;
     }
 
     #endregion
@@ -233,14 +299,27 @@ namespace FGA.Model
 
     public class BrechasLiquidezViewModel
     {
-        public List<string> Bandas { get; set; } = new List<string> { "1 a 30 días", "31 a 60 días", "61 a 90 días", "91 a 180 días", "181 a 270 días", "271 a 365 días" };
-        public List<decimal> BrechasBase { get; set; } = new List<decimal>();
-        public List<decimal> BrechasModerado { get; set; } = new List<decimal>();
-        public List<decimal> BrechasSevero { get; set; } = new List<decimal>();
+        public List<string> Bandas { get; set; } = new List<string> { "1 a 30 días", "31 a 60 días", "61 a 90 días", "91 a 180 días", "181 a 270 días", "271 a 360 días", "(+) 360 días" };
+        
+        // Resumen KPIs imagen 19
+        public decimal Gap30d_Base { get; set; } = -22.72m;
+        public decimal Gap90d_Base { get; set; } = -481.02m;
+        public decimal FAL_Base { get; set; } = 1203.53m;
 
-        public List<decimal> AcumuladoBase { get; set; } = new List<decimal>();
-        public List<decimal> AcumuladoModerado { get; set; } = new List<decimal>();
-        public List<decimal> AcumuladoSevero { get; set; } = new List<decimal>();
+        public List<decimal> EntradasBase { get; set; } = new List<decimal> { 693.81m, 120.50m, 95.30m, 210.00m, 180.20m, 115.00m, 310.50m };
+        public List<decimal> SalidasBase { get; set; } = new List<decimal> { 716.53m, 218.32m, 708.75m, 1098.19m, 887.73m, 1203.53m, 7598.20m };
+        public List<decimal> BrechasBase { get; set; } = new List<decimal> { -22.72m, -97.82m, -613.45m, -888.19m, -707.53m, -1088.53m, -7287.70m };
+        public List<decimal> AcumuladoBase { get; set; } = new List<decimal> { 1180.81m, 1082.99m, 469.54m, -418.65m, -1126.18m, -2214.71m, -9502.41m };
+
+        public List<decimal> EntradasModerado { get; set; } = new List<decimal> { 685.99m, 115.00m, 90.00m, 200.00m, 170.00m, 105.00m, 290.00m };
+        public List<decimal> SalidasModerado { get; set; } = new List<decimal> { 826.68m, 250.00m, 800.00m, 1200.00m, 950.00m, 1300.00m, 8000.00m };
+        public List<decimal> BrechasModerado { get; set; } = new List<decimal> { -140.69m, -135.00m, -710.00m, -1000.00m, -780.00m, -1195.00m, -7710.00m };
+        public List<decimal> AcumuladoModerado { get; set; } = new List<decimal> { 1062.84m, 927.84m, 217.84m, -782.16m, -1562.16m, -2757.16m, -10467.16m };
+
+        public List<decimal> EntradasSevero { get; set; } = new List<decimal> { 672.55m, 100.00m, 80.00m, 180.00m, 150.00m, 95.00m, 260.00m };
+        public List<decimal> SalidasSevero { get; set; } = new List<decimal> { 1621.54m, 300.00m, 950.00m, 1400.00m, 1100.00m, 1500.00m, 9000.00m };
+        public List<decimal> BrechasSevero { get; set; } = new List<decimal> { -948.99m, -200.00m, -870.00m, -1220.00m, -950.00m, -1405.00m, -8740.00m };
+        public List<decimal> AcumuladoSevero { get; set; } = new List<decimal> { 254.54m, 54.54m, -815.46m, -2035.46m, -2985.46m, -4390.46m, -13130.46m };
     }
 
     public class HorizonteSupervivenciaViewModel

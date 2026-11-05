@@ -1,0 +1,332 @@
+@model FGA.Model.LiquidezIndexViewModel
+@{
+    ViewBag.Title = "Liquidez Contractual";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .sub-tab-link {
+        font-weight: 700;
+        font-size: 13px;
+        color: #475569;
+        border-radius: 6px 6px 0 0;
+        padding: 9px 18px;
+    }
+    .nav-tabs > li.active > a, .nav-tabs > li.active > a:focus, .nav-tabs > li.active > a:hover {
+        color: #0284c7 !important;
+        border-bottom-color: transparent !important;
+    }
+    .header-back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #0284c7;
+        text-decoration: none !important;
+        margin-bottom: 6px;
+        transition: color 0.15s ease;
+    }
+    .header-back-link:hover {
+        color: #0369a1;
+        text-decoration: underline !important;
+    }
+
+    /* Estilos forzados de cabecera azul corporativa (#2b579a) para tablas de Liquidez */
+    table.tabla-liquidez-azul thead,
+    table.tabla-liquidez-azul thead tr,
+    table.tabla-liquidez-azul thead th,
+    .modern-data-table.tabla-liquidez-azul thead tr,
+    .modern-data-table.tabla-liquidez-azul thead th {
+        background: #2b579a !important;
+        background-color: #2b579a !important;
+        color: #ffffff !important;
+        border: none !important;
+        border-bottom: 2px solid #1e3f70 !important;
+        font-weight: 700 !important;
+        vertical-align: middle !important;
+        text-shadow: none !important;
+    }
+</style>
+
+<section class="content-header" style="padding: 12px 20px 8px 20px;">
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+        <div>
+            <a href="@Url.Action("Index", "Liquidez", new { idEntidad = Model.IdEntidad })" class="header-back-link">
+                <i class="fa fa-arrow-left"></i> Volver a Liquidez
+            </a>
+            <h1 style="margin: 0; font-size: 20px; font-weight: 700; color: #143750; display: flex; align-items: center; gap: 8px;">
+                <i class="fa fa-book" style="color: #0284c7;"></i>
+                Liquidez Contractual
+            </h1>
+            <p style="margin: 3px 0 0 0; font-size: 12.5px; color: #64748b;">
+                Cálculo normativo e insumos del Indicador de Riesgo de Liquidez (IRL), ICL, GAP Contractual e IFNE.
+            </p>
+        </div>
+    </div>
+    <ol class="breadcrumb" style="top: 10px;">
+        <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
+        <li><a href="@Url.Action("Index", "Modulo", new { id = 1500 })" class="breadcrumb-parent-pill" title="Volver al menú de Estructura Financiera"><i class="fa fa-file-text-o" style="margin-right: 4px;"></i> Estructura Financiera</a></li>
+        <li><a href="@Url.Action("Index", "Liquidez", new { idEntidad = Model.IdEntidad })">Liquidez</a></li>
+        <li class="active">Liquidez Contractual</li>
+    </ol>
+</section>
+
+<section class="content" style="padding: 0 20px 14px 20px;">
+    <!-- Selector General de Filtros -->
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="modern-filter-card" style="margin-bottom: 14px; padding: 10px 18px; background: #ffffff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;">
+                <div class="modern-filter-toolbar" style="display: flex; align-items: center; justify-content: flex-start; flex-wrap: wrap; gap: 14px;">
+                    <!-- Entidad -->
+                    <div class="filter-item" style="display: flex; flex-direction: column; gap: 4px;">
+                        <label for="ddlEntidad" style="margin: 0; font-size: 12px; font-weight: 700; color: #1e3a8a; display: flex; align-items: center; gap: 5px; white-space: nowrap;">
+                            <i class="fa fa-university" style="color: #2F5597;"></i> Entidad:
+                        </label>
+                        <div style="min-width: 220px;">
+                            @Html.DropDownList("Entidades", null, new { @id = "ddlEntidad", @class = "form-control modern-select", style = "width: 100%; height: 34px; font-size: 12.5px; font-weight: 500; border-radius: 6px; border: 1px solid #cbd5e1; padding: 4px 8px;" })
+                        </div>
+                    </div>
+
+                    <!-- Periodo Inicial -->
+                    <div class="filter-item" style="display: flex; flex-direction: column; gap: 4px;">
+                        <label for="Periodo1" style="margin: 0; font-size: 12px; font-weight: 600; color: #475569; display: flex; align-items: center; gap: 4px; white-space: nowrap;">
+                            <i class="fa fa-calendar" style="color: #2F5597;"></i> Periodo Inicial:
+                        </label>
+                        <div class="modern-input-wrapper">
+                            <input name="Periodo1" id="Periodo1" class="datecontrol form-control modern-date-input" value="@Model.Periodo1" style="min-width: 120px; height: 34px; font-size: 12.5px; padding: 4px 8px;" />
+                        </div>
+                    </div>
+
+                    <!-- Periodo Final -->
+                    <div class="filter-item" style="display: flex; flex-direction: column; gap: 4px;">
+                        <label for="Periodo2" style="margin: 0; font-size: 12px; font-weight: 600; color: #475569; display: flex; align-items: center; gap: 4px; white-space: nowrap;">
+                            <i class="fa fa-calendar-check-o" style="color: #2F5597;"></i> Periodo Final:
+                        </label>
+                        <div class="modern-input-wrapper">
+                            <input name="Periodo2" id="Periodo2" class="datecontrol form-control modern-date-input" value="@Model.Periodo2" style="min-width: 120px; height: 34px; font-size: 12.5px; padding: 4px 8px;" />
+                        </div>
+                    </div>
+
+                    <!-- Botón Generar -->
+                    <div class="filter-item" style="margin-left: auto; align-self: flex-end; padding-bottom: 1px;">
+                        <button type="button" id="btnGenerarContractual" class="btn-modern-generate" style="height: 34px; padding: 0 18px; font-size: 12.5px; white-space: nowrap;" onclick="cargarDatosContractual()">
+                            <i class="fa fa-search"></i> Generar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenedor de Pestañas de Liquidez Contractual -->
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="modern-table-card" style="border: 1px solid #e2e8f0; border-radius: 10px; background: #ffffff; box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04); overflow: hidden; padding: 14px 18px; margin-bottom: 14px;">
+                <ul class="nav nav-tabs" id="tabsContractual" style="border-bottom: 1px solid #e2e8f0; margin-bottom: 16px;">
+                    <li class="active">
+                        <a href="#tab-indicadores" data-toggle="tab" class="sub-tab-link">
+                            <i class="fa fa-pie-chart" style="color: #0284c7; margin-right: 5px;"></i> Indicadores
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#tab-icl" data-toggle="tab" class="sub-tab-link">
+                            <i class="fa fa-shield" style="color: #10b981; margin-right: 5px;"></i> ICL (Colones / Dólares)
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#tab-gap" data-toggle="tab" class="sub-tab-link">
+                            <i class="fa fa-exchange" style="color: #ea580c; margin-right: 5px;"></i> GAP Contractual
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#tab-ifne" data-toggle="tab" class="sub-tab-link">
+                            <i class="fa fa-balance-scale" style="color: #6366f1; margin-right: 5px;"></i> IFNE
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="tab-content">
+                    <div class="tab-pane active" id="tab-indicadores">
+                        @Html.Partial("_Indicadores", Model)
+                    </div>
+                    <div class="tab-pane" id="tab-icl">
+                        @Html.Partial("_ICL", Model)
+                    </div>
+                    <div class="tab-pane" id="tab-gap">
+                        @Html.Partial("_GapContractual", Model)
+                    </div>
+                    <div class="tab-pane" id="tab-ifne">
+                        @Html.Partial("_IFNE", Model)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Modal Gráfico Histórico de Indicador (como en Fondeo) -->
+<div class="modal fade" id="modalHistoricoIndicadorLiquidez" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="border-radius: 8px;">
+            <div class="modal-header" style="background-color: #f8fafc; border-bottom: 1px solid #e2e8f0; border-top-left-radius: 8px; border-top-right-radius: 8px;">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title" id="tituloModalIndicadorLiquidez" style="font-weight: 700; color: #143750;">Evolución Histórica</h4>
+            </div>
+            <div class="modal-body">
+                <div id="chartHistoricoIndicadorLiquidez" style="height: 350px; width: 100%;"></div>
+            </div>
+            <div class="modal-footer" style="border-top: 1px solid #e2e8f0;">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        function cargarDatosContractual() {
+            var ent = $('#ddlEntidad').val();
+            var p1 = $('#Periodo1').val();
+            var p2 = $('#Periodo2').val();
+            window.location.href = '@Url.Action("Contractual", "Liquidez")' + '?idEntidad=' + encodeURIComponent(ent) + '&periodo1=' + encodeURIComponent(p1) + '&periodo2=' + encodeURIComponent(p2);
+        }
+
+        function cambiarMonedaICL(moneda) {
+            $('.btn-moneda-icl').removeClass('active').css({ 'background': 'transparent', 'color': '#64748b' });
+            if (moneda === 1) {
+                $('#btnMonedaColones').addClass('active').css({ 'background': '#0284c7', 'color': '#ffffff' });
+                $('#alertaNoDolares').hide();
+                $('#contenedorDetalleICL').show();
+            } else {
+                $('#btnMonedaDolares').addClass('active').css({ 'background': '#0284c7', 'color': '#ffffff' });
+                var tieneDolares = @(Model.ICLDatos.TieneDolares ? "true" : "false");
+                if (!tieneDolares) {
+                    $('#alertaNoDolares').show();
+                    $('#contenedorDetalleICL').hide();
+                } else {
+                    $('#alertaNoDolares').hide();
+                    $('#contenedorDetalleICL').show();
+                }
+            }
+        }
+
+        function getGraphIndicadorLiquidez(orden) {
+            $('#modalHistoricoIndicadorLiquidez').modal('show');
+            setTimeout(function() {
+                Highcharts.chart('chartHistoricoIndicadorLiquidez', {
+                    chart: { type: 'spline' },
+                    title: { text: 'Evolución Histórica del Indicador' },
+                    xAxis: { categories: ['Set 2025', 'Nov 2025', 'Ene 2026', 'Mar 2026', 'May 2026', 'Jul 2026', 'Ago 2026'] },
+                    yAxis: { title: { text: 'Valor / Porcentaje' } },
+                    series: [{ name: 'Indicador', data: [69.7, 68.9, 70.2, 69.1, 68.5, 68.2, 68.4], color: '#0284c7' }],
+                    credits: { enabled: false }
+                });
+            }, 300);
+        }
+
+        function renderGraficosGap() {
+            var chartBarrasEl = document.getElementById('chartGapContractualBarras');
+            if (chartBarrasEl) {
+                Highcharts.chart('chartGapContractualBarras', {
+                    chart: { type: 'column' },
+                    title: { text: 'Entradas y Salidas Contractuales por Banda', style: { fontWeight: '700', color: '#143750', fontSize: '15px' } },
+                    subtitle: { text: 'Comparación de flujos contractuales (Millones de ¢)' },
+                    xAxis: { categories: ['1 a 30 d', '31 a 60 d', '61 a 90 d', '91 a 180 d', '181 a 270 d', '271 a 360 d', '(+) 360 d'] },
+                    yAxis: { title: { text: 'Monto en Millones (¢)' } },
+                    plotOptions: {
+                        column: {
+                            cursor: 'pointer',
+                            point: {
+                                events: {
+                                    click: function () {
+                                        verDetalleEntradasSalidas(this.series.name.toLowerCase().indexOf('entradas') >= 0 ? 'entradas' : 'salidas', this.category);
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    series: [
+                        { name: 'Entradas', data: [693.8, 120.5, 95.3, 210.0, 180.2, 115.0, 310.5], color: '#10b981' },
+                        { name: 'Salidas', data: [739.9, 215.0, 180.4, 305.2, 220.1, 140.0, 250.0], color: '#f97316' }
+                    ],
+                    credits: { enabled: false }
+                });
+            }
+
+            var chartEvolucionEl = document.getElementById('chartGapEvolucion');
+            if (chartEvolucionEl) {
+                Highcharts.chart('chartGapEvolucion', {
+                    title: { text: 'Evolución del GAP Contractual', style: { fontWeight: '700', color: '#143750', fontSize: '15px' } },
+                    subtitle: { text: 'Brecha individual por banda y brecha acumulada (Millones de ¢)' },
+                    xAxis: { categories: ['1 a 30 d', '31 a 60 d', '61 a 90 d', '91 a 180 d', '181 a 270 d', '271 a 360 d', '(+) 360 d'] },
+                    yAxis: { title: { text: 'Monto (MM ¢)' } },
+                    series: [
+                        { type: 'column', name: 'GAP por Banda', data: [-802.8, -2016.9, -831.4, -95.2, -39.9, -25.0, 60.5], color: '#0284c7' },
+                        { type: 'spline', name: 'GAP Acumulado', data: [-802.8, -2888.3, -3719.7, -3814.9, -3854.8, -3879.8, -3819.3], color: '#dc2626', lineWidth: 3, marker: { radius: 4 } }
+                    ],
+                    credits: { enabled: false }
+                });
+            }
+        }
+
+        function renderGraficoICL() {
+            var chartIclEl = document.getElementById('chartEvolucionICL');
+            if (chartIclEl) {
+                Highcharts.chart('chartEvolucionICL', {
+                    chart: { type: 'spline' },
+                    title: { text: 'Evolución Ilustrativa del ICL (Últimos 12 Meses)', style: { fontWeight: '700', color: '#143750', fontSize: '15px' } },
+                    subtitle: { text: 'Meta regulatoria sobre 100%' },
+                    xAxis: { categories: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.ICLDatos.HistoricoMeses)) },
+                    yAxis: {
+                        title: { text: 'Ratio ICL' },
+                        plotLines: [{
+                            value: 1.0,
+                            color: '#dc2626',
+                            dashStyle: 'shortdash',
+                            width: 2,
+                            label: { text: 'Límite Normativo (100%)', align: 'right', style: { color: '#dc2626', fontWeight: 'bold' } }
+                        }]
+                    },
+                    tooltip: { valueDecimals: 2, valueSuffix: 'x' },
+                    series: [{
+                        name: 'ICL Real',
+                        data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.ICLDatos.HistoricoValores)),
+                        color: '#0284c7',
+                        marker: { radius: 4 }
+                    }],
+                    credits: { enabled: false }
+                });
+            }
+        }
+
+        function verDetalleEntradasSalidas(tipo, banda) {
+            $('#tituloModalEntradasSalidas').text('Detalle de ' + (tipo === 'entradas' ? 'Entradas' : 'Salidas') + ' - Banda: ' + banda);
+            $('#modalDetalleEntradasSalidas').modal('show');
+            setTimeout(function() {
+                Highcharts.chart('chartDetalleEntradasSalidas', {
+                    chart: { type: 'bar' },
+                    title: { text: tipo === 'entradas' ? 'Composición de Entradas Contractuales' : 'Composición de Salidas Contractuales' },
+                    xAxis: { categories: tipo === 'entradas' ? ['Disponibilidades', 'Recuperación Cartera', 'Inversiones (Venc./Cupones)'] : ['Vencimientos CDP', 'Obligaciones Terceros', 'Otras Cuentas por Pagar'] },
+                    yAxis: { title: { text: 'Millones de Colones (¢)' } },
+                    series: [{ name: 'Monto', data: tipo === 'entradas' ? [1214.1, 135.5, 552.5] : [127.5, 10.0, 87.1], color: tipo === 'entradas' ? '#10b981' : '#f97316' }],
+                    credits: { enabled: false }
+                });
+            }, 300);
+        }
+
+        $(document).ready(function() {
+            renderGraficosGap();
+            renderGraficoICL();
+
+            $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                var target = $(e.target).attr('href');
+                if (target === '#tab-gap') {
+                    renderGraficosGap();
+                } else if (target === '#tab-icl') {
+                    renderGraficoICL();
+                }
+            });
+        });
+    </script>
+}

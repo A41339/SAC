@@ -13,8 +13,33 @@ namespace FGA.Controllers
         private readonly FGA_En_Linea.EntidadService.EntidadServiceClient entClient = new FGA_En_Linea.EntidadService.EntidadServiceClient();
         private readonly FGA_En_Linea.SPService.SPClient spClient = new FGA_En_Linea.SPService.SPClient();
 
-        // GET: Liquidez
+        // GET: Liquidez (Landing Hub Oficial con 2 Tarjetas Macro)
         public ActionResult Index(string idEntidad = null, string seccion = null, string periodo1 = null, string periodo2 = null)
+        {
+            if (string.Equals(seccion, "contractual", StringComparison.OrdinalIgnoreCase))
+                return RedirectToAction("Contractual", new { idEntidad, periodo1, periodo2 });
+            if (string.Equals(seccion, "estres", StringComparison.OrdinalIgnoreCase))
+                return RedirectToAction("Estres", new { idEntidad, periodo1, periodo2 });
+
+            var model = ConstruirModelo(idEntidad, "hub", periodo1, periodo2);
+            return View("Index", model);
+        }
+
+        // GET: Liquidez/Contractual (Pantalla Independiente: Indicadores, ICL, GAP Contractual e IFNE)
+        public ActionResult Contractual(string idEntidad = null, string periodo1 = null, string periodo2 = null)
+        {
+            var model = ConstruirModelo(idEntidad, "contractual", periodo1, periodo2);
+            return View("Contractual", model);
+        }
+
+        // GET: Liquidez/Estres (Pantalla Independiente: Supuestos, Razón Cobertura, ICL Estresado, Brechas y Horizonte)
+        public ActionResult Estres(string idEntidad = null, string periodo1 = null, string periodo2 = null)
+        {
+            var model = ConstruirModelo(idEntidad, "estres", periodo1, periodo2);
+            return View("Estres", model);
+        }
+
+        private LiquidezIndexViewModel ConstruirModelo(string idEntidad, string seccion, string periodo1, string periodo2)
         {
             try
             {
@@ -58,11 +83,9 @@ namespace FGA.Controllers
                     }
                 }
 
-                // Determinar macro sección: hub (menú de 2 opciones), contractual o estres
                 string macroSec = string.IsNullOrWhiteSpace(seccion) ? "hub" : seccion.ToLowerInvariant();
 
-                // Instanciar y llenar el modelo
-                var model = new LiquidezIndexViewModel
+                return new LiquidezIndexViewModel
                 {
                     IdEntidad = currentEntidad,
                     NombreEntidad = nomEntidad,
@@ -81,26 +104,12 @@ namespace FGA.Controllers
                     BrechasEstres = ObtenerBrechasEstresDefecto(),
                     Horizonte = ObtenerHorizonteDefecto()
                 };
-
-                return View("Index", model);
             }
             catch (Exception ex)
             {
                 ViewBag.Error = ex.Message;
-                return View("Index", new LiquidezIndexViewModel());
+                return new LiquidezIndexViewModel();
             }
-        }
-
-        // GET: Liquidez/Contractual
-        public ActionResult Contractual(string idEntidad = null, string periodo1 = null, string periodo2 = null)
-        {
-            return Index(idEntidad, "contractual", periodo1, periodo2);
-        }
-
-        // GET: Liquidez/Estres
-        public ActionResult Estres(string idEntidad = null, string periodo1 = null, string periodo2 = null)
-        {
-            return Index(idEntidad, "estres", periodo1, periodo2);
         }
 
         #region Métodos de Negocio y Cálculo Normativo
