@@ -342,3 +342,58 @@ GRANT EXECUTE ON [dbo].[FGA_Guardar_Parametros_Liquidez] TO [FGA];
 GRANT SELECT, INSERT, UPDATE, DELETE ON [dbo].[FGA_Parametros_Liquidez_Entidad] TO [FGA];
 GO
 PRINT 'Permisos asignados exitosamente.';
+
+-- =====================================================================================
+-- 7. CONFIGURACIÓN DEL MENÚ Y PERMISOS: SUBMÓDULO DE LIQUIDEZ (ParentId = 1500)
+-- =====================================================================================
+PRINT 'Configurando menú y permisos para el Submódulo de Liquidez...';
+
+-- 7.1 Asegurar opción en dbo.Menu
+IF EXISTS (SELECT 1 FROM dbo.Menu WHERE Id = 5000)
+BEGIN
+    UPDATE dbo.Menu
+    SET MenuText = 'Liquidez',
+        MenuURL = 'Liquidez/Index',
+        ParentId = 1500, -- Bajo Estrategia Financiera
+        SortOrder = 3,
+        MenuIcon = '<i class="fa fa-tint"></i>',
+        Description = 'Reconfiguración del submódulo: Liquidez Contractual y Escenarios de Estrés.'
+    WHERE Id = 5000;
+    PRINT '   -> Opción de menú 5000 [Liquidez] actualizada bajo Estructura Financiera (ParentId: 1500).';
+END
+ELSE
+BEGIN
+    SET IDENTITY_INSERT dbo.Menu ON;
+    INSERT INTO dbo.Menu (Id, MenuText, MenuURL, ParentId, SortOrder, MenuIcon, Description)
+    VALUES (5000, 'Liquidez', 'Liquidez/Index', 1500, 3, '<i class="fa fa-tint"></i>', 'Reconfiguración del submódulo: Liquidez Contractual y Escenarios de Estrés.');
+    SET IDENTITY_INSERT dbo.Menu OFF;
+    PRINT '   -> Opción de menú 5000 [Liquidez] creada exitosamente.';
+END
+
+-- Desvincular opciones hijas obsoletas del viejo módulo IRL si existían bajo 5000
+UPDATE dbo.Menu SET ParentId = NULL WHERE ParentId = 5000 AND Id NOT IN (5000);
+
+-- 7.2 Asignación de Permisos en dbo.MenuPermission para Role 1 (Administrador) y demás roles autorizados
+IF NOT EXISTS (SELECT 1 FROM dbo.MenuPermission WHERE MenuId = 5000 AND RoleId = 1)
+BEGIN
+    INSERT INTO dbo.MenuPermission (MenuId, RoleId, SortOrder, IsCreate, IsRead, IsUpdate, IsDelete)
+    VALUES (5000, 1, 3, 1, 1, 1, 1);
+    PRINT '   -> Permiso asignado al Role 1 (Administrador) para el Menú 5000.';
+END
+ELSE
+BEGIN
+    UPDATE dbo.MenuPermission
+    SET IsCreate = 1, IsRead = 1, IsUpdate = 1, IsDelete = 1, SortOrder = 3
+    WHERE MenuId = 5000 AND RoleId = 1;
+    PRINT '   -> Permiso actualizado para el Role 1.';
+END
+
+-- Asignar también a roles con acceso a Estructura Financiera (ParentId = 1500)
+INSERT INTO dbo.MenuPermission (MenuId, RoleId, SortOrder, IsCreate, IsRead, IsUpdate, IsDelete)
+SELECT 5000, r.Id, 3, 1, 1, 1, 1
+FROM dbo.Role r
+WHERE r.Id IN (2, 4, 5, 6, 7, 10, 12)
+  AND NOT EXISTS (SELECT 1 FROM dbo.MenuPermission mp WHERE mp.MenuId = 5000 AND mp.RoleId = r.Id);
+
+PRINT 'Permisos de menú para Liquidez asignados exitosamente.';
+GO
