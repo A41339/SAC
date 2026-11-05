@@ -964,6 +964,16 @@ namespace FGA.Controllers
             decimal invLiq = ObtenerSaldoCta(saldos, "12000000") / 1000000m;
             decimal fal = (disp + invLiq);
 
+            rc.Disponibilidades110_Base = Math.Round(disp, 2);
+            rc.Disponibilidades110_Moderado = Math.Round(disp, 2);
+            rc.Disponibilidades110_Severo = Math.Round(disp, 2);
+
+            decimal ratioMod = (fal > 0 && supuestos.Haircut_Moderado > 0) ? (supuestos.Haircut_Moderado / (fal * 1000000m)) : 0.9169m;
+            decimal ratioSev = (fal > 0 && supuestos.Haircut_Severo > 0) ? (supuestos.Haircut_Severo / (fal * 1000000m)) : 0.7757m;
+            rc.Inversiones120_Base = Math.Round(invLiq, 2);
+            rc.Inversiones120_Moderado = Math.Round(invLiq * ratioMod, 2);
+            rc.Inversiones120_Severo = Math.Round(invLiq * ratioSev, 2);
+
             rc.ActivosLiquidos_Base = fal;
             rc.ActivosLiquidos_Moderado = supuestos.Haircut_Moderado > 0 ? Math.Round(supuestos.Haircut_Moderado / 1000000m, 2) : Math.Round(fal * 0.9169m, 2);
             rc.ActivosLiquidos_Severo = supuestos.Haircut_Severo > 0 ? Math.Round(supuestos.Haircut_Severo / 1000000m, 2) : Math.Round(fal * 0.7757m, 2);

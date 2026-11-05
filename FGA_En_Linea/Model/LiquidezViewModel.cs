@@ -220,6 +220,15 @@ namespace FGA.Model
 
     public class RazonCoberturaViewModel
     {
+        // Desglose de componentes del Fondo de Activos Líquidos (FAL)
+        public decimal Disponibilidades110_Base { get; set; }
+        public decimal Disponibilidades110_Moderado { get; set; }
+        public decimal Disponibilidades110_Severo { get; set; }
+
+        public decimal Inversiones120_Base { get; set; }
+        public decimal Inversiones120_Moderado { get; set; }
+        public decimal Inversiones120_Severo { get; set; }
+
         public decimal ActivosLiquidos_Base { get; set; }
         public decimal ActivosLiquidos_Moderado { get; set; }
         public decimal ActivosLiquidos_Severo { get; set; }
