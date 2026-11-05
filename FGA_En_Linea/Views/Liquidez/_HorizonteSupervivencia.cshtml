@@ -30,6 +30,24 @@
                     <i class="fa fa-line-chart"></i> @(Model.Horizonte.VariacionDiasBase >= 0 ? "+" + Model.Horizonte.VariacionDiasBase.ToString("N0") : Model.Horizonte.VariacionDiasBase.ToString("N0"))d vs mes ant.
                 </div>
             </div>
+            <!-- Timeline Visual de Supervivencia (0 a 90+ días) -->
+            <div style="margin-top: 14px; text-align: left; background: #ffffff; border-radius: 8px; padding: 8px 12px; border: 1px solid #bfdbfe;">
+                <div style="display: flex; justify-content: space-between; font-size: 10px; color: #64748b; font-weight: 700; margin-bottom: 4px;">
+                    <span>0d (Agotamiento)</span>
+                    <span>30d</span>
+                    <span>60d</span>
+                    <span>90d+ (Conforme)</span>
+                </div>
+                <div style="height: 10px; background: #f1f5f9; border-radius: 5px; overflow: hidden; position: relative; border: 1px solid #cbd5e1;">
+                    <div style="position: absolute; left: 33.3%; top: 0; bottom: 0; width: 1px; background: #94a3b8; z-index: 2;"></div>
+                    <div style="position: absolute; left: 66.6%; top: 0; bottom: 0; width: 1px; background: #94a3b8; z-index: 2;"></div>
+                    <div id="progresoBarraBase" style="height: 100%; width: @(Math.Min(100, Math.Max(0, (double)Model.Horizonte.DiasSupervivenciaBase / 90.0 * 100)).ToString("0.0", System.Globalization.CultureInfo.InvariantCulture))%; background: #2b579a; border-radius: 4px; transition: width 0.5s ease;"></div>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 9.5px; color: #1e3a8a; font-weight: 600; margin-top: 3px;">
+                    <span>Holgura estimada:</span>
+                    <strong>@(Model.Horizonte.DiasSupervivenciaBase.ToString("N0")) días de cobertura</strong>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -52,6 +70,24 @@
                     <i class="fa fa-line-chart"></i> @(Model.Horizonte.VariacionDiasModerado >= 0 ? "+" + Model.Horizonte.VariacionDiasModerado.ToString("N0") : Model.Horizonte.VariacionDiasModerado.ToString("N0"))d vs mes ant.
                 </div>
             </div>
+            <!-- Timeline Visual de Supervivencia (0 a 90+ días) -->
+            <div style="margin-top: 14px; text-align: left; background: #ffffff; border-radius: 8px; padding: 8px 12px; border: 1px solid #fde68a;">
+                <div style="display: flex; justify-content: space-between; font-size: 10px; color: #64748b; font-weight: 700; margin-bottom: 4px;">
+                    <span>0d (Agotamiento)</span>
+                    <span>30d</span>
+                    <span>60d</span>
+                    <span>90d+ (Conforme)</span>
+                </div>
+                <div style="height: 10px; background: #f1f5f9; border-radius: 5px; overflow: hidden; position: relative; border: 1px solid #cbd5e1;">
+                    <div style="position: absolute; left: 33.3%; top: 0; bottom: 0; width: 1px; background: #94a3b8; z-index: 2;"></div>
+                    <div style="position: absolute; left: 66.6%; top: 0; bottom: 0; width: 1px; background: #94a3b8; z-index: 2;"></div>
+                    <div id="progresoBarraMod" style="height: 100%; width: @(Math.Min(100, Math.Max(0, (double)Model.Horizonte.DiasSupervivenciaModerado / 90.0 * 100)).ToString("0.0", System.Globalization.CultureInfo.InvariantCulture))%; background: #64748b; border-radius: 4px; transition: width 0.5s ease;"></div>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 9.5px; color: #92400e; font-weight: 600; margin-top: 3px;">
+                    <span>Holgura estimada:</span>
+                    <strong>@(Model.Horizonte.DiasSupervivenciaModerado.ToString("N0")) días de cobertura</strong>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -72,6 +108,24 @@
                 </div>
                 <div style="font-size: 11px; font-weight: 600; color: #b91c1c; background: #ffffff; border: 1px solid #fecaca; padding: 4px 8px; border-radius: 6px;" title="Mes anterior: @Model.Horizonte.DiasSupervivenciaMesAnteriorSevero.ToString("N0") días">
                     <i class="fa fa-line-chart"></i> @(Model.Horizonte.VariacionDiasSevero >= 0 ? "+" + Model.Horizonte.VariacionDiasSevero.ToString("N0") : Model.Horizonte.VariacionDiasSevero.ToString("N0"))d vs mes ant.
+                </div>
+            </div>
+            <!-- Timeline Visual de Supervivencia (0 a 90+ días) -->
+            <div style="margin-top: 14px; text-align: left; background: #ffffff; border-radius: 8px; padding: 8px 12px; border: 1px solid #fecaca;">
+                <div style="display: flex; justify-content: space-between; font-size: 10px; color: #64748b; font-weight: 700; margin-bottom: 4px;">
+                    <span>0d (Agotamiento)</span>
+                    <span>30d</span>
+                    <span>60d</span>
+                    <span>90d+ (Conforme)</span>
+                </div>
+                <div style="height: 10px; background: #f1f5f9; border-radius: 5px; overflow: hidden; position: relative; border: 1px solid #cbd5e1;">
+                    <div style="position: absolute; left: 33.3%; top: 0; bottom: 0; width: 1px; background: #94a3b8; z-index: 2;"></div>
+                    <div style="position: absolute; left: 66.6%; top: 0; bottom: 0; width: 1px; background: #94a3b8; z-index: 2;"></div>
+                    <div id="progresoBarraSev" style="height: 100%; width: @(Math.Min(100, Math.Max(0, (double)Model.Horizonte.DiasSupervivenciaSevero / 90.0 * 100)).ToString("0.0", System.Globalization.CultureInfo.InvariantCulture))%; background: #dc2626; border-radius: 4px; transition: width 0.5s ease;"></div>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 9.5px; color: #991b1b; font-weight: 600; margin-top: 3px;">
+                    <span>Holgura estimada:</span>
+                    <strong>@(Model.Horizonte.DiasSupervivenciaSevero.ToString("N0")) días de cobertura</strong>
                 </div>
             </div>
         </div>

@@ -143,6 +143,11 @@
                     <button type="button" class="btn btn-sm btn-default" onclick="window.print()" style="border-color: #cbd5e1; font-weight: 600; font-size: 12px; border-radius: 6px; padding: 5px 12px; display: inline-flex; align-items: center; gap: 6px; color: #1e293b;">
                         <i class="fa fa-print"></i> Imprimir / PDF
                     </button>
+
+                    <!-- Glosario de Conceptos -->
+                    <button type="button" class="btn btn-sm btn-default" data-toggle="modal" data-target="#modalGlosarioLiquidez" style="border-color: #cbd5e1; font-weight: 600; font-size: 12px; border-radius: 6px; padding: 5px 12px; display: inline-flex; align-items: center; gap: 6px; color: #1e3a8a;">
+                        <i class="fa fa-question-circle" style="color: #2b579a;"></i> Glosario
+                    </button>
                 </div>
             </div>
         </div>
@@ -258,6 +263,81 @@
     </div>
 </div>
 
+<!-- Modal Glosario Rápido de Conceptos de Liquidez -->
+<div class="modal fade" id="modalGlosarioLiquidez" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" style="width: 90%; max-width: 950px;">
+        <div class="modal-content" style="border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.15);">
+            <div class="modal-header" style="background-color: #2b579a; color: #ffffff; border-top-left-radius: 8px; border-top-right-radius: 8px; padding: 14px 20px;">
+                <button type="button" class="close" data-dismiss="modal" style="color: #ffffff; opacity: 0.9;">&times;</button>
+                <h4 class="modal-title" style="font-weight: 700; color: #ffffff; font-size: 16px;">
+                    <i class="fa fa-book" style="margin-right: 6px;"></i> Glosario de Conceptos y Métricas de Liquidez
+                </h4>
+            </div>
+            <div class="modal-body" style="padding: 22px;">
+                <div class="row">
+                    <!-- GAP Contractual -->
+                    <div class="col-md-6 col-xs-12" style="margin-bottom: 16px;">
+                        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #2b579a; border-radius: 6px; padding: 12px 16px; height: 100%;">
+                            <h5 style="margin: 0 0 6px 0; font-weight: 700; color: #1e3a8a;"><i class="fa fa-exchange" style="color: #2b579a; margin-right: 6px;"></i> GAP Contractual</h5>
+                            <p style="margin: 0; font-size: 12px; color: #475569; line-height: 1.5;">
+                                Diferencia matemática entre las <strong>entradas</strong> (recaudo de cartera, cupones, disponibilidades) y las <strong>salidas</strong> (vencimientos de CDP, deuda, gastos) pactadas formalmente en 7 bandas temporales (1-30d a &gt;360d).
+                            </p>
+                        </div>
+                    </div>
+                    <!-- ICL -->
+                    <div class="col-md-6 col-xs-12" style="margin-bottom: 16px;">
+                        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #0284c7; border-radius: 6px; padding: 12px 16px; height: 100%;">
+                            <h5 style="margin: 0 0 6px 0; font-weight: 700; color: #1e3a8a;"><i class="fa fa-shield" style="color: #0284c7; margin-right: 6px;"></i> ICL (Índice de Cobertura de Liquidez)</h5>
+                            <p style="margin: 0; font-size: 12px; color: #475569; line-height: 1.5;">
+                                Razón entre el Fondo de Activos Líquidos (FAL) y las Salidas Netas de Efectivo a 30 días. La meta regulatoria SUGEF exige un ratio &ge; <strong>100% (1.00x)</strong> para garantizar resistencia ante corridas de depósitos.
+                            </p>
+                        </div>
+                    </div>
+                    <!-- FAL -->
+                    <div class="col-md-6 col-xs-12" style="margin-bottom: 16px;">
+                        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #475569; border-radius: 6px; padding: 12px 16px; height: 100%;">
+                            <h5 style="margin: 0 0 6px 0; font-weight: 700; color: #1e3a8a;"><i class="fa fa-cubes" style="color: #475569; margin-right: 6px;"></i> FAL (Fondo de Activos Líquidos)</h5>
+                            <p style="margin: 0; font-size: 12px; color: #475569; line-height: 1.5;">
+                                Recursos líquidos de inmediata disponibilidad sin restricciones: efectivo en bóveda, depósitos a la vista en bancos/BCCR y títulos de deuda soberana negociables.
+                            </p>
+                        </div>
+                    </div>
+                    <!-- Razón de Cobertura -->
+                    <div class="col-md-6 col-xs-12" style="margin-bottom: 16px;">
+                        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #2b579a; border-radius: 6px; padding: 12px 16px; height: 100%;">
+                            <h5 style="margin: 0 0 6px 0; font-weight: 700; color: #1e3a8a;"><i class="fa fa-check-square-o" style="color: #2b579a; margin-right: 6px;"></i> Razón de Cobertura (30 Días)</h5>
+                            <p style="margin: 0; font-size: 12px; color: #475569; line-height: 1.5;">
+                                Modelo proyectivo: <code>(Activos Líquidos + Ingresos Contractuales) / (Egresos + Salidas Proyectivas)</code>. Si es superior a <strong>1.00x</strong>, la entidad cubre sus compromisos sin apalancamiento adicional.
+                            </p>
+                        </div>
+                    </div>
+                    <!-- Horizonte de Supervivencia -->
+                    <div class="col-md-6 col-xs-12" style="margin-bottom: 16px;">
+                        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #f59e0b; border-radius: 6px; padding: 12px 16px; height: 100%;">
+                            <h5 style="margin: 0 0 6px 0; font-weight: 700; color: #1e3a8a;"><i class="fa fa-hourglass-half" style="color: #f59e0b; margin-right: 6px;"></i> Horizonte de Supervivencia</h5>
+                            <p style="margin: 0; font-size: 12px; color: #475569; line-height: 1.5;">
+                                Estimación cuantitativa de días que la entidad puede subsistir operando con sus flujos y reservas líquidas acumuladas hasta agotar la caja (cruce con ¢0) bajo escenarios de estrés severo.
+                            </p>
+                        </div>
+                    </div>
+                    <!-- IFNE -->
+                    <div class="col-md-6 col-xs-12" style="margin-bottom: 16px;">
+                        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #64748b; border-radius: 6px; padding: 12px 16px; height: 100%;">
+                            <h5 style="margin: 0 0 6px 0; font-weight: 700; color: #1e3a8a;"><i class="fa fa-balance-scale" style="color: #64748b; margin-right: 6px;"></i> IFNE (Financiación Neta Estable)</h5>
+                            <p style="margin: 0; font-size: 12px; color: #475569; line-height: 1.5;">
+                                Métrica estructural a 1 año que compara la Financiación Estable Disponible (FED) versus la Financiación Estable Requerida (FER). Meta directriz: &ge; <strong>1.00x (100%)</strong>.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="border-top: 1px solid #e2e8f0; background: #f8fafc;">
+                <button type="button" class="btn btn-default" data-dismiss="modal" style="border-radius: 6px; font-weight: 600;">Entendido</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section scripts {
     <script>
         function cargarDatosContractual() {
@@ -325,9 +405,37 @@
                 Highcharts.chart('chartGapContractualBarras', {
                     chart: { type: 'column' },
                     title: { text: 'Entradas y Salidas Contractuales por Banda', style: { fontWeight: '700', color: '#143750', fontSize: '15px' } },
-                    subtitle: { text: 'Comparación de flujos contractuales (Millones de ¢)' },
+                    subtitle: { text: 'Haga clic en una barra para ver su desglose contable (Millones de ¢)' },
                     xAxis: { categories: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.GapDatos.Bandas)) },
                     yAxis: { title: { text: 'Monto en Millones (¢)' } },
+                    tooltip: {
+                        shared: true,
+                        useHTML: true,
+                        formatter: function () {
+                            var s = '<div style="font-size:12px; font-weight:700; color:#143750; margin-bottom:5px; padding-bottom:3px; border-bottom:1px solid #cbd5e1;">Banda: ' + this.x + '</div>';
+                            var entradas = 0;
+                            var salidas = 0;
+                            this.points.forEach(function (point) {
+                                var valStr = '¢' + point.y.toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' MM';
+                                s += '<div style="display:flex; justify-content:space-between; gap:12px; margin:3px 0;">' +
+                                     '<span style="color:' + point.color + '; font-weight:600;">' + point.series.name + ':</span> ' +
+                                     '<span style="font-family:monospace; font-weight:700;">' + valStr + '</span>' +
+                                     '</div>';
+                                if (point.series.name.indexOf('Entradas') >= 0) entradas = point.y;
+                                if (point.series.name.indexOf('Salidas') >= 0) salidas = point.y;
+                            });
+                            var netGap = entradas - salidas;
+                            var gapColor = netGap >= 0 ? '#1e40af' : '#b91c1c';
+                            var gapSign = netGap >= 0 ? '+¢' : '-¢';
+                            var gapText = netGap >= 0 ? 'Superávit' : 'Déficit';
+                            var netStr = gapSign + Math.abs(netGap).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' MM';
+                            s += '<div style="margin-top:6px; padding-top:5px; border-top:1px dashed #cbd5e1; display:flex; justify-content:space-between; gap:12px;">' +
+                                 '<span style="font-weight:700; color:' + gapColor + ';">GAP Neto (' + gapText + '):</span> ' +
+                                 '<span style="font-family:monospace; font-weight:800; color:' + gapColor + ';">' + netStr + '</span>' +
+                                 '</div>';
+                            return s;
+                        }
+                    },
                     plotOptions: {
                         column: {
                             cursor: 'pointer',
@@ -344,6 +452,7 @@
                         { name: 'Entradas', data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.GapDatos.Entradas)), color: '#2b579a' },
                         { name: 'Salidas', data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.GapDatos.Salidas)), color: '#64748b' }
                     ],
+                    exporting: { enabled: true },
                     credits: { enabled: false }
                 });
             }
@@ -355,10 +464,17 @@
                     subtitle: { text: 'Brecha individual por banda y brecha acumulada (Millones de ¢)' },
                     xAxis: { categories: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.GapDatos.Bandas)) },
                     yAxis: { title: { text: 'Monto (MM ¢)' } },
+                    tooltip: {
+                        shared: true,
+                        valueDecimals: 2,
+                        valuePrefix: '¢',
+                        valueSuffix: ' MM'
+                    },
                     series: [
                         { type: 'column', name: 'GAP por Banda', data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.GapDatos.BrechasBanda)), color: '#2b579a' },
                         { type: 'spline', name: 'GAP Acumulado', data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.GapDatos.BrechasAcumuladas)), color: '#475569', lineWidth: 3, marker: { radius: 4 } }
                     ],
+                    exporting: { enabled: true },
                     credits: { enabled: false }
                 });
             }

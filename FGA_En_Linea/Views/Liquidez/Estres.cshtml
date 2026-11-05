@@ -143,6 +143,11 @@
                     <button type="button" class="btn btn-sm btn-default" onclick="window.print()" style="border-color: #cbd5e1; font-weight: 600; font-size: 12px; border-radius: 6px; padding: 5px 12px; display: inline-flex; align-items: center; gap: 6px; color: #1e293b;">
                         <i class="fa fa-print"></i> Imprimir / PDF
                     </button>
+
+                    <!-- Glosario de Conceptos -->
+                    <button type="button" class="btn btn-sm btn-default" data-toggle="modal" data-target="#modalGlosarioLiquidez" style="border-color: #cbd5e1; font-weight: 600; font-size: 12px; border-radius: 6px; padding: 5px 12px; display: inline-flex; align-items: center; gap: 6px; color: #1e3a8a;">
+                        <i class="fa fa-question-circle" style="color: #2b579a;"></i> Glosario
+                    </button>
                 </div>
             </div>
         </div>
@@ -248,6 +253,81 @@
     </div>
 </section>
 
+<!-- Modal Glosario Rápido de Conceptos de Liquidez -->
+<div class="modal fade" id="modalGlosarioLiquidez" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" style="width: 90%; max-width: 950px;">
+        <div class="modal-content" style="border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.15);">
+            <div class="modal-header" style="background-color: #2b579a; color: #ffffff; border-top-left-radius: 8px; border-top-right-radius: 8px; padding: 14px 20px;">
+                <button type="button" class="close" data-dismiss="modal" style="color: #ffffff; opacity: 0.9;">&times;</button>
+                <h4 class="modal-title" style="font-weight: 700; color: #ffffff; font-size: 16px;">
+                    <i class="fa fa-book" style="margin-right: 6px;"></i> Glosario de Conceptos y Métricas de Liquidez
+                </h4>
+            </div>
+            <div class="modal-body" style="padding: 22px;">
+                <div class="row">
+                    <!-- GAP Contractual -->
+                    <div class="col-md-6 col-xs-12" style="margin-bottom: 16px;">
+                        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #2b579a; border-radius: 6px; padding: 12px 16px; height: 100%;">
+                            <h5 style="margin: 0 0 6px 0; font-weight: 700; color: #1e3a8a;"><i class="fa fa-exchange" style="color: #2b579a; margin-right: 6px;"></i> GAP Contractual</h5>
+                            <p style="margin: 0; font-size: 12px; color: #475569; line-height: 1.5;">
+                                Diferencia matemática entre las <strong>entradas</strong> (recaudo de cartera, cupones, disponibilidades) y las <strong>salidas</strong> (vencimientos de CDP, deuda, gastos) pactadas formalmente en 7 bandas temporales (1-30d a &gt;360d).
+                            </p>
+                        </div>
+                    </div>
+                    <!-- ICL -->
+                    <div class="col-md-6 col-xs-12" style="margin-bottom: 16px;">
+                        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #0284c7; border-radius: 6px; padding: 12px 16px; height: 100%;">
+                            <h5 style="margin: 0 0 6px 0; font-weight: 700; color: #1e3a8a;"><i class="fa fa-shield" style="color: #0284c7; margin-right: 6px;"></i> ICL (Índice de Cobertura de Liquidez)</h5>
+                            <p style="margin: 0; font-size: 12px; color: #475569; line-height: 1.5;">
+                                Razón entre el Fondo de Activos Líquidos (FAL) y las Salidas Netas de Efectivo a 30 días. La meta regulatoria SUGEF exige un ratio &ge; <strong>100% (1.00x)</strong> para garantizar resistencia ante corridas de depósitos.
+                            </p>
+                        </div>
+                    </div>
+                    <!-- FAL -->
+                    <div class="col-md-6 col-xs-12" style="margin-bottom: 16px;">
+                        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #475569; border-radius: 6px; padding: 12px 16px; height: 100%;">
+                            <h5 style="margin: 0 0 6px 0; font-weight: 700; color: #1e3a8a;"><i class="fa fa-cubes" style="color: #475569; margin-right: 6px;"></i> FAL (Fondo de Activos Líquidos)</h5>
+                            <p style="margin: 0; font-size: 12px; color: #475569; line-height: 1.5;">
+                                Recursos líquidos de inmediata disponibilidad sin restricciones: efectivo en bóveda, depósitos a la vista en bancos/BCCR y títulos de deuda soberana negociables.
+                            </p>
+                        </div>
+                    </div>
+                    <!-- Razón de Cobertura -->
+                    <div class="col-md-6 col-xs-12" style="margin-bottom: 16px;">
+                        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #2b579a; border-radius: 6px; padding: 12px 16px; height: 100%;">
+                            <h5 style="margin: 0 0 6px 0; font-weight: 700; color: #1e3a8a;"><i class="fa fa-check-square-o" style="color: #2b579a; margin-right: 6px;"></i> Razón de Cobertura (30 Días)</h5>
+                            <p style="margin: 0; font-size: 12px; color: #475569; line-height: 1.5;">
+                                Modelo proyectivo: <code>(Activos Líquidos + Ingresos Contractuales) / (Egresos + Salidas Proyectivas)</code>. Si es superior a <strong>1.00x</strong>, la entidad cubre sus compromisos sin apalancamiento adicional.
+                            </p>
+                        </div>
+                    </div>
+                    <!-- Horizonte de Supervivencia -->
+                    <div class="col-md-6 col-xs-12" style="margin-bottom: 16px;">
+                        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #f59e0b; border-radius: 6px; padding: 12px 16px; height: 100%;">
+                            <h5 style="margin: 0 0 6px 0; font-weight: 700; color: #1e3a8a;"><i class="fa fa-hourglass-half" style="color: #f59e0b; margin-right: 6px;"></i> Horizonte de Supervivencia</h5>
+                            <p style="margin: 0; font-size: 12px; color: #475569; line-height: 1.5;">
+                                Estimación cuantitativa de días que la entidad puede subsistir operando con sus flujos y reservas líquidas acumuladas hasta agotar la caja (cruce con ¢0) bajo escenarios de estrés severo.
+                            </p>
+                        </div>
+                    </div>
+                    <!-- IFNE -->
+                    <div class="col-md-6 col-xs-12" style="margin-bottom: 16px;">
+                        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #64748b; border-radius: 6px; padding: 12px 16px; height: 100%;">
+                            <h5 style="margin: 0 0 6px 0; font-weight: 700; color: #1e3a8a;"><i class="fa fa-balance-scale" style="color: #64748b; margin-right: 6px;"></i> IFNE (Financiación Neta Estable)</h5>
+                            <p style="margin: 0; font-size: 12px; color: #475569; line-height: 1.5;">
+                                Métrica estructural a 1 año que compara la Financiación Estable Disponible (FED) versus la Financiación Estable Requerida (FER). Meta directriz: &ge; <strong>1.00x (100%)</strong>.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="border-top: 1px solid #e2e8f0; background: #f8fafc;">
+                <button type="button" class="btn btn-default" data-dismiss="modal" style="border-radius: 6px; font-weight: 600;">Entendido</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section scripts {
     <script>
         function cargarDatosEstres() {
@@ -263,16 +343,32 @@
                 Highcharts.chart('chartRazonCoberturaComparativo', {
                     chart: { type: 'column' },
                     title: { text: 'Razón de Cobertura a 30 Días por Escenario', style: { fontWeight: '700', color: '#143750', fontSize: '15px' } },
+                    subtitle: { text: 'Meta directriz de suficiencia mayor a 1.00x' },
                     xAxis: { categories: ['Contractual', 'Simulación Moderada', 'Simulación Severa'] },
                     yAxis: {
                         title: { text: 'Ratio de Cobertura (x)' },
                         plotLines: [{
                             value: 1.0,
                             color: '#dc2626',
-                            dashStyle: 'shortdash',
+                            dashStyle: 'dash',
                             width: 2,
-                            label: { text: 'Meta Cobertura 1.00x', align: 'right', style: { color: '#dc2626', fontWeight: 'bold' } }
-                        }]
+                            zIndex: 5,
+                            label: { text: 'Límite Cobertura (1.00x)', align: 'right', style: { color: '#dc2626', fontWeight: 'bold' } }
+                        }],
+                        plotBands: [
+                            { from: 0, to: 1.0, color: 'rgba(220, 38, 38, 0.05)', label: { text: 'Zona de Déficit (< 1.00x)', style: { color: '#dc2626', fontSize: '10.5px', fontWeight: 'bold' } } },
+                            { from: 1.0, to: 10.0, color: 'rgba(43, 87, 154, 0.03)', label: { text: 'Zona Adecuada (≥ 1.00x)', style: { color: '#2b579a', fontSize: '10.5px', fontWeight: 'bold' } } }
+                        ]
+                    },
+                    tooltip: {
+                        useHTML: true,
+                        formatter: function () {
+                            var val = this.y;
+                            var estado = val >= 1.0 ? '<span style="color:#2b579a;font-weight:700;"><i class="fa fa-check-circle"></i> Cobertura Conforme (≥ 1.00x)</span>' : '<span style="color:#dc2626;font-weight:700;"><i class="fa fa-warning"></i> Presión de Liquidez (< 1.00x)</span>';
+                            return '<div style="font-size:12px; font-weight:700; color:#143750; margin-bottom:4px;">' + this.x + '</div>' +
+                                   '<div style="margin:4px 0; font-size:13px;">Ratio: <strong style="font-family:monospace; font-size:14px;">' + val.toFixed(2) + 'x</strong></div>' +
+                                   '<div style="font-size:11px; margin-top:4px;">' + estado + '</div>';
+                        }
                     },
                     series: [{
                         name: 'Razón Cobertura',
@@ -283,6 +379,7 @@
                         ],
                         dataLabels: { enabled: true, format: '{y:.2f}x' }
                     }],
+                    exporting: { enabled: true },
                     credits: { enabled: false }
                 });
             }
@@ -294,16 +391,33 @@
                 Highcharts.chart('chartICLEstresadoComparativo', {
                     chart: { type: 'column' },
                     title: { text: 'ICL bajo Escenarios de Estrés (Haircut FAL & Salida Top 20)', style: { fontWeight: '700', color: '#143750', fontSize: '15px' } },
+                    subtitle: { text: 'Mínimo regulatorio SUGEF sobre 100% (1.00x)' },
                     xAxis: { categories: ['Contractual / Base', 'Moderado (FAL -20%, Top 20 -25%)', 'Severo (FAL -50%, Top 20 -50%)'] },
                     yAxis: {
                         title: { text: 'Ratio ICL (x)' },
                         plotLines: [{
                             value: 1.0,
                             color: '#dc2626',
-                            dashStyle: 'shortdash',
+                            dashStyle: 'dash',
                             width: 2,
-                            label: { text: 'Mínimo Regulatorio (1.00x)', align: 'right', style: { color: '#dc2626', fontWeight: 'bold' } }
-                        }]
+                            zIndex: 5,
+                            label: { text: 'Mínimo SUGEF (1.00x / 100%)', align: 'right', style: { color: '#dc2626', fontWeight: 'bold' } }
+                        }],
+                        plotBands: [
+                            { from: 0, to: 1.0, color: 'rgba(220, 38, 38, 0.05)', label: { text: 'Déficit Normativo (< 1.00x)', style: { color: '#dc2626', fontSize: '10.5px', fontWeight: 'bold' } } },
+                            { from: 1.0, to: 10.0, color: 'rgba(43, 87, 154, 0.03)', label: { text: 'Cumplimiento SUGEF (≥ 1.00x)', style: { color: '#2b579a', fontSize: '10.5px', fontWeight: 'bold' } } }
+                        ]
+                    },
+                    tooltip: {
+                        useHTML: true,
+                        formatter: function () {
+                            var val = this.y;
+                            var pct = (val * 100).toFixed(0);
+                            var estado = val >= 1.0 ? '<span style="color:#2b579a;font-weight:700;"><i class="fa fa-check-circle"></i> Cumple Meta Regulatoria</span>' : '<span style="color:#dc2626;font-weight:700;"><i class="fa fa-exclamation-triangle"></i> Incumplimiento Normativo</span>';
+                            return '<div style="font-size:12px; font-weight:700; color:#143750; margin-bottom:4px;">' + this.x + '</div>' +
+                                   '<div style="margin:4px 0; font-size:13px;">ICL: <strong style="font-family:monospace; font-size:14px;">' + val.toFixed(2) + 'x (' + pct + '%)</strong></div>' +
+                                   '<div style="font-size:11px; margin-top:4px;">' + estado + '</div>';
+                        }
                     },
                     series: [{
                         name: 'ICL Estresado',
@@ -314,6 +428,7 @@
                         ],
                         dataLabels: { enabled: true, format: '{y:.2f}x' }
                     }],
+                    exporting: { enabled: true },
                     credits: { enabled: false }
                 });
             }
@@ -333,6 +448,7 @@
                         { type: 'column', name: 'Salidas Estresadas', data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.BrechasEstres.SalidasBase)), color: '#64748b' },
                         { type: 'spline', name: 'GAP por Banda', data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.BrechasEstres.BrechasBase)), color: '#0284c7', lineWidth: 2, marker: { radius: 4 } }
                     ],
+                    exporting: { enabled: true },
                     credits: { enabled: false }
                 });
             }
@@ -365,6 +481,7 @@
                         { name: 'Escenario Moderado', data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.BrechasEstres.AcumuladoModerado)), color: '#64748b', lineWidth: 3, marker: { symbol: 'diamond', radius: 5 } },
                         { name: 'Escenario Severo', data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.BrechasEstres.AcumuladoSevero)), color: '#dc2626', lineWidth: 3, marker: { symbol: 'square', radius: 4 } }
                     ],
+                    exporting: { enabled: true },
                     credits: { enabled: false }
                 });
             }
@@ -388,6 +505,22 @@
                             label: { text: 'Agotamiento de Liquidez (¢0)', align: 'left', style: { color: '#dc2626', fontWeight: 'bold' } }
                         }]
                     },
+                    tooltip: {
+                        shared: true,
+                        valueDecimals: 2,
+                        valuePrefix: '¢',
+                        valueSuffix: ' MM'
+                    },
+                    series: [
+                        { name: 'Escenario Base (@Model.Horizonte.DiasSupervivenciaBase.ToString("N0")d)', data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Horizonte.TrayectoriaBase)), color: '#2b579a', fillColor: 'rgba(43, 87, 154, 0.12)' },
+                        { name: 'Escenario Moderado (@Model.Horizonte.DiasSupervivenciaModerado.ToString("N0")d)', data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Horizonte.TrayectoriaModerado)), color: '#64748b', fillColor: 'rgba(100, 116, 139, 0.12)' },
+                        { name: 'Escenario Severo (@Model.Horizonte.DiasSupervivenciaSevero.ToString("N0")d)', data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Horizonte.TrayectoriaSevero)), color: '#dc2626', fillColor: 'rgba(220, 38, 38, 0.12)' }
+                    ],
+                    exporting: { enabled: true },
+                    credits: { enabled: false }
+                });
+            }
+        }
                     tooltip: {
                         shared: true,
                         valueDecimals: 2,

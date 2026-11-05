@@ -193,9 +193,24 @@
             <!-- 5. RESULTADO FINAL RAZON DE COBERTURA -->
             <tr style="background-color: #eff6ff; font-weight: 800; border-top: 2px solid #2b579a; border-bottom: 2px solid #2b579a;">
                 <td style="color: #1e40af; font-size: 14px; padding: 12px 16px;">Razón de Cobertura (30 días)</td>
-                <td class="text-right font-mono" style="font-size: 15px; color: #1e40af;">@(Model.RazonCobertura.RazonCobertura_Base.ToString("N2"))x</td>
-                <td class="text-right font-mono" style="font-size: 15px; color: #475569;">@(Model.RazonCobertura.RazonCobertura_Moderado.ToString("N2"))x</td>
-                <td class="text-right font-mono" style="font-size: 15px; color: #b91c1c;">@(Model.RazonCobertura.RazonCobertura_Severo.ToString("N2"))x</td>
+                <td class="text-right font-mono" style="font-size: 15px; color: #1e40af;">
+                    @(Model.RazonCobertura.RazonCobertura_Base.ToString("N2"))x
+                    <div style="font-size: 10.5px; font-weight: 700; color: @(Model.RazonCobertura.RazonCobertura_Base >= 1.0m ? "#1e40af" : "#dc2626"); margin-top: 2px;">
+                        @(Model.RazonCobertura.RazonCobertura_Base >= 1.0m ? "Conforme" : "Déficit")
+                    </div>
+                </td>
+                <td class="text-right font-mono" style="font-size: 15px; color: #475569;">
+                    @(Model.RazonCobertura.RazonCobertura_Moderado.ToString("N2"))x
+                    <div style="font-size: 10.5px; font-weight: 700; color: @(Model.RazonCobertura.RazonCobertura_Moderado >= 1.0m ? "#475569" : "#dc2626"); margin-top: 2px;">
+                        @(Model.RazonCobertura.RazonCobertura_Moderado >= 1.0m ? "Conforme" : "Déficit")
+                    </div>
+                </td>
+                <td class="text-right font-mono" style="font-size: 15px; color: #b91c1c;">
+                    @(Model.RazonCobertura.RazonCobertura_Severo.ToString("N2"))x
+                    <div style="font-size: 10.5px; font-weight: 700; color: @(Model.RazonCobertura.RazonCobertura_Severo >= 1.0m ? "#475569" : "#dc2626"); margin-top: 2px;">
+                        @(Model.RazonCobertura.RazonCobertura_Severo >= 1.0m ? "Conforme" : "Déficit")
+                    </div>
+                </td>
             </tr>
         </tbody>
     </table>

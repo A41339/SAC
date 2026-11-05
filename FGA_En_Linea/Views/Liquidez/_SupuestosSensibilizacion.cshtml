@@ -1,5 +1,21 @@
 @model FGA.Model.LiquidezIndexViewModel
 
+<style>
+    .input-base-editable {
+        border: 1.5px solid #2b579a !important;
+        background-color: #ffffff !important;
+        color: #1e3a8a !important;
+        font-weight: 700 !important;
+        box-shadow: inset 0 1px 2px rgba(43,87,154,0.08) !important;
+        transition: border-color 0.2s, box-shadow 0.2s !important;
+    }
+    .input-base-editable:focus {
+        border-color: #0284c7 !important;
+        box-shadow: 0 0 5px rgba(2,132,199,0.35) !important;
+        outline: none !important;
+    }
+</style>
+
 <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid #f1f5f9;">
     <div style="display: flex; align-items: center; gap: 14px;">
         <img class="img-logo-entidad" width="44" height="44" src="@(Session["Logo"] ?? Url.Content("~/Content/images/FFC.jpg"))" onerror="this.onerror=null;this.src='@Url.Content("~/Content/images/FFC.jpg")';" style="border-radius: 8px; background: #ffffff; padding: 3px; border: 1px solid #e2e8f0; object-fit: contain;" />
@@ -22,6 +38,20 @@
     </div>
 </div>
 
+<!-- Banner Dinámico de Alerta de Simulación What-If -->
+<div id="bannerSimulacionActiva" style="display: none; background: #eff6ff; border: 1px solid #bfdbfe; border-left: 4px solid #2b579a; border-radius: 6px; padding: 10px 16px; margin-bottom: 16px; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;">
+    <div style="display: flex; align-items: center; gap: 10px;">
+        <i class="fa fa-pencil-square-o" style="color: #2b579a; font-size: 18px;"></i>
+        <div>
+            <strong style="color: #1e3a8a; font-size: 13px;">Parámetros base modificados</strong>
+            <p style="margin: 0; font-size: 12px; color: #475569;">Ha editado supuestos del Escenario Base. Presione <strong>"Aplicar y Proyectar"</strong> para recalcular en tiempo real todos los modelos de liquidez.</p>
+        </div>
+    </div>
+    <button type="button" class="btn btn-xs btn-primary" onclick="recalcularEscenarios()" style="background-color: #2b579a; border-color: #1e3f70; font-weight: 700; padding: 5px 12px; border-radius: 4px;">
+        <i class="fa fa-calculator"></i> Aplicar y Proyectar Ahora
+    </button>
+</div>
+
 <!-- Tabla 1: Variables del Modelo de Estrés (Requerimiento imagen 14 y Anexo Excel) -->
 <h5 style="margin: 0 0 10px 0; font-size: 14px; font-weight: 700; color: #143750; display: flex; align-items: center; gap: 6px;">
     <i class="fa fa-sliders" style="color: #2b579a;"></i> Parámetros y Proyectores por Escenario
@@ -30,11 +60,17 @@
     <table id="tblSupuestos" class="table table-striped modern-data-table tabla-liquidez-azul" style="width: 100%; margin-bottom: 0; border-collapse: collapse;">
         <thead style="background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important;">
             <tr style="background-color: #2b579a !important; background: #2b579a !important;">
-                <th class="text-left" style="width: 30%; text-align: left !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 16px; font-weight: 700; font-size: 13px; border: none;">Variables del Modelo</th>
-                <th class="text-left" style="width: 25%; text-align: left !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 14px; font-weight: 700; font-size: 13px; border: none;">Tipo de Proyector</th>
-                <th class="text-right" style="width: 15%; text-align: right !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 14px; font-weight: 700; font-size: 13px; border: none; white-space: nowrap;">Escenario Base</th>
-                <th class="text-right" style="width: 15%; text-align: right !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 14px; font-weight: 700; font-size: 13px; border: none; white-space: nowrap;">Escenario Moderado</th>
-                <th class="text-right" style="width: 15%; text-align: right !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 16px; font-weight: 700; font-size: 13px; border: none; white-space: nowrap;">Escenario Severo</th>
+                <th class="text-left" style="width: 28%; text-align: left !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 16px; font-weight: 700; font-size: 13px; border: none;">Variables del Modelo</th>
+                <th class="text-left" style="width: 24%; text-align: left !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 14px; font-weight: 700; font-size: 13px; border: none;">Tipo de Proyector</th>
+                <th class="text-right" style="width: 16%; text-align: right !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 14px; font-weight: 700; font-size: 13px; border: none; white-space: nowrap;">
+                    Escenario Base <span class="badge" style="background: #ffffff; color: #1e3a8a; font-size: 10px; font-weight: 700; padding: 2px 6px; margin-left: 3px;"><i class="fa fa-pencil"></i> Editable</span>
+                </th>
+                <th class="text-right" style="width: 16%; text-align: right !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 14px; font-weight: 700; font-size: 13px; border: none; white-space: nowrap;">
+                    Escenario Moderado <span class="badge" style="background: rgba(255,255,255,0.25); color: #ffffff; font-size: 10px; font-weight: 600; padding: 2px 6px; margin-left: 3px;"><i class="fa fa-lock"></i> Proyectado</span>
+                </th>
+                <th class="text-right" style="width: 16%; text-align: right !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 16px; font-weight: 700; font-size: 13px; border: none; white-space: nowrap;">
+                    Escenario Severo <span class="badge" style="background: rgba(255,255,255,0.25); color: #ffffff; font-size: 10px; font-weight: 600; padding: 2px 6px; margin-left: 3px;"><i class="fa fa-lock"></i> Estrés Máx.</span>
+                </th>
             </tr>
         </thead>
         <tbody>
@@ -47,7 +83,7 @@
                         <option value="Manual">Dato Manual</option>
                     </select>
                 </td>
-                <td style="background-color: #f8fafc; padding: 8px 14px;"><input type="number" step="0.01" id="txtCDP_Base" class="form-control input-sm text-right font-weight-bold" value="@(Model.Supuestos.RenovacionCDP_Base * 100m)" /></td>
+                <td style="background-color: #f8fafc; padding: 8px 14px;"><input type="number" step="0.01" id="txtCDP_Base" class="form-control input-sm text-right font-weight-bold input-base-editable" value="@(Model.Supuestos.RenovacionCDP_Base * 100m)" /></td>
                 <td style="background-color: #fffbeb; padding: 8px 14px;"><input type="number" step="0.01" id="txtCDP_Mod" class="form-control input-sm text-right" value="@(Model.Supuestos.RenovacionCDP_Moderado * 100m)" readonly /></td>
                 <td style="background-color: #fef2f2; padding: 8px 16px;"><input type="number" step="0.01" id="txtCDP_Sev" class="form-control input-sm text-right" value="@(Model.Supuestos.RenovacionCDP_Severo * 100m)" readonly /></td>
             </tr>
@@ -63,7 +99,7 @@
                         <option value="Manual">Dato Manual</option>
                     </select>
                 </td>
-                <td style="background-color: #f8fafc; padding: 8px 14px;"><input type="number" step="0.01" id="txtVaR_Base" class="form-control input-sm text-right font-weight-bold" value="@(Model.Supuestos.SalidaVista_Base * 100m)" /></td>
+                <td style="background-color: #f8fafc; padding: 8px 14px;"><input type="number" step="0.01" id="txtVaR_Base" class="form-control input-sm text-right font-weight-bold input-base-editable" value="@(Model.Supuestos.SalidaVista_Base * 100m)" /></td>
                 <td style="background-color: #fffbeb; padding: 8px 14px;"><input type="number" step="0.01" id="txtVaR_Mod" class="form-control input-sm text-right" value="@(Model.Supuestos.SalidaVista_Moderado * 100m)" readonly /></td>
                 <td style="background-color: #fef2f2; padding: 8px 16px;"><input type="number" step="0.01" id="txtVaR_Sev" class="form-control input-sm text-right" value="@(Model.Supuestos.SalidaVista_Severo * 100m)" readonly /></td>
             </tr>
@@ -79,7 +115,7 @@
                         <option value="Manual">Dato Manual</option>
                     </select>
                 </td>
-                <td style="background-color: #f8fafc; padding: 8px 14px;"><input type="number" step="0.01" id="txtCartera_Base" class="form-control input-sm text-right font-weight-bold" value="@(Model.Supuestos.CrecimientoCartera_Base * 100m)" /></td>
+                <td style="background-color: #f8fafc; padding: 8px 14px;"><input type="number" step="0.01" id="txtCartera_Base" class="form-control input-sm text-right font-weight-bold input-base-editable" value="@(Model.Supuestos.CrecimientoCartera_Base * 100m)" /></td>
                 <td style="background-color: #fffbeb; padding: 8px 14px;"><input type="number" step="0.01" id="txtCartera_Mod" class="form-control input-sm text-right" value="@(Model.Supuestos.CrecimientoCartera_Moderado * 100m)" readonly /></td>
                 <td style="background-color: #fef2f2; padding: 8px 16px;"><input type="number" step="0.01" id="txtCartera_Sev" class="form-control input-sm text-right" value="@(Model.Supuestos.CrecimientoCartera_Severo * 100m)" readonly /></td>
             </tr>
@@ -88,7 +124,7 @@
             <tr>
                 <td style="font-weight: 600; color: #1e3a8a; padding: 10px 16px; vertical-align: middle;">Disminución en el recaudo mensual de cartera</td>
                 <td style="padding: 10px 14px; vertical-align: middle;"><span class="badge" style="background-color: #f1f5f9; color: #475569; font-weight: normal; padding: 5px 10px;">Dato Manual</span></td>
-                <td style="background-color: #f8fafc; padding: 8px 14px;"><input type="number" step="0.01" id="txtRecaudo_Base" class="form-control input-sm text-right font-weight-bold" value="@(Model.Supuestos.DisminucionRecaudo_Base * 100m)" /></td>
+                <td style="background-color: #f8fafc; padding: 8px 14px;"><input type="number" step="0.01" id="txtRecaudo_Base" class="form-control input-sm text-right font-weight-bold input-base-editable" value="@(Model.Supuestos.DisminucionRecaudo_Base * 100m)" /></td>
                 <td style="background-color: #fffbeb; padding: 8px 14px;"><input type="number" step="0.01" id="txtRecaudo_Mod" class="form-control input-sm text-right" value="@(Model.Supuestos.DisminucionRecaudo_Moderado * 100m)" /></td>
                 <td style="background-color: #fef2f2; padding: 8px 16px;"><input type="number" step="0.01" id="txtRecaudo_Sev" class="form-control input-sm text-right" value="@(Model.Supuestos.DisminucionRecaudo_Severo * 100m)" /></td>
             </tr>
@@ -102,7 +138,7 @@
                         <option value="Manual">Dato Manual</option>
                     </select>
                 </td>
-                <td style="background-color: #f8fafc; padding: 8px 14px;"><input type="number" step="1" id="txtHaircut_Base" class="form-control input-sm text-right font-weight-bold" value="@Model.Supuestos.Haircut_Base.ToString("F0")" /></td>
+                <td style="background-color: #f8fafc; padding: 8px 14px;"><input type="number" step="1" id="txtHaircut_Base" class="form-control input-sm text-right font-weight-bold input-base-editable" value="@Model.Supuestos.Haircut_Base.ToString("F0")" /></td>
                 <td style="background-color: #fffbeb; padding: 8px 14px;"><input type="number" step="1" id="txtHaircut_Mod" class="form-control input-sm text-right" value="@Model.Supuestos.Haircut_Moderado.ToString("F0")" /></td>
                 <td style="background-color: #fef2f2; padding: 8px 16px;"><input type="number" step="1" id="txtHaircut_Sev" class="form-control input-sm text-right" value="@Model.Supuestos.Haircut_Severo.ToString("F0")" /></td>
             </tr>
@@ -111,7 +147,7 @@
             <tr>
                 <td style="font-weight: 600; color: #1e3a8a; padding: 10px 16px; vertical-align: middle;">Salida Top 20 depositantes</td>
                 <td style="padding: 10px 14px; vertical-align: middle;"><span class="badge" style="background-color: #f1f5f9; color: #475569; font-weight: normal; padding: 5px 10px;">% Disminución fija</span></td>
-                <td style="background-color: #f8fafc; padding: 8px 14px;"><input type="number" step="0.01" id="txtTop20_Base" class="form-control input-sm text-right font-weight-bold" value="@(Model.Supuestos.SalidaTop20_Base * 100m)" /></td>
+                <td style="background-color: #f8fafc; padding: 8px 14px;"><input type="number" step="0.01" id="txtTop20_Base" class="form-control input-sm text-right font-weight-bold input-base-editable" value="@(Model.Supuestos.SalidaTop20_Base * 100m)" /></td>
                 <td style="background-color: #fffbeb; padding: 8px 14px;"><input type="number" step="0.01" id="txtTop20_Mod" class="form-control input-sm text-right" value="@(Model.Supuestos.SalidaTop20_Moderado * 100m)" readonly /></td>
                 <td style="background-color: #fef2f2; padding: 8px 16px;"><input type="number" step="0.01" id="txtTop20_Sev" class="form-control input-sm text-right" value="@(Model.Supuestos.SalidaTop20_Severo * 100m)" readonly /></td>
             </tr>
@@ -120,7 +156,7 @@
             <tr>
                 <td style="font-weight: 600; color: #1e3a8a; padding: 10px 16px; vertical-align: middle;">Disponibilidad de líneas de financiamiento mensual (¢)</td>
                 <td style="padding: 10px 14px; vertical-align: middle;"><span class="badge" style="background-color: #f1f5f9; color: #475569; font-weight: normal; padding: 5px 10px;">Dato Manual</span></td>
-                <td style="background-color: #f8fafc; padding: 8px 14px;"><input type="number" step="1000000" id="txtLineas_Base" class="form-control input-sm text-right font-weight-bold" value="@Model.Supuestos.DisponibilidadLineas_Base.ToString("F0")" /></td>
+                <td style="background-color: #f8fafc; padding: 8px 14px;"><input type="number" step="1000000" id="txtLineas_Base" class="form-control input-sm text-right font-weight-bold input-base-editable" value="@Model.Supuestos.DisponibilidadLineas_Base.ToString("F0")" /></td>
                 <td style="background-color: #fffbeb; padding: 8px 14px;"><input type="number" step="1000000" id="txtLineas_Mod" class="form-control input-sm text-right" value="@Model.Supuestos.DisponibilidadLineas_Moderado.ToString("F0")" /></td>
                 <td style="background-color: #fef2f2; padding: 8px 16px;"><input type="number" step="1000000" id="txtLineas_Sev" class="form-control input-sm text-right" value="@Model.Supuestos.DisponibilidadLineas_Severo.ToString("F0")" /></td>
             </tr>
@@ -129,7 +165,7 @@
             <tr>
                 <td style="font-weight: 600; color: #1e3a8a; padding: 10px 16px; vertical-align: middle;">Pago principal de obligaciones por deuda mensual (¢)</td>
                 <td style="padding: 10px 14px; vertical-align: middle;"><span class="badge" style="background-color: #f1f5f9; color: #475569; font-weight: normal; padding: 5px 10px;">Dato Manual</span></td>
-                <td style="background-color: #f8fafc; padding: 8px 14px;"><input type="number" step="1000000" id="txtDeuda_Base" class="form-control input-sm text-right font-weight-bold" value="@Model.Supuestos.PagoObligaciones_Base.ToString("F0")" /></td>
+                <td style="background-color: #f8fafc; padding: 8px 14px;"><input type="number" step="1000000" id="txtDeuda_Base" class="form-control input-sm text-right font-weight-bold input-base-editable" value="@Model.Supuestos.PagoObligaciones_Base.ToString("F0")" /></td>
                 <td style="background-color: #fffbeb; padding: 8px 14px;"><input type="number" step="1000000" id="txtDeuda_Mod" class="form-control input-sm text-right" value="@Model.Supuestos.PagoObligaciones_Moderado.ToString("F0")" /></td>
                 <td style="background-color: #fef2f2; padding: 8px 16px;"><input type="number" step="1000000" id="txtDeuda_Sev" class="form-control input-sm text-right" value="@Model.Supuestos.PagoObligaciones_Severo.ToString("F0")" /></td>
             </tr>
@@ -138,7 +174,7 @@
             <tr>
                 <td style="font-weight: 600; color: #1e3a8a; padding: 10px 16px; vertical-align: middle;">Cupones mensuales (¢)</td>
                 <td style="padding: 10px 14px; vertical-align: middle;"><span class="badge" style="background-color: #f1f5f9; color: #475569; font-weight: normal; padding: 5px 10px;">Dato Manual</span></td>
-                <td style="background-color: #f8fafc; padding: 8px 14px;"><input type="number" step="100000" id="txtCupones_Base" class="form-control input-sm text-right font-weight-bold" value="@Model.Supuestos.Cupones_Base.ToString("F0")" /></td>
+                <td style="background-color: #f8fafc; padding: 8px 14px;"><input type="number" step="100000" id="txtCupones_Base" class="form-control input-sm text-right font-weight-bold input-base-editable" value="@Model.Supuestos.Cupones_Base.ToString("F0")" /></td>
                 <td style="background-color: #fffbeb; padding: 8px 14px;"><input type="number" step="100000" id="txtCupones_Mod" class="form-control input-sm text-right" value="@Model.Supuestos.Cupones_Moderado.ToString("F0")" /></td>
                 <td style="background-color: #fef2f2; padding: 8px 16px;"><input type="number" step="100000" id="txtCupones_Sev" class="form-control input-sm text-right" value="@Model.Supuestos.Cupones_Severo.ToString("F0")" /></td>
             </tr>
@@ -153,7 +189,7 @@
                         <option value="Manual">Dato Manual</option>
                     </select>
                 </td>
-                <td style="background-color: #f8fafc; padding: 8px 14px;"><input type="number" step="0.01" id="txtCapital_Base" class="form-control input-sm text-right font-weight-bold" value="@(Model.Supuestos.CapitalSocial_Base * 100m)" /></td>
+                <td style="background-color: #f8fafc; padding: 8px 14px;"><input type="number" step="0.01" id="txtCapital_Base" class="form-control input-sm text-right font-weight-bold input-base-editable" value="@(Model.Supuestos.CapitalSocial_Base * 100m)" /></td>
                 <td style="background-color: #fffbeb; padding: 8px 14px;"><input type="number" step="0.01" id="txtCapital_Mod" class="form-control input-sm text-right" value="@(Model.Supuestos.CapitalSocial_Moderado * 100m)" readonly /></td>
                 <td style="background-color: #fef2f2; padding: 8px 16px;"><input type="number" step="0.01" id="txtCapital_Sev" class="form-control input-sm text-right" value="@(Model.Supuestos.CapitalSocial_Severo * 100m)" readonly /></td>
             </tr>
@@ -162,7 +198,7 @@
             <tr>
                 <td style="font-weight: 600; color: #1e3a8a; padding: 10px 16px; vertical-align: middle;">Otros ingresos mensual</td>
                 <td style="padding: 10px 14px; vertical-align: middle;"><span class="badge" style="background-color: #f1f5f9; color: #475569; font-weight: normal; padding: 5px 10px;">Promedio 6 meses</span></td>
-                <td style="background-color: #f8fafc; padding: 8px 14px;"><input type="number" step="0.01" id="txtOtrosIng_Base" class="form-control input-sm text-right font-weight-bold" value="@(Model.Supuestos.OtrosIngresos_Base * 100m)" /></td>
+                <td style="background-color: #f8fafc; padding: 8px 14px;"><input type="number" step="0.01" id="txtOtrosIng_Base" class="form-control input-sm text-right font-weight-bold input-base-editable" value="@(Model.Supuestos.OtrosIngresos_Base * 100m)" /></td>
                 <td style="background-color: #fffbeb; padding: 8px 14px;"><input type="number" step="0.01" id="txtOtrosIng_Mod" class="form-control input-sm text-right" value="@(Model.Supuestos.OtrosIngresos_Moderado * 100m)" readonly /></td>
                 <td style="background-color: #fef2f2; padding: 8px 16px;"><input type="number" step="0.01" id="txtOtrosIng_Sev" class="form-control input-sm text-right" value="@(Model.Supuestos.OtrosIngresos_Severo * 100m)" readonly /></td>
             </tr>
@@ -171,7 +207,7 @@
             <tr>
                 <td style="font-weight: 600; color: #1e3a8a; padding: 10px 16px; vertical-align: middle;">Egresos financieros mensual</td>
                 <td style="padding: 10px 14px; vertical-align: middle;"><span class="badge" style="background-color: #f1f5f9; color: #475569; font-weight: normal; padding: 5px 10px;">Dato Manual</span></td>
-                <td style="background-color: #f8fafc; padding: 8px 14px;"><input type="number" step="0.01" id="txtEgFin_Base" class="form-control input-sm text-right font-weight-bold" value="@(Model.Supuestos.EgresosFinancieros_Base * 100m)" /></td>
+                <td style="background-color: #f8fafc; padding: 8px 14px;"><input type="number" step="0.01" id="txtEgFin_Base" class="form-control input-sm text-right font-weight-bold input-base-editable" value="@(Model.Supuestos.EgresosFinancieros_Base * 100m)" /></td>
                 <td style="background-color: #fffbeb; padding: 8px 14px;"><input type="number" step="0.01" id="txtEgFin_Mod" class="form-control input-sm text-right" value="@(Model.Supuestos.EgresosFinancieros_Moderado * 100m)" /></td>
                 <td style="background-color: #fef2f2; padding: 8px 16px;"><input type="number" step="0.01" id="txtEgFin_Sev" class="form-control input-sm text-right" value="@(Model.Supuestos.EgresosFinancieros_Severo * 100m)" /></td>
             </tr>
@@ -180,7 +216,7 @@
             <tr>
                 <td style="font-weight: 600; color: #1e3a8a; padding: 10px 16px; vertical-align: middle;">Gastos administrativos mensual</td>
                 <td style="padding: 10px 14px; vertical-align: middle;"><span class="badge" style="background-color: #f1f5f9; color: #475569; font-weight: normal; padding: 5px 10px;">Dato Manual</span></td>
-                <td style="background-color: #f8fafc; padding: 8px 14px;"><input type="number" step="0.01" id="txtAdm_Base" class="form-control input-sm text-right font-weight-bold" value="@(Model.Supuestos.GastosAdministrativos_Base * 100m)" /></td>
+                <td style="background-color: #f8fafc; padding: 8px 14px;"><input type="number" step="0.01" id="txtAdm_Base" class="form-control input-sm text-right font-weight-bold input-base-editable" value="@(Model.Supuestos.GastosAdministrativos_Base * 100m)" /></td>
                 <td style="background-color: #fffbeb; padding: 8px 14px;"><input type="number" step="0.01" id="txtAdm_Mod" class="form-control input-sm text-right" value="@(Model.Supuestos.GastosAdministrativos_Moderado * 100m)" /></td>
                 <td style="background-color: #fef2f2; padding: 8px 16px;"><input type="number" step="0.01" id="txtAdm_Sev" class="form-control input-sm text-right" value="@(Model.Supuestos.GastosAdministrativos_Severo * 100m)" /></td>
             </tr>
@@ -355,7 +391,7 @@
                         }
                     }
 
-                    // 4. Actualizar Horizonte de Supervivencia
+                    // 4. Actualizar Horizonte de Supervivencia y Timelines Visuales
                     if (resp.horizonte) {
                         var hz = resp.horizonte;
                         $('#lblDiasBase').text('> 90 días (' + hz.DiasSupervivenciaBase.toFixed(0) + 'd)');
@@ -369,6 +405,14 @@
                         $('#lblBufferBase').text('Buffer: ¢' + (hz.BufferRemanenteBase || 0).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' MM');
                         $('#lblBufferMod').text('Buffer: ¢' + (hz.BufferRemanenteModerado || 0).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' MM');
 
+                        // Actualizar barras de tiempo visuales (0 a 90 días)
+                        var pctBase = Math.min(100, Math.max(0, (hz.DiasSupervivenciaBase / 90.0) * 100));
+                        var pctMod = Math.min(100, Math.max(0, (hz.DiasSupervivenciaModerado / 90.0) * 100));
+                        var pctSev = Math.min(100, Math.max(0, (hz.DiasSupervivenciaSevero / 90.0) * 100));
+                        $('#progresoBarraBase').css('width', pctBase + '%');
+                        $('#progresoBarraMod').css('width', pctMod + '%');
+                        $('#progresoBarraSev').css('width', pctSev + '%');
+
                         var chartHz = $('#chartTrayectoriaSupervivencia').highcharts();
                         if (chartHz && chartHz.series && chartHz.series.length >= 3) {
                             chartHz.series[0].setData(hz.TrayectoriaBase, false);
@@ -377,6 +421,7 @@
                         }
                     }
 
+                    $('#bannerSimulacionActiva').slideUp(200);
                     alert('Simulación What-If completada exitosamente. Todos los modelos han sido proyectados en tiempo real.');
                 } else {
                     alert('Error en la simulación: ' + (resp ? resp.message : 'Error desconocido'));
@@ -415,4 +460,11 @@
     function restablecerSupuestos() {
         cargarDatosEstres();
     }
+
+    $(document).ready(function() {
+        // Detectar cambios en cualquier parámetro del Escenario Base para activar aviso visual
+        $('input.input-base-editable, select[id^="selProyector"]').on('input change', function() {
+            $('#bannerSimulacionActiva').slideDown(150);
+        });
+    });
 </script>
