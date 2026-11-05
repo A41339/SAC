@@ -36,6 +36,15 @@ namespace Entities.Entities.Procedures
                 "EXEC [dbo].[FGA_Consultar_GAP_Contractual] @IDENTIDAD, @PERIODO_CORTE", p1, p2);
         }
 
+        public virtual int FGA_Generar_GAP_Contractual(string iDENTIDAD, Nullable<System.DateTime> pERIODOCORTE)
+        {
+            var p1 = new SqlParameter("@IDENTIDAD", (object)iDENTIDAD ?? DBNull.Value);
+            var p2 = new SqlParameter("@PERIODO_CORTE", (object)pERIODOCORTE ?? DBNull.Value);
+
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteStoreCommand(
+                "EXEC [dbo].[FGA_Generar_GAP_Contractual] @IDENTIDAD, @PERIODO_CORTE", p1, p2);
+        }
+
         public virtual int FGA_Guardar_Parametros_Liquidez(string iDENTIDAD, Nullable<decimal> rENOVACION_CDP, Nullable<decimal> dISMINUCION_RECAUDO, Nullable<decimal> dISPONIBILIDAD_LINEAS, Nullable<decimal> pAGO_DEUDA, Nullable<decimal> cUPONES, string uSUARIO)
         {
             var p1 = new SqlParameter("@IDENTIDAD", (object)iDENTIDAD ?? DBNull.Value);

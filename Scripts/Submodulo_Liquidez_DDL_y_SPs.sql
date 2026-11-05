@@ -149,7 +149,7 @@ BEGIN
     FROM [dbo].[Salida_Concentracion_Ahorrantes] WITH(NOLOCK)
     WHERE IdEntidad = @IDENTIDAD AND Periodo = @PERIODO2;
 
-    -- 4. Consultar dinámicamente Pasivos exigibles CP (<= 30 días) desde Salida_Concentracion_Vencimiento
+    -- 4. Consultar Pasivos exigibles CP (<= 30 días) desde Salida_Concentracion_Vencimiento (precalculado en Cierre)
     DECLARE @PasCP_P1 DECIMAL(25,2) = 0;
     DECLARE @PasCP_P2 DECIMAL(25,2) = 0;
 
@@ -161,24 +161,10 @@ BEGIN
     FROM [dbo].[Salida_Concentracion_Vencimiento] WITH(NOLOCK)
     WHERE IdEntidad = @IDENTIDAD AND Periodo = @PERIODO2;
 
-    -- Si no está calculado el vencimiento en la tabla de salida, calcularlo dinámicamente desde XML_Pasivo_Cuenta_Contable_210
-    IF @PasCP_P2 = 0
-    BEGIN
-        SELECT @PasCP_P2 = ISNULL(SUM(A.SaldoPrincipal), 0)
-        FROM [dbo].[XML_Pasivo_Cuenta_Contable_210] A WITH(NOLOCK)
-        INNER JOIN [dbo].[XML_Encabezado] B WITH(NOLOCK) ON B.Id = A.IdEncabezado_Id
-        WHERE B.IdEntidad_Id = @IDENTIDAD AND B.Periodo = @PERIODO2
-          AND (A.CuentaContablePrincipal LIKE '211%' OR A.FechaVencimiento IS NULL OR A.FechaVencimiento <= DATEADD(DAY, 30, @PERIODO2));
-    END
-
-    IF @PasCP_P1 = 0
-    BEGIN
-        SELECT @PasCP_P1 = ISNULL(SUM(A.SaldoPrincipal), 0)
-        FROM [dbo].[XML_Pasivo_Cuenta_Contable_210] A WITH(NOLOCK)
-        INNER JOIN [dbo].[XML_Encabezado] B WITH(NOLOCK) ON B.Id = A.IdEncabezado_Id
-        WHERE B.IdEntidad_Id = @IDENTIDAD AND B.Periodo = @PERIODO1
-          AND (A.CuentaContablePrincipal LIKE '211%' OR A.FechaVencimiento IS NULL OR A.FechaVencimiento <= DATEADD(DAY, 30, @PERIODO1));
-    END
+    -- Si para algún periodo aún no se ha corrido el cierre de vencimientos, usar el saldo de balance a la vista (21100000)
+    -- para evitar escaneos pesados sobre XML_Pasivo_Cuenta_Contable_210 en tiempo real
+    IF @PasCP_P1 = 0 SET @PasCP_P1 = @C211_P1;
+    IF @PasCP_P2 = 0 SET @PasCP_P2 = @C211_P2;
 
     -- 5. Armar resultado con los 8 indicadores normativos de Liquidez
     CREATE TABLE #Resultados (
@@ -308,14 +294,44 @@ PRINT 'SP [dbo].[FGA_Consultar_Serie_VaR_Liquidez] creado exitosamente.';
 GO
 
 -- =====================================================================================
--- 4. PROCEDIMIENTO ALMACENADO: FGA_Consultar_GAP_Contractual (100% DINÁMICO)
--- Agrupa dinámicamente las entradas de inversiones y salidas de pasivos 210
+-- 4. TABLA DE SALIDA: GAP CONTRACTUAL (PRECALCULADA EN CIERRE)
 -- =====================================================================================
-IF OBJECT_ID('[dbo].[FGA_Consultar_GAP_Contractual]', 'P') IS NOT NULL
-    DROP PROCEDURE [dbo].[FGA_Consultar_GAP_Contractual];
+IF NOT EXISTS (SELECT 1 FROM sys.tables WHERE name = 'Salida_GAP_Contractual')
+BEGIN
+    CREATE TABLE [dbo].[Salida_GAP_Contractual](
+        [Id] [bigint] IDENTITY(1,1) NOT NULL,
+        [IdEntidad] [nvarchar](5) NOT NULL,
+        [Periodo] [date] NOT NULL,
+        [BandaId] [int] NOT NULL,
+        [Banda] [nvarchar](50) NOT NULL,
+        [Entradas] [decimal](25, 2) NOT NULL DEFAULT (0),
+        [Salidas] [decimal](25, 2) NOT NULL DEFAULT (0),
+        [BrechaBanda] [decimal](25, 2) NOT NULL DEFAULT (0),
+        [BrechaAcumulada] [decimal](25, 2) NOT NULL DEFAULT (0),
+        [FechaGeneracion] [datetime] NOT NULL DEFAULT (GETDATE()),
+        CONSTRAINT [PK_Salida_GAP_Contractual] PRIMARY KEY CLUSTERED ([Id] ASC)
+    );
+
+    CREATE NONCLUSTERED INDEX [IX_Salida_GAP_Contractual_Entidad_Periodo] 
+    ON [dbo].[Salida_GAP_Contractual] ([IdEntidad], [Periodo]);
+
+    PRINT 'Tabla [dbo].[Salida_GAP_Contractual] creada exitosamente.';
+END
+ELSE
+BEGIN
+    PRINT 'Tabla [dbo].[Salida_GAP_Contractual] ya existe.';
+END
 GO
 
-CREATE PROCEDURE [dbo].[FGA_Consultar_GAP_Contractual]
+-- =====================================================================================
+-- 4.1 PROCEDIMIENTO DE GENERACIÓN DE CIERRE: FGA_Generar_GAP_Contractual
+-- Procesa los XML de pasivos e inversiones una única vez durante el cierre y los almacena
+-- =====================================================================================
+IF OBJECT_ID('[dbo].[FGA_Generar_GAP_Contractual]', 'P') IS NOT NULL
+    DROP PROCEDURE [dbo].[FGA_Generar_GAP_Contractual];
+GO
+
+CREATE PROCEDURE [dbo].[FGA_Generar_GAP_Contractual]
     @IDENTIDAD NVARCHAR(5),
     @PERIODO_CORTE DATE
 AS
@@ -324,7 +340,11 @@ BEGIN
 
     SET @PERIODO_CORTE = DATEFROMPARTS(YEAR(@PERIODO_CORTE), MONTH(@PERIODO_CORTE), 1);
 
-    -- Tabla para almacenar los 7 tramos temporales
+    -- Limpieza previa del período para reproceso
+    DELETE FROM [dbo].[Salida_GAP_Contractual]
+    WHERE IdEntidad = @IDENTIDAD AND Periodo = @PERIODO_CORTE;
+
+    -- Tabla temporal para armar los 7 tramos de vencimiento contractual
     CREATE TABLE #Bandas (
         BandaId INT,
         Banda NVARCHAR(50),
@@ -344,7 +364,7 @@ BEGIN
         (6, '271 a 365 días', 271, 365),
         (7, '> 365 días', 366, 99999);
 
-    -- 1. Calcular Salidas desde XML_Pasivo_Cuenta_Contable_210 según fecha de vencimiento
+    -- 1. Salidas desde XML_Pasivo_Cuenta_Contable_210
     UPDATE B
     SET B.Salidas = ISNULL(P.TotalSalida, 0) / 1000000.0 -- En millones de colones
     FROM #Bandas B
@@ -375,7 +395,25 @@ BEGIN
             END
     ) P ON P.TramoId = B.BandaId;
 
-    -- 2. Calcular Entradas desde XML_Inversion_Activa según vencimiento
+    -- Si no hubo salidas de XML, usar como contingencia los tramos de Salida_Concentracion_Vencimiento si existen
+    IF (SELECT SUM(Salidas) FROM #Bandas) = 0
+    BEGIN
+        UPDATE B
+        SET B.Salidas = CASE B.BandaId
+            WHEN 1 THEN ISNULL(V.Tramo1_Vista, 0) / 1000000.0
+            WHEN 2 THEN (ISNULL(V.Tramo2_1a90Dias, 0) / 3.0) / 1000000.0
+            WHEN 3 THEN (ISNULL(V.Tramo2_1a90Dias, 0) / 3.0) / 1000000.0
+            WHEN 4 THEN ISNULL(V.Tramo3_91a180Dias, 0) / 1000000.0
+            WHEN 5 THEN ISNULL(V.Tramo4_181a270Dias, 0) / 1000000.0
+            WHEN 6 THEN ISNULL(V.Tramo5_271a360Dias, 0) / 1000000.0
+            ELSE (ISNULL(V.Tramo6_1a3Anios, 0) + ISNULL(V.Tramo7_Mas3Anios, 0)) / 1000000.0
+        END
+        FROM #Bandas B
+        CROSS JOIN [dbo].[Salida_Concentracion_Vencimiento] V WITH(NOLOCK)
+        WHERE V.IdEntidad = @IDENTIDAD AND V.Periodo = @PERIODO_CORTE;
+    END
+
+    -- 2. Entradas desde XML_Inversion_Activa
     UPDATE B
     SET B.Entradas = ISNULL(I.TotalEntrada, 0) / 1000000.0
     FROM #Bandas B
@@ -406,7 +444,7 @@ BEGIN
             END
     ) I ON I.TramoId = B.BandaId;
 
-    -- Obtener FAL inicial para acumulación
+    -- FAL inicial para acumulación
     DECLARE @FAL_Inicial DECIMAL(25,2) = 0;
     SELECT TOP 1 @FAL_Inicial = ISNULL(B.MontoPonderado, B.Monto) / 1000000.0
     FROM [dbo].[XML_ICL] B WITH(NOLOCK)
@@ -414,24 +452,77 @@ BEGIN
     WHERE (B.CuentaCatalogo = '200000' OR B.CuentaCatalogo = '100000')
       AND A.IdEntidad_Id = @IDENTIDAD AND A.Periodo = @PERIODO_CORTE;
 
-    -- Si FAL es 0, buscar en Salida_Concentracion_Vencimiento o saldo balance
     IF @FAL_Inicial = 0
     BEGIN
         SET @FAL_Inicial = ISNULL((SELECT ABS(SALDOFINAL) / 1000000.0 FROM [dbo].[SALIDA_BALANCE_COMPROBACION] WHERE IDENTIDAD = @IDENTIDAD AND PERIODO = @PERIODO_CORTE AND CUENTA = '11000000'), 1203.53);
     END
 
-    -- Salida final con cálculo de brecha de banda y brecha acumulada con ventana OVER
+    -- Insertar en la tabla de salida definitiva
+    INSERT INTO [dbo].[Salida_GAP_Contractual]
+    (
+        IdEntidad,
+        Periodo,
+        BandaId,
+        Banda,
+        Entradas,
+        Salidas,
+        BrechaBanda,
+        BrechaAcumulada,
+        FechaGeneracion
+    )
     SELECT
+        @IDENTIDAD,
+        @PERIODO_CORTE,
         BandaId,
         Banda,
         Entradas,
         Salidas,
         (Entradas - Salidas) AS BrechaBanda,
-        @FAL_Inicial + SUM(Entradas - Salidas) OVER (ORDER BY BandaId ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS BrechaAcumulada
+        @FAL_Inicial + SUM(Entradas - Salidas) OVER (ORDER BY BandaId ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS BrechaAcumulada,
+        GETDATE()
     FROM #Bandas
     ORDER BY BandaId ASC;
 
     DROP TABLE #Bandas;
+END
+GO
+PRINT 'SP [dbo].[FGA_Generar_GAP_Contractual] creado exitosamente.';
+GO
+
+-- =====================================================================================
+-- 4.2 PROCEDIMIENTO DE CONSULTA: FGA_Consultar_GAP_Contractual (ULTRA RÁPIDO)
+-- Lee de la tabla de salida de cierre; si no existe, la genera y guarda de inmediato
+-- =====================================================================================
+IF OBJECT_ID('[dbo].[FGA_Consultar_GAP_Contractual]', 'P') IS NOT NULL
+    DROP PROCEDURE [dbo].[FGA_Consultar_GAP_Contractual];
+GO
+
+CREATE PROCEDURE [dbo].[FGA_Consultar_GAP_Contractual]
+    @IDENTIDAD NVARCHAR(5),
+    @PERIODO_CORTE DATE
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SET @PERIODO_CORTE = DATEFROMPARTS(YEAR(@PERIODO_CORTE), MONTH(@PERIODO_CORTE), 1);
+
+    -- Si no existe cálculo previo de cierre, generarlo una sola vez
+    IF NOT EXISTS (SELECT 1 FROM [dbo].[Salida_GAP_Contractual] WITH(NOLOCK) WHERE IdEntidad = @IDENTIDAD AND Periodo = @PERIODO_CORTE)
+    BEGIN
+        EXEC [dbo].[FGA_Generar_GAP_Contractual] @IDENTIDAD, @PERIODO_CORTE;
+    END
+
+    -- Retornar instantáneamente desde la tabla de salida
+    SELECT
+        BandaId,
+        Banda,
+        Entradas,
+        Salidas,
+        BrechaBanda,
+        BrechaAcumulada
+    FROM [dbo].[Salida_GAP_Contractual] WITH(NOLOCK)
+    WHERE IdEntidad = @IDENTIDAD AND Periodo = @PERIODO_CORTE
+    ORDER BY BandaId ASC;
 END
 GO
 PRINT 'SP [dbo].[FGA_Consultar_GAP_Contractual] creado exitosamente.';
@@ -504,9 +595,11 @@ GO
 PRINT 'Asignando permisos (GRANT) al rol de base de datos [FGA]...';
 GRANT EXECUTE ON [dbo].[FGA_Consultar_Indicadores_Liquidez] TO [FGA];
 GRANT EXECUTE ON [dbo].[FGA_Consultar_Serie_VaR_Liquidez] TO [FGA];
+GRANT EXECUTE ON [dbo].[FGA_Generar_GAP_Contractual] TO [FGA];
 GRANT EXECUTE ON [dbo].[FGA_Consultar_GAP_Contractual] TO [FGA];
 GRANT EXECUTE ON [dbo].[FGA_Guardar_Parametros_Liquidez] TO [FGA];
 GRANT SELECT, INSERT, UPDATE, DELETE ON [dbo].[FGA_Parametros_Liquidez_Entidad] TO [FGA];
+GRANT SELECT, INSERT, UPDATE, DELETE ON [dbo].[Salida_GAP_Contractual] TO [FGA];
 PRINT 'Permisos asignados exitosamente.';
 GO
 

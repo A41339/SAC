@@ -476,6 +476,11 @@ public class SP : ISP
         return sp.FGA_Consultar_GAP_Contractual(iDENTIDAD, pERIODOCORTE).ToList();
     }
 
+    public int FGA_Generar_GAP_Contractual(string iDENTIDAD, DateTime? pERIODOCORTE)
+    {
+        return sp.FGA_Generar_GAP_Contractual(iDENTIDAD, pERIODOCORTE);
+    }
+
     public int FGA_Guardar_Parametros_Liquidez(string iDENTIDAD, decimal? rENOVACION_CDP, decimal? dISMINUCION_RECAUDO, decimal? dISPONIBILIDAD_LINEAS, decimal? pAGO_DEUDA, decimal? cUPONES, string uSUARIO)
     {
         return sp.FGA_Guardar_Parametros_Liquidez(iDENTIDAD, rENOVACION_CDP, dISMINUCION_RECAUDO, dISPONIBILIDAD_LINEAS, pAGO_DEUDA, cUPONES, uSUARIO);
