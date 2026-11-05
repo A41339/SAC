@@ -11,7 +11,7 @@
 
     <!-- Selector de Escenario Activo (Requerimiento imagen 19) -->
     <div style="display: inline-flex; align-items: center; background: #f1f5f9; padding: 4px; border-radius: 8px; border: 1px solid #cbd5e1;">
-        <button type="button" id="btnEscenarioBase" class="btn btn-xs active" onclick="seleccionarEscenarioBrechas('base')" style="padding: 6px 14px; font-weight: 700; font-size: 12px; border-radius: 6px; border: none; background: #16a34a; color: #ffffff;">
+        <button type="button" id="btnEscenarioBase" class="btn btn-xs active" onclick="seleccionarEscenarioBrechas('base')" style="padding: 6px 14px; font-weight: 700; font-size: 12px; border-radius: 6px; border: none; background: #2b579a; color: #ffffff;">
             Escenario Base
         </button>
         <button type="button" id="btnEscenarioMod" class="btn btn-xs" onclick="seleccionarEscenarioBrechas('moderado')" style="padding: 6px 14px; font-weight: 700; font-size: 12px; border-radius: 6px; border: none; margin-left: 4px; background: transparent; color: #64748b;">
@@ -46,12 +46,12 @@
         </div>
     </div>
     <div class="col-md-4 col-sm-4 col-xs-12">
-        <div class="info-box" style="border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); border: 1px solid #bbf7d0; background: #f0fdf4;">
-            <span class="info-box-icon" style="background-color: #16a34a; color: #ffffff; border-top-left-radius: 8px; border-bottom-left-radius: 8px;"><i class="fa fa-cubes"></i></span>
+        <div class="info-box" style="border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); border: 1px solid #bfdbfe; background: #eff6ff;">
+            <span class="info-box-icon" style="background-color: #2b579a; color: #ffffff; border-top-left-radius: 8px; border-bottom-left-radius: 8px;"><i class="fa fa-cubes"></i></span>
             <div class="info-box-content" style="padding: 10px 14px;">
-                <span class="info-box-text" style="font-size: 12px; color: #166534; font-weight: 700;">FAL BAJO ESTRÉS</span>
-                <span class="info-box-number" id="lblFALEstres" style="font-size: 22px; font-weight: 800; color: #15803d;">¢1.203,53 MM</span>
-                <span style="font-size: 11px; color: #166534;">Activos líquidos disponibles</span>
+                <span class="info-box-text" style="font-size: 12px; color: #1e3a8a; font-weight: 700;">FAL BAJO ESTRÉS</span>
+                <span class="info-box-number" id="lblFALEstres" style="font-size: 22px; font-weight: 800; color: #1e40af;">¢1.203,53 MM</span>
+                <span style="font-size: 11px; color: #1e3a8a;">Activos líquidos disponibles</span>
             </div>
         </div>
     </div>
@@ -99,8 +99,8 @@
             </tr>
         </thead>
         <tbody>
-            <tr style="background-color: #ecfdf5; font-weight: 700;">
-                <td class="text-left" style="color: #065f46; padding-left: 16px;"><i class="fa fa-arrow-down" style="color: #10b981; margin-right: 6px;"></i> Entradas estresadas</td>
+            <tr style="background-color: #eff6ff; font-weight: 700;">
+                <td class="text-left" style="color: #1e3a8a; padding-left: 16px;"><i class="fa fa-arrow-down" style="color: #2b579a; margin-right: 6px;"></i> Entradas estresadas</td>
                 @for (int i = 0; i < 7; i++)
                 {
                     decimal val = (i < Model.BrechasEstres.EntradasBase.Count) ? Model.BrechasEstres.EntradasBase[i] : 0m;
@@ -120,7 +120,7 @@
                 @for (int i = 0; i < 7; i++)
                 {
                     decimal val = (i < Model.BrechasEstres.BrechasBase.Count) ? Model.BrechasEstres.BrechasBase[i] : 0m;
-                    string col = val >= 0 ? "#047857" : "#b91c1c";
+                    string col = val >= 0 ? "#1e40af" : "#b91c1c";
                     string sig = val >= 0 ? "+¢" : "-¢";
                     <td class="text-right font-mono" id="tdGap@(i)" style="color: @col;">@sig@Math.Abs(val).ToString("N2")</td>
                 }
@@ -130,7 +130,7 @@
                 @for (int i = 0; i < 7; i++)
                 {
                     decimal val = (i < Model.BrechasEstres.AcumuladoBase.Count) ? Model.BrechasEstres.AcumuladoBase[i] : 0m;
-                    string col = val >= 0 ? "#15803d" : "#dc2626";
+                    string col = val >= 0 ? "#1e40af" : "#dc2626";
                     string sig = val >= 0 ? "+¢" : "-¢";
                     <td class="text-right font-mono" id="tdAcum@(i)" style="color: @col;">@sig@Math.Abs(val).ToString("N2")</td>
                 }
@@ -183,9 +183,9 @@
         if (!d) return;
 
         if (escenario === 'base') {
-            $('#btnEscenarioBase').css({ 'background': '#16a34a', 'color': '#ffffff' });
+            $('#btnEscenarioBase').css({ 'background': '#2b579a', 'color': '#ffffff' });
         } else if (escenario === 'moderado') {
-            $('#btnEscenarioMod').css({ 'background': '#ea580c', 'color': '#ffffff' });
+            $('#btnEscenarioMod').css({ 'background': '#64748b', 'color': '#ffffff' });
         } else {
             $('#btnEscenarioSev').css({ 'background': '#dc2626', 'color': '#ffffff' });
         }
@@ -200,11 +200,11 @@
             
             var gapB = d.gapBanda[i];
             $('#tdGap' + i).text(formatearMontoCelda(gapB, true))
-                           .css('color', gapB >= 0 ? '#047857' : '#b91c1c');
+                           .css('color', gapB >= 0 ? '#1e40af' : '#b91c1c');
 
             var gapA = d.gapAcum[i];
             $('#tdAcum' + i).text(formatearMontoCelda(gapA, true))
-                            .css('color', gapA >= 0 ? '#15803d' : '#dc2626');
+                            .css('color', gapA >= 0 ? '#1e40af' : '#dc2626');
         }
 
         // Actualizar gráfico Highcharts de Brechas por Banda

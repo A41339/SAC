@@ -66,12 +66,12 @@
 <div class="row" style="margin-bottom: 20px;">
     <div class="col-md-6 col-xs-12">
         <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
-            <div style="display: flex; justify-content: flex-end; gap: 6px; margin-bottom: 4px;">
-                <button type="button" class="btn btn-xs" onclick="verDetalleEntradasSalidas('entradas')" style="background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; font-weight: 600; border-radius: 4px; padding: 3px 8px;">
-                    <i class="fa fa-pie-chart" style="color: #10b981;"></i> Ver Entradas
+            <div style="display: flex; justify-content: flex-end; gap: 8px; margin-bottom: 8px;">
+                <button type="button" class="btn btn-xs" onclick="verDetalleEntradasSalidas('entradas')" style="background-color: #2b579a; border: 1px solid #1e3f70; color: #ffffff; font-weight: 700; font-size: 11.5px; border-radius: 5px; padding: 4px 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.12); display: inline-flex; align-items: center; gap: 5px;">
+                    <i class="fa fa-pie-chart" style="color: #ffffff;"></i> Ver Entradas
                 </button>
-                <button type="button" class="btn btn-xs" onclick="verDetalleEntradasSalidas('salidas')" style="background: #fff7ed; border: 1px solid #fed7aa; color: #9a3412; font-weight: 600; border-radius: 4px; padding: 3px 8px;">
-                    <i class="fa fa-pie-chart" style="color: #f97316;"></i> Ver Salidas
+                <button type="button" class="btn btn-xs" onclick="verDetalleEntradasSalidas('salidas')" style="background-color: #475569; border: 1px solid #334155; color: #ffffff; font-weight: 700; font-size: 11.5px; border-radius: 5px; padding: 4px 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.12); display: inline-flex; align-items: center; gap: 5px;">
+                    <i class="fa fa-pie-chart" style="color: #ffffff;"></i> Ver Salidas
                 </button>
             </div>
             <div id="chartGapContractualBarras" style="height: 330px; width: 100%;"></div>
@@ -111,8 +111,8 @@
         </thead>
         <tbody>
             <!-- ENTRADAS CONTRACTUALES -->
-            <tr style="background-color: #ecfdf5; font-weight: 700; border-top: 1px solid #cbd5e1;">
-                <td class="text-left" style="color: #065f46; padding-left: 16px;"><i class="fa fa-arrow-down" style="color: #10b981; margin-right: 6px;"></i> Entradas contractuales</td>
+            <tr style="background-color: #eff6ff; font-weight: 700; border-top: 1px solid #cbd5e1;">
+                <td class="text-left" style="color: #1e3a8a; padding-left: 16px;"><i class="fa fa-arrow-down" style="color: #2b579a; margin-right: 6px;"></i> Entradas contractuales</td>
                 @for (int b = 0; b < 7; b++)
                 {
                     decimal val = (b < Model.GapDatos.Entradas.Count) ? Model.GapDatos.Entradas[b] : 0m;
@@ -196,7 +196,7 @@
                 @for (int b = 0; b < 7; b++)
                 {
                     decimal val = (b < Model.GapDatos.BrechasBanda.Count) ? Model.GapDatos.BrechasBanda[b] : 0m;
-                    string color = val >= 0 ? "#047857" : "#b91c1c";
+                    string color = val >= 0 ? "#1e40af" : "#b91c1c";
                     string sign = val >= 0 ? "+¢" : "-¢";
                     <td class="text-right font-mono" style="color: @color;">@sign@Math.Abs(val).ToString("N2")</td>
                 }
@@ -208,7 +208,7 @@
                 @for (int b = 0; b < 7; b++)
                 {
                     decimal val = (b < Model.GapDatos.BrechasAcumuladas.Count) ? Model.GapDatos.BrechasAcumuladas[b] : 0m;
-                    string color = val >= 0 ? "#15803d" : "#dc2626";
+                    string color = val >= 0 ? "#1e40af" : "#dc2626";
                     string sign = val >= 0 ? "+¢" : "-¢";
                     <td class="text-right font-mono" style="color: @color;">@sign@Math.Abs(val).ToString("N2")</td>
                 }
