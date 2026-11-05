@@ -1,0 +1,91 @@
+@model FGA.Model.LiquidezIndexViewModel
+
+<div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid #f1f5f9;">
+    <div style="display: flex; align-items: center; gap: 14px;">
+        <img class="img-logo-entidad" width="44" height="44" src="@(Session["Logo"] ?? Url.Content("~/Content/images/FFC.jpg"))" onerror="this.onerror=null;this.src='@Url.Content("~/Content/images/FFC.jpg")';" style="border-radius: 8px; background: #ffffff; padding: 3px; border: 1px solid #e2e8f0; object-fit: contain;" />
+        <div>
+            <h4 style="margin: 0; font-size: 16px; font-weight: 700; color: #143750;">ICL Estresado - <span id="lblEntidadICLEstres">@Model.NombreEntidad</span></h4>
+            <p style="margin: 2px 0 0 0; font-size: 12px; color: #64748b;">Estrés simultáneo sobre el Fondo de Activos Líquidos (Haircut) y pasivos (Salida de Top 20 depositantes)</p>
+        </div>
+    </div>
+</div>
+
+<div class="row" style="margin-bottom: 20px;">
+    <div class="col-md-3 col-sm-6 col-xs-12">
+        <div class="info-box" style="border-radius: 8px; border: 1px solid #cbd5e1; background: #f8fafc;">
+            <span class="info-box-icon" style="background-color: #64748b; color: #ffffff; border-top-left-radius: 8px; border-bottom-left-radius: 8px;"><i class="fa fa-university"></i></span>
+            <div class="info-box-content">
+                <span class="info-box-text" style="font-size: 11.5px; color: #64748b; font-weight: 700;">CONTRACTUAL</span>
+                <span class="info-box-number" style="font-size: 22px; font-weight: 800; color: #334155;">@(Model.ICLEstresado.ICLContractual.ToString("N2"))%</span>
+                <span style="font-size: 11px; color: #64748b;">Límite min: 100%</span>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6 col-xs-12">
+        <div class="info-box" style="border-radius: 8px; border: 1px solid #bbf7d0; background: #f0fdf4;">
+            <span class="info-box-icon" style="background-color: #16a34a; color: #ffffff; border-top-left-radius: 8px; border-bottom-left-radius: 8px;"><i class="fa fa-check-circle"></i></span>
+            <div class="info-box-content">
+                <span class="info-box-text" style="font-size: 11.5px; color: #166534; font-weight: 700;">ESTRÉS BASE</span>
+                <span class="info-box-number" style="font-size: 22px; font-weight: 800; color: #15803d;">@(Model.ICLEstresado.ICLBase.ToString("N2"))%</span>
+                <span style="font-size: 11px; color: #166534;">Top 20 (-10%)</span>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6 col-xs-12">
+        <div class="info-box" style="border-radius: 8px; border: 1px solid #fed7aa; background: #fff7ed;">
+            <span class="info-box-icon" style="background-color: #ea580c; color: #ffffff; border-top-left-radius: 8px; border-bottom-left-radius: 8px;"><i class="fa fa-exclamation-circle"></i></span>
+            <div class="info-box-content">
+                <span class="info-box-text" style="font-size: 11.5px; color: #9a3412; font-weight: 700;">ESTRÉS MODERADO</span>
+                <span class="info-box-number" style="font-size: 22px; font-weight: 800; color: #c2410c;">@(Model.ICLEstresado.ICLModerado.ToString("N2"))%</span>
+                <span style="font-size: 11px; color: #9a3412;">Top 20 (-25%) / FAL (-20%)</span>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6 col-xs-12">
+        <div class="info-box" style="border-radius: 8px; border: 1px solid #fecaca; background: #fef2f2;">
+            <span class="info-box-icon" style="background-color: #dc2626; color: #ffffff; border-top-left-radius: 8px; border-bottom-left-radius: 8px;"><i class="fa fa-warning"></i></span>
+            <div class="info-box-content">
+                <span class="info-box-text" style="font-size: 11.5px; color: #991b1b; font-weight: 700;">ESTRÉS SEVERO</span>
+                <span class="info-box-number" style="font-size: 22px; font-weight: 800; color: #b91c1c;">@(Model.ICLEstresado.ICLSevero.ToString("N2"))%</span>
+                <span style="font-size: 11px; color: #991b1b;">Top 20 (-50%) / FAL (-50%)</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-bordered modern-data-table" style="width: 100%;">
+        <thead>
+            <tr style="background-color: #f1f5f9;">
+                <th class="text-left">Métrica de ICL</th>
+                <th class="text-right">Contractual</th>
+                <th class="text-right" style="background-color: #f0fdf4;">Base</th>
+                <th class="text-right" style="background-color: #fffbeb;">Moderado</th>
+                <th class="text-right" style="background-color: #fef2f2;">Severo</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="font-weight: 600; color: #1e3a8a;">Fondo de Activos Líquidos (FAL)</td>
+                <td class="text-right">¢@Model.ICLEstresado.FALContractual.ToString("N2")</td>
+                <td class="text-right font-weight-bold">¢@Model.ICLEstresado.FALBase.ToString("N2")</td>
+                <td class="text-right font-weight-bold">¢@Model.ICLEstresado.FALModerado.ToString("N2")</td>
+                <td class="text-right font-weight-bold">¢@Model.ICLEstresado.FALSevero.ToString("N2")</td>
+            </tr>
+            <tr>
+                <td style="font-weight: 600; color: #c2410c;">Salidas Netas de Efectivo (30 días)</td>
+                <td class="text-right">¢@Model.ICLEstresado.SalidasContractual.ToString("N2")</td>
+                <td class="text-right font-weight-bold">¢@Model.ICLEstresado.SalidasBase.ToString("N2")</td>
+                <td class="text-right font-weight-bold">¢@Model.ICLEstresado.SalidasModerado.ToString("N2")</td>
+                <td class="text-right font-weight-bold">¢@Model.ICLEstresado.SalidasSevero.ToString("N2")</td>
+            </tr>
+            <tr style="background-color: #f1f5f9; font-weight: 800; font-size: 14px;">
+                <td style="color: #0f172a;">ÍNDICE ICL RESULTANTE</td>
+                <td class="text-right">@Model.ICLEstresado.ICLContractual.ToString("N2")%</td>
+                <td class="text-right" style="color: #16a34a;">@Model.ICLEstresado.ICLBase.ToString("N2")%</td>
+                <td class="text-right" style="color: #ea580c;">@Model.ICLEstresado.ICLModerado.ToString("N2")%</td>
+                <td class="text-right" style="color: #dc2626;">@Model.ICLEstresado.ICLSevero.ToString("N2")%</td>
+            </tr>
+        </tbody>
+    </table>
+</div>

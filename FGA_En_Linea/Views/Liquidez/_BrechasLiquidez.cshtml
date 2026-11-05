@@ -1,0 +1,63 @@
+@model FGA.Model.LiquidezIndexViewModel
+
+<div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid #f1f5f9;">
+    <div style="display: flex; align-items: center; gap: 14px;">
+        <img class="img-logo-entidad" width="44" height="44" src="@(Session["Logo"] ?? Url.Content("~/Content/images/FFC.jpg"))" onerror="this.onerror=null;this.src='@Url.Content("~/Content/images/FFC.jpg")';" style="border-radius: 8px; background: #ffffff; padding: 3px; border: 1px solid #e2e8f0; object-fit: contain;" />
+        <div>
+            <h4 style="margin: 0; font-size: 16px; font-weight: 700; color: #143750;">Brechas de Liquidez Estresadas - <span id="lblEntidadBrechas">@Model.NombreEntidad</span></h4>
+            <p style="margin: 2px 0 0 0; font-size: 12px; color: #64748b;">Comportamiento proyectado de bandas y acumulación de liquidez en escenarios de estrés</p>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-bottom: 16px;">
+            <div id="chartBrechasEstresComparativo" style="height: 400px; width: 100%;"></div>
+        </div>
+    </div>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-bordered table-striped modern-data-table" style="width: 100%;">
+        <thead>
+            <tr style="background-color: #f1f5f9;">
+                <th class="text-left">Banda Temporal</th>
+                <th class="text-right" style="background-color: #f0fdf4;">Brecha Base (MM ¢)</th>
+                <th class="text-right" style="background-color: #f0fdf4;">Acumulado Base</th>
+                <th class="text-right" style="background-color: #fffbeb;">Brecha Moderado (MM ¢)</th>
+                <th class="text-right" style="background-color: #fffbeb;">Acumulado Moderado</th>
+                <th class="text-right" style="background-color: #fef2f2;">Brecha Severo (MM ¢)</th>
+                <th class="text-right" style="background-color: #fef2f2;">Acumulado Severo</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.BrechasEstres != null && Model.BrechasEstres.Bandas != null)
+            {
+                for (int i = 0; i < Model.BrechasEstres.Bandas.Count; i++)
+                {
+                    decimal bBase = Model.BrechasEstres.BrechasBase.Count > i ? Model.BrechasEstres.BrechasBase[i] : 0m;
+                    decimal aBase = Model.BrechasEstres.AcumuladoBase.Count > i ? Model.BrechasEstres.AcumuladoBase[i] : 0m;
+
+                    decimal bMod = Model.BrechasEstres.BrechasModerado.Count > i ? Model.BrechasEstres.BrechasModerado[i] : 0m;
+                    decimal aMod = Model.BrechasEstres.AcumuladoModerado.Count > i ? Model.BrechasEstres.AcumuladoModerado[i] : 0m;
+
+                    decimal bSev = Model.BrechasEstres.BrechasSevero.Count > i ? Model.BrechasEstres.BrechasSevero[i] : 0m;
+                    decimal aSev = Model.BrechasEstres.AcumuladoSevero.Count > i ? Model.BrechasEstres.AcumuladoSevero[i] : 0m;
+
+                    <tr>
+                        <td class="text-left" style="font-weight: 600; color: #1e3a8a;">@Model.BrechasEstres.Bandas[i]</td>
+                        <td class="text-right" style="color: @(bBase >= 0 ? "#15803d" : "#b91c1c");">@bBase.ToString("N2")</td>
+                        <td class="text-right font-weight-bold" style="color: @(aBase >= 0 ? "#15803d" : "#dc2626"); background-color: #f0fdf4;">@aBase.ToString("N2")</td>
+
+                        <td class="text-right" style="color: @(bMod >= 0 ? "#c2410c" : "#b91c1c");">@bMod.ToString("N2")</td>
+                        <td class="text-right font-weight-bold" style="color: @(aMod >= 0 ? "#c2410c" : "#dc2626"); background-color: #fffbeb;">@aMod.ToString("N2")</td>
+
+                        <td class="text-right" style="color: @(bSev >= 0 ? "#b91c1c" : "#7f1d1d");">@bSev.ToString("N2")</td>
+                        <td class="text-right font-weight-bold" style="color: @(aSev >= 0 ? "#b91c1c" : "#dc2626"); background-color: #fef2f2;">@aSev.ToString("N2")</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>

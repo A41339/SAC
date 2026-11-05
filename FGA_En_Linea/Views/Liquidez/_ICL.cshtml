@@ -1,0 +1,95 @@
+@model FGA.Model.LiquidezIndexViewModel
+
+<!-- Selector Colones / Dólares y Encabezado -->
+<div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid #f1f5f9;">
+    <div style="display: flex; align-items: center; gap: 14px;">
+        <img class="img-logo-entidad" width="44" height="44" src="@(Session["Logo"] ?? Url.Content("~/Content/images/FFC.jpg"))" onerror="this.onerror=null;this.src='@Url.Content("~/Content/images/FFC.jpg")';" style="border-radius: 8px; background: #ffffff; padding: 3px; border: 1px solid #e2e8f0; object-fit: contain;" />
+        <div>
+            <h4 style="margin: 0; font-size: 16px; font-weight: 700; color: #143750;">Índice de Cobertura de Liquidez (ICL) - <span id="lblEntidadICL">@Model.NombreEntidad</span></h4>
+            <p style="margin: 2px 0 0 0; font-size: 12px; color: #64748b;">Fondo de Activos Líquidos de alta calidad frente a Salidas Netas de Efectivo a 30 días</p>
+        </div>
+    </div>
+
+    <!-- Toggle Moneda (Colones vs Dólares) -->
+    <div style="display: inline-flex; align-items: center; background: #f1f5f9; padding: 4px; border-radius: 8px; border: 1px solid #cbd5e1;">
+        <button type="button" id="btnMonedaColones" class="btn btn-xs btn-moneda-icl @(Model.ICLDatos.MonedaTipo == 1 ? "active" : "")" onclick="cambiarMonedaICL(1)" style="padding: 6px 14px; font-weight: 700; font-size: 12px; border-radius: 6px; border: none; @(Model.ICLDatos.MonedaTipo == 1 ? "background: #0284c7; color: #ffffff;" : "background: transparent; color: #64748b;")">
+            <i class="fa fa-money"></i> Colones (¢)
+        </button>
+        <button type="button" id="btnMonedaDolares" class="btn btn-xs btn-moneda-icl @(Model.ICLDatos.MonedaTipo == 2 ? "active" : "")" onclick="cambiarMonedaICL(2)" style="padding: 6px 14px; font-weight: 700; font-size: 12px; border-radius: 6px; border: none; margin-left: 4px; @(Model.ICLDatos.MonedaTipo == 2 ? "background: #0284c7; color: #ffffff;" : "background: transparent; color: #64748b;")">
+            <i class="fa fa-dollar"></i> Dólares ($)
+        </button>
+    </div>
+</div>
+
+<!-- Banner de Alerta para Dólares si no aplica -->
+<div id="alertaNoDolares" style="display: @(Model.ICLDatos.MonedaTipo == 2 && !Model.ICLDatos.TieneDolares ? "block" : "none"); margin-bottom: 16px; padding: 14px 18px; background-color: #fff7ed; border-left: 4px solid #f97316; border-radius: 6px; font-size: 13px; color: #9a3412;">
+    <i class="fa fa-exclamation-triangle" style="color: #ea580c; margin-right: 8px; font-size: 16px;"></i>
+    <strong>Aviso:</strong> Esta cooperativa no cuenta con un cálculo de su ICL en dólares por lo que no hay información por mostrar.
+</div>
+
+<!-- Tarjetas Resumen de ICL -->
+<div id="contenedorDetalleICL" style="display: @(Model.ICLDatos.MonedaTipo == 2 && !Model.ICLDatos.TieneDolares ? "none" : "block");">
+    <div class="row" style="margin-bottom: 20px;">
+        <div class="col-md-4 col-sm-6 col-xs-12">
+            <div class="info-box" style="border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); border: 1px solid #e2e8f0; min-height: 80px;">
+                <span class="info-box-icon" style="background-color: #0284c7; color: #ffffff; border-top-left-radius: 8px; border-bottom-left-radius: 8px; height: 80px; line-height: 80px;"><i class="fa fa-shield"></i></span>
+                <div class="info-box-content" style="padding: 10px 14px;">
+                    <span class="info-box-text" style="font-size: 12px; color: #64748b; font-weight: 600;">Índice ICL</span>
+                    <span class="info-box-number" id="lblICLRatio" style="font-size: 22px; font-weight: 700; color: #1e3a8a;">@(Model.ICLDatos.ICLRatio.ToString("N2"))%</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-6 col-xs-12">
+            <div class="info-box" style="border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); border: 1px solid #e2e8f0; min-height: 80px;">
+                <span class="info-box-icon" style="background-color: #10b981; color: #ffffff; border-top-left-radius: 8px; border-bottom-left-radius: 8px; height: 80px; line-height: 80px;"><i class="fa fa-cubes"></i></span>
+                <div class="info-box-content" style="padding: 10px 14px;">
+                    <span class="info-box-text" style="font-size: 12px; color: #64748b; font-weight: 600;">Fondo Activos Líquidos (FAL)</span>
+                    <span class="info-box-number" id="lblICLFAL" style="font-size: 20px; font-weight: 700; color: #047857;">¢@(Model.ICLDatos.FondoActivosLiquidos.ToString("N2"))</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-6 col-xs-12">
+            <div class="info-box" style="border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); border: 1px solid #e2e8f0; min-height: 80px;">
+                <span class="info-box-icon" style="background-color: #f97316; color: #ffffff; border-top-left-radius: 8px; border-bottom-left-radius: 8px; height: 80px; line-height: 80px;"><i class="fa fa-sign-out"></i></span>
+                <div class="info-box-content" style="padding: 10px 14px;">
+                    <span class="info-box-text" style="font-size: 12px; color: #64748b; font-weight: 600;">Salidas Netas Efectivo (30d)</span>
+                    <span class="info-box-number" id="lblICLSalidas" style="font-size: 20px; font-weight: 700; color: #c2410c;">¢@(Model.ICLDatos.SalidasNetasEfectivo.ToString("N2"))</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla Detallada XML ICL -->
+    <div class="table-responsive">
+        <table id="tblDetalleICL" class="table table-striped modern-data-table" style="width: 100%;">
+            <thead>
+                <tr>
+                    <th class="text-left" style="width: 110px;">Código</th>
+                    <th class="text-left">Concepto</th>
+                    <th class="text-right">Saldo Bruto</th>
+                    <th class="text-center" style="width: 100px;">Ponderador</th>
+                    <th class="text-right">Saldo Ponderado</th>
+                </tr>
+            </thead>
+            <tbody id="tbodyDetalleICL">
+                @if (Model.ICLDatos.Items != null && Model.ICLDatos.Items.Count > 0)
+                {
+                    foreach (var item in Model.ICLDatos.Items)
+                    {
+                        string paddingLeft = (item.Nivel * 18) + "px";
+                        string fontWeight = item.EsTotalizador ? "700" : "400";
+                        string bgColor = item.EsTotalizador ? "#f8fafc" : "transparent";
+
+                        <tr style="background-color: @bgColor;">
+                            <td class="text-left" style="font-family: monospace; font-size: 12px; font-weight: @fontWeight; color: #475569;">@item.Codigo</td>
+                            <td class="text-left" style="padding-left: @paddingLeft; font-weight: @fontWeight; color: #1e293b; font-size: 12.5px;">@item.Concepto</td>
+                            <td class="text-right" style="font-variant-numeric: tabular-nums; font-weight: @fontWeight; font-size: 12.5px;">@item.SaldoBruto.ToString("N2")</td>
+                            <td class="text-center" style="font-variant-numeric: tabular-nums; font-size: 12px; color: #64748b;">@item.Ponderador.ToString("P0")</td>
+                            <td class="text-right" style="font-variant-numeric: tabular-nums; font-weight: @fontWeight; color: #0f172a; font-size: 12.5px;">@item.SaldoPonderado.ToString("N2")</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
