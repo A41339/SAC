@@ -293,20 +293,24 @@ namespace FGA.Model
 
     public class ICLEstresadoViewModel
     {
-        public decimal ICLContractual { get; set; }
-        public decimal ICLBase { get; set; }
-        public decimal ICLModerado { get; set; }
-        public decimal ICLSevero { get; set; }
+        public decimal ICLContractual { get; set; } = 1.55m;
+        public decimal ICLBase { get; set; } = 1.55m;
+        public decimal ICLModerado { get; set; } = 1.18m;
+        public decimal ICLSevero { get; set; } = 0.82m;
 
-        public decimal FALContractual { get; set; }
-        public decimal FALBase { get; set; }
-        public decimal FALModerado { get; set; }
-        public decimal FALSevero { get; set; }
+        public decimal ICL_Base { get { return ICLBase; } set { ICLBase = value; } }
+        public decimal ICL_Moderado { get { return ICLModerado; } set { ICLModerado = value; } }
+        public decimal ICL_Severo { get { return ICLSevero; } set { ICLSevero = value; } }
 
-        public decimal SalidasContractual { get; set; }
-        public decimal SalidasBase { get; set; }
-        public decimal SalidasModerado { get; set; }
-        public decimal SalidasSevero { get; set; }
+        public decimal FALContractual { get; set; } = 1203.53m;
+        public decimal FALBase { get; set; } = 1203.53m;
+        public decimal FALModerado { get; set; } = 1103.53m;
+        public decimal FALSevero { get; set; } = 933.53m;
+
+        public decimal SalidasContractual { get; set; } = 360.12m;
+        public decimal SalidasBase { get; set; } = 360.12m;
+        public decimal SalidasModerado { get; set; } = 684.18m;
+        public decimal SalidasSevero { get; set; } = 1332.31m;
     }
 
     #endregion

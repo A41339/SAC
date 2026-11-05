@@ -17,7 +17,7 @@
             <span class="info-box-icon" style="background-color: #16a34a; color: #ffffff; border-top-left-radius: 8px; border-bottom-left-radius: 8px;"><i class="fa fa-shield"></i></span>
             <div class="info-box-content" style="padding: 10px 14px;">
                 <span class="info-box-text" style="font-size: 11.5px; color: #166534; font-weight: 700;">ICL BASE</span>
-                <span class="info-box-number" style="font-size: 22px; font-weight: 800; color: #15803d;">@(Model.ICLEstresado.ICL_Base.ToString("N2"))x</span>
+                <span class="info-box-number" style="font-size: 22px; font-weight: 800; color: #15803d;">@(Model.ICLEstresado.ICLBase.ToString("N2"))x</span>
                 <span style="font-size: 11px; color: #166534;">Meta regulatoria > 1.00x</span>
             </div>
         </div>
@@ -27,7 +27,7 @@
             <span class="info-box-icon" style="background-color: #ea580c; color: #ffffff; border-top-left-radius: 8px; border-bottom-left-radius: 8px;"><i class="fa fa-exclamation-circle"></i></span>
             <div class="info-box-content" style="padding: 10px 14px;">
                 <span class="info-box-text" style="font-size: 11.5px; color: #9a3412; font-weight: 700;">ICL MODERADO</span>
-                <span class="info-box-number" style="font-size: 22px; font-weight: 800; color: #c2410c;">@(Model.ICLEstresado.ICL_Moderado.ToString("N2"))x</span>
+                <span class="info-box-number" style="font-size: 22px; font-weight: 800; color: #c2410c;">@(Model.ICLEstresado.ICLModerado.ToString("N2"))x</span>
                 <span style="font-size: 11px; color: #9a3412;">Top 20 (-25%) / FAL (-20%)</span>
             </div>
         </div>
@@ -37,7 +37,7 @@
             <span class="info-box-icon" style="background-color: #dc2626; color: #ffffff; border-top-left-radius: 8px; border-bottom-left-radius: 8px;"><i class="fa fa-warning"></i></span>
             <div class="info-box-content" style="padding: 10px 14px;">
                 <span class="info-box-text" style="font-size: 11.5px; color: #991b1b; font-weight: 700;">ICL SEVERO</span>
-                <span class="info-box-number" style="font-size: 22px; font-weight: 800; color: #b91c1c;">@(Model.ICLEstresado.ICL_Severo.ToString("N2"))x</span>
+                <span class="info-box-number" style="font-size: 22px; font-weight: 800; color: #b91c1c;">@(Model.ICLEstresado.ICLSevero.ToString("N2"))x</span>
                 <span style="font-size: 11px; color: #991b1b;">Bajo límite normativo</span>
             </div>
         </div>
@@ -47,7 +47,7 @@
             <span class="info-box-icon" style="background-color: #64748b; color: #ffffff; border-top-left-radius: 8px; border-bottom-left-radius: 8px;"><i class="fa fa-line-chart"></i></span>
             <div class="info-box-content" style="padding: 10px 14px;">
                 <span class="info-box-text" style="font-size: 11.5px; color: #475569; font-weight: 700;">VARIACIÓN SEVERA</span>
-                <span class="info-box-number" style="font-size: 22px; font-weight: 800; color: #b91c1c;">@((Model.ICLEstresado.ICL_Severo - Model.ICLEstresado.ICL_Base).ToString("N2"))x</span>
+                <span class="info-box-number" style="font-size: 22px; font-weight: 800; color: #b91c1c;">@((Model.ICLEstresado.ICLSevero - Model.ICLEstresado.ICLBase).ToString("N2"))x</span>
                 <span style="font-size: 11px; color: #64748b;">Caída total de cobertura</span>
             </div>
         </div>
@@ -92,9 +92,9 @@
             </tr>
             <tr style="background-color: #eff6ff; font-weight: 800; border-top: 2px solid #2b579a; border-bottom: 2px solid #2b579a;">
                 <td style="color: #1e40af; font-size: 14px; padding: 12px 16px;"><i class="fa fa-shield" style="color: #0284c7; margin-right: 6px;"></i> ICL Resultante (Estresado)</td>
-                <td class="text-right font-mono" style="font-size: 16px; color: #15803d;">@(Model.ICLEstresado.ICL_Base.ToString("N2"))x (@((Model.ICLEstresado.ICL_Base * 100m).ToString("N0"))%)</td>
-                <td class="text-right font-mono" style="font-size: 16px; color: #c2410c;">@(Model.ICLEstresado.ICL_Moderado.ToString("N2"))x (@((Model.ICLEstresado.ICL_Moderado * 100m).ToString("N0"))%)</td>
-                <td class="text-right font-mono" style="font-size: 16px; color: #b91c1c;">@(Model.ICLEstresado.ICL_Severo.ToString("N2"))x (@((Model.ICLEstresado.ICL_Severo * 100m).ToString("N0"))%)</td>
+                <td class="text-right font-mono" style="font-size: 16px; color: #15803d;">@(Model.ICLEstresado.ICLBase.ToString("N2"))x (@((Model.ICLEstresado.ICLBase * 100m).ToString("N0"))%)</td>
+                <td class="text-right font-mono" style="font-size: 16px; color: #c2410c;">@(Model.ICLEstresado.ICLModerado.ToString("N2"))x (@((Model.ICLEstresado.ICLModerado * 100m).ToString("N0"))%)</td>
+                <td class="text-right font-mono" style="font-size: 16px; color: #b91c1c;">@(Model.ICLEstresado.ICLSevero.ToString("N2"))x (@((Model.ICLEstresado.ICLSevero * 100m).ToString("N0"))%)</td>
             </tr>
         </tbody>
     </table>
