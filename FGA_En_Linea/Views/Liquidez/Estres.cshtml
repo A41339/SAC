@@ -316,12 +316,14 @@
             var el = document.getElementById('chartRazonCoberturaComparativo');
             if (el) {
                 Highcharts.chart('chartRazonCoberturaComparativo', {
-                    chart: { type: 'column' },
+                    chart: { type: 'column', height: 350 },
                     title: { text: 'Razón de Cobertura a 30 Días por Escenario', style: { fontWeight: '700', color: '#143750', fontSize: '15px' } },
                     subtitle: { text: 'Meta directriz de suficiencia mayor a 1.00x' },
+                    legend: { enabled: false },
                     xAxis: { categories: ['Contractual', 'Simulación Moderada', 'Simulación Severa'] },
                     yAxis: {
                         title: { text: 'Ratio de Cobertura (x)' },
+                        min: 0,
                         plotLines: [{
                             value: 1.0,
                             color: '#c2410c',
@@ -332,14 +334,21 @@
                                 text: '<span style="background-color: #ea580c; color: #ffffff; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; box-shadow: 0 1px 3px rgba(0,0,0,0.25); white-space: nowrap;"><i class="fa fa-flag" style="margin-right: 4px;"></i> Límite Cobertura (1.00x)</span>',
                                 align: 'right',
                                 x: -10,
-                                y: -6,
+                                y: -12,
                                 useHTML: true
                             }
-                        }],
-                        plotBands: [
-                            { from: 0, to: 1.0, color: 'rgba(234, 88, 12, 0.05)', label: { text: 'Zona de Déficit (< 1.00x)', style: { color: '#ea580c', fontSize: '10.5px', fontWeight: 'bold' } } },
-                            { from: 1.0, to: 10.0, color: 'rgba(43, 87, 154, 0.03)', label: { text: 'Zona Adecuada (≥ 1.00x)', style: { color: '#2b579a', fontSize: '10.5px', fontWeight: 'bold' } } }
-                        ]
+                        }]
+                    },
+                    plotOptions: {
+                        column: {
+                            maxPointWidth: 60,
+                            borderRadius: 4,
+                            dataLabels: {
+                                enabled: true,
+                                format: '{y:.2f}x',
+                                style: { fontWeight: '700', fontSize: '12px', color: '#1e293b' }
+                            }
+                        }
                     },
                     tooltip: {
                         useHTML: true,
@@ -357,8 +366,7 @@
                             { y: @Model.RazonCobertura.RazonCobertura_Base.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture), color: '#2b579a' },
                             { y: @Model.RazonCobertura.RazonCobertura_Moderado.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture), color: '#64748b' },
                             { y: @Model.RazonCobertura.RazonCobertura_Severo.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture), color: '#ea580c' }
-                        ],
-                        dataLabels: { enabled: true, format: '{y:.2f}x' }
+                        ]
                     }],
                     exporting: { enabled: true },
                     credits: { enabled: false }
@@ -370,12 +378,14 @@
             var el = document.getElementById('chartICLEstresadoComparativo');
             if (el) {
                 Highcharts.chart('chartICLEstresadoComparativo', {
-                    chart: { type: 'column' },
+                    chart: { type: 'column', height: 350 },
                     title: { text: 'ICL bajo Escenarios de Estrés (Haircut FAL & Salida Top 20)', style: { fontWeight: '700', color: '#143750', fontSize: '15px' } },
                     subtitle: { text: 'Mínimo regulatorio SUGEF sobre 100% (1.00x)' },
+                    legend: { enabled: false },
                     xAxis: { categories: ['Contractual / Base', 'Moderado (FAL -20%, Top 20 -25%)', 'Severo (FAL -50%, Top 20 -50%)'] },
                     yAxis: {
                         title: { text: 'Ratio ICL (x)' },
+                        min: 0,
                         plotLines: [{
                             value: 1.0,
                             color: '#c2410c',
@@ -386,14 +396,21 @@
                                 text: '<span style="background-color: #ea580c; color: #ffffff; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; box-shadow: 0 1px 3px rgba(0,0,0,0.25); white-space: nowrap;"><i class="fa fa-flag" style="margin-right: 4px;"></i> Mínimo SUGEF (1.00x / 100%)</span>',
                                 align: 'right',
                                 x: -10,
-                                y: -6,
+                                y: -12,
                                 useHTML: true
                             }
-                        }],
-                        plotBands: [
-                            { from: 0, to: 1.0, color: 'rgba(234, 88, 12, 0.05)', label: { text: 'Déficit Normativo (< 1.00x)', style: { color: '#ea580c', fontSize: '10.5px', fontWeight: 'bold' } } },
-                            { from: 1.0, to: 10.0, color: 'rgba(43, 87, 154, 0.03)', label: { text: 'Cumplimiento SUGEF (≥ 1.00x)', style: { color: '#2b579a', fontSize: '10.5px', fontWeight: 'bold' } } }
-                        ]
+                        }]
+                    },
+                    plotOptions: {
+                        column: {
+                            maxPointWidth: 60,
+                            borderRadius: 4,
+                            dataLabels: {
+                                enabled: true,
+                                format: '{y:.2f}x',
+                                style: { fontWeight: '700', fontSize: '12px', color: '#1e293b' }
+                            }
+                        }
                     },
                     tooltip: {
                         useHTML: true,
@@ -412,8 +429,7 @@
                             { y: @Model.ICLEstresado.ICLBase.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture), color: '#2b579a' },
                             { y: @Model.ICLEstresado.ICLModerado.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture), color: '#64748b' },
                             { y: @Model.ICLEstresado.ICLSevero.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture), color: '#ea580c' }
-                        ],
-                        dataLabels: { enabled: true, format: '{y:.2f}x' }
+                        ]
                     }],
                     exporting: { enabled: true },
                     credits: { enabled: false }
@@ -540,10 +556,24 @@
 
             $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
                 var target = $(e.target).attr('href');
-                if (target === '#tab-razon-cobertura') renderGraficoCobertura();
-                else if (target === '#tab-icl-estresado') renderGraficoICLEstresado();
-                else if (target === '#tab-brechas-estres') renderGraficoBrechasEstres();
-                else if (target === '#tab-horizonte') renderGraficoSupervivencia();
+                setTimeout(function () {
+                    if (target === '#tab-razon-cobertura') {
+                        var c = $('#chartRazonCoberturaComparativo').highcharts();
+                        if (c) c.reflow(); else renderGraficoCobertura();
+                    } else if (target === '#tab-icl-estresado') {
+                        var c = $('#chartICLEstresadoComparativo').highcharts();
+                        if (c) c.reflow(); else renderGraficoICLEstresado();
+                    } else if (target === '#tab-brechas-estres') {
+                        var c1 = $('#chartBrechasBanda').highcharts();
+                        var c2 = $('#chartBrechasAcumuladoFAL').highcharts();
+                        if (c1) c1.reflow();
+                        if (c2) c2.reflow();
+                        if (!c1 || !c2) renderGraficoBrechasEstres();
+                    } else if (target === '#tab-horizonte') {
+                        var c = $('#chartTrayectoriaSupervivencia').highcharts();
+                        if (c) c.reflow(); else renderGraficoSupervivencia();
+                    }
+                }, 60);
             });
         });
     </script>
