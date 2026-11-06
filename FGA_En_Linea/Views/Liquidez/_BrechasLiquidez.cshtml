@@ -1,5 +1,57 @@
 @model FGA.Model.LiquidezIndexViewModel
 
+<style>
+    .btn-escenario-pill {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 6px 14px !important;
+        font-size: 12px !important;
+        font-family: inherit !important;
+        font-weight: 600 !important;
+        border-radius: 6px !important;
+        border: 1px solid transparent !important;
+        cursor: pointer !important;
+        transition: all 0.2s ease !important;
+        outline: none !important;
+        text-decoration: none !important;
+        line-height: 1.4 !important;
+        margin: 0 !important;
+    }
+    .btn-escenario-pill.inactivo {
+        background: #ffffff !important;
+        color: #1e293b !important;
+        border-color: #cbd5e1 !important;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.04) !important;
+    }
+    .btn-escenario-pill.inactivo:hover {
+        background: #f1f5f9 !important;
+        color: #0f172a !important;
+        border-color: #94a3b8 !important;
+    }
+    .btn-escenario-pill.activo-base {
+        background: #2b579a !important;
+        color: #ffffff !important;
+        border-color: #1e3f70 !important;
+        font-weight: 700 !important;
+        box-shadow: 0 2px 4px rgba(43,87,154,0.3) !important;
+    }
+    .btn-escenario-pill.activo-mod {
+        background: #475569 !important;
+        color: #ffffff !important;
+        border-color: #334155 !important;
+        font-weight: 700 !important;
+        box-shadow: 0 2px 4px rgba(71,85,105,0.3) !important;
+    }
+    .btn-escenario-pill.activo-sev {
+        background: #ea580c !important;
+        color: #ffffff !important;
+        border-color: #c2410c !important;
+        font-weight: 700 !important;
+        box-shadow: 0 2px 4px rgba(234,88,12,0.3) !important;
+    }
+</style>
+
 <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid #f1f5f9;">
     <div style="display: flex; align-items: center; gap: 14px;">
         <img class="img-logo-entidad" width="44" height="44" src="@(Session["Logo"] ?? Url.Content("~/Content/images/FFC.jpg"))" onerror="this.onerror=null;this.src='@Url.Content("~/Content/images/FFC.jpg")';" style="border-radius: 8px; background: #ffffff; padding: 3px; border: 1px solid #e2e8f0; object-fit: contain;" />
@@ -10,15 +62,15 @@
     </div>
 
     <!-- Selector de Escenario Activo (Requerimiento imagen 19) -->
-    <div style="display: inline-flex; align-items: center; background: #e2e8f0; padding: 3px; border-radius: 8px; border: 1px solid #cbd5e1;">
-        <button type="button" id="btnEscenarioBase" class="btn btn-xs active" onclick="seleccionarEscenarioBrechas('base')" style="padding: 5px 14px; font-weight: 700; font-size: 12px; border-radius: 6px; border: none; background: #2b579a; color: #ffffff; box-shadow: 0 1px 3px rgba(43,87,154,0.3);">
-            Escenario Base
+    <div style="display: inline-flex; align-items: center; background: #f1f5f9; padding: 4px; border-radius: 8px; border: 1px solid #cbd5e1; gap: 4px;">
+        <button type="button" id="btnEscenarioBase" class="btn-escenario-pill activo-base" onclick="seleccionarEscenarioBrechas('base')">
+            <i class="fa fa-circle" style="font-size: 8px; margin-right: 6px;"></i> Escenario Base
         </button>
-        <button type="button" id="btnEscenarioMod" class="btn btn-xs" onclick="seleccionarEscenarioBrechas('moderado')" style="padding: 5px 14px; font-weight: 600; font-size: 12px; border-radius: 6px; border: none; margin-left: 3px; background: #ffffff; color: #334155;">
-            Escenario Moderado
+        <button type="button" id="btnEscenarioMod" class="btn-escenario-pill inactivo" onclick="seleccionarEscenarioBrechas('moderado')">
+            <i class="fa fa-circle-o" style="font-size: 8px; margin-right: 6px;"></i> Escenario Moderado
         </button>
-        <button type="button" id="btnEscenarioSev" class="btn btn-xs" onclick="seleccionarEscenarioBrechas('severo')" style="padding: 5px 14px; font-weight: 600; font-size: 12px; border-radius: 6px; border: none; margin-left: 3px; background: #ffffff; color: #334155;">
-            Escenario Severo
+        <button type="button" id="btnEscenarioSev" class="btn-escenario-pill inactivo" onclick="seleccionarEscenarioBrechas('severo')">
+            <i class="fa fa-circle-o" style="font-size: 8px; margin-right: 6px;"></i> Escenario Severo
         </button>
     </div>
 </div>
@@ -198,16 +250,24 @@
 
     function seleccionarEscenarioBrechas(escenario) {
         $('#btnEscenarioBase, #btnEscenarioMod, #btnEscenarioSev')
-            .css({ 'background': '#ffffff', 'color': '#334155', 'font-weight': '600', 'box-shadow': 'none' });
+            .removeClass('activo-base activo-mod activo-sev')
+            .addClass('inactivo');
+        $('#btnEscenarioBase i, #btnEscenarioMod i, #btnEscenarioSev i')
+            .removeClass('fa-circle')
+            .addClass('fa-circle-o');
+
         var d = datosEscenariosBrechas[escenario];
         if (!d) return;
 
         if (escenario === 'base') {
-            $('#btnEscenarioBase').css({ 'background': '#2b579a', 'color': '#ffffff', 'font-weight': '700', 'box-shadow': '0 2px 4px rgba(43,87,154,0.3)' });
+            $('#btnEscenarioBase').removeClass('inactivo').addClass('activo-base');
+            $('#btnEscenarioBase i').removeClass('fa-circle-o').addClass('fa-circle');
         } else if (escenario === 'moderado') {
-            $('#btnEscenarioMod').css({ 'background': '#64748b', 'color': '#ffffff', 'font-weight': '700', 'box-shadow': '0 2px 4px rgba(100,116,139,0.3)' });
+            $('#btnEscenarioMod').removeClass('inactivo').addClass('activo-mod');
+            $('#btnEscenarioMod i').removeClass('fa-circle-o').addClass('fa-circle');
         } else {
-            $('#btnEscenarioSev').css({ 'background': '#ea580c', 'color': '#ffffff', 'font-weight': '700', 'box-shadow': '0 2px 4px rgba(234,88,12,0.3)' });
+            $('#btnEscenarioSev').removeClass('inactivo').addClass('activo-sev');
+            $('#btnEscenarioSev i').removeClass('fa-circle-o').addClass('fa-circle');
         }
 
         $('#lblBrecha30d').text(d.kpi30);

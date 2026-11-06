@@ -323,13 +323,13 @@
         }
 
         function cambiarMonedaICL(moneda) {
-            $('.btn-moneda-icl').removeClass('active').css({ 'background': 'transparent', 'color': '#64748b' });
+            $('.btn-moneda-pill').removeClass('activo').addClass('inactivo');
             if (moneda === 1) {
-                $('#btnMonedaColones').addClass('active').css({ 'background': '#0284c7', 'color': '#ffffff' });
+                $('#btnMonedaColones').removeClass('inactivo').addClass('activo');
                 $('#alertaNoDolares').hide();
                 $('#contenedorDetalleICL').show();
             } else {
-                $('#btnMonedaDolares').addClass('active').css({ 'background': '#0284c7', 'color': '#ffffff' });
+                $('#btnMonedaDolares').removeClass('inactivo').addClass('activo');
                 var tieneDolares = @(Model.ICLDatos.TieneDolares ? "true" : "false");
                 if (!tieneDolares) {
                     $('#alertaNoDolares').show();

@@ -1,5 +1,42 @@
 @model FGA.Model.LiquidezIndexViewModel
 
+<style>
+    .btn-moneda-pill {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 6px 14px !important;
+        font-size: 12px !important;
+        font-family: inherit !important;
+        font-weight: 600 !important;
+        border-radius: 6px !important;
+        border: 1px solid transparent !important;
+        cursor: pointer !important;
+        transition: all 0.2s ease !important;
+        outline: none !important;
+        line-height: 1.4 !important;
+        margin: 0 !important;
+    }
+    .btn-moneda-pill.inactivo {
+        background: #ffffff !important;
+        color: #1e293b !important;
+        border-color: #cbd5e1 !important;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.04) !important;
+    }
+    .btn-moneda-pill.inactivo:hover {
+        background: #f1f5f9 !important;
+        color: #0f172a !important;
+        border-color: #94a3b8 !important;
+    }
+    .btn-moneda-pill.activo {
+        background: #0284c7 !important;
+        color: #ffffff !important;
+        border-color: #0369a1 !important;
+        font-weight: 700 !important;
+        box-shadow: 0 2px 4px rgba(2,132,199,0.3) !important;
+    }
+</style>
+
 <!-- Selector Colones / Dólares y Encabezado -->
 <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid #f1f5f9;">
     <div style="display: flex; align-items: center; gap: 14px;">
@@ -11,12 +48,12 @@
     </div>
 
     <!-- Toggle Moneda (Colones vs Dólares) -->
-    <div style="display: inline-flex; align-items: center; background: #f1f5f9; padding: 4px; border-radius: 8px; border: 1px solid #cbd5e1;">
-        <button type="button" id="btnMonedaColones" class="btn btn-xs btn-moneda-icl @(Model.ICLDatos.MonedaTipo == 1 ? "active" : "")" onclick="cambiarMonedaICL(1)" style="padding: 6px 14px; font-weight: 700; font-size: 12px; border-radius: 6px; border: none; @(Model.ICLDatos.MonedaTipo == 1 ? "background: #0284c7; color: #ffffff;" : "background: transparent; color: #64748b;")">
-            <i class="fa fa-money"></i> Colones (¢)
+    <div style="display: inline-flex; align-items: center; background: #f1f5f9; padding: 4px; border-radius: 8px; border: 1px solid #cbd5e1; gap: 4px;">
+        <button type="button" id="btnMonedaColones" class="btn-moneda-pill @(Model.ICLDatos.MonedaTipo == 1 ? "activo" : "inactivo")" onclick="cambiarMonedaICL(1)">
+            <i class="fa fa-money" style="margin-right: 5px;"></i> Colones (¢)
         </button>
-        <button type="button" id="btnMonedaDolares" class="btn btn-xs btn-moneda-icl @(Model.ICLDatos.MonedaTipo == 2 ? "active" : "")" onclick="cambiarMonedaICL(2)" style="padding: 6px 14px; font-weight: 700; font-size: 12px; border-radius: 6px; border: none; margin-left: 4px; @(Model.ICLDatos.MonedaTipo == 2 ? "background: #0284c7; color: #ffffff;" : "background: transparent; color: #64748b;")">
-            <i class="fa fa-dollar"></i> Dólares ($)
+        <button type="button" id="btnMonedaDolares" class="btn-moneda-pill @(Model.ICLDatos.MonedaTipo == 2 ? "activo" : "inactivo")" onclick="cambiarMonedaICL(2)">
+            <i class="fa fa-dollar" style="margin-right: 5px;"></i> Dólares ($)
         </button>
     </div>
 </div>
