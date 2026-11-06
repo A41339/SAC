@@ -134,16 +134,6 @@
 
                     <!-- Lado Derecho: Acciones Ejecutivas y Metadatos -->
                     <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-                        <!-- Toggle Unidades -->
-                        <div class="btn-group btn-group-sm" role="group" aria-label="Unidades de medida">
-                            <button type="button" class="btn btn-primary active" id="btnUnidadMM" onclick="setUnidadDisplay('MM')" style="font-weight: 700; font-size: 11px; padding: 4px 8px; border-color: #cbd5e1;">
-                                ¢ MM
-                            </button>
-                            <button type="button" class="btn btn-default" id="btnUnidadUnidades" onclick="setUnidadDisplay('Unidades')" style="font-weight: 600; font-size: 11px; padding: 4px 8px; border-color: #cbd5e1;">
-                                ¢ Unid
-                            </button>
-                        </div>
-
                         <!-- Exportar a Excel -->
                         <a href="@Url.Action("ExportarExcelEstres", "Liquidez", new { idEntidad = Model.IdEntidad, periodo1 = Model.Periodo1, periodo2 = Model.Periodo2 })" class="btn btn-sm btn-success" style="background-color: #16a34a; border-color: #15803d; font-weight: 600; font-size: 11.5px; border-radius: 6px; padding: 4px 10px; display: inline-flex; align-items: center; gap: 5px;">
                             <i class="fa fa-file-excel-o"></i> Excel
@@ -334,11 +324,17 @@
                         title: { text: 'Ratio de Cobertura (x)' },
                         plotLines: [{
                             value: 1.0,
-                            color: '#ea580c',
-                            dashStyle: 'dash',
-                            width: 2,
-                            zIndex: 5,
-                            label: { text: 'Límite Cobertura (1.00x)', align: 'right', style: { color: '#ea580c', fontWeight: 'bold' } }
+                            color: '#c2410c',
+                            dashStyle: 'Dash',
+                            width: 2.5,
+                            zIndex: 10,
+                            label: {
+                                text: '<span style="background-color: #ea580c; color: #ffffff; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; box-shadow: 0 1px 3px rgba(0,0,0,0.25); white-space: nowrap;"><i class="fa fa-flag" style="margin-right: 4px;"></i> Límite Cobertura (1.00x)</span>',
+                                align: 'right',
+                                x: -10,
+                                y: -6,
+                                useHTML: true
+                            }
                         }],
                         plotBands: [
                             { from: 0, to: 1.0, color: 'rgba(234, 88, 12, 0.05)', label: { text: 'Zona de Déficit (< 1.00x)', style: { color: '#ea580c', fontSize: '10.5px', fontWeight: 'bold' } } },
@@ -382,11 +378,17 @@
                         title: { text: 'Ratio ICL (x)' },
                         plotLines: [{
                             value: 1.0,
-                            color: '#ea580c',
-                            dashStyle: 'dash',
-                            width: 2,
-                            zIndex: 5,
-                            label: { text: 'Mínimo SUGEF (1.00x / 100%)', align: 'right', style: { color: '#ea580c', fontWeight: 'bold' } }
+                            color: '#c2410c',
+                            dashStyle: 'Dash',
+                            width: 2.5,
+                            zIndex: 10,
+                            label: {
+                                text: '<span style="background-color: #ea580c; color: #ffffff; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; box-shadow: 0 1px 3px rgba(0,0,0,0.25); white-space: nowrap;"><i class="fa fa-flag" style="margin-right: 4px;"></i> Mínimo SUGEF (1.00x / 100%)</span>',
+                                align: 'right',
+                                x: -10,
+                                y: -6,
+                                useHTML: true
+                            }
                         }],
                         plotBands: [
                             { from: 0, to: 1.0, color: 'rgba(234, 88, 12, 0.05)', label: { text: 'Déficit Normativo (< 1.00x)', style: { color: '#ea580c', fontSize: '10.5px', fontWeight: 'bold' } } },
@@ -427,7 +429,16 @@
                     title: { text: 'Brechas de Liquidez por Banda', style: { fontWeight: '700', color: '#143750', fontSize: '15px' } },
                     subtitle: { text: 'Entradas vs Salidas estresadas y GAP de la banda (Millones de ¢)' },
                     xAxis: { categories: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.BrechasEstres.Bandas)) },
-                    yAxis: { title: { text: 'Millones de Colones (¢)' } },
+                    yAxis: {
+                        title: { text: 'Millones de Colones (¢)' },
+                        plotLines: [{
+                            value: 0,
+                            color: '#94a3b8',
+                            dashStyle: 'Dash',
+                            width: 1.5,
+                            zIndex: 5
+                        }]
+                    },
                     series: [
                         { type: 'column', name: 'Entradas Estresadas', data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.BrechasEstres.EntradasBase)), color: '#2b579a' },
                         { type: 'column', name: 'Salidas Estresadas', data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.BrechasEstres.SalidasBase)), color: '#64748b' },
@@ -449,10 +460,17 @@
                         title: { text: 'GAP Acumulado con FAL (MM ¢)' },
                         plotLines: [{
                             value: 0,
-                            color: '#ea580c',
-                            dashStyle: 'shortdash',
-                            width: 2,
-                            label: { text: 'Agotamiento FAL (¢0)', align: 'right', style: { color: '#ea580c', fontWeight: 'bold' } }
+                            color: '#c2410c',
+                            dashStyle: 'Dash',
+                            width: 2.5,
+                            zIndex: 10,
+                            label: {
+                                text: '<span style="background-color: #ea580c; color: #ffffff; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; box-shadow: 0 1px 3px rgba(0,0,0,0.25); white-space: nowrap;"><i class="fa fa-exclamation-triangle" style="margin-right: 4px;"></i> Agotamiento FAL (¢0)</span>',
+                                align: 'right',
+                                x: -10,
+                                y: -6,
+                                useHTML: true
+                            }
                         }]
                     },
                     tooltip: {
@@ -484,10 +502,17 @@
                         title: { text: 'Recursos Líquidos (MM ¢)' },
                         plotLines: [{
                             value: 0,
-                            color: '#ea580c',
-                            dashStyle: 'solid',
-                            width: 2,
-                            label: { text: 'Agotamiento de Liquidez (¢0)', align: 'left', style: { color: '#ea580c', fontWeight: 'bold' } }
+                            color: '#c2410c',
+                            dashStyle: 'Dash',
+                            width: 2.5,
+                            zIndex: 10,
+                            label: {
+                                text: '<span style="background-color: #ea580c; color: #ffffff; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; box-shadow: 0 1px 3px rgba(0,0,0,0.25); white-space: nowrap;"><i class="fa fa-exclamation-triangle" style="margin-right: 4px;"></i> Agotamiento de Liquidez (¢0)</span>',
+                                align: 'left',
+                                x: 10,
+                                y: -6,
+                                useHTML: true
+                            }
                         }]
                     },
                     tooltip: {
@@ -504,34 +529,6 @@
                     exporting: { enabled: true },
                     credits: { enabled: false }
                 });
-            }
-        }
-
-        function setUnidadDisplay(modo) {
-            if (modo === 'MM') {
-                $('#btnUnidadMM').addClass('active').addClass('btn-primary').removeClass('btn-default');
-                $('#btnUnidadUnidades').removeClass('active').removeClass('btn-primary').addClass('btn-default');
-                $('.monto-dinamico').each(function() {
-                    var valMm = parseFloat($(this).attr('data-monto-mm'));
-                    if (!isNaN(valMm)) {
-                        var prefix = $(this).attr('data-prefix') || '¢';
-                        var suffix = $(this).attr('data-suffix') !== undefined ? $(this).attr('data-suffix') : ' MM';
-                        $(this).text(prefix + valMm.toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + suffix);
-                    }
-                });
-                $('.unidad-label').text('Millones de Colones (¢ MM)');
-            } else {
-                $('#btnUnidadUnidades').addClass('active').addClass('btn-primary').removeClass('btn-default');
-                $('#btnUnidadMM').removeClass('active').removeClass('btn-primary').addClass('btn-default');
-                $('.monto-dinamico').each(function() {
-                    var valMm = parseFloat($(this).attr('data-monto-mm'));
-                    if (!isNaN(valMm)) {
-                        var valUnidades = valMm * 1000000;
-                        var prefix = $(this).attr('data-prefix') || '¢';
-                        $(this).text(prefix + valUnidades.toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
-                    }
-                });
-                $('.unidad-label').text('Colones Exactos (¢)');
             }
         }
 
