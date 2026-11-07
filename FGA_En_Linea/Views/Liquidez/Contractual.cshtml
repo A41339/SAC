@@ -59,7 +59,7 @@
         display: inline-block !important;
     }
     .tab-badge-pill.pill-blue { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
-    .tab-badge-pill.pill-green { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+    .tab-badge-pill.pill-green { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
     .tab-badge-pill.pill-orange { background: #fff7ed; color: #c2410c; border: 1px solid #fed7aa; }
     .tab-badge-pill.pill-gray { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
 
@@ -104,17 +104,18 @@
         background: #ffffff;
         color: #1e3a8a;
         border-radius: 6px;
-        padding: 4px 10px;
+        padding: 5px 12px;
         font-size: 11.5px;
         font-weight: 600;
         cursor: pointer;
         transition: all 0.15s ease;
         display: inline-flex;
         align-items: center;
-        gap: 5px;
+        gap: 6px;
         box-shadow: 0 1px 2px rgba(0,0,0,0.04);
         position: relative;
         z-index: 5;
+        letter-spacing: 0.2px;
     }
     .btn-chart-expand:hover {
         background: #eff6ff;
@@ -209,8 +210,8 @@
                     <!-- Lado Derecho: Acciones Ejecutivas y Metadatos -->
                     <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
                         <!-- Exportar a Excel -->
-                        <a href="@Url.Action("ExportarExcelContractual", "Liquidez", new { idEntidad = Model.IdEntidad, periodo1 = Model.Periodo1, periodo2 = Model.Periodo2 })" class="btn btn-sm btn-success" style="background-color: #16a34a; border-color: #15803d; font-weight: 600; font-size: 11.5px; border-radius: 6px; padding: 4px 10px; display: inline-flex; align-items: center; gap: 5px;">
-                            <i class="fa fa-file-excel-o"></i> Excel
+                        <a href="@Url.Action("ExportarExcelContractual", "Liquidez", new { idEntidad = Model.IdEntidad, periodo1 = Model.Periodo1, periodo2 = Model.Periodo2 })" class="btn btn-sm btn-default" style="background: #ffffff; border-color: #cbd5e1; font-weight: 600; font-size: 11.5px; border-radius: 6px; padding: 4px 10px; display: inline-flex; align-items: center; gap: 5px; color: #1e3a8a;">
+                            <i class="fa fa-file-excel-o" style="color: #2b579a;"></i> Excel
                         </a>
 
                         <!-- Imprimir / PDF -->
@@ -239,7 +240,7 @@
                             <div><i class="fa fa-clock-o" style="color: #64748b;"></i> <strong>Ejecución:</strong> @Model.FechaCalculo.ToString("dd/MM/yyyy HH:mm")</div>
                             <div><i class="fa fa-user-circle" style="color: #64748b;"></i> <strong>Usuario:</strong> @Model.UsuarioActual</div>
                         </div>
-                        <span class="badge" style="background: #dcfce7; color: #15803d; font-size: 11px; font-weight: 700; padding: 3px 8px; border: 1px solid #bbf7d0;">
+                        <span class="badge" style="background: #eff6ff; color: #1e40af; font-size: 11px; font-weight: 700; padding: 3px 8px; border: 1px solid #bfdbfe;">
                             <i class="fa fa-check-circle"></i> Integridad Validada
                         </span>
                     </div>
