@@ -58,13 +58,13 @@
         <span style="font-size: 12px; font-weight: 700; color: #1e3a8a; display: inline-flex; align-items: center; gap: 5px;">
             <i class="fa fa-bolt" style="color: #ea580c;"></i> Presets de Simulación Rápida:
         </span>
-        <button type="button" class="btn btn-xs btn-default" onclick="cargarPresetSupuestos('sugef')" style="font-weight: 600; border-radius: 5px; border-color: #cbd5e1; padding: 4px 10px; color: #1e3a8a;" title="Cargar calibración estándar regulatoria SUGEF">
+        <button type="button" class="btn btn-xs btn-default btn-preset-simulacion" id="btnPresetSugef" onclick="cargarPresetSupuestos('sugef')" style="font-weight: 600; border-radius: 5px; border-color: #cbd5e1; padding: 4px 10px; color: #1e3a8a;" title="Cargar calibración estándar regulatoria SUGEF">
             <i class="fa fa-shield" style="color: #2b579a;"></i> Estándar SUGEF
         </button>
-        <button type="button" class="btn btn-xs btn-default" onclick="cargarPresetSupuestos('moderado')" style="font-weight: 600; border-radius: 5px; border-color: #cbd5e1; padding: 4px 10px; color: #475569;" title="Simular escenario de estrés moderado en captaciones y créditos">
+        <button type="button" class="btn btn-xs btn-default btn-preset-simulacion" id="btnPresetMod" onclick="cargarPresetSupuestos('moderado')" style="font-weight: 600; border-radius: 5px; border-color: #cbd5e1; padding: 4px 10px; color: #475569;" title="Simular escenario de estrés moderado en captaciones y créditos">
             <i class="fa fa-sliders" style="color: #64748b;"></i> Estrés Moderado
         </button>
-        <button type="button" class="btn btn-xs btn-default" onclick="cargarPresetSupuestos('severo')" style="font-weight: 600; border-radius: 5px; border-color: #cbd5e1; padding: 4px 10px; color: #c2410c;" title="Simular choque sistémico severo / corrida preventiva de depósitos">
+        <button type="button" class="btn btn-xs btn-default btn-preset-simulacion" id="btnPresetSev" onclick="cargarPresetSupuestos('severo')" style="font-weight: 600; border-radius: 5px; border-color: #cbd5e1; padding: 4px 10px; color: #c2410c;" title="Simular choque sistémico severo / corrida preventiva de depósitos">
             <i class="fa fa-fire" style="color: #ea580c;"></i> Choque Severo / Sistémico
         </button>
     </div>
@@ -346,36 +346,60 @@
     function recopilarSupuestos() {
         return {
             RenovacionCDP_Base: parseMonto($('#txtCDP_Base').val()) / 100,
+            RenovacionCDP_Moderado: parseMonto($('#txtCDP_Mod').val()) / 100,
+            RenovacionCDP_Severo: parseMonto($('#txtCDP_Sev').val()) / 100,
+
             SalidaVista_Base: parseMonto($('#txtVaR_Base').val()) / 100,
+            SalidaVista_Moderado: parseMonto($('#txtVaR_Mod').val()) / 100,
+            SalidaVista_Severo: parseMonto($('#txtVaR_Sev').val()) / 100,
+
             CrecimientoCartera_Base: parseMonto($('#txtCartera_Base').val()) / 100,
+            CrecimientoCartera_Moderado: parseMonto($('#txtCartera_Mod').val()) / 100,
+            CrecimientoCartera_Severo: parseMonto($('#txtCartera_Sev').val()) / 100,
+
             DisminucionRecaudo_Base: parseMonto($('#txtRecaudo_Base').val()) / 100,
             DisminucionRecaudo_Moderado: parseMonto($('#txtRecaudo_Mod').val()) / 100,
             DisminucionRecaudo_Severo: parseMonto($('#txtRecaudo_Sev').val()) / 100,
+
             Haircut_Base: parseMonto($('#txtHaircut_Base').val()),
             Haircut_Moderado: parseMonto($('#txtHaircut_Mod').val()),
             Haircut_Severo: parseMonto($('#txtHaircut_Sev').val()),
+
             SalidaTop20_Base: parseMonto($('#txtTop20_Base').val()) / 100,
+            SalidaTop20_Moderado: parseMonto($('#txtTop20_Mod').val()) / 100,
+            SalidaTop20_Severo: parseMonto($('#txtTop20_Sev').val()) / 100,
+
             DisponibilidadLineas_Base: parseMonto($('#txtLineas_Base').val()),
             DisponibilidadLineas_Moderado: parseMonto($('#txtLineas_Mod').val()),
             DisponibilidadLineas_Severo: parseMonto($('#txtLineas_Sev').val()),
+
             PagoObligaciones_Base: parseMonto($('#txtDeuda_Base').val()),
             PagoObligaciones_Moderado: parseMonto($('#txtDeuda_Mod').val()),
             PagoObligaciones_Severo: parseMonto($('#txtDeuda_Sev').val()),
+
             Cupones_Base: parseMonto($('#txtCupones_Base').val()),
             Cupones_Moderado: parseMonto($('#txtCupones_Mod').val()),
             Cupones_Severo: parseMonto($('#txtCupones_Sev').val()),
+
             CapitalSocial_Base: parseMonto($('#txtCapital_Base').val()) / 100,
+            CapitalSocial_Moderado: parseMonto($('#txtCapital_Mod').val()) / 100,
+            CapitalSocial_Severo: parseMonto($('#txtCapital_Sev').val()) / 100,
+
             OtrosIngresos_Base: parseMonto($('#txtOtrosIng_Base').val()) / 100,
+            OtrosIngresos_Moderado: parseMonto($('#txtOtrosIng_Mod').val()) / 100,
+            OtrosIngresos_Severo: parseMonto($('#txtOtrosIng_Sev').val()) / 100,
+
             EgresosFinancieros_Base: parseMonto($('#txtEgFin_Base').val()) / 100,
             EgresosFinancieros_Moderado: parseMonto($('#txtEgFin_Mod').val()) / 100,
             EgresosFinancieros_Severo: parseMonto($('#txtEgFin_Sev').val()) / 100,
+
             GastosAdministrativos_Base: parseMonto($('#txtAdm_Base').val()) / 100,
             GastosAdministrativos_Moderado: parseMonto($('#txtAdm_Mod').val()) / 100,
             GastosAdministrativos_Severo: parseMonto($('#txtAdm_Sev').val()) / 100
         };
     }
 
-    function recalcularEscenarios() {
+    function recalcularEscenarios(fromPreset) {
         var postData = {
             idEntidad: $('#ddlEntidad').val(),
             periodo2: $('#Periodo2').val(),
@@ -403,10 +427,22 @@
                         $('#tdFalTotMod').text('¢' + (rc.ActivosLiquidos_Moderado || 0).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' MM');
                         $('#tdFalTotSev').text('¢' + (rc.ActivosLiquidos_Severo || 0).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' MM');
 
-                        // Actualizar Razón de Cobertura
+                        // Actualizar Razón de Cobertura Tarjetas
                         $('#lblRCBase').text((rc.RazonCobertura_Base || 0).toFixed(2) + 'x');
                         $('#lblRCMod').text((rc.RazonCobertura_Moderado || 0).toFixed(2) + 'x');
                         $('#lblRCSevero').text((rc.RazonCobertura_Severo || 0).toFixed(2) + 'x');
+
+                        // Actualizar Badge de Pestaña Razón de Cobertura
+                        $('#badgeTabRC').text((rc.RazonCobertura_Base || 0).toFixed(2) + 'x');
+
+                        // Actualizar Fila Resumen Tabla Razón Cobertura
+                        $('#cellRCBaseVal').text((rc.RazonCobertura_Base || 0).toFixed(2) + 'x');
+                        $('#cellRCModVal').text((rc.RazonCobertura_Moderado || 0).toFixed(2) + 'x');
+                        $('#cellRCSeveroVal').text((rc.RazonCobertura_Severo || 0).toFixed(2) + 'x');
+
+                        $('#cellRCBaseEstado').text(rc.RazonCobertura_Base >= 1.0 ? 'Conforme' : 'Déficit').css('color', rc.RazonCobertura_Base >= 1.0 ? '#1e40af' : '#ea580c');
+                        $('#cellRCModEstado').text(rc.RazonCobertura_Moderado >= 1.0 ? 'Conforme' : 'Déficit').css('color', rc.RazonCobertura_Moderado >= 1.0 ? '#475569' : '#ea580c');
+                        $('#cellRCSeveroEstado').text(rc.RazonCobertura_Severo >= 1.0 ? 'Conforme' : 'Déficit').css('color', rc.RazonCobertura_Severo >= 1.0 ? '#475569' : '#ea580c');
 
                         var chartRc = $('#chartRazonCoberturaComparativo').highcharts();
                         if (chartRc && chartRc.series && chartRc.series[0]) {
@@ -421,6 +457,7 @@
                     // 2. Actualizar ICL Estresado
                     if (resp.iclEstresado) {
                         var icl = resp.iclEstresado;
+                        $('#badgeTabICLEstres').text(((icl.ICLBase || 0) * 100).toFixed(1) + '%');
                         var chartIcl = $('#chartICLEstresadoComparativo').highcharts();
                         if (chartIcl && chartIcl.series && chartIcl.series[0]) {
                             chartIcl.series[0].setData([
@@ -438,16 +475,25 @@
                         window.datosEscenariosBrechas.base.salidas = be.SalidasBase;
                         window.datosEscenariosBrechas.base.gapBanda = be.BrechasBase;
                         window.datosEscenariosBrechas.base.gapAcum = be.AcumuladoBase;
+                        window.datosEscenariosBrechas.base.kpi30 = '¢' + (be.BrechasBase && be.BrechasBase.length > 0 ? be.BrechasBase[0] : 0).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' MM';
+                        window.datosEscenariosBrechas.base.kpi90 = '¢' + (be.BrechasBase && be.BrechasBase.length > 2 ? be.BrechasBase[2] : 0).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' MM';
+                        window.datosEscenariosBrechas.base.fal = '¢' + (resp.razonCobertura ? resp.razonCobertura.ActivosLiquidos_Base : 0).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' MM';
 
                         window.datosEscenariosBrechas.moderado.entradas = be.EntradasModerado;
                         window.datosEscenariosBrechas.moderado.salidas = be.SalidasModerado;
                         window.datosEscenariosBrechas.moderado.gapBanda = be.BrechasModerado;
                         window.datosEscenariosBrechas.moderado.gapAcum = be.AcumuladoModerado;
+                        window.datosEscenariosBrechas.moderado.kpi30 = '¢' + (be.BrechasModerado && be.BrechasModerado.length > 0 ? be.BrechasModerado[0] : 0).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' MM';
+                        window.datosEscenariosBrechas.moderado.kpi90 = '¢' + (be.BrechasModerado && be.BrechasModerado.length > 2 ? be.BrechasModerado[2] : 0).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' MM';
+                        window.datosEscenariosBrechas.moderado.fal = '¢' + (resp.razonCobertura ? resp.razonCobertura.ActivosLiquidos_Moderado : 0).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' MM';
 
                         window.datosEscenariosBrechas.severo.entradas = be.EntradasSevero;
                         window.datosEscenariosBrechas.severo.salidas = be.SalidasSevero;
                         window.datosEscenariosBrechas.severo.gapBanda = be.BrechasSevero;
                         window.datosEscenariosBrechas.severo.gapAcum = be.AcumuladoSevero;
+                        window.datosEscenariosBrechas.severo.kpi30 = '¢' + (be.BrechasSevero && be.BrechasSevero.length > 0 ? be.BrechasSevero[0] : 0).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' MM';
+                        window.datosEscenariosBrechas.severo.kpi90 = '¢' + (be.BrechasSevero && be.BrechasSevero.length > 2 ? be.BrechasSevero[2] : 0).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' MM';
+                        window.datosEscenariosBrechas.severo.fal = '¢' + (resp.razonCobertura ? resp.razonCobertura.ActivosLiquidos_Severo : 0).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' MM';
 
                         if (typeof seleccionarEscenarioBrechas === 'function') {
                             seleccionarEscenarioBrechas('base');
@@ -467,6 +513,8 @@
                         $('#lblDiasBase').text('> 90 días (' + hz.DiasSupervivenciaBase.toFixed(0) + 'd)');
                         $('#lblDiasMod').text(hz.DiasSupervivenciaModerado.toFixed(0) + ' días');
                         $('#lblDiasSev').text(hz.DiasSupervivenciaSevero.toFixed(0) + ' días');
+
+                        $('#badgeTabHorizonte').text(hz.DiasSupervivenciaBase >= 90 ? '> 90d' : hz.DiasSupervivenciaBase.toFixed(0) + 'd');
 
                         $('#lblInflexionBase').text(hz.HorizonteBase);
                         $('#lblInflexionMod').text(hz.HorizonteModerado);
@@ -492,13 +540,12 @@
                     }
 
                     $('#bannerSimulacionActiva').slideUp(200);
-                    alert('Simulación What-If completada exitosamente. Todos los modelos han sido proyectados en tiempo real.');
                 } else {
                     alert('Error en la simulación: ' + (resp ? resp.message : 'Error desconocido'));
                 }
             },
             error: function(err) {
-                alert('Ocurrió un error al procesar la simulación en el servidor.');
+                console.error('Error al procesar la simulación:', err);
             }
         });
     }
@@ -534,60 +581,95 @@
     function cargarPresetSupuestos(presetTipo) {
         var presets = {
             sugef: {
-                cdp: '85.00',
-                var: '12.50',
-                top20: '15.00',
-                credito: '100.00',
-                mora: '0.00',
-                capital: '5.00',
-                otrosIng: '100.00',
-                egFin: '100.00',
-                adm: '100.00',
-                nombre: 'Estándar Regulatorio SUGEF'
+                nombre: 'Estándar Regulatorio SUGEF',
+                cdp_base: '85.00', cdp_mod: '68.00', cdp_sev: '42.50',
+                var_base: '10.09', var_mod: '12.11', var_sev: '18.16',
+                cartera_base: '6.88', cartera_mod: '8.26', cartera_sev: '10.32',
+                recaudo_base: '3.50', recaudo_mod: '5.00', recaudo_sev: '10.00',
+                top20_base: '5.00', top20_mod: '15.00', top20_sev: '35.00',
+                capital_base: '3.50', capital_mod: '2.80', capital_sev: '1.75',
+                otrosIng_base: '3.94', otrosIng_mod: '3.15', otrosIng_sev: '1.97',
+                egFin_base: '1.00', egFin_mod: '2.00', egFin_sev: '3.00',
+                adm_base: '1.50', adm_mod: '2.50', adm_sev: '4.00'
             },
             moderado: {
-                cdp: '75.00',
-                var: '18.00',
-                top20: '25.00',
-                credito: '90.00',
-                mora: '5.00',
-                capital: '2.50',
-                otrosIng: '90.00',
-                egFin: '105.00',
-                adm: '105.00',
-                nombre: 'Estrés Moderado de Sensibilización'
+                nombre: 'Estrés Moderado de Sensibilización',
+                cdp_base: '75.00', cdp_mod: '55.00', cdp_sev: '35.00',
+                var_base: '15.00', var_mod: '20.00', var_sev: '28.00',
+                cartera_base: '5.00', cartera_mod: '7.00', cartera_sev: '9.00',
+                recaudo_base: '6.00', recaudo_mod: '10.00', recaudo_sev: '15.00',
+                top20_base: '10.00', top20_mod: '25.00', top20_sev: '45.00',
+                capital_base: '2.50', capital_mod: '1.80', capital_sev: '1.00',
+                otrosIng_base: '2.50', otrosIng_mod: '2.00', otrosIng_sev: '1.20',
+                egFin_base: '2.00', egFin_mod: '3.50', egFin_sev: '5.00',
+                adm_base: '2.00', adm_mod: '3.50', adm_sev: '5.00'
             },
             severo: {
-                cdp: '60.00',
-                var: '25.00',
-                top20: '40.00',
-                credito: '80.00',
-                mora: '10.00',
-                capital: '0.00',
-                otrosIng: '80.00',
-                egFin: '115.00',
-                adm: '110.00',
-                nombre: 'Choque Severo / Corrida Sistémica'
+                nombre: 'Choque Severo / Corrida Sistémica',
+                cdp_base: '50.00', cdp_mod: '35.00', cdp_sev: '20.00',
+                var_base: '25.00', var_mod: '35.00', var_sev: '45.00',
+                cartera_base: '2.00', cartera_mod: '4.00', cartera_sev: '6.00',
+                recaudo_base: '12.00', recaudo_mod: '18.00', recaudo_sev: '25.00',
+                top20_base: '25.00', top20_mod: '45.00', top20_sev: '65.00',
+                capital_base: '1.00', capital_mod: '0.50', capital_sev: '0.00',
+                otrosIng_base: '1.00', otrosIng_mod: '0.80', otrosIng_sev: '0.50',
+                egFin_base: '3.50', egFin_mod: '5.00', egFin_sev: '7.50',
+                adm_base: '3.00', adm_mod: '4.50', adm_sev: '6.00'
             }
         };
 
         var p = presets[presetTipo];
         if (!p) return;
 
-        $('#txtCDP_Base').val(p.cdp);
-        $('#txtVaR_Base').val(p.var);
-        $('#txtTop20_Base').val(p.top20);
-        $('#txtCartera_Base').val(p.credito);
-        $('#txtMora_Base').val(p.mora);
-        $('#txtCapital_Base').val(p.capital);
-        $('#txtOtrosIng_Base').val(p.otrosIng);
-        $('#txtEgFin_Base').val(p.egFin);
-        $('#txtAdm_Base').val(p.adm);
+        // 1. Asignar valores a la tabla en las 3 columnas
+        $('#txtCDP_Base').val(p.cdp_base);
+        $('#txtCDP_Mod').val(p.cdp_mod);
+        $('#txtCDP_Sev').val(p.cdp_sev);
 
-        $('#bannerSimulacionActiva').slideDown(150);
-        if (window.mostrarToastInfo) {
-            window.mostrarToastInfo('Preset "' + p.nombre + '" cargado. Presione "Aplicar y Proyectar" para recalcular los modelos.', 'Preset Cargado');
+        $('#txtVaR_Base').val(p.var_base);
+        $('#txtVaR_Mod').val(p.var_mod);
+        $('#txtVaR_Sev').val(p.var_sev);
+
+        $('#txtCartera_Base').val(p.cartera_base);
+        $('#txtCartera_Mod').val(p.cartera_mod);
+        $('#txtCartera_Sev').val(p.cartera_sev);
+
+        $('#txtRecaudo_Base').val(p.recaudo_base);
+        $('#txtRecaudo_Mod').val(p.recaudo_mod);
+        $('#txtRecaudo_Sev').val(p.recaudo_sev);
+
+        $('#txtTop20_Base').val(p.top20_base);
+        $('#txtTop20_Mod').val(p.top20_mod);
+        $('#txtTop20_Sev').val(p.top20_sev);
+
+        $('#txtCapital_Base').val(p.capital_base);
+        $('#txtCapital_Mod').val(p.capital_mod);
+        $('#txtCapital_Sev').val(p.capital_sev);
+
+        $('#txtOtrosIng_Base').val(p.otrosIng_base);
+        $('#txtOtrosIng_Mod').val(p.otrosIng_mod);
+        $('#txtOtrosIng_Sev').val(p.otrosIng_sev);
+
+        $('#txtEgFin_Base').val(p.egFin_base);
+        $('#txtEgFin_Mod').val(p.egFin_mod);
+        $('#txtEgFin_Sev').val(p.egFin_sev);
+
+        $('#txtAdm_Base').val(p.adm_base);
+        $('#txtAdm_Mod').val(p.adm_mod);
+        $('#txtAdm_Sev').val(p.adm_sev);
+
+        // 2. Estado visual activo en los botones de Preset
+        $('.btn-preset-simulacion').css({ 'background-color': '#ffffff', 'border-color': '#cbd5e1', 'box-shadow': 'none' });
+        if (presetTipo === 'sugef') {
+            $('#btnPresetSugef').css({ 'background-color': '#eff6ff', 'border-color': '#2b579a', 'color': '#1e3a8a', 'box-shadow': '0 0 0 1px #2b579a' });
+        } else if (presetTipo === 'moderado') {
+            $('#btnPresetMod').css({ 'background-color': '#f8fafc', 'border-color': '#64748b', 'color': '#334155', 'box-shadow': '0 0 0 1px #64748b' });
+        } else if (presetTipo === 'severo') {
+            $('#btnPresetSev').css({ 'background-color': '#fff7ed', 'border-color': '#ea580c', 'color': '#c2410c', 'box-shadow': '0 0 0 1px #ea580c' });
         }
+
+        // 3. Ejecutar simulación y recalcular de inmediato
+        recalcularEscenarios(true);
     }
 
     $(document).ready(function() {
