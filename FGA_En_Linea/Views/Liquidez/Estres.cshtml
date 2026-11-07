@@ -123,6 +123,10 @@
         border-color: #93c5fd;
     }
 
+    .highcharts-container, svg.highcharts-root {
+        overflow: visible !important;
+    }
+
     @@media print {
         .main-header, .main-sidebar, .breadcrumb, .header-back-link, .modern-filter-card, .no-print, .nav-tabs, footer {
             display: none !important;
@@ -636,7 +640,7 @@
             var elFAL = document.getElementById('chartBrechasAcumuladoFAL');
             if (elFAL) {
                 Highcharts.chart('chartBrechasAcumuladoFAL', {
-                    chart: { type: 'spline', spacingTop: 20 },
+                    chart: { type: 'spline' },
                     title: { text: 'Brecha Acumulada considera el FAL de Liquidez bajo Estrés', style: { fontWeight: '700', color: '#143750', fontSize: '13.5px' }, margin: 20 },
                     subtitle: { text: 'Trayectoria multiescenario de acumulación de liquidez (Millones de ¢)' },
                     xAxis: { categories: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.BrechasEstres.Bandas)) },
