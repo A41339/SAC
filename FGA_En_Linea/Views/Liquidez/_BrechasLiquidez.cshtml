@@ -289,15 +289,66 @@
                             .addClass(gapA < 0 ? 'cell-heatmap-neg' : 'cell-heatmap-pos');
         }
 
-        // Actualizar gráfico Highcharts de Brechas por Banda
+        var nombreEscenario = escenario === 'base' ? 'Base' : (escenario === 'moderado' ? 'Moderado' : 'Severo');
+        var colorGap = escenario === 'base' ? '#0284c7' : (escenario === 'moderado' ? '#475569' : '#ea580c');
+        var colorEntradas = escenario === 'severo' ? '#c2410c' : (escenario === 'moderado' ? '#334155' : '#2b579a');
+
+        // 1. Actualizar gráfico Highcharts de Brechas por Banda (Chart 1)
         var chartBanda = $('#chartBrechasBanda').highcharts();
         if (chartBanda) {
-            chartBanda.series[0].setData(d.entradas, false);
-            chartBanda.series[1].setData(d.salidas, false);
-            chartBanda.series[2].setData(d.gapBanda, false);
-            chartBanda.redraw();
+            chartBanda.setTitle(
+                { text: 'Brechas de Liquidez por Banda (' + nombreEscenario + ')' },
+                { text: 'Entradas vs Salidas estresadas y GAP de la banda en Escenario ' + nombreEscenario }
+            );
+            if (chartBanda.series && chartBanda.series.length >= 3) {
+                chartBanda.series[0].update({ name: 'Entradas (' + nombreEscenario + ')', color: colorEntradas }, false);
+                chartBanda.series[0].setData(d.entradas, false);
+
+                chartBanda.series[1].update({ name: 'Salidas (' + nombreEscenario + ')' }, false);
+                chartBanda.series[1].setData(d.salidas, false);
+
+                chartBanda.series[2].update({ name: 'GAP por Banda (' + nombreEscenario + ')', color: colorGap }, false);
+                chartBanda.series[2].setData(d.gapBanda, false);
+
+                chartBanda.redraw();
+            }
+        }
+
+        // 2. Actualizar gráfico Highcharts de Brecha Acumulada con FAL (Chart 2)
+        var chartFAL = $('#chartBrechasAcumuladoFAL').highcharts();
+        if (chartFAL) {
+            chartFAL.setTitle(
+                null,
+                { text: 'Trayectoria multiescenario de acumulación de liquidez (Enfocado en ' + nombreEscenario + ')' }
+            );
+            if (chartFAL.series && chartFAL.series.length >= 3) {
+                var isBase = escenario === 'base';
+                var isMod = escenario === 'moderado';
+                var isSev = escenario === 'severo';
+
+                chartFAL.series[0].update({
+                    lineWidth: isBase ? 5 : 2,
+                    opacity: isBase ? 1 : 0.35,
+                    zIndex: isBase ? 10 : 2
+                }, false);
+
+                chartFAL.series[1].update({
+                    lineWidth: isMod ? 5 : 2,
+                    opacity: isMod ? 1 : 0.35,
+                    zIndex: isMod ? 10 : 2
+                }, false);
+
+                chartFAL.series[2].update({
+                    lineWidth: isSev ? 5 : 2,
+                    opacity: isSev ? 1 : 0.35,
+                    zIndex: isSev ? 10 : 2
+                }, false);
+
+                chartFAL.redraw();
+            }
         }
     }
+    window.seleccionarEscenarioBrechas = seleccionarEscenarioBrechas;
 
     $(document).ready(function() {
         $('#collapseTblBrechas').on('show.bs.collapse', function() {
@@ -307,5 +358,9 @@
             $('#iconChevronBrechas').removeClass('fa-chevron-up').addClass('fa-chevron-down');
             $('#textToggleBrechas').text('Ver Detalle Tabular');
         });
+
+        setTimeout(function() {
+            seleccionarEscenarioBrechas(window.escenarioBrechasActivo || 'base');
+        }, 120);
     });
 </script>
