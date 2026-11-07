@@ -52,15 +52,38 @@
     </button>
 </div>
 
+<!-- Presets de Simulación Rápida y Acciones de Tabla -->
+<div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 14px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+    <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+        <span style="font-size: 12px; font-weight: 700; color: #1e3a8a; display: inline-flex; align-items: center; gap: 5px;">
+            <i class="fa fa-bolt" style="color: #ea580c;"></i> Presets de Simulación Rápida:
+        </span>
+        <button type="button" class="btn btn-xs btn-default" onclick="cargarPresetSupuestos('sugef')" style="font-weight: 600; border-radius: 5px; border-color: #cbd5e1; padding: 4px 10px; color: #1e3a8a;" title="Cargar calibración estándar regulatoria SUGEF">
+            <i class="fa fa-shield" style="color: #2b579a;"></i> Estándar SUGEF
+        </button>
+        <button type="button" class="btn btn-xs btn-default" onclick="cargarPresetSupuestos('moderado')" style="font-weight: 600; border-radius: 5px; border-color: #cbd5e1; padding: 4px 10px; color: #475569;" title="Simular escenario de estrés moderado en captaciones y créditos">
+            <i class="fa fa-sliders" style="color: #64748b;"></i> Estrés Moderado
+        </button>
+        <button type="button" class="btn btn-xs btn-default" onclick="cargarPresetSupuestos('severo')" style="font-weight: 600; border-radius: 5px; border-color: #cbd5e1; padding: 4px 10px; color: #c2410c;" title="Simular choque sistémico severo / corrida preventiva de depósitos">
+            <i class="fa fa-fire" style="color: #ea580c;"></i> Choque Severo / Sistémico
+        </button>
+    </div>
+    <div style="display: flex; align-items: center; gap: 8px;">
+        <button type="button" class="btn btn-xs btn-default" onclick="copiarTablaPortapapeles('tblSupuestos')" style="border-radius: 5px; border-color: #cbd5e1; font-weight: 600; padding: 4px 10px; color: #1e3a8a;" title="Copiar matriz de supuestos a Excel">
+            <i class="fa fa-clipboard"></i> Copiar a Excel
+        </button>
+    </div>
+</div>
+
 <!-- Tabla 1: Variables del Modelo de Estrés (Requerimiento imagen 14 y Anexo Excel) -->
 <h5 style="margin: 0 0 10px 0; font-size: 14px; font-weight: 700; color: #143750; display: flex; align-items: center; gap: 6px;">
     <i class="fa fa-sliders" style="color: #2b579a;"></i> Parámetros y Proyectores por Escenario
 </h5>
-<div class="table-responsive" style="border-radius: 6px; overflow: hidden; border: 1px solid #cbd5e1; box-shadow: 0 1px 3px rgba(0,0,0,0.04); margin-bottom: 24px;">
+<div class="table-responsive table-sticky-container" style="box-shadow: 0 1px 3px rgba(0,0,0,0.04); margin-bottom: 24px;">
     <table id="tblSupuestos" class="table table-striped modern-data-table tabla-liquidez-azul" style="width: 100%; margin-bottom: 0; border-collapse: collapse;">
         <thead style="background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important;">
             <tr style="background-color: #2b579a !important; background: #2b579a !important;">
-                <th class="text-left" style="width: 28%; text-align: left !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 16px; font-weight: 700; font-size: 13px; border: none;">Variables del Modelo</th>
+                <th class="text-left col-sticky-first" style="width: 28%; text-align: left !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 16px; font-weight: 700; font-size: 13px; border: none;">Variables del Modelo</th>
                 <th class="text-left" style="width: 24%; text-align: left !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 14px; font-weight: 700; font-size: 13px; border: none;">Tipo de Proyector</th>
                 <th class="text-right" style="width: 16%; text-align: right !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 14px; font-weight: 700; font-size: 13px; border: none; white-space: nowrap;">
                     Escenario Base <span class="badge" style="background: #ffffff; color: #1e3a8a; font-size: 10px; font-weight: 700; padding: 2px 6px; margin-left: 3px;"><i class="fa fa-pencil"></i> Editable</span>
@@ -225,14 +248,19 @@
 </div>
 
 <!-- Tabla 2: Fondo de Activos Líquidos (FAL) con Ponderadores (Excel Hoja Supuestos filas 23-31) -->
-<h5 style="margin: 0 0 10px 0; font-size: 14px; font-weight: 700; color: #143750; display: flex; align-items: center; gap: 6px;">
-    <i class="fa fa-cubes" style="color: #2b579a;"></i> Composición del Fondo de Activos Líquidos (FAL) por Escenario
-</h5>
-<div class="table-responsive" style="border-radius: 6px; overflow: hidden; border: 1px solid #cbd5e1; box-shadow: 0 1px 3px rgba(0,0,0,0.04); margin-bottom: 20px;">
+<div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">
+    <h5 style="margin: 0; font-size: 14px; font-weight: 700; color: #143750; display: flex; align-items: center; gap: 6px;">
+        <i class="fa fa-cubes" style="color: #2b579a;"></i> Composición del Fondo de Activos Líquidos (FAL) por Escenario
+    </h5>
+    <button type="button" class="btn btn-xs btn-default" onclick="copiarTablaPortapapeles('tblFALSupuestos')" style="border-radius: 5px; border-color: #cbd5e1; font-weight: 600; padding: 3px 8px; color: #1e3a8a;" title="Copiar desglose del FAL a Excel">
+        <i class="fa fa-clipboard"></i> Copiar a Excel
+    </button>
+</div>
+<div class="table-responsive table-sticky-container" style="box-shadow: 0 1px 3px rgba(0,0,0,0.04); margin-bottom: 20px;">
     <table id="tblFALSupuestos" class="table table-striped modern-data-table tabla-liquidez-azul" style="width: 100%; margin-bottom: 0; border-collapse: collapse;">
         <thead style="background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important;">
             <tr style="background-color: #2b579a !important; background: #2b579a !important;">
-                <th class="text-left" style="width: 40%; text-align: left !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 16px; font-weight: 700; font-size: 13px; border: none;">Componente del FAL</th>
+                <th class="text-left col-sticky-first" style="width: 40%; text-align: left !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 16px; font-weight: 700; font-size: 13px; border: none;">Componente del FAL</th>
                 <th class="text-center" style="width: 15%; text-align: center !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 14px; font-weight: 700; font-size: 13px; border: none; white-space: nowrap;">Ponderador</th>
                 <th class="text-right" style="width: 15%; text-align: right !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 14px; font-weight: 700; font-size: 13px; border: none; white-space: nowrap;">Escenario Base</th>
                 <th class="text-right" style="width: 15%; text-align: right !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 14px; font-weight: 700; font-size: 13px; border: none; white-space: nowrap;">Escenario Moderado</th>
@@ -501,6 +529,65 @@
 
     function restablecerSupuestos() {
         cargarDatosEstres();
+    }
+
+    function cargarPresetSupuestos(presetTipo) {
+        var presets = {
+            sugef: {
+                cdp: '85.00',
+                var: '12.50',
+                top20: '15.00',
+                credito: '100.00',
+                mora: '0.00',
+                capital: '5.00',
+                otrosIng: '100.00',
+                egFin: '100.00',
+                adm: '100.00',
+                nombre: 'Estándar Regulatorio SUGEF'
+            },
+            moderado: {
+                cdp: '75.00',
+                var: '18.00',
+                top20: '25.00',
+                credito: '90.00',
+                mora: '5.00',
+                capital: '2.50',
+                otrosIng: '90.00',
+                egFin: '105.00',
+                adm: '105.00',
+                nombre: 'Estrés Moderado de Sensibilización'
+            },
+            severo: {
+                cdp: '60.00',
+                var: '25.00',
+                top20: '40.00',
+                credito: '80.00',
+                mora: '10.00',
+                capital: '0.00',
+                otrosIng: '80.00',
+                egFin: '115.00',
+                adm: '110.00',
+                nombre: 'Choque Severo / Corrida Sistémica'
+            }
+        };
+
+        var p = presets[presetTipo];
+        if (!p) return;
+
+        $('#txtCDP_Base').val(p.cdp);
+        $('#txtVaR_Base').val(p.var);
+        $('#txtTop20_Base').val(p.top20);
+        $('#txtCartera_Base').val(p.credito);
+        $('#txtMora_Base').val(p.mora);
+        $('#txtCapital_Base').val(p.capital);
+        $('#txtOtrosIng_Base').val(p.otrosIng);
+        $('#txtEgFin_Base').val(p.egFin);
+        $('#txtAdm_Base').val(p.adm);
+
+        $('#bannerSimulacionActiva').slideDown(150);
+        if (window.mostrarToastInfo) {
+            window.mostrarToastInfo('Preset "' + p.nombre + '" cargado. Presione "Aplicar y Proyectar" para recalcular los modelos.', 'Preset Cargado');
+        }
     }
 
     $(document).ready(function() {

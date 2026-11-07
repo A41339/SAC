@@ -48,6 +48,80 @@
         text-shadow: none !important;
     }
 
+    /* 1. Badges ejecutivos en pestañas */
+    .tab-badge-pill {
+        font-size: 10px !important;
+        font-weight: 700 !important;
+        padding: 2px 7px !important;
+        border-radius: 10px !important;
+        margin-left: 6px !important;
+        vertical-align: middle !important;
+        display: inline-block !important;
+    }
+    .tab-badge-pill.pill-blue { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
+    .tab-badge-pill.pill-green { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+    .tab-badge-pill.pill-orange { background: #fff7ed; color: #c2410c; border: 1px solid #fed7aa; }
+    .tab-badge-pill.pill-gray { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
+
+    /* 2. Fijación de encabezados (Sticky Headers) y primera columna */
+    .table-sticky-container {
+        max-height: 520px;
+        overflow: auto;
+        position: relative;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+    }
+    .table-sticky-container thead th {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+    }
+    .table-sticky-container th.col-sticky-first,
+    .table-sticky-container td.col-sticky-first {
+        position: sticky;
+        left: 0;
+        background-color: #ffffff;
+        z-index: 10;
+        box-shadow: 2px 0 5px rgba(0,0,0,0.06);
+    }
+    .table-sticky-container thead th.col-sticky-first {
+        z-index: 30;
+        background-color: #2b579a !important;
+    }
+
+    /* 3. Micro-Heatmap en celdas numéricas */
+    .cell-heatmap-neg {
+        background-color: #fff7ed !important;
+        color: #c2410c !important;
+        font-weight: 700 !important;
+    }
+    .cell-heatmap-pos {
+        background-color: #eff6ff !important;
+        color: #1e40af !important;
+        font-weight: 700 !important;
+    }
+
+    /* 4. Botón expandir gráfico */
+    .btn-chart-expand {
+        border: 1px solid #cbd5e1;
+        background: #ffffff;
+        color: #475569;
+        border-radius: 5px;
+        padding: 3px 8px;
+        font-size: 11px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+    .btn-chart-expand:hover {
+        background: #f1f5f9;
+        color: #0f172a;
+        border-color: #94a3b8;
+    }
+
     @@media print {
         .main-header, .main-sidebar, .breadcrumb, .header-back-link, .modern-filter-card, .no-print, .nav-tabs, footer {
             display: none !important;
@@ -182,26 +256,33 @@
                     <li class="active">
                         <a href="#tab-supuestos" data-toggle="tab" class="sub-tab-link">
                             <i class="fa fa-sliders" style="color: #0284c7; margin-right: 5px;"></i> Supuestos de Sensibilización
+                            <span class="tab-badge-pill pill-blue" id="badgeTabSupuestos"><i class="fa fa-sliders"></i> Calibrado</span>
                         </a>
                     </li>
                     <li>
                         <a href="#tab-razon-cobertura" data-toggle="tab" class="sub-tab-link">
                             <i class="fa fa-check-square-o" style="color: #2b579a; margin-right: 5px;"></i> Razón de Cobertura
+                            <span class="tab-badge-pill pill-green" id="badgeTabRC">@((Model.RazonCobertura.RazonCobertura_Base).ToString("0.00"))x</span>
                         </a>
                     </li>
                     <li>
                         <a href="#tab-icl-estresado" data-toggle="tab" class="sub-tab-link">
                             <i class="fa fa-fire" style="color: #ea580c; margin-right: 5px;"></i> ICL Estresado
+                            <span class="tab-badge-pill @(Model.ICLEstresado.ICLBase >= 1.0m ? "pill-blue" : "pill-orange")" id="badgeTabICLEstres">
+                                @((Model.ICLEstresado.ICLBase * 100m).ToString("0.0"))%
+                            </span>
                         </a>
                     </li>
                     <li>
                         <a href="#tab-brechas-estres" data-toggle="tab" class="sub-tab-link">
                             <i class="fa fa-bar-chart" style="color: #8b5cf6; margin-right: 5px;"></i> Brechas de Liquidez
+                            <span class="tab-badge-pill pill-gray" id="badgeTabBrechas">FAL Dinámico</span>
                         </a>
                     </li>
                     <li>
                         <a href="#tab-horizonte" data-toggle="tab" class="sub-tab-link">
                             <i class="fa fa-hourglass-end" style="color: #ea580c; margin-right: 5px;"></i> Horizonte de Supervivencia
+                            <span class="tab-badge-pill pill-green" id="badgeTabHorizonte">> 90d</span>
                         </a>
                     </li>
                 </ul>
@@ -303,8 +384,68 @@
     </div>
 </div>
 
+<!-- Modal para Visualización de Gráficos en Pantalla Completa / Alta Definición -->
+<div class="modal fade" id="modalChartFullscreen" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" style="width: 95%; max-width: 1400px; margin: 20px auto;">
+        <div class="modal-content" style="border-radius: 10px; overflow: hidden; box-shadow: 0 16px 40px rgba(0,0,0,0.25); border: none;">
+            <div class="modal-header" style="background: #2b579a; color: #ffffff; padding: 12px 20px; display: flex; align-items: center; justify-content: space-between;">
+                <h4 class="modal-title" id="modalChartFullscreenTitle" style="font-weight: 700; font-size: 15px; margin: 0; color: #ffffff; display: flex; align-items: center; gap: 8px;">
+                    <i class="fa fa-line-chart"></i> Visualización Detallada
+                </h4>
+                <button type="button" class="close" data-dismiss="modal" style="color: #ffffff; opacity: 0.9; font-size: 20px;">&times;</button>
+            </div>
+            <div class="modal-body" style="padding: 20px; background: #ffffff;">
+                <div id="containerChartFullscreen" style="height: 560px; width: 100%;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section scripts {
     <script>
+        // Función rápida para copiar tabla HTML completa al portapapeles con formato para Excel/Word
+        function copiarTablaPortapapeles(tableId) {
+            var tabla = document.getElementById(tableId);
+            if (!tabla) return;
+            var rows = Array.from(tabla.rows);
+            var text = rows.map(function(r) {
+                return Array.from(r.cells).map(function(c) {
+                    return c.innerText.trim().replace(/\s+/g, ' ');
+                }).join('\t');
+            }).join('\n');
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(function() {
+                    if (window.mostrarToastExito) {
+                        window.mostrarToastExito('Tabla copiada al portapapeles para pegar en Excel.', 'Copiado');
+                    } else {
+                        alert('Tabla copiada al portapapeles para pegar en Excel.');
+                    }
+                });
+            } else {
+                var tArea = document.createElement('textarea');
+                tArea.value = text;
+                document.body.appendChild(tArea);
+                tArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(tArea);
+                alert('Tabla copiada al portapapeles para pegar en Excel.');
+            }
+        }
+
+        // Función para expandir cualquier gráfico Highcharts a modal en pantalla completa
+        function expandirGraficoModal(chartContainerId, titleText) {
+            var chart = $('#' + chartContainerId).highcharts();
+            if (!chart) return;
+            $('#modalChartFullscreenTitle').html('<i class="fa fa-line-chart"></i> ' + (titleText || 'Visualización Detallada'));
+            $('#modalChartFullscreen').modal('show');
+            $('#modalChartFullscreen').one('shown.bs.modal', function() {
+                var opts = Highcharts.merge(chart.userOptions, {
+                    chart: { renderTo: 'containerChartFullscreen' },
+                    credits: { enabled: false }
+                });
+                new Highcharts.Chart(opts);
+            });
+        }
         function cargarDatosEstres() {
             var ent = $('#ddlEntidad').val();
             var p1 = $('#Periodo1').val();
@@ -334,6 +475,19 @@
                                 text: '<span style="background-color: #fff7ed; color: #c2410c; border: 1px solid #ea580c; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; box-shadow: 0 1px 3px rgba(0,0,0,0.06); white-space: nowrap;"><i class="fa fa-flag" style="margin-right: 4px;"></i> Límite Cobertura (1.00x)</span>',
                                 align: 'right',
                                 x: -10,
+                                y: -14,
+                                useHTML: true
+                            }
+                        }, {
+                            value: 1.10,
+                            color: '#2b579a',
+                            dashStyle: 'ShortDot',
+                            width: 2.0,
+                            zIndex: 9,
+                            label: {
+                                text: '<span style="background-color: #eff6ff; color: #1e40af; border: 1px solid #93c5fd; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; box-shadow: 0 1px 3px rgba(0,0,0,0.06); white-space: nowrap;"><i class="fa fa-bullseye" style="margin-right: 4px;"></i> Apetito Interno (1.10x)</span>',
+                                align: 'left',
+                                x: 10,
                                 y: -14,
                                 useHTML: true
                             }
@@ -396,6 +550,19 @@
                                 text: '<span style="background-color: #fff7ed; color: #c2410c; border: 1px solid #ea580c; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; box-shadow: 0 1px 3px rgba(0,0,0,0.06); white-space: nowrap;"><i class="fa fa-flag" style="margin-right: 4px;"></i> Mínimo SUGEF (1.00x / 100%)</span>',
                                 align: 'right',
                                 x: -10,
+                                y: -14,
+                                useHTML: true
+                            }
+                        }, {
+                            value: 1.10,
+                            color: '#2b579a',
+                            dashStyle: 'ShortDot',
+                            width: 2.0,
+                            zIndex: 9,
+                            label: {
+                                text: '<span style="background-color: #eff6ff; color: #1e40af; border: 1px solid #93c5fd; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; box-shadow: 0 1px 3px rgba(0,0,0,0.06); white-space: nowrap;"><i class="fa fa-bullseye" style="margin-right: 4px;"></i> Apetito Interno (1.10x)</span>',
+                                align: 'left',
+                                x: 10,
                                 y: -14,
                                 useHTML: true
                             }
