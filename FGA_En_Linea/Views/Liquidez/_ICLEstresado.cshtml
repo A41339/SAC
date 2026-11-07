@@ -1,63 +1,57 @@
 @model FGA.Model.LiquidezIndexViewModel
 
-<div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid #f1f5f9;">
-    <div style="display: flex; align-items: center; gap: 14px;">
-        <img class="img-logo-entidad" width="44" height="44" src="@(Session["Logo"] ?? Url.Content("~/Content/images/FFC.jpg"))" onerror="this.onerror=null;this.src='@Url.Content("~/Content/images/FFC.jpg")';" style="border-radius: 8px; background: #ffffff; padding: 3px; border: 1px solid #e2e8f0; object-fit: contain;" />
+<!-- Encabezado Ejecutivo Compacto Unificado de ICL Estresado -->
+<div class="compact-tab-header" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 16px; margin-bottom: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+    <!-- Lado Izquierdo: Título Compacto con Logo y Subtítulo en línea -->
+    <div style="display: flex; align-items: center; gap: 10px;">
+        <img class="img-logo-entidad" width="30" height="30" src="@(Session["Logo"] ?? Url.Content("~/Content/images/FFC.jpg"))" onerror="this.onerror=null;this.src='@Url.Content("~/Content/images/FFC.jpg")';" style="border-radius: 6px; background: #ffffff; padding: 2px; border: 1px solid #e2e8f0; object-fit: contain;" />
         <div>
-            <h4 style="margin: 0; font-size: 16px; font-weight: 700; color: #143750;">ICL Estresado - <span id="lblEntidadICLEstres">@Model.NombreEntidad</span></h4>
-            <p style="margin: 2px 0 0 0; font-size: 12px; color: #64748b;">Estrés simultáneo sobre el Fondo de Activos Líquidos (Haircut) y pasivos (Salida de Top 20 depositantes)</p>
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                <span style="font-size: 14px; font-weight: 700; color: #143750;">ICL Estresado (Índice de Cobertura de Liquidez)</span>
+                <span class="badge" style="background: #f1f5f9; color: #475569; font-weight: 600; font-size: 11px; padding: 2px 7px;">@Model.NombreEntidad</span>
+            </div>
+            <div style="font-size: 11px; color: #64748b; margin-top: 1px;">
+                <i class="fa fa-info-circle" style="color: #0284c7; margin-right: 3px;"></i> Haircut sobre Fondo de Activos Líquidos y Salida de Top 20 Depositantes &bull; Meta &ge; 1.00x (100%)
+            </div>
         </div>
     </div>
-</div>
 
-<!-- 4 Tarjetas KPI Minimalistas de ICL Estresado (Requerimiento imagen 17) -->
-<div class="row" style="margin-bottom: 18px;">
-    <div class="col-md-3 col-sm-6 col-xs-12">
-        <div style="background: #ffffff; border: 1px solid #bfdbfe; border-left: 4px solid #2b579a; border-radius: 8px; padding: 12px 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); display: flex; align-items: center; justify-content: space-between;">
+    <!-- Lado Derecho: 4 Chips de Métricas Compactos en línea -->
+    <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+        <!-- Base -->
+        <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 6px; padding: 4px 10px; display: flex; align-items: center; gap: 6px;" title="ICL Base - Meta > 1.00x">
             <div>
-                <div style="font-size: 11px; font-weight: 700; color: #1e3a8a; text-transform: uppercase;">ICL Base</div>
-                <div class="font-mono" style="font-size: 22px; font-weight: 800; color: #1e40af; margin: 2px 0;">@(Model.ICLEstresado.ICLBase.ToString("N2"))x</div>
-                <div style="font-size: 10.5px; color: #64748b;">Meta > 1.00x</div>
+                <div style="font-size: 9px; font-weight: 700; color: #1e3a8a; text-transform: uppercase;">ICL Base</div>
+                <div id="lblICLBase" class="font-mono" style="font-size: 15px; font-weight: 800; color: #1e40af; line-height: 1.1;">@(Model.ICLEstresado.ICLBase.ToString("N2"))x</div>
             </div>
-            <div style="width: 36px; height: 36px; border-radius: 8px; background: #eff6ff; display: flex; align-items: center; justify-content: center; color: #2b579a; font-size: 15px;">
-                <i class="fa fa-shield"></i>
-            </div>
+            <i class="fa fa-shield" style="color: #2b579a; font-size: 13px;"></i>
         </div>
-    </div>
-    <div class="col-md-3 col-sm-6 col-xs-12">
-        <div style="background: #ffffff; border: 1px solid #cbd5e1; border-left: 4px solid #64748b; border-radius: 8px; padding: 12px 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); display: flex; align-items: center; justify-content: space-between;">
+
+        <!-- Moderado -->
+        <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 4px 10px; display: flex; align-items: center; gap: 6px;" title="ICL Moderado - FAL -20%, Top20 -25%">
             <div>
-                <div style="font-size: 11px; font-weight: 700; color: #475569; text-transform: uppercase;">ICL Moderado</div>
-                <div class="font-mono" style="font-size: 22px; font-weight: 800; color: #334155; margin: 2px 0;">@(Model.ICLEstresado.ICLModerado.ToString("N2"))x</div>
-                <div style="font-size: 10.5px; color: #94a3b8;">FAL -20%, Top20 -25%</div>
+                <div style="font-size: 9px; font-weight: 700; color: #475569; text-transform: uppercase;">Moderado</div>
+                <div id="lblICLMod" class="font-mono" style="font-size: 15px; font-weight: 800; color: #334155; line-height: 1.1;">@(Model.ICLEstresado.ICLModerado.ToString("N2"))x</div>
             </div>
-            <div style="width: 36px; height: 36px; border-radius: 8px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; color: #64748b; font-size: 15px;">
-                <i class="fa fa-sliders"></i>
-            </div>
+            <i class="fa fa-sliders" style="color: #64748b; font-size: 13px;"></i>
         </div>
-    </div>
-    <div class="col-md-3 col-sm-6 col-xs-12">
-        <div style="background: #ffffff; border: 1px solid #fed7aa; border-left: 4px solid #ea580c; border-radius: 8px; padding: 12px 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); display: flex; align-items: center; justify-content: space-between;">
+
+        <!-- Severo -->
+        <div style="background: #fff7ed; border: 1px solid #fed7aa; border-radius: 6px; padding: 4px 10px; display: flex; align-items: center; gap: 6px;" title="ICL Severo - Choque conjunto extremo">
             <div>
-                <div style="font-size: 11px; font-weight: 700; color: #9a3412; text-transform: uppercase;">ICL Severo</div>
-                <div class="font-mono" style="font-size: 22px; font-weight: 800; color: #c2410c; margin: 2px 0;">@(Model.ICLEstresado.ICLSevero.ToString("N2"))x</div>
-                <div style="font-size: 10.5px; color: #9a3412;">Bajo límite normativo</div>
+                <div style="font-size: 9px; font-weight: 700; color: #9a3412; text-transform: uppercase;">Severo</div>
+                <div id="lblICLSev" class="font-mono" style="font-size: 15px; font-weight: 800; color: #c2410c; line-height: 1.1;">@(Model.ICLEstresado.ICLSevero.ToString("N2"))x</div>
             </div>
-            <div style="width: 36px; height: 36px; border-radius: 8px; background: #fff7ed; display: flex; align-items: center; justify-content: center; color: #ea580c; font-size: 15px;">
-                <i class="fa fa-warning"></i>
-            </div>
+            <i class="fa fa-warning" style="color: #ea580c; font-size: 13px;"></i>
         </div>
-    </div>
-    <div class="col-md-3 col-sm-6 col-xs-12">
-        <div style="background: #ffffff; border: 1px solid #cbd5e1; border-left: 4px solid #475569; border-radius: 8px; padding: 12px 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); display: flex; align-items: center; justify-content: space-between;">
+
+        <!-- Variación -->
+        <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 4px 10px; display: flex; align-items: center; gap: 6px;" title="Variación Severa vs Base">
             <div>
-                <div style="font-size: 11px; font-weight: 700; color: #475569; text-transform: uppercase;">Variación Severa</div>
-                <div class="font-mono" style="font-size: 22px; font-weight: 800; color: #c2410c; margin: 2px 0;">@((Model.ICLEstresado.ICLSevero - Model.ICLEstresado.ICLBase).ToString("N2"))x</div>
-                <div style="font-size: 10.5px; color: #64748b;">Caída total cobertura</div>
+                <div style="font-size: 9px; font-weight: 700; color: #475569; text-transform: uppercase;">Variación</div>
+                <div id="lblICLVar" class="font-mono" style="font-size: 15px; font-weight: 800; color: #c2410c; line-height: 1.1;">@((Model.ICLEstresado.ICLSevero - Model.ICLEstresado.ICLBase).ToString("N2"))x</div>
             </div>
-            <div style="width: 36px; height: 36px; border-radius: 8px; background: #f8fafc; display: flex; align-items: center; justify-content: center; color: #475569; font-size: 15px;">
-                <i class="fa fa-line-chart"></i>
-            </div>
+            <i class="fa fa-line-chart" style="color: #475569; font-size: 13px;"></i>
         </div>
     </div>
 </div>
@@ -108,21 +102,21 @@
                     <tbody>
                         <tr>
                             <td style="font-weight: 600; color: #1e3a8a; padding: 11px 16px;"><i class="fa fa-cubes" style="color: #2b579a; margin-right: 6px;"></i> Fondo de Activos Líquidos (FAL)</td>
-                            <td class="text-right font-mono" style="font-size: 13.5px;">¢@Model.ICLEstresado.FALBase.ToString("N2") MM</td>
-                            <td class="text-right font-mono" style="font-size: 13.5px;">¢@Model.ICLEstresado.FALModerado.ToString("N2") MM</td>
-                            <td class="text-right font-mono" style="font-size: 13.5px;">¢@Model.ICLEstresado.FALSevero.ToString("N2") MM</td>
+                            <td class="text-right font-mono" id="tdIclFalBase" style="font-size: 13.5px;">¢@Model.ICLEstresado.FALBase.ToString("N2") MM</td>
+                            <td class="text-right font-mono" id="tdIclFalMod" style="font-size: 13.5px;">¢@Model.ICLEstresado.FALModerado.ToString("N2") MM</td>
+                            <td class="text-right font-mono" id="tdIclFalSev" style="font-size: 13.5px;">¢@Model.ICLEstresado.FALSevero.ToString("N2") MM</td>
                         </tr>
                         <tr>
                             <td style="font-weight: 600; color: #1e3a8a; padding: 11px 16px;"><i class="fa fa-sign-out" style="color: #475569; margin-right: 6px;"></i> Salidas Netas a 30 días</td>
-                            <td class="text-right font-mono" style="font-size: 13.5px;">¢@Model.ICLEstresado.SalidasBase.ToString("N2") MM</td>
-                            <td class="text-right font-mono" style="font-size: 13.5px;">¢@Model.ICLEstresado.SalidasModerado.ToString("N2") MM</td>
-                            <td class="text-right font-mono" style="font-size: 13.5px;">¢@Model.ICLEstresado.SalidasSevero.ToString("N2") MM</td>
+                            <td class="text-right font-mono" id="tdIclSalidasBase" style="font-size: 13.5px;">¢@Model.ICLEstresado.SalidasBase.ToString("N2") MM</td>
+                            <td class="text-right font-mono" id="tdIclSalidasMod" style="font-size: 13.5px;">¢@Model.ICLEstresado.SalidasModerado.ToString("N2") MM</td>
+                            <td class="text-right font-mono" id="tdIclSalidasSev" style="font-size: 13.5px;">¢@Model.ICLEstresado.SalidasSevero.ToString("N2") MM</td>
                         </tr>
                         <tr style="background-color: #eff6ff; font-weight: 800; border-top: 2px solid #2b579a; border-bottom: 2px solid #2b579a;">
                             <td style="color: #1e40af; font-size: 14px; padding: 12px 16px;"><i class="fa fa-shield" style="color: #0284c7; margin-right: 6px;"></i> ICL Resultante (Estresado)</td>
-                            <td class="text-right font-mono" style="font-size: 16px; color: #1e40af;">@(Model.ICLEstresado.ICLBase.ToString("N2"))x (@((Model.ICLEstresado.ICLBase * 100m).ToString("N0"))%)</td>
-                            <td class="text-right font-mono" style="font-size: 16px; color: #475569;">@(Model.ICLEstresado.ICLModerado.ToString("N2"))x (@((Model.ICLEstresado.ICLModerado * 100m).ToString("N0"))%)</td>
-                            <td class="text-right font-mono" style="font-size: 16px; color: #c2410c;">@(Model.ICLEstresado.ICLSevero.ToString("N2"))x (@((Model.ICLEstresado.ICLSevero * 100m).ToString("N0"))%)</td>
+                            <td class="text-right font-mono" id="tdIclResBase" style="font-size: 16px; color: #1e40af;">@(Model.ICLEstresado.ICLBase.ToString("N2"))x (@((Model.ICLEstresado.ICLBase * 100m).ToString("N0"))%)</td>
+                            <td class="text-right font-mono" id="tdIclResMod" style="font-size: 16px; color: #475569;">@(Model.ICLEstresado.ICLModerado.ToString("N2"))x (@((Model.ICLEstresado.ICLModerado * 100m).ToString("N0"))%)</td>
+                            <td class="text-right font-mono" id="tdIclResSev" style="font-size: 16px; color: #c2410c;">@(Model.ICLEstresado.ICLSevero.ToString("N2"))x (@((Model.ICLEstresado.ICLSevero * 100m).ToString("N0"))%)</td>
                         </tr>
                     </tbody>
                 </table>

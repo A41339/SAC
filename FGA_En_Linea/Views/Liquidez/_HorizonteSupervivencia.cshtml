@@ -1,51 +1,71 @@
 @model FGA.Model.LiquidezIndexViewModel
 
-<div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid #f1f5f9;">
-    <div style="display: flex; align-items: center; gap: 14px;">
-        <img class="img-logo-entidad" width="44" height="44" src="@(Session["Logo"] ?? Url.Content("~/Content/images/FFC.jpg"))" onerror="this.onerror=null;this.src='@Url.Content("~/Content/images/FFC.jpg")';" style="border-radius: 8px; background: #ffffff; padding: 3px; border: 1px solid #e2e8f0; object-fit: contain;" />
-        <div>
-            <h4 style="margin: 0; font-size: 16px; font-weight: 700; color: #143750;">Horizonte de Supervivencia - <span id="lblEntidadHorizonte">@Model.NombreEntidad</span></h4>
-            <p style="margin: 2px 0 0 0; font-size: 12px; color: #64748b;">Período máximo estimado en que la entidad puede operar sin acceso a nuevas fuentes de liquidez</p>
+<div class="header-cobertura-bar" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; padding: 8px 12px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+    <!-- Left: Title & Entity -->
+    <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+        <img class="img-logo-entidad" width="28" height="28" src="@(Session["Logo"] ?? Url.Content("~/Content/images/FFC.jpg"))" onerror="this.onerror=null;this.src='@Url.Content("~/Content/images/FFC.jpg")';" style="border-radius: 4px; background: #ffffff; padding: 1px; border: 1px solid #cbd5e1; object-fit: contain;" />
+        <div style="display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap;">
+            <span style="font-size: 14px; font-weight: 700; color: #143750;">Horizonte de Supervivencia</span>
+            <span class="badge" style="background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; font-size: 11px; font-weight: 600; padding: 2px 7px;">
+                <i class="fa fa-university" style="margin-right: 3px;"></i> <span id="lblEntidadHorizonte">@Model.NombreEntidad</span>
+            </span>
         </div>
+    </div>
+
+    <!-- Right: Summary Chips for the 3 Scenarios -->
+    <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+        <div style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 6px; background: #eff6ff; border: 1px solid #bfdbfe;">
+            <span style="font-size: 10.5px; font-weight: 700; color: #1e3a8a; text-transform: uppercase;">Base:</span>
+            <span id="lblChipBase" class="font-mono" style="font-size: 13.5px; font-weight: 800; color: #1e40af;">@(Model.Horizonte.DiasSupervivenciaBase >= 90 ? "> 90d" : Model.Horizonte.DiasSupervivenciaBase.ToString("N0") + "d")</span>
+        </div>
+        <div style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 6px; background: #f8fafc; border: 1px solid #cbd5e1;">
+            <span style="font-size: 10.5px; font-weight: 700; color: #475569; text-transform: uppercase;">Moderado:</span>
+            <span id="lblChipMod" class="font-mono" style="font-size: 13.5px; font-weight: 800; color: #334155;">@Model.Horizonte.DiasSupervivenciaModerado.ToString("N0")d</span>
+        </div>
+        <div style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 6px; background: #fff7ed; border: 1px solid #fed7aa;">
+            <span style="font-size: 10.5px; font-weight: 700; color: #9a3412; text-transform: uppercase;">Severo:</span>
+            <span id="lblChipSev" class="font-mono" style="font-size: 13.5px; font-weight: 800; color: #c2410c;">@Model.Horizonte.DiasSupervivenciaSevero.ToString("N0")d</span>
+        </div>
+        <span class="fa fa-info-circle text-muted" style="cursor: pointer; font-size: 13px;" data-toggle="tooltip" data-placement="left" title="Período máximo estimado en que la entidad puede operar sin acceso a nuevas fuentes de liquidez."></span>
     </div>
 </div>
 
-<div class="row" style="margin-bottom: 24px;">
+<div class="row" style="margin-bottom: 16px;">
     <!-- Base -->
     <div class="col-md-4 col-sm-6 col-xs-12">
-        <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 18px 20px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); position: relative;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                <span style="font-size: 12px; font-weight: 800; color: #1e3a8a; text-transform: uppercase;">Escenario Base</span>
-                <span class="badge" id="badgeSemaforoBase" style="background: #dbeafe; color: #1d4ed8; border: 1px solid #bfdbfe; font-size: 10.5px; font-weight: 700;">
+        <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 12px 14px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.04); position: relative;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <span style="font-size: 11px; font-weight: 800; color: #1e3a8a; text-transform: uppercase;">Escenario Base</span>
+                <span class="badge" id="badgeSemaforoBase" style="background: #dbeafe; color: #1d4ed8; border: 1px solid #bfdbfe; font-size: 10px; font-weight: 700;">
                     <i class="fa fa-shield"></i> Holgura Conforme
                 </span>
             </div>
-            <div id="lblDiasBase" style="font-size: 28px; font-weight: 800; color: #1e40af; margin-bottom: 4px;">&gt; 90 días (@Model.Horizonte.DiasSupervivenciaBase.ToString("N0")d)</div>
-            <p style="font-size: 12px; color: #1e3a8a; margin: 0;">Banda de inflexión: <strong id="lblInflexionBase">@Model.Horizonte.HorizonteBase</strong></p>
-            <div style="margin-top: 10px; display: flex; justify-content: center; align-items: center; gap: 8px; flex-wrap: wrap;">
-                <div id="lblBufferBase" style="font-size: 11px; font-weight: 600; color: #1e40af; background: #dbeafe; padding: 4px 10px; border-radius: 6px;">
+            <div id="lblDiasBase" style="font-size: 22px; font-weight: 800; color: #1e40af; margin-bottom: 2px;">&gt; 90 días (@Model.Horizonte.DiasSupervivenciaBase.ToString("N0")d)</div>
+            <p style="font-size: 11px; color: #1e3a8a; margin: 0;">Banda de inflexión: <strong id="lblInflexionBase">@Model.Horizonte.HorizonteBase</strong></p>
+            <div style="margin-top: 8px; display: flex; justify-content: center; align-items: center; gap: 6px; flex-wrap: wrap;">
+                <div id="lblBufferBase" style="font-size: 10.5px; font-weight: 600; color: #1e40af; background: #dbeafe; padding: 2px 8px; border-radius: 5px;">
                     Buffer: ¢@Model.Horizonte.BufferRemanenteBase.ToString("N2") MM
                 </div>
-                <div style="font-size: 11px; font-weight: 600; color: #1e40af; background: #ffffff; border: 1px solid #bfdbfe; padding: 4px 8px; border-radius: 6px;" title="Mes anterior: @Model.Horizonte.DiasSupervivenciaMesAnteriorBase.ToString("N0") días">
+                <div style="font-size: 10.5px; font-weight: 600; color: #1e40af; background: #ffffff; border: 1px solid #bfdbfe; padding: 2px 6px; border-radius: 5px;" title="Mes anterior: @Model.Horizonte.DiasSupervivenciaMesAnteriorBase.ToString("N0") días">
                     <i class="fa fa-line-chart"></i> @(Model.Horizonte.VariacionDiasBase >= 0 ? "+" + Model.Horizonte.VariacionDiasBase.ToString("N0") : Model.Horizonte.VariacionDiasBase.ToString("N0"))d vs mes ant.
                 </div>
             </div>
             <!-- Timeline Visual de Supervivencia (0 a 90+ días) -->
-            <div style="margin-top: 14px; text-align: left; background: #ffffff; border-radius: 8px; padding: 8px 12px; border: 1px solid #bfdbfe;">
-                <div style="display: flex; justify-content: space-between; font-size: 10px; color: #64748b; font-weight: 700; margin-bottom: 4px;">
+            <div style="margin-top: 10px; text-align: left; background: #ffffff; border-radius: 6px; padding: 6px 10px; border: 1px solid #bfdbfe;">
+                <div style="display: flex; justify-content: space-between; font-size: 9px; color: #64748b; font-weight: 700; margin-bottom: 3px;">
                     <span>0d (Agotamiento)</span>
                     <span>30d</span>
                     <span>60d</span>
                     <span>90d+ (Conforme)</span>
                 </div>
-                <div style="height: 10px; background: #f1f5f9; border-radius: 5px; overflow: hidden; position: relative; border: 1px solid #cbd5e1;">
+                <div style="height: 8px; background: #f1f5f9; border-radius: 4px; overflow: hidden; position: relative; border: 1px solid #cbd5e1;">
                     <div style="position: absolute; left: 33.3%; top: 0; bottom: 0; width: 1px; background: #94a3b8; z-index: 2;"></div>
                     <div style="position: absolute; left: 66.6%; top: 0; bottom: 0; width: 1px; background: #94a3b8; z-index: 2;"></div>
-                    <div id="progresoBarraBase" style="height: 100%; width: @(Math.Min(100, Math.Max(0, (double)Model.Horizonte.DiasSupervivenciaBase / 90.0 * 100)).ToString("0.0", System.Globalization.CultureInfo.InvariantCulture))%; background: #2b579a; border-radius: 4px; transition: width 0.5s ease;"></div>
+                    <div id="progresoBarraBase" style="height: 100%; width: @(Math.Min(100, Math.Max(0, (double)Model.Horizonte.DiasSupervivenciaBase / 90.0 * 100)).ToString("0.0", System.Globalization.CultureInfo.InvariantCulture))%; background: #2b579a; border-radius: 3px; transition: width 0.5s ease;"></div>
                 </div>
-                <div style="display: flex; justify-content: space-between; font-size: 9.5px; color: #1e3a8a; font-weight: 600; margin-top: 3px;">
+                <div style="display: flex; justify-content: space-between; font-size: 9px; color: #1e3a8a; font-weight: 600; margin-top: 2px;">
                     <span>Holgura estimada:</span>
-                    <strong>@(Model.Horizonte.DiasSupervivenciaBase.ToString("N0")) días de cobertura</strong>
+                    <strong id="lblHolguraDiasBase">@(Model.Horizonte.DiasSupervivenciaBase.ToString("N0")) días de cobertura</strong>
                 </div>
             </div>
         </div>
@@ -53,39 +73,39 @@
 
     <!-- Moderado -->
     <div class="col-md-4 col-sm-6 col-xs-12">
-        <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 10px; padding: 18px 20px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); position: relative;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                <span style="font-size: 12px; font-weight: 800; color: #92400e; text-transform: uppercase;">Escenario Moderado</span>
-                <span class="badge" id="badgeSemaforoMod" style="background: #fef3c7; color: #b45309; border: 1px solid #fde68a; font-size: 10.5px; font-weight: 700;">
+        <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 12px 14px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.04); position: relative;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <span style="font-size: 11px; font-weight: 800; color: #92400e; text-transform: uppercase;">Escenario Moderado</span>
+                <span class="badge" id="badgeSemaforoMod" style="background: #fef3c7; color: #b45309; border: 1px solid #fde68a; font-size: 10px; font-weight: 700;">
                     <i class="fa fa-exclamation-triangle"></i> Riesgo Medio
                 </span>
             </div>
-            <div id="lblDiasMod" style="font-size: 28px; font-weight: 800; color: #d97706; margin-bottom: 4px;">@Model.Horizonte.DiasSupervivenciaModerado.ToString("N0") días</div>
-            <p style="font-size: 12px; color: #92400e; margin: 0;">Banda de inflexión: <strong id="lblInflexionMod">@Model.Horizonte.HorizonteModerado</strong></p>
-            <div style="margin-top: 10px; display: flex; justify-content: center; align-items: center; gap: 8px; flex-wrap: wrap;">
-                <div id="lblBufferMod" style="font-size: 11px; font-weight: 600; color: #b45309; background: #fef3c7; padding: 4px 10px; border-radius: 6px;">
+            <div id="lblDiasMod" style="font-size: 22px; font-weight: 800; color: #d97706; margin-bottom: 2px;">@Model.Horizonte.DiasSupervivenciaModerado.ToString("N0") días</div>
+            <p style="font-size: 11px; color: #92400e; margin: 0;">Banda de inflexión: <strong id="lblInflexionMod">@Model.Horizonte.HorizonteModerado</strong></p>
+            <div style="margin-top: 8px; display: flex; justify-content: center; align-items: center; gap: 6px; flex-wrap: wrap;">
+                <div id="lblBufferMod" style="font-size: 10.5px; font-weight: 600; color: #b45309; background: #fef3c7; padding: 2px 8px; border-radius: 5px;">
                     Buffer: ¢@Model.Horizonte.BufferRemanenteModerado.ToString("N2") MM
                 </div>
-                <div style="font-size: 11px; font-weight: 600; color: #b45309; background: #ffffff; border: 1px solid #fde68a; padding: 4px 8px; border-radius: 6px;" title="Mes anterior: @Model.Horizonte.DiasSupervivenciaMesAnteriorModerado.ToString("N0") días">
+                <div style="font-size: 10.5px; font-weight: 600; color: #b45309; background: #ffffff; border: 1px solid #fde68a; padding: 2px 6px; border-radius: 5px;" title="Mes anterior: @Model.Horizonte.DiasSupervivenciaMesAnteriorModerado.ToString("N0") días">
                     <i class="fa fa-line-chart"></i> @(Model.Horizonte.VariacionDiasModerado >= 0 ? "+" + Model.Horizonte.VariacionDiasModerado.ToString("N0") : Model.Horizonte.VariacionDiasModerado.ToString("N0"))d vs mes ant.
                 </div>
             </div>
             <!-- Timeline Visual de Supervivencia (0 a 90+ días) -->
-            <div style="margin-top: 14px; text-align: left; background: #ffffff; border-radius: 8px; padding: 8px 12px; border: 1px solid #fde68a;">
-                <div style="display: flex; justify-content: space-between; font-size: 10px; color: #64748b; font-weight: 700; margin-bottom: 4px;">
+            <div style="margin-top: 10px; text-align: left; background: #ffffff; border-radius: 6px; padding: 6px 10px; border: 1px solid #fde68a;">
+                <div style="display: flex; justify-content: space-between; font-size: 9px; color: #64748b; font-weight: 700; margin-bottom: 3px;">
                     <span>0d (Agotamiento)</span>
                     <span>30d</span>
                     <span>60d</span>
                     <span>90d+ (Conforme)</span>
                 </div>
-                <div style="height: 10px; background: #f1f5f9; border-radius: 5px; overflow: hidden; position: relative; border: 1px solid #cbd5e1;">
+                <div style="height: 8px; background: #f1f5f9; border-radius: 4px; overflow: hidden; position: relative; border: 1px solid #cbd5e1;">
                     <div style="position: absolute; left: 33.3%; top: 0; bottom: 0; width: 1px; background: #94a3b8; z-index: 2;"></div>
                     <div style="position: absolute; left: 66.6%; top: 0; bottom: 0; width: 1px; background: #94a3b8; z-index: 2;"></div>
-                    <div id="progresoBarraMod" style="height: 100%; width: @(Math.Min(100, Math.Max(0, (double)Model.Horizonte.DiasSupervivenciaModerado / 90.0 * 100)).ToString("0.0", System.Globalization.CultureInfo.InvariantCulture))%; background: #64748b; border-radius: 4px; transition: width 0.5s ease;"></div>
+                    <div id="progresoBarraMod" style="height: 100%; width: @(Math.Min(100, Math.Max(0, (double)Model.Horizonte.DiasSupervivenciaModerado / 90.0 * 100)).ToString("0.0", System.Globalization.CultureInfo.InvariantCulture))%; background: #64748b; border-radius: 3px; transition: width 0.5s ease;"></div>
                 </div>
-                <div style="display: flex; justify-content: space-between; font-size: 9.5px; color: #92400e; font-weight: 600; margin-top: 3px;">
+                <div style="display: flex; justify-content: space-between; font-size: 9px; color: #92400e; font-weight: 600; margin-top: 2px;">
                     <span>Holgura estimada:</span>
-                    <strong>@(Model.Horizonte.DiasSupervivenciaModerado.ToString("N0")) días de cobertura</strong>
+                    <strong id="lblHolguraDiasMod">@(Model.Horizonte.DiasSupervivenciaModerado.ToString("N0")) días de cobertura</strong>
                 </div>
             </div>
         </div>
@@ -93,21 +113,44 @@
 
     <!-- Severo -->
     <div class="col-md-4 col-sm-6 col-xs-12">
-        <div style="background: #fff7ed; border: 1px solid #fed7aa; border-radius: 10px; padding: 18px 20px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); position: relative;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                <span style="font-size: 12px; font-weight: 800; color: #9a3412; text-transform: uppercase;">Escenario Severo</span>
-                <span class="badge" id="badgeSemaforoSev" style="background: #ffedd5; color: #c2410c; border: 1px solid #fed7aa; font-size: 10.5px; font-weight: 700;">
+        <div style="background: #fff7ed; border: 1px solid #fed7aa; border-radius: 8px; padding: 12px 14px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.04); position: relative;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <span style="font-size: 11px; font-weight: 800; color: #9a3412; text-transform: uppercase;">Escenario Severo</span>
+                <span class="badge" id="badgeSemaforoSev" style="background: #ffedd5; color: #c2410c; border: 1px solid #fed7aa; font-size: 10px; font-weight: 700;">
                     <i class="fa fa-fire"></i> Acción Contingente
                 </span>
             </div>
-            <div id="lblDiasSev" style="font-size: 28px; font-weight: 800; color: #ea580c; margin-bottom: 4px;">@Model.Horizonte.DiasSupervivenciaSevero.ToString("N0") días</div>
-            <p style="font-size: 12px; color: #9a3412; margin: 0;">Banda de inflexión: <strong id="lblInflexionSev">@Model.Horizonte.HorizonteSevero</strong></p>
-            <div style="margin-top: 10px; display: flex; justify-content: center; align-items: center; gap: 8px; flex-wrap: wrap;">
-                <div id="lblBufferSev" style="font-size: 11px; font-weight: 700; color: #ffffff; background: #ea580c; padding: 4px 10px; border-radius: 6px;">
+            <div id="lblDiasSev" style="font-size: 22px; font-weight: 800; color: #ea580c; margin-bottom: 2px;">@Model.Horizonte.DiasSupervivenciaSevero.ToString("N0") días</div>
+            <p style="font-size: 11px; color: #9a3412; margin: 0;">Banda de inflexión: <strong id="lblInflexionSev">@Model.Horizonte.HorizonteSevero</strong></p>
+            <div style="margin-top: 8px; display: flex; justify-content: center; align-items: center; gap: 6px; flex-wrap: wrap;">
+                <div id="lblBufferSev" style="font-size: 10.5px; font-weight: 700; color: #ffffff; background: #ea580c; padding: 2px 8px; border-radius: 5px;">
                     <i class="fa fa-arrow-down"></i> Reducción: @Model.Horizonte.ReduccionDias.ToString("N0") días
                 </div>
-                <div style="font-size: 11px; font-weight: 600; color: #c2410c; background: #ffffff; border: 1px solid #fed7aa; padding: 4px 8px; border-radius: 6px;" title="Mes anterior: @Model.Horizonte.DiasSupervivenciaMesAnteriorSevero.ToString("N0") días">
+                <div style="font-size: 10.5px; font-weight: 600; color: #c2410c; background: #ffffff; border: 1px solid #fed7aa; padding: 2px 6px; border-radius: 5px;" title="Mes anterior: @Model.Horizonte.DiasSupervivenciaMesAnteriorSevero.ToString("N0") días">
                     <i class="fa fa-line-chart"></i> @(Model.Horizonte.VariacionDiasSevero >= 0 ? "+" + Model.Horizonte.VariacionDiasSevero.ToString("N0") : Model.Horizonte.VariacionDiasSevero.ToString("N0"))d vs mes ant.
+                </div>
+            </div>
+            <!-- Timeline Visual de Supervivencia (0 a 90+ días) -->
+            <div style="margin-top: 10px; text-align: left; background: #ffffff; border-radius: 6px; padding: 6px 10px; border: 1px solid #fed7aa;">
+                <div style="display: flex; justify-content: space-between; font-size: 9px; color: #64748b; font-weight: 700; margin-bottom: 3px;">
+                    <span>0d (Agotamiento)</span>
+                    <span>30d</span>
+                    <span>60d</span>
+                    <span>90d+ (Conforme)</span>
+                </div>
+                <div style="height: 8px; background: #f1f5f9; border-radius: 4px; overflow: hidden; position: relative; border: 1px solid #cbd5e1;">
+                    <div style="position: absolute; left: 33.3%; top: 0; bottom: 0; width: 1px; background: #94a3b8; z-index: 2;"></div>
+                    <div style="position: absolute; left: 66.6%; top: 0; bottom: 0; width: 1px; background: #94a3b8; z-index: 2;"></div>
+                    <div id="progresoBarraSev" style="height: 100%; width: @(Math.Min(100, Math.Max(0, (double)Model.Horizonte.DiasSupervivenciaSevero / 90.0 * 100)).ToString("0.0", System.Globalization.CultureInfo.InvariantCulture))%; background: #ea580c; border-radius: 3px; transition: width 0.5s ease;"></div>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 9px; color: #9a3412; font-weight: 600; margin-top: 2px;">
+                    <span>Holgura estimada:</span>
+                    <strong id="lblHolguraDiasSev">@(Model.Horizonte.DiasSupervivenciaSevero.ToString("N0")) días de cobertura</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
                 </div>
             </div>
             <!-- Timeline Visual de Supervivencia (0 a 90+ días) -->
@@ -176,24 +219,24 @@
                     <tbody>
                         <tr>
                             <td style="font-weight: 700; color: #1e3a8a;"><i class="fa fa-circle" style="color: #2b579a; font-size: 10px; margin-right: 6px;"></i> Base</td>
-                            <td style="text-align: right; font-weight: 600; color: #1e40af;">¢@Model.Horizonte.SaldoFinalBase.ToString("N2")</td>
-                            <td style="text-align: center; font-weight: 600;">@Model.Horizonte.HorizonteBase</td>
-                            <td style="text-align: right; font-weight: 600;">¢@Model.Horizonte.BufferRemanenteBase.ToString("N2") MM</td>
-                            <td style="text-align: center;"><span class="badge" style="background: #dbeafe; color: #1e40af; font-weight: 700; font-size: 12px; padding: 4px 10px;">> 90 días (@Model.Horizonte.DiasSupervivenciaBase.ToString("N0")d)</span></td>
+                            <td id="tdHzSaldoBase" style="text-align: right; font-weight: 600; color: #1e40af;">¢@Model.Horizonte.SaldoFinalBase.ToString("N2")</td>
+                            <td id="tdHzBandaBase" style="text-align: center; font-weight: 600;">@Model.Horizonte.HorizonteBase</td>
+                            <td id="tdHzBufferBase" style="text-align: right; font-weight: 600;">¢@Model.Horizonte.BufferRemanenteBase.ToString("N2") MM</td>
+                            <td id="tdHzBadgeBase" style="text-align: center;"><span class="badge" style="background: #dbeafe; color: #1e40af; font-weight: 700; font-size: 12px; padding: 4px 10px;">> 90 días (@Model.Horizonte.DiasSupervivenciaBase.ToString("N0")d)</span></td>
                         </tr>
                         <tr>
                             <td style="font-weight: 700; color: #475569;"><i class="fa fa-circle" style="color: #64748b; font-size: 10px; margin-right: 6px;"></i> Moderado</td>
-                            <td style="text-align: right; font-weight: 600; color: #475569;">¢@Model.Horizonte.SaldoFinalModerado.ToString("N2")</td>
-                            <td style="text-align: center; font-weight: 600;">@Model.Horizonte.HorizonteModerado</td>
-                            <td style="text-align: right; font-weight: 600;">¢@Model.Horizonte.BufferRemanenteModerado.ToString("N2") MM</td>
-                            <td style="text-align: center;"><span class="badge" style="background: #f1f5f9; color: #475569; font-weight: 700; font-size: 12px; padding: 4px 10px; border: 1px solid #cbd5e1;">@Model.Horizonte.DiasSupervivenciaModerado.ToString("N0") días</span></td>
+                            <td id="tdHzSaldoMod" style="text-align: right; font-weight: 600; color: #475569;">¢@Model.Horizonte.SaldoFinalModerado.ToString("N2")</td>
+                            <td id="tdHzBandaMod" style="text-align: center; font-weight: 600;">@Model.Horizonte.HorizonteModerado</td>
+                            <td id="tdHzBufferMod" style="text-align: right; font-weight: 600;">¢@Model.Horizonte.BufferRemanenteModerado.ToString("N2") MM</td>
+                            <td id="tdHzBadgeMod" style="text-align: center;"><span class="badge" style="background: #f1f5f9; color: #475569; font-weight: 700; font-size: 12px; padding: 4px 10px; border: 1px solid #cbd5e1;">@Model.Horizonte.DiasSupervivenciaModerado.ToString("N0") días</span></td>
                         </tr>
                         <tr>
                             <td style="font-weight: 700; color: #9a3412;"><i class="fa fa-circle" style="color: #ea580c; font-size: 10px; margin-right: 6px;"></i> Severo</td>
-                            <td style="text-align: right; font-weight: 600; color: #ea580c;">¢@Model.Horizonte.SaldoFinalSevero.ToString("N2")</td>
-                            <td style="text-align: center; font-weight: 600;">@Model.Horizonte.HorizonteSevero</td>
-                            <td style="text-align: right; font-weight: 600;">¢@Model.Horizonte.BufferRemanenteSevero.ToString("N2") MM</td>
-                            <td style="text-align: center;"><span class="badge" style="background: #ffedd5; color: #c2410c; font-weight: 700; font-size: 12px; padding: 4px 10px; border: 1px solid #fed7aa;">@Model.Horizonte.DiasSupervivenciaSevero.ToString("N0") días</span></td>
+                            <td id="tdHzSaldoSev" style="text-align: right; font-weight: 600; color: #ea580c;">¢@Model.Horizonte.SaldoFinalSevero.ToString("N2")</td>
+                            <td id="tdHzBandaSev" style="text-align: center; font-weight: 600;">@Model.Horizonte.HorizonteSevero</td>
+                            <td id="tdHzBufferSev" style="text-align: right; font-weight: 600;">¢@Model.Horizonte.BufferRemanenteSevero.ToString("N2") MM</td>
+                            <td id="tdHzBadgeSev" style="text-align: center;"><span class="badge" style="background: #ffedd5; color: #c2410c; font-weight: 700; font-size: 12px; padding: 4px 10px; border: 1px solid #fed7aa;">@Model.Horizonte.DiasSupervivenciaSevero.ToString("N0") días</span></td>
                         </tr>
                     </tbody>
                 </table>

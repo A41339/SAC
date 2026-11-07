@@ -409,36 +409,110 @@
         $.ajax({
             url: '@Url.Action("SimularEstres", "Liquidez")',
             type: 'POST',
-            data: postData,
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            data: JSON.stringify(postData),
             success: function(resp) {
                 if (resp && resp.success) {
-                    // 1. Actualizar Tabla FAL
+                    window.ultimoResultadoSimulacion = resp;
+
+                    function fmtCR(val) {
+                        return '¢' + (val || 0).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    }
+                    function fmtCRMM(val) {
+                        return '¢' + (val || 0).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' MM';
+                    }
+
+                    // 1. Actualizar Razón de Cobertura y Tabla Detallada
                     if (resp.razonCobertura) {
                         var rc = resp.razonCobertura;
-                        $('#tdFalEfBase').text('¢' + (rc.Disponibilidades110_Base || 0).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' MM');
-                        $('#tdFalEfMod').text('¢' + (rc.Disponibilidades110_Moderado || 0).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' MM');
-                        $('#tdFalEfSev').text('¢' + (rc.Disponibilidades110_Severo || 0).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' MM');
+                        // Tabla FAL Supuestos
+                        $('#tdFalEfBase').text(fmtCRMM(rc.Disponibilidades110_Base));
+                        $('#tdFalEfMod').text(fmtCRMM(rc.Disponibilidades110_Moderado));
+                        $('#tdFalEfSev').text(fmtCRMM(rc.Disponibilidades110_Severo));
 
-                        $('#tdFalInvBase').text('¢' + (rc.Inversiones120_Base || 0).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' MM');
-                        $('#tdFalInvMod').text('¢' + (rc.Inversiones120_Moderado || 0).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' MM');
-                        $('#tdFalInvSev').text('¢' + (rc.Inversiones120_Severo || 0).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' MM');
+                        $('#tdFalInvBase').text(fmtCRMM(rc.Inversiones120_Base));
+                        $('#tdFalInvMod').text(fmtCRMM(rc.Inversiones120_Moderado));
+                        $('#tdFalInvSev').text(fmtCRMM(rc.Inversiones120_Severo));
 
-                        $('#tdFalTotBase').text('¢' + (rc.ActivosLiquidos_Base || 0).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' MM');
-                        $('#tdFalTotMod').text('¢' + (rc.ActivosLiquidos_Moderado || 0).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' MM');
-                        $('#tdFalTotSev').text('¢' + (rc.ActivosLiquidos_Severo || 0).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' MM');
+                        $('#tdFalTotBase').text(fmtCRMM(rc.ActivosLiquidos_Base));
+                        $('#tdFalTotMod').text(fmtCRMM(rc.ActivosLiquidos_Moderado));
+                        $('#tdFalTotSev').text(fmtCRMM(rc.ActivosLiquidos_Severo));
 
-                        // Actualizar Razón de Cobertura Tarjetas
-                        $('#lblRCBase').text((rc.RazonCobertura_Base || 0).toFixed(2) + 'x');
-                        $('#lblRCMod').text((rc.RazonCobertura_Moderado || 0).toFixed(2) + 'x');
-                        $('#lblRCSevero').text((rc.RazonCobertura_Severo || 0).toFixed(2) + 'x');
+                        // Razón de Cobertura - Chips de Cabecera Ejecutiva y Badges
+                        var rcBaseStr = (rc.RazonCobertura_Base || 0).toFixed(2) + 'x';
+                        var rcModStr = (rc.RazonCobertura_Moderado || 0).toFixed(2) + 'x';
+                        var rcSevStr = (rc.RazonCobertura_Severo || 0).toFixed(2) + 'x';
 
-                        // Actualizar Badge de Pestaña Razón de Cobertura
-                        $('#badgeTabRC').text((rc.RazonCobertura_Base || 0).toFixed(2) + 'x');
+                        $('#lblRCBase').text(rcBaseStr);
+                        $('#lblRCMod').text(rcModStr);
+                        $('#lblRCSevero').text(rcSevStr);
+                        $('#badgeTabRC').text(rcBaseStr);
 
-                        // Actualizar Fila Resumen Tabla Razón Cobertura
-                        $('#cellRCBaseVal').text((rc.RazonCobertura_Base || 0).toFixed(2) + 'x');
-                        $('#cellRCModVal').text((rc.RazonCobertura_Moderado || 0).toFixed(2) + 'x');
-                        $('#cellRCSeveroVal').text((rc.RazonCobertura_Severo || 0).toFixed(2) + 'x');
+                        // Tabla Detallada tblRazonCobertura
+                        $('#tdRCActivosLiquidosBase').text(fmtCR(rc.ActivosLiquidos_Base));
+                        $('#tdRCActivosLiquidosMod').text(fmtCR(rc.ActivosLiquidos_Moderado));
+                        $('#tdRCActivosLiquidosSev').text(fmtCR(rc.ActivosLiquidos_Severo));
+
+                        $('#tdRCFalBase').text(fmtCR(rc.ActivosLiquidos_Base));
+                        $('#tdRCFalMod').text(fmtCR(rc.ActivosLiquidos_Moderado));
+                        $('#tdRCFalSev').text(fmtCR(rc.ActivosLiquidos_Severo));
+
+                        $('#tdRCIngresosBase').text(fmtCR(rc.IngresosTotales_Base));
+                        $('#tdRCIngresosMod').text(fmtCR(rc.IngresosTotales_Moderado));
+                        $('#tdRCIngresosSev').text(fmtCR(rc.IngresosTotales_Severo));
+
+                        $('#tdRCCarteraBase').text(fmtCR(rc.CarteraRecuperacion_Base));
+                        $('#tdRCCarteraMod').text(fmtCR(rc.CarteraRecuperacion_Moderado));
+                        $('#tdRCCarteraSev').text(fmtCR(rc.CarteraRecuperacion_Severo));
+
+                        $('#tdRCInversionesBase').text(fmtCR(rc.Inversiones_Base));
+                        $('#tdRCInversionesMod').text(fmtCR(rc.Inversiones_Moderado));
+                        $('#tdRCInversionesSev').text(fmtCR(rc.Inversiones_Severo));
+
+                        $('#tdRCComisionesBase').text(fmtCR(rc.Comisiones_Base));
+                        $('#tdRCComisionesMod').text(fmtCR(rc.Comisiones_Moderado));
+                        $('#tdRCComisionesSev').text(fmtCR(rc.Comisiones_Severo));
+
+                        $('#tdRCEgresosBase').text(fmtCR(rc.EgresosTotales_Base));
+                        $('#tdRCEgresosMod').text(fmtCR(rc.EgresosTotales_Moderado));
+                        $('#tdRCEgresosSev').text(fmtCR(rc.EgresosTotales_Severo));
+
+                        $('#tdRCCdpBase').text(fmtCR(rc.VencimientoCDP_Base));
+                        $('#tdRCCdpMod').text(fmtCR(rc.VencimientoCDP_Moderado));
+                        $('#tdRCCdpSev').text(fmtCR(rc.VencimientoCDP_Severo));
+
+                        $('#tdRCTop20Base').text(fmtCR(rc.SalidaTop20_Base));
+                        $('#tdRCTop20Mod').text(fmtCR(rc.SalidaTop20_Moderado));
+                        $('#tdRCTop20Sev').text(fmtCR(rc.SalidaTop20_Severo));
+
+                        $('#tdRCObligacionesBase').text(fmtCR(rc.ObligacionesFinancieras_Base));
+                        $('#tdRCObligacionesMod').text(fmtCR(rc.ObligacionesFinancieras_Moderado));
+                        $('#tdRCObligacionesSev').text(fmtCR(rc.ObligacionesFinancieras_Severo));
+
+                        $('#tdRCEgresosFinAdmBase').text(fmtCR(rc.EgresosFinAdm_Base));
+                        $('#tdRCEgresosFinAdmMod').text(fmtCR(rc.EgresosFinAdm_Moderado));
+                        $('#tdRCEgresosFinAdmSev').text(fmtCR(rc.EgresosFinAdm_Severo));
+
+                        $('#tdRCDesembolsosBase').text(fmtCR(rc.DesembolsosCredito_Base));
+                        $('#tdRCDesembolsosMod').text(fmtCR(rc.DesembolsosCredito_Moderado));
+                        $('#tdRCDesembolsosSev').text(fmtCR(rc.DesembolsosCredito_Severo));
+
+                        $('#tdRCCorridaVistaBase').text(fmtCR(rc.SalidaVista_Base));
+                        $('#tdRCCorridaVistaMod').text(fmtCR(rc.SalidaVista_Moderado));
+                        $('#tdRCCorridaVistaSev').text(fmtCR(rc.SalidaVista_Severo));
+
+                        var difB = rc.DiferenciaTotal_Base || 0;
+                        var difM = rc.DiferenciaTotal_Moderado || 0;
+                        var difS = rc.DiferenciaTotal_Severo || 0;
+                        $('#tdRCDifTotalBase').text((difB >= 0 ? '+' : '') + fmtCR(difB));
+                        $('#tdRCDifTotalMod').text((difM >= 0 ? '+' : '') + fmtCR(difM));
+                        $('#tdRCDifTotalSev').text((difS >= 0 ? '+' : '') + fmtCR(difS));
+
+                        // Fila Resumen Tabla Razón Cobertura
+                        $('#cellRCBaseVal').text(rcBaseStr);
+                        $('#cellRCModVal').text(rcModStr);
+                        $('#cellRCSeveroVal').text(rcSevStr);
 
                         $('#cellRCBaseEstado').text(rc.RazonCobertura_Base >= 1.0 ? 'Conforme' : 'Déficit').css('color', rc.RazonCobertura_Base >= 1.0 ? '#1e40af' : '#ea580c');
                         $('#cellRCModEstado').text(rc.RazonCobertura_Moderado >= 1.0 ? 'Conforme' : 'Déficit').css('color', rc.RazonCobertura_Moderado >= 1.0 ? '#475569' : '#ea580c');
@@ -457,7 +531,30 @@
                     // 2. Actualizar ICL Estresado
                     if (resp.iclEstresado) {
                         var icl = resp.iclEstresado;
-                        $('#badgeTabICLEstres').text(((icl.ICLBase || 0) * 100).toFixed(1) + '%');
+                        var iclBasePct = ((icl.ICLBase || 0) * 100).toFixed(1) + '%';
+                        var iclModPct = ((icl.ICLModerado || 0) * 100).toFixed(1) + '%';
+                        var iclSevPct = ((icl.ICLSevero || 0) * 100).toFixed(1) + '%';
+                        var iclVarPts = (icl.VariacionSeveroVsBase >= 0 ? '+' : '') + ((icl.VariacionSeveroVsBase || 0) * 100).toFixed(1) + ' pts';
+
+                        $('#badgeTabICLEstres').text(iclBasePct);
+                        $('#lblICLBase').text(iclBasePct);
+                        $('#lblICLMod').text(iclModPct);
+                        $('#lblICLSev').text(iclSevPct);
+                        $('#lblICLVar').text(iclVarPts);
+
+                        // Tabla ICL Detalle
+                        $('#tdIclFalBase').text(fmtCRMM(icl.FAL_Base));
+                        $('#tdIclFalMod').text(fmtCRMM(icl.FAL_Moderado));
+                        $('#tdIclFalSev').text(fmtCRMM(icl.FAL_Severo));
+
+                        $('#tdIclSalidasBase').text(fmtCRMM(icl.Salidas30d_Base));
+                        $('#tdIclSalidasMod').text(fmtCRMM(icl.Salidas30d_Moderado));
+                        $('#tdIclSalidasSev').text(fmtCRMM(icl.Salidas30d_Severo));
+
+                        $('#tdIclResBase').text(((icl.ICLBase || 0) * 100).toFixed(2) + '%');
+                        $('#tdIclResMod').text(((icl.ICLModerado || 0) * 100).toFixed(2) + '%');
+                        $('#tdIclResSev').text(((icl.ICLSevero || 0) * 100).toFixed(2) + '%');
+
                         var chartIcl = $('#chartICLEstresadoComparativo').highcharts();
                         if (chartIcl && chartIcl.series && chartIcl.series[0]) {
                             chartIcl.series[0].setData([
@@ -496,7 +593,7 @@
                         window.datosEscenariosBrechas.severo.fal = '¢' + (resp.razonCobertura ? resp.razonCobertura.ActivosLiquidos_Severo : 0).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' MM';
 
                         if (typeof seleccionarEscenarioBrechas === 'function') {
-                            seleccionarEscenarioBrechas('base');
+                            seleccionarEscenarioBrechas(window.escenarioBrechasActivo || 'base');
                         }
 
                         var chartFal = $('#chartBrechasAcumuladoFAL').highcharts();
@@ -510,18 +607,31 @@
                     // 4. Actualizar Horizonte de Supervivencia y Timelines Visuales
                     if (resp.horizonte) {
                         var hz = resp.horizonte;
+                        var hzBaseTxt = hz.DiasSupervivenciaBase >= 90 ? '> 90d' : hz.DiasSupervivenciaBase.toFixed(0) + 'd';
+                        var hzModTxt = hz.DiasSupervivenciaModerado.toFixed(0) + 'd';
+                        var hzSevTxt = hz.DiasSupervivenciaSevero.toFixed(0) + 'd';
+
+                        $('#lblChipBase').text(hzBaseTxt);
+                        $('#lblChipMod').text(hzModTxt);
+                        $('#lblChipSev').text(hzSevTxt);
+
                         $('#lblDiasBase').text('> 90 días (' + hz.DiasSupervivenciaBase.toFixed(0) + 'd)');
                         $('#lblDiasMod').text(hz.DiasSupervivenciaModerado.toFixed(0) + ' días');
                         $('#lblDiasSev').text(hz.DiasSupervivenciaSevero.toFixed(0) + ' días');
 
-                        $('#badgeTabHorizonte').text(hz.DiasSupervivenciaBase >= 90 ? '> 90d' : hz.DiasSupervivenciaBase.toFixed(0) + 'd');
+                        $('#lblHolguraDiasBase').text(hz.DiasSupervivenciaBase.toFixed(0) + ' días de cobertura');
+                        $('#lblHolguraDiasMod').text(hz.DiasSupervivenciaModerado.toFixed(0) + ' días de cobertura');
+                        $('#lblHolguraDiasSev').text(hz.DiasSupervivenciaSevero.toFixed(0) + ' días de cobertura');
+
+                        $('#badgeTabHorizonte').text(hzBaseTxt);
 
                         $('#lblInflexionBase').text(hz.HorizonteBase);
                         $('#lblInflexionMod').text(hz.HorizonteModerado);
                         $('#lblInflexionSev').text(hz.HorizonteSevero);
 
-                        $('#lblBufferBase').text('Buffer: ¢' + (hz.BufferRemanenteBase || 0).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' MM');
-                        $('#lblBufferMod').text('Buffer: ¢' + (hz.BufferRemanenteModerado || 0).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' MM');
+                        $('#lblBufferBase').text('Buffer: ' + fmtCRMM(hz.BufferRemanenteBase));
+                        $('#lblBufferMod').text('Buffer: ' + fmtCRMM(hz.BufferRemanenteModerado));
+                        $('#lblBufferSev').html('<i class="fa fa-arrow-down"></i> Reducción: ' + (hz.ReduccionDias || 0).toFixed(0) + ' días');
 
                         // Actualizar barras de tiempo visuales (0 a 90 días)
                         var pctBase = Math.min(100, Math.max(0, (hz.DiasSupervivenciaBase / 90.0) * 100));
@@ -530,6 +640,19 @@
                         $('#progresoBarraBase').css('width', pctBase + '%');
                         $('#progresoBarraMod').css('width', pctMod + '%');
                         $('#progresoBarraSev').css('width', pctSev + '%');
+
+                        // Actualizar Tabla Comparativa Horizonte
+                        $('#tdHzSaldoBase').text(fmtCR(hz.SaldoFinalBase));
+                        $('#tdHzSaldoMod').text(fmtCR(hz.SaldoFinalModerado));
+                        $('#tdHzSaldoSev').text(fmtCR(hz.SaldoFinalSevero));
+
+                        $('#tdHzBandaBase').text(hz.HorizonteBase);
+                        $('#tdHzBandaMod').text(hz.HorizonteModerado);
+                        $('#tdHzBandaSev').text(hz.HorizonteSevero);
+
+                        $('#tdHzBufferBase').text(fmtCRMM(hz.BufferRemanenteBase));
+                        $('#tdHzBufferMod').text(fmtCRMM(hz.BufferRemanenteModerado));
+                        $('#tdHzBufferSev').text(fmtCRMM(hz.BufferRemanenteSevero));
 
                         var chartHz = $('#chartTrayectoriaSupervivencia').highcharts();
                         if (chartHz && chartHz.series && chartHz.series.length >= 3) {

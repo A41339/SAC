@@ -1,53 +1,47 @@
 @model FGA.Model.LiquidezIndexViewModel
 
-<div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid #f1f5f9;">
-    <div style="display: flex; align-items: center; gap: 14px;">
-        <img class="img-logo-entidad" width="44" height="44" src="@(Session["Logo"] ?? Url.Content("~/Content/images/FFC.jpg"))" onerror="this.onerror=null;this.src='@Url.Content("~/Content/images/FFC.jpg")';" style="border-radius: 8px; background: #ffffff; padding: 3px; border: 1px solid #e2e8f0; object-fit: contain;" />
+<div class="compact-tab-header" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 16px; margin-bottom: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+    <!-- Lado Izquierdo: Título Compacto con Logo y Subtítulo en línea -->
+    <div style="display: flex; align-items: center; gap: 10px;">
+        <img class="img-logo-entidad" width="30" height="30" src="@(Session["Logo"] ?? Url.Content("~/Content/images/FFC.jpg"))" onerror="this.onerror=null;this.src='@Url.Content("~/Content/images/FFC.jpg")';" style="border-radius: 6px; background: #ffffff; padding: 2px; border: 1px solid #e2e8f0; object-fit: contain;" />
         <div>
-            <h4 style="margin: 0; font-size: 16px; font-weight: 700; color: #143750;">Razón de Cobertura de Liquidez (30 días) - <span id="lblEntidadRC">@Model.NombreEntidad</span></h4>
-            <p style="margin: 2px 0 0 0; font-size: 12px; color: #64748b;">(Activos Líquidos + Ingresos Contractuales) / (Egresos Contractuales + Variables Proyectivas)</p>
-        </div>
-    </div>
-</div>
-
-<!-- 3 Tarjetas KPI Minimalistas Razón de Cobertura -->
-<div class="row" style="margin-bottom: 18px;">
-    <div class="col-md-4 col-sm-4 col-xs-12">
-        <div style="background: #ffffff; border: 1px solid #bfdbfe; border-left: 4px solid #2b579a; border-radius: 8px; padding: 12px 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); display: flex; align-items: center; justify-content: space-between;">
-            <div>
-                <div style="font-size: 11px; font-weight: 700; color: #1e3a8a; text-transform: uppercase; letter-spacing: 0.3px;">Escenario Contractual (30d)</div>
-                <div id="lblRCBase" class="font-mono" style="font-size: 24px; font-weight: 800; color: #1e40af; margin: 2px 0;">@(Model.RazonCobertura.RazonCobertura_Base.ToString("N2"))x</div>
-                <div style="font-size: 11px; color: #64748b;">Cobertura saludable &gt; 1.00x</div>
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                <span style="font-size: 14px; font-weight: 700; color: #143750;">Razón de Cobertura de Liquidez (30 días)</span>
+                <span class="badge" style="background: #f1f5f9; color: #475569; font-weight: 600; font-size: 11px; padding: 2px 7px;">@Model.NombreEntidad</span>
             </div>
-            <div style="width: 38px; height: 38px; border-radius: 8px; background: #eff6ff; display: flex; align-items: center; justify-content: center; color: #2b579a; font-size: 16px;">
-                <i class="fa fa-check-circle"></i>
+            <div style="font-size: 11px; color: #64748b; margin-top: 1px;">
+                <i class="fa fa-info-circle" style="color: #0284c7; margin-right: 3px;"></i> (Activos Líquidos + Ingresos Contractuales) / (Egresos + Var. Proyectivas) &bull; Meta &ge; 1.00x
             </div>
         </div>
     </div>
 
-    <div class="col-md-4 col-sm-4 col-xs-12">
-        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-left: 4px solid #64748b; border-radius: 8px; padding: 12px 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); display: flex; align-items: center; justify-content: space-between;">
+    <!-- Lado Derecho: 3 Chips de Métricas Compactos en línea -->
+    <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+        <!-- Contractual -->
+        <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 6px; padding: 4px 12px; display: flex; align-items: center; gap: 8px;" title="Escenario Contractual (30d) - Cobertura saludable > 1.00x">
             <div>
-                <div style="font-size: 11px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.3px;">Simulación Moderada (30d)</div>
-                <div id="lblRCMod" class="font-mono" style="font-size: 24px; font-weight: 800; color: #334155; margin: 2px 0;">@(Model.RazonCobertura.RazonCobertura_Moderado.ToString("N2"))x</div>
-                <div style="font-size: 11px; color: #94a3b8;">Sensibilidad media</div>
+                <div style="font-size: 9.5px; font-weight: 700; color: #1e3a8a; text-transform: uppercase;">Contractual (30d)</div>
+                <div id="lblRCBase" class="font-mono" style="font-size: 16px; font-weight: 800; color: #1e40af; line-height: 1.1;">@(Model.RazonCobertura.RazonCobertura_Base.ToString("N2"))x</div>
             </div>
-            <div style="width: 38px; height: 38px; border-radius: 8px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; color: #64748b; font-size: 16px;">
-                <i class="fa fa-sliders"></i>
-            </div>
+            <i class="fa fa-check-circle" style="color: #2b579a; font-size: 14px;"></i>
         </div>
-    </div>
 
-    <div class="col-md-4 col-sm-4 col-xs-12">
-        <div style="background: #ffffff; border: 1px solid #fed7aa; border-left: 4px solid #ea580c; border-radius: 8px; padding: 12px 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); display: flex; align-items: center; justify-content: space-between;">
+        <!-- Moderada -->
+        <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 4px 12px; display: flex; align-items: center; gap: 8px;" title="Simulación Moderada (30d) - Sensibilidad media">
             <div>
-                <div style="font-size: 11px; font-weight: 700; color: #9a3412; text-transform: uppercase; letter-spacing: 0.3px;">Simulación Severa (30d)</div>
-                <div id="lblRCSevero" class="font-mono" style="font-size: 24px; font-weight: 800; color: #c2410c; margin: 2px 0;">@(Model.RazonCobertura.RazonCobertura_Severo.ToString("N2"))x</div>
-                <div style="font-size: 11px; color: #9a3412;">Presión extrema de liquidez</div>
+                <div style="font-size: 9.5px; font-weight: 700; color: #475569; text-transform: uppercase;">Moderada (30d)</div>
+                <div id="lblRCMod" class="font-mono" style="font-size: 16px; font-weight: 800; color: #334155; line-height: 1.1;">@(Model.RazonCobertura.RazonCobertura_Moderado.ToString("N2"))x</div>
             </div>
-            <div style="width: 38px; height: 38px; border-radius: 8px; background: #fff7ed; display: flex; align-items: center; justify-content: center; color: #ea580c; font-size: 16px;">
-                <i class="fa fa-warning"></i>
+            <i class="fa fa-sliders" style="color: #64748b; font-size: 14px;"></i>
+        </div>
+
+        <!-- Severa -->
+        <div style="background: #fff7ed; border: 1px solid #fed7aa; border-radius: 6px; padding: 4px 12px; display: flex; align-items: center; gap: 8px;" title="Simulación Severa (30d) - Presión extrema de liquidez">
+            <div>
+                <div style="font-size: 9.5px; font-weight: 700; color: #9a3412; text-transform: uppercase;">Severa (30d)</div>
+                <div id="lblRCSevero" class="font-mono" style="font-size: 16px; font-weight: 800; color: #c2410c; line-height: 1.1;">@(Model.RazonCobertura.RazonCobertura_Severo.ToString("N2"))x</div>
             </div>
+            <i class="fa fa-warning" style="color: #ea580c; font-size: 14px;"></i>
         </div>
     </div>
 </div>
@@ -99,85 +93,85 @@
                         <!-- 1. ACTIVOS LIQUIDOS -->
                         <tr style="background-color: #f8fafc; font-weight: 700; border-top: 1px solid #cbd5e1;">
                             <td style="color: #1e3a8a; padding: 10px 16px;"><i class="fa fa-cubes" style="color: #2b579a; margin-right: 6px;"></i> Activos Líquidos</td>
-                            <td class="text-right">¢@Model.RazonCobertura.ActivosLiquidos_Base.ToString("N2")</td>
-                            <td class="text-right">¢@Model.RazonCobertura.ActivosLiquidos_Moderado.ToString("N2")</td>
-                            <td class="text-right">¢@Model.RazonCobertura.ActivosLiquidos_Severo.ToString("N2")</td>
+                            <td class="text-right" id="tdRCActivosLiquidosBase">¢@Model.RazonCobertura.ActivosLiquidos_Base.ToString("N2")</td>
+                            <td class="text-right" id="tdRCActivosLiquidosMod">¢@Model.RazonCobertura.ActivosLiquidos_Moderado.ToString("N2")</td>
+                            <td class="text-right" id="tdRCActivosLiquidosSev">¢@Model.RazonCobertura.ActivosLiquidos_Severo.ToString("N2")</td>
                         </tr>
                         <tr>
                             <td style="color: #475569; padding-left: 32px;">Fondo de Activos Líquidos (FAL)</td>
-                            <td class="text-right font-mono">@Model.RazonCobertura.ActivosLiquidos_Base.ToString("N2")</td>
-                            <td class="text-right font-mono">@Model.RazonCobertura.ActivosLiquidos_Moderado.ToString("N2")</td>
-                            <td class="text-right font-mono">@Model.RazonCobertura.ActivosLiquidos_Severo.ToString("N2")</td>
+                            <td class="text-right font-mono" id="tdRCFalBase">@Model.RazonCobertura.ActivosLiquidos_Base.ToString("N2")</td>
+                            <td class="text-right font-mono" id="tdRCFalMod">@Model.RazonCobertura.ActivosLiquidos_Moderado.ToString("N2")</td>
+                            <td class="text-right font-mono" id="tdRCFalSev">@Model.RazonCobertura.ActivosLiquidos_Severo.ToString("N2")</td>
                         </tr>
 
                         <!-- 2. INGRESOS CONTRACTUALES -->
                         <tr style="background-color: #eff6ff; font-weight: 700; border-top: 2px solid #e2e8f0;">
                             <td style="color: #1e3a8a; padding: 10px 16px;"><i class="fa fa-arrow-down" style="color: #2b579a; margin-right: 6px;"></i> Ingresos Contractuales</td>
-                            <td class="text-right">¢@Model.RazonCobertura.IngresosContractuales_Base.ToString("N2")</td>
-                            <td class="text-right">¢@Model.RazonCobertura.IngresosContractuales_Moderado.ToString("N2")</td>
-                            <td class="text-right">¢@Model.RazonCobertura.IngresosContractuales_Severo.ToString("N2")</td>
+                            <td class="text-right" id="tdRCIngresosBase">¢@Model.RazonCobertura.IngresosContractuales_Base.ToString("N2")</td>
+                            <td class="text-right" id="tdRCIngresosMod">¢@Model.RazonCobertura.IngresosContractuales_Moderado.ToString("N2")</td>
+                            <td class="text-right" id="tdRCIngresosSev">¢@Model.RazonCobertura.IngresosContractuales_Severo.ToString("N2")</td>
                         </tr>
                         <tr>
                             <td style="color: #475569; padding-left: 32px;">Cartera de crédito (recuperaciones)</td>
-                            <td class="text-right font-mono">@Model.RazonCobertura.CarteraRecuperacion_Base.ToString("N2")</td>
-                            <td class="text-right font-mono">@Model.RazonCobertura.CarteraRecuperacion_Moderado.ToString("N2")</td>
-                            <td class="text-right font-mono">@Model.RazonCobertura.CarteraRecuperacion_Severo.ToString("N2")</td>
+                            <td class="text-right font-mono" id="tdRCCarteraBase">@Model.RazonCobertura.CarteraRecuperacion_Base.ToString("N2")</td>
+                            <td class="text-right font-mono" id="tdRCCarteraMod">@Model.RazonCobertura.CarteraRecuperacion_Moderado.ToString("N2")</td>
+                            <td class="text-right font-mono" id="tdRCCarteraSev">@Model.RazonCobertura.CarteraRecuperacion_Severo.ToString("N2")</td>
                         </tr>
                         <tr>
                             <td style="color: #475569; padding-left: 32px;">Inversiones (cupones, vencimiento principal)</td>
-                            <td class="text-right font-mono">@Model.RazonCobertura.Inversiones_Base.ToString("N2")</td>
-                            <td class="text-right font-mono">@Model.RazonCobertura.Inversiones_Moderado.ToString("N2")</td>
-                            <td class="text-right font-mono">@Model.RazonCobertura.Inversiones_Severo.ToString("N2")</td>
+                            <td class="text-right font-mono" id="tdRCInversionesBase">@Model.RazonCobertura.Inversiones_Base.ToString("N2")</td>
+                            <td class="text-right font-mono" id="tdRCInversionesMod">@Model.RazonCobertura.Inversiones_Moderado.ToString("N2")</td>
+                            <td class="text-right font-mono" id="tdRCInversionesSev">@Model.RazonCobertura.Inversiones_Severo.ToString("N2")</td>
                         </tr>
                         <tr>
                             <td style="color: #475569; padding-left: 32px;">Comisiones por servicios</td>
-                            <td class="text-right font-mono">@Model.RazonCobertura.Comisiones_Base.ToString("N2")</td>
-                            <td class="text-right font-mono">@Model.RazonCobertura.Comisiones_Moderado.ToString("N2")</td>
-                            <td class="text-right font-mono">@Model.RazonCobertura.Comisiones_Severo.ToString("N2")</td>
+                            <td class="text-right font-mono" id="tdRCComisionesBase">@Model.RazonCobertura.Comisiones_Base.ToString("N2")</td>
+                            <td class="text-right font-mono" id="tdRCComisionesMod">@Model.RazonCobertura.Comisiones_Moderado.ToString("N2")</td>
+                            <td class="text-right font-mono" id="tdRCComisionesSev">@Model.RazonCobertura.Comisiones_Severo.ToString("N2")</td>
                         </tr>
 
                         <!-- 3. EGRESOS CONTRACTUALES -->
                         <tr style="background-color: #fff7ed; font-weight: 700; border-top: 2px solid #e2e8f0;">
                             <td style="color: #9a3412; padding: 10px 16px;"><i class="fa fa-arrow-up" style="color: #f97316; margin-right: 6px;"></i> Egresos Contractuales</td>
-                            <td class="text-right">¢@Model.RazonCobertura.EgresosContractuales_Base.ToString("N2")</td>
-                            <td class="text-right">¢@Model.RazonCobertura.EgresosContractuales_Moderado.ToString("N2")</td>
-                            <td class="text-right">¢@Model.RazonCobertura.EgresosContractuales_Severo.ToString("N2")</td>
+                            <td class="text-right" id="tdRCEgresosBase">¢@Model.RazonCobertura.EgresosContractuales_Base.ToString("N2")</td>
+                            <td class="text-right" id="tdRCEgresosMod">¢@Model.RazonCobertura.EgresosContractuales_Moderado.ToString("N2")</td>
+                            <td class="text-right" id="tdRCEgresosSev">¢@Model.RazonCobertura.EgresosContractuales_Severo.ToString("N2")</td>
                         </tr>
                         <tr>
                             <td style="color: #475569; padding-left: 32px;">CDP's contractuales a un mes</td>
-                            <td class="text-right font-mono">@Model.RazonCobertura.CDPContractuales_Base.ToString("N2")</td>
-                            <td class="text-right font-mono">@Model.RazonCobertura.CDPContractuales_Moderado.ToString("N2")</td>
-                            <td class="text-right font-mono">@Model.RazonCobertura.CDPContractuales_Severo.ToString("N2")</td>
+                            <td class="text-right font-mono" id="tdRCCdpBase">@Model.RazonCobertura.CDPContractuales_Base.ToString("N2")</td>
+                            <td class="text-right font-mono" id="tdRCCdpMod">@Model.RazonCobertura.CDPContractuales_Moderado.ToString("N2")</td>
+                            <td class="text-right font-mono" id="tdRCCdpSev">@Model.RazonCobertura.CDPContractuales_Severo.ToString("N2")</td>
                         </tr>
                         <tr>
                             <td style="color: #475569; padding-left: 32px;">Salida depósitos Top 20</td>
-                            <td class="text-right font-mono">@Model.RazonCobertura.SalidaTop20_Base.ToString("N2")</td>
-                            <td class="text-right font-mono">@Model.RazonCobertura.SalidaTop20_Moderado.ToString("N2")</td>
-                            <td class="text-right font-mono">@Model.RazonCobertura.SalidaTop20_Severo.ToString("N2")</td>
+                            <td class="text-right font-mono" id="tdRCTop20Base">@Model.RazonCobertura.SalidaTop20_Base.ToString("N2")</td>
+                            <td class="text-right font-mono" id="tdRCTop20Mod">@Model.RazonCobertura.SalidaTop20_Moderado.ToString("N2")</td>
+                            <td class="text-right font-mono" id="tdRCTop20Sev">@Model.RazonCobertura.SalidaTop20_Severo.ToString("N2")</td>
                         </tr>
                         <tr>
                             <td style="color: #475569; padding-left: 32px;">Pago obligaciones con terceros (principal)</td>
-                            <td class="text-right font-mono">@Model.RazonCobertura.PagoObligaciones_Base.ToString("N2")</td>
-                            <td class="text-right font-mono">@Model.RazonCobertura.PagoObligaciones_Moderado.ToString("N2")</td>
-                            <td class="text-right font-mono">@Model.RazonCobertura.PagoObligaciones_Severo.ToString("N2")</td>
+                            <td class="text-right font-mono" id="tdRCObligacionesBase">@Model.RazonCobertura.PagoObligaciones_Base.ToString("N2")</td>
+                            <td class="text-right font-mono" id="tdRCObligacionesMod">@Model.RazonCobertura.PagoObligaciones_Moderado.ToString("N2")</td>
+                            <td class="text-right font-mono" id="tdRCObligacionesSev">@Model.RazonCobertura.PagoObligaciones_Severo.ToString("N2")</td>
                         </tr>
                         <tr>
                             <td style="color: #475569; padding-left: 32px;">Egresos financieros y administrativos</td>
-                            <td class="text-right font-mono">@Model.RazonCobertura.EgresosFinAdm_Base.ToString("N2")</td>
-                            <td class="text-right font-mono">@Model.RazonCobertura.EgresosFinAdm_Moderado.ToString("N2")</td>
-                            <td class="text-right font-mono">@Model.RazonCobertura.EgresosFinAdm_Severo.ToString("N2")</td>
+                            <td class="text-right font-mono" id="tdRCEgresosFinAdmBase">@Model.RazonCobertura.EgresosFinAdm_Base.ToString("N2")</td>
+                            <td class="text-right font-mono" id="tdRCEgresosFinAdmMod">@Model.RazonCobertura.EgresosFinAdm_Moderado.ToString("N2")</td>
+                            <td class="text-right font-mono" id="tdRCEgresosFinAdmSev">@Model.RazonCobertura.EgresosFinAdm_Severo.ToString("N2")</td>
                         </tr>
                         <tr>
                             <td style="color: #475569; padding-left: 32px;">Desembolsos de cartera</td>
-                            <td class="text-right font-mono">@Model.RazonCobertura.DesembolsosCartera_Base.ToString("N2")</td>
-                            <td class="text-right font-mono">@Model.RazonCobertura.DesembolsosCartera_Moderado.ToString("N2")</td>
-                            <td class="text-right font-mono">@Model.RazonCobertura.DesembolsosCartera_Severo.ToString("N2")</td>
+                            <td class="text-right font-mono" id="tdRCDesembolsosBase">@Model.RazonCobertura.DesembolsosCartera_Base.ToString("N2")</td>
+                            <td class="text-right font-mono" id="tdRCDesembolsosMod">@Model.RazonCobertura.DesembolsosCartera_Moderado.ToString("N2")</td>
+                            <td class="text-right font-mono" id="tdRCDesembolsosSev">@Model.RazonCobertura.DesembolsosCartera_Severo.ToString("N2")</td>
                         </tr>
                         <tr>
                             <td style="color: #475569; padding-left: 32px;">Corrida depósitos vista</td>
-                            <td class="text-right font-mono">@Model.RazonCobertura.CorridaDepositosVista_Base.ToString("N2")</td>
-                            <td class="text-right font-mono">@Model.RazonCobertura.CorridaDepositosVista_Moderado.ToString("N2")</td>
-                            <td class="text-right font-mono">@Model.RazonCobertura.CorridaDepositosVista_Severo.ToString("N2")</td>
+                            <td class="text-right font-mono" id="tdRCCorridaVistaBase">@Model.RazonCobertura.CorridaDepositosVista_Base.ToString("N2")</td>
+                            <td class="text-right font-mono" id="tdRCCorridaVistaMod">@Model.RazonCobertura.CorridaDepositosVista_Moderado.ToString("N2")</td>
+                            <td class="text-right font-mono" id="tdRCCorridaVistaSev">@Model.RazonCobertura.CorridaDepositosVista_Severo.ToString("N2")</td>
                         </tr>
 
                         <!-- 4. VARIABLES PROYECTIVAS (DIFERENCIA DE ESCENARIOS) -->
@@ -187,33 +181,33 @@
                         }
                         <tr style="background-color: #fff7ed; font-weight: 700; border-top: 2px solid #e2e8f0;">
                             <td style="color: #9a3412; padding: 10px 16px;"><i class="fa fa-sliders" style="color: #ea580c; margin-right: 6px;"></i> Variables Proyectivas (Diferencia de Escenarios)</td>
-                            <td class="text-right font-mono">¢0.00</td>
-                            <td class="text-right font-mono">¢@difTotalMod.ToString("N2")</td>
-                            <td class="text-right font-mono">¢@difTotalSev.ToString("N2")</td>
+                            <td class="text-right font-mono" id="tdRCDifTotalBase">¢0.00</td>
+                            <td class="text-right font-mono" id="tdRCDifTotalMod">¢@difTotalMod.ToString("N2")</td>
+                            <td class="text-right font-mono" id="tdRCDifTotalSev">¢@difTotalSev.ToString("N2")</td>
                         </tr>
                         <tr>
                             <td style="color: #475569; padding-left: 32px;">CDP's (diferencia de escenarios)</td>
-                            <td class="text-right font-mono">@Model.RazonCobertura.CDPDiferencia_Base.ToString("N2")</td>
-                            <td class="text-right font-mono">@Model.RazonCobertura.CDPDiferencia_Moderado.ToString("N2")</td>
-                            <td class="text-right font-mono">@Model.RazonCobertura.CDPDiferencia_Severo.ToString("N2")</td>
+                            <td class="text-right font-mono" id="tdRCCdpDifBase">@Model.RazonCobertura.CDPDiferencia_Base.ToString("N2")</td>
+                            <td class="text-right font-mono" id="tdRCCdpDifMod">@Model.RazonCobertura.CDPDiferencia_Moderado.ToString("N2")</td>
+                            <td class="text-right font-mono" id="tdRCCdpDifSev">@Model.RazonCobertura.CDPDiferencia_Severo.ToString("N2")</td>
                         </tr>
                         <tr>
                             <td style="color: #475569; padding-left: 32px;">Salida depósitos Top 20 (diferencia)</td>
-                            <td class="text-right font-mono">@Model.RazonCobertura.SalidaTop20Diferencia_Base.ToString("N2")</td>
-                            <td class="text-right font-mono">@Model.RazonCobertura.SalidaTop20Diferencia_Moderado.ToString("N2")</td>
-                            <td class="text-right font-mono">@Model.RazonCobertura.SalidaTop20Diferencia_Severo.ToString("N2")</td>
+                            <td class="text-right font-mono" id="tdRCTop20DifBase">@Model.RazonCobertura.SalidaTop20Diferencia_Base.ToString("N2")</td>
+                            <td class="text-right font-mono" id="tdRCTop20DifMod">@Model.RazonCobertura.SalidaTop20Diferencia_Moderado.ToString("N2")</td>
+                            <td class="text-right font-mono" id="tdRCTop20DifSev">@Model.RazonCobertura.SalidaTop20Diferencia_Severo.ToString("N2")</td>
                         </tr>
                         <tr>
                             <td style="color: #475569; padding-left: 32px;">Corrida de depósitos vista (diferencia)</td>
-                            <td class="text-right font-mono">@Model.RazonCobertura.CorridaVistaDiferencia_Base.ToString("N2")</td>
-                            <td class="text-right font-mono">@Model.RazonCobertura.CorridaVistaDiferencia_Moderado.ToString("N2")</td>
-                            <td class="text-right font-mono">@Model.RazonCobertura.CorridaVistaDiferencia_Severo.ToString("N2")</td>
+                            <td class="text-right font-mono" id="tdRCCorridaVistaDifBase">@Model.RazonCobertura.CorridaVistaDiferencia_Base.ToString("N2")</td>
+                            <td class="text-right font-mono" id="tdRCCorridaVistaDifMod">@Model.RazonCobertura.CorridaVistaDiferencia_Moderado.ToString("N2")</td>
+                            <td class="text-right font-mono" id="tdRCCorridaVistaDifSev">@Model.RazonCobertura.CorridaVistaDiferencia_Severo.ToString("N2")</td>
                         </tr>
                         <tr>
                             <td style="color: #475569; padding-left: 32px;">Desembolso de cartera (diferencia)</td>
-                            <td class="text-right font-mono">@Model.RazonCobertura.DesembolsoCarteraDiferencia_Base.ToString("N2")</td>
-                            <td class="text-right font-mono">@Model.RazonCobertura.DesembolsoCarteraDiferencia_Moderado.ToString("N2")</td>
-                            <td class="text-right font-mono">@Model.RazonCobertura.DesembolsoCarteraDiferencia_Severo.ToString("N2")</td>
+                            <td class="text-right font-mono" id="tdRCDesembolsoDifBase">@Model.RazonCobertura.DesembolsoCarteraDiferencia_Base.ToString("N2")</td>
+                            <td class="text-right font-mono" id="tdRCDesembolsoDifMod">@Model.RazonCobertura.DesembolsoCarteraDiferencia_Moderado.ToString("N2")</td>
+                            <td class="text-right font-mono" id="tdRCDesembolsoDifSev">@Model.RazonCobertura.DesembolsoCarteraDiferencia_Severo.ToString("N2")</td>
                         </tr>
 
                         <!-- 5. RESULTADO FINAL RAZON DE COBERTURA -->

@@ -52,66 +52,48 @@
     }
 </style>
 
-<div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid #f1f5f9;">
-    <div style="display: flex; align-items: center; gap: 14px;">
-        <img class="img-logo-entidad" width="44" height="44" src="@(Session["Logo"] ?? Url.Content("~/Content/images/FFC.jpg"))" onerror="this.onerror=null;this.src='@Url.Content("~/Content/images/FFC.jpg")';" style="border-radius: 8px; background: #ffffff; padding: 3px; border: 1px solid #e2e8f0; object-fit: contain;" />
-        <div>
-            <h4 style="margin: 0; font-size: 16px; font-weight: 700; color: #143750;">Brechas de Liquidez bajo Estrés - <span id="lblEntidadBrechas">@Model.NombreEntidad</span></h4>
-            <p style="margin: 2px 0 0 0; font-size: 12px; color: #64748b;">Comportamiento proyectado de bandas y flujos netos acumulados en escenarios de estrés</p>
+<div class="header-cobertura-bar" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; padding: 8px 12px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+    <!-- Left: Title, Entity badge & Context -->
+    <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+        <img class="img-logo-entidad" width="28" height="28" src="@(Session["Logo"] ?? Url.Content("~/Content/images/FFC.jpg"))" onerror="this.onerror=null;this.src='@Url.Content("~/Content/images/FFC.jpg")';" style="border-radius: 4px; background: #ffffff; padding: 1px; border: 1px solid #cbd5e1; object-fit: contain;" />
+        <div style="display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap;">
+            <span style="font-size: 14px; font-weight: 700; color: #143750;">Brechas de Liquidez bajo Estrés</span>
+            <span class="badge" style="background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; font-size: 11px; font-weight: 600; padding: 2px 7px;">
+                <i class="fa fa-university" style="margin-right: 3px;"></i> <span id="lblEntidadBrechas">@Model.NombreEntidad</span>
+            </span>
+        </div>
+        <!-- Selector de Escenario Activo integrado compacto -->
+        <div style="display: inline-flex; align-items: center; background: #f1f5f9; padding: 2px; border-radius: 6px; border: 1px solid #cbd5e1; gap: 2px; margin-left: 6px;">
+            <button type="button" id="btnEscenarioBase" class="btn-escenario-pill activo-base" style="padding: 3px 10px; font-size: 11px;" onclick="seleccionarEscenarioBrechas('base')">
+                <i class="fa fa-circle" style="font-size: 7px; margin-right: 4px;"></i> Base
+            </button>
+            <button type="button" id="btnEscenarioMod" class="btn-escenario-pill inactivo" style="padding: 3px 10px; font-size: 11px;" onclick="seleccionarEscenarioBrechas('moderado')">
+                <i class="fa fa-circle-o" style="font-size: 7px; margin-right: 4px;"></i> Moderado
+            </button>
+            <button type="button" id="btnEscenarioSev" class="btn-escenario-pill inactivo" style="padding: 3px 10px; font-size: 11px;" onclick="seleccionarEscenarioBrechas('severo')">
+                <i class="fa fa-circle-o" style="font-size: 7px; margin-right: 4px;"></i> Severo
+            </button>
         </div>
     </div>
 
-    <!-- Selector de Escenario Activo (Requerimiento imagen 19) -->
-    <div style="display: inline-flex; align-items: center; background: #f1f5f9; padding: 4px; border-radius: 8px; border: 1px solid #cbd5e1; gap: 4px;">
-        <button type="button" id="btnEscenarioBase" class="btn-escenario-pill activo-base" onclick="seleccionarEscenarioBrechas('base')">
-            <i class="fa fa-circle" style="font-size: 8px; margin-right: 6px;"></i> Escenario Base
-        </button>
-        <button type="button" id="btnEscenarioMod" class="btn-escenario-pill inactivo" onclick="seleccionarEscenarioBrechas('moderado')">
-            <i class="fa fa-circle-o" style="font-size: 8px; margin-right: 6px;"></i> Escenario Moderado
-        </button>
-        <button type="button" id="btnEscenarioSev" class="btn-escenario-pill inactivo" onclick="seleccionarEscenarioBrechas('severo')">
-            <i class="fa fa-circle-o" style="font-size: 8px; margin-right: 6px;"></i> Escenario Severo
-        </button>
-    </div>
-</div>
-
-<!-- 3 Tarjetas KPI Minimalistas del Escenario Activo -->
-<div class="row" style="margin-bottom: 18px;">
-    <div class="col-md-4 col-sm-4 col-xs-12">
-        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-left: 4px solid #64748b; border-radius: 8px; padding: 12px 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); display: flex; align-items: center; justify-content: space-between;">
-            <div>
-                <div style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.3px;">GAP 30 Días (Estrés)</div>
-                <div id="lblBrecha30d" class="font-mono" style="font-size: 22px; font-weight: 800; color: #334155; margin: 2px 0;">¢-22,72 MM</div>
-                <div id="lblBrecha30dDesc" style="font-size: 11px; color: #94a3b8;">Flujo neto inicial a 30 días</div>
-            </div>
-            <div style="width: 38px; height: 38px; border-radius: 8px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; color: #64748b; font-size: 16px;">
-                <i class="fa fa-calendar-minus-o"></i>
-            </div>
+    <!-- Right: Compact inline metric chips -->
+    <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+        <!-- FAL Activos Líquidos -->
+        <div style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 6px; background: #eff6ff; border: 1px solid #bfdbfe;">
+            <span style="font-size: 10.5px; font-weight: 700; color: #1e3a8a; text-transform: uppercase;">FAL Estrés:</span>
+            <span id="lblFALEstres" class="font-mono" style="font-size: 13.5px; font-weight: 800; color: #1e40af;">¢1.203,53 MM</span>
         </div>
-    </div>
-    <div class="col-md-4 col-sm-4 col-xs-12">
-        <div style="background: #ffffff; border: 1px solid #fed7aa; border-left: 4px solid #ea580c; border-radius: 8px; padding: 12px 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); display: flex; align-items: center; justify-content: space-between;">
-            <div>
-                <div style="font-size: 11px; font-weight: 700; color: #9a3412; text-transform: uppercase; letter-spacing: 0.3px;">GAP 90 Días (Estrés)</div>
-                <div id="lblBrecha90d" class="font-mono" style="font-size: 22px; font-weight: 800; color: #c2410c; margin: 2px 0;">¢-461,02 MM</div>
-                <div id="lblBrecha90dDesc" style="font-size: 11px; color: #9a3412;">Flujo neto en banda 61-90 días</div>
-            </div>
-            <div style="width: 38px; height: 38px; border-radius: 8px; background: #fff7ed; display: flex; align-items: center; justify-content: center; color: #ea580c; font-size: 16px;">
-                <i class="fa fa-calendar"></i>
-            </div>
+        <!-- GAP 30 Días -->
+        <div style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 6px; background: #f8fafc; border: 1px solid #cbd5e1;">
+            <span style="font-size: 10.5px; font-weight: 700; color: #475569; text-transform: uppercase;">GAP 30d:</span>
+            <span id="lblBrecha30d" class="font-mono" style="font-size: 13.5px; font-weight: 800; color: #334155;">¢-22,72 MM</span>
         </div>
-    </div>
-    <div class="col-md-4 col-sm-4 col-xs-12">
-        <div style="background: #ffffff; border: 1px solid #bfdbfe; border-left: 4px solid #2b579a; border-radius: 8px; padding: 12px 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); display: flex; align-items: center; justify-content: space-between;">
-            <div>
-                <div style="font-size: 11px; font-weight: 700; color: #1e3a8a; text-transform: uppercase; letter-spacing: 0.3px;">FAL Bajo Estrés</div>
-                <div id="lblFALEstres" class="font-mono" style="font-size: 22px; font-weight: 800; color: #1e40af; margin: 2px 0;">¢1.203,53 MM</div>
-                <div style="font-size: 11px; color: #64748b;">Activos líquidos disponibles</div>
-            </div>
-            <div style="width: 38px; height: 38px; border-radius: 8px; background: #eff6ff; display: flex; align-items: center; justify-content: center; color: #2b579a; font-size: 16px;">
-                <i class="fa fa-cubes"></i>
-            </div>
+        <!-- GAP 90 Días -->
+        <div style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 6px; background: #fff7ed; border: 1px solid #fed7aa;">
+            <span style="font-size: 10.5px; font-weight: 700; color: #9a3412; text-transform: uppercase;">GAP 90d:</span>
+            <span id="lblBrecha90d" class="font-mono" style="font-size: 13.5px; font-weight: 800; color: #c2410c;">¢-461,02 MM</span>
         </div>
+        <span class="fa fa-info-circle text-muted" style="cursor: pointer; font-size: 13px;" data-toggle="tooltip" data-placement="left" title="Comportamiento proyectado de bandas y flujos netos acumulados en escenarios de estrés."></span>
     </div>
 </div>
 
@@ -266,6 +248,7 @@
     }
 
     function seleccionarEscenarioBrechas(escenario) {
+        window.escenarioBrechasActivo = escenario;
         $('#btnEscenarioBase, #btnEscenarioMod, #btnEscenarioSev')
             .removeClass('activo-base activo-mod activo-sev')
             .addClass('inactivo');

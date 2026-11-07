@@ -731,19 +731,66 @@
                 setTimeout(function () {
                     if (target === '#tab-razon-cobertura') {
                         var c = $('#chartRazonCoberturaComparativo').highcharts();
-                        if (c) c.reflow(); else renderGraficoCobertura();
+                        if (c) {
+                            if (window.ultimoResultadoSimulacion && window.ultimoResultadoSimulacion.razonCobertura) {
+                                var rc = window.ultimoResultadoSimulacion.razonCobertura;
+                                c.series[0].setData([
+                                    { y: rc.RazonCobertura_Base, color: '#2b579a' },
+                                    { y: rc.RazonCobertura_Moderado, color: '#64748b' },
+                                    { y: rc.RazonCobertura_Severo, color: '#ea580c' }
+                                ], false);
+                            }
+                            c.reflow();
+                        } else {
+                            renderGraficoCobertura();
+                        }
                     } else if (target === '#tab-icl-estresado') {
                         var c = $('#chartICLEstresadoComparativo').highcharts();
-                        if (c) c.reflow(); else renderGraficoICLEstresado();
+                        if (c) {
+                            if (window.ultimoResultadoSimulacion && window.ultimoResultadoSimulacion.iclEstresado) {
+                                var icl = window.ultimoResultadoSimulacion.iclEstresado;
+                                c.series[0].setData([
+                                    { y: icl.ICLBase, color: '#2b579a' },
+                                    { y: icl.ICLModerado, color: '#64748b' },
+                                    { y: icl.ICLSevero, color: '#ea580c' }
+                                ], false);
+                            }
+                            c.reflow();
+                        } else {
+                            renderGraficoICLEstresado();
+                        }
                     } else if (target === '#tab-brechas-estres') {
                         var c1 = $('#chartBrechasBanda').highcharts();
                         var c2 = $('#chartBrechasAcumuladoFAL').highcharts();
-                        if (c1) c1.reflow();
-                        if (c2) c2.reflow();
+                        if (c1) {
+                            if (typeof seleccionarEscenarioBrechas === 'function') {
+                                seleccionarEscenarioBrechas(window.escenarioBrechasActivo || 'base');
+                            }
+                            c1.reflow();
+                        }
+                        if (c2) {
+                            if (window.ultimoResultadoSimulacion && window.ultimoResultadoSimulacion.brechasEstres) {
+                                var be = window.ultimoResultadoSimulacion.brechasEstres;
+                                c2.series[0].setData(be.AcumuladoBase, false);
+                                c2.series[1].setData(be.AcumuladoModerado, false);
+                                c2.series[2].setData(be.AcumuladoSevero, false);
+                            }
+                            c2.reflow();
+                        }
                         if (!c1 || !c2) renderGraficoBrechasEstres();
                     } else if (target === '#tab-horizonte') {
                         var c = $('#chartTrayectoriaSupervivencia').highcharts();
-                        if (c) c.reflow(); else renderGraficoSupervivencia();
+                        if (c) {
+                            if (window.ultimoResultadoSimulacion && window.ultimoResultadoSimulacion.horizonte) {
+                                var hz = window.ultimoResultadoSimulacion.horizonte;
+                                c.series[0].setData(hz.TrayectoriaBase, false);
+                                c.series[1].setData(hz.TrayectoriaModerado, false);
+                                c.series[2].setData(hz.TrayectoriaSevero, false);
+                            }
+                            c.reflow();
+                        } else {
+                            renderGraficoSupervivencia();
+                        }
                     }
                 }, 60);
             });
