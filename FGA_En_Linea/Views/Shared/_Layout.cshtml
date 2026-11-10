@@ -2029,8 +2029,9 @@
             // Sincronización proactiva con el módulo raíz activo de la base de datos (menú lateral)
             if (parentModuleName && parentModuleUrl && $parentPill.length > 0) {
                 var totalBcItems = $('.breadcrumb li').length;
+                var isPreservedPill = ($parentPill.attr('data-preserve-back') === 'true' || $parentPill.hasClass('no-auto-override'));
                 // En rutas estándar (Inicio > Padre > Actual), si el texto de la píldora difiere del módulo de BD, manda la BD
-                if (totalBcItems <= 3) {
+                if (totalBcItems <= 3 && !isPreservedPill) {
                     var currentPillNorm = normalizar($parentPill.text());
                     var dbParentNorm = normalizar(parentModuleName);
                     if (currentPillNorm !== dbParentNorm) {
@@ -2062,7 +2063,10 @@
                 headerBackName = 'Inicio';
             }
 
-            if (headerBackName && headerBackUrl && !isHomePage) {
+            var $existingBack = $('.header-back-link').first();
+            var hasExplicitBack = ($existingBack.length > 0 && ($existingBack.attr('data-preserve-back') === 'true' || $existingBack.hasClass('no-auto-override')));
+
+            if (headerBackName && headerBackUrl && !isHomePage && !hasExplicitBack) {
                 var $header = $('.content-header').first();
                 if ($header.length > 0 && $header.find('.header-back-link').length === 0 && $header.find('.hub-header').length === 0) {
                     var $titleEl = $header.find('.alertas-header-top-row, .modern-page-title, .cuenta-header-title, h1').first();
@@ -2155,7 +2159,7 @@
                                                 var item = data[k];
                                                 if (!item || !item.url) continue;
                                                 var itemPath = item.url.split('?')[0].toLowerCase().replace(/\/+$/, '');
-                                                if (itemPath === combo || itemPath.indexOf(combo) !== -1 || combo.indexOf(itemPath) !== -1) {
+                                                if (itemPath === combo || (act === 'index' && itemPath === '/' + ctrl)) {
                                                     matchItem = item;
                                                     break;
                                                 }
@@ -2184,31 +2188,37 @@
 
                                         // C. Actualizar breadcrumb del padre y botón de retorno con la jerarquía viva de BD
                                         if (matchItem.parent) {
-                                            var parentItem = null;
-                                            var pNorm = normalizar(matchItem.parent);
-                                            for (var p = 0; p < data.length; p++) {
-                                                if (data[p] && data[p].title && normalizar(data[p].title) === pNorm) {
-                                                    parentItem = data[p];
-                                                    break;
-                                                }
-                                            }
-
-                                            var parentTargetUrl = (parentItem && parentItem.url) ? parentItem.url : resolverUrlModulo(matchItem.parent);
-
-                                            var $bcParent = $('.breadcrumb .breadcrumb-parent-pill').first();
-                                            if ($bcParent.length > 0) {
-                                                var $pIcon = $bcParent.find('i').first();
-                                                var pIconHtml = $pIcon.length ? $pIcon.prop('outerHTML') + ' ' : '';
-                                                $bcParent.html(pIconHtml + matchItem.parent);
-                                                $bcParent.attr('href', parentTargetUrl);
-                                                $bcParent.attr('title', 'Volver al menú de ' + matchItem.parent);
-                                            }
-
                                             var $headerBack = $('.header-back-link');
-                                            if ($headerBack.length > 0) {
-                                                $headerBack.attr('href', parentTargetUrl);
-                                                $headerBack.attr('title', 'Volver a ' + matchItem.parent);
-                                                $headerBack.html('<i class="fa fa-arrow-left" style="font-size: 12px;"></i> Volver a ' + matchItem.parent);
+                                            var isPreservedBack = ($headerBack.attr('data-preserve-back') === 'true' || $headerBack.hasClass('no-auto-override'));
+                                            var totalBcItems = $('.breadcrumb li').length;
+
+                                            // Respetar enlaces padres específicos cuando la vista ya tiene jerarquía profunda (>= 4 niveles) o preservación explícita
+                                            if (!isPreservedBack && totalBcItems <= 3) {
+                                                var parentItem = null;
+                                                var pNorm = normalizar(matchItem.parent);
+                                                for (var p = 0; p < data.length; p++) {
+                                                    if (data[p] && data[p].title && normalizar(data[p].title) === pNorm) {
+                                                        parentItem = data[p];
+                                                        break;
+                                                    }
+                                                }
+
+                                                var parentTargetUrl = (parentItem && parentItem.url) ? parentItem.url : resolverUrlModulo(matchItem.parent);
+
+                                                var $bcParent = $('.breadcrumb .breadcrumb-parent-pill').first();
+                                                if ($bcParent.length > 0 && !$bcParent.hasClass('no-auto-override') && $bcParent.attr('data-preserve-back') !== 'true') {
+                                                    var $pIcon = $bcParent.find('i').first();
+                                                    var pIconHtml = $pIcon.length ? $pIcon.prop('outerHTML') + ' ' : '';
+                                                    $bcParent.html(pIconHtml + matchItem.parent);
+                                                    $bcParent.attr('href', parentTargetUrl);
+                                                    $bcParent.attr('title', 'Volver al menú de ' + matchItem.parent);
+                                                }
+
+                                                if ($headerBack.length > 0) {
+                                                    $headerBack.attr('href', parentTargetUrl);
+                                                    $headerBack.attr('title', 'Volver a ' + matchItem.parent);
+                                                    $headerBack.html('<i class="fa fa-arrow-left" style="font-size: 12px;"></i> Volver a ' + matchItem.parent);
+                                                }
                                             }
                                         }
 

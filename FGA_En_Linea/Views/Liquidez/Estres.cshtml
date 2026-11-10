@@ -157,7 +157,7 @@
 <section class="content-header" style="padding: 12px 20px 8px 20px;">
     <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
         <div>
-            <a href="@Url.Action("Index", "Liquidez", new { idEntidad = Model.IdEntidad })" class="header-back-link">
+            <a href="@Url.Action("Index", "Liquidez", new { idEntidad = Model.IdEntidad })" class="header-back-link no-auto-override" data-preserve-back="true" title="Volver a Submódulo de Liquidez">
                 <i class="fa fa-arrow-left"></i> Volver a Submódulo de Liquidez
             </a>
             <h1 style="margin: 0; font-size: 20px; font-weight: 700; color: #143750; display: flex; align-items: center; gap: 8px;">
@@ -172,7 +172,7 @@
     <ol class="breadcrumb" style="top: 10px;">
         <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
         <li><a href="@Url.Action("Index", "Modulo", new { id = 1500 })"><i class="fa fa-file-text-o" style="margin-right: 4px;"></i> Estructura Financiera</a></li>
-        <li><a href="@Url.Action("Index", "Liquidez", new { idEntidad = Model.IdEntidad })" class="breadcrumb-parent-pill" title="Volver a Submódulo de Liquidez"><i class="fa fa-tint" style="margin-right: 4px;"></i> Submódulo de Liquidez</a></li>
+        <li><a href="@Url.Action("Index", "Liquidez", new { idEntidad = Model.IdEntidad })" class="breadcrumb-parent-pill no-auto-override" data-preserve-back="true" title="Volver a Submódulo de Liquidez"><i class="fa fa-tint" style="margin-right: 4px;"></i> Submódulo de Liquidez</a></li>
         <li class="active">Escenarios de Estrés</li>
     </ol>
 </section>
@@ -714,7 +714,7 @@
                     series: [
                         { name: 'Escenario Base (@Model.Horizonte.DiasSupervivenciaBase.ToString("N0")d)', data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Horizonte.TrayectoriaBase)), color: '#2b579a', fillColor: 'rgba(43, 87, 154, 0.12)' },
                         { name: 'Escenario Moderado (@Model.Horizonte.DiasSupervivenciaModerado.ToString("N0")d)', data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Horizonte.TrayectoriaModerado)), color: '#64748b', fillColor: 'rgba(100, 116, 139, 0.12)' },
-                        { name: 'Escenario Severo (@Model.Horizonte.DiasSupervivenciaSevero.ToString("N0")d)', data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Horizonte.TrayectoriaSevero)), color: '#ea580c', fillColor: 'rgba(234, 88, 12, 0.12)' }
+                        { name: 'Escenario Severo (Agotamiento: Día @Model.Horizonte.DiasSupervivenciaSevero.ToString("N0"))', data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Horizonte.TrayectoriaSevero)), color: '#ea580c', fillColor: 'rgba(234, 88, 12, 0.12)' }
                     ],
                     exporting: { enabled: true },
                     credits: { enabled: false }
