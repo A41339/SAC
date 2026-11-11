@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
 using System.Xml.Serialization;
@@ -25,6 +26,7 @@ namespace FGA.Models
         public string Tipo { get; set; }
         public int? TipoDepositoFGDLEY9816 { get; set; }
         public Int64? IdEncabezado_Id { get; set; }
+        [ForeignKey("IdEncabezado_Id")]
         public virtual XML_Encabezado IdEncabezado { get; set; }
     }
 } 

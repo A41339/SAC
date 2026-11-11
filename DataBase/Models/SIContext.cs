@@ -152,6 +152,7 @@ namespace FGA.Models
             modelBuilder.Configurations.Add(new Maping.XML_Pasivo_Cuenta_Contable_210Map());
             modelBuilder.Configurations.Add(new Maping.XML_Capital_SocialMap());
             modelBuilder.Configurations.Add(new Maping.XML_EncabezadoMap());
+            modelBuilder.Configurations.Add(new Maping.XML_ErroresMap());
             modelBuilder.Configurations.Add(new Maping.TipoXMLMap());
             modelBuilder.Configurations.Add(new Maping.TipoInformeMap());
             modelBuilder.Configurations.Add(new Maping.InformeMailMap());
