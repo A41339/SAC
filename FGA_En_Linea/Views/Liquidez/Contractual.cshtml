@@ -269,8 +269,8 @@
                     <li>
                         <a href="#tab-icl" data-toggle="tab" class="sub-tab-link">
                             <i class="fa fa-shield" style="color: #2b579a; margin-right: 5px;"></i> ICL (Colones / Dólares)
-                            <span class="tab-badge-pill @(Model.ICLDatos.ICLRatio >= 100m ? "pill-green" : "pill-orange")">
-                                @(Model.ICLDatos.ICLRatio.ToString("N0"))%
+                            <span class="tab-badge-pill @(Model.ICLDatos.ICLRatio >= 1.00m ? "pill-green" : "pill-orange")">
+                                @(Model.ICLDatos.ICLRatio.ToString("N2")) veces
                             </span>
                         </a>
                     </li>
@@ -617,10 +617,10 @@
                 Highcharts.chart('chartEvolucionICL', {
                     chart: { type: 'spline' },
                     title: { text: 'Evolución Ilustrativa del ICL (Últimos 12 Meses)', style: { fontWeight: '700', color: '#143750', fontSize: '15px' } },
-                    subtitle: { text: 'Meta regulatoria sobre 100%' },
+                    subtitle: { text: 'Meta regulatoria sobre 1.00 vez (100%)' },
                     xAxis: { categories: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.ICLDatos.HistoricoMeses)) },
                     yAxis: {
-                        title: { text: 'Ratio ICL' },
+                        title: { text: 'Ratio ICL (Veces)' },
                         plotLines: [{
                             value: 1.0,
                             color: '#c2410c',
@@ -628,7 +628,7 @@
                             width: 2.5,
                             zIndex: 10,
                             label: {
-                                text: '<span style="background-color: #fff7ed; color: #c2410c; border: 1px solid #ea580c; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; box-shadow: 0 1px 3px rgba(0,0,0,0.06); white-space: nowrap;"><i class="fa fa-flag" style="margin-right: 4px;"></i> Límite Normativo (100%)</span>',
+                                text: '<span style="background-color: #fff7ed; color: #c2410c; border: 1px solid #ea580c; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; box-shadow: 0 1px 3px rgba(0,0,0,0.06); white-space: nowrap;"><i class="fa fa-flag" style="margin-right: 4px;"></i> Límite Normativo (1.00 vez)</span>',
                                 align: 'right',
                                 x: -10,
                                 y: -14,
@@ -641,7 +641,7 @@
                             width: 2.0,
                             zIndex: 9,
                             label: {
-                                text: '<span style="background-color: #eff6ff; color: #1e40af; border: 1px solid #93c5fd; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; box-shadow: 0 1px 3px rgba(0,0,0,0.06); white-space: nowrap;"><i class="fa fa-bullseye" style="margin-right: 4px;"></i> Apetito Interno (110%)</span>',
+                                text: '<span style="background-color: #eff6ff; color: #1e40af; border: 1px solid #93c5fd; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; box-shadow: 0 1px 3px rgba(0,0,0,0.06); white-space: nowrap;"><i class="fa fa-bullseye" style="margin-right: 4px;"></i> Apetito Interno (1.10 veces)</span>',
                                 align: 'left',
                                 x: 10,
                                 y: -14,
@@ -649,7 +649,16 @@
                             }
                         }]
                     },
-                    tooltip: { valueDecimals: 2, valueSuffix: 'x' },
+                    tooltip: {
+                        useHTML: true,
+                        formatter: function () {
+                            var val = this.y;
+                            var estado = val >= 1.0 ? '<span style="color:#047857; font-weight:700;"><i class="fa fa-check-circle"></i> Cumple SUGEF (&ge; 1.00 vez)</span>' : '<span style="color:#c2410c; font-weight:700;"><i class="fa fa-exclamation-triangle"></i> Déficit Normativo (&lt; 1.00 vez)</span>';
+                            return '<div style="font-size:12px; font-weight:700; color:#143750; margin-bottom:4px;">' + this.x + '</div>' +
+                                   '<div style="margin:4px 0; font-size:13px;">ICL: <strong style="font-family:monospace; font-size:14px; color:#1e3a8a;">' + val.toFixed(2) + ' veces</strong></div>' +
+                                   '<div>' + estado + '</div>';
+                        }
+                    },
                     series: [{
                         name: 'ICL Real',
                         data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.ICLDatos.HistoricoValores)),

@@ -531,16 +531,23 @@
                     // 2. Actualizar ICL Estresado
                     if (resp.iclEstresado) {
                         var icl = resp.iclEstresado;
-                        var iclBasePct = ((icl.ICLBase || 0) * 100).toFixed(1) + '%';
-                        var iclModPct = ((icl.ICLModerado || 0) * 100).toFixed(1) + '%';
-                        var iclSevPct = ((icl.ICLSevero || 0) * 100).toFixed(1) + '%';
-                        var iclVarPts = (icl.VariacionSeveroVsBase >= 0 ? '+' : '') + ((icl.VariacionSeveroVsBase || 0) * 100).toFixed(1) + ' pts';
+                        var iclBaseStr = (icl.ICLBase || 0).toFixed(2) + ' veces';
+                        var iclModStr = (icl.ICLModerado || 0).toFixed(2) + ' veces';
+                        var iclSevStr = (icl.ICLSevero || 0).toFixed(2) + ' veces';
+                        var varSev = (icl.ICLSevero || 0) - (icl.ICLBase || 0);
+                        var iclVarStr = (varSev >= 0 ? '+' : '') + varSev.toFixed(2) + ' veces';
 
-                        $('#badgeTabICLEstres').text(iclBasePct);
-                        $('#lblICLBase').text(iclBasePct);
-                        $('#lblICLMod').text(iclModPct);
-                        $('#lblICLSev').text(iclSevPct);
-                        $('#lblICLVar').text(iclVarPts);
+                        $('#badgeTabICLEstres').text(iclBaseStr);
+                        if ((icl.ICLBase || 0) >= 1.0) {
+                            $('#badgeTabICLEstres').removeClass('pill-orange').addClass('pill-green');
+                        } else {
+                            $('#badgeTabICLEstres').removeClass('pill-green').addClass('pill-orange');
+                        }
+
+                        $('#lblICLBase').text(iclBaseStr);
+                        $('#lblICLMod').text(iclModStr);
+                        $('#lblICLSev').text(iclSevStr);
+                        $('#lblICLVar').text(iclVarStr);
 
                         // Tabla ICL Detalle
                         $('#tdIclFalBase').text(fmtCRMM(icl.FAL_Base));
@@ -551,9 +558,9 @@
                         $('#tdIclSalidasMod').text(fmtCRMM(icl.Salidas30d_Moderado));
                         $('#tdIclSalidasSev').text(fmtCRMM(icl.Salidas30d_Severo));
 
-                        $('#tdIclResBase').text(((icl.ICLBase || 0) * 100).toFixed(2) + '%');
-                        $('#tdIclResMod').text(((icl.ICLModerado || 0) * 100).toFixed(2) + '%');
-                        $('#tdIclResSev').text(((icl.ICLSevero || 0) * 100).toFixed(2) + '%');
+                        $('#tdIclResBase').text(iclBaseStr);
+                        $('#tdIclResMod').text(iclModStr);
+                        $('#tdIclResSev').text(iclSevStr);
 
                         var chartIcl = $('#chartICLEstresadoComparativo').highcharts();
                         if (chartIcl && chartIcl.series && chartIcl.series[0]) {
