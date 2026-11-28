@@ -771,6 +771,7 @@ namespace FGA.Controllers
                 ICLRatio = iclRatio,
                 FondoActivosLiquidos = fal,
                 SalidasNetasEfectivo = salidasNetas,
+                MargenSobreUno = Math.Round(iclRatio - 1.00m, 2),
                 Items = new List<ICLDetalleItem>
                 {
                     new ICLDetalleItem { Codigo = "100000", Nivel = 0, Concepto = "ÍNDICE DE COBERTURA DE LIQUIDEZ (ICL)", SaldoBruto = iclRatio, Ponderador = 1m, SaldoPonderado = iclRatio, EsTotalizador = true },
@@ -807,6 +808,18 @@ namespace FGA.Controllers
                 {
                     icl.HistoricoValores.Add(0m);
                 }
+            }
+
+            if (icl.HistoricoValores.Count >= 2)
+            {
+                decimal valorMesAnterior = icl.HistoricoValores[icl.HistoricoValores.Count - 2];
+                icl.VariacionMensual = Math.Round(iclRatio - valorMesAnterior, 2);
+                icl.Minimo12Meses = icl.HistoricoValores.Where(x => x > 0).DefaultIfEmpty(iclRatio).Min();
+            }
+            else
+            {
+                icl.Minimo12Meses = iclRatio;
+                icl.VariacionMensual = 0m;
             }
 
             return icl;

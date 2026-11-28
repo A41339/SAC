@@ -5,8 +5,8 @@
         display: inline-flex !important;
         align-items: center !important;
         justify-content: center !important;
-        padding: 6px 14px !important;
-        font-size: 12px !important;
+        padding: 6px 16px !important;
+        font-size: 12.5px !important;
         font-family: inherit !important;
         font-weight: 600 !important;
         border-radius: 6px !important;
@@ -35,6 +35,36 @@
         font-weight: 700 !important;
         box-shadow: 0 2px 4px rgba(2,132,199,0.3) !important;
     }
+    .icl-kpi-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 14px 18px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        min-height: 88px;
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .icl-kpi-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+    }
+    .icl-kpi-card .kpi-label {
+        font-size: 12px;
+        font-weight: 600;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+    .icl-kpi-card .kpi-number {
+        font-size: 24px;
+        font-weight: 800;
+        color: #143750;
+        line-height: 1.2;
+        font-variant-numeric: tabular-nums;
+    }
 </style>
 
 <!-- Selector Colones / Dólares y Encabezado -->
@@ -42,67 +72,108 @@
     <div style="display: flex; align-items: center; gap: 14px;">
         <img class="img-logo-entidad" width="44" height="44" src="@(Session["Logo"] ?? Url.Content("~/Content/images/FFC.jpg"))" onerror="this.onerror=null;this.src='@Url.Content("~/Content/images/FFC.jpg")';" style="border-radius: 8px; background: #ffffff; padding: 3px; border: 1px solid #e2e8f0; object-fit: contain;" />
         <div>
-            <h4 style="margin: 0; font-size: 16px; font-weight: 700; color: #143750;">Índice de Cobertura de Liquidez (ICL) - <span id="lblEntidadICL">@Model.NombreEntidad</span></h4>
-            <p style="margin: 2px 0 0 0; font-size: 12px; color: #64748b;">Fondo de Activos Líquidos de alta calidad frente a Salidas Netas de Efectivo a 30 días</p>
+            <h4 style="margin: 0; font-size: 16px; font-weight: 700; color: #143750;">Indicador de Cobertura de Liquidez (ICL) - <span id="lblEntidadICL">@Model.NombreEntidad</span></h4>
+            <p style="margin: 2px 0 0 0; font-size: 12px; color: #64748b;">Evolución mensual ilustrativa del ICL y referencia mínima de 1,00 vez (Reglamento SUGEF 17-23)</p>
         </div>
     </div>
 
-    <!-- Toggle Moneda (Colones vs Dólares) -->
+    <!-- Toggle Moneda (ICL Colones vs ICL Dólares) -->
     <div style="display: inline-flex; align-items: center; background: #f1f5f9; padding: 4px; border-radius: 8px; border: 1px solid #cbd5e1; gap: 4px;">
         <button type="button" id="btnMonedaColones" class="btn-moneda-pill @(Model.ICLDatos.MonedaTipo == 1 ? "activo" : "inactivo")" onclick="cambiarMonedaICL(1)">
-            <i class="fa fa-money" style="margin-right: 5px;"></i> Colones (¢)
+            <i class="fa fa-money" style="margin-right: 5px;"></i> ICL COLONES
         </button>
         <button type="button" id="btnMonedaDolares" class="btn-moneda-pill @(Model.ICLDatos.MonedaTipo == 2 ? "activo" : "inactivo")" onclick="cambiarMonedaICL(2)">
-            <i class="fa fa-dollar" style="margin-right: 5px;"></i> Dólares ($)
+            <i class="fa fa-dollar" style="margin-right: 5px;"></i> ICL DÓLARES
         </button>
     </div>
 </div>
 
-<!-- Banner de Alerta para Dólares si no aplica -->
-<div id="alertaNoDolares" style="display: @(Model.ICLDatos.MonedaTipo == 2 && !Model.ICLDatos.TieneDolares ? "block" : "none"); margin-bottom: 16px; padding: 14px 18px; background-color: #fff7ed; border-left: 4px solid #f97316; border-radius: 6px; font-size: 13px; color: #9a3412;">
-    <i class="fa fa-exclamation-triangle" style="color: #ea580c; margin-right: 8px; font-size: 16px;"></i>
+<!-- Banner de Alerta para Dólares (Especificación literal del requerimiento P38) -->
+<div id="alertaNoDolares" style="display: @(Model.ICLDatos.MonedaTipo == 2 && !Model.ICLDatos.TieneDolares ? "block" : "none"); margin-bottom: 20px; padding: 16px 20px; background-color: #fff7ed; border-left: 4px solid #f97316; border-radius: 8px; font-size: 13.5px; color: #9a3412; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+    <i class="fa fa-info-circle" style="color: #ea580c; margin-right: 8px; font-size: 18px; vertical-align: middle;"></i>
     <strong>Aviso:</strong> Esta cooperativa no cuenta con un cálculo de su ICL en dólares por lo que no hay información por mostrar.
 </div>
 
-<!-- Tarjetas Resumen de ICL -->
+<!-- Contenedor Detalle ICL -->
 <div id="contenedorDetalleICL" style="display: @(Model.ICLDatos.MonedaTipo == 2 && !Model.ICLDatos.TieneDolares ? "none" : "block");">
+
+    <!-- 4 Tarjetas Resumen Idénticas a la Imagen 4 del Requerimiento -->
     <div class="row" style="margin-bottom: 20px;">
-        <div class="col-md-4 col-sm-6 col-xs-12">
-            <div class="info-box" style="border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); border: 1px solid #e2e8f0; min-height: 80px;">
-                <span class="info-box-icon" style="background-color: #0284c7; color: #ffffff; border-top-left-radius: 8px; border-bottom-left-radius: 8px; height: 80px; line-height: 80px;"><i class="fa fa-shield"></i></span>
-                <div class="info-box-content" style="padding: 10px 14px;">
-                    <span class="info-box-text" style="font-size: 12px; color: #64748b; font-weight: 600;">Índice ICL</span>
-                    <span class="info-box-number" id="lblICLRatio" style="font-size: 22px; font-weight: 700; color: #1e3a8a;">@(Model.ICLDatos.ICLRatio.ToString("N2")) veces</span>
+        <!-- Card 1: ICL Actual -->
+        <div class="col-md-3 col-sm-6 col-xs-12" style="margin-bottom: 10px;">
+            <div class="icl-kpi-card" style="border-top: 3px solid @(Model.ICLDatos.ICLRatio >= 1.00m ? "#16a34a" : "#dc2626");">
+                <span class="kpi-label">ICL actual</span>
+                <span class="kpi-number" id="lblICLRatio">@(Model.ICLDatos.ICLRatio.ToString("N2")) veces</span>
+                <div style="margin-top: auto;">
                     @if (Model.ICLDatos.ICLRatio >= 1.00m)
                     {
-                        <span class="badge" style="background: #ecfdf5; color: #047857; font-size: 11px; font-weight: 700; padding: 2px 8px; border: 1px solid #a7f3d0; margin-top: 3px; display: inline-block;">
-                            <i class="fa fa-check-circle"></i> Cumple SUGEF (&ge; 1.00 vez)
+                        <span class="badge" style="background: #ecfdf5; color: #047857; font-size: 11px; font-weight: 700; padding: 2px 8px; border: 1px solid #a7f3d0; display: inline-block;">
+                            <i class="fa fa-check-circle"></i> Cumple (&ge; 1,00 vez)
                         </span>
                     }
                     else
                     {
-                        <span class="badge" style="background: #fef2f2; color: #b91c1c; font-size: 11px; font-weight: 700; padding: 2px 8px; border: 1px solid #fecaca; margin-top: 3px; display: inline-block;">
-                            <i class="fa fa-exclamation-triangle"></i> Déficit Normativo (&lt; 1.00 vez)
+                        <span class="badge" style="background: #fef2f2; color: #b91c1c; font-size: 11px; font-weight: 700; padding: 2px 8px; border: 1px solid #fecaca; display: inline-block;">
+                            <i class="fa fa-exclamation-triangle"></i> Déficit (&lt; 1,00 vez)
                         </span>
                     }
                 </div>
             </div>
         </div>
-        <div class="col-md-4 col-sm-6 col-xs-12">
-            <div class="info-box" style="border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); border: 1px solid #e2e8f0; min-height: 80px;">
-                <span class="info-box-icon" style="background-color: #2b579a; color: #ffffff; border-top-left-radius: 8px; border-bottom-left-radius: 8px; height: 80px; line-height: 80px;"><i class="fa fa-cubes"></i></span>
-                <div class="info-box-content" style="padding: 10px 14px;">
-                    <span class="info-box-text" style="font-size: 12px; color: #64748b; font-weight: 600;">Fondo Activos Líquidos (FAL)</span>
-                    <span class="info-box-number" id="lblICLFAL" style="font-size: 20px; font-weight: 700; color: #1e40af;">¢@(Model.ICLDatos.FondoActivosLiquidos.ToString("N2"))</span>
+
+        <!-- Card 2: Variación Mensual -->
+        <div class="col-md-3 col-sm-6 col-xs-12" style="margin-bottom: 10px;">
+            <div class="icl-kpi-card" style="border-top: 3px solid @(Model.ICLDatos.VariacionMensual >= 0 ? "#16a34a" : "#f97316");">
+                <span class="kpi-label">Variación mensual</span>
+                <span class="kpi-number" id="lblICLVar">@(Model.ICLDatos.VariacionMensual >= 0 ? "+" : "")@(Model.ICLDatos.VariacionMensual.ToString("N2")) veces</span>
+                <div style="margin-top: auto;">
+                    @if (Model.ICLDatos.VariacionMensual >= 0)
+                    {
+                        <span class="badge" style="background: #ecfdf5; color: #047857; font-size: 11px; font-weight: 700; padding: 2px 8px; border: 1px solid #a7f3d0; display: inline-block;">
+                            <i class="fa fa-arrow-up"></i> Incremento
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="badge" style="background: #fff7ed; color: #c2410c; font-size: 11px; font-weight: 700; padding: 2px 8px; border: 1px solid #fed7aa; display: inline-block;">
+                            <i class="fa fa-arrow-down"></i> Reducción
+                        </span>
+                    }
                 </div>
             </div>
         </div>
-        <div class="col-md-4 col-sm-6 col-xs-12">
-            <div class="info-box" style="border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); border: 1px solid #e2e8f0; min-height: 80px;">
-                <span class="info-box-icon" style="background-color: #f97316; color: #ffffff; border-top-left-radius: 8px; border-bottom-left-radius: 8px; height: 80px; line-height: 80px;"><i class="fa fa-sign-out"></i></span>
-                <div class="info-box-content" style="padding: 10px 14px;">
-                    <span class="info-box-text" style="font-size: 12px; color: #64748b; font-weight: 600;">Salidas Netas Efectivo (30d)</span>
-                    <span class="info-box-number" id="lblICLSalidas" style="font-size: 20px; font-weight: 700; color: #c2410c;">¢@(Model.ICLDatos.SalidasNetasEfectivo.ToString("N2"))</span>
+
+        <!-- Card 3: Mínimo 12 meses -->
+        <div class="col-md-3 col-sm-6 col-xs-12" style="margin-bottom: 10px;">
+            <div class="icl-kpi-card" style="border-top: 3px solid #0284c7;">
+                <span class="kpi-label">Mínimo 12 meses</span>
+                <span class="kpi-number" id="lblICLMin">@(Model.ICLDatos.Minimo12Meses.ToString("N2")) veces</span>
+                <div style="margin-top: auto;">
+                    <span class="badge" style="background: #eff6ff; color: #1e40af; font-size: 11px; font-weight: 600; padding: 2px 8px; border: 1px solid #bfdbfe; display: inline-block;">
+                        <i class="fa fa-history"></i> Mínimo anual
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 4: Margen sobre 1,00 -->
+        <div class="col-md-3 col-sm-6 col-xs-12" style="margin-bottom: 10px;">
+            <div class="icl-kpi-card" style="border-top: 3px solid @(Model.ICLDatos.MargenSobreUno >= 0 ? "#16a34a" : "#dc2626");">
+                <span class="kpi-label">Margen sobre 1,00</span>
+                <span class="kpi-number" id="lblICLMargen" style="color: @(Model.ICLDatos.MargenSobreUno >= 0 ? "#15803d" : "#b91c1c");">@(Model.ICLDatos.MargenSobreUno >= 0 ? "+" : "")@(Model.ICLDatos.MargenSobreUno.ToString("N2")) veces</span>
+                <div style="margin-top: auto;">
+                    @if (Model.ICLDatos.MargenSobreUno >= 0)
+                    {
+                        <span class="badge" style="background: #ecfdf5; color: #047857; font-size: 11px; font-weight: 700; padding: 2px 8px; border: 1px solid #a7f3d0; display: inline-block;">
+                            <i class="fa fa-shield"></i> Holgura positiva
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="badge" style="background: #fef2f2; color: #b91c1c; font-size: 11px; font-weight: 700; padding: 2px 8px; border: 1px solid #fecaca; display: inline-block;">
+                            <i class="fa fa-warning"></i> Holgura negativa
+                        </span>
+                    }
                 </div>
             </div>
         </div>
@@ -111,14 +182,17 @@
     <!-- Gráfico Evolución Ilustrativa a 12 meses (Requerimiento imagen 4) -->
     <div class="row" style="margin-bottom: 20px;">
         <div class="col-md-12">
-            <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 22px 24px 22px 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; padding: 4px 6px 12px 6px; border-bottom: 1px solid #f1f5f9; min-height: 38px;">
-                    <button type="button" class="btn-chart-expand" onclick="expandirGraficoModal('chartEvolucionICL', 'Evolución Ilustrativa del ICL (Últimos 12 Meses)')">
+            <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px 22px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid #f1f5f9;">
+                    <div>
+                        <h5 style="margin: 0; font-size: 14px; font-weight: 700; color: #143750;">Indicador de Cobertura de Liquidez (ICL)</h5>
+                        <span style="font-size: 12px; color: #64748b;">Evolución mensual ilustrativa del ICL y referencia mínima de 1,00 vez.</span>
+                    </div>
+                    <button type="button" class="btn-chart-expand" onclick="expandirGraficoModal('chartEvolucionICL', 'Indicador de Cobertura de Liquidez (ICL) - Últimos 12 Meses')">
                         <i class="fa fa-expand" style="color: #2b579a;"></i> Ampliar Gráfico
                     </button>
-                    <div style="width: 140px;"><!-- Espacio reservado para el botón Descargar de Highcharts --></div>
                 </div>
-                <div id="chartEvolucionICL" style="height: 300px; width: 100%;"></div>
+                <div id="chartEvolucionICL" style="height: 320px; width: 100%;"></div>
             </div>
         </div>
     </div>
@@ -140,9 +214,9 @@
                 <tr style="background-color: #2b579a !important; background: #2b579a !important;">
                     <th class="text-left col-sticky-first" style="width: 12%; text-align: left !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 16px; font-weight: 700; font-size: 13px; border: none;">Código</th>
                     <th class="text-left" style="width: 46%; text-align: left !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 14px; font-weight: 700; font-size: 13px; border: none;">Concepto</th>
-                    <th class="text-right" style="width: 15%; text-align: right !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 14px; font-weight: 700; font-size: 13px; border: none; white-space: nowrap;">Saldo Bruto</th>
+                    <th class="text-right" style="width: 15%; text-align: right !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 14px; font-weight: 700; font-size: 13px; border: none; white-space: nowrap;">Saldo Bruto (₡)</th>
                     <th class="text-center" style="width: 11%; text-align: center !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 10px; font-weight: 700; font-size: 13px; border: none; white-space: nowrap;">Ponderador</th>
-                    <th class="text-right" style="width: 16%; text-align: right !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 16px; font-weight: 700; font-size: 13px; border: none; white-space: nowrap;">Saldo Ponderado</th>
+                    <th class="text-right" style="width: 16%; text-align: right !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 16px; font-weight: 700; font-size: 13px; border: none; white-space: nowrap;">Saldo Ponderado (₡)</th>
                 </tr>
             </thead>
             <tbody id="tbodyDetalleICL">
@@ -158,9 +232,9 @@
                         <tr style="background-color: @bgColor; border-bottom: @borderBottom;">
                             <td class="text-left col-sticky-first" style="padding: 9px 16px; vertical-align: middle; font-family: monospace; font-size: 12px; font-weight: @fontWeight; color: #475569; background-color: @bgColor;">@item.Codigo</td>
                             <td class="text-left" style="padding: 9px 14px; padding-left: @paddingLeft; vertical-align: middle; font-weight: @fontWeight; color: #1e293b; font-size: 12.5px; line-height: 1.4;">@item.Concepto</td>
-                            <td class="text-right" style="padding: 9px 14px; vertical-align: middle; font-variant-numeric: tabular-nums; font-weight: @fontWeight; font-size: 12.5px; white-space: nowrap;">@item.SaldoBruto.ToString("N2")</td>
+                            <td class="text-right" style="padding: 9px 14px; vertical-align: middle; font-variant-numeric: tabular-nums; font-weight: @fontWeight; font-size: 12.5px; white-space: nowrap;">@(item.Nivel == 0 ? item.SaldoBruto.ToString("N2") + " veces" : item.SaldoBruto.ToString("N2"))</td>
                             <td class="text-center" style="padding: 9px 10px; vertical-align: middle; font-variant-numeric: tabular-nums; font-size: 12px; color: #64748b; white-space: nowrap;">@item.Ponderador.ToString("P0")</td>
-                            <td class="text-right" style="padding: 9px 16px; vertical-align: middle; font-variant-numeric: tabular-nums; font-weight: @fontWeight; color: #0f172a; font-size: 12.5px; white-space: nowrap;">@item.SaldoPonderado.ToString("N2")</td>
+                            <td class="text-right" style="padding: 9px 16px; vertical-align: middle; font-variant-numeric: tabular-nums; font-weight: @fontWeight; color: #0f172a; font-size: 12.5px; white-space: nowrap;">@(item.Nivel == 0 ? item.SaldoPonderado.ToString("N2") + " veces" : item.SaldoPonderado.ToString("N2"))</td>
                         </tr>
                     }
                 }

@@ -614,56 +614,61 @@
         function renderGraficoICL() {
             var chartIclEl = document.getElementById('chartEvolucionICL');
             if (chartIclEl) {
+                var histMeses = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.ICLDatos.HistoricoMeses));
+                var histValores = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.ICLDatos.HistoricoValores));
+                var refMinima = [];
+                for (var i = 0; i < histMeses.length; i++) {
+                    refMinima.push(1.00);
+                }
+
                 Highcharts.chart('chartEvolucionICL', {
                     chart: { type: 'spline' },
-                    title: { text: 'Evolución Ilustrativa del ICL (Últimos 12 Meses)', style: { fontWeight: '700', color: '#143750', fontSize: '15px' } },
-                    subtitle: { text: 'Meta regulatoria sobre 1.00 vez (100%)' },
-                    xAxis: { categories: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.ICLDatos.HistoricoMeses)) },
+                    title: { text: null },
+                    xAxis: { categories: histMeses },
                     yAxis: {
-                        title: { text: 'Ratio ICL (Veces)' },
+                        title: { text: 'Ratio ICL (veces)' },
+                        min: 0,
+                        labels: {
+                            formatter: function() { return this.value.toFixed(2) + 'x'; }
+                        },
                         plotLines: [{
                             value: 1.0,
-                            color: '#c2410c',
-                            dashStyle: 'Dash',
-                            width: 2.5,
+                            color: '#16a34a',
+                            dashStyle: 'Solid',
+                            width: 2.0,
                             zIndex: 10,
                             label: {
-                                text: '<span style="background-color: #fff7ed; color: #c2410c; border: 1px solid #ea580c; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; box-shadow: 0 1px 3px rgba(0,0,0,0.06); white-space: nowrap;"><i class="fa fa-flag" style="margin-right: 4px;"></i> Límite Normativo (1.00 vez)</span>',
+                                text: '<span style="background-color: #ecfdf5; color: #047857; border: 1px solid #10b981; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; box-shadow: 0 1px 3px rgba(0,0,0,0.06); white-space: nowrap;"><i class="fa fa-check-circle" style="margin-right: 4px;"></i> Referencia mínima (1,00 vez)</span>',
                                 align: 'right',
                                 x: -10,
-                                y: -14,
-                                useHTML: true
-                            }
-                        }, {
-                            value: 1.10,
-                            color: '#2b579a',
-                            dashStyle: 'ShortDot',
-                            width: 2.0,
-                            zIndex: 9,
-                            label: {
-                                text: '<span style="background-color: #eff6ff; color: #1e40af; border: 1px solid #93c5fd; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; box-shadow: 0 1px 3px rgba(0,0,0,0.06); white-space: nowrap;"><i class="fa fa-bullseye" style="margin-right: 4px;"></i> Apetito Interno (1.10 veces)</span>',
-                                align: 'left',
-                                x: 10,
-                                y: -14,
+                                y: -12,
                                 useHTML: true
                             }
                         }]
                     },
                     tooltip: {
                         useHTML: true,
+                        shared: true,
                         formatter: function () {
-                            var val = this.y;
-                            var estado = val >= 1.0 ? '<span style="color:#047857; font-weight:700;"><i class="fa fa-check-circle"></i> Cumple SUGEF (&ge; 1.00 vez)</span>' : '<span style="color:#c2410c; font-weight:700;"><i class="fa fa-exclamation-triangle"></i> Déficit Normativo (&lt; 1.00 vez)</span>';
-                            return '<div style="font-size:12px; font-weight:700; color:#143750; margin-bottom:4px;">' + this.x + '</div>' +
-                                   '<div style="margin:4px 0; font-size:13px;">ICL: <strong style="font-family:monospace; font-size:14px; color:#1e3a8a;">' + val.toFixed(2) + ' veces</strong></div>' +
-                                   '<div>' + estado + '</div>';
+                            var s = '<div style="font-size:12px; font-weight:700; color:#143750; margin-bottom:4px;">' + this.x + '</div>';
+                            $.each(this.points, function () {
+                                var valStr = this.y.toFixed(2) + ' veces';
+                                s += '<div style="margin:2px 0; font-size:12.5px;"><span style="color:' + this.series.color + '">●</span> ' + this.series.name + ': <strong>' + valStr + '</strong></div>';
+                            });
+                            return s;
                         }
                     },
                     series: [{
-                        name: 'ICL Real',
-                        data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.ICLDatos.HistoricoValores)),
+                        name: 'ICL',
+                        data: histValores,
                         color: '#0284c7',
-                        marker: { radius: 4 }
+                        marker: { radius: 4, symbol: 'circle' }
+                    }, {
+                        name: 'Referencia mínima',
+                        data: refMinima,
+                        color: '#16a34a',
+                        dashStyle: 'Dash',
+                        marker: { radius: 3, symbol: 'diamond' }
                     }],
                     credits: { enabled: false }
                 });

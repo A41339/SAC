@@ -86,6 +86,11 @@ namespace FGA.Model
         public decimal ICLRatio { get; set; }
         public decimal FondoActivosLiquidos { get; set; }
         public decimal SalidasNetasEfectivo { get; set; }
+        public decimal VariacionMensual { get; set; }
+        public decimal Minimo12Meses { get; set; }
+        public decimal MargenSobreUno { get; set; }
+        public string Periodo1Nombre { get; set; }
+        public string Periodo2Nombre { get; set; }
         public List<ICLDetalleItem> Items { get; set; } = new List<ICLDetalleItem>();
 
         // Serie histórica de 12 meses para gráfico evolutivo (Requerimiento Word imagen 4)
@@ -101,6 +106,8 @@ namespace FGA.Model
         public decimal SaldoBruto { get; set; }
         public decimal Ponderador { get; set; }
         public decimal SaldoPonderado { get; set; }
+        public decimal SaldoP1 { get; set; }
+        public decimal SaldoP2 { get; set; }
         public bool EsTotalizador { get; set; }
     }
 
