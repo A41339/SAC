@@ -23,9 +23,9 @@
         box-shadow: 0 4px 10px rgba(15, 23, 42, 0.08);
     }
     .badge-estado-critica {
-        background-color: #fef2f2 !important;
-        color: #991b1b !important;
-        border: 1px solid #fecaca !important;
+        background-color: #fff7ed !important;
+        color: #ea580c !important;
+        border: 1px solid #fed7aa !important;
         font-weight: 700;
         padding: 3px 8px;
         border-radius: 4px;
@@ -35,9 +35,9 @@
         gap: 4px;
     }
     .badge-estado-advertencia {
-        background-color: #fffaf0 !important;
-        color: #c2410c !important;
-        border: 1px solid #fed7aa !important;
+        background-color: #f1f5f9 !important;
+        color: #475569 !important;
+        border: 1px solid #cbd5e1 !important;
         font-weight: 700;
         padding: 3px 8px;
         border-radius: 4px;
@@ -215,29 +215,29 @@
 
     <!-- 5 TARJETAS KPI DE CABECERA (SEGUN MAQUETA OFICIAL) -->
     <div class="row" style="margin-bottom: 16px;">
-        <!-- 1. Alertas Críticas -->
+        <!-- 1. Alertas Críticas (Naranja Alerta) -->
         <div class="col-md-2 col-sm-4 col-xs-6" style="width: 20%; padding-right: 6px; padding-left: 6px;">
-            <div class="kpi-alert-card" style="border-left: 4px solid #b91c1c; background: #fef2f2;">
+            <div class="kpi-alert-card" style="border-left: 4px solid #ea580c; background: #fff7ed;">
                 <div>
-                    <div style="font-size: 11px; font-weight: 700; color: #7f1d1d; text-transform: uppercase;">Alertas Críticas</div>
-                    <div style="font-size: 24px; font-weight: 800; color: #991b1b; line-height: 1.1; margin: 3px 0;" id="kpiCriticasVal">@Model.AlertasCriticas</div>
-                    <div style="font-size: 10.5px; font-weight: 600; color: #991b1b;"><i class="fa fa-exclamation-triangle"></i> Superan límite interno</div>
+                    <div style="font-size: 11px; font-weight: 700; color: #9a3412; text-transform: uppercase;">Alertas Críticas</div>
+                    <div style="font-size: 24px; font-weight: 800; color: #ea580c; line-height: 1.1; margin: 3px 0;" id="kpiCriticasVal">@Model.AlertasCriticas</div>
+                    <div style="font-size: 10.5px; font-weight: 600; color: #ea580c;"><i class="fa fa-exclamation-triangle"></i> Superan límite interno</div>
                 </div>
-                <div style="width: 38px; height: 38px; border-radius: 8px; background: #fee2e2; display: flex; align-items: center; justify-content: center; color: #991b1b; font-size: 18px;">
+                <div style="width: 38px; height: 38px; border-radius: 8px; background: #ffedd5; display: flex; align-items: center; justify-content: center; color: #ea580c; font-size: 18px;">
                     <i class="fa fa-exclamation-triangle"></i>
                 </div>
             </div>
         </div>
 
-        <!-- 2. Alertas de Advertencia -->
+        <!-- 2. Alertas de Advertencia (Gris Advertencia) -->
         <div class="col-md-2 col-sm-4 col-xs-6" style="width: 20%; padding-right: 6px; padding-left: 6px;">
-            <div class="kpi-alert-card" style="border-left: 4px solid #f97316; background: #fffaf0;">
+            <div class="kpi-alert-card" style="border-left: 4px solid #64748b; background: #f8fafc;">
                 <div>
-                    <div style="font-size: 11px; font-weight: 700; color: #9a3412; text-transform: uppercase;">Alertas Advertencia</div>
-                    <div style="font-size: 24px; font-weight: 800; color: #ea580c; line-height: 1.1; margin: 3px 0;" id="kpiAdvertenciaVal">@Model.AlertasAdvertencia</div>
-                    <div style="font-size: 10.5px; font-weight: 600; color: #ea580c;"><i class="fa fa-exclamation-circle"></i> Próximos a límite</div>
+                    <div style="font-size: 11px; font-weight: 700; color: #475569; text-transform: uppercase;">Alertas Advertencia</div>
+                    <div style="font-size: 24px; font-weight: 800; color: #334155; line-height: 1.1; margin: 3px 0;" id="kpiAdvertenciaVal">@Model.AlertasAdvertencia</div>
+                    <div style="font-size: 10.5px; font-weight: 600; color: #64748b;"><i class="fa fa-exclamation-circle"></i> Próximos a límite</div>
                 </div>
-                <div style="width: 38px; height: 38px; border-radius: 8px; background: #ffedd5; display: flex; align-items: center; justify-content: center; color: #ea580c; font-size: 18px;">
+                <div style="width: 38px; height: 38px; border-radius: 8px; background: #e2e8f0; display: flex; align-items: center; justify-content: center; color: #475569; font-size: 18px;">
                     <i class="fa fa-exclamation-circle"></i>
                 </div>
             </div>
@@ -388,7 +388,7 @@
                                     </td>
                                 </tr>
                             }
-                            <tr id="trSinIndicadoresAlertas" style="display: none;">
+                            <tr id="trSinIndicadoresAlertas" class="alerta-row-hidden" style="display: none !important;">
                                 <td colspan="5" class="text-center" style="padding: 24px; color: #64748b; font-weight: 600;">
                                     <i class="fa fa-info-circle" style="color: #0071AD; font-size: 16px; margin-right: 5px;"></i>
                                     No se encontraron indicadores para el filtro seleccionado.
@@ -468,13 +468,13 @@
                                     decimal pctRango = (Model.IndicadoresEnRango * 100m) / totalInd;
                                 }
                                 <tr>
-                                    <td><span style="color: #991b1b; font-weight: 700;">●</span> Crítica</td>
-                                    <td class="text-right font-mono" id="sumCriticas" style="font-weight: 700; color: #991b1b;">@Model.AlertasCriticas</td>
+                                    <td><span style="color: #ea580c; font-weight: 700;">●</span> Crítica</td>
+                                    <td class="text-right font-mono" id="sumCriticas" style="font-weight: 700; color: #ea580c;">@Model.AlertasCriticas</td>
                                     <td class="text-right font-mono" id="pctCriticas" style="font-weight: 600;">@pctCritica.ToString("N0")%</td>
                                 </tr>
                                 <tr>
-                                    <td><span style="color: #ea580c; font-weight: 700;">●</span> Advertencia</td>
-                                    <td class="text-right font-mono" id="sumAdvertencias" style="font-weight: 700; color: #ea580c;">@Model.AlertasAdvertencia</td>
+                                    <td><span style="color: #64748b; font-weight: 700;">●</span> Advertencia</td>
+                                    <td class="text-right font-mono" id="sumAdvertencias" style="font-weight: 700; color: #64748b;">@Model.AlertasAdvertencia</td>
                                     <td class="text-right font-mono" id="pctAdvertencias" style="font-weight: 600;">@pctAdvertencia.ToString("N0")%</td>
                                 </tr>
                                 <tr>
@@ -582,10 +582,15 @@
                 }
             });
 
-            if (visibleCount === 0) {
-                $('#trSinIndicadoresAlertas').show();
-            } else {
-                $('#trSinIndicadoresAlertas').hide();
+            var elSin = document.getElementById('trSinIndicadoresAlertas');
+            if (elSin) {
+                if (visibleCount === 0) {
+                    elSin.classList.remove('alerta-row-hidden');
+                    elSin.style.setProperty('display', 'table-row', 'important');
+                } else {
+                    elSin.classList.add('alerta-row-hidden');
+                    elSin.style.setProperty('display', 'none', 'important');
+                }
             }
 
             $('#badgeContadorVisible').text(visibleCount + ' Indicadores');
@@ -600,9 +605,9 @@
             $('#kpiIndiceGlobalVal').text(indiceGlobal.toFixed(2));
             var $badgeGlobal = $('#kpiEstadoGlobalBadge');
             if (indiceGlobal >= 0.35) {
-                $badgeGlobal.text('Crítica').css({ background: '#fee2e2', color: '#991b1b' });
+                $badgeGlobal.text('Crítica').css({ background: '#ffedd5', color: '#ea580c' });
             } else if (indiceGlobal >= 0.15) {
-                $badgeGlobal.text('Advertencia').css({ background: '#fed7aa', color: '#9a3412' });
+                $badgeGlobal.text('Advertencia').css({ background: '#f1f5f9', color: '#475569' });
             } else {
                 $badgeGlobal.text('En rango').css({ background: '#e6f1f8', color: '#0071AD' });
             }
@@ -781,8 +786,8 @@
                     name: 'Indicadores',
                     colorByPoint: true,
                     data: [
-                        { name: 'Crítica', y: criticas, color: '#991b1b' },
-                        { name: 'Advertencia', y: advertencias, color: '#ea580c' },
+                        { name: 'Crítica', y: criticas, color: '#ea580c' },
+                        { name: 'Advertencia', y: advertencias, color: '#64748b' },
                         { name: 'En rango', y: enRango, color: '#0071AD' }
                     ]
                 }]
