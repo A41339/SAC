@@ -67,11 +67,27 @@
         border-bottom: 2px solid #cbd5e1 !important;
         border-top: none !important;
     }
+    .tabla-alertas tbody tr {
+        padding: 9px 12px;
+        font-size: 12.5px;
+        vertical-align: middle;
+        border-bottom: 1px solid #e2e8f0;
+        transition: background-color 0.12s ease, border-left 0.12s ease;
+        border-left: 3px solid transparent;
+        cursor: pointer;
+    }
     .tabla-alertas tbody tr td {
         padding: 9px 12px;
         font-size: 12.5px;
         vertical-align: middle;
         border-bottom: 1px solid #e2e8f0;
+    }
+    .tabla-alertas tbody tr:hover {
+        background-color: #f0f7fc !important;
+    }
+    .tabla-alertas tbody tr.tr-selected {
+        background-color: #e6f1f8 !important;
+        border-left: 3px solid #0071AD !important;
     }
     .header-back-link {
         display: inline-flex;
@@ -341,7 +357,7 @@
                                 <th class="text-center" style="width: 14%;">Estado</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody onmouseleave="restaurarIndicadorFijado()">
                             @foreach (var ind in Model.Indicadores)
                             {
                                 string badgeClase = "badge-estado-rango";
@@ -357,7 +373,10 @@
                                     badgeIcono = "fa-exclamation-circle";
                                 }
 
-                                <tr style="cursor: pointer;" onclick="seleccionarIndicadorTrend('@ind.Codigo')" id="tr_@ind.Codigo" 
+                                <tr style="cursor: pointer;" 
+                                    onclick="seleccionarIndicadorTrend('@ind.Codigo')" 
+                                    onmouseenter="hoverIndicadorTrend('@ind.Codigo')"
+                                    id="tr_@ind.Codigo" 
                                     data-codigo="@ind.Codigo" 
                                     data-tipo="@ind.Tipo" 
                                     data-estado="@ind.Estado"
@@ -409,7 +428,7 @@
 
                 <div style="margin-bottom: 14px;">
                     <label for="selIndicadorTrend" style="font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 4px;">Seleccione indicador para análisis de tendencia:</label>
-                    <select id="selIndicadorTrend" class="form-control input-sm" style="border-radius: 6px; font-weight: 600;" onchange="actualizarGraficoTrend(this.value)">
+                    <select id="selIndicadorTrend" class="form-control input-sm" style="border-radius: 6px; font-weight: 600;" onchange="seleccionarIndicadorTrend(this.value)">
                         @foreach (var ind in Model.Indicadores)
                         {
                             <option value="@ind.Codigo">[@ind.Codigo] @ind.Nombre</option>
@@ -555,10 +574,38 @@
             }
         }
 
+        var codigoFijado = null;
+        var codigoActualTrend = null;
+        var hoverTimer = null;
+
         function seleccionarIndicadorTrend(cod) {
-            $('#selIndicadorTrend').val(cod).trigger('change');
-            $('tr[id^="tr_"]').css('background-color', '');
-            $('#tr_' + cod).css('background-color', '#eff6ff');
+            codigoFijado = cod;
+            aplicarIndicadorTrend(cod, true);
+        }
+
+        function hoverIndicadorTrend(cod) {
+            if (hoverTimer) clearTimeout(hoverTimer);
+            hoverTimer = setTimeout(function () {
+                aplicarIndicadorTrend(cod, false);
+            }, 35);
+        }
+
+        function restaurarIndicadorFijado() {
+            if (hoverTimer) clearTimeout(hoverTimer);
+            if (codigoFijado && codigoFijado !== codigoActualTrend) {
+                aplicarIndicadorTrend(codigoFijado, false);
+            }
+        }
+
+        function aplicarIndicadorTrend(cod, fijar) {
+            if (!cod || (codigoActualTrend === cod && !fijar)) return;
+            codigoActualTrend = cod;
+            if (fijar) codigoFijado = cod;
+
+            $('#selIndicadorTrend').val(cod);
+            $('tr[id^="tr_"]').removeClass('tr-selected');
+            $('#tr_' + cod).addClass('tr-selected');
+            actualizarGraficoTrend(cod);
         }
 
         function actualizarGraficoTrend(cod) {
@@ -595,7 +642,11 @@
             }
 
             Highcharts.chart('chartTendenciaIndicador', {
-                chart: { type: 'spline', spacingTop: 20 },
+                chart: { 
+                    type: 'spline', 
+                    spacingTop: 20,
+                    animation: false
+                },
                 title: { text: null },
                 xAxis: { categories: ind.HistoricoMeses },
                 yAxis: {
@@ -667,8 +718,7 @@
 
         $(document).ready(function () {
             if (catalogoAlertas && catalogoAlertas.length > 0) {
-                actualizarGraficoTrend(catalogoAlertas[0].Codigo);
-                $('#tr_' + catalogoAlertas[0].Codigo).css('background-color', '#eff6ff');
+                seleccionarIndicadorTrend(catalogoAlertas[0].Codigo);
             }
             renderDonutAlertas();
         });
