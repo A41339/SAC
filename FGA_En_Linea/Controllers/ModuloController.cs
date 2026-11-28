@@ -353,7 +353,8 @@ namespace FGA.Controllers
                                         titulo.IndexOf("Administra", StringComparison.OrdinalIgnoreCase) >= 0 ||
                                         titulo.IndexOf("Mantenimiento", StringComparison.OrdinalIgnoreCase) >= 0;
 
-                bool mostrarFiltros = (!esAdministracion && string.Equals(rootMenuUrl, "filter", StringComparison.OrdinalIgnoreCase)) || esSbr;
+                // Se suprime la barra superior de cooperativa y período en los submódulos según requerimiento
+                bool mostrarFiltros = esSbr;
 
                 string idEntidadSesion = Session["IdEntidad"]?.ToString() ?? "";
                 string nomEntidadSesion = Session["NomEntidad"]?.ToString() ?? "";

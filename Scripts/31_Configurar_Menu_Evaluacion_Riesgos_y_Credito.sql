@@ -81,6 +81,13 @@ BEGIN TRY
     UPDATE dbo.Menu SET SortOrder = 6 WHERE Id = 2260;  -- Proyecciones
     UPDATE dbo.Menu SET SortOrder = 7 WHERE Id = 5120;  -- Tasas implícitas
 
+    -- Actualizar subtarjetas de Cartera de Crédito (4000)
+    -- Se renombra la opción 4001 a 'Calidad de la cartera' para evitar duplicidad con el nuevo módulo 'Riesgo de crédito'
+    UPDATE dbo.Menu 
+    SET MenuText = 'Calidad de la cartera', 
+        Description = 'Composición de mora, morosidad agrupada y análisis según normativa SUGEF 14-21.' 
+    WHERE Id = 4001;
+
     -- ---------------------------------------------------------------------------------
     -- 3. TRASLADAR [Liquidez] (5000) DENTRO DE [Evaluación Riesgos] (7500)
     -- ---------------------------------------------------------------------------------

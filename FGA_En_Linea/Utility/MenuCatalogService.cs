@@ -269,6 +269,20 @@ namespace FGA.Utility
                 ColorFondoIcono = "#e0f2fe",
                 ColorIcono = "#0284c7"
             },
+            ["Calidad de la cartera"] = new CardMeta
+            {
+                Descripcion = "Composición de mora, morosidad agrupada y análisis de riesgo según normativa SUGEF 14-21.",
+                Icono = "fa fa-shield",
+                ColorFondoIcono = "#e0f2fe",
+                ColorIcono = "#0284c7"
+            },
+            ["Calidad de cartera"] = new CardMeta
+            {
+                Descripcion = "Composición de mora, morosidad agrupada y análisis de riesgo según normativa SUGEF 14-21.",
+                Icono = "fa fa-shield",
+                ColorFondoIcono = "#e0f2fe",
+                ColorIcono = "#0284c7"
+            },
             ["Autoevaluación"] = new CardMeta
             {
                 Descripcion = "Evalúe los aspectos que establece el Reglamento SUGEF 24-22 para la Supervisión Basada en Riesgos (SBR).",
