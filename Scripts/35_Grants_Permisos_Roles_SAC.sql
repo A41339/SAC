@@ -218,10 +218,10 @@ BEGIN
         (7500, 'Evaluación Riesgos', 'root', NULL, 3, '<i class="fa fa-calculator"></i>', 'Análisis integral de riesgo de crédito y riesgo de liquidez.'),
         (7510, 'Riesgo de crédito', 'root', 7500, 1, '<i class="fa fa-pie-chart"></i>', 'Monitoreo de indicadores de alerta temprana y calidad de cartera SUGEF 14-21.'),
         (7511, 'Indicadores de alerta', 'RiesgoCredito/Alertas', 7510, 1, '<i class="fa fa-bell-o"></i>', 'Monitoreo del deterioro del riesgo de crédito mediante indicadores de alerta temprana SUGEF 14-21.'),
-        (7512, 'Modelo de matrices', 'Cartera14_21/Index?parent=7510', 7510, 2, '<i class="fa fa-th"></i>', 'Matrices de transición de mora y calificación crediticia.'),
+        (7512, 'Modelo de matrices', 'Matriz/Index?parent=7510', 7510, 2, '<i class="fa fa-th"></i>', 'Matrices de transición de mora y calificación crediticia.'),
         (7513, 'Modelo de cosechas', 'Cartera14_21/Index?parent=7510', 7510, 3, '<i class="fa fa-line-chart"></i>', 'Curvas de maduración y cosechas crediticias.'),
-        (7514, 'Simulaciones de mora', 'Cartera14_21/Index?parent=7510', 7510, 4, '<i class="fa fa-sliders"></i>', 'Simulaciones prospectivas de morosidad y estrés crediticio.'),
-        (7515, 'Evaluación de riesgo FFC', 'Cartera14_21/Index?parent=7510', 7510, 5, '<i class="fa fa-shield"></i>', 'Metodología y evaluación del perfil de riesgo de crédito FFC.'),
+        (7514, 'Simulaciones de mora', 'ProyeccionMatriz/Index?parent=7510', 7510, 4, '<i class="fa fa-sliders"></i>', 'Simulaciones prospectivas de morosidad y estrés crediticio.'),
+        (7515, 'Evaluación de riesgo FFC', 'Evaluacion/Evaluacion?parent=7510', 7510, 5, '<i class="fa fa-shield"></i>', 'Metodología y evaluación del perfil de riesgo de crédito FFC.'),
         (5010, 'Liquidez Contractual', 'Liquidez/Contractual', 5000, 1, '<i class="fa fa-book"></i>', 'Cálculo de ICL, GAP Contractual e IFNE según normativa.'),
         (5020, 'Escenarios de Estrés', 'Liquidez/Estres', 5000, 2, '<i class="fa fa-bolt"></i>', 'Modelos proyectados de liquidez: Supuestos, Cobertura, ICL Estresado, Brechas y Horizonte.');
 
@@ -266,6 +266,52 @@ BEGIN
     SET MenuText = 'Calidad de la cartera',
         Description = 'Composición de mora, morosidad agrupada y análisis según normativa SUGEF 14-21.'
     WHERE Id = 4130;
+
+    -- Actualizar URLs y descripciones de las subopciones de Riesgo de Crédito (7510)
+    UPDATE [dbo].[Menu]
+    SET MenuText = 'Indicadores de alerta',
+        MenuURL = 'RiesgoCredito/Alertas',
+        ParentId = 7510,
+        SortOrder = 1,
+        MenuIcon = '<i class="fa fa-bell-o"></i>',
+        Description = 'Monitoreo del deterioro del riesgo de crédito mediante indicadores de alerta temprana SUGEF 14-21.'
+    WHERE Id = 7511;
+
+    UPDATE [dbo].[Menu]
+    SET MenuText = 'Modelo de matrices',
+        MenuURL = 'Matriz/Index?parent=7510',
+        ParentId = 7510,
+        SortOrder = 2,
+        MenuIcon = '<i class="fa fa-th"></i>',
+        Description = 'Matrices de transición de mora y calificación crediticia.'
+    WHERE Id = 7512;
+
+    UPDATE [dbo].[Menu]
+    SET MenuText = 'Modelo de cosechas',
+        MenuURL = 'Cartera14_21/Index?parent=7510',
+        ParentId = 7510,
+        SortOrder = 3,
+        MenuIcon = '<i class="fa fa-line-chart"></i>',
+        Description = 'Curvas de maduración y cosechas crediticias.'
+    WHERE Id = 7513;
+
+    UPDATE [dbo].[Menu]
+    SET MenuText = 'Simulaciones de mora',
+        MenuURL = 'ProyeccionMatriz/Index?parent=7510',
+        ParentId = 7510,
+        SortOrder = 4,
+        MenuIcon = '<i class="fa fa-sliders"></i>',
+        Description = 'Simulaciones prospectivas de morosidad y estrés crediticio.'
+    WHERE Id = 7514;
+
+    UPDATE [dbo].[Menu]
+    SET MenuText = 'Evaluación de riesgo FFC',
+        MenuURL = 'Evaluacion/Evaluacion?parent=7510',
+        ParentId = 7510,
+        SortOrder = 5,
+        MenuIcon = '<i class="fa fa-shield"></i>',
+        Description = 'Metodología y evaluación del perfil de riesgo de crédito FFC.'
+    WHERE Id = 7515;
 
     -- Reordenar módulos raíz
     UPDATE [dbo].[Menu] SET SortOrder = 1, ParentId = NULL WHERE Id = 1000; -- Tablero
