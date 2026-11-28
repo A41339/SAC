@@ -129,6 +129,10 @@ namespace FGA.Model
         public decimal GapAcumulado90d { get; set; }
         public decimal MaximaBrecha { get; set; }
         public string BandaCritica { get; set; }
+        public decimal MaximaBrechaBanda { get; set; }
+        public decimal MaximaBrechaAcumulada { get; set; }
+        public string BandaCriticaBanda { get; set; }
+        public string BandaCriticaAcumulada { get; set; }
 
         // Desglose de partidas detalladas (Requerimiento imagen 6 y Excel hoja Gap contractual)
         public List<decimal> Disponibilidades { get; set; } = new List<decimal>();

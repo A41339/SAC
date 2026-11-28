@@ -687,6 +687,282 @@
             otrasCuentas: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.GapDatos.OtrasCuentasPagar))
         };
 
+        function renderGraficosGap() {
+            var chartBarrasEl = document.getElementById('chartGapContractualBarras');
+            if (chartBarrasEl) {
+                Highcharts.chart('chartGapContractualBarras', {
+                    chart: { type: 'column' },
+                    title: { text: 'Entradas y salidas contractuales por banda', style: { fontWeight: '700', color: '#143750', fontSize: '15px' } },
+                    subtitle: { text: 'Comparación de flujos contractuales. Datos en millones de colones.' },
+                    xAxis: { categories: gapModelData.bandas },
+                    yAxis: { title: { text: 'Monto en Millones (₡)' } },
+                    tooltip: {
+                        shared: true,
+                        useHTML: true,
+                        formatter: function () {
+                            var s = '<div style="font-size:12px; font-weight:700; color:#143750; margin-bottom:5px; padding-bottom:3px; border-bottom:1px solid #cbd5e1;">Banda: ' + this.x + '</div>';
+                            var entradas = 0;
+                            var salidas = 0;
+                            this.points.forEach(function (point) {
+                                var valStr = '₡' + point.y.toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' MM';
+                                s += '<div style="display:flex; justify-content:space-between; gap:12px; margin:3px 0;">' +
+                                     '<span style="color:' + point.color + '; font-weight:600;">' + point.series.name + ':</span> ' +
+                                     '<span style="font-family:monospace; font-weight:700;">' + valStr + '</span>' +
+                                     '</div>';
+                                if (point.series.name.indexOf('Entradas') >= 0) entradas = point.y;
+                                if (point.series.name.indexOf('Salidas') >= 0) salidas = point.y;
+                            });
+                            var netGap = entradas - salidas;
+                            var gapColor = netGap >= 0 ? '#1e40af' : '#ea580c';
+                            var gapSign = netGap >= 0 ? '+₡' : '-₡';
+                            var gapText = netGap >= 0 ? 'Superávit' : 'Déficit';
+                            var netStr = gapSign + Math.abs(netGap).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' MM';
+                            s += '<div style="margin-top:6px; padding-top:5px; border-top:1px dashed #cbd5e1; display:flex; justify-content:space-between; gap:12px;">' +
+                                 '<span style="font-weight:700; color:' + gapColor + ';">GAP Neto (' + gapText + '):</span> ' +
+                                 '<span style="font-family:monospace; font-weight:800; color:' + gapColor + ';">' + netStr + '</span>' +
+                                 '</div>';
+                            return s;
+                        }
+                    },
+                    plotOptions: {
+                        column: {
+                            cursor: 'pointer',
+                            point: {
+                                events: {
+                                    click: function () {
+                                        var targetId = this.series.name.toLowerCase().indexOf('entradas') >= 0 ? 'chartComposicionEntradas' : 'chartComposicionSalidas';
+                                        var el = document.getElementById(targetId);
+                                        if (el) {
+                                            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                            $(el).closest('.box').css('box-shadow', '0 0 12px rgba(43,87,154,0.4)');
+                                            setTimeout(function() {
+                                                $(el).closest('.box').css('box-shadow', '0 1px 3px rgba(0,0,0,0.04)');
+                                            }, 1500);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    series: [
+                        { name: 'Entradas', data: gapModelData.entradasTotales, color: '#2b579a' },
+                        { name: 'Salidas', data: gapModelData.salidasTotales, color: '#16a34a' }
+                    ],
+                    exporting: { enabled: true },
+                    credits: { enabled: false }
+                });
+            }
+
+            // Gráfico Drilldown: Composición de entradas de efectivo (imagen 11)
+            var chartEntEl = document.getElementById('chartComposicionEntradas');
+            if (chartEntEl) {
+                Highcharts.chart('chartComposicionEntradas', {
+                    chart: { type: 'bar' },
+                    title: { text: 'Composición de entradas de efectivo', style: { fontWeight: '700', color: '#143750', fontSize: '14px' } },
+                    subtitle: { text: 'Vencimiento de inversiones y recuperación de cartera (MM ₡)' },
+                    xAxis: { categories: gapModelData.bandas },
+                    yAxis: { title: { text: 'Millones de colones (₡)' } },
+                    tooltip: {
+                        shared: true,
+                        valueDecimals: 2,
+                        valuePrefix: '₡',
+                        valueSuffix: ' MM'
+                    },
+                    plotOptions: {
+                        bar: {
+                            dataLabels: {
+                                enabled: true,
+                                format: '{y:,.2f}',
+                                style: { fontSize: '10px', fontWeight: '600' }
+                            }
+                        }
+                    },
+                    series: [
+                        { name: 'Vencimiento de inversiones', data: gapModelData.vencimientoInversiones, color: '#ea580c' },
+                        { name: 'Recuperación de cartera', data: gapModelData.recaudoCartera, color: '#2b579a' }
+                    ],
+                    legend: { reversed: false },
+                    credits: { enabled: false }
+                });
+            }
+
+            // Gráfico Drilldown: Composición de las salidas contractuales (imagen 12)
+            var chartSalEl = document.getElementById('chartComposicionSalidas');
+            if (chartSalEl) {
+                Highcharts.chart('chartComposicionSalidas', {
+                    chart: { type: 'bar' },
+                    title: { text: 'Composición de las salidas contractuales', style: { fontWeight: '700', color: '#143750', fontSize: '14px' } },
+                    subtitle: { text: 'Otras cuentas por pagar, obligaciones y CDP's (MM ₡)' },
+                    xAxis: { categories: gapModelData.bandas },
+                    yAxis: { title: { text: 'Millones de colones (₡)' } },
+                    tooltip: {
+                        shared: true,
+                        valueDecimals: 2,
+                        valuePrefix: '₡',
+                        valueSuffix: ' MM'
+                    },
+                    plotOptions: {
+                        bar: {
+                            dataLabels: {
+                                enabled: true,
+                                format: '{y:,.2f}',
+                                style: { fontSize: '10px', fontWeight: '600' }
+                            }
+                        }
+                    },
+                    series: [
+                        { name: 'Otras cuentas por pagar', data: gapModelData.otrasCuentas, color: '#94a3b8' },
+                        { name: 'Obligaciones con entidades', data: gapModelData.obligaciones, color: '#ea580c' },
+                        { name: 'Vencimientos de CDP's', data: gapModelData.cdps, color: '#2b579a' }
+                    ],
+                    legend: { reversed: false },
+                    credits: { enabled: false }
+                });
+            }
+        }
+
+        function ejecutarGenerarGap() {
+            var idEntidad = $('#txtIdEntidadGap').val();
+            var fechaCorte = $('#txtFechaCorteGap').val();
+            var $btn = $('#btnGenerarGap');
+            var $icon = $('#iconGenerarGap');
+            var $text = $('#lblTextoGenerarGap');
+
+            $btn.prop('disabled', true);
+            $icon.removeClass('fa-cogs').addClass('fa-spinner fa-spin');
+            $text.text('GENERANDO...');
+
+            $.ajax({
+                url: '@Url.Action("GenerarGapContractual", "Liquidez")',
+                type: 'POST',
+                data: { entidad: idEntidad, periodoCorte: fechaCorte },
+                success: function (res) {
+                    if (res && res.success && res.data) {
+                        var d = res.data;
+                        gapModelData.bandas = d.Bandas;
+                        gapModelData.entradasTotales = d.Entradas;
+                        gapModelData.salidasTotales = d.Salidas;
+                        gapModelData.disponibilidades = d.Disponibilidades;
+                        gapModelData.recaudoCartera = d.RecuperacionCartera;
+                        gapModelData.vencimientoInversiones = d.VencimientoInversiones;
+                        gapModelData.cdps = d.VencimientosCDP;
+                        gapModelData.obligaciones = d.ObligacionesEntidades;
+                        gapModelData.otrasCuentas = d.OtrasCuentasPagar;
+
+                        // Actualizar KPIs
+                        function fmtKpi(val) {
+                            var n = Math.abs(val || 0).toLocaleString('es-CR', { maximumFractionDigits: 0 });
+                            return (val < 0) ? '(-₡' + n + ' MM)' : '(₡' + n + ' MM)';
+                        }
+                        $('#kpiGap30d').text(fmtKpi(d.GapAcumulado30d)).css('color', d.GapAcumulado30d < 0 ? '#dc2626' : '#16a34a');
+                        $('#kpiGap90d').text(fmtKpi(d.GapAcumulado90d)).css('color', d.GapAcumulado90d < 0 ? '#dc2626' : '#16a34a');
+                        $('#kpiMaxBrechaBanda').text(fmtKpi(d.MaximaBrechaBanda)).css('color', d.MaximaBrechaBanda < 0 ? '#dc2626' : '#16a34a');
+                        $('#kpiMaxBrechaAcum').text(fmtKpi(d.MaximaBrechaAcumulada)).css('color', d.MaximaBrechaAcumulada < 0 ? '#dc2626' : '#16a34a');
+                        $('#kpiBandaCriticaBanda').text(d.BandaCriticaBanda || '1 a 30 días');
+                        $('#kpiBandaCriticaAcum').text(d.BandaCriticaAcumulada || 'de 271 a 360 días');
+
+                        // Redibujar gráficos
+                        renderGraficosGap();
+
+                        $icon.removeClass('fa-spinner fa-spin').addClass('fa-check');
+                        $text.text('GENERADO');
+                        setTimeout(function () {
+                            $btn.prop('disabled', false);
+                            $icon.removeClass('fa-check').addClass('fa-cogs');
+                            $text.text('GENERAR');
+                        }, 2000);
+                    } else {
+                        alert('No se pudo generar el cálculo: ' + (res.message || 'Error desconocido'));
+                        $btn.prop('disabled', false);
+                        $icon.removeClass('fa-spinner fa-spin').addClass('fa-cogs');
+                        $text.text('GENERAR');
+                    }
+                },
+                error: function (xhr) {
+                    alert('Error en la comunicación con el servidor al generar GAP Contractual.');
+                    $btn.prop('disabled', false);
+                    $icon.removeClass('fa-spinner fa-spin').addClass('fa-cogs');
+                    $text.text('GENERAR');
+                }
+            });
+        }
+
+        function renderGraficoICL() {
+            var chartIclEl = document.getElementById('chartEvolucionICL');
+            if (chartIclEl) {
+                var histMeses = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.ICLDatos.HistoricoMeses));
+                var histValores = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.ICLDatos.HistoricoValores));
+                var refMinima = [];
+                for (var i = 0; i < histMeses.length; i++) {
+                    refMinima.push(1.00);
+                }
+
+                Highcharts.chart('chartEvolucionICL', {
+                    chart: { type: 'spline' },
+                    title: { text: null },
+                    xAxis: { categories: histMeses },
+                    yAxis: {
+                        title: { text: 'Ratio ICL (veces)' },
+                        min: 0,
+                        labels: {
+                            formatter: function() { return this.value.toFixed(2) + 'x'; }
+                        },
+                        plotLines: [{
+                            value: 1.0,
+                            color: '#16a34a',
+                            dashStyle: 'Solid',
+                            width: 2.0,
+                            zIndex: 10,
+                            label: {
+                                text: '<span style="background-color: #ecfdf5; color: #047857; border: 1px solid #10b981; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; box-shadow: 0 1px 3px rgba(0,0,0,0.06); white-space: nowrap;"><i class="fa fa-check-circle" style="margin-right: 4px;"></i> Referencia mínima (1,00 vez)</span>',
+                                align: 'right',
+                                x: -10,
+                                y: -12,
+                                useHTML: true
+                            }
+                        }]
+                    },
+                    tooltip: {
+                        useHTML: true,
+                        shared: true,
+                        formatter: function () {
+                            var s = '<div style="font-size:12px; font-weight:700; color:#143750; margin-bottom:4px;">' + this.x + '</div>';
+                            $.each(this.points, function () {
+                                var valStr = this.y.toFixed(2) + ' veces';
+                                s += '<div style="margin:2px 0; font-size:12.5px;"><span style="color:' + this.series.color + '">●</span> ' + this.series.name + ': <strong>' + valStr + '</strong></div>';
+                            });
+                            return s;
+                        }
+                    },
+                    series: [{
+                        name: 'ICL',
+                        data: histValores,
+                        color: '#0284c7',
+                        marker: { radius: 4, symbol: 'circle' }
+                    }, {
+                        name: 'Referencia mínima',
+                        data: refMinima,
+                        color: '#16a34a',
+                        dashStyle: 'Dash',
+                        marker: { radius: 3, symbol: 'diamond' }
+                    }],
+                    credits: { enabled: false }
+                });
+            }
+        }
+
+        var gapModelData = {
+            bandas: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.GapDatos.Bandas)),
+            entradasTotales: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.GapDatos.Entradas)),
+            salidasTotales: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.GapDatos.Salidas)),
+            disponibilidades: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.GapDatos.Disponibilidades)),
+            recaudoCartera: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.GapDatos.RecuperacionCartera)),
+            vencimientoInversiones: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.GapDatos.VencimientoInversiones)),
+            cdps: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.GapDatos.VencimientosCDP)),
+            obligaciones: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.GapDatos.ObligacionesEntidades)),
+            otrasCuentas: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.GapDatos.OtrasCuentasPagar))
+        };
+
         function verDetalleEntradasSalidas(tipo, bandaSeleccionada) {
             var esEntradas = (tipo === 'entradas');
             var titulo = esEntradas ? 'Composición de Entradas de Efectivo Contractuales' : 'Composición de Salidas Contractuales';

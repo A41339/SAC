@@ -23,5 +23,23 @@ namespace Entities.Entities.Procedures
 
         [DataMember]
         public Nullable<decimal> BrechaAcumulada { get; set; }
+
+        [DataMember]
+        public Nullable<decimal> Disponibilidades { get; set; }
+
+        [DataMember]
+        public Nullable<decimal> RecuperacionCartera { get; set; }
+
+        [DataMember]
+        public Nullable<decimal> VencimientoInversiones { get; set; }
+
+        [DataMember]
+        public Nullable<decimal> VencimientosCDP { get; set; }
+
+        [DataMember]
+        public Nullable<decimal> ObligacionesEntidades { get; set; }
+
+        [DataMember]
+        public Nullable<decimal> OtrasCuentasPagar { get; set; }
     }
 }

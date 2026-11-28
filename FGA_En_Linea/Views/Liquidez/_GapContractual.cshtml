@@ -1,253 +1,313 @@
 @model FGA.Model.LiquidezIndexViewModel
 
-<!-- Encabezado y Selector de Fecha de Corte -->
-<div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid #f1f5f9;">
-    <div style="display: flex; align-items: center; gap: 14px;">
-        <img class="img-logo-entidad" width="44" height="44" src="@(Session["Logo"] ?? Url.Content("~/Content/images/FFC.jpg"))" onerror="this.onerror=null;this.src='@Url.Content("~/Content/images/FFC.jpg")';" style="border-radius: 8px; background: #ffffff; padding: 3px; border: 1px solid #e2e8f0; object-fit: contain;" />
-        <div>
-            <h4 style="margin: 0; font-size: 16px; font-weight: 700; color: #143750;">GAP Contractual de Liquidez - <span id="lblEntidadGap">@Model.NombreEntidad</span></h4>
-            <p style="margin: 2px 0 0 0; font-size: 12px; color: #64748b;">Brechas temporales entre entradas y salidas contractuales acumuladas en el tiempo</p>
-        </div>
-    </div>
+@{
+    var gap = Model.GapDatos;
+    var bandas = gap.Bandas;
+    var nBandas = bandas.Count;
 
-    <!-- Indicador de Fecha de Corte (Toma el Periodo Final seleccionado en el filtro superior) -->
-    <div>
-        <span class="badge" style="background: #f1f5f9; color: #1e3a8a; border: 1px solid #cbd5e1; font-size: 12.5px; font-weight: 600; padding: 6px 14px; border-radius: 6px;">
-            <i class="fa fa-calendar-check-o" style="color: #2b579a; margin-right: 5px;"></i> Fecha de corte: <strong>@Model.Periodo2</strong>
-        </span>
-    </div>
-</div>
+    Func<decimal, string> fmtMillones = (val) =>
+    {
+        string formatted = Math.Abs(val).ToString("N0");
+        return val < 0 ? "(-₡" + formatted + " MM)" : "(₡" + formatted + " MM)";
+    };
 
-<!-- 4 Tarjetas KPI Minimalistas del GAP Contractual -->
-<div class="row" style="margin-bottom: 18px;">
-    <div class="col-md-3 col-sm-6 col-xs-12">
-        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-left: 4px solid #64748b; border-radius: 8px; padding: 12px 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); display: flex; align-items: center; justify-content: space-between;">
-            <div>
-                <div style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.3px;">GAP 30 Días</div>
-                <div class="font-mono" style="font-size: 20px; font-weight: 800; color: #334155; margin: 2px 0;">¢@(Model.GapDatos.BrechasBanda[0].ToString("N2")) MM</div>
-                <div style="font-size: 11px; color: #64748b; font-weight: 600;">Acum: ¢@Model.GapDatos.GapAcumulado30d.ToString("N2") MM</div>
-            </div>
-            <div style="width: 38px; height: 38px; border-radius: 8px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; color: #64748b; font-size: 16px;">
-                <i class="fa fa-calendar-minus-o"></i>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3 col-sm-6 col-xs-12">
-        <div style="background: #ffffff; border: 1px solid #fed7aa; border-left: 4px solid #ea580c; border-radius: 8px; padding: 12px 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); display: flex; align-items: center; justify-content: space-between;">
-            <div>
-                <div style="font-size: 11px; font-weight: 700; color: #9a3412; text-transform: uppercase; letter-spacing: 0.3px;">GAP 90 Días</div>
-                <div class="font-mono" style="font-size: 20px; font-weight: 800; color: #c2410c; margin: 2px 0;">¢@(Model.GapDatos.BrechasBanda[2].ToString("N2")) MM</div>
-                <div style="font-size: 11px; color: #9a3412; font-weight: 600;">Acum: ¢@Model.GapDatos.GapAcumulado90d.ToString("N2") MM</div>
-            </div>
-            <div style="width: 38px; height: 38px; border-radius: 8px; background: #fff7ed; display: flex; align-items: center; justify-content: center; color: #ea580c; font-size: 16px;">
-                <i class="fa fa-calendar"></i>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3 col-sm-6 col-xs-12">
-        <div style="background: #ffffff; border: 1px solid #fed7aa; border-left: 4px solid #f97316; border-radius: 8px; padding: 12px 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); display: flex; align-items: center; justify-content: space-between;">
-            <div>
-                <div style="font-size: 11px; font-weight: 700; color: #9a3412; text-transform: uppercase; letter-spacing: 0.3px;">Máxima Brecha</div>
-                <div class="font-mono" style="font-size: 20px; font-weight: 800; color: #c2410c; margin: 2px 0;">¢@(Model.GapDatos.MaximaBrecha.ToString("N2")) MM</div>
-                <div style="font-size: 11px; color: #9a3412; font-weight: 600;">Banda: @Model.GapDatos.BandaCritica</div>
-            </div>
-            <div style="width: 38px; height: 38px; border-radius: 8px; background: #fff7ed; display: flex; align-items: center; justify-content: center; color: #f97316; font-size: 16px;">
-                <i class="fa fa-exclamation-triangle"></i>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3 col-sm-6 col-xs-12">
-        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-left: 4px solid #2b579a; border-radius: 8px; padding: 12px 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); display: flex; align-items: center; justify-content: space-between;">
-            <div>
-                <div style="font-size: 11px; font-weight: 700; color: #1e3a8a; text-transform: uppercase; letter-spacing: 0.3px;">Banda Crítica</div>
-                <div class="font-mono" style="font-size: 19px; font-weight: 800; color: #2b579a; margin: 2px 0;">@Model.GapDatos.BandaCritica</div>
-                <div style="font-size: 11px; color: #64748b; font-weight: 600;">Mayor presión de flujos</div>
-            </div>
-            <div style="width: 38px; height: 38px; border-radius: 8px; background: #eff6ff; display: flex; align-items: center; justify-content: center; color: #2b579a; font-size: 16px;">
-                <i class="fa fa-clock-o"></i>
-            </div>
-        </div>
-    </div>
-</div>
+    Func<decimal, string> fmtCell = (val) =>
+    {
+        return val.ToString("N2");
+    };
+}
 
-<!-- 2 Gráficos de Brechas Contractuales (Requerimiento imagen 7 y 8) -->
-<div class="row" style="margin-bottom: 20px;">
-    <div class="col-md-6 col-xs-12">
-        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 22px 24px 22px 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding: 4px 6px 12px 6px; border-bottom: 1px solid #f1f5f9; min-height: 38px;">
-                <button type="button" class="btn-chart-expand" onclick="expandirGraficoModal('chartGapContractualBarras', 'Entradas y Salidas Contractuales por Banda')">
-                    <i class="fa fa-expand" style="color: #2b579a;"></i> Ampliar Gráfico
-                </button>
-                <div style="display: flex; gap: 6px; margin-right: 125px;">
-                    <button type="button" class="btn btn-xs" onclick="verDetalleEntradasSalidas('entradas')" style="background-color: #2b579a; border: 1px solid #1e3f70; color: #ffffff; font-weight: 700; font-size: 11.5px; border-radius: 5px; padding: 4px 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.12); display: inline-flex; align-items: center; gap: 5px;">
-                        <i class="fa fa-pie-chart" style="color: #ffffff;"></i> Ver Entradas
-                    </button>
-                    <button type="button" class="btn btn-xs" onclick="verDetalleEntradasSalidas('salidas')" style="background-color: #475569; border: 1px solid #334155; color: #ffffff; font-weight: 700; font-size: 11.5px; border-radius: 5px; padding: 4px 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.12); display: inline-flex; align-items: center; gap: 5px;">
-                        <i class="fa fa-pie-chart" style="color: #ffffff;"></i> Ver Salidas
-                    </button>
+<!-- =====================================================================================
+     1. BARRA SUPERIOR INICIAL DE SELECCIÓN Y GENERACIÓN (Requerimiento imagen 5 e imagen 7)
+     ===================================================================================== -->
+<div class="box box-default" style="border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.04); margin-bottom: 20px; background: #ffffff;">
+    <div class="box-body" style="padding: 14px 20px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
+            <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <i class="fa fa-university" style="color: #2b579a; font-size: 16px;"></i>
+                    <strong style="color: #334155; font-size: 13px;">Entidad:</strong>
+                    <div style="display: inline-block;">
+                        <input type="text" class="form-control input-sm" value="@Model.NombreEntidad" readonly style="background: #f8fafc; font-weight: 700; color: #1e3a8a; border: 1px solid #cbd5e1; border-radius: 4px; min-width: 180px;" />
+                        <input type="hidden" id="txtIdEntidadGap" value="@Model.IdEntidad" />
+                    </div>
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 8px; margin-left: 10px;">
+                    <strong style="color: #334155; font-size: 13px;">Fecha de corte:</strong>
+                    <div class="input-group" style="display: inline-flex; width: 140px; vertical-align: middle;">
+                        <input type="text" id="txtFechaCorteGap" class="form-control input-sm date-picker" value="@(string.IsNullOrEmpty(gap.PeriodoCorte) ? Model.Periodo2 : gap.PeriodoCorte)" placeholder="MM/aaaa" style="font-weight: 700; text-align: center; border-radius: 4px 0 0 4px; border: 1px solid #cbd5e1; color: #1e293b;" />
+                        <span class="input-group-addon" style="padding: 4px 10px; background: #f8fafc; border: 1px solid #cbd5e1; border-left: none; border-radius: 0 4px 4px 0;">
+                            <i class="fa fa-calendar" style="color: #ea580c;"></i>
+                        </span>
+                    </div>
+                    <span style="font-size: 11px; color: #64748b; font-style: italic;">(Último mes cargado)</span>
                 </div>
             </div>
-            <div id="chartGapContractualBarras" style="height: 330px; width: 100%;"></div>
-            <div style="font-size: 11.5px; color: #64748b; text-align: center; margin-top: 6px;">
-                <i class="fa fa-info-circle"></i> Haga clic sobre una barra o use los botones superiores para ver la composición detallada.
-            </div>
-        </div>
-    </div>
-    <div class="col-md-6 col-xs-12">
-        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 22px 24px 22px 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; padding: 4px 6px 12px 6px; border-bottom: 1px solid #f1f5f9; min-height: 38px;">
-                <button type="button" class="btn-chart-expand" onclick="expandirGraficoModal('chartGapEvolucion', 'Evolución y Acumulación del GAP Contractual')">
-                    <i class="fa fa-expand" style="color: #2b579a;"></i> Ampliar Gráfico
+
+            <div>
+                <button type="button" id="btnGenerarGap" class="btn btn-primary" onclick="ejecutarGenerarGap();" style="background-color: #2b579a; border-color: #1e3a8a; font-weight: 800; padding: 7px 28px; border-radius: 4px; letter-spacing: 0.6px; font-size: 13px; box-shadow: 0 2px 6px rgba(43,87,154,0.3); transition: all 0.2s ease;">
+                    <i class="fa fa-cogs" id="iconGenerarGap" style="margin-right: 8px;"></i> <span id="lblTextoGenerarGap">GENERAR</span>
                 </button>
-                <div style="width: 140px;"><!-- Espacio reservado para el botón Descargar de Highcharts --></div>
-            </div>
-            <div id="chartGapEvolucion" style="height: 330px; width: 100%;"></div>
-            <div style="font-size: 11.5px; color: #64748b; text-align: center; margin-top: 6px;">
-                <i class="fa fa-line-chart"></i> GAP individual por banda y curva continua acumulada en el tiempo.
             </div>
         </div>
     </div>
 </div>
 
-<!-- Acordeón Desplegable para la Tabla Detallada (Colapsada por defecto para vista despejada) -->
-<div class="panel panel-default" style="border: 1px solid #cbd5e1; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); overflow: hidden;">
-    <div class="panel-heading" style="background: #f8fafc; padding: 10px 16px; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between;">
-        <span style="font-weight: 700; font-size: 13px; color: #1e3a8a; display: flex; align-items: center; gap: 8px; cursor: pointer;"
-              data-toggle="collapse" data-target="#collapseTblGapContractual" aria-expanded="false">
-            <i class="fa fa-table" style="color: #2b579a;"></i> Desglose Detallado del GAP Contractual por Partidas (Millones de ¢)
-        </span>
-        <div style="display: flex; align-items: center; gap: 8px;">
-            <button type="button" class="btn btn-xs btn-default" onclick="copiarTablaPortapapeles('tblGapDetallado')" style="border-radius: 5px; border-color: #cbd5e1; font-weight: 600; padding: 3px 8px; display: inline-flex; align-items: center; gap: 4px; color: #1e3a8a;" title="Copiar toda la tabla estructurada para pegar en Excel">
-                <i class="fa fa-clipboard"></i> Copiar a Excel
-            </button>
-            <button type="button" class="btn btn-xs btn-default" data-toggle="collapse" data-target="#collapseTblGapContractual" style="font-size: 11px; font-weight: 600; color: #475569; border-color: #cbd5e1;">
-                <i class="fa fa-chevron-down" id="iconCollapseGap"></i> <span id="textCollapseGap">Ver Detalle Tabular</span>
+<!-- =====================================================================================
+     2. 4 TARJETAS RESUMEN DE INDICADORES CLAVE (Requerimiento imagen 7 e imagen 10)
+     ===================================================================================== -->
+<div class="box box-default" style="border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.04); margin-bottom: 22px; background: #ffffff;">
+    <div class="box-body" style="padding: 16px 20px;">
+        <div class="row" style="margin: 0;">
+            <!-- KPI 1: GAP acumulado 30 días -->
+            <div class="col-md-3 col-sm-6 col-xs-12" style="border-right: 1px solid #f1f5f9; padding: 6px 16px;">
+                <div style="font-size: 13px; font-weight: 700; color: #1e293b; margin-bottom: 8px;">GAP acumulado 30 días</div>
+                <div id="kpiGap30d" class="font-mono" style="font-size: 22px; font-weight: 800; color: @(gap.GapAcumulado30d < 0 ? "#dc2626" : "#16a34a");">
+                    @fmtMillones(gap.GapAcumulado30d)
+                </div>
+            </div>
+
+            <!-- KPI 2: GAP acumulado 90 días -->
+            <div class="col-md-3 col-sm-6 col-xs-12" style="border-right: 1px solid #f1f5f9; padding: 6px 16px;">
+                <div style="font-size: 13px; font-weight: 700; color: #1e293b; margin-bottom: 8px;">GAP acumulado 90 días</div>
+                <div id="kpiGap90d" class="font-mono" style="font-size: 22px; font-weight: 800; color: @(gap.GapAcumulado90d < 0 ? "#dc2626" : "#16a34a");">
+                    @fmtMillones(gap.GapAcumulado90d)
+                </div>
+            </div>
+
+            <!-- KPI 3: Máxima brecha (Banda y Acumulada) -->
+            <div class="col-md-3 col-sm-6 col-xs-12" style="border-right: 1px solid #f1f5f9; padding: 6px 16px;">
+                <div style="font-size: 13px; font-weight: 700; color: #1e293b; margin-bottom: 6px;">Máxima brecha</div>
+                <div style="display: flex; flex-direction: column; gap: 3px;">
+                    <div style="font-size: 14px; font-weight: 700; color: #334155;">
+                        Banda <span id="kpiMaxBrechaBanda" class="font-mono" style="color: @(gap.MaximaBrechaBanda < 0 ? "#dc2626" : "#16a34a");">@fmtMillones(gap.MaximaBrechaBanda)</span>
+                    </div>
+                    <div style="font-size: 14px; font-weight: 700; color: #334155;">
+                        Acumulada <span id="kpiMaxBrechaAcum" class="font-mono" style="color: @(gap.MaximaBrechaAcumulada < 0 ? "#dc2626" : "#16a34a");">@fmtMillones(gap.MaximaBrechaAcumulada)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- KPI 4: Banda crítica (Banda y Acumulada) -->
+            <div class="col-md-3 col-sm-6 col-xs-12" style="padding: 6px 16px;">
+                <div style="font-size: 13px; font-weight: 700; color: #1e293b; margin-bottom: 6px;">Banda crítica</div>
+                <div style="display: flex; flex-direction: column; gap: 3px;">
+                    <div id="kpiBandaCriticaBanda" style="font-size: 14px; font-weight: 700; color: #1e3a8a;">
+                        @(string.IsNullOrEmpty(gap.BandaCriticaBanda) ? "1 a 30 días" : gap.BandaCriticaBanda)
+                    </div>
+                    <div id="kpiBandaCriticaAcum" style="font-size: 14px; font-weight: 700; color: #ea580c;">
+                        @(string.IsNullOrEmpty(gap.BandaCriticaAcumulada) ? "de 271 a 360 días" : gap.BandaCriticaAcumulada)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- =====================================================================================
+     3. GRÁFICO PRINCIPAL: ENTRADAS Y SALIDAS CONTRACTUALES POR BANDA (Requerimiento imagen 7)
+     ===================================================================================== -->
+<div class="box box-default" style="border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.04); margin-bottom: 22px;">
+    <div class="box-header with-border" style="padding: 14px 20px; background-color: #f8fafc; border-top-left-radius: 8px; border-top-right-radius: 8px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;">
+        <div>
+            <h3 class="box-title" style="font-weight: 700; color: #143750; font-size: 15px;">
+                <i class="fa fa-bar-chart" style="color: #2b579a; margin-right: 8px;"></i> Entradas y salidas contractuales por banda
+            </h3>
+            <p style="margin: 2px 0 0 0; font-size: 12px; color: #64748b;">Comparación de flujos contractuales. Datos en millones de colones.</p>
+        </div>
+        <div style="display: flex; gap: 8px;">
+            <button type="button" class="btn btn-default btn-xs" onclick="expandirGraficoModal('chartGapContractualBarras', 'Entradas y salidas contractuales por banda');" style="border-radius: 4px; color: #475569; font-weight: 600;">
+                <i class="fa fa-expand" style="margin-right: 4px;"></i> Expandir
             </button>
         </div>
     </div>
-    <div id="collapseTblGapContractual" class="panel-collapse collapse">
-        <div class="panel-body" style="padding: 0;">
-            <div class="table-responsive table-sticky-container" style="margin: 0; border: none;">
-    <table id="tblGapDetallado" class="table table-striped modern-data-table tabla-liquidez-azul" style="width: 100%; margin-bottom: 0; border-collapse: collapse;">
-        <thead style="background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important;">
-            <tr style="background-color: #2b579a !important; background: #2b579a !important;">
-                <th class="text-left col-sticky-first" style="width: 23%; text-align: left !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 16px; font-weight: 700; font-size: 12.5px; border: none;">Partida / Cuenta Contable</th>
-                <th class="text-right" style="width: 11%; text-align: right !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 10px; font-weight: 700; font-size: 12.5px; border: none;">1 a 30 d</th>
-                <th class="text-right" style="width: 11%; text-align: right !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 10px; font-weight: 700; font-size: 12.5px; border: none;">31 a 60 d</th>
-                <th class="text-right" style="width: 11%; text-align: right !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 10px; font-weight: 700; font-size: 12.5px; border: none;">61 a 90 d</th>
-                <th class="text-right" style="width: 11%; text-align: right !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 10px; font-weight: 700; font-size: 12.5px; border: none;">91 a 180 d</th>
-                <th class="text-right" style="width: 11%; text-align: right !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 10px; font-weight: 700; font-size: 12.5px; border: none;">181 a 270 d</th>
-                <th class="text-right" style="width: 11%; text-align: right !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 10px; font-weight: 700; font-size: 12.5px; border: none;">271 a 360 d</th>
-                <th class="text-right" style="width: 11%; text-align: right !important; background-color: #2b579a !important; background: #2b579a !important; color: #ffffff !important; padding: 12px 12px; font-weight: 700; font-size: 12.5px; border: none;">(+) 360 d</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- ENTRADAS CONTRACTUALES -->
-            <tr style="background-color: #eff6ff; font-weight: 700; border-top: 1px solid #cbd5e1;">
-                <td class="text-left col-sticky-first" style="color: #1e3a8a; padding-left: 16px; background-color: #eff6ff;"><i class="fa fa-arrow-down" style="color: #2b579a; margin-right: 6px;"></i> Entradas contractuales</td>
-                @for (int b = 0; b < 7; b++)
-                {
-                    decimal val = (b < Model.GapDatos.Entradas.Count) ? Model.GapDatos.Entradas[b] : 0m;
-                    <td class="text-right font-mono">¢@val.ToString("N2")</td>
-                }
-            </tr>
-            <tr>
-                <td class="text-left col-sticky-first" style="padding-left: 32px; color: #475569; background-color: #ffffff;">Disponibilidades (11000000)</td>
-                <td class="text-right font-mono">@Model.GapDatos.Disponibilidades[0].ToString("N2")</td>
-                <td class="text-right font-mono">@Model.GapDatos.Disponibilidades[1].ToString("N2")</td>
-                <td class="text-right font-mono">@Model.GapDatos.Disponibilidades[2].ToString("N2")</td>
-                <td class="text-right font-mono">@Model.GapDatos.Disponibilidades[3].ToString("N2")</td>
-                <td class="text-right font-mono">@Model.GapDatos.Disponibilidades[4].ToString("N2")</td>
-                <td class="text-right font-mono">@Model.GapDatos.Disponibilidades[5].ToString("N2")</td>
-                <td class="text-right font-mono">@Model.GapDatos.Disponibilidades[6].ToString("N2")</td>
-            </tr>
-            <tr>
-                <td class="text-left col-sticky-first" style="padding-left: 32px; color: #475569; background-color: #ffffff;">Recuperación de cartera (IRL recaudo)</td>
-                <td class="text-right font-mono">@Model.GapDatos.RecuperacionCartera[0].ToString("N2")</td>
-                <td class="text-right font-mono">@Model.GapDatos.RecuperacionCartera[1].ToString("N2")</td>
-                <td class="text-right font-mono">@Model.GapDatos.RecuperacionCartera[2].ToString("N2")</td>
-                <td class="text-right font-mono">@Model.GapDatos.RecuperacionCartera[3].ToString("N2")</td>
-                <td class="text-right font-mono">@Model.GapDatos.RecuperacionCartera[4].ToString("N2")</td>
-                <td class="text-right font-mono">@Model.GapDatos.RecuperacionCartera[5].ToString("N2")</td>
-                <td class="text-right font-mono">@Model.GapDatos.RecuperacionCartera[6].ToString("N2")</td>
-            </tr>
-            <tr>
-                <td class="text-left col-sticky-first" style="padding-left: 32px; color: #475569; background-color: #ffffff;">Vencimiento de inversiones (activas)</td>
-                <td class="text-right font-mono">@Model.GapDatos.VencimientoInversiones[0].ToString("N2")</td>
-                <td class="text-right font-mono">@Model.GapDatos.VencimientoInversiones[1].ToString("N2")</td>
-                <td class="text-right font-mono">@Model.GapDatos.VencimientoInversiones[2].ToString("N2")</td>
-                <td class="text-right font-mono">@Model.GapDatos.VencimientoInversiones[3].ToString("N2")</td>
-                <td class="text-right font-mono">@Model.GapDatos.VencimientoInversiones[4].ToString("N2")</td>
-                <td class="text-right font-mono">@Model.GapDatos.VencimientoInversiones[5].ToString("N2")</td>
-                <td class="text-right font-mono">@Model.GapDatos.VencimientoInversiones[6].ToString("N2")</td>
-            </tr>
-
-            <!-- SALIDAS CONTRACTUALES -->
-            <tr style="background-color: #fff7ed; font-weight: 700; border-top: 2px solid #e2e8f0;">
-                <td class="text-left col-sticky-first" style="color: #9a3412; padding-left: 16px; background-color: #fff7ed;"><i class="fa fa-arrow-up" style="color: #f97316; margin-right: 6px;"></i> Salidas contractuales</td>
-                @for (int b = 0; b < 7; b++)
-                {
-                    decimal val = (b < Model.GapDatos.Salidas.Count) ? Model.GapDatos.Salidas[b] : 0m;
-                    <td class="text-right font-mono">¢@val.ToString("N2")</td>
-                }
-            </tr>
-            <tr>
-                <td class="text-left col-sticky-first" style="padding-left: 32px; color: #475569; background-color: #ffffff;">Vencimientos de CDP's (21300000)</td>
-                <td class="text-right font-mono">@Model.GapDatos.VencimientosCDP[0].ToString("N2")</td>
-                <td class="text-right font-mono">@Model.GapDatos.VencimientosCDP[1].ToString("N2")</td>
-                <td class="text-right font-mono">@Model.GapDatos.VencimientosCDP[2].ToString("N2")</td>
-                <td class="text-right font-mono">@Model.GapDatos.VencimientosCDP[3].ToString("N2")</td>
-                <td class="text-right font-mono">@Model.GapDatos.VencimientosCDP[4].ToString("N2")</td>
-                <td class="text-right font-mono">@Model.GapDatos.VencimientosCDP[5].ToString("N2")</td>
-                <td class="text-right font-mono">@Model.GapDatos.VencimientosCDP[6].ToString("N2")</td>
-            </tr>
-            <tr>
-                <td class="text-left col-sticky-first" style="padding-left: 32px; color: #475569; background-color: #ffffff;">Obligaciones con entidades (231/232)</td>
-                <td class="text-right font-mono">@Model.GapDatos.ObligacionesEntidades[0].ToString("N2")</td>
-                <td class="text-right font-mono">@Model.GapDatos.ObligacionesEntidades[1].ToString("N2")</td>
-                <td class="text-right font-mono">@Model.GapDatos.ObligacionesEntidades[2].ToString("N2")</td>
-                <td class="text-right font-mono">@Model.GapDatos.ObligacionesEntidades[3].ToString("N2")</td>
-                <td class="text-right font-mono">@Model.GapDatos.ObligacionesEntidades[4].ToString("N2")</td>
-                <td class="text-right font-mono">@Model.GapDatos.ObligacionesEntidades[5].ToString("N2")</td>
-                <td class="text-right font-mono">@Model.GapDatos.ObligacionesEntidades[6].ToString("N2")</td>
-            </tr>
-            <tr>
-                <td class="text-left col-sticky-first" style="padding-left: 32px; color: #475569; background-color: #ffffff;">Otras cuentas por pagar</td>
-                <td class="text-right font-mono">@Model.GapDatos.OtrasCuentasPagar[0].ToString("N2")</td>
-                <td class="text-right font-mono">@Model.GapDatos.OtrasCuentasPagar[1].ToString("N2")</td>
-                <td class="text-right font-mono">@Model.GapDatos.OtrasCuentasPagar[2].ToString("N2")</td>
-                <td class="text-right font-mono">@Model.GapDatos.OtrasCuentasPagar[3].ToString("N2")</td>
-                <td class="text-right font-mono">@Model.GapDatos.OtrasCuentasPagar[4].ToString("N2")</td>
-                <td class="text-right font-mono">@Model.GapDatos.OtrasCuentasPagar[5].ToString("N2")</td>
-                <td class="text-right font-mono">@Model.GapDatos.OtrasCuentasPagar[6].ToString("N2")</td>
-            </tr>
-
-            <!-- GAP POR BANDA (Con Micro-Heatmap Institucional) -->
-            <tr style="background-color: #f8fafc; font-weight: 700; border-top: 2px solid #cbd5e1;">
-                <td class="text-left col-sticky-first" style="color: #1e3a8a; padding-left: 16px; background-color: #f8fafc;">GAP por Banda</td>
-                @for (int b = 0; b < 7; b++)
-                {
-                    decimal val = (b < Model.GapDatos.BrechasBanda.Count) ? Model.GapDatos.BrechasBanda[b] : 0m;
-                    string cellClass = val < 0 ? "cell-heatmap-neg" : "cell-heatmap-pos";
-                    string sign = val >= 0 ? "+¢" : "-¢";
-                    <td class="text-right font-mono @cellClass">@sign@Math.Abs(val).ToString("N2")</td>
-                }
-            </tr>
-
-            <!-- GAP ACUMULADO (Con Micro-Heatmap Institucional) -->
-            <tr style="background-color: #eff6ff; font-weight: 800; border-top: 1px solid #bfdbfe; border-bottom: 2px solid #2b579a;">
-                <td class="text-left col-sticky-first" style="color: #1e40af; padding-left: 16px; background-color: #eff6ff;">GAP Acumulado</td>
-                @for (int b = 0; b < 7; b++)
-                {
-                    decimal val = (b < Model.GapDatos.BrechasAcumuladas.Count) ? Model.GapDatos.BrechasAcumuladas[b] : 0m;
-                    string cellClass = val < 0 ? "cell-heatmap-neg" : "cell-heatmap-pos";
-                    string sign = val >= 0 ? "+¢" : "-¢";
-                    <td class="text-right font-mono @cellClass">@sign@Math.Abs(val).ToString("N2")</td>
-                }
-            </tr>
-        </tbody>
-    </table>
+    <div class="box-body" style="padding: 20px;">
+        <div id="chartGapContractualBarras" style="height: 380px; width: 100%;"></div>
+    </div>
 </div>
+
+<!-- =====================================================================================
+     4. DRILL-DOWN: COMPOSICIÓN DE ENTRADAS Y SALIDAS (Requerimiento imagen 11 e imagen 12)
+     ===================================================================================== -->
+<div class="row" id="seccionDrilldownGap" style="margin-bottom: 22px;">
+    <!-- Gráfico Drilldown: Composición de entradas de efectivo (imagen 11) -->
+    <div class="col-md-6 col-sm-12">
+        <div class="box box-default" style="border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+            <div class="box-header with-border" style="padding: 12px 18px; background-color: #f8fafc; border-top-left-radius: 8px; border-top-right-radius: 8px;">
+                <h4 class="box-title" style="font-weight: 700; color: #143750; font-size: 14px;">
+                    <i class="fa fa-arrow-down" style="color: #2b579a; margin-right: 6px;"></i> Composición de entradas de efectivo
+                </h4>
+            </div>
+            <div class="box-body" style="padding: 16px;">
+                <div id="chartComposicionEntradas" style="height: 340px; width: 100%;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráfico Drilldown: Composición de las salidas contractuales (imagen 12) -->
+    <div class="col-md-6 col-sm-12">
+        <div class="box box-default" style="border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+            <div class="box-header with-border" style="padding: 12px 18px; background-color: #f8fafc; border-top-left-radius: 8px; border-top-right-radius: 8px;">
+                <h4 class="box-title" style="font-weight: 700; color: #143750; font-size: 14px;">
+                    <i class="fa fa-arrow-up" style="color: #ea580c; margin-right: 6px;"></i> Composición de las salidas contractuales
+                </h4>
+            </div>
+            <div class="box-body" style="padding: 16px;">
+                <div id="chartComposicionSalidas" style="height: 340px; width: 100%;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- =====================================================================================
+     5. DETALLE TABULAR DE ENTRADAS, SALIDAS Y BRECHAS (Requerimiento imagen 6 y Excel Gap)
+     ===================================================================================== -->
+<div class="box box-default" style="border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.04); margin-bottom: 25px;">
+    <div class="box-header with-border" style="padding: 12px 20px; background-color: #f8fafc; border-top-left-radius: 8px; border-top-right-radius: 8px; display: flex; align-items: center; justify-content: space-between;">
+        <h4 class="box-title" style="font-weight: 700; color: #143750; font-size: 14px;">
+            <i class="fa fa-table" style="color: #2b579a; margin-right: 8px;"></i> Desglose Tabular del GAP Contractual
+        </h4>
+        <div style="display: flex; gap: 8px;">
+            <button type="button" class="btn btn-default btn-xs" onclick="copiarTablaPortapapeles('tblGapContractualDetalle');" style="border-radius: 4px; color: #475569; font-weight: 600;">
+                <i class="fa fa-copy" style="margin-right: 4px;"></i> Copiar
+            </button>
+            <button type="button" class="btn btn-default btn-xs" data-toggle="collapse" data-target="#collapseTblGapContractual" style="border-radius: 4px; color: #475569; font-weight: 600;">
+                <i class="fa fa-chevron-up" id="iconCollapseGap"></i> <span id="textCollapseGap">Ocultar Detalle</span>
+            </button>
+        </div>
+    </div>
+    <div id="collapseTblGapContractual" class="collapse in">
+        <div class="box-body" style="padding: 0;">
+            <div class="table-responsive" style="margin-bottom: 0;">
+                <table id="tblGapContractualDetalle" class="table table-bordered table-striped tabla-liquidez-azul" style="margin-bottom: 0; font-size: 12px; width: 100%;">
+                    <thead>
+                        <tr>
+                            <th class="col-sticky-first" style="min-width: 250px; text-align: left; background-color: #2b579a; color: #ffffff;">Concepto / Partida Contable</th>
+                            @for (int b = 0; b < nBandas; b++)
+                            {
+                                <th style="min-width: 110px; text-align: right; background-color: #2b579a; color: #ffffff;">@bandas[b]</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- 1. Disponibilidades -->
+                        <tr style="background-color: #f8fafc; font-weight: 600;">
+                            <td class="text-left col-sticky-first" style="color: #1e3a8a;">
+                                <i class="fa fa-bank" style="color: #2b579a; margin-right: 6px;"></i> 11000000 Disponibilidades
+                            </td>
+                            <td class="text-right font-mono" style="font-weight: 700; color: #1e3a8a;">@(gap.Disponibilidades.Count > 0 ? fmtCell(gap.Disponibilidades[0]) : "0.00")</td>
+                            @for (int b = 1; b < nBandas; b++)
+                            {
+                                decimal acumPrev = (b - 1 < gap.BrechasAcumuladas.Count) ? gap.BrechasAcumuladas[b - 1] : 0m;
+                                <td class="text-right font-mono" style="color: #64748b;">@fmtCell(acumPrev)</td>
+                            }
+                        </tr>
+
+                        <!-- 2. Entradas contractuales (Total) -->
+                        <tr style="background-color: #eff6ff; font-weight: 700; border-top: 1px solid #bfdbfe;">
+                            <td class="text-left col-sticky-first" style="color: #1e40af;">
+                                <i class="fa fa-arrow-circle-down" style="color: #2b579a; margin-right: 6px;"></i> Entradas contractuales
+                            </td>
+                            @for (int b = 0; b < nBandas; b++)
+                            {
+                                decimal ent = (b < gap.Entradas.Count) ? gap.Entradas[b] : 0m;
+                                <td class="text-right font-mono" style="color: #1e40af;">@fmtCell(ent)</td>
+                            }
+                        </tr>
+                        <tr>
+                            <td class="text-left col-sticky-first" style="padding-left: 28px; color: #475569;">
+                                <i class="fa fa-angle-right" style="margin-right: 4px; color: #94a3b8;"></i> Recuperación de cartera (IRL)
+                            </td>
+                            @for (int b = 0; b < nBandas; b++)
+                            {
+                                decimal rec = (b < gap.RecuperacionCartera.Count) ? gap.RecuperacionCartera[b] : 0m;
+                                <td class="text-right font-mono">@fmtCell(rec)</td>
+                            }
+                        </tr>
+                        <tr>
+                            <td class="text-left col-sticky-first" style="padding-left: 28px; color: #475569;">
+                                <i class="fa fa-angle-right" style="margin-right: 4px; color: #94a3b8;"></i> Vencimiento de inversiones (XML)
+                            </td>
+                            @for (int b = 0; b < nBandas; b++)
+                            {
+                                decimal inv = (b < gap.VencimientoInversiones.Count) ? gap.VencimientoInversiones[b] : 0m;
+                                <td class="text-right font-mono">@fmtCell(inv)</td>
+                            }
+                        </tr>
+
+                        <!-- 3. Salidas contractuales (Total) -->
+                        <tr style="background-color: #fff7ed; font-weight: 700; border-top: 1px solid #fed7aa;">
+                            <td class="text-left col-sticky-first" style="color: #c2410c;">
+                                <i class="fa fa-arrow-circle-up" style="color: #ea580c; margin-right: 6px;"></i> Salidas contractuales
+                            </td>
+                            @for (int b = 0; b < nBandas; b++)
+                            {
+                                decimal sal = (b < gap.Salidas.Count) ? gap.Salidas[b] : 0m;
+                                <td class="text-right font-mono" style="color: #c2410c;">@fmtCell(sal)</td>
+                            }
+                        </tr>
+                        <tr>
+                            <td class="text-left col-sticky-first" style="padding-left: 28px; color: #475569;">
+                                <i class="fa fa-angle-right" style="margin-right: 4px; color: #94a3b8;"></i> Vencimientos de CDP's (XML 210)
+                            </td>
+                            @for (int b = 0; b < nBandas; b++)
+                            {
+                                decimal cdp = (b < gap.VencimientosCDP.Count) ? gap.VencimientosCDP[b] : 0m;
+                                <td class="text-right font-mono">@fmtCell(cdp)</td>
+                            }
+                        </tr>
+                        <tr>
+                            <td class="text-left col-sticky-first" style="padding-left: 28px; color: #475569;">
+                                <i class="fa fa-angle-right" style="margin-right: 4px; color: #94a3b8;"></i> Obligaciones con entidades (231/232)
+                            </td>
+                            @for (int b = 0; b < nBandas; b++)
+                            {
+                                decimal ob = (b < gap.ObligacionesEntidades.Count) ? gap.ObligacionesEntidades[b] : 0m;
+                                <td class="text-right font-mono">@fmtCell(ob)</td>
+                            }
+                        </tr>
+                        <tr>
+                            <td class="text-left col-sticky-first" style="padding-left: 28px; color: #475569;">
+                                <i class="fa fa-angle-right" style="margin-right: 4px; color: #94a3b8;"></i> Otras cuentas por pagar (240)
+                            </td>
+                            @for (int b = 0; b < nBandas; b++)
+                            {
+                                decimal op = (b < gap.OtrasCuentasPagar.Count) ? gap.OtrasCuentasPagar[b] : 0m;
+                                <td class="text-right font-mono">@fmtCell(op)</td>
+                            }
+                        </tr>
+
+                        <!-- 4. GAP POR BANDA (Con Heatmap) -->
+                        <tr style="background-color: #f8fafc; font-weight: 700; border-top: 2px solid #cbd5e1;">
+                            <td class="text-left col-sticky-first" style="color: #1e3a8a; padding-left: 16px;">
+                                <i class="fa fa-exchange" style="color: #2b579a; margin-right: 6px;"></i> GAP por Banda
+                            </td>
+                            @for (int b = 0; b < nBandas; b++)
+                            {
+                                decimal val = (b < gap.BrechasBanda.Count) ? gap.BrechasBanda[b] : 0m;
+                                string cellClass = val < 0 ? "cell-heatmap-neg" : "cell-heatmap-pos";
+                                string sign = val >= 0 ? "+" : "";
+                                <td class="text-right font-mono @cellClass" style="font-weight: 700;">@sign@fmtCell(val)</td>
+                            }
+                        </tr>
+
+                        <!-- 5. GAP ACUMULADA (Con Heatmap) -->
+                        <tr style="background-color: #eff6ff; font-weight: 800; border-top: 1px solid #bfdbfe; border-bottom: 2px solid #2b579a;">
+                            <td class="text-left col-sticky-first" style="color: #1e40af; padding-left: 16px;">
+                                <i class="fa fa-cubes" style="color: #1e40af; margin-right: 6px;"></i> GAP Acumulada
+                            </td>
+                            @for (int b = 0; b < nBandas; b++)
+                            {
+                                decimal val = (b < gap.BrechasAcumuladas.Count) ? gap.BrechasAcumuladas[b] : 0m;
+                                string cellClass = val < 0 ? "cell-heatmap-neg" : "cell-heatmap-pos";
+                                string sign = val >= 0 ? "+" : "";
+                                <td class="text-right font-mono @cellClass" style="font-weight: 800;">@sign@fmtCell(val)</td>
+                            }
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
@@ -255,30 +315,9 @@
 <script>
     $('#collapseTblGapContractual').on('show.bs.collapse', function () {
         $('#iconCollapseGap').removeClass('fa-chevron-down').addClass('fa-chevron-up');
-        $('#textCollapseGap').text('Ocultar Detalle Tabular');
+        $('#textCollapseGap').text('Ocultar Detalle');
     }).on('hide.bs.collapse', function () {
         $('#iconCollapseGap').removeClass('fa-chevron-up').addClass('fa-chevron-down');
-        $('#textCollapseGap').text('Ver Detalle Tabular');
+        $('#textCollapseGap').text('Ver Detalle');
     });
 </script>
-
-<!-- Modal para Detalle de Entradas / Salidas al hacer clic -->
-<div class="modal fade" id="modalDetalleEntradasSalidas" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-lg" style="width: 92%; max-width: 1100px;">
-        <div class="modal-content" style="border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.15);">
-            <div class="modal-header" style="background-color: #2b579a; color: #ffffff; border-top-left-radius: 8px; border-top-right-radius: 8px; padding: 14px 20px;">
-                <button type="button" class="close" data-dismiss="modal" style="color: #ffffff; opacity: 0.9;">&times;</button>
-                <h4 class="modal-title" id="tituloModalEntradasSalidas" style="font-weight: 700; color: #ffffff; font-size: 16px;">
-                    <i class="fa fa-bar-chart" style="margin-right: 6px;"></i> Detalle de Composición
-                </h4>
-            </div>
-            <div class="modal-body" style="padding: 20px;">
-                <div id="chartDetalleEntradasSalidas" style="height: 340px; width: 100%; margin-bottom: 20px;"></div>
-                <div id="contenedorTablaDetalleModal"></div>
-            </div>
-            <div class="modal-footer" style="border-top: 1px solid #e2e8f0; background: #f8fafc;">
-                <button type="button" class="btn btn-default" data-dismiss="modal" style="border-radius: 6px; font-weight: 600;">Cerrar</button>
-            </div>
-        </div>
-    </div>
-</div>
