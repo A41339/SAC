@@ -62,6 +62,7 @@
     .tab-badge-pill.pill-green { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
     .tab-badge-pill.pill-orange { background: #fff7ed; color: #c2410c; border: 1px solid #fed7aa; }
     .tab-badge-pill.pill-gray { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
+    .tab-badge-pill.pill-red { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
 
     /* 2. Soporte responsivo de tablas y primera columna anclada (sin cortes verticales) */
     .table-sticky-container {
@@ -289,7 +290,7 @@
                     <li>
                         <a href="#tab-horizonte" data-toggle="tab" class="sub-tab-link">
                             <i class="fa fa-hourglass-end" style="color: #ea580c; margin-right: 5px;"></i> Horizonte de Supervivencia
-                            <span class="tab-badge-pill pill-green" id="badgeTabHorizonte">> 90d</span>
+                            <span class="tab-badge-pill @(Model.Horizonte.DiasSupervivenciaBase >= 90 ? "pill-blue" : (Model.Horizonte.DiasSupervivenciaBase >= 30 ? "pill-orange" : "pill-red"))" id="badgeTabHorizonte">@(Model.Horizonte.DiasSupervivenciaBase >= 90 ? "> 90d" : Model.Horizonte.DiasSupervivenciaBase.ToString("N0") + "d")</span>
                         </a>
                     </li>
                 </ul>

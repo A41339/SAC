@@ -1033,20 +1033,34 @@ namespace FGA.Controllers
                 if (varList != null && varList.Length > 0)
                 {
                     var v = varList[0];
+                    decimal pctVal = v.PctSalida95;
                     if (proyectorVaR == "VaR al 99%")
                     {
-                        salidaVistaBase = v.PctSalida99 > 0 ? v.PctSalida99 : 0.1211m;
+                        pctVal = v.PctSalida99;
                     }
                     else if (proyectorVaR == "Máxima variación")
                     {
-                        salidaVistaBase = v.PctMaxSalida > 0 ? v.PctMaxSalida : 0.1816m;
+                        pctVal = v.PctMaxSalida;
+                    }
+
+                    // Normalizar si viene en puntos porcentuales (ej. 10.09 en lugar de 0.1009)
+                    if (pctVal > 1.0m && pctVal <= 100m)
+                    {
+                        pctVal = pctVal / 100m;
+                    }
+
+                    // Guardrail normativo: acotar entre 3% y 35% para el escenario base
+                    if (pctVal >= 0.03m && pctVal <= 0.35m)
+                    {
+                        salidaVistaBase = pctVal;
                     }
                     else
                     {
-                        salidaVistaBase = v.PctSalida95 > 0 ? v.PctSalida95 : 0.1009m;
+                        salidaVistaBase = 0.1009m;
                     }
-                    salidaVistaMod = Math.Round(salidaVistaBase * 1.20m, 4);
-                    salidaVistaSev = Math.Round(salidaVistaBase * 1.80m, 4);
+
+                    salidaVistaMod = Math.Min(0.45m, Math.Round(salidaVistaBase * 1.20m, 4));
+                    salidaVistaSev = Math.Min(0.60m, Math.Round(salidaVistaBase * 1.80m, 4));
                 }
             }
             catch { }
@@ -1224,13 +1238,13 @@ namespace FGA.Controllers
 
             // Razón de Cobertura oficial Excel F16 / (F22 - F18)
             decimal netoBase = rc.EgresosContractuales_Base - rc.IngresosContractuales_Base;
-            rc.RazonCobertura_Base = netoBase > 0 ? Math.Round(rc.ActivosLiquidos_Base / netoBase, 2) : 0m;
+            rc.RazonCobertura_Base = netoBase > 0 ? Math.Round(rc.ActivosLiquidos_Base / netoBase, 2) : (rc.EgresosContractuales_Base > 0 ? Math.Round(rc.ActivosLiquidos_Base / rc.EgresosContractuales_Base, 2) : 99.99m);
 
             decimal netoMod = rc.EgresosContractuales_Moderado - rc.IngresosContractuales_Moderado;
-            rc.RazonCobertura_Moderado = netoMod > 0 ? Math.Round(rc.ActivosLiquidos_Moderado / netoMod, 2) : 0m;
+            rc.RazonCobertura_Moderado = netoMod > 0 ? Math.Round(rc.ActivosLiquidos_Moderado / netoMod, 2) : (rc.EgresosContractuales_Moderado > 0 ? Math.Round(rc.ActivosLiquidos_Moderado / rc.EgresosContractuales_Moderado, 2) : 99.99m);
 
             decimal netoSev = rc.EgresosContractuales_Severo - rc.IngresosContractuales_Severo;
-            rc.RazonCobertura_Severo = netoSev > 0 ? Math.Round(rc.ActivosLiquidos_Severo / netoSev, 2) : 0m;
+            rc.RazonCobertura_Severo = netoSev > 0 ? Math.Round(rc.ActivosLiquidos_Severo / netoSev, 2) : (rc.EgresosContractuales_Severo > 0 ? Math.Round(rc.ActivosLiquidos_Severo / rc.EgresosContractuales_Severo, 2) : 99.99m);
 
             // Diferencia de Escenarios
             rc.CDPDiferencia_Base = 0m;
