@@ -7,12 +7,12 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 -- =====================================================================================
--- SCRIPT: 35_Grants_Permisos_Roles_SAC.sql
+-- SCRIPT: 35_Grants_Permisos_Roles_SAC.sql (CORREGIDO)
 -- Módulo SAC: Asignación Integral de Permisos de Base de Datos y de Aplicación
--- 1. Permisos EXECUTE sobre todos los Procedimientos Almacenados de Riesgo y Liquidez
--- 2. Permisos SELECT, INSERT, UPDATE, DELETE sobre todas las Tablas del Sistema
--- 3. Permisos en [dbo].[MenuPermission] para todos los Roles activos en [dbo].[Role]
---    (Para que todos los perfiles de usuario puedan ver las opciones en la web)
+-- 1. Permisos EXECUTE sobre todos los Procedimientos Almacenados a [FGA] y [public]
+-- 2. Permisos SELECT, INSERT, UPDATE, DELETE sobre todas las Tablas a [FGA] y [public]
+-- 3. Permisos en [dbo].[MenuPermission] con cálculo seguro de [Id] (MAX(Id) + ROW_NUMBER)
+--    Compatible tanto si [Id] es IDENTITY como si NO ES IDENTITY
 -- =====================================================================================
 
 PRINT '=====================================================================================';
@@ -191,69 +191,103 @@ GO
 
 -- =====================================================================================
 -- 3. PERMISOS DE MENÚ EN LA APLICACIÓN (MenuPermission PARA TODOS LOS ROLES)
--- Asegura que todos los roles activos (dbo.Role) puedan ver los módulos nuevos:
---   7500: Evaluación Riesgos
---   7510: Riesgo de crédito
---   7511: Indicadores de alerta
---   7512: Modelo de matrices
---   7513: Modelo de cosechas
---   7514: Simulaciones de mora
---   7515: Evaluación de riesgo FFC
---   4000: Cartera de crédito
---   4001: Calidad de la cartera
---   5000: Liquidez
---   5010: Liquidez Contractual
---   5020: Escenarios de Estrés
---   1500: Estructura Financiera
+-- Maneja con seguridad la columna [Id] de [dbo].[MenuPermission]:
+--   - Si [Id] NO es IDENTITY: calcula (@MaxId + ROW_NUMBER) para evitar conflicto de PK.
+--   - Si [Id] ES IDENTITY: inserta sin la columna [Id].
 -- =====================================================================================
 PRINT '3. Asignando permisos en [dbo].[MenuPermission] para todos los roles de usuario...';
 
-DECLARE @MenusRequeridos TABLE (MenuId INT, SortOrder INT);
-INSERT INTO @MenusRequeridos (MenuId, SortOrder) VALUES
-    (1500, 2),  -- Estructura Financiera
-    (4000, 4),  -- Cartera de crédito
-    (4001, 1),  -- Calidad de la cartera
-    (7500, 3),  -- Evaluación Riesgos
-    (7510, 1),  -- Riesgo de crédito
-    (7511, 1),  -- Indicadores de alerta
-    (7512, 2),  -- Modelo de matrices
-    (7513, 3),  -- Modelo de cosechas
-    (7514, 4),  -- Simulaciones de mora
-    (7515, 5),  -- Evaluación de riesgo FFC
-    (5000, 2),  -- Liquidez
-    (5010, 1),  -- Liquidez Contractual
-    (5020, 2);  -- Escenarios de Estrés
+IF OBJECT_ID('[dbo].[MenuPermission]', 'U') IS NOT NULL AND OBJECT_ID('[dbo].[Role]', 'U') IS NOT NULL
+BEGIN
+    -- Lista de menús requeridos
+    DECLARE @MenusRequeridos TABLE (MenuId INT, SortOrder INT);
+    INSERT INTO @MenusRequeridos (MenuId, SortOrder) VALUES
+        (1500, 2),  -- Estructura Financiera
+        (4000, 4),  -- Cartera de crédito
+        (4001, 1),  -- Calidad de la cartera
+        (7500, 3),  -- Evaluación Riesgos
+        (7510, 1),  -- Riesgo de crédito
+        (7511, 1),  -- Indicadores de alerta
+        (7512, 2),  -- Modelo de matrices
+        (7513, 3),  -- Modelo de cosechas
+        (7514, 4),  -- Simulaciones de mora
+        (7515, 5),  -- Evaluación de riesgo FFC
+        (5000, 2),  -- Liquidez
+        (5010, 1),  -- Liquidez Contractual
+        (5020, 2);  -- Escenarios de Estrés
 
--- 3.1 Insertar permisos completos para todos los roles existentes en dbo.Role si no los tienen
-INSERT INTO [dbo].[MenuPermission] ([MenuId], [RoleId], [SortOrder], [IsCreate], [IsRead], [IsUpdate], [IsDelete])
-SELECT 
-    m.MenuId, 
-    r.Id AS RoleId, 
-    m.SortOrder, 
-    1 AS IsCreate, 
-    1 AS IsRead, 
-    1 AS IsUpdate, 
-    1 AS IsDelete
-FROM @MenusRequeridos m
-CROSS JOIN [dbo].[Role] r
-WHERE NOT EXISTS (
-    SELECT 1 
-    FROM [dbo].[MenuPermission] mp 
-    WHERE mp.MenuId = m.MenuId AND mp.RoleId = r.Id
-);
+    -- Identificar combinaciones faltantes
+    CREATE TABLE #PermisosFaltantes (
+        Fila INT IDENTITY(1,1),
+        MenuId INT,
+        RoleId INT,
+        SortOrder INT
+    );
 
-PRINT '   -> Permisos insertados para roles no asignados previamente.';
+    INSERT INTO #PermisosFaltantes (MenuId, RoleId, SortOrder)
+    SELECT 
+        m.MenuId, 
+        r.Id AS RoleId, 
+        m.SortOrder
+    FROM @MenusRequeridos m
+    CROSS JOIN [dbo].[Role] r
+    WHERE NOT EXISTS (
+        SELECT 1 
+        FROM [dbo].[MenuPermission] mp 
+        WHERE mp.MenuId = m.MenuId AND mp.RoleId = r.Id
+    );
 
--- 3.2 Asegurar que los permisos existentes tengan lectura (IsRead = 1) habilitada
-UPDATE mp
-SET mp.IsRead = 1,
-    mp.IsCreate = 1,
-    mp.IsUpdate = 1,
-    mp.IsDelete = 1
-FROM [dbo].[MenuPermission] mp
-INNER JOIN @MenusRequeridos m ON mp.MenuId = m.MenuId;
+    DECLARE @CantidadFaltantes INT = 0;
+    SELECT @CantidadFaltantes = COUNT(*) FROM #PermisosFaltantes;
 
-PRINT '   -> Permisos de visualización y operación garantizados (IsRead = 1) para todos los roles.';
+    IF @CantidadFaltantes > 0
+    BEGIN
+        -- Detectar si la columna Id es IDENTITY
+        DECLARE @IsIdentity INT = COLUMNPROPERTY(OBJECT_ID('[dbo].[MenuPermission]'), 'Id', 'IsIdentity');
+
+        IF @IsIdentity = 1
+        BEGIN
+            PRINT '   -> Columna [Id] es IDENTITY. Insertando sin especificar Id...';
+            INSERT INTO [dbo].[MenuPermission] ([MenuId], [RoleId], [SortOrder], [IsCreate], [IsRead], [IsUpdate], [IsDelete])
+            SELECT MenuId, RoleId, SortOrder, 1, 1, 1, 1
+            FROM #PermisosFaltantes;
+        END
+        ELSE
+        BEGIN
+            PRINT '   -> Columna [Id] NO es IDENTITY. Calculando Id autoincremental seguro...';
+            DECLARE @MaxId INT = 0;
+            SELECT @MaxId = ISNULL(MAX(Id), 0) FROM [dbo].[MenuPermission];
+
+            INSERT INTO [dbo].[MenuPermission] ([Id], [MenuId], [RoleId], [SortOrder], [IsCreate], [IsRead], [IsUpdate], [IsDelete])
+            SELECT 
+                (@MaxId + Fila) AS Id,
+                MenuId, 
+                RoleId, 
+                SortOrder, 
+                1, 1, 1, 1
+            FROM #PermisosFaltantes;
+        END
+
+        PRINT '   -> ' + CAST(@CantidadFaltantes AS NVARCHAR(10)) + ' permisos nuevos insertados exitosamente.';
+    END
+    ELSE
+    BEGIN
+        PRINT '   -> Todos los roles ya contaban con registros de permisos asignados.';
+    END
+
+    -- Asegurar que los permisos tengan lectura y operación habilitada (IsRead = 1)
+    UPDATE mp
+    SET mp.IsRead = 1,
+        mp.IsCreate = 1,
+        mp.IsUpdate = 1,
+        mp.IsDelete = 1
+    FROM [dbo].[MenuPermission] mp
+    INNER JOIN @MenusRequeridos m ON mp.MenuId = m.MenuId;
+
+    PRINT '   -> Permisos de visualización garantizados (IsRead = 1) para todos los roles.';
+
+    DROP TABLE #PermisosFaltantes;
+END
 GO
 
 PRINT '=====================================================================================';
