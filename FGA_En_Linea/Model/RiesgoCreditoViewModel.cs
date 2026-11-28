@@ -43,5 +43,6 @@ namespace FGA.Model
         public string InterpretacionDiagnostica { get; set; } = "";
         public List<AlertaItemViewModel> Indicadores { get; set; } = new List<AlertaItemViewModel>();
         public SelectList Entidades { get; set; }
+        public List<SelectListItem> SegmentosDisponibles { get; set; } = new List<SelectListItem>();
     }
 }

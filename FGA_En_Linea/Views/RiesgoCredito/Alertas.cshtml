@@ -180,43 +180,27 @@
             </div>
 
             <!-- Selector de Fecha de Corte / Análisis -->
-            <div style="display: flex; align-items: center; gap: 6px;">
+            <div style="display: flex; align-items: center; gap: 6px; white-space: nowrap;">
                 <label for="txtPeriodoCorte" style="margin: 0; font-size: 12px; font-weight: 700; color: #143750;"><i class="fa fa-calendar" style="color: #0071AD;"></i> Período de corte:</label>
-                <input type="month" id="txtPeriodoCorte" class="form-control input-sm" style="width: 140px; border-radius: 6px; font-weight: 600;" value="@Model.PeriodoValorPicker" onchange="filtrarAlertas()" />
+                <input type="month" id="txtPeriodoCorte" class="form-control input-sm" style="min-width: 195px; width: 195px; border-radius: 6px; font-weight: 600;" value="@Model.PeriodoValorPicker" onchange="filtrarAlertas()" />
             </div>
         </div>
 
-        <!-- Selectores de Cartera, Producto y Segmento segun maqueta Oficial -->
+        <!-- Selector exclusivo por Tipo de Segmento (8 de la SUGEF) -->
         <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
             <div style="display: flex; align-items: center; gap: 6px;">
-                <span style="font-size: 12px; font-weight: 600; color: #475569;">Cartera:</span>
-                <select id="selCartera" class="form-control input-sm" style="width: 110px; border-radius: 6px; font-weight: 600;" onchange="filtrarAlertas()">
-                    <option value="Total" @(Model.CarteraSeleccionada == "Total" ? "selected" : "")>Total</option>
-                    <option value="Consumo" @(Model.CarteraSeleccionada == "Consumo" ? "selected" : "")>Consumo</option>
-                    <option value="Vivienda" @(Model.CarteraSeleccionada == "Vivienda" ? "selected" : "")>Vivienda</option>
-                    <option value="Comercial" @(Model.CarteraSeleccionada == "Comercial" ? "selected" : "")>Comercial</option>
+                <label for="selSegmento" style="margin: 0; font-size: 12px; font-weight: 700; color: #143750; white-space: nowrap;">
+                    <i class="fa fa-pie-chart" style="color: #0071AD;"></i> Tipo de segmento:
+                </label>
+                <select id="selSegmento" class="form-control input-sm" style="min-width: 270px; max-width: 330px; border-radius: 6px; font-weight: 600;" onchange="filtrarAlertas()">
+                    @foreach (var seg in Model.SegmentosDisponibles)
+                    {
+                        <option value="@seg.Value" @(seg.Selected ? "selected" : "")>@seg.Text</option>
+                    }
                 </select>
             </div>
-            <div style="display: flex; align-items: center; gap: 6px;">
-                <span style="font-size: 12px; font-weight: 600; color: #475569;">Producto:</span>
-                <select id="selProducto" class="form-control input-sm" style="width: 110px; border-radius: 6px; font-weight: 600;" onchange="filtrarAlertas()">
-                    <option value="Todos" @(Model.ProductoSeleccionado == "Todos" ? "selected" : "")>Todos</option>
-                    <option value="Personal" @(Model.ProductoSeleccionado == "Personal" ? "selected" : "")>Personal</option>
-                    <option value="Hipotecario" @(Model.ProductoSeleccionado == "Hipotecario" ? "selected" : "")>Hipotecario</option>
-                    <option value="Prendario" @(Model.ProductoSeleccionado == "Prendario" ? "selected" : "")>Prendario</option>
-                </select>
-            </div>
-            <div style="display: flex; align-items: center; gap: 6px;">
-                <span style="font-size: 12px; font-weight: 600; color: #475569;">Segmento:</span>
-                <select id="selSegmento" class="form-control input-sm" style="width: 110px; border-radius: 6px; font-weight: 600;" onchange="filtrarAlertas()">
-                    <option value="Todos" @(Model.SegmentoSeleccionado == "Todos" ? "selected" : "")>Todos</option>
-                    <option value="Asalariados" @(Model.SegmentoSeleccionado == "Asalariados" ? "selected" : "")>Asalariados</option>
-                    <option value="Independientes" @(Model.SegmentoSeleccionado == "Independientes" ? "selected" : "")>Independientes</option>
-                    <option value="Empresarial" @(Model.SegmentoSeleccionado == "Empresarial" ? "selected" : "")>Empresarial</option>
-                </select>
-            </div>
-            <button type="button" class="btn btn-default btn-sm" onclick="filtrarAlertas()" title="Actualizar datos" style="border-radius: 6px;">
-                <i class="fa fa-refresh text-primary"></i>
+            <button type="button" class="btn btn-default btn-sm" onclick="filtrarAlertas()" title="Actualizar datos" style="border-radius: 6px; padding: 5px 10px;">
+                <i class="fa fa-refresh" style="color: #0071AD;"></i>
             </button>
         </div>
     </div>
@@ -270,7 +254,7 @@
             <div class="kpi-alert-card" style="border-left: 4px solid #0284c7; background: #f0f9ff;">
                 <div>
                     <div style="font-size: 11px; font-weight: 700; color: #075985; text-transform: uppercase;">Total Indicadores</div>
-                    <div style="font-size: 24px; font-weight: 800; color: #0284c7; line-height: 1.1; margin: 3px 0;">@Model.TotalIndicadores</div>
+                    <div style="font-size: 24px; font-weight: 800; color: #0284c7; line-height: 1.1; margin: 3px 0;" id="kpiTotalVal">@Model.TotalIndicadores</div>
                     <div style="font-size: 10.5px; font-weight: 600; color: #64748b;">Métricas monitoreadas</div>
                 </div>
                 <div style="width: 38px; height: 38px; border-radius: 8px; background: #e0f2fe; display: flex; align-items: center; justify-content: center; color: #0284c7; font-size: 18px;">
@@ -285,8 +269,8 @@
                 <div>
                     <div style="font-size: 11px; font-weight: 700; color: #5b21b6; text-transform: uppercase;">Índice Global</div>
                     <div style="display: flex; align-items: baseline; gap: 6px; margin: 3px 0;">
-                        <span style="font-size: 24px; font-weight: 800; color: #7c3aed; line-height: 1.1;">@Model.IndiceAlertaGlobal.ToString("N2")</span>
-                        <span class="badge" style="background: #fed7aa; color: #9a3412; font-size: 10px; font-weight: 700; padding: 2px 6px;">@Model.EstadoGlobal</span>
+                        <span style="font-size: 24px; font-weight: 800; color: #7c3aed; line-height: 1.1;" id="kpiIndiceGlobalVal">@Model.IndiceAlertaGlobal.ToString("N2")</span>
+                        <span class="badge" style="background: #fed7aa; color: #9a3412; font-size: 10px; font-weight: 700; padding: 2px 6px;" id="kpiEstadoGlobalBadge">@Model.EstadoGlobal</span>
                     </div>
                     <div style="font-size: 10.5px; font-weight: 600; color: #7c3aed;">Nivel institucional</div>
                 </div>
@@ -514,15 +498,11 @@
         }
 
         function filtrarAlertasConEntidad(ent) {
-            var cartera = $('#selCartera').val() || 'Total';
-            var prod = $('#selProducto').val() || 'Todos';
             var seg = $('#selSegmento').val() || 'Todos';
             var periodo = $('#txtPeriodoCorte').val() || '@Model.PeriodoValorPicker';
 
             window.location.href = '@Url.Action("Alertas", "RiesgoCredito")?idEntidad=' + encodeURIComponent(ent) +
                                    '&periodo=' + encodeURIComponent(periodo) +
-                                   '&cartera=' + encodeURIComponent(cartera) +
-                                   '&producto=' + encodeURIComponent(prod) +
                                    '&segmento=' + encodeURIComponent(seg);
         }
 
@@ -566,10 +546,56 @@
 
             $('#badgeContadorVisible').text(visibleCount + ' Indicadores');
 
-            // Si el indicador seleccionado en trend se ocultó, seleccionamos el primer visible
-            var codActual = $('#selIndicadorTrend').val();
-            var $trActual = $('#tr_' + codActual);
-            if (!$trActual.is(':visible') && primerVisibleCod) {
+            // 1. Actualizar las 5 tarjetas KPI superiores de forma reactiva
+            $('#kpiCriticasVal').text(visibleCriticas);
+            $('#kpiAdvertenciaVal').text(visibleAdvertencias);
+            $('#kpiEnRangoVal').text(visibleEnRango);
+            $('#kpiTotalVal').text(visibleCount);
+
+            var indiceGlobal = visibleCount > 0 ? ((visibleCriticas * 1.0 + visibleAdvertencias * 0.5) / visibleCount) : 0;
+            $('#kpiIndiceGlobalVal').text(indiceGlobal.toFixed(2));
+            var $badgeGlobal = $('#kpiEstadoGlobalBadge');
+            if (indiceGlobal >= 0.35) {
+                $badgeGlobal.text('Crítica').css({ background: '#fee2e2', color: '#991b1b' });
+            } else if (indiceGlobal >= 0.15) {
+                $badgeGlobal.text('Advertencia').css({ background: '#fed7aa', color: '#9a3412' });
+            } else {
+                $badgeGlobal.text('En rango').css({ background: '#e6f1f8', color: '#0071AD' });
+            }
+
+            // 2. Actualizar tabla y gráfico Donut de distribución según la categoría activa
+            var pctCrit = visibleCount > 0 ? ((visibleCriticas / visibleCount) * 100).toFixed(0) : 0;
+            var pctAdv = visibleCount > 0 ? ((visibleAdvertencias / visibleCount) * 100).toFixed(0) : 0;
+            var pctRng = visibleCount > 0 ? ((visibleEnRango / visibleCount) * 100).toFixed(0) : 0;
+
+            $('#sumCriticas').text(visibleCriticas);
+            $('#pctCriticas').text(pctCrit + '%');
+            $('#sumAdvertencias').text(visibleAdvertencias);
+            $('#pctAdvertencias').text(pctAdv + '%');
+            $('#sumEnRango').text(visibleEnRango);
+            $('#pctEnRango').text(pctRng + '%');
+            $('#sumTotal').text(visibleCount);
+
+            renderDonutAlertas(visibleCriticas, visibleAdvertencias, visibleEnRango, visibleCount);
+
+            // 3. Filtrar opciones en el selector de tendencia (selIndicadorTrend) para que solo aparezcan los de esta categoría
+            $('#selIndicadorTrend option').each(function () {
+                var $opt = $(this);
+                var cod = $opt.val();
+                var ind = catalogoAlertas.find(function(x) { return x.Codigo === cod; });
+                if (ind) {
+                    var matchCat = (categoriaActiva === 'Todos' || ind.Tipo === categoriaActiva);
+                    var matchText = (texto === '' || ind.Nombre.toLowerCase().indexOf(texto) > -1 || ind.Codigo.toLowerCase().indexOf(texto) > -1);
+                    if (matchCat && matchText) {
+                        $opt.show().prop('disabled', false);
+                    } else {
+                        $opt.hide().prop('disabled', true);
+                    }
+                }
+            });
+
+            // 4. Seleccionar el primer indicador visible de la categoría en el gráfico de tendencia
+            if (primerVisibleCod) {
                 seleccionarIndicadorTrend(primerVisibleCod);
             }
         }
@@ -668,11 +694,11 @@
             });
         }
 
-        function renderDonutAlertas() {
-            var total = @Model.TotalIndicadores;
-            var criticas = @Model.AlertasCriticas;
-            var advertencias = @Model.AlertasAdvertencia;
-            var enRango = @Model.IndicadoresEnRango;
+        function renderDonutAlertas(crit, adv, rng, tot) {
+            var total = (tot !== undefined) ? tot : @Model.TotalIndicadores;
+            var criticas = (crit !== undefined) ? crit : @Model.AlertasCriticas;
+            var advertencias = (adv !== undefined) ? adv : @Model.AlertasAdvertencia;
+            var enRango = (rng !== undefined) ? rng : @Model.IndicadoresEnRango;
 
             Highcharts.chart('chartDonutAlertas', {
                 chart: { 

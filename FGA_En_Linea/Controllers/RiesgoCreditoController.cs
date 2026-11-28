@@ -162,7 +162,19 @@ namespace FGA.Controllers
                 PeriodoActual = strCorte,
                 PeriodoAnterior = strAnt,
                 PeriodoValorPicker = dtCorte.ToString("yyyy-MM"),
-                Indicadores = new List<AlertaItemViewModel>()
+                Indicadores = new List<AlertaItemViewModel>(),
+                SegmentosDisponibles = new List<SelectListItem>
+                {
+                    new SelectListItem { Value = "Todos", Text = "Todos (Cartera Total)", Selected = (segmento == "Todos") },
+                    new SelectListItem { Value = "0", Text = "0 - No aplica acuerdo 14-21", Selected = (segmento == "0") },
+                    new SelectListItem { Value = "1", Text = "1 - Créditos revolutivos de consumo", Selected = (segmento == "1") },
+                    new SelectListItem { Value = "2", Text = "2 - Préstamos de consumo", Selected = (segmento == "2") },
+                    new SelectListItem { Value = "3", Text = "3 - Préstamos vehiculares", Selected = (segmento == "3") },
+                    new SelectListItem { Value = "4", Text = "4 - Créditos de vivienda", Selected = (segmento == "4") },
+                    new SelectListItem { Value = "5", Text = "5 - Crédito empresarial 1", Selected = (segmento == "5") },
+                    new SelectListItem { Value = "6", Text = "6 - Crédito empresarial 2", Selected = (segmento == "6") },
+                    new SelectListItem { Value = "7", Text = "7 - Crédito empresarial 3", Selected = (segmento == "7") }
+                }
             };
 
             var meses12 = Generar12MesesTexto(dtCorte);
