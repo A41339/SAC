@@ -1,18 +1,36 @@
 @{
     ViewBag.Title = "Calidad de la Cartera";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    int parentModuloId = 7510;
+    string parentTitulo = "Riesgo de crédito";
+
+    if (Request.QueryString["parent"] != null && int.TryParse(Request.QueryString["parent"], out int qParent))
+    {
+        parentModuloId = qParent;
+        if (qParent == 4000) { parentTitulo = "Cartera de crédito"; }
+        else if (qParent == 1500) { parentTitulo = "Estructura Financiera"; }
+        else if (qParent == 7510) { parentTitulo = "Riesgo de crédito"; }
+    }
+    else if (Request.UrlReferrer != null)
+    {
+        string refUrl = Request.UrlReferrer.ToString();
+        if (refUrl.Contains("4000")) { parentModuloId = 4000; parentTitulo = "Cartera de crédito"; }
+        else if (refUrl.Contains("1500")) { parentModuloId = 1500; parentTitulo = "Estructura Financiera"; }
+        else if (refUrl.Contains("7510")) { parentModuloId = 7510; parentTitulo = "Riesgo de crédito"; }
+    }
 }
 
 <section class="content-header" style="padding: 10px 20px 6px 20px;">
     <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
         <div>
             <div style="margin-bottom: 4px;">
-                <a href="@Url.Action("Index", "Modulo", new { id = 1500 })" class="header-back-link" style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: #0284c7; text-decoration: none;">
-                    <i class="fa fa-arrow-left"></i> Volver a Estructura Financiera
+                <a href="@Url.Action("Index", "Modulo", new { id = parentModuloId })" class="header-back-link" style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: #0071AD; text-decoration: none;">
+                    <i class="fa fa-arrow-left"></i> Volver a @parentTitulo
                 </a>
             </div>
             <h1 class="modern-page-title" style="margin: 0; font-size: 18px; font-weight: 700; color: #143750; display: flex; align-items: center; gap: 8px;">
-                <i class="fa fa-shield" style="color: #0284c7;"></i>
+                <i class="fa fa-shield" style="color: #0071AD;"></i>
                 Calidad de la Cartera
             </h1>
             <p style="margin: 2px 0 0 0; font-size: 12px; color: #64748b;">
@@ -22,7 +40,19 @@
     </div>
     <ol class="breadcrumb" style="top: 8px;">
         <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
-        <li><a href="@Url.Action("Index", "Modulo", new { id = 1500 })" class="breadcrumb-parent-pill" title="Volver a Estructura Financiera"><i class="fa fa-file-text-o" style="margin-right: 4px;"></i> Estructura Financiera</a></li>
+        @if (parentModuloId == 7510)
+        {
+            <li><a href="@Url.Action("Index", "Modulo", new { id = 7500 })"><i class="fa fa-calculator" style="margin-right: 4px;"></i> Evaluación Riesgos</a></li>
+            <li><a href="@Url.Action("Index", "Modulo", new { id = 7510 })" class="breadcrumb-parent-pill" title="Volver a Riesgo de crédito"><i class="fa fa-pie-chart" style="margin-right: 4px;"></i> Riesgo de crédito</a></li>
+        }
+        else
+        {
+            <li><a href="@Url.Action("Index", "Modulo", new { id = 1500 })" class="breadcrumb-parent-pill" title="Volver a Estructura Financiera"><i class="fa fa-file-text-o" style="margin-right: 4px;"></i> Estructura Financiera</a></li>
+            if (parentModuloId == 4000)
+            {
+                <li><a href="@Url.Action("Index", "Modulo", new { id = 4000 })"><i class="fa fa-credit-card" style="margin-right: 4px;"></i> Cartera de crédito</a></li>
+            }
+        }
         <li class="active">Calidad de la Cartera</li>
     </ol>
 </section>

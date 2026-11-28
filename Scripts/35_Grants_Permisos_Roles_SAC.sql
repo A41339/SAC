@@ -218,10 +218,10 @@ BEGIN
         (7500, 'Evaluación Riesgos', 'root', NULL, 3, '<i class="fa fa-calculator"></i>', 'Análisis integral de riesgo de crédito y riesgo de liquidez.'),
         (7510, 'Riesgo de crédito', 'root', 7500, 1, '<i class="fa fa-pie-chart"></i>', 'Monitoreo de indicadores de alerta temprana y calidad de cartera SUGEF 14-21.'),
         (7511, 'Indicadores de alerta', 'RiesgoCredito/Alertas', 7510, 1, '<i class="fa fa-bell-o"></i>', 'Monitoreo del deterioro del riesgo de crédito mediante indicadores de alerta temprana SUGEF 14-21.'),
-        (7512, 'Modelo de matrices', 'Cartera14_21/Index', 7510, 2, '<i class="fa fa-th"></i>', 'Matrices de transición de mora y calificación crediticia.'),
-        (7513, 'Modelo de cosechas', 'Cartera14_21/Index', 7510, 3, '<i class="fa fa-line-chart"></i>', 'Curvas de maduración y cosechas crediticias.'),
-        (7514, 'Simulaciones de mora', 'Cartera14_21/Index', 7510, 4, '<i class="fa fa-sliders"></i>', 'Simulaciones prospectivas de morosidad y estrés crediticio.'),
-        (7515, 'Evaluación de riesgo FFC', 'Cartera14_21/Index', 7510, 5, '<i class="fa fa-shield"></i>', 'Metodología y evaluación del perfil de riesgo de crédito FFC.'),
+        (7512, 'Modelo de matrices', 'Cartera14_21/Index?parent=7510', 7510, 2, '<i class="fa fa-th"></i>', 'Matrices de transición de mora y calificación crediticia.'),
+        (7513, 'Modelo de cosechas', 'Cartera14_21/Index?parent=7510', 7510, 3, '<i class="fa fa-line-chart"></i>', 'Curvas de maduración y cosechas crediticias.'),
+        (7514, 'Simulaciones de mora', 'Cartera14_21/Index?parent=7510', 7510, 4, '<i class="fa fa-sliders"></i>', 'Simulaciones prospectivas de morosidad y estrés crediticio.'),
+        (7515, 'Evaluación de riesgo FFC', 'Cartera14_21/Index?parent=7510', 7510, 5, '<i class="fa fa-shield"></i>', 'Metodología y evaluación del perfil de riesgo de crédito FFC.'),
         (5010, 'Liquidez Contractual', 'Liquidez/Contractual', 5000, 1, '<i class="fa fa-book"></i>', 'Cálculo de ICL, GAP Contractual e IFNE según normativa.'),
         (5020, 'Escenarios de Estrés', 'Liquidez/Estres', 5000, 2, '<i class="fa fa-bolt"></i>', 'Modelos proyectados de liquidez: Supuestos, Cobertura, ICL Estresado, Brechas y Horizonte.');
 

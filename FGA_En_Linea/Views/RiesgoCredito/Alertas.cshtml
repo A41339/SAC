@@ -88,6 +88,43 @@
         color: #0369a1;
         text-decoration: underline !important;
     }
+    .nav-cat-pill {
+        border: 1px solid #cbd5e1;
+        background: #f8fafc;
+        color: #334155;
+        font-size: 11.5px;
+        font-weight: 600;
+        padding: 5px 11px;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        user-select: none;
+    }
+    .nav-cat-pill:hover {
+        background: #e2e8f0;
+        color: #0f172a;
+    }
+    .nav-cat-pill.active {
+        background: #0071AD !important;
+        color: #ffffff !important;
+        border-color: #0071AD !important;
+        box-shadow: 0 2px 4px rgba(0, 113, 173, 0.25);
+    }
+    .nav-cat-pill.active .badge-pill-count {
+        background: #ffffff !important;
+        color: #0071AD !important;
+    }
+    .badge-pill-count {
+        background: #cbd5e1;
+        color: #1e293b;
+        font-size: 10px;
+        font-weight: 700;
+        padding: 2px 6px;
+        border-radius: 10px;
+    }
 </style>
 
 <section class="content-header" style="padding: 14px 20px 8px 20px;">
@@ -99,11 +136,11 @@
                 </a>
             </div>
             <h1 style="margin: 0; font-size: 21px; font-weight: 700; color: #143750; display: flex; align-items: center; gap: 10px;">
-                <i class="fa fa-bell" style="color: #0284c7;"></i>
-                Alertas Tempranas
+                <i class="fa fa-bell" style="color: #0071AD;"></i>
+                Monitoreo de Indicadores de Alerta Temprana
             </h1>
             <p style="margin: 3px 0 0 0; font-size: 12.5px; color: #64748b;">
-                Monitoreo del deterioro del riesgo de crédito mediante indicadores de tendencia, niveles y límites internos.
+                Matriz completa de 26 indicadores normativos y de gestión conforme al Anexo No 1 y SUGEF 14-21.
             </p>
         </div>
     </div>
@@ -117,44 +154,54 @@
 
 <section class="content" style="padding: 0 20px 24px 20px;">
 
-    <!-- BARRA DE FILTROS Y ENTIDAD -->
+    <!-- BARRA DE FILTROS: ENTIDAD, CORTE, CARTERA, PRODUCTO Y SEGMENTO -->
     <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px 18px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
-        <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+        <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
+            <!-- Selector de Entidad -->
             <div style="display: flex; align-items: center; gap: 6px;">
-                <label for="ddlEntidadAlertas" style="margin: 0; font-size: 13px; font-weight: 700; color: #143750;"><i class="fa fa-university" style="color: #0284c7;"></i> Entidad:</label>
-                @Html.DropDownList("ddlEntidadAlertas", Model.Entidades, new { @class = "form-control input-sm", style = "width: 220px; font-weight: 600; border-radius: 6px;", onchange = "cambiarEntidadAlertas(this.value)" })
+                <label for="ddlEntidadAlertas" style="margin: 0; font-size: 13px; font-weight: 700; color: #143750;"><i class="fa fa-university" style="color: #0071AD;"></i> Entidad:</label>
+                @Html.DropDownList("ddlEntidadAlertas", Model.Entidades, new { @class = "form-control input-sm", style = "width: 200px; font-weight: 600; border-radius: 6px;", onchange = "cambiarEntidadAlertas(this.value)" })
+            </div>
+
+            <!-- Selector de Fecha de Corte / Análisis -->
+            <div style="display: flex; align-items: center; gap: 6px;">
+                <label for="txtPeriodoCorte" style="margin: 0; font-size: 12px; font-weight: 700; color: #143750;"><i class="fa fa-calendar" style="color: #0071AD;"></i> Período de corte:</label>
+                <input type="month" id="txtPeriodoCorte" class="form-control input-sm" style="width: 140px; border-radius: 6px; font-weight: 600;" value="@Model.PeriodoValorPicker" onchange="filtrarAlertas()" />
             </div>
         </div>
 
         <!-- Selectores de Cartera, Producto y Segmento segun maqueta Oficial -->
-        <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+        <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
             <div style="display: flex; align-items: center; gap: 6px;">
                 <span style="font-size: 12px; font-weight: 600; color: #475569;">Cartera:</span>
-                <select id="selCartera" class="form-control input-sm" style="width: 110px; border-radius: 6px;" onchange="filtrarAlertas()">
-                    <option value="Total" selected>Total</option>
-                    <option value="Consumo">Consumo</option>
-                    <option value="Vivienda">Vivienda</option>
-                    <option value="Comercial">Comercial</option>
+                <select id="selCartera" class="form-control input-sm" style="width: 110px; border-radius: 6px; font-weight: 600;" onchange="filtrarAlertas()">
+                    <option value="Total" @(Model.CarteraSeleccionada == "Total" ? "selected" : "")>Total</option>
+                    <option value="Consumo" @(Model.CarteraSeleccionada == "Consumo" ? "selected" : "")>Consumo</option>
+                    <option value="Vivienda" @(Model.CarteraSeleccionada == "Vivienda" ? "selected" : "")>Vivienda</option>
+                    <option value="Comercial" @(Model.CarteraSeleccionada == "Comercial" ? "selected" : "")>Comercial</option>
                 </select>
             </div>
             <div style="display: flex; align-items: center; gap: 6px;">
                 <span style="font-size: 12px; font-weight: 600; color: #475569;">Producto:</span>
-                <select id="selProducto" class="form-control input-sm" style="width: 110px; border-radius: 6px;" onchange="filtrarAlertas()">
-                    <option value="Todos" selected>Todos</option>
-                    <option value="Personal">Personal</option>
-                    <option value="Hipotecario">Hipotecario</option>
-                    <option value="Prendario">Prendario</option>
+                <select id="selProducto" class="form-control input-sm" style="width: 110px; border-radius: 6px; font-weight: 600;" onchange="filtrarAlertas()">
+                    <option value="Todos" @(Model.ProductoSeleccionado == "Todos" ? "selected" : "")>Todos</option>
+                    <option value="Personal" @(Model.ProductoSeleccionado == "Personal" ? "selected" : "")>Personal</option>
+                    <option value="Hipotecario" @(Model.ProductoSeleccionado == "Hipotecario" ? "selected" : "")>Hipotecario</option>
+                    <option value="Prendario" @(Model.ProductoSeleccionado == "Prendario" ? "selected" : "")>Prendario</option>
                 </select>
             </div>
             <div style="display: flex; align-items: center; gap: 6px;">
                 <span style="font-size: 12px; font-weight: 600; color: #475569;">Segmento:</span>
-                <select id="selSegmento" class="form-control input-sm" style="width: 110px; border-radius: 6px;" onchange="filtrarAlertas()">
-                    <option value="Todos" selected>Todos</option>
-                    <option value="Asalariados">Asalariados</option>
-                    <option value="Independientes">Independientes</option>
-                    <option value="Empresarial">Empresarial</option>
+                <select id="selSegmento" class="form-control input-sm" style="width: 110px; border-radius: 6px; font-weight: 600;" onchange="filtrarAlertas()">
+                    <option value="Todos" @(Model.SegmentoSeleccionado == "Todos" ? "selected" : "")>Todos</option>
+                    <option value="Asalariados" @(Model.SegmentoSeleccionado == "Asalariados" ? "selected" : "")>Asalariados</option>
+                    <option value="Independientes" @(Model.SegmentoSeleccionado == "Independientes" ? "selected" : "")>Independientes</option>
+                    <option value="Empresarial" @(Model.SegmentoSeleccionado == "Empresarial" ? "selected" : "")>Empresarial</option>
                 </select>
             </div>
+            <button type="button" class="btn btn-default btn-sm" onclick="filtrarAlertas()" title="Actualizar datos" style="border-radius: 6px;">
+                <i class="fa fa-refresh text-primary"></i>
+            </button>
         </div>
     </div>
 
@@ -165,8 +212,8 @@
             <div class="kpi-alert-card" style="border-left: 4px solid #b91c1c; background: #fef2f2;">
                 <div>
                     <div style="font-size: 11px; font-weight: 700; color: #7f1d1d; text-transform: uppercase;">Alertas Críticas</div>
-                    <div style="font-size: 24px; font-weight: 800; color: #991b1b; line-height: 1.1; margin: 3px 0;">@Model.AlertasCriticas</div>
-                    <div style="font-size: 10.5px; font-weight: 600; color: #991b1b;"><i class="fa fa-arrow-up"></i> +1 vs. mes anterior</div>
+                    <div style="font-size: 24px; font-weight: 800; color: #991b1b; line-height: 1.1; margin: 3px 0;" id="kpiCriticasVal">@Model.AlertasCriticas</div>
+                    <div style="font-size: 10.5px; font-weight: 600; color: #991b1b;"><i class="fa fa-exclamation-triangle"></i> Superan límite interno</div>
                 </div>
                 <div style="width: 38px; height: 38px; border-radius: 8px; background: #fee2e2; display: flex; align-items: center; justify-content: center; color: #991b1b; font-size: 18px;">
                     <i class="fa fa-exclamation-triangle"></i>
@@ -179,8 +226,8 @@
             <div class="kpi-alert-card" style="border-left: 4px solid #f97316; background: #fffaf0;">
                 <div>
                     <div style="font-size: 11px; font-weight: 700; color: #9a3412; text-transform: uppercase;">Alertas Advertencia</div>
-                    <div style="font-size: 24px; font-weight: 800; color: #ea580c; line-height: 1.1; margin: 3px 0;">@Model.AlertasAdvertencia</div>
-                    <div style="font-size: 10.5px; font-weight: 600; color: #64748b;">= Sin cambio</div>
+                    <div style="font-size: 24px; font-weight: 800; color: #ea580c; line-height: 1.1; margin: 3px 0;" id="kpiAdvertenciaVal">@Model.AlertasAdvertencia</div>
+                    <div style="font-size: 10.5px; font-weight: 600; color: #ea580c;"><i class="fa fa-exclamation-circle"></i> Próximos a límite</div>
                 </div>
                 <div style="width: 38px; height: 38px; border-radius: 8px; background: #ffedd5; display: flex; align-items: center; justify-content: center; color: #ea580c; font-size: 18px;">
                     <i class="fa fa-exclamation-circle"></i>
@@ -193,8 +240,8 @@
             <div class="kpi-alert-card" style="border-left: 4px solid #0071AD; background: #f0f7ff;">
                 <div>
                     <div style="font-size: 11px; font-weight: 700; color: #004b75; text-transform: uppercase;">Indicadores en Rango</div>
-                    <div style="font-size: 24px; font-weight: 800; color: #0071AD; line-height: 1.1; margin: 3px 0;">@Model.IndicadoresEnRango</div>
-                    <div style="font-size: 10.5px; font-weight: 600; color: #0071AD;"><i class="fa fa-check-circle"></i> +1 vs. mes anterior</div>
+                    <div style="font-size: 24px; font-weight: 800; color: #0071AD; line-height: 1.1; margin: 3px 0;" id="kpiEnRangoVal">@Model.IndicadoresEnRango</div>
+                    <div style="font-size: 10.5px; font-weight: 600; color: #0071AD;"><i class="fa fa-check-circle"></i> Parámetros normales</div>
                 </div>
                 <div style="width: 38px; height: 38px; border-radius: 8px; background: #d0e6f3; display: flex; align-items: center; justify-content: center; color: #0071AD; font-size: 18px;">
                     <i class="fa fa-check-circle"></i>
@@ -236,20 +283,55 @@
 
     <!-- FILA PRINCIPAL: TABLA DE MONITOREO Y PANELES DERECHOS -->
     <div class="row">
-        <!-- COLUMNA IZQUIERDA: TABLA DE MONITOREO DE INDICADORES (ANEXO 1) -->
+        <!-- COLUMNA IZQUIERDA: TABLA DE MONITOREO DE INDICADORES (ANEXO 1 - 26 INDICADORES EN 4 FAMILIAS) -->
         <div class="col-md-7 col-xs-12">
             <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 18px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); margin-bottom: 20px;">
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px;">
+                
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px; flex-wrap: wrap; gap: 8px;">
                     <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: #143750; display: flex; align-items: center; gap: 8px;">
-                        <i class="fa fa-list-alt" style="color: #0284c7;"></i>
+                        <i class="fa fa-list-alt" style="color: #0071AD;"></i>
                         Monitoreo de Indicadores de Alerta
-                        <span title="Métricas de riesgo de crédito analizadas conforme a normativa y políticas internas" style="color: #94a3b8; cursor: pointer; font-size: 13px;"><i class="fa fa-info-circle"></i></span>
+                        <span title="Métricas de riesgo de crédito analizadas conforme a normativa SUGEF 14-21 y Anexo No 1" style="color: #94a3b8; cursor: pointer; font-size: 13px;"><i class="fa fa-info-circle"></i></span>
                     </h4>
-                    <span class="badge" style="background: #eff6ff; color: #1e40af; font-weight: 600; font-size: 11px;">@Model.Indicadores.Count Indicadores</span>
+                    <span class="badge" id="badgeContadorVisible" style="background: #e6f1f8; color: #0071AD; font-weight: 700; font-size: 11px;">@Model.Indicadores.Count Indicadores</span>
                 </div>
 
-                <div class="table-responsive">
-                    <table class="table table-hover tabla-alertas" style="width: 100%; margin-bottom: 0;">
+                <!-- TABS DE CATEGORÍA Y BUSCADOR EN TIEMPO REAL -->
+                <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 14px;">
+                    <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                        <div class="nav-cat-pill active" onclick="filtrarCategoria('Todos', this)">
+                            <span>Todos</span>
+                            <span class="badge-pill-count">@Model.TotalIndicadores</span>
+                        </div>
+                        <div class="nav-cat-pill" onclick="filtrarCategoria('Calidad y deterioro', this)">
+                            <span>Calidad y deterioro</span>
+                            <span class="badge-pill-count">@(Model.Indicadores.Count(x => x.Tipo == "Calidad y deterioro"))</span>
+                        </div>
+                        <div class="nav-cat-pill" onclick="filtrarCategoria('Dinámica y colocación', this)">
+                            <span>Dinámica y colocación</span>
+                            <span class="badge-pill-count">@(Model.Indicadores.Count(x => x.Tipo == "Dinámica y colocación"))</span>
+                        </div>
+                        <div class="nav-cat-pill" onclick="filtrarCategoria('Maduración y cosechas', this)">
+                            <span>Maduración y cosechas</span>
+                            <span class="badge-pill-count">@(Model.Indicadores.Count(x => x.Tipo == "Maduración y cosechas"))</span>
+                        </div>
+                        <div class="nav-cat-pill" onclick="filtrarCategoria('Concentración y cobertura', this)">
+                            <span>Concentración y cobertura</span>
+                            <span class="badge-pill-count">@(Model.Indicadores.Count(x => x.Tipo == "Concentración y cobertura"))</span>
+                        </div>
+                    </div>
+
+                    <div style="width: 190px;">
+                        <div class="input-group input-group-sm">
+                            <input type="text" id="txtBuscarIndicador" class="form-control" placeholder="Buscar indicador..." onkeyup="filtrarTabla()" style="border-radius: 6px 0 0 6px;" />
+                            <span class="input-group-addon" style="border-radius: 0 6px 6px 0;"><i class="fa fa-search text-muted"></i></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TABLA DE INDICADORES -->
+                <div class="table-responsive" style="max-height: 520px; overflow-y: auto;">
+                    <table class="table table-hover tabla-alertas" id="tblIndicadoresAlertas" style="width: 100%; margin-bottom: 0;">
                         <thead>
                             <tr>
                                 <th style="width: 44%;">Indicador</th>
@@ -275,9 +357,14 @@
                                     badgeIcono = "fa-exclamation-circle";
                                 }
 
-                                <tr style="cursor: pointer;" onclick="seleccionarIndicadorTrend('@ind.Codigo')" id="tr_@ind.Codigo">
+                                <tr style="cursor: pointer;" onclick="seleccionarIndicadorTrend('@ind.Codigo')" id="tr_@ind.Codigo" 
+                                    data-codigo="@ind.Codigo" 
+                                    data-tipo="@ind.Tipo" 
+                                    data-estado="@ind.Estado"
+                                    data-nombre="@ind.Nombre.ToLower()" 
+                                    data-formula="@ind.Formula.ToLower()">
                                     <td>
-                                        <div style="font-weight: 700; color: #1e3a8a;">@ind.Nombre</div>
+                                        <div style="font-weight: 700; color: #143750;">@ind.Nombre</div>
                                         <div style="font-size: 11px; color: #64748b;">@ind.Formula</div>
                                     </td>
                                     <td class="text-right" style="font-family: monospace; font-size: 13px; font-weight: 700; color: #0f172a;">@ind.ValorActualFormateado</td>
@@ -295,9 +382,9 @@
                 </div>
 
                 <!-- CUADRO DE INTERPRETACIÓN DIAGNÓSTICA AL PIE -->
-                <div style="margin-top: 14px; background: #f8fafc; border: 1px solid #cbd5e1; border-left: 4px solid #0284c7; border-radius: 6px; padding: 12px 16px; font-size: 12px; line-height: 1.5; color: #334155;">
+                <div style="margin-top: 14px; background: #f8fafc; border: 1px solid #cbd5e1; border-left: 4px solid #0071AD; border-radius: 6px; padding: 12px 16px; font-size: 12px; line-height: 1.5; color: #334155;">
                     <div style="display: flex; align-items: flex-start; gap: 8px;">
-                        <i class="fa fa-info-circle" style="color: #0284c7; font-size: 15px; margin-top: 2px;"></i>
+                        <i class="fa fa-info-circle" style="color: #0071AD; font-size: 15px; margin-top: 2px;"></i>
                         <div>
                             <strong style="color: #0f172a;">Interpretación:</strong> @Model.InterpretacionDiagnostica
                         </div>
@@ -312,7 +399,7 @@
             <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 18px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); margin-bottom: 20px;">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px;">
                     <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: #143750; display: flex; align-items: center; gap: 8px;">
-                        <i class="fa fa-line-chart" style="color: #0284c7;"></i>
+                        <i class="fa fa-line-chart" style="color: #0071AD;"></i>
                         Tendencia del Indicador
                     </h4>
                     <span id="badgeEstadoTrend" class="badge-estado-critica">
@@ -321,11 +408,11 @@
                 </div>
 
                 <div style="margin-bottom: 14px;">
-                    <label for="selIndicadorTrend" style="font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 4px;">Seleccione indicador:</label>
+                    <label for="selIndicadorTrend" style="font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 4px;">Seleccione indicador para análisis de tendencia:</label>
                     <select id="selIndicadorTrend" class="form-control input-sm" style="border-radius: 6px; font-weight: 600;" onchange="actualizarGraficoTrend(this.value)">
                         @foreach (var ind in Model.Indicadores)
                         {
-                            <option value="@ind.Codigo">@ind.Nombre</option>
+                            <option value="@ind.Codigo">[@ind.Codigo] @ind.Nombre</option>
                         }
                     </select>
                 </div>
@@ -333,7 +420,7 @@
                 <div id="chartTendenciaIndicador" style="height: 230px; width: 100%;"></div>
             </div>
 
-            <!-- 2. DISTRIBUCIÓN DE ALERTAS POR TIPO (DONUT Y TABLA RESUMEN - TAMAÑO Y VISIBILIDAD OPTIMIZADA) -->
+            <!-- 2. DISTRIBUCIÓN DE ALERTAS POR TIPO (DONUT Y TABLA RESUMEN - ALTA VISIBILIDAD) -->
             <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 18px; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
                 <div style="margin-bottom: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px; display: flex; align-items: center; justify-content: space-between;">
                     <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: #143750; display: flex; align-items: center; gap: 8px;">
@@ -365,22 +452,22 @@
                                 }
                                 <tr>
                                     <td><span style="color: #991b1b; font-weight: 700;">●</span> Crítica</td>
-                                    <td class="text-right font-mono" style="font-weight: 700; color: #991b1b;">@Model.AlertasCriticas</td>
-                                    <td class="text-right font-mono" style="font-weight: 600;">@pctCritica.ToString("N0")%</td>
+                                    <td class="text-right font-mono" id="sumCriticas" style="font-weight: 700; color: #991b1b;">@Model.AlertasCriticas</td>
+                                    <td class="text-right font-mono" id="pctCriticas" style="font-weight: 600;">@pctCritica.ToString("N0")%</td>
                                 </tr>
                                 <tr>
                                     <td><span style="color: #ea580c; font-weight: 700;">●</span> Advertencia</td>
-                                    <td class="text-right font-mono" style="font-weight: 700; color: #ea580c;">@Model.AlertasAdvertencia</td>
-                                    <td class="text-right font-mono" style="font-weight: 600;">@pctAdvertencia.ToString("N0")%</td>
+                                    <td class="text-right font-mono" id="sumAdvertencias" style="font-weight: 700; color: #ea580c;">@Model.AlertasAdvertencia</td>
+                                    <td class="text-right font-mono" id="pctAdvertencias" style="font-weight: 600;">@pctAdvertencia.ToString("N0")%</td>
                                 </tr>
                                 <tr>
                                     <td><span style="color: #0071AD; font-weight: 700;">●</span> En rango</td>
-                                    <td class="text-right font-mono" style="font-weight: 700; color: #0071AD;">@Model.IndicadoresEnRango</td>
-                                    <td class="text-right font-mono" style="font-weight: 600;">@pctRango.ToString("N0")%</td>
+                                    <td class="text-right font-mono" id="sumEnRango" style="font-weight: 700; color: #0071AD;">@Model.IndicadoresEnRango</td>
+                                    <td class="text-right font-mono" id="pctEnRango" style="font-weight: 600;">@pctRango.ToString("N0")%</td>
                                 </tr>
                                 <tr style="font-weight: 700; border-top: 2px solid #cbd5e1; background: #f8fafc;">
                                     <td>Total</td>
-                                    <td class="text-right font-mono">@Model.TotalIndicadores</td>
+                                    <td class="text-right font-mono" id="sumTotal">@Model.TotalIndicadores</td>
                                     <td class="text-right font-mono">100%</td>
                                 </tr>
                             </tbody>
@@ -396,26 +483,76 @@
     <script src="https://code.highcharts.com/highcharts.js"></script>
     <script>
         var catalogoAlertas = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Indicadores));
+        var categoriaActiva = 'Todos';
 
         function cambiarEntidadAlertas(ent) {
+            filtrarAlertasConEntidad(ent);
+        }
+
+        function filtrarAlertas() {
+            var ent = $('#ddlEntidadAlertas').val() || '@Model.IdEntidad';
+            filtrarAlertasConEntidad(ent);
+        }
+
+        function filtrarAlertasConEntidad(ent) {
             var cartera = $('#selCartera').val() || 'Total';
             var prod = $('#selProducto').val() || 'Todos';
             var seg = $('#selSegmento').val() || 'Todos';
+            var periodo = $('#txtPeriodoCorte').val() || '@Model.PeriodoValorPicker';
+
             window.location.href = '@Url.Action("Alertas", "RiesgoCredito")?idEntidad=' + encodeURIComponent(ent) +
+                                   '&periodo=' + encodeURIComponent(periodo) +
                                    '&cartera=' + encodeURIComponent(cartera) +
                                    '&producto=' + encodeURIComponent(prod) +
                                    '&segmento=' + encodeURIComponent(seg);
         }
 
-        function filtrarAlertas() {
-            var ent = $('select[name="Entidades"]').val() || '@Model.IdEntidad';
-            var cartera = $('#selCartera').val() || 'Total';
-            var prod = $('#selProducto').val() || 'Todos';
-            var seg = $('#selSegmento').val() || 'Todos';
-            window.location.href = '@Url.Action("Alertas", "RiesgoCredito")?idEntidad=' + encodeURIComponent(ent) +
-                                   '&cartera=' + encodeURIComponent(cartera) +
-                                   '&producto=' + encodeURIComponent(prod) +
-                                   '&segmento=' + encodeURIComponent(seg);
+        function filtrarCategoria(cat, btn) {
+            categoriaActiva = cat;
+            $('.nav-cat-pill').removeClass('active');
+            $(btn).addClass('active');
+            filtrarTabla();
+        }
+
+        function filtrarTabla() {
+            var texto = ($('#txtBuscarIndicador').val() || '').toLowerCase().trim();
+            var visibleCount = 0;
+            var visibleCriticas = 0;
+            var visibleAdvertencias = 0;
+            var visibleEnRango = 0;
+            var primerVisibleCod = null;
+
+            $('#tblIndicadoresAlertas tbody tr').each(function () {
+                var $tr = $(this);
+                var cat = $tr.attr('data-tipo');
+                var estado = $tr.attr('data-estado');
+                var cod = $tr.attr('data-codigo');
+                var nombre = $tr.attr('data-nombre') || '';
+                var formula = $tr.attr('data-formula') || '';
+
+                var coincideCat = (categoriaActiva === 'Todos' || cat === categoriaActiva);
+                var coincideTexto = (texto === '' || nombre.indexOf(texto) > -1 || formula.indexOf(texto) > -1 || cod.toLowerCase().indexOf(texto) > -1);
+
+                if (coincideCat && coincideTexto) {
+                    $tr.show();
+                    visibleCount++;
+                    if (!primerVisibleCod) primerVisibleCod = cod;
+                    if (estado === 'Critica') visibleCriticas++;
+                    else if (estado === 'Advertencia') visibleAdvertencias++;
+                    else visibleEnRango++;
+                } else {
+                    $tr.hide();
+                }
+            });
+
+            $('#badgeContadorVisible').text(visibleCount + ' Indicadores');
+
+            // Si el indicador seleccionado en trend se ocultó, seleccionamos el primer visible
+            var codActual = $('#selIndicadorTrend').val();
+            var $trActual = $('#tr_' + codActual);
+            if (!$trActual.is(':visible') && primerVisibleCod) {
+                seleccionarIndicadorTrend(primerVisibleCod);
+            }
         }
 
         function seleccionarIndicadorTrend(cod) {
@@ -473,7 +610,7 @@
                 series: [{
                     name: ind.Nombre,
                     data: ind.HistoricoValores,
-                    color: '#0284c7',
+                    color: '#0071AD',
                     lineWidth: 3,
                     marker: { radius: 4 }
                 }]
