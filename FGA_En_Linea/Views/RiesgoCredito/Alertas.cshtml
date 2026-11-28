@@ -1,0 +1,499 @@
+@model FGA.Model.AlertasTempranasViewModel
+
+@{
+    ViewBag.Title = "Alertas Tempranas de Riesgo de Crédito";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .kpi-alert-card {
+        background: #ffffff;
+        border-radius: 10px;
+        border: 1px solid #e2e8f0;
+        padding: 14px 18px;
+        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+        height: 100%;
+    }
+    .kpi-alert-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(15, 23, 42, 0.08);
+    }
+    .badge-estado-critica {
+        background-color: #fee2e2 !important;
+        color: #b91c1c !important;
+        border: 1px solid #fca5a5 !important;
+        font-weight: 700;
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-size: 11px;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+    .badge-estado-advertencia {
+        background-color: #ffedd5 !important;
+        color: #c2410c !important;
+        border: 1px solid #fed7aa !important;
+        font-weight: 700;
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-size: 11px;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+    .badge-estado-rango {
+        background-color: #ecfdf5 !important;
+        color: #047857 !important;
+        border: 1px solid #a7f3d0 !important;
+        font-weight: 700;
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-size: 11px;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+    .tabla-alertas thead tr th {
+        background-color: #f1f5f9 !important;
+        color: #1e293b !important;
+        font-weight: 700 !important;
+        font-size: 12.5px;
+        padding: 10px 12px;
+        border-bottom: 2px solid #cbd5e1 !important;
+        border-top: none !important;
+    }
+    .tabla-alertas tbody tr td {
+        padding: 9px 12px;
+        font-size: 12.5px;
+        vertical-align: middle;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    .header-back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #0284c7;
+        text-decoration: none !important;
+        margin-bottom: 6px;
+        transition: color 0.15s ease;
+    }
+    .header-back-link:hover {
+        color: #0369a1;
+        text-decoration: underline !important;
+    }
+</style>
+
+<section class="content-header" style="padding: 14px 20px 8px 20px;">
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+        <div>
+            <div style="margin-bottom: 6px;">
+                <a href="@Url.Action("Index", "Modulo", new { id = 7510 })" class="header-back-link">
+                    <i class="fa fa-arrow-left"></i> Volver a Riesgo de crédito
+                </a>
+            </div>
+            <h1 style="margin: 0; font-size: 21px; font-weight: 700; color: #143750; display: flex; align-items: center; gap: 10px;">
+                <i class="fa fa-bell" style="color: #0284c7;"></i>
+                Alertas Tempranas
+            </h1>
+            <p style="margin: 3px 0 0 0; font-size: 12.5px; color: #64748b;">
+                Monitoreo del deterioro del riesgo de crédito mediante indicadores de tendencia, niveles y límites internos.
+            </p>
+        </div>
+    </div>
+    <ol class="breadcrumb" style="top: 14px;">
+        <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Inicio</a></li>
+        <li><a href="@Url.Action("Index", "Modulo", new { id = 7500 })"><i class="fa fa-calculator" style="margin-right: 4px;"></i> Evaluación Riesgos</a></li>
+        <li><a href="@Url.Action("Index", "Modulo", new { id = 7510 })"><i class="fa fa-pie-chart" style="margin-right: 4px;"></i> Riesgo de crédito</a></li>
+        <li class="active">Alertas Tempranas</li>
+    </ol>
+</section>
+
+<section class="content" style="padding: 0 20px 24px 20px;">
+
+    <!-- BARRA DE FILTROS Y ENTIDAD -->
+    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px 18px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+        <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+                <label for="ddlEntidadAlertas" style="margin: 0; font-size: 13px; font-weight: 700; color: #143750;"><i class="fa fa-university" style="color: #0284c7;"></i> Entidad:</label>
+                @Html.DropDownList("ddlEntidadAlertas", Model.Entidades, new { @class = "form-control input-sm", style = "width: 220px; font-weight: 600; border-radius: 6px;", onchange = "cambiarEntidadAlertas(this.value)" })
+            </div>
+        </div>
+
+        <!-- Selectores de Cartera, Producto y Segmento segun maqueta Oficial -->
+        <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="font-size: 12px; font-weight: 600; color: #475569;">Cartera:</span>
+                <select id="selCartera" class="form-control input-sm" style="width: 110px; border-radius: 6px;" onchange="filtrarAlertas()">
+                    <option value="Total" selected>Total</option>
+                    <option value="Consumo">Consumo</option>
+                    <option value="Vivienda">Vivienda</option>
+                    <option value="Comercial">Comercial</option>
+                </select>
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="font-size: 12px; font-weight: 600; color: #475569;">Producto:</span>
+                <select id="selProducto" class="form-control input-sm" style="width: 110px; border-radius: 6px;" onchange="filtrarAlertas()">
+                    <option value="Todos" selected>Todos</option>
+                    <option value="Personal">Personal</option>
+                    <option value="Hipotecario">Hipotecario</option>
+                    <option value="Prendario">Prendario</option>
+                </select>
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="font-size: 12px; font-weight: 600; color: #475569;">Segmento:</span>
+                <select id="selSegmento" class="form-control input-sm" style="width: 110px; border-radius: 6px;" onchange="filtrarAlertas()">
+                    <option value="Todos" selected>Todos</option>
+                    <option value="Asalariados">Asalariados</option>
+                    <option value="Independientes">Independientes</option>
+                    <option value="Empresarial">Empresarial</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5 TARJETAS KPI DE CABECERA (SEGUN MAQUETA OFICIAL) -->
+    <div class="row" style="margin-bottom: 16px;">
+        <!-- 1. Alertas Críticas -->
+        <div class="col-md-2 col-sm-4 col-xs-6" style="width: 20%; padding-right: 6px; padding-left: 6px;">
+            <div class="kpi-alert-card" style="border-left: 4px solid #ef4444; background: #fff5f5;">
+                <div>
+                    <div style="font-size: 11px; font-weight: 700; color: #991b1b; text-transform: uppercase;">Alertas Críticas</div>
+                    <div style="font-size: 24px; font-weight: 800; color: #dc2626; line-height: 1.1; margin: 3px 0;">@Model.AlertasCriticas</div>
+                    <div style="font-size: 10.5px; font-weight: 600; color: #dc2626;"><i class="fa fa-arrow-up"></i> +1 vs. mes anterior</div>
+                </div>
+                <div style="width: 38px; height: 38px; border-radius: 8px; background: #fee2e2; display: flex; align-items: center; justify-content: center; color: #dc2626; font-size: 18px;">
+                    <i class="fa fa-exclamation-triangle"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Alertas de Advertencia -->
+        <div class="col-md-2 col-sm-4 col-xs-6" style="width: 20%; padding-right: 6px; padding-left: 6px;">
+            <div class="kpi-alert-card" style="border-left: 4px solid #f97316; background: #fffaf0;">
+                <div>
+                    <div style="font-size: 11px; font-weight: 700; color: #9a3412; text-transform: uppercase;">Alertas Advertencia</div>
+                    <div style="font-size: 24px; font-weight: 800; color: #ea580c; line-height: 1.1; margin: 3px 0;">@Model.AlertasAdvertencia</div>
+                    <div style="font-size: 10.5px; font-weight: 600; color: #64748b;">= Sin cambio</div>
+                </div>
+                <div style="width: 38px; height: 38px; border-radius: 8px; background: #ffedd5; display: flex; align-items: center; justify-content: center; color: #ea580c; font-size: 18px;">
+                    <i class="fa fa-exclamation-circle"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Indicadores en Rango -->
+        <div class="col-md-2 col-sm-4 col-xs-6" style="width: 20%; padding-right: 6px; padding-left: 6px;">
+            <div class="kpi-alert-card" style="border-left: 4px solid #10b981; background: #f0fdf4;">
+                <div>
+                    <div style="font-size: 11px; font-weight: 700; color: #065f46; text-transform: uppercase;">Indicadores en Rango</div>
+                    <div style="font-size: 24px; font-weight: 800; color: #059669; line-height: 1.1; margin: 3px 0;">@Model.IndicadoresEnRango</div>
+                    <div style="font-size: 10.5px; font-weight: 600; color: #059669;"><i class="fa fa-arrow-up"></i> +1 vs. mes anterior</div>
+                </div>
+                <div style="width: 38px; height: 38px; border-radius: 8px; background: #d1fae5; display: flex; align-items: center; justify-content: center; color: #059669; font-size: 18px;">
+                    <i class="fa fa-check-circle"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. Total de Indicadores -->
+        <div class="col-md-2 col-sm-4 col-xs-6" style="width: 20%; padding-right: 6px; padding-left: 6px;">
+            <div class="kpi-alert-card" style="border-left: 4px solid #0284c7; background: #f0f9ff;">
+                <div>
+                    <div style="font-size: 11px; font-weight: 700; color: #075985; text-transform: uppercase;">Total Indicadores</div>
+                    <div style="font-size: 24px; font-weight: 800; color: #0284c7; line-height: 1.1; margin: 3px 0;">@Model.TotalIndicadores</div>
+                    <div style="font-size: 10.5px; font-weight: 600; color: #64748b;">Métricas monitoreadas</div>
+                </div>
+                <div style="width: 38px; height: 38px; border-radius: 8px; background: #e0f2fe; display: flex; align-items: center; justify-content: center; color: #0284c7; font-size: 18px;">
+                    <i class="fa fa-bullseye"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. Índice de Alerta Global -->
+        <div class="col-md-2 col-sm-4 col-xs-6" style="width: 20%; padding-right: 6px; padding-left: 6px;">
+            <div class="kpi-alert-card" style="border-left: 4px solid #8b5cf6; background: #faf5ff;">
+                <div>
+                    <div style="font-size: 11px; font-weight: 700; color: #5b21b6; text-transform: uppercase;">Índice Global</div>
+                    <div style="display: flex; align-items: baseline; gap: 6px; margin: 3px 0;">
+                        <span style="font-size: 24px; font-weight: 800; color: #7c3aed; line-height: 1.1;">@Model.IndiceAlertaGlobal.ToString("N2")</span>
+                        <span class="badge" style="background: #fed7aa; color: #9a3412; font-size: 10px; font-weight: 700; padding: 2px 6px;">@Model.EstadoGlobal</span>
+                    </div>
+                    <div style="font-size: 10.5px; font-weight: 600; color: #7c3aed;">Nivel institucional</div>
+                </div>
+                <div style="width: 38px; height: 38px; border-radius: 8px; background: #ede9fe; display: flex; align-items: center; justify-content: center; color: #7c3aed; font-size: 18px;">
+                    <i class="fa fa-bar-chart"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FILA PRINCIPAL: TABLA DE MONITOREO Y PANELES DERECHOS -->
+    <div class="row">
+        <!-- COLUMNA IZQUIERDA: TABLA DE MONITOREO DE INDICADORES (ANEXO 1) -->
+        <div class="col-md-7 col-xs-12">
+            <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 18px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); margin-bottom: 20px;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px;">
+                    <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: #143750; display: flex; align-items: center; gap: 8px;">
+                        <i class="fa fa-list-alt" style="color: #0284c7;"></i>
+                        Monitoreo de Indicadores de Alerta
+                        <span title="Métricas de riesgo de crédito analizadas conforme a normativa y políticas internas" style="color: #94a3b8; cursor: pointer; font-size: 13px;"><i class="fa fa-info-circle"></i></span>
+                    </h4>
+                    <span class="badge" style="background: #eff6ff; color: #1e40af; font-weight: 600; font-size: 11px;">@Model.Indicadores.Count Indicadores</span>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover tabla-alertas" style="width: 100%; margin-bottom: 0;">
+                        <thead>
+                            <tr>
+                                <th style="width: 44%;">Indicador</th>
+                                <th class="text-right" style="width: 14%;">@Model.PeriodoActual</th>
+                                <th class="text-right" style="width: 14%;">@Model.PeriodoAnterior</th>
+                                <th class="text-center" style="width: 14%;">Límite interno</th>
+                                <th class="text-center" style="width: 14%;">Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var ind in Model.Indicadores)
+                            {
+                                string badgeClase = "badge-estado-rango";
+                                string badgeIcono = "fa-check-circle";
+                                if (ind.Estado == "Critica")
+                                {
+                                    badgeClase = "badge-estado-critica";
+                                    badgeIcono = "fa-exclamation-triangle";
+                                }
+                                else if (ind.Estado == "Advertencia")
+                                {
+                                    badgeClase = "badge-estado-advertencia";
+                                    badgeIcono = "fa-exclamation-circle";
+                                }
+
+                                <tr style="cursor: pointer;" onclick="seleccionarIndicadorTrend('@ind.Codigo')" id="tr_@ind.Codigo">
+                                    <td>
+                                        <div style="font-weight: 700; color: #1e3a8a;">@ind.Nombre</div>
+                                        <div style="font-size: 11px; color: #64748b;">@ind.Formula</div>
+                                    </td>
+                                    <td class="text-right" style="font-family: monospace; font-size: 13px; font-weight: 700; color: #0f172a;">@ind.ValorActualFormateado</td>
+                                    <td class="text-right" style="font-family: monospace; font-size: 13px; color: #64748b;">@ind.ValorAnteriorFormateado</td>
+                                    <td class="text-center" style="font-family: monospace; font-size: 12px; font-weight: 600; color: #475569;">@ind.LimiteTexto</td>
+                                    <td class="text-center">
+                                        <span class="@badgeClase">
+                                            <i class="fa @badgeIcono"></i> @ind.EstadoTexto
+                                        </span>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- CUADRO DE INTERPRETACIÓN DIAGNÓSTICA AL PIE -->
+                <div style="margin-top: 14px; background: #f8fafc; border: 1px solid #cbd5e1; border-left: 4px solid #0284c7; border-radius: 6px; padding: 12px 16px; font-size: 12px; line-height: 1.5; color: #334155;">
+                    <div style="display: flex; align-items: flex-start; gap: 8px;">
+                        <i class="fa fa-info-circle" style="color: #0284c7; font-size: 15px; margin-top: 2px;"></i>
+                        <div>
+                            <strong style="color: #0f172a;">Interpretación:</strong> @Model.InterpretacionDiagnostica
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- COLUMNA DERECHA: TENDENCIA DEL INDICADOR Y DISTRIBUCIÓN -->
+        <div class="col-md-5 col-xs-12">
+            <!-- 1. TENDENCIA DEL INDICADOR (HISTÓRICO 12 MESES CON LÍNEA LÍMITE) -->
+            <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 18px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); margin-bottom: 20px;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px;">
+                    <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: #143750; display: flex; align-items: center; gap: 8px;">
+                        <i class="fa fa-line-chart" style="color: #0284c7;"></i>
+                        Tendencia del Indicador
+                    </h4>
+                    <span id="badgeEstadoTrend" class="badge-estado-critica">
+                        <i class="fa fa-exclamation-triangle"></i> Crítica
+                    </span>
+                </div>
+
+                <div style="margin-bottom: 14px;">
+                    <label for="selIndicadorTrend" style="font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 4px;">Seleccione indicador:</label>
+                    <select id="selIndicadorTrend" class="form-control input-sm" style="border-radius: 6px; font-weight: 600;" onchange="actualizarGraficoTrend(this.value)">
+                        @foreach (var ind in Model.Indicadores)
+                        {
+                            <option value="@ind.Codigo">@ind.Nombre</option>
+                        }
+                    </select>
+                </div>
+
+                <div id="chartTendenciaIndicador" style="height: 230px; width: 100%;"></div>
+            </div>
+
+            <!-- 2. DISTRIBUCIÓN DE ALERTAS POR TIPO (DONUT Y TABLA RESUMEN) -->
+            <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 18px; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+                <div style="margin-bottom: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px;">
+                    <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: #143750; display: flex; align-items: center; gap: 8px;">
+                        <i class="fa fa-pie-chart" style="color: #0284c7;"></i>
+                        Distribución de Alertas por Tipo
+                    </h4>
+                </div>
+
+                <div class="row" style="display: flex; align-items: center;">
+                    <div class="col-xs-6">
+                        <div id="chartDonutAlertas" style="height: 180px; width: 100%;"></div>
+                    </div>
+                    <div class="col-xs-6" style="padding-left: 0;">
+                        <table class="table table-condensed" style="font-size: 12px; margin-bottom: 0;">
+                            <thead>
+                                <tr style="color: #64748b; font-size: 11px;">
+                                    <th>Tipo de alerta</th>
+                                    <th class="text-right">Cantidad</th>
+                                    <th class="text-right">%</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span style="color: #ef4444; font-weight: 700;">●</span> Crítica</td>
+                                    <td class="text-right font-mono" style="font-weight: 700;">@Model.AlertasCriticas</td>
+                                    <td class="text-right font-mono">40%</td>
+                                </tr>
+                                <tr>
+                                    <td><span style="color: #f97316; font-weight: 700;">●</span> Advertencia</td>
+                                    <td class="text-right font-mono" style="font-weight: 700;">@Model.AlertasAdvertencia</td>
+                                    <td class="text-right font-mono">60%</td>
+                                </tr>
+                                <tr>
+                                    <td><span style="color: #10b981; font-weight: 700;">●</span> En rango</td>
+                                    <td class="text-right font-mono" style="font-weight: 700;">@Model.IndicadoresEnRango</td>
+                                    <td class="text-right font-mono">—</td>
+                                </tr>
+                                <tr style="font-weight: 700; border-top: 2px solid #cbd5e1; background: #f8fafc;">
+                                    <td>Total</td>
+                                    <td class="text-right font-mono">@Model.TotalIndicadores</td>
+                                    <td class="text-right font-mono">100%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script>
+        var catalogoAlertas = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Indicadores));
+
+        function cambiarEntidadAlertas(ent) {
+            window.location.href = '@Url.Action("Alertas", "RiesgoCredito")' + '?idEntidad=' + encodeURIComponent(ent);
+        }
+
+        function filtrarAlertas() {
+            // Placeholder para filtros cruzados de Cartera, Producto y Segmento
+            console.log('Filtros aplicados');
+        }
+
+        function seleccionarIndicadorTrend(cod) {
+            $('#selIndicadorTrend').val(cod).trigger('change');
+            $('tr[id^="tr_"]').css('background-color', '');
+            $('#tr_' + cod).css('background-color', '#eff6ff');
+        }
+
+        function actualizarGraficoTrend(cod) {
+            var ind = catalogoAlertas.find(function(x) { return x.Codigo === cod; });
+            if (!ind) return;
+
+            // Actualizar badge de estado
+            var $badge = $('#badgeEstadoTrend');
+            $badge.removeClass('badge-estado-critica badge-estado-advertencia badge-estado-rango');
+            if (ind.Estado === 'Critica') {
+                $badge.addClass('badge-estado-critica').html('<i class="fa fa-exclamation-triangle"></i> ' + ind.EstadoTexto);
+            } else if (ind.Estado === 'Advertencia') {
+                $badge.addClass('badge-estado-advertencia').html('<i class="fa fa-exclamation-circle"></i> ' + ind.EstadoTexto);
+            } else {
+                $badge.addClass('badge-estado-rango').html('<i class="fa fa-check-circle"></i> ' + ind.EstadoTexto);
+            }
+
+            var plotLines = [];
+            if (ind.LimiteValor !== null) {
+                plotLines.push({
+                    value: ind.LimiteValor,
+                    color: '#10b981',
+                    dashStyle: 'ShortDash',
+                    width: 2,
+                    zIndex: 5,
+                    label: {
+                        text: '<span style="background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 700;">Límite interno: ' + ind.LimiteTexto + '</span>',
+                        align: 'right',
+                        x: -5,
+                        y: -8,
+                        useHTML: true
+                    }
+                });
+            }
+
+            Highcharts.chart('chartTendenciaIndicador', {
+                chart: { type: 'spline', spacingTop: 20 },
+                title: { text: null },
+                xAxis: { categories: ind.HistoricoMeses },
+                yAxis: {
+                    title: { text: '%' },
+                    plotLines: plotLines
+                },
+                tooltip: {
+                    valueSuffix: '%'
+                },
+                legend: { enabled: false },
+                credits: { enabled: false },
+                series: [{
+                    name: ind.Nombre,
+                    data: ind.HistoricoValores,
+                    color: '#0284c7',
+                    lineWidth: 3,
+                    marker: { radius: 4 }
+                }]
+            });
+        }
+
+        function renderDonutAlertas() {
+            Highcharts.chart('chartDonutAlertas', {
+                chart: { type: 'pie' },
+                title: {
+                    text: 'Total<br><strong>5</strong><br><span style="font-size:10px; color:#64748b;">alertas</span>',
+                    align: 'center',
+                    verticalAlign: 'middle',
+                    y: 10,
+                    style: { fontSize: '13px', color: '#1e293b' }
+                },
+                plotOptions: {
+                    pie: {
+                        innerSize: '65%',
+                        dataLabels: { enabled: false }
+                    }
+                },
+                credits: { enabled: false },
+                series: [{
+                    name: 'Alertas',
+                    data: [
+                        { name: 'Crítica', y: 2, color: '#ef4444' },
+                        { name: 'Advertencia', y: 3, color: '#f97316' }
+                    ]
+                }]
+            });
+        }
+
+        $(document).ready(function () {
+            if (catalogoAlertas && catalogoAlertas.length > 0) {
+                actualizarGraficoTrend(catalogoAlertas[0].Codigo);
+                $('#tr_' + catalogoAlertas[0].Codigo).css('background-color', '#eff6ff');
+            }
+            renderDonutAlertas();
+        });
+    </script>
+}

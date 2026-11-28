@@ -99,6 +99,26 @@ namespace FGA.Utility
                 Subtitulo = "Plataforma de negociaci\u00f3n y gesti\u00f3n de cartera crediticia interinstitucional",
                 NotaPie = "Nota: Las ofertas y solicitudes registradas son de car\u00e1cter confidencial."
             },
+            ["Evaluación Riesgos"] = new ModuloMeta
+            {
+                Subtitulo = "Análisis de colocación, morosidad y concentración de la cartera de crédito",
+                NotaPie = "Nota: Información calculada con base en los saldos y categorías de riesgo registradas."
+            },
+            ["Evaluacion Riesgos"] = new ModuloMeta
+            {
+                Subtitulo = "Análisis de colocación, morosidad y concentración de la cartera de crédito",
+                NotaPie = "Nota: Información calculada con base en los saldos y categorías de riesgo registradas."
+            },
+            ["Riesgo de crédito"] = new ModuloMeta
+            {
+                Subtitulo = "Análisis de colocación, morosidad y concentración de la cartera de crédito",
+                NotaPie = "Nota: Información calculada con base en los saldos y categorías de riesgo registradas."
+            },
+            ["Riesgo de credito"] = new ModuloMeta
+            {
+                Subtitulo = "Análisis de colocación, morosidad y concentración de la cartera de crédito",
+                NotaPie = "Nota: Información calculada con base en los saldos y categorías de riesgo registradas."
+            },
             ["Riesgos"] = new ModuloMeta
             {
                 Subtitulo = "Monitoreo de matrices de transici\u00f3n, liquidez y l\u00edmites prudenciales",
@@ -179,6 +199,76 @@ namespace FGA.Utility
         // Metadatos de tarjetas hijas (por coincidencia de URL o texto)
         private static readonly Dictionary<string, CardMeta> Tarjetas = new Dictionary<string, CardMeta>(StringComparer.OrdinalIgnoreCase)
         {
+            ["Riesgo de crédito"] = new CardMeta
+            {
+                Descripcion = "Monitoreo de saldos de cartera según acuerdo SUGEF 14-21.",
+                Icono = "fa fa-pie-chart",
+                ColorFondoIcono = "#e0f2fe",
+                ColorIcono = "#0284c7"
+            },
+            ["Riesgo de credito"] = new CardMeta
+            {
+                Descripcion = "Monitoreo de saldos de cartera según acuerdo SUGEF 14-21.",
+                Icono = "fa fa-pie-chart",
+                ColorFondoIcono = "#e0f2fe",
+                ColorIcono = "#0284c7"
+            },
+            ["Indicadores de alerta"] = new CardMeta
+            {
+                Descripcion = "Monitoreo de saldos de cartera según acuerdo SUGEF 14-21.",
+                Icono = "fa fa-pie-chart",
+                ColorFondoIcono = "#e0f2fe",
+                ColorIcono = "#0284c7"
+            },
+            ["Modelo de matrices"] = new CardMeta
+            {
+                Descripcion = "Analice la composición de las fuentes de fondeo de la entidad.",
+                Icono = "fa fa-credit-card",
+                ColorFondoIcono = "#fff1eb",
+                ColorIcono = "#FE7235"
+            },
+            ["Modelo de cosechas"] = new CardMeta
+            {
+                Descripcion = "Analice los principales indicadores financieros de la entidad.",
+                Icono = "fa fa-check-square-o",
+                ColorFondoIcono = "#e0f2fe",
+                ColorIcono = "#0284c7"
+            },
+            ["Simulaciones de mora"] = new CardMeta
+            {
+                Descripcion = "Monitoreo de saldos de cartera según acuerdo SUGEF 14-21.",
+                Icono = "fa fa-pie-chart",
+                ColorFondoIcono = "#e0f2fe",
+                ColorIcono = "#0284c7"
+            },
+            ["Evaluación de riesgo FFC"] = new CardMeta
+            {
+                Descripcion = "Analice la composición de las fuentes de fondeo de la entidad.",
+                Icono = "fa fa-credit-card",
+                ColorFondoIcono = "#fff1eb",
+                ColorIcono = "#FE7235"
+            },
+            ["Evaluacion de riesgo FFC"] = new CardMeta
+            {
+                Descripcion = "Analice la composición de las fuentes de fondeo de la entidad.",
+                Icono = "fa fa-credit-card",
+                ColorFondoIcono = "#fff1eb",
+                ColorIcono = "#FE7235"
+            },
+            ["Cartera de crédito"] = new CardMeta
+            {
+                Descripcion = "Análisis de colocación, morosidad y concentración de la cartera de crédito.",
+                Icono = "fa fa-credit-card",
+                ColorFondoIcono = "#e0f2fe",
+                ColorIcono = "#0284c7"
+            },
+            ["Cartera de credito"] = new CardMeta
+            {
+                Descripcion = "Análisis de colocación, morosidad y concentración de la cartera de crédito.",
+                Icono = "fa fa-credit-card",
+                ColorFondoIcono = "#e0f2fe",
+                ColorIcono = "#0284c7"
+            },
             ["Autoevaluación"] = new CardMeta
             {
                 Descripcion = "Evalúe los aspectos que establece el Reglamento SUGEF 24-22 para la Supervisión Basada en Riesgos (SBR).",
