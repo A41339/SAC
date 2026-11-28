@@ -567,6 +567,15 @@ namespace FGA_En_Linea.SPService {
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISP/FGA_Generar_GAP_Contractual", ReplyAction="http://tempuri.org/ISP/FGA_Generar_GAP_ContractualResponse")]
         int FGA_Generar_GAP_Contractual(string iDENTIDAD, System.Nullable<System.DateTime> pERIODOCORTE);
 
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISP/FGA_Consultar_Parametros_Liquidez", ReplyAction="http://tempuri.org/ISP/FGA_Consultar_Parametros_LiquidezResponse")]
+        Entities.Entities.Procedures.FGA_Consultar_Parametros_Liquidez_Result[] FGA_Consultar_Parametros_Liquidez(string iDENTIDAD);
+
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISP/FGA_Consultar_Calculo_VaR_Liquidez", ReplyAction="http://tempuri.org/ISP/FGA_Consultar_Calculo_VaR_LiquidezResponse")]
+        Entities.Entities.Procedures.FGA_Consultar_Calculo_VaR_Liquidez_Result[] FGA_Consultar_Calculo_VaR_Liquidez(string iDENTIDAD, System.Nullable<System.DateTime> pERIODOCORTE);
+
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISP/FGA_Consultar_Proyecciones_Liquidez", ReplyAction="http://tempuri.org/ISP/FGA_Consultar_Proyecciones_LiquidezResponse")]
+        Entities.Entities.Procedures.FGA_Consultar_Proyecciones_Liquidez_Result[] FGA_Consultar_Proyecciones_Liquidez(string iDENTIDAD, System.Nullable<System.DateTime> pERIODOCORTE);
+
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISP/FGA_Guardar_Parametros_Liquidez", ReplyAction="http://tempuri.org/ISP/FGA_Guardar_Parametros_LiquidezResponse")]
         int FGA_Guardar_Parametros_Liquidez(string iDENTIDAD, System.Nullable<decimal> rENOVACION_CDP, System.Nullable<decimal> dISMINUCION_RECAUDO, System.Nullable<decimal> dISPONIBILIDAD_LINEAS, System.Nullable<decimal> pAGO_DEUDA, System.Nullable<decimal> cUPONES, string uSUARIO);
 
@@ -1794,6 +1803,18 @@ namespace FGA_En_Linea.SPService {
 
         public int FGA_Generar_GAP_Contractual(string iDENTIDAD, System.Nullable<System.DateTime> pERIODOCORTE) {
             return base.Channel.FGA_Generar_GAP_Contractual(iDENTIDAD, pERIODOCORTE);
+        }
+
+        public Entities.Entities.Procedures.FGA_Consultar_Parametros_Liquidez_Result[] FGA_Consultar_Parametros_Liquidez(string iDENTIDAD) {
+            return base.Channel.FGA_Consultar_Parametros_Liquidez(iDENTIDAD);
+        }
+
+        public Entities.Entities.Procedures.FGA_Consultar_Calculo_VaR_Liquidez_Result[] FGA_Consultar_Calculo_VaR_Liquidez(string iDENTIDAD, System.Nullable<System.DateTime> pERIODOCORTE) {
+            return base.Channel.FGA_Consultar_Calculo_VaR_Liquidez(iDENTIDAD, pERIODOCORTE);
+        }
+
+        public Entities.Entities.Procedures.FGA_Consultar_Proyecciones_Liquidez_Result[] FGA_Consultar_Proyecciones_Liquidez(string iDENTIDAD, System.Nullable<System.DateTime> pERIODOCORTE) {
+            return base.Channel.FGA_Consultar_Proyecciones_Liquidez(iDENTIDAD, pERIODOCORTE);
         }
 
         public int FGA_Guardar_Parametros_Liquidez(string iDENTIDAD, System.Nullable<decimal> rENOVACION_CDP, System.Nullable<decimal> dISMINUCION_RECAUDO, System.Nullable<decimal> dISPONIBILIDAD_LINEAS, System.Nullable<decimal> pAGO_DEUDA, System.Nullable<decimal> cUPONES, string uSUARIO) {

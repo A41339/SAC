@@ -983,53 +983,153 @@ namespace FGA.Controllers
             decimal inv = ObtenerSaldoCta(saldos, "12000000");
             decimal fal = disp + inv;
 
-            decimal obligTotal = ObtenerSaldoCta(saldos, "23000000");
-            decimal pagoDeudaMes = obligTotal > 0 ? Math.Round(obligTotal / 12m, 2) : 0m;
-            decimal cuponesMes = inv > 0 ? Math.Round((inv * 0.05m) / 12m, 2) : 0m;
+            // 1. Consultar parámetros institucionales guardados de la entidad (FGA_Consultar_Parametros_Liquidez)
+            decimal renovacionBase = 0.85m;
+            decimal dismRecaudoBase = 0.035m;
+            decimal dispLineasBase = 75000000m;
+            decimal pagoDeudaBase = 10000000m;
+            decimal cuponesBase = 2500000m;
+            decimal egFinBase = 0.0100m;
+            decimal gastosAdmBase = 0.0150m;
+            decimal salidaTop20Base = 0.0500m;
+            decimal capitalSocialBase = 0.0350m;
+            decimal otrosIngresosBase = 0.0394m;
+            string proyectorVaR = "VaR al 95%";
+            string proyectorCartera = "Tasa de crecimiento";
+            string proyectorCapital = "Tasa de crecimiento";
+            string proyectorOtrosIng = "Promedio 6 meses";
+
+            try
+            {
+                var paramList = spClient.FGA_Consultar_Parametros_Liquidez(entidad);
+                if (paramList != null && paramList.Length > 0)
+                {
+                    var p = paramList[0];
+                    if (p.RenovacionCDP_Historica > 0) renovacionBase = p.RenovacionCDP_Historica;
+                    if (p.DisminucionRecaudoManual > 0) dismRecaudoBase = p.DisminucionRecaudoManual;
+                    if (p.DisponibilidadLineasMes >= 0) dispLineasBase = p.DisponibilidadLineasMes;
+                    if (p.PagoPrincipalDeudaMes >= 0) pagoDeudaBase = p.PagoPrincipalDeudaMes;
+                    if (p.CuponesMes >= 0) cuponesBase = p.CuponesMes;
+                    if (p.EgresosFinancierosMes > 0) egFinBase = p.EgresosFinancierosMes;
+                    if (p.GastosAdministrativosMes > 0) gastosAdmBase = p.GastosAdministrativosMes;
+                    if (p.SalidaTop20_Base > 0) salidaTop20Base = p.SalidaTop20_Base;
+                    if (p.CapitalSocial_Base > 0) capitalSocialBase = p.CapitalSocial_Base;
+                    if (p.OtrosIngresos_Base > 0) otrosIngresosBase = p.OtrosIngresos_Base;
+                    if (!string.IsNullOrWhiteSpace(p.ProyectorVaR)) proyectorVaR = p.ProyectorVaR;
+                    if (!string.IsNullOrWhiteSpace(p.ProyectorCartera)) proyectorCartera = p.ProyectorCartera;
+                    if (!string.IsNullOrWhiteSpace(p.ProyectorCapital)) proyectorCapital = p.ProyectorCapital;
+                    if (!string.IsNullOrWhiteSpace(p.ProyectorOtrosIngresos)) proyectorOtrosIng = p.ProyectorOtrosIngresos;
+                }
+            }
+            catch { }
+
+            // 2. Consultar cálculo dinámico de VaR de Liquidez desde balance de comprobación (cuenta 21103000)
+            decimal salidaVistaBase = 0.1009m;
+            decimal salidaVistaMod = 0.1211m;
+            decimal salidaVistaSev = 0.1816m;
+            try
+            {
+                var varList = spClient.FGA_Consultar_Calculo_VaR_Liquidez(entidad, fecha);
+                if (varList != null && varList.Length > 0)
+                {
+                    var v = varList[0];
+                    if (proyectorVaR == "VaR al 99%")
+                    {
+                        salidaVistaBase = v.PctSalida99 > 0 ? v.PctSalida99 : 0.1211m;
+                    }
+                    else if (proyectorVaR == "Máxima variación")
+                    {
+                        salidaVistaBase = v.PctMaxSalida > 0 ? v.PctMaxSalida : 0.1816m;
+                    }
+                    else
+                    {
+                        salidaVistaBase = v.PctSalida95 > 0 ? v.PctSalida95 : 0.1009m;
+                    }
+                    salidaVistaMod = Math.Round(salidaVistaBase * 1.20m, 4);
+                    salidaVistaSev = Math.Round(salidaVistaBase * 1.80m, 4);
+                }
+            }
+            catch { }
+
+            // 3. Consultar proyecciones dinámicas de Cartera, Capital Social, Top 20 y Balances
+            decimal crecCarteraBase = 0.0688m;
+            try
+            {
+                var proyList = spClient.FGA_Consultar_Proyecciones_Liquidez(entidad, fecha);
+                if (proyList != null && proyList.Length > 0)
+                {
+                    var pr = proyList[0];
+                    if (pr.CrecimientoCarteraAnual > 0) crecCarteraBase = pr.CrecimientoCarteraAnual;
+                    if (pr.CrecimientoCapitalSocial > 0) capitalSocialBase = pr.CrecimientoCapitalSocial;
+                    if (pr.OtrosIngresosPromedio > 0) otrosIngresosBase = pr.OtrosIngresosPromedio;
+                    if (pr.EgresosFinancierosRatio > 0) egFinBase = pr.EgresosFinancierosRatio;
+                    if (pr.GastosAdministrativosRatio > 0) gastosAdmBase = pr.GastosAdministrativosRatio;
+                    if (pr.FALTotal > 0) fal = pr.FALTotal;
+                }
+            }
+            catch { }
 
             return new SupuestosSensibilizacionViewModel
             {
                 Entidad = entidad,
                 PeriodoCorte = fecha.ToString("MM/yyyy"),
-                RenovacionCDP_Base = 0.85m,
-                RenovacionCDP_Moderado = 0.68m,
-                RenovacionCDP_Severo = 0.425m,
-                SalidaVista_Base = 0.1009m,
-                SalidaVista_Moderado = 0.1211m,
-                SalidaVista_Severo = 0.1816m,
-                CrecimientoCartera_Base = 0.0688m,
-                CrecimientoCartera_Moderado = 0.0826m,
-                CrecimientoCartera_Severo = 0.1032m,
-                DisminucionRecaudo_Base = 0.035m,
-                DisminucionRecaudo_Moderado = 0.05m,
-                DisminucionRecaudo_Severo = 0.10m,
+                ProyectorRenovacionCDP = "Histórico",
+                RenovacionCDP_Base = renovacionBase,
+                RenovacionCDP_Moderado = Math.Round(renovacionBase * 0.80m, 4),
+                RenovacionCDP_Severo = Math.Round(renovacionBase * 0.50m, 4),
+
+                ProyectorVaR = proyectorVaR,
+                SalidaVista_Base = salidaVistaBase,
+                SalidaVista_Moderado = salidaVistaMod,
+                SalidaVista_Severo = salidaVistaSev,
+
+                ProyectorCartera = proyectorCartera,
+                CrecimientoCartera_Base = crecCarteraBase,
+                CrecimientoCartera_Moderado = Math.Round(crecCarteraBase * 1.20m, 4),
+                CrecimientoCartera_Severo = Math.Round(crecCarteraBase * 1.50m, 4),
+
+                DisminucionRecaudo_Base = dismRecaudoBase,
+                DisminucionRecaudo_Moderado = Math.Round(dismRecaudoBase * 1.428m, 4),
+                DisminucionRecaudo_Severo = Math.Round(dismRecaudoBase * 2.857m, 4),
+
+                ProyectorHaircut = "Dato Manual",
                 Haircut_Base = fal,
                 Haircut_Moderado = Math.Round(fal * 0.9169m, 2),
                 Haircut_Severo = Math.Round(fal * 0.7757m, 2),
-                SalidaTop20_Base = 0.05m,
-                SalidaTop20_Moderado = 0.15m,
-                SalidaTop20_Severo = 0.35m,
-                DisponibilidadLineas_Base = 0m,
-                DisponibilidadLineas_Moderado = 0m,
-                DisponibilidadLineas_Severo = 0m,
-                PagoObligaciones_Base = pagoDeudaMes,
-                PagoObligaciones_Moderado = pagoDeudaMes,
-                PagoObligaciones_Severo = pagoDeudaMes,
-                Cupones_Base = cuponesMes,
-                Cupones_Moderado = Math.Round(cuponesMes * 0.60m, 2),
-                Cupones_Severo = Math.Round(cuponesMes * 0.40m, 2),
-                CapitalSocial_Base = 0.035m,
-                CapitalSocial_Moderado = 0.028m,
-                CapitalSocial_Severo = 0.0175m,
-                OtrosIngresos_Base = 0.0394m,
-                OtrosIngresos_Moderado = 0.0315m,
-                OtrosIngresos_Severo = 0.0197m,
-                EgresosFinancieros_Base = 0.0100m,
-                EgresosFinancieros_Moderado = 0.0200m,
-                EgresosFinancieros_Severo = 0.0300m,
-                GastosAdministrativos_Base = 0.0150m,
-                GastosAdministrativos_Moderado = 0.0250m,
-                GastosAdministrativos_Severo = 0.0400m
+
+                SalidaTop20_Base = salidaTop20Base,
+                SalidaTop20_Moderado = Math.Round(salidaTop20Base * 3.0m, 4),
+                SalidaTop20_Severo = Math.Round(salidaTop20Base * 7.0m, 4),
+
+                DisponibilidadLineas_Base = dispLineasBase,
+                DisponibilidadLineas_Moderado = Math.Round(dispLineasBase * 0.6667m, 2),
+                DisponibilidadLineas_Severo = Math.Round(dispLineasBase * 0.40m, 2),
+
+                PagoObligaciones_Base = pagoDeudaBase,
+                PagoObligaciones_Moderado = pagoDeudaBase,
+                PagoObligaciones_Severo = pagoDeudaBase,
+
+                Cupones_Base = cuponesBase,
+                Cupones_Moderado = Math.Round(cuponesBase * 0.60m, 2),
+                Cupones_Severo = Math.Round(cuponesBase * 0.40m, 2),
+
+                ProyectorCapitalSocial = proyectorCapital,
+                CapitalSocial_Base = capitalSocialBase,
+                CapitalSocial_Moderado = Math.Round(capitalSocialBase * 0.80m, 4),
+                CapitalSocial_Severo = Math.Round(capitalSocialBase * 0.50m, 4),
+
+                ProyectorOtrosIngresos = proyectorOtrosIng,
+                OtrosIngresos_Base = otrosIngresosBase,
+                OtrosIngresos_Moderado = Math.Round(otrosIngresosBase * 0.80m, 4),
+                OtrosIngresos_Severo = Math.Round(otrosIngresosBase * 0.50m, 4),
+
+                EgresosFinancieros_Base = egFinBase,
+                EgresosFinancieros_Moderado = Math.Round(egFinBase * 2.0m, 4),
+                EgresosFinancieros_Severo = Math.Round(egFinBase * 3.0m, 4),
+
+                GastosAdministrativos_Base = gastosAdmBase,
+                GastosAdministrativos_Moderado = Math.Round(gastosAdmBase * 1.6667m, 4),
+                GastosAdministrativos_Severo = Math.Round(gastosAdmBase * 2.6667m, 4)
             };
         }
 
