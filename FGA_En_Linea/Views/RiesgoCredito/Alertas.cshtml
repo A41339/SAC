@@ -87,7 +87,15 @@
     }
     .tabla-alertas tbody tr.tr-selected {
         background-color: #e6f1f8 !important;
-        border-left: 3px solid #0071AD !important;
+        border-left: 4px solid #0071AD !important;
+    }
+    .tabla-alertas tbody tr.alerta-row-hidden {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        border: none !important;
     }
     .header-back-link {
         display: inline-flex;
@@ -299,23 +307,23 @@
                 <!-- TABS DE CATEGORÍA Y BUSCADOR EN TIEMPO REAL -->
                 <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 14px;">
                     <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-                        <div class="nav-cat-pill active" onclick="filtrarCategoria('Todos', this)">
+                        <div class="nav-cat-pill active" data-cat="Todos" onclick="filtrarCategoria('Todos', this)">
                             <span>Todos</span>
                             <span class="badge-pill-count">@Model.TotalIndicadores</span>
                         </div>
-                        <div class="nav-cat-pill" onclick="filtrarCategoria('Calidad y deterioro', this)">
+                        <div class="nav-cat-pill" data-cat="Calidad y deterioro" onclick="filtrarCategoria('Calidad y deterioro', this)">
                             <span>Calidad y deterioro</span>
                             <span class="badge-pill-count">@(Model.Indicadores.Count(x => x.Tipo == "Calidad y deterioro"))</span>
                         </div>
-                        <div class="nav-cat-pill" onclick="filtrarCategoria('Dinámica y colocación', this)">
+                        <div class="nav-cat-pill" data-cat="Dinámica y colocación" onclick="filtrarCategoria('Dinámica y colocación', this)">
                             <span>Dinámica y colocación</span>
                             <span class="badge-pill-count">@(Model.Indicadores.Count(x => x.Tipo == "Dinámica y colocación"))</span>
                         </div>
-                        <div class="nav-cat-pill" onclick="filtrarCategoria('Maduración y cosechas', this)">
+                        <div class="nav-cat-pill" data-cat="Maduración y cosechas" onclick="filtrarCategoria('Maduración y cosechas', this)">
                             <span>Maduración y cosechas</span>
                             <span class="badge-pill-count">@(Model.Indicadores.Count(x => x.Tipo == "Maduración y cosechas"))</span>
                         </div>
-                        <div class="nav-cat-pill" onclick="filtrarCategoria('Concentración y cobertura', this)">
+                        <div class="nav-cat-pill" data-cat="Concentración y cobertura" onclick="filtrarCategoria('Concentración y cobertura', this)">
                             <span>Concentración y cobertura</span>
                             <span class="badge-pill-count">@(Model.Indicadores.Count(x => x.Tipo == "Concentración y cobertura"))</span>
                         </div>
@@ -362,10 +370,10 @@
                                     onmouseenter="hoverIndicadorTrend('@ind.Codigo')"
                                     id="tr_@ind.Codigo" 
                                     data-codigo="@ind.Codigo" 
-                                    data-tipo="@ind.Tipo" 
+                                    data-tipo="@Html.Raw(ind.Tipo)" 
                                     data-estado="@ind.Estado"
-                                    data-nombre="@ind.Nombre.ToLower()" 
-                                    data-formula="@ind.Formula.ToLower()">
+                                    data-nombre="@Html.Raw(ind.Nombre.ToLower())" 
+                                    data-formula="@Html.Raw(ind.Formula.ToLower())">
                                     <td>
                                         <div style="font-weight: 700; color: #143750;">@ind.Nombre</div>
                                         <div style="font-size: 11px; color: #64748b;">@ind.Formula</div>
@@ -380,6 +388,12 @@
                                     </td>
                                 </tr>
                             }
+                            <tr id="trSinIndicadoresAlertas" style="display: none;">
+                                <td colspan="5" class="text-center" style="padding: 24px; color: #64748b; font-weight: 600;">
+                                    <i class="fa fa-info-circle" style="color: #0071AD; font-size: 16px; margin-right: 5px;"></i>
+                                    No se encontraron indicadores para el filtro seleccionado.
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -506,43 +520,73 @@
                                    '&segmento=' + encodeURIComponent(seg);
         }
 
+        function normalizarTextoAlerta(str) {
+            if (!str) return '';
+            return str.toString()
+                .toLowerCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .replace(/&[a-z0-9#]+;/gi, '')
+                .replace(/\s+/g, ' ')
+                .trim();
+        }
+
         function filtrarCategoria(cat, btn) {
-            categoriaActiva = cat;
+            categoriaActiva = cat || 'Todos';
             $('.nav-cat-pill').removeClass('active');
-            $(btn).addClass('active');
+            if (btn) {
+                $(btn).addClass('active');
+            } else {
+                $('.nav-cat-pill[data-cat="' + cat + '"]').addClass('active');
+            }
             filtrarTabla();
         }
 
         function filtrarTabla() {
-            var texto = ($('#txtBuscarIndicador').val() || '').toLowerCase().trim();
+            var inputVal = $('#txtBuscarIndicador').val() || '';
+            var textoNorm = normalizarTextoAlerta(inputVal);
+            var actNorm = normalizarTextoAlerta(categoriaActiva);
+
             var visibleCount = 0;
             var visibleCriticas = 0;
             var visibleAdvertencias = 0;
             var visibleEnRango = 0;
             var primerVisibleCod = null;
 
-            $('#tblIndicadoresAlertas tbody tr').each(function () {
-                var $tr = $(this);
-                var cat = $tr.attr('data-tipo');
-                var estado = $tr.attr('data-estado');
-                var cod = $tr.attr('data-codigo');
-                var nombre = $tr.attr('data-nombre') || '';
-                var formula = $tr.attr('data-formula') || '';
+            $('#tblIndicadoresAlertas tbody tr:not(#trSinIndicadoresAlertas)').each(function () {
+                var tr = this;
+                var $tr = $(tr);
+                var rawTipo = tr.getAttribute('data-tipo') || $tr.attr('data-tipo') || '';
+                var cat = normalizarTextoAlerta(rawTipo);
+                var estado = tr.getAttribute('data-estado') || $tr.attr('data-estado') || '';
+                var cod = (tr.getAttribute('data-codigo') || $tr.attr('data-codigo') || '').toLowerCase();
+                var rawNombre = tr.getAttribute('data-nombre') || $tr.attr('data-nombre') || '';
+                var nombre = normalizarTextoAlerta(rawNombre);
+                var rawFormula = tr.getAttribute('data-formula') || $tr.attr('data-formula') || '';
+                var formula = normalizarTextoAlerta(rawFormula);
 
-                var coincideCat = (categoriaActiva === 'Todos' || cat === categoriaActiva);
-                var coincideTexto = (texto === '' || nombre.indexOf(texto) > -1 || formula.indexOf(texto) > -1 || cod.toLowerCase().indexOf(texto) > -1);
+                var coincideCat = (actNorm === 'todos' || cat === actNorm);
+                var coincideTexto = (textoNorm === '' || nombre.indexOf(textoNorm) > -1 || formula.indexOf(textoNorm) > -1 || cod.indexOf(textoNorm) > -1);
 
                 if (coincideCat && coincideTexto) {
-                    $tr.show();
+                    tr.classList.remove('alerta-row-hidden');
+                    tr.style.setProperty('display', '', '');
                     visibleCount++;
-                    if (!primerVisibleCod) primerVisibleCod = cod;
+                    if (!primerVisibleCod) primerVisibleCod = (tr.getAttribute('data-codigo') || $tr.attr('data-codigo'));
                     if (estado === 'Critica') visibleCriticas++;
                     else if (estado === 'Advertencia') visibleAdvertencias++;
                     else visibleEnRango++;
                 } else {
-                    $tr.hide();
+                    tr.classList.add('alerta-row-hidden');
+                    tr.style.setProperty('display', 'none', 'important');
                 }
             });
+
+            if (visibleCount === 0) {
+                $('#trSinIndicadoresAlertas').show();
+            } else {
+                $('#trSinIndicadoresAlertas').hide();
+            }
 
             $('#badgeContadorVisible').text(visibleCount + ' Indicadores');
 
@@ -580,16 +624,19 @@
 
             // 3. Filtrar opciones en el selector de tendencia (selIndicadorTrend) para que solo aparezcan los de esta categoría
             $('#selIndicadorTrend option').each(function () {
-                var $opt = $(this);
+                var opt = this;
+                var $opt = $(opt);
                 var cod = $opt.val();
                 var ind = catalogoAlertas.find(function(x) { return x.Codigo === cod; });
                 if (ind) {
-                    var matchCat = (categoriaActiva === 'Todos' || ind.Tipo === categoriaActiva);
-                    var matchText = (texto === '' || ind.Nombre.toLowerCase().indexOf(texto) > -1 || ind.Codigo.toLowerCase().indexOf(texto) > -1);
+                    var matchCat = (actNorm === 'todos' || normalizarTextoAlerta(ind.Tipo) === actNorm);
+                    var matchText = (textoNorm === '' || normalizarTextoAlerta(ind.Nombre).indexOf(textoNorm) > -1 || normalizarTextoAlerta(ind.Codigo).indexOf(textoNorm) > -1);
                     if (matchCat && matchText) {
-                        $opt.show().prop('disabled', false);
+                        opt.style.display = '';
+                        opt.disabled = false;
                     } else {
-                        $opt.hide().prop('disabled', true);
+                        opt.style.display = 'none';
+                        opt.disabled = true;
                     }
                 }
             });
