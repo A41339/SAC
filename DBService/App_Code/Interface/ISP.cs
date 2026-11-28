@@ -387,6 +387,15 @@ public interface ISP
     List<FGA_Consultar_GAP_Contractual_Result> FGA_Consultar_GAP_Contractual(string iDENTIDAD, DateTime? pERIODOCORTE);
 
     [OperationContract]
+    List<FGA_Consultar_Alertas_Tempranas_Credito_Result> FGA_Consultar_Alertas_Tempranas_Credito(string iDENTIDAD, DateTime? pERIODOCORTE, string cARTERA, string pRODUCTO, string sEGMENTO);
+
+    [OperationContract]
+    List<FGA_Consultar_Serie_Alerta_Temprana_Result> FGA_Consultar_Serie_Alerta_Temprana(string iDENTIDAD, DateTime? pERIODOCORTE, string cODIGO, string cARTERA);
+
+    [OperationContract]
+    int FGA_Generar_Alertas_Tempranas_Credito(string iDENTIDAD, DateTime? pERIODOCORTE, string cARTERA, string pRODUCTO, string sEGMENTO);
+
+    [OperationContract]
     int FGA_Generar_GAP_Contractual(string iDENTIDAD, DateTime? pERIODOCORTE);
 
 

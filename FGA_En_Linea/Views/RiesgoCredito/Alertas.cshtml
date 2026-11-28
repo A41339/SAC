@@ -391,12 +391,24 @@
         var catalogoAlertas = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Indicadores));
 
         function cambiarEntidadAlertas(ent) {
-            window.location.href = '@Url.Action("Alertas", "RiesgoCredito")' + '?idEntidad=' + encodeURIComponent(ent);
+            var cartera = $('#selCartera').val() || 'Total';
+            var prod = $('#selProducto').val() || 'Todos';
+            var seg = $('#selSegmento').val() || 'Todos';
+            window.location.href = '@Url.Action("Alertas", "RiesgoCredito")?idEntidad=' + encodeURIComponent(ent) +
+                                   '&cartera=' + encodeURIComponent(cartera) +
+                                   '&producto=' + encodeURIComponent(prod) +
+                                   '&segmento=' + encodeURIComponent(seg);
         }
 
         function filtrarAlertas() {
-            // Placeholder para filtros cruzados de Cartera, Producto y Segmento
-            console.log('Filtros aplicados');
+            var ent = $('select[name="Entidades"]').val() || '@Model.IdEntidad';
+            var cartera = $('#selCartera').val() || 'Total';
+            var prod = $('#selProducto').val() || 'Todos';
+            var seg = $('#selSegmento').val() || 'Todos';
+            window.location.href = '@Url.Action("Alertas", "RiesgoCredito")?idEntidad=' + encodeURIComponent(ent) +
+                                   '&cartera=' + encodeURIComponent(cartera) +
+                                   '&producto=' + encodeURIComponent(prod) +
+                                   '&segmento=' + encodeURIComponent(seg);
         }
 
         function seleccionarIndicadorTrend(cod) {

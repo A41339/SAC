@@ -471,6 +471,21 @@ public class SP : ISP
         return sp.FGA_Consultar_Serie_VaR_Liquidez(iDENTIDAD, pERIODOCORTE, cANTIDAD).ToList();
     }
 
+    public List<FGA_Consultar_Alertas_Tempranas_Credito_Result> FGA_Consultar_Alertas_Tempranas_Credito(string iDENTIDAD, DateTime? pERIODOCORTE, string cARTERA, string pRODUCTO, string sEGMENTO)
+    {
+        return sp.FGA_Consultar_Alertas_Tempranas_Credito(iDENTIDAD, pERIODOCORTE, cARTERA, pRODUCTO, sEGMENTO).ToList();
+    }
+
+    public List<FGA_Consultar_Serie_Alerta_Temprana_Result> FGA_Consultar_Serie_Alerta_Temprana(string iDENTIDAD, DateTime? pERIODOCORTE, string cODIGO, string cARTERA)
+    {
+        return sp.FGA_Consultar_Serie_Alerta_Temprana(iDENTIDAD, pERIODOCORTE, cODIGO, cARTERA).ToList();
+    }
+
+    public int FGA_Generar_Alertas_Tempranas_Credito(string iDENTIDAD, DateTime? pERIODOCORTE, string cARTERA, string pRODUCTO, string sEGMENTO)
+    {
+        return sp.FGA_Generar_Alertas_Tempranas_Credito(iDENTIDAD, pERIODOCORTE, cARTERA, pRODUCTO, sEGMENTO);
+    }
+
     public List<FGA_Consultar_GAP_Contractual_Result> FGA_Consultar_GAP_Contractual(string iDENTIDAD, DateTime? pERIODOCORTE)
     {
         return sp.FGA_Consultar_GAP_Contractual(iDENTIDAD, pERIODOCORTE).ToList();

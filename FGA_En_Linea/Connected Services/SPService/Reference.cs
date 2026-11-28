@@ -555,6 +555,15 @@ namespace FGA_En_Linea.SPService {
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISP/FGA_Consultar_GAP_Contractual", ReplyAction="http://tempuri.org/ISP/FGA_Consultar_GAP_ContractualResponse")]
         Entities.Entities.Procedures.FGA_Consultar_GAP_Contractual_Result[] FGA_Consultar_GAP_Contractual(string iDENTIDAD, System.Nullable<System.DateTime> pERIODOCORTE);
 
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISP/FGA_Consultar_Alertas_Tempranas_Credito", ReplyAction="http://tempuri.org/ISP/FGA_Consultar_Alertas_Tempranas_CreditoResponse")]
+        Entities.Entities.Procedures.FGA_Consultar_Alertas_Tempranas_Credito_Result[] FGA_Consultar_Alertas_Tempranas_Credito(string iDENTIDAD, System.Nullable<System.DateTime> pERIODOCORTE, string cARTERA, string pRODUCTO, string sEGMENTO);
+
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISP/FGA_Consultar_Serie_Alerta_Temprana", ReplyAction="http://tempuri.org/ISP/FGA_Consultar_Serie_Alerta_TempranaResponse")]
+        Entities.Entities.Procedures.FGA_Consultar_Serie_Alerta_Temprana_Result[] FGA_Consultar_Serie_Alerta_Temprana(string iDENTIDAD, System.Nullable<System.DateTime> pERIODOCORTE, string cODIGO, string cARTERA);
+
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISP/FGA_Generar_Alertas_Tempranas_Credito", ReplyAction="http://tempuri.org/ISP/FGA_Generar_Alertas_Tempranas_CreditoResponse")]
+        int FGA_Generar_Alertas_Tempranas_Credito(string iDENTIDAD, System.Nullable<System.DateTime> pERIODOCORTE, string cARTERA, string pRODUCTO, string sEGMENTO);
+
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISP/FGA_Generar_GAP_Contractual", ReplyAction="http://tempuri.org/ISP/FGA_Generar_GAP_ContractualResponse")]
         int FGA_Generar_GAP_Contractual(string iDENTIDAD, System.Nullable<System.DateTime> pERIODOCORTE);
 
@@ -1769,6 +1778,18 @@ namespace FGA_En_Linea.SPService {
 
         public Entities.Entities.Procedures.FGA_Consultar_GAP_Contractual_Result[] FGA_Consultar_GAP_Contractual(string iDENTIDAD, System.Nullable<System.DateTime> pERIODOCORTE) {
             return base.Channel.FGA_Consultar_GAP_Contractual(iDENTIDAD, pERIODOCORTE);
+        }
+
+        public Entities.Entities.Procedures.FGA_Consultar_Alertas_Tempranas_Credito_Result[] FGA_Consultar_Alertas_Tempranas_Credito(string iDENTIDAD, System.Nullable<System.DateTime> pERIODOCORTE, string cARTERA, string pRODUCTO, string sEGMENTO) {
+            return base.Channel.FGA_Consultar_Alertas_Tempranas_Credito(iDENTIDAD, pERIODOCORTE, cARTERA, pRODUCTO, sEGMENTO);
+        }
+
+        public Entities.Entities.Procedures.FGA_Consultar_Serie_Alerta_Temprana_Result[] FGA_Consultar_Serie_Alerta_Temprana(string iDENTIDAD, System.Nullable<System.DateTime> pERIODOCORTE, string cODIGO, string cARTERA) {
+            return base.Channel.FGA_Consultar_Serie_Alerta_Temprana(iDENTIDAD, pERIODOCORTE, cODIGO, cARTERA);
+        }
+
+        public int FGA_Generar_Alertas_Tempranas_Credito(string iDENTIDAD, System.Nullable<System.DateTime> pERIODOCORTE, string cARTERA, string pRODUCTO, string sEGMENTO) {
+            return base.Channel.FGA_Generar_Alertas_Tempranas_Credito(iDENTIDAD, pERIODOCORTE, cARTERA, pRODUCTO, sEGMENTO);
         }
 
         public int FGA_Generar_GAP_Contractual(string iDENTIDAD, System.Nullable<System.DateTime> pERIODOCORTE) {

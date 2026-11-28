@@ -29,6 +29,9 @@ namespace FGA.Model
         public string NombreEntidad { get; set; } = "COOPENAE";
         public string PeriodoActual { get; set; } = "Oct 2026";
         public string PeriodoAnterior { get; set; } = "Sep 2026";
+        public string CarteraSeleccionada { get; set; } = "Total";
+        public string ProductoSeleccionado { get; set; } = "Todos";
+        public string SegmentoSeleccionado { get; set; } = "Todos";
         public int AlertasCriticas { get; set; } = 2;
         public int AlertasAdvertencia { get; set; } = 3;
         public int IndicadoresEnRango { get; set; } = 5;
