@@ -433,15 +433,42 @@ PRINT 'SP [dbo].[FGA_Consultar_Serie_Alerta_Temprana] creado exitosamente.';
 GO
 
 -- =====================================================================================
--- 6. ASIGNACIÓN DE PERMISOS AL ROL [FGA]
+-- 6. ASIGNACIÓN DE PERMISOS A LOS ROLES [FGA], [public] Y MenuPermission
 -- =====================================================================================
-PRINT 'Asignando permisos al rol de base de datos [FGA]...';
+PRINT 'Asignando permisos a los roles de base de datos [FGA] y [public]...';
 GRANT EXECUTE ON [dbo].[FGA_Generar_Alertas_Tempranas_Credito] TO [FGA];
+GRANT EXECUTE ON [dbo].[FGA_Generar_Alertas_Tempranas_Credito] TO [public];
 GRANT EXECUTE ON [dbo].[FGA_Consultar_Alertas_Tempranas_Credito] TO [FGA];
+GRANT EXECUTE ON [dbo].[FGA_Consultar_Alertas_Tempranas_Credito] TO [public];
 GRANT EXECUTE ON [dbo].[FGA_Consultar_Serie_Alerta_Temprana] TO [FGA];
+GRANT EXECUTE ON [dbo].[FGA_Consultar_Serie_Alerta_Temprana] TO [public];
 GRANT SELECT, INSERT, UPDATE, DELETE ON [dbo].[Config_Alertas_Tempranas_Credito] TO [FGA];
+GRANT SELECT, INSERT, UPDATE, DELETE ON [dbo].[Config_Alertas_Tempranas_Credito] TO [public];
 GRANT SELECT, INSERT, UPDATE, DELETE ON [dbo].[Salida_Alertas_Tempranas_Credito] TO [FGA];
-PRINT 'Permisos concedidos exitosamente.';
+GRANT SELECT, INSERT, UPDATE, DELETE ON [dbo].[Salida_Alertas_Tempranas_Credito] TO [public];
+PRINT 'Permisos concedidos exitosamente a [FGA] y [public].';
+GO
+
+-- Asignar visibilidad en MenuPermission a todos los roles para los módulos de riesgo
+IF EXISTS (SELECT 1 FROM sys.tables WHERE name = 'MenuPermission')
+BEGIN
+    DECLARE @MenusCredito TABLE (MenuId INT);
+    INSERT INTO @MenusCredito (MenuId) VALUES (7500), (7510), (7511), (7512), (7513), (7514), (7515);
+
+    INSERT INTO [dbo].[MenuPermission] ([MenuId], [RoleId], [SortOrder], [IsCreate], [IsRead], [IsUpdate], [IsDelete])
+    SELECT m.MenuId, r.Id, 1, 1, 1, 1, 1
+    FROM @MenusCredito m
+    CROSS JOIN [dbo].[Role] r
+    WHERE NOT EXISTS (
+        SELECT 1 FROM [dbo].[MenuPermission] mp WHERE mp.MenuId = m.MenuId AND mp.RoleId = r.Id
+    );
+
+    UPDATE mp
+    SET mp.IsRead = 1, mp.IsCreate = 1, mp.IsUpdate = 1, mp.IsDelete = 1
+    FROM [dbo].[MenuPermission] mp
+    INNER JOIN @MenusCredito m ON mp.MenuId = m.MenuId;
+    PRINT 'Permisos de menú para Riesgo de Crédito asignados a todos los roles.';
+END
 GO
 
 PRINT '=====================================================================================';

@@ -460,11 +460,14 @@ GO
 PRINT 'SP [dbo].[FGA_Consultar_GAP_Contractual] actualizado exitosamente.';
 GO
 
--- 4. Asignar permisos al rol [FGA]
+-- 4. Asignar permisos a los roles [FGA] y [public]
 GRANT EXECUTE ON [dbo].[FGA_Generar_GAP_Contractual] TO [FGA];
+GRANT EXECUTE ON [dbo].[FGA_Generar_GAP_Contractual] TO [public];
 GRANT EXECUTE ON [dbo].[FGA_Consultar_GAP_Contractual] TO [FGA];
+GRANT EXECUTE ON [dbo].[FGA_Consultar_GAP_Contractual] TO [public];
 GRANT SELECT, INSERT, UPDATE, DELETE ON [dbo].[Salida_GAP_Contractual] TO [FGA];
-PRINT 'Permisos concedidos al rol [FGA].';
+GRANT SELECT, INSERT, UPDATE, DELETE ON [dbo].[Salida_GAP_Contractual] TO [public];
+PRINT 'Permisos concedidos a los roles [FGA] y [public].';
 GO
 
 PRINT '=====================================================================================';

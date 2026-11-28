@@ -864,16 +864,44 @@ PRINT 'SP [dbo].[FGA_Consultar_Modelos_Estres_Liquidez] creado exitosamente.';
 GO
 
 -- =====================================================================================
--- 7. ASIGNACIÓN DE PERMISOS (GRANT) AL ROL [FGA]
+-- 7. ASIGNACIÓN DE PERMISOS (GRANT) A LOS ROLES [FGA], [public] Y MenuPermission
 -- =====================================================================================
-PRINT 'Asignando permisos (GRANT) al rol de base de datos [FGA]...';
+PRINT 'Asignando permisos (GRANT) a los roles de base de datos [FGA] y [public]...';
 GRANT EXECUTE ON [dbo].[FGA_Consultar_Parametros_Liquidez] TO [FGA];
+GRANT EXECUTE ON [dbo].[FGA_Consultar_Parametros_Liquidez] TO [public];
 GRANT EXECUTE ON [dbo].[FGA_Guardar_Parametros_Liquidez] TO [FGA];
+GRANT EXECUTE ON [dbo].[FGA_Guardar_Parametros_Liquidez] TO [public];
 GRANT EXECUTE ON [dbo].[FGA_Consultar_Calculo_VaR_Liquidez] TO [FGA];
+GRANT EXECUTE ON [dbo].[FGA_Consultar_Calculo_VaR_Liquidez] TO [public];
 GRANT EXECUTE ON [dbo].[FGA_Consultar_Proyecciones_Liquidez] TO [FGA];
+GRANT EXECUTE ON [dbo].[FGA_Consultar_Proyecciones_Liquidez] TO [public];
 GRANT EXECUTE ON [dbo].[FGA_Consultar_Modelos_Estres_Liquidez] TO [FGA];
+GRANT EXECUTE ON [dbo].[FGA_Consultar_Modelos_Estres_Liquidez] TO [public];
 GRANT SELECT, INSERT, UPDATE, DELETE ON [dbo].[FGA_Parametros_Liquidez_Entidad] TO [FGA];
-PRINT 'Permisos asignados exitosamente.';
+GRANT SELECT, INSERT, UPDATE, DELETE ON [dbo].[FGA_Parametros_Liquidez_Entidad] TO [public];
+PRINT 'Permisos de base de datos asignados exitosamente a [FGA] y [public].';
+GO
+
+-- Asignar visibilidad en MenuPermission a todos los roles para los módulos de Liquidez
+IF EXISTS (SELECT 1 FROM sys.tables WHERE name = 'MenuPermission')
+BEGIN
+    DECLARE @MenusLiquidez TABLE (MenuId INT, SortOrder INT);
+    INSERT INTO @MenusLiquidez (MenuId, SortOrder) VALUES (5000, 2), (5010, 1), (5020, 2);
+
+    INSERT INTO [dbo].[MenuPermission] ([MenuId], [RoleId], [SortOrder], [IsCreate], [IsRead], [IsUpdate], [IsDelete])
+    SELECT m.MenuId, r.Id, m.SortOrder, 1, 1, 1, 1
+    FROM @MenusLiquidez m
+    CROSS JOIN [dbo].[Role] r
+    WHERE NOT EXISTS (
+        SELECT 1 FROM [dbo].[MenuPermission] mp WHERE mp.MenuId = m.MenuId AND mp.RoleId = r.Id
+    );
+
+    UPDATE mp
+    SET mp.IsRead = 1, mp.IsCreate = 1, mp.IsUpdate = 1, mp.IsDelete = 1
+    FROM [dbo].[MenuPermission] mp
+    INNER JOIN @MenusLiquidez m ON mp.MenuId = m.MenuId;
+    PRINT 'Permisos de menú para Liquidez asignados a todos los roles.';
+END
 GO
 
 PRINT '=====================================================================================';
