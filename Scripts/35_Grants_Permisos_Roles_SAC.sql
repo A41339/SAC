@@ -197,14 +197,14 @@ GO
 -- =====================================================================================
 -- 3. VERIFICACIÓN Y CREACIÓN DE MENÚS Y ASIGNACIÓN EN dbo.MenuPermission
 -- =====================================================================================
-PRINT '3. Verificando existencia de menús y asignando permisos en [dbo].[MenuPermission]...';
+PRINT '3. Sincronizando catálogo de menús en [dbo].[Menu] y asignando permisos...';
 
 IF OBJECT_ID('[dbo].[Menu]', 'U') IS NOT NULL AND OBJECT_ID('[dbo].[MenuPermission]', 'U') IS NOT NULL AND OBJECT_ID('[dbo].[Role]', 'U') IS NOT NULL
 BEGIN
-    -- 3.0 Catálogo de menús requeridos para SAC (Riesgo y Liquidez)
-    IF OBJECT_ID('tempdb..#DefinicionMenus') IS NOT NULL DROP TABLE #DefinicionMenus;
+    -- 3.0 Catálogo de menús a crear/garantizar en [dbo].[Menu]
+    IF OBJECT_ID('tempdb..#NuevosMenus') IS NOT NULL DROP TABLE #NuevosMenus;
 
-    CREATE TABLE #DefinicionMenus (
+    CREATE TABLE #NuevosMenus (
         Id INT,
         MenuText NVARCHAR(150),
         MenuURL NVARCHAR(250),
@@ -214,60 +214,79 @@ BEGIN
         Description NVARCHAR(500)
     );
 
-    INSERT INTO #DefinicionMenus (Id, MenuText, MenuURL, ParentId, SortOrder, MenuIcon, Description) VALUES
-        (1500, 'Estructura Financiera', 'root', NULL, 2, '<i class="fa fa-line-chart"></i>', 'Estructura Financiera de la Entidad'),
-        (7500, 'Evaluación Riesgos', 'root', NULL, 3, '<i class="fa fa-calculator"></i>', 'Análisis de colocación, morosidad y concentración de la cartera de crédito y liquidez.'),
-        (4000, 'Cartera de crédito', 'root', 1500, 4, '<i class="fa fa-credit-card"></i>', 'Análisis de colocación, morosidad y concentración de la cartera de crédito.'),
-        (4001, 'Calidad de la cartera', 'Cartera14_21/Index', 4000, 1, '<i class="fa fa-pie-chart"></i>', 'Composición de mora, morosidad agrupada y análisis según normativa SUGEF 14-21.'),
-        (7510, 'Riesgo de crédito', 'root', 7500, 1, '<i class="fa fa-pie-chart"></i>', 'Monitoreo de saldos de cartera según acuerdo SUGEF 14-21.'),
-        (7511, 'Indicadores de alerta', 'RiesgoCredito/Alertas', 7510, 1, '<i class="fa fa-bell-o"></i>', 'Monitoreo del deterioro del riesgo de crédito mediante indicadores de tendencia, niveles y límites internos.'),
-        (7512, 'Modelo de matrices', 'Cartera14_21/Index', 7510, 2, '<i class="fa fa-th"></i>', 'Analice la composición de las fuentes de fondeo y matrices de transición de la entidad.'),
-        (7513, 'Modelo de cosechas', 'Cartera14_21/Index', 7510, 3, '<i class="fa fa-line-chart"></i>', 'Analice las curvas de maduración y cosechas crediticias de la entidad.'),
-        (7514, 'Simulaciones de mora', 'Cartera14_21/Index', 7510, 4, '<i class="fa fa-sliders"></i>', 'Simulaciones prospectivas de morosidad y estrés según acuerdo SUGEF 14-21.'),
+    INSERT INTO #NuevosMenus (Id, MenuText, MenuURL, ParentId, SortOrder, MenuIcon, Description) VALUES
+        (7500, 'Evaluación Riesgos', 'root', NULL, 3, '<i class="fa fa-calculator"></i>', 'Análisis integral de riesgo de crédito y riesgo de liquidez.'),
+        (7510, 'Riesgo de crédito', 'root', 7500, 1, '<i class="fa fa-pie-chart"></i>', 'Monitoreo de indicadores de alerta temprana y calidad de cartera SUGEF 14-21.'),
+        (7511, 'Indicadores de alerta', 'RiesgoCredito/Alertas', 7510, 1, '<i class="fa fa-bell-o"></i>', 'Monitoreo del deterioro del riesgo de crédito mediante indicadores de alerta temprana SUGEF 14-21.'),
+        (7512, 'Modelo de matrices', 'Cartera14_21/Index', 7510, 2, '<i class="fa fa-th"></i>', 'Matrices de transición de mora y calificación crediticia.'),
+        (7513, 'Modelo de cosechas', 'Cartera14_21/Index', 7510, 3, '<i class="fa fa-line-chart"></i>', 'Curvas de maduración y cosechas crediticias.'),
+        (7514, 'Simulaciones de mora', 'Cartera14_21/Index', 7510, 4, '<i class="fa fa-sliders"></i>', 'Simulaciones prospectivas de morosidad y estrés crediticio.'),
         (7515, 'Evaluación de riesgo FFC', 'Cartera14_21/Index', 7510, 5, '<i class="fa fa-shield"></i>', 'Metodología y evaluación del perfil de riesgo de crédito FFC.'),
-        (5000, 'Liquidez', 'Liquidez/Index', 7500, 2, '<i class="fa fa-tint"></i>', 'Submódulo de Liquidez: Liquidez Contractual y Escenarios de Estrés.'),
-        (5010, 'Liquidez Contractual', 'Liquidez/Contractual', 5000, 1, '<i class="fa fa-book"></i>', 'Cálculo e insumos del Indicador de Riesgo de Liquidez: Indicadores normativos, ICL, GAP Contractual e IFNE.'),
-        (5020, 'Escenarios de Estrés', 'Liquidez/Estres', 5000, 2, '<i class="fa fa-bolt"></i>', 'Modelos proyectados de liquidez: Supuestos, Razón de Cobertura a 30 días, ICL Estresado, Brechas y Horizonte.');
+        (5010, 'Liquidez Contractual', 'Liquidez/Contractual', 5000, 1, '<i class="fa fa-book"></i>', 'Cálculo de ICL, GAP Contractual e IFNE según normativa.'),
+        (5020, 'Escenarios de Estrés', 'Liquidez/Estres', 5000, 2, '<i class="fa fa-bolt"></i>', 'Modelos proyectados de liquidez: Supuestos, Cobertura, ICL Estresado, Brechas y Horizonte.');
 
-    -- 3.1 Insertar en [dbo].[Menu] los que falten garantizando FK posterior
+    -- 3.1 Insertar en [dbo].[Menu] los que falten con IDENTITY_INSERT ON
     DECLARE @MenuIdentity INT = COLUMNPROPERTY(OBJECT_ID('[dbo].[Menu]'), 'Id', 'IsIdentity');
 
-    IF EXISTS (SELECT 1 FROM #DefinicionMenus d WHERE NOT EXISTS (SELECT 1 FROM [dbo].[Menu] m WHERE m.Id = d.Id))
+    IF EXISTS (SELECT 1 FROM #NuevosMenus n WHERE NOT EXISTS (SELECT 1 FROM [dbo].[Menu] m WHERE m.Id = n.Id))
     BEGIN
         IF @MenuIdentity = 1
         BEGIN
             SET IDENTITY_INSERT [dbo].[Menu] ON;
         END
 
+        -- Insertar respetando jerarquía: primero 7500, luego 7510, luego subopciones
         INSERT INTO [dbo].[Menu] (Id, MenuText, MenuURL, ParentId, SortOrder, MenuIcon, Description)
-        SELECT d.Id, d.MenuText, d.MenuURL, d.ParentId, d.SortOrder, d.MenuIcon, d.Description
-        FROM #DefinicionMenus d
-        WHERE NOT EXISTS (SELECT 1 FROM [dbo].[Menu] m WHERE m.Id = d.Id)
-        ORDER BY CASE WHEN d.ParentId IS NULL THEN 1 WHEN d.ParentId IN (1500, 7500) THEN 2 ELSE 3 END, d.Id;
+        SELECT n.Id, n.MenuText, n.MenuURL, n.ParentId, n.SortOrder, n.MenuIcon, n.Description
+        FROM #NuevosMenus n
+        WHERE NOT EXISTS (SELECT 1 FROM [dbo].[Menu] m WHERE m.Id = n.Id)
+        ORDER BY CASE WHEN n.Id = 7500 THEN 1 WHEN n.Id = 7510 THEN 2 ELSE 3 END;
 
         IF @MenuIdentity = 1
         BEGIN
             SET IDENTITY_INSERT [dbo].[Menu] OFF;
         END
 
-        PRINT '   -> Menús faltantes creados en [dbo].[Menu].';
+        PRINT '   -> Menús creados exitosamente en [dbo].[Menu].';
     END
 
-    -- 3.2 Actualizar configuración de los menús existentes
-    UPDATE m
-    SET m.MenuText = d.MenuText,
-        m.MenuURL = d.MenuURL,
-        m.ParentId = d.ParentId,
-        m.SortOrder = d.SortOrder,
-        m.MenuIcon = d.MenuIcon,
-        m.Description = d.Description
-    FROM [dbo].[Menu] m
-    INNER JOIN #DefinicionMenus d ON m.Id = d.Id;
+    -- 3.2 Actualizar opciones existentes para estructura limpia
+    -- Trasladar Liquidez (5000) bajo Evaluación Riesgos (7500)
+    UPDATE [dbo].[Menu]
+    SET ParentId = 7500,
+        SortOrder = 2,
+        MenuText = 'Liquidez',
+        MenuURL = 'Liquidez/Index',
+        MenuIcon = '<i class="fa fa-tint"></i>',
+        Description = 'Submódulo de Liquidez: Liquidez Contractual y Escenarios de Estrés.'
+    WHERE Id = 5000;
 
-    PRINT '   -> Catálogo de menús sincronizado.';
+    -- Renombrar 4130 en Cartera de Crédito a 'Calidad de la cartera' para diferenciar del nuevo módulo 'Riesgo de crédito'
+    UPDATE [dbo].[Menu]
+    SET MenuText = 'Calidad de la cartera',
+        Description = 'Composición de mora, morosidad agrupada y análisis según normativa SUGEF 14-21.'
+    WHERE Id = 4130;
 
-    -- 3.3 Identificar combinaciones faltantes de MenuPermission
-    -- Se hace INNER JOIN con [dbo].[Menu] para GARANTIZAR que MenuId exista en dbo.Menu (evita error FK)
+    -- Reordenar módulos raíz
+    UPDATE [dbo].[Menu] SET SortOrder = 1, ParentId = NULL WHERE Id = 1000; -- Tablero
+    UPDATE [dbo].[Menu] SET SortOrder = 2, ParentId = NULL WHERE Id = 1500; -- Estructura Financiera
+    UPDATE [dbo].[Menu] SET SortOrder = 3, ParentId = NULL WHERE Id = 7500; -- Evaluación Riesgos
+    UPDATE [dbo].[Menu] SET SortOrder = 4, ParentId = NULL WHERE Id = 4000; -- Cartera de Crédito
+    UPDATE [dbo].[Menu] SET SortOrder = 5, ParentId = NULL WHERE Id = 6000; -- Evaluación SBR
+    UPDATE [dbo].[Menu] SET SortOrder = 6, ParentId = NULL WHERE Id = 9000; -- Administración
+
+    PRINT '   -> Jerarquía y nombres de menú sincronizados correctamente.';
+
+    -- 3.3 Catálogo de todos los menús que deben tener permisos asignados
+    IF OBJECT_ID('tempdb..#MenusConPermiso') IS NOT NULL DROP TABLE #MenusConPermiso;
+
+    CREATE TABLE #MenusConPermiso (MenuId INT, SortOrder INT);
+    INSERT INTO #MenusConPermiso (MenuId, SortOrder)
+    SELECT Id, SortOrder FROM [dbo].[Menu]
+    WHERE Id IN (1500, 4000, 4130, 5000, 5010, 5020, 7500, 7510, 7511, 7512, 7513, 7514, 7515);
+
+    -- 3.4 Identificar combinaciones faltantes en dbo.MenuPermission
+    -- Se enlaza estrictamente con [dbo].[Menu] para garantizar FK
     IF OBJECT_ID('tempdb..#PermisosFaltantes') IS NOT NULL DROP TABLE #PermisosFaltantes;
 
     CREATE TABLE #PermisosFaltantes (
@@ -279,16 +298,16 @@ BEGIN
 
     INSERT INTO #PermisosFaltantes (MenuId, RoleId, SortOrder)
     SELECT 
-        d.Id AS MenuId, 
+        m.MenuId, 
         r.Id AS RoleId, 
-        d.SortOrder
-    FROM #DefinicionMenus d
-    INNER JOIN [dbo].[Menu] m_db ON m_db.Id = d.Id
+        m.SortOrder
+    FROM #MenusConPermiso m
+    INNER JOIN [dbo].[Menu] m_db ON m_db.Id = m.MenuId
     CROSS JOIN [dbo].[Role] r
     WHERE NOT EXISTS (
         SELECT 1 
         FROM [dbo].[MenuPermission] mp 
-        WHERE mp.MenuId = d.Id AND mp.RoleId = r.Id
+        WHERE mp.MenuId = m.MenuId AND mp.RoleId = r.Id
     );
 
     DECLARE @CantidadFaltantes INT = 0;
@@ -300,14 +319,14 @@ BEGIN
 
         IF @IsIdentity = 1
         BEGIN
-            PRINT '   -> Columna [dbo].[MenuPermission].[Id] es IDENTITY. Insertando...';
+            PRINT '   -> Insertando permisos en [dbo].[MenuPermission] (columna Id es IDENTITY)...';
             INSERT INTO [dbo].[MenuPermission] ([MenuId], [RoleId], [SortOrder], [IsCreate], [IsRead], [IsUpdate], [IsDelete])
             SELECT MenuId, RoleId, SortOrder, 1, 1, 1, 1
             FROM #PermisosFaltantes;
         END
         ELSE
         BEGIN
-            PRINT '   -> Columna [dbo].[MenuPermission].[Id] NO es IDENTITY. Calculando Id autoincremental seguro...';
+            PRINT '   -> Insertando permisos en [dbo].[MenuPermission] (calculando Id no-identity)...';
             DECLARE @MaxId INT = 0;
             SELECT @MaxId = ISNULL(MAX(Id), 0) FROM [dbo].[MenuPermission];
 
@@ -321,26 +340,27 @@ BEGIN
             FROM #PermisosFaltantes;
         END
 
-        PRINT '   -> ' + CAST(@CantidadFaltantes AS NVARCHAR(10)) + ' permisos nuevos insertados exitosamente.';
+        PRINT '   -> ' + CAST(@CantidadFaltantes AS NVARCHAR(10)) + ' registros de permisos insertados exitosamente.';
     END
     ELSE
     BEGIN
-        PRINT '   -> Todos los roles ya contaban con registros de permisos asignados.';
+        PRINT '   -> Todos los roles ya tenían registros asignados en MenuPermission.';
     END
 
-    -- 3.4 Asegurar que todos los permisos para estos menús tengan lectura y operación habilitada
+    -- 3.5 Garantizar lectura y operación completa para todos los roles
     UPDATE mp
     SET mp.IsRead = 1,
         mp.IsCreate = 1,
         mp.IsUpdate = 1,
         mp.IsDelete = 1
     FROM [dbo].[MenuPermission] mp
-    INNER JOIN #DefinicionMenus d ON mp.MenuId = d.Id;
+    INNER JOIN #MenusConPermiso m ON mp.MenuId = m.MenuId;
 
     PRINT '   -> Permisos de visualización (IsRead = 1) garantizados para todos los roles.';
 
     DROP TABLE #PermisosFaltantes;
-    DROP TABLE #DefinicionMenus;
+    DROP TABLE #MenusConPermiso;
+    DROP TABLE #NuevosMenus;
 END
 GO
 
